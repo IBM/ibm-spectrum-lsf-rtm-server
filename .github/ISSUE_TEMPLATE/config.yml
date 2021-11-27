@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Community
+    url: https://community.ibm.com/community/user/businessanalytics/communities/community-home?CommunityKey=74d589b7-7276-4d70-acf5-0fc26430c6c0
+    about: Connect with experts and peers to elevate technical expertise, solve problems and share insights.
+  - name: Get Support
+    url: https://www.ibm.com/support/pages/ibm-spectrum-computing-support
+    about: Visit IBM Spectrum Computing Support where you'll find documentation and IBM Redbooks®. You can also open a support ticket, shop for products and download product updates.

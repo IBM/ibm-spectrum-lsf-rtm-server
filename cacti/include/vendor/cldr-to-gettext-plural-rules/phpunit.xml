@@ -1,0 +1,9 @@
+<!-- $Id$ -->
+<phpunit bootstrap="./tests/bootstrap.php">
+    <testsuites>
+        <testsuite name="Rule checks">
+            <directory>./tests/Rules/</directory>
+				<directory>./tests/Get/</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
