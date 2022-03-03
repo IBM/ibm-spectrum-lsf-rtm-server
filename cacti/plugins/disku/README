@@ -1,0 +1,207 @@
+/*******************************************************************************
+
+    Author ......... IBM Corporation
+    Home Site ...... http://www.ibm.com
+    Program ........ RTM Disk Monitoring Plugin
+    Version ........ 10.2.0.12
+    Purpose ........ Scan Disks for Utilization
+
+*******************************************************************************/
+
+
+----[ Purpose
+
+    This plugins purpose is to help HPC administrators keep track of who
+    in their organization is consuming data on disk.
+
+    It has the following feature:
+
+    1) A forking Perl based poller daemon that can scan disks anywhere and
+       can be installed on as many systems as required
+    2) Poller self registration with the RTM server
+    3) A UI to define the paths on the remote pollers to scan, at what
+       frequency and at what level of parallelization
+    4) A user interface to view file system status, users, groups, and if
+       you have loaded organization information into the Metadata plugin
+       a hierarchial view of disk utilization.
+    5) An Extension Registry that allows you to map certain file extensions
+       to your applications that leverage them
+    6) Graphs of everthing included in the plugin.
+
+    This is a generation 1 plugin.  It is not without it's bugs.  After all
+    I claim to have caused most of Cacti's bugs for a reason.  The extension
+    registry is not fully functional, and there were planned several
+    additional features, that for the POC where this was developed, ran out
+    of steam.  So, the features are not there today.
+
+----[ Features
+
+    Multi-forking perl collection daemon
+    Multiple collection frequencies
+    GUI to view utilization
+    Graphs to track historical utilization
+
+----[ Prerequisites
+
+    Before you install Boost, you need to have met the following pre-requisites
+    on the RTM Web Server
+
+    1) RTM 9.x or Above
+
+    On your Poller servers , you are required to install the following
+    perl packages:
+
+    1) perl-DBD-MySQL
+    2) perl-DBI
+    3) perl-Timer-HiRes
+    4) perl-TimeDate
+    5) mysql
+
+----[ Installation
+
+    Plugin Install:
+
+    The plugin Installation is similar to other plugins.  Simply goto Plugin
+    management, and install and enable the plugin.
+
+    Once that is complete, you need to import the Extension Registry.  To
+    do that, open an ssh session with the RTM Web Server and issue the
+    following commands:
+
+    cd /opt/cacti/plugins/disku
+    mysql cacti < disku_extension_registry.sql
+
+    Next, grant your RTM user account access to veiw the plugins content.
+    The Cacti Realms are as follows:
+
+    RTM -> View Disk Admin Data
+    RTM -> View Disk Usage Data
+
+    Forking Perl Daemon Install:
+
+    To install the forking daemon, follow the steps below.
+
+    1) Copy the service binries to the collector host:
+
+       % cd /opt/cacti/plugins/disku
+       % scp -rp service mypollerhost:/tmp
+
+    2) Grant the poller host access to the RTM servers database
+
+       % mysql
+       > grant all on cacti.* to 'cacti'@'mypollerhost.mydomain' identified by 'admin';
+       > flush privileges;
+       > quit;
+
+    2) Login to the poller host, in this case 'mypollerhost' and test
+       the MySQL access.
+
+       mysql -ucacti -padmin cacti
+
+       If for some reason, you can not login, insure the domain name on
+       the error message is the same you used in step 2 and try again.
+
+    3) Install the service.
+
+       % cd /tmp/service/install
+       % ./install.sh
+
+    4) Verify that the service is running if you used different credential
+       to login to mysql, you may have to edit /etc/diskud.conf and set
+       the correct mysql credentials, and then restart the service:
+
+       % vim /etc/diskud.conf
+       % /etc/init.d/diskud restart
+
+    5) Once the service is running, you can view it from RTM by going to
+       Console->File System Pollers
+
+    You may repeat the poller steps on a many systems as required to scan
+    all of your relevant disks.
+
+    Plugin General Web Configuration:
+
+    Once your Plugin is installed, your Daemon is running, there are still
+    several steps to complete the installation.  They include:
+
+    - Copying scripts to /opt/cacti/scripts
+    - Copying XML to /opt/cacti/resource/script_server
+    - Importing a Host Template to Monitor Disks
+    - Modifying the MetaData Plugin's User Configuration to Include
+      Organizational Hierarchy
+    - Importing your revised user data into RTM
+    - Setting Disku Configuration Settings in RTM
+    - Adding Paths to RTM for Collecting Data
+    - Mapping Your Applications File Extensions to that Application
+
+    That's a lot of steps.  However, in the end, you will be happily
+    Graphing per user, per group and per organization disk utilization
+    over time.
+
+    Let's cover the install steps one at a time now.  The first step is to
+    copy the Host Template files to their respective directories:
+
+    % cd /opt/cacti/plugins/disku/templates
+    % cp -p scripts/* /opt/cacti/scripts
+    % cp -p script_server/* /opt/cacti/resource/script_server
+
+    Then, in the templates directory itself, there is a Host Template
+    XML file.  You need to import that by going to
+    Console->Import/Export->Import Templates
+
+    Next, is the MetaData plugin.  I wont go over all the details on the
+    use of the MetaData plugin.  But the important thing is to add user columns
+    for things like Site, Organization, Department, Phone Number you name it
+    for organizations.  Then, have that data ready in a CSV file.  Then,
+    you need to modify the XML file that defines your user Hierarchy.  The
+    steps below should help:
+
+    % cd /opt/cacti/plugins/meta
+    % vim metadata.conf.xml
+    % php -q metadata_cli.php -c -f metadata.conf.xml
+    % php -q metadata_cli.php -l -t user -f mycsvfile.csv
+
+    Next, you need to goto the Cacti Settings page under the section
+    RTM Plugins and review your configuration settings.  This should
+    be pretty strait forward.
+
+    Lastly, you need to add your paths.  It's important to know that
+    these paths can by anywhere on your poller hosts, and RTM does not
+    do too much checking.  There are two concepts to remember.  The first
+    if the Directory Depth.  Disku uses this to define the number of
+    directories to scan, the second is the level of parallelization.
+
+    If you parallelize too much, it might slow down your filers, so
+    be cautious at first.
+
+    Disku does two scans of the file system.  The first scans to a depth
+    of 'Dictory Depth' and get's a list of directories to scan.  This
+    list is then assigned to the 'Max Concurrent Threads' to process.
+
+    As the threads finish one path, and insert in to the database, they
+    will grab the next available path from the list and continue to
+    scan until all directories have been scanned, and then it will perform
+    rollup queries for your reporting.
+
+    The collection frequencies are defined at the Poller level and not
+    the path level.  So, keep that in mind.  The least frequent polling
+    interval is currently once a week.
+
+----[ Possible Bugs?
+
+    If you figure out this problem, let me know!!!
+
+----[ Special Thanks
+
+    All my cacti friends that I miss each day.
+
+----[ Future Changes
+
+    Got any ideas or complaints, please e-mail me!
+
+----[ Changelog
+    --- 1.0 ---
+    Initial release
+
+    --- Known Issues ---
+    None reported

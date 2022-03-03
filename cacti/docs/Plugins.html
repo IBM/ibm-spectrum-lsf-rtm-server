@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Plugin Management</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="plugin-management">Plugin Management</h1>
+<h3 id="installing-plugins">Installing Plugins</h3>
+<p>Installing plugins on cacti is a simple procedure</p>
+<p>Step 1 download the plugin to cactidir/cacti/plugins</p>
+<pre class="console"><code>git clone https://github.com/Cacti/plugin_thold.git
+</code></pre>
+<pre class="console"><code>mv plugin_thold /var/www/html/cacti/plugins
+</code></pre>
+<p>Now assign the proper permissions to the folder</p>
+<pre class="console"><code>chown -R www-data:www-data plugin_thold
+</code></pre>
+<p>Below you will now see the THOLD plugin avaliable to install in this case we are installing thold</p>
+<p><img src="images/cacti_thold_plugin_install.JPG" alt="thold plugin" />.</p>
+<p>After installing the plugin by clicking on the grey gear you will now how to enable it this can be done via clicking on the green check mark</p>
+<p><img src="images/cacti_thold_enable.JPG" alt="thold plugin enable" /></p>
+<h3 id="unistall-a-plugin">Unistall a plugin</h3>
+<p>To uninstall a plugin go into the plugins page console &gt;&gt; configuration &gt;&gt; plugins Click on the plugin to disable the plugin</p>
+<p>Click on the red dot beside the plugin to uninstall the plugin a dialouge box will appear now click uninstall.</p>
+<p><img src="images/plugins-uninstall.png" alt="uninstall plugin" /></p>
+<p>This will uninstall the plugin from cacti but will NOT remove the files from the server to do that you must manually remove the plugin until you remove the files the plugin will show to be avaliable to be installed.</p>
+<h3 id="dependecies-in-plugins">Dependecies in plugins</h3>
+<p>Some dependencies such as THOLD aka Thresholds rely on another plugin in this case thold reliese on the monitor plugin which is missing in this case you will see the below messege box in order to continue you must install the required plugin.</p>
+<p><img src="images/plugins-dependencies.png" alt="plugin dependencies" /></p>
+<hr />
+<p>Copyright (c) 2004-2020 The Cacti Group</p>
+</body>
+</html>

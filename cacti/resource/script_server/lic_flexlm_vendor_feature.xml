@@ -1,0 +1,57 @@
+<!-- $Id$ -->
+<interface>
+  <name>License Vendor Feature Usage Information</name>
+  <script_path>|path_cacti|/scripts/ss_lic_flexlm_vendors_features.php</script_path>
+  <script_function>ss_lic_get_vendors_features</script_function>
+  <script_server>php</script_server>
+  <arg_prepend>|lic_server_id|</arg_prepend>
+  <arg_index>index</arg_index>
+  <arg_query>query</arg_query>
+  <arg_get>get</arg_get>
+  <output_delimeter>!</output_delimeter>
+  <index_order>licFeatureName</index_order>
+  <index_order_type>alpha</index_order_type>
+  <index_title_format>|choosen_field_order|</index_title_format>
+  <fields>
+    <licVendor>
+      <name>Vendor Name</name>
+      <direction>input</direction>
+      <query_name>vendor</query_name>
+    </licVendor>
+    <licIndexName>
+        <name>Index Name</name>
+        <direction>input</direction>
+        <query_name>index</query_name>
+    </licIndexName>
+    <licFeatureName>
+      <name>Feature Name</name>
+      <direction>input</direction>
+      <query_name>feature</query_name>
+    </licFeatureName>
+    <licMaxLicenses>
+      <name>Max Licenses</name>
+      <direction>input</direction>
+      <query_name>licenses</query_name>
+    </licMaxLicenses>
+    <licMaxInUseLicenses>
+      <name>Max Licenses</name>
+      <direction>output</direction>
+      <query_name>maxavail</query_name>
+    </licMaxInUseLicenses>
+    <licInUseLicenses>
+      <name>In Use Licenses</name>
+      <direction>output</direction>
+      <query_name>inuse</query_name>
+    </licInUseLicenses>
+    <licQueuedLicenses>
+      <name>Queued Count</name>
+      <direction>output</direction>
+      <query_name>queued</query_name>
+    </licQueuedLicenses>
+    <licDeniedLicenses>
+      <name>Denied Count</name>
+      <direction>output</direction>
+      <query_name>denied</query_name>
+    </licDeniedLicenses>
+  </fields>
+</interface>

@@ -1,0 +1,163 @@
+<!-- $Id$ -->
+<cacti>
+	<hash_1800210f1a584487506ce1e41389c99f377ec8>
+		<id>17</id>
+		<name>Jobs with Invalid Dependencies in Cluster |alert_clustername|</name>
+		<clusterid>0</clusterid>
+		<type>0</type>
+		<expression_id>16</expression_id>
+		<aggregation>0</aggregation>
+		<metric>0</metric>
+		<base_time_display>12:00am</base_time_display>
+		<base_time>0000-00-00 00:00:00</base_time>
+		<frequency>12</frequency>
+		<alarm_type>0</alarm_type>
+		<alarm_hi>0</alarm_hi>
+		<alarm_low></alarm_low>
+		<alarm_fail_trigger>12</alarm_fail_trigger>
+		<time_hi>0</time_hi>
+		<time_low></time_low>
+		<time_fail_trigger>0</time_fail_trigger>
+		<time_fail_length>1</time_fail_length>
+		<warning_pct></warning_pct>
+		<trigger_cmd_high></trigger_cmd_high>
+		<trigger_cmd_low></trigger_cmd_low>
+		<trigger_cmd_norm></trigger_cmd_norm>
+		<repeat_alert>288</repeat_alert>
+		<notify_extra></notify_extra>
+		<notify_cluster_admin>1</notify_cluster_admin>
+		<notify_alert>0</notify_alert>
+		<notify_users>on</notify_users>
+		<syslog_priority>4</syslog_priority>
+		<syslog_facility>24</syslog_facility>
+		<syslog_enabled></syslog_enabled>
+		<tcheck>0</tcheck>
+		<exempt>off</exempt>
+		<acknowledgement>off</acknowledgement>
+		<restored_alert>off</restored_alert>
+		<req_ack>off</req_ack>
+		<email_body>The following list of jobs have invalid dependencies and will never run.  Take appropriate action.&lt;br&gt;&lt;DETAILS&gt;&lt;br&gt;</email_body>
+		<email_subject>ALERT: &lt;NAME&gt;</email_subject>
+		<gridalarms_template_contacts>
+		</gridalarms_template_contacts>
+		<gridalarms_template_layout>
+			<hash_200021274c489940fdb0ccee58eefc0c1f8cbe>
+				<id>133</id>
+				<alarm_id>17</alarm_id>
+				<display_name>Jobid</display_name>
+				<column_name>jobid</column_name>
+				<sequence>9</sequence>
+				<sortposition>2</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200021274c489940fdb0ccee58eefc0c1f8cbe>
+			<hash_200021f773dba9853f2261d7968b796adc4708>
+				<id>134</id>
+				<alarm_id>17</alarm_id>
+				<display_name>Indexid</display_name>
+				<column_name>indexid</column_name>
+				<sequence>10</sequence>
+				<sortposition>3</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200021f773dba9853f2261d7968b796adc4708>
+			<hash_20002111cfc14634527035c27387cca8c2b6ce>
+				<id>135</id>
+				<alarm_id>17</alarm_id>
+				<display_name>Clusterid</display_name>
+				<column_name>clusterid</column_name>
+				<sequence>8</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_20002111cfc14634527035c27387cca8c2b6ce>
+			<hash_20002112e8a623c675260ed32559ced968631c>
+				<id>136</id>
+				<alarm_id>17</alarm_id>
+				<display_name>Submit Time</display_name>
+				<column_name>submit_time</column_name>
+				<sequence>11</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_20002112e8a623c675260ed32559ced968631c>
+			<hash_200021689291c3e8023312c429e903e956764b>
+				<id>137</id>
+				<alarm_id>17</alarm_id>
+				<display_name>User Name</display_name>
+				<column_name>user</column_name>
+				<sequence>7</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200021689291c3e8023312c429e903e956764b>
+			<hash_20002118badc81016e1b71b7fb711d1f34c2f7>
+				<id>138</id>
+				<alarm_id>17</alarm_id>
+				<display_name>Status</display_name>
+				<column_name>stat</column_name>
+				<sequence>12</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_20002118badc81016e1b71b7fb711d1f34c2f7>
+			<hash_2000210f7d696fd2e03a8740dca8e514c56163>
+				<id>157</id>
+				<alarm_id>17</alarm_id>
+				<display_name>Cluster Name</display_name>
+				<column_name>clustername</column_name>
+				<sequence>1</sequence>
+				<sortposition>1</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_2000210f7d696fd2e03a8740dca8e514c56163>
+			<hash_20002127ad099f993c0bef8836a6b88e340751>
+				<id>158</id>
+				<alarm_id>17</alarm_id>
+				<display_name>Dependencies</display_name>
+				<column_name>dependCond</column_name>
+				<sequence>13</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_20002127ad099f993c0bef8836a6b88e340751>
+			<hash_200021c1f9be51cedf5d50e5360995fca67fc1>
+				<id>159</id>
+				<alarm_id>17</alarm_id>
+				<display_name>Job Name</display_name>
+				<column_name>jobname</column_name>
+				<sequence>2</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200021c1f9be51cedf5d50e5360995fca67fc1>
+			<hash_200021a0d354ab10de1a55e1e8fe489a4b390c>
+				<id>160</id>
+				<alarm_id>17</alarm_id>
+				<display_name>Queue Name</display_name>
+				<column_name>queue</column_name>
+				<sequence>3</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200021a0d354ab10de1a55e1e8fe489a4b390c>
+		</gridalarms_template_layout>
+		<gridalarms_template_expression>
+			<hash_21002196e658be6050f393dc2a4cf405602a67>
+				<id>16</id>
+				<name>Invalid Dependencies</name>
+				<description>Shows jobs with invalid dependencies</description>
+				<ds_type>1</ds_type>
+				<type>1</type>
+				<db_table>grid_jobs</db_table>
+				<sql_query>SELECT gc.clustername, gj.*
+FROM grid_clusters AS gc
+INNER JOIN grid_jobs AS gj
+ON gc.clusterid=gj.clusterid
+WHERE gj.stat=&#039;PEND&#039;
+AND gj.pendReasons like &#039;%Dependency%invalid%&#039;</sql_query>
+				<script_thold></script_thold>
+				<script_data></script_data>
+				<script_data_type>0</script_data_type>
+			</hash_21002196e658be6050f393dc2a4cf405602a67>
+		</gridalarms_template_expression>
+		<gridalarms_template_expression_item>
+		</gridalarms_template_expression_item>
+		<gridalarms_template_metric>
+		</gridalarms_template_metric>
+		<gridalarms_template_metric_expression>
+		</gridalarms_template_metric_expression>
+		<gridalarms_template_expression_input>
+		</gridalarms_template_expression_input>
+	</hash_1800210f1a584487506ce1e41389c99f377ec8>
+</cacti>

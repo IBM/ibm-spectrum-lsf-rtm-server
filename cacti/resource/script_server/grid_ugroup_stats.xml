@@ -1,0 +1,87 @@
+<!-- $Id$ -->
+<interface>
+	<name>Grid User Group Statistics</name>
+	<script_path>|path_cacti|/scripts/ss_grid_ugroup_stats.php</script_path>
+	<script_function>ss_grid_ugroup_stats</script_function>
+	<script_server>php</script_server>
+	<arg_prepend>|clusterid|</arg_prepend>
+	<arg_index>index</arg_index>
+	<arg_query>query</arg_query>
+	<arg_get>get</arg_get>
+	<output_delimeter>!</output_delimeter>
+	<index_order>groupName</index_order>
+	<index_order_type>alpha</index_order_type>
+	<index_title_format>|chosen_order_field|</index_title_format>
+	<fields>
+		<groupName>
+			<name>Group Name</name>
+			<direction>input</direction>
+			<query_name>groupName</query_name>
+		</groupName>
+		<groupMembers>
+			<name>Total Users</name>
+			<direction>input</direction>
+			<query_name>groupMembers</query_name>
+		</groupMembers>
+		<efficiency>
+			<name>CPU Efficiency</name>
+			<direction>output</direction>
+			<query_name>efficiency</query_name>
+		</efficiency>
+		<maxJobs>
+			<name>Max Jobs</name>
+			<direction>output</direction>
+			<query_name>maxJobs</query_name>
+		</maxJobs>
+		<numStartJobs>
+			<name>Started Jobs</name>
+			<direction>output</direction>
+			<query_name>numStartJobs</query_name>
+		</numStartJobs>
+		<numPEND>
+			<name>Pending Jobs</name>
+			<direction>output</direction>
+			<query_name>numPEND</query_name>
+		</numPEND>
+		<numRUN>
+			<name>Running Jobs</name>
+			<direction>output</direction>
+			<query_name>numRUN</query_name>
+		</numRUN>
+		<numSSUSP>
+			<name>System Suspended Jobs</name>
+			<direction>output</direction>
+			<query_name>numSSUSP</query_name>
+		</numSSUSP>
+		<numUSUSP>
+			<name>User Suspended Jobs</name>
+			<direction>output</direction>
+			<query_name>numUSUSP</query_name>
+		</numUSUSP>
+		<numRESERVE>
+			<name>Reserved Jobs</name>
+			<direction>output</direction>
+			<query_name>numRESERVE</query_name>
+		</numRESERVE>
+		<maxPendJobs>
+			<name>Maximum Pending Jobs</name>
+			<direction>output</direction>
+			<query_name>maxPendJobs</query_name>
+		</maxPendJobs>
+		<avg_mem>
+			<name>Average Memory Usage</name>
+			<direction>output</direction>
+			<query_name>avg_mem</query_name>
+		</avg_mem>
+		<max_mem>
+			<name>Maximum Memory Usage</name>
+			<direction>output</direction>
+			<query_name>max_mem</query_name>
+		</max_mem>
+		<total_cpu>
+			<name>Total CPU</name>
+			<direction>output</direction>
+			<query_name>total_cpu</query_name>
+		</total_cpu>
+	</fields>
+</interface>

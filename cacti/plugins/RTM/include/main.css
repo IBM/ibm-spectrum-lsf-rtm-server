@@ -1,0 +1,214 @@
+/* $Id$ */
+/* main styles */
+
+*, ::after, ::before {
+    box-sizing: content-box;
+}
+
+.login-body .product-name {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.login-table {
+	width: calc(100% - 50px);
+}
+
+.login-area, .logout-area {
+	min-width:360px;
+	max-width:450px;
+}
+
+.loginArea legend, .logoutArea legend {
+    text-align: left;
+    margin: 0 auto 40px;
+    white-space: nowrap;
+    line-height: 28px;
+    font-weight: 400;
+}
+
+.login-logo-area {
+	display: none;
+}
+
+.login-form {
+	width: 80%;
+}
+
+.login-field {
+	width: 100%;
+}
+
+.cactiLogin input[type='text'], .cactiLogin input[type='password'] {
+	display: inline-block;
+	padding: 0 4px 3px;
+	cursor: pointer;
+	text-decoration: none;
+	text-overflow: ellipsis;
+	background: none;
+	font-size: inherit;
+	line-height: inherit;
+	border: none;
+	border-bottom: 1px solid #aeb8b8;
+}
+
+.cactiLogin input[type='submit'], .cactiLogin input[type='button']{
+	outline: 0;
+	width: 100%;
+	line-height: 32px;
+	font-size: 14px;
+	height: 36px;
+	text-align: center;
+	vertical-align: middle;
+	padding: 0 0px !important;
+	border: none;
+	margin-top: 24px;
+	margin-right: 0px;
+	float: right;
+	cursor: pointer;
+}
+
+ul.ulist{
+	background-color: transparent;
+	padding:0px;
+	margin:0px;
+}
+
+li.llist {
+	float: left;
+	background-color: transparent;
+	display: block;
+	list-style-type:none;
+	list-style-position: outside;
+}
+
+li.slist {
+	float: left;
+	background-color: transparent;
+	display: block;
+	list-style-type:none;
+	list-style-position: outside;
+}
+
+.rtmLegend {
+	font-weight: bold;
+	padding: 8px;
+    table-layout: fixed;
+    width: 100%;
+}
+
+.learnMore {
+	font-size:12px;
+	padding-left:3px;
+}
+
+.rtmTitle, .rtmSubTitle {
+        font-weight: 550;
+}
+
+.arrow {
+  background:url('../images/popupSharkfin.png') no-repeat 0 0;
+  height: 18px;
+  width: 18px;
+  z-index: 0;
+  position:absolute;
+  left:0px;
+  bottom:-18px;
+}
+
+.toparrow {
+  background:url('../images/popupSharkfin.png') no-repeat -18px 0;
+  height: 18px;
+  width: 18px;
+  z-index: 0;
+  position:absolute;
+  left:0px;
+  top:-18px;
+}
+
+.landing_page_tile_large {
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 20px;
+  padding-top: 8px;
+}
+
+.landing_page_tile_medium {
+  font-size:14px;
+  font-weight: bold;
+  line-height:20px;
+  padding-top:6px;
+}
+
+.landing_page_tile_small {
+  font-size:12px;
+  line-height:20px;
+}
+.landing_page_tile_small a{
+}
+
+td.print_underline {
+  display: inline-block;
+  height: 1px;
+  border-bottom: 1px solid #4E4E4E !important;
+  margin-top:5px;
+  min-width:280px;
+  width:100%;
+}
+
+.versionInfo {
+	position: absolute;
+	bottom: 0px;
+	width: 100% !important;
+	height: 70px;
+}
+
+svg:not(:root) {
+    overflow: hidden;
+}
+
+.ibm-logo, .cacti-logo {
+    fill: #c8d2d2;
+    position: relative;
+}
+
+.ibm-logo {
+    height: 20px;
+    top: 25px;
+    left: 0;
+    width: 58px;
+}
+
+.cacti-logo {
+    height: 50px;
+    top: 10px;
+    right: 0;
+    width: 32px;
+}
+
+.versionInfo p.legal-text {
+    font-size: 10px;
+    line-height: 12px;
+    margin: 0 auto;
+    width: 360px;
+    text-align: center;
+    color: #c8d2d2;
+}
+
+.filepath {
+	font-size: 11px;
+	font-family: Courier New, Courier, monospace;
+}
+
+.uicontrol {
+	font-weight: bold;
+}
+
+.codeph {
+	font-size: 11px;
+	font-family: Courier New, Courier, monospace;
+}
+
+.keyword {
+	color: blue;
+}

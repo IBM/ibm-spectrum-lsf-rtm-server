@@ -1,0 +1,228 @@
+<!-- $Id$ -->
+<interface>
+	<name>Grid Host Group Statistics</name>
+	<script_path>|path_cacti|/scripts/ss_grid_hgroup_stats.php</script_path>
+	<script_function>ss_grid_hgroup_stats</script_function>
+	<script_server>php</script_server>
+	<arg_prepend>|clusterid|</arg_prepend>
+	<arg_index>index</arg_index>
+	<arg_query>query</arg_query>
+	<arg_get>get</arg_get>
+	<output_delimeter>!</output_delimeter>
+	<index_order>groupName</index_order>
+	<index_order_type>numeric</index_order_type>
+	<index_title_format>|chosen_order_field|</index_title_format>
+
+	<fields>
+		<groupName>
+			<name>Group Name</name>
+			<direction>input</direction>
+			<query_name>groupName</query_name>
+		</groupName>
+		<groupHosts>
+			<name>Total Hosts</name>
+			<direction>input</direction>
+			<query_name>hosts</query_name>
+		</groupHosts>
+		<r15s>
+			<name>Jobs in Run Queue 15s</name>
+			<direction>output</direction>
+			<query_name>r15s</query_name>
+		</r15s>
+		<r1m>
+			<name>Jobs in Run Queue 1m</name>
+			<direction>output</direction>
+			<query_name>r1m</query_name>
+		</r1m>
+		<r15m>
+			<name>Jobs in Run Queue 15m</name>
+			<direction>output</direction>
+			<query_name>r15m</query_name>
+		</r15m>
+		<ut>
+			<name>CPU Utilization</name>
+			<direction>output</direction>
+			<query_name>ut</query_name>
+		</ut>
+		<pg>
+			<name>Average System Paging Rate</name>
+			<direction>output</direction>
+			<query_name>pg</query_name>
+		</pg>
+		<io>
+			<name>Average System IO Rate</name>
+			<direction>output</direction>
+			<query_name>io</query_name>
+		</io>
+		<ls>
+			<name>Login Sessions</name>
+			<direction>output</direction>
+			<query_name>ls</query_name>
+		</ls>
+		<it>
+			<name>Average Idle Time (No Users)</name>
+			<direction>output</direction>
+			<query_name>it</query_name>
+		</it>
+		<mem>
+			<name>Average Memory Available</name>
+			<direction>output</direction>
+			<query_name>mem</query_name>
+		</mem>
+		<swp>
+			<name>Average Swap Available</name>
+			<direction>output</direction>
+			<query_name>swp</query_name>
+		</swp>
+		<tmp>
+			<name>Average Temp Available</name>
+			<direction>output</direction>
+			<query_name>tmp</query_name>
+		</tmp>
+		<capacity>
+			<name>Host Group Capacity</name>
+			<direction>output</direction>
+			<query_name>capacity</query_name>
+		</capacity>
+		<load>
+			<name>Host Group Load</name>
+			<direction>output</direction>
+			<query_name>load</query_name>
+		</load>
+		<total_slots>
+			<name>Host Group Total Slots</name>
+			<direction>output</direction>
+			<query_name>total_slots</query_name>
+		</total_slots>
+		<ok_slots>
+			<name>Host Group OK Slots</name>
+			<direction>output</direction>
+			<query_name>ok_slots</query_name>
+		</ok_slots>
+		<avail_slots>
+			<name>Host Group Avail Slots</name>
+			<direction>output</direction>
+			<query_name>avail_slots</query_name>
+		</avail_slots>
+		<closed_slots>
+			<name>Host Group closed Slots</name>
+			<direction>output</direction>
+			<query_name>closed_slots</query_name>
+		</closed_slots>
+		<out_slots>
+			<name>Host Group Out of Service Slots</name>
+			<direction>output</direction>
+			<query_name>out_slots</query_name>
+		</out_slots>
+		<unavail_slots>
+			<name>Host Group Unavailable Slots</name>
+			<direction>output</direction>
+			<query_name>unavail_slots</query_name>
+		</unavail_slots>
+		<total_jobs>
+			<name>Host Group Total Jobs</name>
+			<direction>output</direction>
+			<query_name>total_jobs</query_name>
+		</total_jobs>
+		<numDONE>
+			<name>Done Jobs 5 Minutes</name>
+			<direction>output</direction>
+			<query_name>numDONE</query_name>
+		</numDONE>
+		<numEXIT>
+			<name>Exited Jobs 5 Minutes</name>
+			<direction>output</direction>
+			<query_name>numEXIT</query_name>
+		</numEXIT>
+		<numPEND>
+		        <name>Pending Jobs</name>
+		        <direction>output</direction>
+		        <query_name>numPEND</query_name>
+		</numPEND>
+		<numRUN>
+		        <name>Running Jobs</name>
+		        <direction>output</direction>
+		        <query_name>numRUN</query_name>
+		</numRUN>
+		<avg_mem>
+			<name>Average Memory Usage</name>
+			<direction>output</direction>
+			<query_name>avg_mem</query_name>
+		</avg_mem>
+		<max_mem>
+			<name>Maximum Memory Usage</name>
+			<direction>output</direction>
+			<query_name>max_mem</query_name>
+		</max_mem>
+		<avg_swap>
+			<name>Average Swap Usage</name>
+			<direction>output</direction>
+			<query_name>avg_swap</query_name>
+		</avg_swap>
+		<max_swap>
+			<name>Maximum Swap Usage</name>
+			<direction>output</direction>
+			<query_name>max_swap</query_name>
+		</max_swap>
+		<total_maxMem>
+			<name>Maximum Memory</name>
+			<direction>output</direction>
+			<query_name>total_maxMem</query_name>
+		</total_maxMem>
+		<total_maxSwap>
+			<name>Maximum Swap</name>
+			<direction>output</direction>
+			<query_name>total_maxSwap</query_name>
+		</total_maxSwap>
+		<total_maxTmp>
+			<name>Maximum Temp</name>
+			<direction>output</direction>
+			<query_name>total_maxTmp</query_name>
+		</total_maxTmp>
+		<total_mem>
+			<name>Memory Available</name>
+			<direction>output</direction>
+			<query_name>total_mem</query_name>
+		</total_mem>
+		<total_swp>
+			<name>Swap Available</name>
+			<direction>output</direction>
+			<query_name>total_swp</query_name>
+		</total_swp>
+		<total_tmp>
+			<name>Temp Available</name>
+			<direction>output</direction>
+			<query_name>total_tmp</query_name>
+		</total_tmp>
+		<memSlotUtil>
+			<name>Memory Slot Utilization</name>
+			<direction>output</direction>
+			<query_name>memSlotUtil</query_name>
+		</memSlotUtil>
+		<slotUtil>
+			<name>Job Slot Utilization</name>
+			<direction>output</direction>
+			<query_name>slotUtil</query_name>
+		</slotUtil>
+		<cpuUtil>
+			<name>CPU Utilization</name>
+			<direction>output</direction>
+			<query_name>cpuUtil</query_name>
+		</cpuUtil>
+		<memUsed>
+			<name>Memory Used</name>
+			<direction>output</direction>
+			<query_name>memUsed</query_name>
+		</memUsed>
+		<memRequested>
+			<name>Memory Requested</name>
+			<direction>output</direction>
+			<query_name>memRequested</query_name>
+		</memRequested>
+		<memReserved>
+			<name>Memory Reserved</name>
+			<direction>output</direction>
+			<query_name>memReserved</query_name>
+		</memReserved>
+	</fields>
+</interface>

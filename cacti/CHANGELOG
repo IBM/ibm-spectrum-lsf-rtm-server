@@ -16,6 +16,7 @@ Cacti CHANGELOG
 -issue#3977: Database upgrade may fail when using upgrade_database.php
 -issue#3978: Input Validation was not handled correctly when displaying graph trees
 -issue#3981: Missing API include leads to runtime errors in Automation
+-issue#3982: Technical Support-->PHP Info should not removed normal hyperlink
 -issue#3985: Collation was not always handled correctly in the database library
 -issue#3990: PHP Information was not being displayed properly under Tech Support
 -issue#4008: Massive decrease in poller performance due to unset variable

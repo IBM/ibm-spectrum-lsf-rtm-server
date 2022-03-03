@@ -2285,6 +2285,10 @@ function thold_check_threshold(&$thold_data) {
 				thold_fail_count=' . $thold_data['thold_fail_count'] . ",
 				thold_warning_fail_count = 0
 				WHERE id=" . $thold_data['id']);
+
+			$thold_data['subject']=$subject;
+			// insert trigged record into grid_hosts_alarm table
+			api_plugin_hook_function('thold_update_hostsalarm',$thold_data);
 		} elseif ($warning_breach_up || $warning_breach_down) {
 			$notify = false;
 
@@ -2786,6 +2790,8 @@ function thold_check_threshold(&$thold_data) {
 				);
 			}
 
+			$thold_data['subject'] = $subject;
+			api_plugin_hook_function('thold_update_hostsalarm',$thold_data);
 			break;
 		}
 
@@ -2992,6 +2998,10 @@ function thold_check_threshold(&$thold_data) {
 				thold_fail_count = ?
 				WHERE id = ?',
 				array($thold_data['thold_alert'], $failures, $thold_data['id']));
+
+			// insert trigged record into grid_hosts_alarm table
+			$thold_data['subject'] = $subject;
+			api_plugin_hook_function('thold_update_hostsalarm',$thold_data);
 		} elseif ($warning_breach_up || $warning_breach_down) {
 			$notify = false;
 
@@ -5379,9 +5389,9 @@ function thold_mail($to_email, $from_email, $subject, $message, $filename, $head
 
 		if ($from_email == '') {
 			if (isset($_SERVER['HOSTNAME'])) {
-				$from_email = 'Cacti@' . $_SERVER['HOSTNAME'];
+				$from_email = 'RTM-Admin@' . $_SERVER['HOSTNAME'];
 			} else {
-				$from_email = 'Cacti@cacti.net';
+				$from_email = 'RTM-Admin@localhost';
 			}
 		}
 

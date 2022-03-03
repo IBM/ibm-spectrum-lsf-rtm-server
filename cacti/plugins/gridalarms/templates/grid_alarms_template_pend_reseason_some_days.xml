@@ -1,0 +1,179 @@
+<!-- $Id$ -->
+<cacti>
+	<hash_18002148540c33b119e45d7ea394ec850cb28c>
+		<id>18</id>
+		<name>Jobs Pending for |input_reason| over |input_days| Day(s) in Cluster |alert_clustername|</name>
+		<clusterid>0</clusterid>
+		<type>0</type>
+		<expression_id>17</expression_id>
+		<aggregation>0</aggregation>
+		<metric>0</metric>
+		<base_time_display>12:00am</base_time_display>
+		<base_time>0</base_time>
+		<frequency>72</frequency>
+		<alarm_type>0</alarm_type>
+		<alarm_hi>0</alarm_hi>
+		<alarm_low></alarm_low>
+		<alarm_fail_trigger>72</alarm_fail_trigger>
+		<time_hi>0</time_hi>
+		<time_low></time_low>
+		<time_fail_trigger>0</time_fail_trigger>
+		<time_fail_length>1</time_fail_length>
+		<warning_pct></warning_pct>
+		<trigger_cmd_high></trigger_cmd_high>
+		<trigger_cmd_low></trigger_cmd_low>
+		<trigger_cmd_norm></trigger_cmd_norm>
+		<repeat_alert>0</repeat_alert>
+		<notify_extra></notify_extra>
+		<notify_cluster_admin>1</notify_cluster_admin>
+		<notify_alert>0</notify_alert>
+		<notify_users>on</notify_users>
+		<syslog_priority>4</syslog_priority>
+		<syslog_facility>24</syslog_facility>
+		<syslog_enabled></syslog_enabled>
+		<tcheck>0</tcheck>
+		<exempt>off</exempt>
+		<acknowledgement>off</acknowledgement>
+		<restored_alert>off</restored_alert>
+		<req_ack>off</req_ack>
+		<email_body>There are jobs that are pending at least |input_days| days with the pending reason match string of &#039;|input_reason|&#039;. Address these issues immediately.&lt;br&gt;&lt;DETAILS&gt;&lt;br&gt;&lt;br&gt;</email_body>
+		<email_subject>ALERT: &lt;NAME&gt;</email_subject>
+		<gridalarms_template_contacts>
+		</gridalarms_template_contacts>
+		<gridalarms_template_layout>
+			<hash_200021ab614005ef061bbf9ac383d732c4c350>
+				<id>139</id>
+				<alarm_id>18</alarm_id>
+				<display_name>Jobid</display_name>
+				<column_name>jobid</column_name>
+				<sequence>8</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200021ab614005ef061bbf9ac383d732c4c350>
+			<hash_2000218c580a7c8363ea2aecbbd2564b7abc35>
+				<id>140</id>
+				<alarm_id>18</alarm_id>
+				<display_name>Indexid</display_name>
+				<column_name>indexid</column_name>
+				<sequence>9</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_2000218c580a7c8363ea2aecbbd2564b7abc35>
+			<hash_200021d99725c8ae806ea3aa1bc4ef0aef10e9>
+				<id>141</id>
+				<alarm_id>18</alarm_id>
+				<display_name>Clusterid</display_name>
+				<column_name>clusterid</column_name>
+				<sequence>10</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200021d99725c8ae806ea3aa1bc4ef0aef10e9>
+			<hash_2000219868e506ee6445548b857f9cbbbf8464>
+				<id>142</id>
+				<alarm_id>18</alarm_id>
+				<display_name>Submit Time</display_name>
+				<column_name>submit_time</column_name>
+				<sequence>11</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_2000219868e506ee6445548b857f9cbbbf8464>
+			<hash_20002158669a510e99500d2124f891bdc0bc04>
+				<id>143</id>
+				<alarm_id>18</alarm_id>
+				<display_name>Reason Start Time</display_name>
+				<column_name>pend_start_time</column_name>
+				<sequence>12</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_20002158669a510e99500d2124f891bdc0bc04>
+			<hash_200021c465d0592e9619abcea5d857e706310d>
+				<id>161</id>
+				<alarm_id>18</alarm_id>
+				<display_name>Cluster Name</display_name>
+				<column_name>clustername</column_name>
+				<sequence>1</sequence>
+				<sortposition>1</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200021c465d0592e9619abcea5d857e706310d>
+			<hash_20002105755c7c528d4bdf0fb1ca595f8626e2>
+				<id>162</id>
+				<alarm_id>18</alarm_id>
+				<display_name>Job Name</display_name>
+				<column_name>jobname</column_name>
+				<sequence>2</sequence>
+				<sortposition>2</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_20002105755c7c528d4bdf0fb1ca595f8626e2>
+			<hash_2000213caf078ac382b552f9ccef232a50f652>
+				<id>163</id>
+				<alarm_id>18</alarm_id>
+				<display_name>Queue</display_name>
+				<column_name>queue</column_name>
+				<sequence>3</sequence>
+				<sortposition>3</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_2000213caf078ac382b552f9ccef232a50f652>
+			<hash_200021271e14c296e5ab3d0c9449c7c18fa82c>
+				<id>164</id>
+				<alarm_id>18</alarm_id>
+				<display_name>User Name</display_name>
+				<column_name>user</column_name>
+				<sequence>7</sequence>
+				<sortposition>4</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200021271e14c296e5ab3d0c9449c7c18fa82c>
+		</gridalarms_template_layout>
+		<gridalarms_template_expression>
+			<hash_210021ebde21b2a09028f86e8230b1a374ae66>
+				<id>17</id>
+				<name>Pending Reason</name>
+				<description>Jobs are pending on this |input_reason| reason for |input_days| days.</description>
+				<ds_type>1</ds_type>
+				<type>1</type>
+				<db_table></db_table>
+				<sql_query>SELECT gc.clustername, gj.*, gjp.start_time AS pend_start_time
+FROM grid_clusters AS gc
+INNER JOIN grid_jobs AS gj
+ON gj.clusterid=gc.clusterid
+INNER JOIN grid_jobs_pendreasons AS gjp
+ON gj.clusterid=gjp.clusterid
+AND gj.jobid=gjp.jobid
+AND gj.indexid=gjp.indexid
+AND gj.submit_time=gjp.submit_time
+INNER JOIN grid_jobs_pendreason_maps AS gjpm 
+ON gjp.issusp=gjpm.issusp 
+AND gjp.reason=gjpm.reason_code 
+AND gjp.subreason=gjpm.sub_reason_code 
+WHERE gjpm.reason LIKE &#039;%|input_reason|%&#039;
+AND gjp.end_time=&#039;0000-00-00&#039;
+AND gjp.start_time&lt; SUBDATE(NOW(),INTERVAL |input_days| day)
+GROUP BY gjp.clusterid,gjp.jobid,gjp.indexid,gjp.submit_time</sql_query>
+				<script_thold></script_thold>
+				<script_data></script_data>
+				<script_data_type>0</script_data_type>
+			</hash_210021ebde21b2a09028f86e8230b1a374ae66>
+		</gridalarms_template_expression>
+		<gridalarms_template_expression_item>
+		</gridalarms_template_expression_item>
+		<gridalarms_template_metric>
+		</gridalarms_template_metric>
+		<gridalarms_template_metric_expression>
+		</gridalarms_template_metric_expression>
+		<gridalarms_template_expression_input>
+			<hash_2400217757e01cad81e116e82cec06cf77c91d>
+				<id>14</id>
+				<expression_id>17</expression_id>
+				<name>days</name>
+				<description>Enter the number of pending days for the job</description>
+				<value>2</value>
+			</hash_2400217757e01cad81e116e82cec06cf77c91d>
+			<hash_240021657c245bd79d7309883bc0cbbdedcd24>
+				<id>15</id>
+				<expression_id>17</expression_id>
+				<name>reason</name>
+				<description>Please input the pending reason of the jobs </description>
+				<value>never satisfied</value>
+			</hash_240021657c245bd79d7309883bc0cbbdedcd24>
+		</gridalarms_template_expression_input>
+	</hash_18002148540c33b119e45d7ea394ec850cb28c>
+</cacti>

@@ -1,0 +1,63 @@
+<!-- $Id$ -->
+<interface>
+	<name>Grid Guarantee Service Class Information</name>
+	<script_path>|path_cacti|/scripts/ss_grid_bgsla_stats.php</script_path>
+	<script_function>ss_grid_bsla_stats</script_function>
+	<script_server>php</script_server>
+	<arg_prepend>|clusterid|</arg_prepend>
+	<arg_index>index</arg_index>
+	<arg_query>query</arg_query>
+	<arg_get>get</arg_get>
+	<output_delimeter>!</output_delimeter>
+	<index_order>gridGsla</index_order>
+	<index_order_type>alpha</index_order_type>
+	<index_title_format>|chosen_order_field|</index_title_format>
+
+	<fields>
+	        <gridGsla>
+	                <name>GSLA Consumer</name>
+	                <direction>input</direction>
+	                <query_name>gslaname</query_name>
+	        </gridGsla>
+	        <gridPoolType>
+	                <name>Resource Pool Type</name>
+	                <direction>input</direction>
+	                <query_name>pooltype</query_name>
+	        </gridPoolType>
+	        <gridPoolName>
+	                <name>Guarantee Resource Pool</name>
+	                <direction>input</direction>
+	                <query_name>poolname</query_name>
+	        </gridPoolName>
+	        <gridSLAName>
+	                <name>Guarantee Service Class</name>
+	                <direction>input</direction>
+	                <query_name>slaname</query_name>
+	        </gridSLAName>
+	        <gridGuarConf>
+	                <name>Guaranteed Config</name>
+	                <direction>output</direction>
+	                <query_name>guar_config</query_name>
+	        </gridGuarConf>
+	        <gridGuarUsed>
+	                <name>Guaranteed Used</name>
+	                <direction>output</direction>
+	                <query_name>guar_used</query_name>
+	        </gridGuarUsed>
+	        <gridTotUsed>
+	                <name>Total Used</name>
+	                <direction>output</direction>
+	                <query_name>total_used</query_name>
+	        </gridTotUsed>
+	        <gridPending>
+	                <name>Total Pending Units</name>
+	                <direction>output</direction>
+	                <query_name>pending</query_name>
+	        </gridPending>
+	        <gridRunning>
+	                <name>Total Running Units</name>
+	                <direction>output</direction>
+	                <query_name>running</query_name>
+	        </gridRunning>
+	</fields>
+</interface>

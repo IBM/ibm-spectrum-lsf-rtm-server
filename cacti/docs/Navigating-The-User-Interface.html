@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Navigating the Cacti User Interface</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="navigating-the-cacti-user-interface">Navigating the Cacti User Interface</h1>
+<p>The Cacti User Interface is visually broken into multiple sections. Each major section is navigated to by clicking on a <strong>Top Tab</strong>. By default, Cacti has four major sections called <em>Console</em>, <em>Graphs</em>, <em>Reporting</em> and <em>Logs</em>, though Administrators can add additional <strong>Top Tab</strong> sections through both installing and enabling <strong>Plugins</strong> or by adding <strong>External Links</strong> to Cacti.</p>
+<p>Inside each of these sections, the page is broken into sub-sections. These Subsections include the <em>Navigation Area</em> and the <em>Content Area</em>.</p>
+<p>All pages include a <em>Breadcrumb</em> area a <em>User Profile and Menu</em> area, and in some themes a <em>Footer</em> area is also included. Additionally, in some <em>Themes</em> the <em>Breadcrumb</em> area is hidden.</p>
+<p>To use Cacti properly, you should first understand these sections. We will start by describing the Cacti <em>Console</em>.</p>
+<h2 id="the-cacti-console-top-tab">The Cacti Console Top Tab</h2>
+<p>The image below is of the Cacti <em>Console</em>. From the Cacti Console, we can see many of Cacti's User Interface areas.</p>
+<ul>
+<li><p><strong>Top Tabs</strong></p>
+<p>Cacti <strong>Top Tabs</strong> provide Cacti with multiple <strong>Navigation Areas</strong>. By default, Cacti includes four <strong>Top Tabs</strong>. They are <em>Console</em>, <em>Graphs</em>, <em>Log</em> and <em>Reports</em>.</p></li>
+<li><p><strong>Breadcrumbs</strong></p>
+<p><strong>Breadcrumbs</strong> appear directly below the <strong>Top Tabs</strong>. Note that some Cacti <em>Themes</em> disable the <strong>Breadcrumbs</strong>. You can click on a <strong>Breadcrumb</strong> area to navigate to that area if desired.</p></li>
+<li><p><strong>Cacti Content Area</strong></p>
+<p>This is where the main page content will be displayed. It is directly below the <strong>Breadcrumbs</strong> or the <strong>Top Tabs</strong> with some Cacti <em>Themes</em>. They can include any HTML that the <strong>Plugin Author</strong> or Cacti Administrator desires in the case of <strong>External Links</strong>.</p></li>
+<li><p><strong>Navigation Menu</strong></p>
+<p>If you click on the Cacti <em>Console</em>, you will see an example <strong>Navigation Menu</strong>. These menus can appear on any Plugin based <strong>Top Tab</strong> page in addition to the Cacti <em>Console</em>.</p></li>
+<li><p><strong>Cacti Tables</strong></p>
+<p>These tables are where table based data is rendered in Cacti. <strong>Cacti Tables</strong> are presented using an arcane, though easy to use API.</p></li>
+<li><p><strong>Table Filters</strong></p>
+<p>Any <strong>Cacti Table</strong> can include a <strong>Table Filters</strong>. These filters can be used to limit the data returned to a <strong>Cacti Table</strong>.</p></li>
+<li><p><strong>Actions Dropdown</strong></p>
+<p>Any page that includes a <strong>Cacti Table</strong> will generally include an <strong>Actions Dropdown</strong>. These <strong>Actions Dropdown</strong> menus allow you to take action on a table row or rows.</p></li>
+<li><p><strong>User Profile and Menu</strong></p>
+<p>This is where a <strong>Cacti User</strong> can edit their profile, change their password, logout, or find links to other Cacti information and support.</p></li>
+</ul>
+<p><img src="images/cacti-page-layout.png" alt="Example Cacti Page" /></p>
+<p>Normal users, such as the Cacti Guest account should not have access to the Cacti <em>Console</em>.</p>
+<h2 id="the-cacti-graphs-top-tab">The Cacti Graphs Top Tab</h2>
+<p>The Cacti Graphs <strong>Top Tab</strong> is where most Cacti <strong>Graphs</strong> are viewed. By default, the Cacti Graphs <strong>Top Tab</strong> includes three distinct views. They include:</p>
+<ul>
+<li><p><strong>Tree View</strong></p>
+<p>Allows Cacti Users to view <strong>Graphs</strong> in the form of hierarchical <strong>Trees</strong>. These <strong>Trees</strong> are generally constructed by the Cacti Administrator and are controlled either at the <strong>User</strong> or <strong>User Group</strong> level.</p></li>
+<li><p><strong>Preview View</strong></p>
+<p>The <strong>Preview View</strong> provides a view of all <strong>Graphs</strong> that a Cacti User has access to. <strong>Table Filters</strong> are provided to constrain the list of <strong>Graphs</strong> returned to the page.</p></li>
+<li><p><strong>List View</strong></p>
+<p>The <strong>List View</strong> allows the Cacti user to Create their own <strong>Preview Page</strong> by allowing them to select graphs from various pages, and then finally view those pages from the <strong>Preview View</strong>.</p></li>
+</ul>
+<p>In the example <strong>Tree View</strong> page below, you can see the <strong>Tree Navigation Area</strong> to the left, and in the <strong>Cacti Content Area</strong>, you can see the <strong>Graphs</strong> and a <strong>Table Filter</strong> area for constraining the list of <strong>Graphs</strong> returned. You can <em>Search</em> the Tree View from the <em>Search</em> area above the <strong>Tree Navigation Area</strong>.</p>
+<p><img src="images/cacti-tree-view-page.png" alt="Cacti Tree View Page" /></p>
+<hr />
+<p>Copyright (c) 2004-2020 The Cacti Group</p>
+</body>
+</html>

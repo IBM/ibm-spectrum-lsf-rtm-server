@@ -2,7 +2,7 @@
 
 --- 1.5.3 ---
 
-* issue#463: php error - undefined index dnotes 
+* issue#463: php error - undefined index dnotes
 
 * issue#467: The thold cdef processing function does not handle non-numeric data correctly
 

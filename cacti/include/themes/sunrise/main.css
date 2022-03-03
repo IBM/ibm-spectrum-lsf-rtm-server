@@ -2587,7 +2587,6 @@ tr#realtime td:first-child {
 	left: 4px;
 	bottom: 3px;
 	background-color: white;
-	background-image: url('./images/cacti_logo.svg');
 	background-repeat: no-repeat;
 	background-size: 7px;
 	background-position: center;
@@ -2674,7 +2673,6 @@ input:checked + .checkboxSlider:before {
 	left: 4px;
 	bottom: 4px;
 	background-color: white;
-	background-image: url('./images/cacti_logo.svg');
 	background-repeat: no-repeat;
 	background-size: 7px;
 	background-position: center;

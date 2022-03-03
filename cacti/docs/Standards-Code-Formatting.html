@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Formatting Guidelines</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="formatting-guidelines">Formatting Guidelines</h1>
+<h2 id="overview">Overview</h2>
+<p>Over the years Cacti has attempted to adhere to standards in code construction, syntax, style, etc. It has been a very organic grow which has resulted in some mixed styles. Cacti is in the process of moving to <a href="http://www.php-fig.org/psr/">PHP Standards Recommendations</a> (PSR) standards.</p>
+<p>Initially we are moving towards <a href="http://www.php-fig.org/psr/psr-2/">PSR-2</a> code syntax standard with the following exceptions:</p>
+<ul>
+<li><p>Initial white space must be tabs not spaces followed by the use of spaces to align elements after initial tab.</p></li>
+<li><p>In a block of variable assignments or array elements (moved to multi-line) it is acceptable, but not required, to use spaces to align the <code>=</code> or <code>=&gt;</code> for the purpose of readability.</p></li>
+<li><p>Bracketing/braces should start on the same line of the statement. For example:</p>
+<ul>
+<li><code>if (expression) {</code>,</li>
+<li><code>} else {</code>,</li>
+<li>and <code>} elseif {</code></li>
+</ul></li>
+<li><p>Function declarations should include ending braces on the same line as the function. For example:</p>
+<ul>
+<li><code>function name($params ...) {</code></li>
+</ul></li>
+<li><p>White-space inside of evaluations is discouraged. For example:</p>
+<ul>
+<li><code>if (expression) {</code> and not <code>if ( expression ) {</code>.</li>
+</ul></li>
+<li><p>Using single quotes to enclose strings, and arrays. This save quite a bit of page processing time. Use of double quotes is acceptable in certain circumstances.</p></li>
+</ul>
+<p>All style guidelines should be followed exactly as shown in these examples, unless indicated otherwise.</p>
+<h2 id="indenting">Indenting</h2>
+<p>Very simply, always use tabs to indent rather than spaces. Tab stops should be set to 4 spaces.</p>
+<p>Below are the vim rules to accomplish this:</p>
+<pre class="console"><code>set expandtab
+set shiftwidth=4
+set softtabstop=4
+set tabstop=4
+</code></pre>
+<h2 id="control-structures">Control Structures</h2>
+<p>Use the following style guidelines for control structures.</p>
+<h3 id="if-elseif-else-construct">if elseif else Construct</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">if</span> <span class="ot">(</span><span class="kw">$var</span> == <span class="dv">0</span><span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb2-2" title="2">    <span class="kw">$i</span>++<span class="ot">;</span></a>
+<a class="sourceLine" id="cb2-3" title="3">} <span class="kw">else</span> <span class="kw">if</span> <span class="ot">(</span><span class="kw">$var</span> == <span class="dv">1</span><span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb2-4" title="4">    <span class="kw">$i</span>--<span class="ot">;</span></a>
+<a class="sourceLine" id="cb2-5" title="5">} <span class="kw">else</span> {</a>
+<a class="sourceLine" id="cb2-6" title="6">    <span class="kw">$i</span> = <span class="dv">0</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb2-7" title="7">}</a></code></pre></div>
+<h3 id="switch-construct">switch Construct</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">switch</span> <span class="ot">(</span><span class="kw">$var</span><span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb3-2" title="2">    <span class="kw">case </span><span class="dv">0</span><span class="ot">:</span></a>
+<a class="sourceLine" id="cb3-3" title="3">        <span class="kw">$var</span> = <span class="dv">1</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb3-4" title="4">        <span class="kw">break</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb3-5" title="5">    <span class="kw">case </span><span class="dv">1</span><span class="ot">:</span></a>
+<a class="sourceLine" id="cb3-6" title="6">        <span class="kw">$var</span> = <span class="dv">2</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb3-7" title="7">        <span class="kw">break</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb3-8" title="8">    <span class="kw">default:</span></a>
+<a class="sourceLine" id="cb3-9" title="9">        <span class="kw">$var</span> = <span class="dv">3</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb3-10" title="10">        <span class="kw">break</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb3-11" title="11">}</a></code></pre></div>
+<h3 id="while-loop">while Loop</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">while</span> <span class="ot">(</span><span class="kw">$i</span> &lt; <span class="dv">10</span><span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb4-2" title="2">    <span class="kw">$i</span>++<span class="ot">;</span></a>
+<a class="sourceLine" id="cb4-3" title="3">}</a></code></pre></div>
+<h3 id="for-loop">for Loop</h3>
+<div class="sourceCode" id="cb5"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">for</span> <span class="ot">(</span><span class="kw">$i</span> = <span class="dv">0</span><span class="ot">;</span> <span class="kw">$i</span> &lt; <span class="dv">10</span><span class="ot">;</span> <span class="kw">$i</span>++<span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb5-2" title="2">    <span class="kw">$var</span> *= <span class="dv">6</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb5-3" title="3">}</a></code></pre></div>
+<h3 id="foreach-loop">foreach Loop</h3>
+<div class="sourceCode" id="cb6"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">foreach</span> <span class="ot">(</span><span class="kw">$array</span> <span class="kw">as</span> <span class="kw">$key</span> =&gt; <span class="kw">$value</span><span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb6-2" title="2">    <span class="kw">echo</span> <span class="st">&quot;</span><span class="kw">$key</span><span class="st"> = </span><span class="kw">$value\n</span><span class="st">&quot;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb6-3" title="3">}</a></code></pre></div>
+<h2 id="naming">Naming</h2>
+<h3 id="general-function-naming">General Function Naming</h3>
+<p>All function names should begin with an identifier (see below) and end with an action. The identifier should generally be derived from the name of the file which the function resides.</p>
+<p><code>Returns all users</code></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb7-1" title="1"><span class="kw">function</span> user_list<span class="ot">()</span> {</a>
+<a class="sourceLine" id="cb7-2" title="2">    <span class="co">// code</span></a>
+<a class="sourceLine" id="cb7-3" title="3">}</a></code></pre></div>
+<p><code>Returns a specific user</code></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb8-1" title="1"><span class="kw">function</span> user_get<span class="ot">(</span><span class="kw">$user_id</span><span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb8-2" title="2">    <span class="co">// code</span></a>
+<a class="sourceLine" id="cb8-3" title="3">}</a></code></pre></div>
+<p><code>Returns the total number of graphs</code></p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb9-1" title="1"><span class="kw">function</span> graph_total_get<span class="ot">()</span> {</a>
+<a class="sourceLine" id="cb9-2" title="2">    <span class="co">// code</span></a>
+<a class="sourceLine" id="cb9-3" title="3">}</a></code></pre></div>
+<p><code>Returns a specific graph title</code></p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb10-1" title="1"><span class="kw">function</span> graph_title_get<span class="ot">()</span> {</a>
+<a class="sourceLine" id="cb10-2" title="2">    <span class="co">// code</span></a>
+<a class="sourceLine" id="cb10-3" title="3">}</a></code></pre></div>
+<h3 id="constant-naming">Constant Naming</h3>
+<p>Constants should always be all capital letters. In most cases, they begin with some identifier. The name should be verbose enough that it describes <strong>exactly</strong> what the constant represents. Below is the general structure of the name.</p>
+<p><code>[identifier]_[type]_[value]</code></p>
+<p><code>Supported graph rendering file types</code></p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb11-1" title="1"><span class="fu">define</span><span class="ot">(</span><span class="st">&#39;GRAPH_IMAGE_TYPE_PNG&#39;</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">);</span></a>
+<a class="sourceLine" id="cb11-2" title="2"><span class="fu">define</span><span class="ot">(</span><span class="st">&#39;GRAPH_IMAGE_TYPE_GIF&#39;</span><span class="ot">,</span> <span class="dv">2</span><span class="ot">);</span></a></code></pre></div>
+<p><code>Data input types for data sources</code></p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb12-1" title="1"><span class="fu">define</span><span class="ot">(</span><span class="st">&#39;DATA_INPUT_TYPE_NONE&#39;</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">);</span></a>
+<a class="sourceLine" id="cb12-2" title="2"><span class="fu">define</span><span class="ot">(</span><span class="st">&#39;DATA_INPUT_TYPE_DATA_QUERY&#39;</span><span class="ot">,</span> <span class="dv">2</span><span class="ot">);</span></a>
+<a class="sourceLine" id="cb12-3" title="3"><span class="fu">define</span><span class="ot">(</span><span class="st">&#39;DATA_INPUT_TYPE_SCRIPT&#39;</span><span class="ot">,</span> <span class="dv">3</span><span class="ot">);</span></a>
+<a class="sourceLine" id="cb12-4" title="4"><span class="fu">define</span><span class="ot">(</span><span class="st">&#39;DATA_INPUT_TYPE_SNMP&#39;</span><span class="ot">,</span> <span class="dv">4</span><span class="ot">);</span></a></code></pre></div>
+<h2 id="common-action-types">Common Action Types</h2>
+<ul>
+<li><p>list - an array of one or more items</p></li>
+<li><p>get - an array with one item or a single value (such as an integer or string)</p></li>
+<li><p>remove - some data is to be removed from the database</p></li>
+<li><p>update - some pre-existing data is to be updated</p></li>
+<li><p>insert - some new data to be saved</p></li>
+<li><p>print - information will be echoed to the screen/browser</p></li>
+<li><p>generate - data will be generated and returned</p></li>
+<li><p>format - data will be passed in, formatted, and then returned</p></li>
+</ul>
+<h2 id="formatting">Formatting</h2>
+<h3 id="argument-spacing">Argument Spacing</h3>
+<p>Always include a single space after each argument in a list except for the last one.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb13-1" title="1"><span class="kw">function</span> log_insert<span class="ot">(</span><span class="kw">$facility</span><span class="ot">,</span> <span class="kw">$severity</span><span class="ot">,</span> <span class="kw">$message</span><span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb13-2" title="2">    <span class="co">// code</span></a>
+<a class="sourceLine" id="cb13-3" title="3">}</a></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb14-1" title="1">log_insert<span class="ot">(</span><span class="kw">LOG_FACILITY_LOCAL0</span><span class="ot">,</span> <span class="kw">LOG_LEVEL_WARNING</span><span class="ot">,</span> <span class="st">&#39;test message&#39;</span><span class="ot">);</span></a></code></pre></div>
+<p>As a general rule of thumb, it is OK to include additional spaces where necessary to improve code readability. The key here is that writing readable code always takes priority.</p>
+<h3 id="white-space">White space</h3>
+<p>Always place a single blank line after a control structure unless the following line is an ending brace <code>}</code>. There should be no blank lines at the end of the file, and no spaces at the end of line.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb15-1" title="1"><span class="kw">if</span> <span class="ot">(</span><span class="kw">$var</span> == <span class="dv">0</span><span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb15-2" title="2">    <span class="kw">$i</span> = <span class="dv">0</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb15-3" title="3">}</a>
+<a class="sourceLine" id="cb15-4" title="4"></a>
+<a class="sourceLine" id="cb15-5" title="5"><span class="kw">if</span> <span class="ot">(</span><span class="kw">$i</span> == <span class="dv">0</span><span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb15-6" title="6">    <span class="kw">$i</span> *= <span class="dv">2</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb15-7" title="7">}</a></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb16-1" title="1"><span class="kw">if</span> <span class="ot">(</span><span class="kw">$var</span> ==<span class="dv">0</span><span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb16-2" title="2">    <span class="kw">if</span> <span class="ot">(</span><span class="kw">$i</span> == <span class="dv">2</span><span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb16-3" title="3">        <span class="kw">$i</span>++<span class="ot">;</span></a>
+<a class="sourceLine" id="cb16-4" title="4">    }</a>
+<a class="sourceLine" id="cb16-5" title="5">}</a></code></pre></div>
+<h2 id="storage-constructs">Storage Constructs</h2>
+<h3 id="constants">Constants</h3>
+<p>Always use constants instead of numbers to represent static values. Instead of doing:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb17-1" title="1"><span class="kw">if</span> <span class="ot">(</span><span class="kw">$poller_verbosity</span> == <span class="dv">2</span><span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb17-2" title="2">    <span class="co">// code</span></a>
+<a class="sourceLine" id="cb17-3" title="3">}</a></code></pre></div>
+<p>Do:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb18-1" title="1"><span class="kw">if</span> <span class="ot">(</span><span class="kw">$poller_verbosity</span> == <span class="kw">POLLER_VERBOSITY_LOW</span><span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb18-2" title="2">    <span class="co">// code</span></a>
+<a class="sourceLine" id="cb18-3" title="3">}</a></code></pre></div>
+<h3 id="variables">Variables</h3>
+<p>Allocating memory for a variable consumes resources. Only declare a variable if it is referenced more than once throughout the code. Instead of doing:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb19-1" title="1"><span class="kw">$num_devices</span> = device_total_num_get<span class="ot">();</span></a>
+<a class="sourceLine" id="cb19-2" title="2"></a>
+<a class="sourceLine" id="cb19-3" title="3"><span class="kw">if</span> <span class="ot">(</span><span class="kw">$num_devices</span> &gt; <span class="dv">0</span><span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb19-4" title="4">    <span class="co">// code</span></a>
+<a class="sourceLine" id="cb19-5" title="5">}</a></code></pre></div>
+<p>Do:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb20-1" title="1"><span class="kw">if</span> <span class="ot">(</span>device_total_num_get<span class="ot">()</span> &gt; <span class="dv">0</span><span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb20-2" title="2">    <span class="co">// code</span></a>
+<a class="sourceLine" id="cb20-3" title="3">}</a></code></pre></div>
+<h3 id="global-variables">Global Variables</h3>
+<p>Certain situations warrant creating a single variable that is to be referenced by multiple functions. Do not rely on PHP's <code>global</code> keyword since it creates the possibility of name space collisions. Instead, create a wrapper function that brings the variable into a global scope and returns a new copy to any function that needs to use it.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb21-1" title="1"><span class="kw">$graph_unit_exponent_values</span> = <span class="kw">array</span><span class="ot">(</span><span class="st">&#39;-18&#39;</span> =&gt; <span class="st">&#39;a - atto&#39;</span><span class="ot">,</span> <span class="st">&#39;-15&#39;</span> =&gt; <span class="st">&#39;f - femto&#39;</span><span class="ot">,</span> <span class="st">...</span><span class="ot">);</span></a>
+<a class="sourceLine" id="cb21-2" title="2"></a>
+<a class="sourceLine" id="cb21-3" title="3"><span class="kw">function</span> graph_unit_exponent_values_list<span class="ot">()</span> {</a>
+<a class="sourceLine" id="cb21-4" title="4">    <span class="kw">global</span> <span class="kw">$graph_unit_exponent_values</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb21-5" title="5"></a>
+<a class="sourceLine" id="cb21-6" title="6">    <span class="kw">return</span> <span class="kw">$graph_unit_exponent_values</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb21-7" title="7">}</a>
+<a class="sourceLine" id="cb21-8" title="8"></a>
+<a class="sourceLine" id="cb21-9" title="9"><span class="kw">function</span> graph_unit_exponent_values_print<span class="ot">()</span> {</a>
+<a class="sourceLine" id="cb21-10" title="10">    <span class="kw">foreach</span> <span class="ot">(</span>graph_unit_exponent_values_list<span class="ot">()</span> <span class="kw">as</span> <span class="kw">$power</span> =&gt; <span class="kw">$unit</span><span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb21-11" title="11">        <span class="co">// code</span></a>
+<a class="sourceLine" id="cb21-12" title="12">    }</a>
+<a class="sourceLine" id="cb21-13" title="13">}</a></code></pre></div>
+<h2 id="references">References</h2>
+<p>Copying around large arrays in PHP can be an expensive operation. Be sure to return or pass arrays by reference when data corruption is not a huge concern. Keep in mind that call time pass by reference is deprecated in PHP.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb22-1" title="1"><span class="kw">function</span> &amp;big_array_list<span class="ot">()</span> {</a>
+<a class="sourceLine" id="cb22-2" title="2">    <span class="co">// code</span></a>
+<a class="sourceLine" id="cb22-3" title="3">}</a></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb23-1" title="1"><span class="kw">function</span> big_array_process<span class="ot">(</span>&amp;<span class="kw">$big_array</span><span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb23-2" title="2">    <span class="co">// code</span></a>
+<a class="sourceLine" id="cb23-3" title="3">}</a></code></pre></div>
+<h2 id="comments">Comments</h2>
+<p>The key to being a respectable coder is to write clear, concise code and to use comments everywhere.</p>
+<h3 id="whole-line-comments">Whole Line Comments</h3>
+<p>All single and multi-line comments should follow the C-style syntax.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb24-1" title="1"><span class="co">/* this determines if $i is equal to 0 */</span></a>
+<a class="sourceLine" id="cb24-2" title="2"><span class="kw">if</span> <span class="ot">(</span><span class="kw">$i</span> == <span class="dv">0</span><span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb24-3" title="3">    <span class="co">// code</span></a>
+<a class="sourceLine" id="cb24-4" title="4">}</a></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb25-1" title="1"><span class="co">/* this is an extra long comment that deserves to be</span></a>
+<a class="sourceLine" id="cb25-2" title="2"><span class="co"> * split up into multiple lines */</span></a>
+<a class="sourceLine" id="cb25-3" title="3"><span class="kw">if</span> <span class="ot">(</span><span class="kw">$i</span> == <span class="dv">0</span><span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb25-4" title="4">    <span class="co">// code</span></a>
+<a class="sourceLine" id="cb25-5" title="5">}</a></code></pre></div>
+<h3 id="end-of-line-comments">End of Line Comments</h3>
+<p>Shorter comments that follow a line of code should use the familiar <code>//</code> style.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb26-1" title="1"><span class="kw">$var</span> = <span class="dv">0</span><span class="ot">;</span> <span class="co">// assign 0 to $var</span></a></code></pre></div>
+<h3 id="file-header-comments">File Header Comments</h3>
+<p>All code related files must contain the following notice at the beginning of the file.</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb27-1" title="1"><span class="co">/*</span></a>
+<a class="sourceLine" id="cb27-2" title="2"><span class="co"> +-------------------------------------------------------------------------+</span></a>
+<a class="sourceLine" id="cb27-3" title="3"><span class="co"> | Copyright (C) 2004-2018 The Cacti Group                                 |</span></a>
+<a class="sourceLine" id="cb27-4" title="4"><span class="co"> |                                                                         |</span></a>
+<a class="sourceLine" id="cb27-5" title="5"><span class="co"> | This program is free software; you can redistribute it and/or           |</span></a>
+<a class="sourceLine" id="cb27-6" title="6"><span class="co"> | modify it under the terms of the GNU General Public License             |</span></a>
+<a class="sourceLine" id="cb27-7" title="7"><span class="co"> | as published by the Free Software Foundation; either version 2          |</span></a>
+<a class="sourceLine" id="cb27-8" title="8"><span class="co"> | of the License, or (at your option) any later version.                  |</span></a>
+<a class="sourceLine" id="cb27-9" title="9"><span class="co"> |                                                                         |</span></a>
+<a class="sourceLine" id="cb27-10" title="10"><span class="co"> | This program is distributed in the hope that it will be useful,         |</span></a>
+<a class="sourceLine" id="cb27-11" title="11"><span class="co"> | but WITHOUT ANY WARRANTY; without even the implied warranty of          |</span></a>
+<a class="sourceLine" id="cb27-12" title="12"><span class="co"> | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |</span></a>
+<a class="sourceLine" id="cb27-13" title="13"><span class="co"> | GNU General Public License for more details.                            |</span></a>
+<a class="sourceLine" id="cb27-14" title="14"><span class="co"> +-------------------------------------------------------------------------+</span></a>
+<a class="sourceLine" id="cb27-15" title="15"><span class="co"> | Cacti: The Complete RRDTool-based Graphing Solution                     |</span></a>
+<a class="sourceLine" id="cb27-16" title="16"><span class="co"> +-------------------------------------------------------------------------+</span></a>
+<a class="sourceLine" id="cb27-17" title="17"><span class="co"> | This code is designed, written, and maintained by the Cacti Group. See  |</span></a>
+<a class="sourceLine" id="cb27-18" title="18"><span class="co"> | about.php and/or the AUTHORS file for specific developer information.   |</span></a>
+<a class="sourceLine" id="cb27-19" title="19"><span class="co"> +-------------------------------------------------------------------------+</span></a>
+<a class="sourceLine" id="cb27-20" title="20"><span class="co"> | http://www.cacti.net/                                                   |</span></a>
+<a class="sourceLine" id="cb27-21" title="21"><span class="co"> +-------------------------------------------------------------------------+</span></a>
+<a class="sourceLine" id="cb27-22" title="22"><span class="co">*/</span></a></code></pre></div>
+<h3 id="function-comments">Function Comments</h3>
+<p>All functions must be preceded by a comment describing the purpose, argument list, and return type of the function. It should be formatted as follow:</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb28-1" title="1"><span class="co">/**</span></a>
+<a class="sourceLine" id="cb28-2" title="2"><span class="co"> * Makes a connection to the database server</span></a>
+<a class="sourceLine" id="cb28-3" title="3"><span class="co"> *</span></a>
+<a class="sourceLine" id="cb28-4" title="4"><span class="co"> * Given a set of login credentials, an attempt is made to establish a persistent database connection.</span></a>
+<a class="sourceLine" id="cb28-5" title="5"><span class="co"> * If the attempt fails, script execution will halt with an error.</span></a>
+<a class="sourceLine" id="cb28-6" title="6"><span class="co"> *</span></a>
+<a class="sourceLine" id="cb28-7" title="7"><span class="co"> * </span><span class="an">@param</span><span class="co"> </span><span class="cv">string</span><span class="co"> $host the hostname of the database server, &#39;localhost&#39; if the database server is running</span></a>
+<a class="sourceLine" id="cb28-8" title="8"><span class="co"> *   on this machine</span></a>
+<a class="sourceLine" id="cb28-9" title="9"><span class="co"> * </span><span class="an">@param</span><span class="co"> </span><span class="cv">string</span><span class="co"> $user the username to connect to the database server as</span></a>
+<a class="sourceLine" id="cb28-10" title="10"><span class="co"> * </span><span class="an">@param</span><span class="co"> </span><span class="cv">string</span><span class="co"> $pass the password to connect to the database server with</span></a>
+<a class="sourceLine" id="cb28-11" title="11"><span class="co"> * </span><span class="an">@param</span><span class="co"> </span><span class="cv">string</span><span class="co"> $db_name the name of the database to connect to</span></a>
+<a class="sourceLine" id="cb28-12" title="12"><span class="co"> * </span><span class="an">@param</span><span class="co"> </span><span class="cv">string</span><span class="co"> $db_type the type of database server to connect to, only &#39;mysql&#39; is currently supported</span></a>
+<a class="sourceLine" id="cb28-13" title="13"><span class="co"> * </span><span class="an">@param</span><span class="co"> </span><span class="cv">int</span><span class="co"> $retries the number a time the server should attempt to connect before failing</span></a>
+<a class="sourceLine" id="cb28-14" title="14"><span class="co"> * </span><span class="an">@return</span><span class="co"> bool true if successful, false otherwise</span></a>
+<a class="sourceLine" id="cb28-15" title="15"><span class="co"> */</span></a></code></pre></div>
+<hr />
+<p>Copyright (c) 2004-2020 The Cacti Group</p>
+</body>
+</html>

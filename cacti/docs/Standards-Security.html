@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Security</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="security">Security</h1>
+<h2 id="general-validation">General Validation</h2>
+<p>Never trust input regardless of where it is coming from! The responsibility falls on the library functions to ensure that potentially dangerous input does not introduce a security hole. Some sort of sanitation, validation, or quoting must be provided for <strong>all</strong> arguments in a function. This ensures that bad data does not make its way into an SQL string, a filename, an executable, or even another function.</p>
+<p>Relying on JavaScript-based validation is nice for instant feedback to the user, but should not replace validation checking in the PHP code.</p>
+<hr />
+<p>Copyright (c) 2004-2020 The Cacti Group</p>
+</body>
+</html>

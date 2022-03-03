@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Cacti Russian Language File\n"
 "Report-Msgid-Bugs-To: developers@cacti.net\n"
-"POT-Creation-Date: 2020-10-28 16:57-0400\n"
+"POT-Creation-Date: 2020-11-02 03:26+0000\n"
 "PO-Revision-Date: 2020-09-13 19:27-0400\n"
 "Last-Translator: Patrick Rademaker\n"
 "Language-Team: KPbIC <Cacti>\n"
@@ -1182,7 +1182,7 @@ msgstr "Удалить устройство(ы)"
 #: automation_devices.php:409 automation_devices.php:419
 #: automation_devices.php:647 automation_devices.php:648 host.php:1596
 #: lib/api_automation.php:173 lib/api_automation.php:1099
-#: lib/html_utility.php:931 pollers.php:46
+#: lib/html_utility.php:939 pollers.php:46
 msgid "Down"
 msgstr "Вниз"
 
@@ -1190,7 +1190,7 @@ msgstr "Вниз"
 #: automation_devices.php:411 automation_devices.php:421
 #: automation_devices.php:647 automation_devices.php:648 host.php:1595
 #: lib/api_automation.php:172 lib/api_automation.php:1098
-#: lib/html_utility.php:937
+#: lib/html_utility.php:945
 msgid "Up"
 msgstr "Вверх"
 
@@ -1523,7 +1523,7 @@ msgstr "Включено"
 #: include/global_settings.php:1427 include/global_settings.php:1441
 #: include/global_settings.php:1501 include/global_settings.php:2146
 #: lib/api_automation.php:170 lib/api_automation.php:1096 lib/html.php:2472
-#: lib/html_reports.php:1513 lib/html_reports.php:1651 lib/html_utility.php:927
+#: lib/html_reports.php:1513 lib/html_reports.php:1651 lib/html_utility.php:935
 #: links.php:500 managers.php:243 managers.php:598 pollers.php:47
 #: user_admin.php:1164 user_domains.php:411 user_group_admin.php:697
 #: utilities.php:2377
@@ -6026,12 +6026,12 @@ msgid "Not Up"
 msgstr "Вверх"
 
 #: host.php:1597 lib/api_automation.php:174 lib/api_automation.php:1100
-#: lib/html_utility.php:934 pollers.php:48
+#: lib/html_utility.php:942 pollers.php:48
 msgid "Recovering"
 msgstr "Восстановление"
 
 #: host.php:1598 lib/api_automation.php:175 lib/api_automation.php:1101
-#: lib/html_utility.php:943 lib/plugins.php:1086 lib/plugins.php:1087
+#: lib/html_utility.php:951 lib/plugins.php:1088 lib/plugins.php:1089
 #: lib/rrd.php:2919 lib/rrd.php:2931 user_admin.php:820 utilities.php:216
 #: utilities.php:217 utilities.php:2241
 msgid "Unknown"
@@ -7292,7 +7292,7 @@ msgid "Export Templates"
 msgstr "Экспорт Шаблонов"
 
 #: include/global_arrays.php:927 include/global_arrays.php:949
-#: include/global_arrays.php:967 lib/plugins.php:1041
+#: include/global_arrays.php:967 lib/plugins.php:1043
 msgid "Configuration"
 msgstr "Конфигурация"
 
@@ -15388,32 +15388,32 @@ msgstr "Выбрано"
 msgid "The regular expression \"%s\" is not valid. Error is %s"
 msgstr "Поисковый запрос \"%s\" недействителен. Ошибка в %s"
 
-#: lib/html_utility.php:884
+#: lib/html_utility.php:892
 #, fuzzy
 msgid "There was an internal error!"
 msgstr "Произошла внутренняя ошибка!"
 
-#: lib/html_utility.php:885
+#: lib/html_utility.php:893
 #, fuzzy
 msgid "Backtrack limit was exhausted!"
 msgstr "Граница обратного хода была исчерпана!"
 
-#: lib/html_utility.php:886
+#: lib/html_utility.php:894
 #, fuzzy
 msgid "Recursion limit was exhausted!"
 msgstr "Предел рецидива был исчерпан!"
 
-#: lib/html_utility.php:887
+#: lib/html_utility.php:895
 #, fuzzy
 msgid "Bad UTF-8 error!"
 msgstr "Плохая ошибка UTF-8!"
 
-#: lib/html_utility.php:888
+#: lib/html_utility.php:896
 #, fuzzy
 msgid "Bad UTF-8 offset error!"
 msgstr "Плохая ошибка смещения UTF-8!"
 
-#: lib/html_utility.php:940 lib/installer.php:1803 lib/installer.php:3533
+#: lib/html_utility.php:948 lib/installer.php:1803 lib/installer.php:3533
 msgid "Error"
 msgstr "Ошибка"
 
@@ -16877,21 +16877,21 @@ msgstr "%s требуется для %s и не устанавливается."
 msgid "Plugin cannot be installed."
 msgstr "Плагин не может быть установлен."
 
-#: lib/plugins.php:1041 lib/plugins.php:1048 plugins.php:367 plugins.php:447
+#: lib/plugins.php:1043 lib/plugins.php:1050 plugins.php:367 plugins.php:447
 msgid "Plugins"
 msgstr "Плагины"
 
-#: lib/plugins.php:1060 lib/plugins.php:1066
+#: lib/plugins.php:1062 lib/plugins.php:1068
 #, fuzzy, php-format
 msgid "Requires: Cacti >= %s"
 msgstr "Требуется: Кактусы >=%s"
 
-#: lib/plugins.php:1063
+#: lib/plugins.php:1065
 #, fuzzy
 msgid "Legacy Plugin"
 msgstr "Наследие Плагин"
 
-#: lib/plugins.php:1088
+#: lib/plugins.php:1090
 msgid "Not Stated"
 msgstr "Не указано"
 
@@ -20882,382 +20882,251 @@ msgid "No VDEFs"
 msgstr "Нет VDEFs"
 
 #, fuzzy
-#~ msgid "When using Cacti with languages other than English, it is important to use the utf8_general_ci collation type as some characters take more than a single byte.  If you are first just now installing Cacti, stop, make the changes and start over again.  If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
-#~ msgstr "При использовании Cacti с языками, отличными от английского, важно использовать тип сопоставления utf8_g General_ci, так как некоторые символы занимают больше одного байта.  Если вы только что установили Cacti, остановитесь, внесите изменения и начните все сначала.  Если кактусы Cacti работали и находятся в производстве, см. инструкции по преобразованию баз данных и таблиц в Интернете, если вы планируете поддерживать другие языки."
+#~ msgid "View SNMPAgent Cache"
+#~ msgstr "Просмотр кэша SNMPAgent"
 
 #, fuzzy
-#~ msgid "When using Cacti with languages other than English, it is important to use the utf8 character set as some characters take more than a single byte. If you are first just now installing Cacti, stop, make the changes and start over again. If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
-#~ msgstr "При использовании Cacti с языками, отличными от английского, важно использовать набор символов utf8, так как некоторые символы занимают больше одного байта. Если вы только что установили Cacti, остановитесь, внесите изменения и начните все сначала. Если кактусы Cacti работали и находятся в производстве, см. инструкции по преобразованию баз данных и таблиц в Интернете, если вы планируете поддерживать другие языки."
+#~ msgid "View SNMPAgent Notification Log"
+#~ msgstr "Просмотр журнала уведомлений SNMPAgent"
 
 #, fuzzy
-#~ msgid "%d Samples"
-#~ msgstr "d Образцы"
+#~ msgid "Legacy 1.x Plugins"
+#~ msgstr "Наследие 1.x Плагины"
 
-#~ msgid "No Task"
-#~ msgstr "Нет задачи"
-
-#, fuzzy
-#~ msgid "%s Standard Deviations"
-#~ msgstr "%s Стандартные отклонения"
+#~ msgid "Resize"
+#~ msgstr "Изменить размер"
 
 #, fuzzy
-#~ msgid "%d Outliers"
-#~ msgstr "d Промахи"
+#~ msgid "The following data sources are in use by these graphs:"
+#~ msgstr "На этих графиках используются следующие источники данных:"
 
 #, fuzzy
-#~ msgid "The file holding the SSL Certificate Authority to use to connect to the remote database."
-#~ msgstr "Файл, содержащий центр сертификации SSL для подключения к удаленной базе данных."
-
-#~ msgid "width"
-#~ msgstr "ширина"
-
-#~ msgid "to"
-#~ msgstr "по"
-
-#~ msgid "string"
-#~ msgstr "строка"
-
-#~ msgid "position"
-#~ msgstr "позиция"
-
-#~ msgid "on:off"
-#~ msgstr "вкл.:выкл."
-
-#~ msgid "of"
-#~ msgstr "из"
-
-#~ msgid "mode"
-#~ msgstr "режим"
-
-#~ msgid "loading"
-#~ msgstr "загрузка"
-
-#~ msgid "limit"
-#~ msgstr "лимит"
-
-#~ msgid "and select the correct RRDTool Utility Version."
-#~ msgstr "и выбирите корректную версию RRDTool"
-
-#~ msgid "_Sep_"
-#~ msgstr "_Сен_"
-
-#~ msgid "_Oct_"
-#~ msgstr "_Окт_"
-
-#~ msgid "_Nov_"
-#~ msgstr "_Ноя_"
-
-#~ msgid "_Mar_"
-#~ msgstr "_Март_"
-
-#~ msgid "_Jun_"
-#~ msgstr "_Июнь_"
-
-#~ msgid "_Jul_"
-#~ msgstr "_Июль_"
-
-#~ msgid "_Jan_"
-#~ msgstr "_Янв_"
-
-#~ msgid "_Feb_"
-#~ msgstr "_Фев_"
-
-#~ msgid "_Dec_"
-#~ msgstr "_Дек_"
-
-#~ msgid "_Aug_"
-#~ msgstr "_Авг_"
-
-#~ msgid "_Apr_"
-#~ msgstr "_Апр_"
-
-#~ msgid "[update]"
-#~ msgstr "[обновлено]"
-
-#~ msgid "[edit: "
-#~ msgstr "[редакция:"
-
-#~ msgid "You must first select a Device Template.  Please select 'Return' to return to the previous menu."
-#~ msgstr "Сначала вы должны выбрать Шаблон Устройства. Пожайлуста нажмите 'Назад' для возврата в предыдущее меню."
-
-#~ msgid "YOU DO NOT HAVE RIGHTS TO CHANGE GRAPH SETTINGS"
-#~ msgstr "У ВАС НЕДОСТАТОЧНО ПРАВ ДЛЯ ИЗМЕНЕНИЯ СВОЙСТВ ГРАФИКА"
-
-#~ msgid "Would you like to copy this user?"
-#~ msgstr "Хотите скопировать этого пользователя?"
-
-#~ msgid "Width"
-#~ msgstr "Ширина"
-
-#~ msgid "Watermark"
-#~ msgstr "Водяной Знак"
-
-#~ msgid "WARNING: Function does not exist\n"
-#~ msgstr "Внимание: Функция не существует\n"
-
-#~ msgid "View Cacti Log File"
-#~ msgstr "Посмотреть Лог Cacti"
-
-#~ msgid "VDEF Title"
-#~ msgstr "Название VDEF"
-
-#~ msgid "User Name:"
-#~ msgstr "Логин:"
-
-#~ msgid "Type:"
-#~ msgstr "Тип:"
-
-#~ msgid "Trees:"
-#~ msgstr "Деревья:"
-
-#~ msgid "Total Lines:"
-#~ msgstr "Всего Строк:"
-
-#~ msgid "To:"
-#~ msgstr "По:"
-
-#~ msgid "The version of RRDTool that you have installed."
-#~ msgstr "Версия RRDTool которую вы установили."
-
-#~ msgid "The full path to the RRD file."
-#~ msgstr "Полный путь к RRD файлам"
-
-#~ msgid "Supported Languages"
-#~ msgstr "Поддерживаемые Языки"
-
-#~ msgid "Status:"
-#~ msgstr "Статус:"
-
-#~ msgid "Some sites not removed as they contain devices!"
-#~ msgstr "Узел нельзя удалить если он содержит устройства!"
-
-#~ msgid "Showing Rows"
-#~ msgstr "Показать Строки"
-
-#~ msgid "Showing Graphs"
-#~ msgstr "Показать Графики"
-
-#~ msgid "Showing All Graphs"
-#~ msgstr "Показаны Все Графики"
-
-#~ msgid "Search:"
-#~ msgstr "Поиск:"
-
-#~ msgid "SNMP Utility Version"
-#~ msgstr "Версия SNMP"
-
-#~ msgid "Rows:"
-#~ msgstr "Строк:"
-
-#~ msgid "Require SSL Encryption"
-#~ msgstr "Необходимо SSL шифрование"
-
-#~ msgid "Redirect all HTTP connections to HTTPS."
-#~ msgstr "Перенаправление всех HTTP соединений на HTTPS"
-
-#~ msgid "Red:"
-#~ msgstr "Красный:"
-
-#~ msgid "RRDTool Version"
-#~ msgstr "Версия RRDTool"
-
-#~ msgid "RRDTool Utility Version"
-#~ msgstr "Версия RRDTool"
-
-#~ msgid "Poller:"
-#~ msgstr "Регистратор:"
-
-#~ msgid "Please visit the"
-#~ msgstr "Пожайлуста посетите"
-
-#~ msgid "Please enter a new password for cacti:"
-#~ msgstr "Пожайлуста введите новый пароль для cacti"
-
-#~ msgid "Password:"
-#~ msgstr "Пароль:"
-
-#~ msgid "Page Top"
-#~ msgstr "Начало Страницы"
-
-#~ msgid "OK: FILE FOUND"
-#~ msgstr "ОК: ФАЙЛ НАЙДЕН"
-
-#~ msgid "OK: DIR FOUND"
-#~ msgstr "ОК: ДИРЕКТОРИЯ НАЙДЕНА"
-
-#~ msgid "Note: "
-#~ msgstr "Примечание:"
-
-#~ msgid "No VDEF's"
-#~ msgstr "Нет VDEF"
-
-#~ msgid "No Trees"
-#~ msgstr "Нет Деревьев"
-
-#~ msgid "No Language Files Loaded."
-#~ msgstr "Языковые Файлы Не Загружены"
-
-#~ msgid "No Access"
-#~ msgstr "Нет Доступа"
-
-#~ msgid "New Username:"
-#~ msgstr "Новое Имя Пользователя:"
-
-#~ msgid "Minimum Value"
-#~ msgstr "Минимальное Значение"
-
-#~ msgid "Minimum"
-#~ msgstr "Минимум"
-
-#~ msgid "Method:"
-#~ msgstr "Метод:"
-
-#~ msgid "Maximum:"
-#~ msgstr "Максимальное:"
-
-#~ msgid "Maximum Value"
-#~ msgstr "Максимальное Значение"
-
-#~ msgid "Maximum"
-#~ msgstr "Максимум"
-
-#~ msgid "Logout User"
-#~ msgstr "Выход"
-
-#~ msgid "Logarithmic Scaling"
-#~ msgstr "Логарифмическая Шкала"
-
-#~ msgid "Loaded Language Files"
-#~ msgstr "Загруженные Языковые Файлы"
-
-#~ msgid "List"
-#~ msgstr "Лист"
-
-#~ msgid "Legend Position"
-#~ msgstr "Позиция Легенды"
-
-#~ msgid "Legend"
-#~ msgstr "Легенда"
-
-#~ msgid "Languages"
-#~ msgstr "Языковые параметры"
-
-#~ msgid "Info"
-#~ msgstr "Информация"
-
-#~ msgid "Import RRA Settings"
-#~ msgstr "Импорт свойств RRA"
-
-#~ msgid "Image"
-#~ msgstr "Изображение"
-
-#~ msgid "Hide/Unhide Menu"
-#~ msgstr "Скрыть/Открыть Меню"
-
-#~ msgid "Graph Template Labels"
-#~ msgstr "Метка Шаблона Графика"
-
-#~ msgid "General Technical Support Information"
-#~ msgstr "Основная Техническая Информация "
-
-#~ msgid "From:"
-#~ msgstr "От:"
-
-#~ msgid "Font"
-#~ msgstr "Шрифт"
-
-#~ msgid "Error: Unable to clear log, "
-#~ msgstr "Ошибка: Невозможно очистить лог, "
-
-#~ msgid "End"
-#~ msgstr "Конец"
-
-#~ msgid "ERROR: IS FILE"
-#~ msgstr "ОШИБКА: ЭТО ФАЙЛ"
-
-#~ msgid "ERROR: IS DIR"
-#~ msgstr "ОШИБКА: ЭТО ДИРЕКТОРИЯ"
-
-#~ msgid "ERROR: FILE NOT FOUND"
-#~ msgstr "ОШИБКА: ФАЙЛ НЕ НАЙДЕН"
-
-#~ msgid "ERROR: DIR NOT FOUND"
-#~ msgstr "ОШИБКА: ДИРЕКТОРИЯ НЕ НАЙДЕНА"
-
-#~ msgid "Default Language"
-#~ msgstr "Язык по Умолчанию"
-
-#~ msgid "DB Info"
-#~ msgstr "Информация по БД"
-
-#~ msgid "Custom Legend"
-#~ msgstr "Выбор Легенды"
-
-#~ msgid "Color tag of the font."
-#~ msgstr "Цвет шрифта"
-
-#~ msgid "Clear Cacti Log File"
-#~ msgstr "Очистить Лог Cacti"
-
-#~ msgid "Cacti Log File Cleared"
-#~ msgstr "Лог Cacti Очищен"
-
-#~ msgid "Blue:"
-#~ msgstr "Голубой:"
-
-#~ msgid "Average:"
-#~ msgstr "Среднее:"
-
-#~ msgid "Available for RRDTool 1.2.x and above"
-#~ msgstr "Доступно для RRDTool 1.2.x и выше"
-
-#~ msgid "Are you sure you want to delete the following site(s)?"
-#~ msgstr "Вы уверены что хотите удалить следующий(ие) узел(ы)"
-
-#~ msgid "Are you sure you want to delete the following graphs?"
-#~ msgstr "Вы уверены что хотите удалить выбраные графики ?"
-
-#~ msgid "Address"
-#~ msgstr "Адрес"
-
-#~ msgid "Accessible"
-#~ msgstr "Разрешено"
-
-#~ msgid "ACCESS DENIED"
-#~ msgstr "ДОСТУП ЗАПРЕЩЕН"
-
-#~ msgid "30 Min"
-#~ msgstr "30 Мин."
-
-#~ msgid "1 Week"
-#~ msgstr "1 Неделя"
-
-#~ msgid "1 Month"
-#~ msgstr "1 Месяц"
-
-#~ msgid "%d Rows"
-#~ msgstr "%d Строк"
-
-#~ msgid "LINE LIMIT OF 1000 LINES REACHED!!"
-#~ msgstr "ДОСТИГНУЛ ЛИМИТ В 1000 СТРОК!!"
-
-#~ msgid "You must select at least one VDEF."
-#~ msgstr "Вы должны выбрать хотябы один VDEF"
+#~ msgid "Resize Selected Graph(s)"
+#~ msgstr "Изменить размер выбранного графика(ов)"
 
 #, fuzzy
-#~ msgid "Tecnical Support"
-#~ msgstr "Техническая Поддержка"
-
-#~ msgid "Site Notes"
-#~ msgstr "Описание узла"
-
-#~ msgid "Message Type"
-#~ msgstr "Тип сообщения"
+#~ msgid "Create Aggregate"
+#~ msgstr "Создать агрегированный отчет"
 
 #, fuzzy
-#~ msgctxt "Dialog: test connection"
-#~ msgid "Test Connection"
-#~ msgstr "Коллекции Данных"
+#~ msgid "With modern SSD type storage, this operation actually degrades the disk more rapidly and adds a 50%% overhead on all write operations."
+#~ msgstr "В современных SSD-накопителях эта операция приводит к более быстрому разложению диска и увеличивает накладные расходы на все операции записи на 50%."
+
+#, fuzzy
+#~ msgid "Sort field returned no data.  Can not continue Re-Index for GET data.."
+#~ msgstr "Поле сортировки не возвращает никаких данных.  Невозможно продолжить переиндекс для GET-данных..."
+
+#, fuzzy
+#~ msgid "Graph Size"
+#~ msgstr "Размер графика"
+
+#, fuzzy
+#~ msgid "Non-Device"
+#~ msgstr "Не-устройство"
+
+#, fuzzy
+#~ msgid "Thresholds"
+#~ msgstr "порог"
+
+#, fuzzy
+#~ msgid "Log"
+#~ msgstr "Лог"
+
+#, fuzzy
+#~ msgid "Time:"
+#~ msgstr "Время"
+
+#, fuzzy
+#~ msgid "Swaps:"
+#~ msgstr "Обмен:"
+
+#, fuzzy
+#~ msgid "Pages:"
+#~ msgstr "Страницы:"
+
+#, fuzzy
+#~ msgid "Link to Graph in Cacti"
+#~ msgstr "Вход на сайт Cacti"
+
+#, fuzzy
+#~ msgid "<html><body>An alert has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
+#~ msgstr "<html><body><html><body>Вышло предупреждение, которое требует вашего внимания.<br><br><br><b>Устройство</b>: <ОПИСАНИЕ> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Мессендж</b>: <SUBJECT><br><br><br><GRAPH></body></html></html>"
+
+#, fuzzy
+#~ msgid "<html><body>A warning has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
+#~ msgstr "<html><body><html><body>Вышло предупреждение, требующее вашего внимания.<br><br><br><b>Устройство</b>: <ОПИСАНИЕ> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Мессендж</b>: <SUBJECT><br><br><br><GRAPH></body></html></html>"
+
+#, fuzzy
+#~ msgid "The Device ID was not set while trying to create Graph and Threshold"
+#~ msgstr "ID устройства не был установлен при попытке создания графика и порогового значения."
+
+#, fuzzy
+#~ msgid "The Threshold Template ID was not set while trying to create Graph and Threshold"
+#~ msgstr "Идентификатор шаблона не был установлен при попытке создания графика и порогового значения."
+
+#, fuzzy
+#~ msgid "The Graph Creation failed for Threshold Template"
+#~ msgstr "График, который будет использоваться для данного пункта отчета."
+
+#, fuzzy
+#~ msgid "Threshold was Autocreated due to Device Template mapping"
+#~ msgstr "Добавить запрос данных в шаблон устройства"
+
+#, fuzzy
+#~ msgid "Record Updated"
+#~ msgstr "RRD Обновлено"
+
+#, fuzzy
+#~ msgid "You must specify either 'High Alert Threshold' or 'Low Alert Threshold' or both!<br>RECORD NOT UPDATED!"
+#~ msgstr "Вы должны указать либо 'Порог высокой тревоги', либо 'Порог низкой тревоги', либо оба!<br> Записывать НЕ ПОСЛЕДУЕТСЯ!"
+
+#, fuzzy
+#~ msgid "Impossible thresholds: 'High Threshold' smaller than or equal to 'Low Threshold'<br>RECORD NOT UPDATED!"
+#~ msgstr "Невозможные пороги: \"Высокий порог\" меньше или равен \"Низкий порог\" <br> Записывать НЕ УДАЛИТЬСЯ!"
+
+#, fuzzy
+#~ msgid "Impossible thresholds: 'High Warning Threshold' smaller than or equal to 'Low Warning Threshold'<br>RECORD NOT UPDATED!"
+#~ msgstr "Невозможные пороги: 'Высокий порог предупреждения' меньше или равен 'Низкий порог предупреждения' <br> Записывать НЕ УДАЛИТЬСЯ!"
+
+#, fuzzy
+#~ msgid "With baseline thresholds enabled."
+#~ msgstr "С включенными исходными пороговыми значениями."
+
+#, fuzzy
+#~ msgid "You must specify either 'Baseline Deviation UP' or 'Baseline Deviation DOWN' or both!<br>RECORD NOT UPDATED!"
+#~ msgstr "Вы должны указать либо 'Baseline Deviation UP', либо 'Baseline Deviation DOWN', либо 'Baseline DeOWN', либо оба!<br>RECORD NOT UPDATED!"
+
+#, fuzzy
+#~ msgid "Failed to find linked Graph Template Item '%d' on Threshold '%d'"
+#~ msgstr "Не удалось найти связанный элемент шаблона графика '%d' на Пороговом уровне '%d'."
+
+#, fuzzy
+#~ msgid " What? Permission Denied"
+#~ msgstr "Доступ запрещён"
+
+#, fuzzy
+#~ msgid "Created threshold: %s"
+#~ msgstr "Созданный график: %s"
+
+#, fuzzy
+#~ msgid "'%s' must be set to positive integer value!<br>RECORD NOT UPDATED!"
+#~ msgstr "\"%s\" должно быть установлено в положительное целое значение!<br>ЗНАЗНАЧИТЬ НЕ ВЫБОРУЕТСЯ!"
+
+#, fuzzy
+#~ msgid "No Thresholds Templates associated with the Device's Template."
+#~ msgstr "Государство, связанное с этим сайтом."
+
+#, fuzzy
+#~ msgid "No Threshold(s) Created.  They either already exist, or there were not matching combinations found."
+#~ msgstr "Порог не установлен.  Они либо уже существуют, либо не были найдены совпадающие комбинации."
+
+#, fuzzy
+#~ msgid "Created Threshold: %s<br>"
+#~ msgstr "Созданный график: %s"
+
+#, fuzzy
+#~ msgid "Mailer Error: No <b>TO</b> address set!!<br>If using the <i>Test Mail</i> link, please set the <b>Alert Email</b> setting."
+#~ msgstr "Почтовая ошибка: Нет <b>TO</b> Адрес установлен!!<br>Если используется ссылка <i>Test Mail</i>, пожалуйста, установите параметр <b>Alert e-mail</b>."
+
+#, fuzzy
+#~ msgid "Does the RRA Profile match the RRDfile structure?"
+#~ msgstr "Соответствует ли RRA-профиль структуре RRD-файла?"
+
+#, fuzzy
+#~ msgid "Data Source Troubleshooter"
+#~ msgstr "Поиск и устранение неисправностей в источнике данных"
+
+#, fuzzy
+#~ msgid " Poller RunAs: "
+#~ msgstr " Poller RunAs:"
+
+#, fuzzy
+#~ msgid "PHP - Timezone Support"
+#~ msgstr "PHP - Поддержка часовых поясов"
+
+#, fuzzy
+#~ msgid "Your Web Servers PHP Timezone settings have not been set.  Please edit php.ini and uncomment the 'date.timezone' setting and set it to the Web Servers Timezone per the PHP installation instructions prior to installing Cacti."
+#~ msgstr "Ваши настройки часового пояса PHP веб-серверов не были установлены.  Пожалуйста, отредактируйте php.ini и удалите настройку 'date.time zone' и установите ее на часовой пояс веб серверов в соответствии с инструкциями по установке PHP перед установкой Cacti."
+
+#, fuzzy
+#~ msgid "Your Web Servers PHP is properly setup with a Timezone."
+#~ msgstr "Ваши веб-серверы PHP правильно настроены с помощью часового пояса."
+
+#, fuzzy
+#~ msgid "Data Source Debugger"
+#~ msgstr "Отладчик источника данных"
+
+#, fuzzy
+#~ msgid "Data Source Debugger [%s]"
+#~ msgstr "Отладчик источника данных"
+
+#, fuzzy
+#~ msgid "Data Debug"
+#~ msgstr "Отладка данных"
+
+#, fuzzy
+#~ msgid "Click to show Data Query output for sfield '%s'"
+#~ msgstr "Нажмите, чтобы показать вывод Data Query для sfield &#39; %s&#39;"
+
+#~ msgid "New Check"
+#~ msgstr "Новая проверка"
+
+#, fuzzy
+#~ msgid "Debugging Data Source"
+#~ msgstr "Отладка источника данных"
+
+#, fuzzy
+#~ msgid "Provide the Maintenance Schedule a meaningful name"
+#~ msgstr "Укажите график обслуживания значимого имени"
+
+#~ msgid "Template [edit: %s]"
+#~ msgstr "Шаблон [редактировать: %s]"
+
+#~ msgid "Template [new]"
+#~ msgstr "Шаблон [новый]"
+
+#, fuzzy
+#~ msgid "Default Graph View Timespan"
+#~ msgstr "Графический график по умолчанию"
+
+#, fuzzy
+#~ msgid "The default timespan you wish to be displayed when you display graphs"
+#~ msgstr "Значения по умолчанию, которые вы хотите отображать при отображении графиков"
+
+#, fuzzy
+#~ msgid "Default Graph View Timeshift"
+#~ msgstr "Default Graph View Timeshift"
+
+#, fuzzy
+#~ msgid "The default timeshift you wish to be displayed when you display graphs"
+#~ msgstr "Сброс по умолчанию, который вы хотите отображать при отображении графиков"
+
+#, fuzzy
+#~ msgid "Non Templated"
+#~ msgstr "Без шаблонов"
+
+#, fuzzy
+#~ msgid "Template Not Found"
+#~ msgstr "Шаблон не найден"
+
+#, fuzzy
+#~ msgid "To many records find"
+#~ msgstr "Записи Не Найдены"
+
+#, fuzzy
+#~ msgid "Ensure Host Process Has Access"
+#~ msgstr "Количество Конкурирующих процессов"
+
+#~ msgid "ERROR: You must select at least one graph template."
+#~ msgstr "ОШИБКА: Вы должны выбрать как минимум один шаблон графика."
+
+#~ msgid "Emailing Options<div id=\"emailtest\" class=\"emailtest textSubHeaderDark\">Send a Test Email</div>"
+#~ msgstr "Параметры отправки по электронной почте<div id=\"emailtest\" class=\"emailtest textSubHeaderDark\">Отправить тестовое сообщение</div>"
+
+#, fuzzy
+#~ msgctxt "Dialog: previous"
+#~ msgid "Previous"
+#~ msgstr "Предыдущая"
 
 #, fuzzy
 #~ msgctxt "Dialog: go to the next page"
@@ -21265,248 +21134,379 @@ msgstr "Нет VDEFs"
 #~ msgstr "Следующая"
 
 #, fuzzy
-#~ msgctxt "Dialog: previous"
-#~ msgid "Previous"
-#~ msgstr "Предыдущая"
+#~ msgctxt "Dialog: test connection"
+#~ msgid "Test Connection"
+#~ msgstr "Коллекции Данных"
 
-#~ msgid "Emailing Options<div id=\"emailtest\" class=\"emailtest textSubHeaderDark\">Send a Test Email</div>"
-#~ msgstr "Параметры отправки по электронной почте<div id=\"emailtest\" class=\"emailtest textSubHeaderDark\">Отправить тестовое сообщение</div>"
+#~ msgid "Message Type"
+#~ msgstr "Тип сообщения"
 
-#~ msgid "ERROR: You must select at least one graph template."
-#~ msgstr "ОШИБКА: Вы должны выбрать как минимум один шаблон графика."
-
-#, fuzzy
-#~ msgid "Ensure Host Process Has Access"
-#~ msgstr "Количество Конкурирующих процессов"
+#~ msgid "Site Notes"
+#~ msgstr "Описание узла"
 
 #, fuzzy
-#~ msgid "To many records find"
-#~ msgstr "Записи Не Найдены"
+#~ msgid "Tecnical Support"
+#~ msgstr "Техническая Поддержка"
+
+#~ msgid "You must select at least one VDEF."
+#~ msgstr "Вы должны выбрать хотябы один VDEF"
+
+#~ msgid "LINE LIMIT OF 1000 LINES REACHED!!"
+#~ msgstr "ДОСТИГНУЛ ЛИМИТ В 1000 СТРОК!!"
+
+#~ msgid "%d Rows"
+#~ msgstr "%d Строк"
+
+#~ msgid "1 Month"
+#~ msgstr "1 Месяц"
+
+#~ msgid "1 Week"
+#~ msgstr "1 Неделя"
+
+#~ msgid "30 Min"
+#~ msgstr "30 Мин."
+
+#~ msgid "ACCESS DENIED"
+#~ msgstr "ДОСТУП ЗАПРЕЩЕН"
+
+#~ msgid "Accessible"
+#~ msgstr "Разрешено"
+
+#~ msgid "Address"
+#~ msgstr "Адрес"
+
+#~ msgid "Are you sure you want to delete the following graphs?"
+#~ msgstr "Вы уверены что хотите удалить выбраные графики ?"
+
+#~ msgid "Are you sure you want to delete the following site(s)?"
+#~ msgstr "Вы уверены что хотите удалить следующий(ие) узел(ы)"
+
+#~ msgid "Available for RRDTool 1.2.x and above"
+#~ msgstr "Доступно для RRDTool 1.2.x и выше"
+
+#~ msgid "Average:"
+#~ msgstr "Среднее:"
+
+#~ msgid "Blue:"
+#~ msgstr "Голубой:"
+
+#~ msgid "Cacti Log File Cleared"
+#~ msgstr "Лог Cacti Очищен"
+
+#~ msgid "Clear Cacti Log File"
+#~ msgstr "Очистить Лог Cacti"
+
+#~ msgid "Color tag of the font."
+#~ msgstr "Цвет шрифта"
+
+#~ msgid "Custom Legend"
+#~ msgstr "Выбор Легенды"
+
+#~ msgid "DB Info"
+#~ msgstr "Информация по БД"
+
+#~ msgid "Default Language"
+#~ msgstr "Язык по Умолчанию"
+
+#~ msgid "ERROR: DIR NOT FOUND"
+#~ msgstr "ОШИБКА: ДИРЕКТОРИЯ НЕ НАЙДЕНА"
+
+#~ msgid "ERROR: FILE NOT FOUND"
+#~ msgstr "ОШИБКА: ФАЙЛ НЕ НАЙДЕН"
+
+#~ msgid "ERROR: IS DIR"
+#~ msgstr "ОШИБКА: ЭТО ДИРЕКТОРИЯ"
+
+#~ msgid "ERROR: IS FILE"
+#~ msgstr "ОШИБКА: ЭТО ФАЙЛ"
+
+#~ msgid "End"
+#~ msgstr "Конец"
+
+#~ msgid "Error: Unable to clear log, "
+#~ msgstr "Ошибка: Невозможно очистить лог, "
+
+#~ msgid "Font"
+#~ msgstr "Шрифт"
+
+#~ msgid "From:"
+#~ msgstr "От:"
+
+#~ msgid "General Technical Support Information"
+#~ msgstr "Основная Техническая Информация "
+
+#~ msgid "Graph Template Labels"
+#~ msgstr "Метка Шаблона Графика"
+
+#~ msgid "Hide/Unhide Menu"
+#~ msgstr "Скрыть/Открыть Меню"
+
+#~ msgid "Image"
+#~ msgstr "Изображение"
+
+#~ msgid "Import RRA Settings"
+#~ msgstr "Импорт свойств RRA"
+
+#~ msgid "Info"
+#~ msgstr "Информация"
+
+#~ msgid "Languages"
+#~ msgstr "Языковые параметры"
+
+#~ msgid "Legend"
+#~ msgstr "Легенда"
+
+#~ msgid "Legend Position"
+#~ msgstr "Позиция Легенды"
+
+#~ msgid "List"
+#~ msgstr "Лист"
+
+#~ msgid "Loaded Language Files"
+#~ msgstr "Загруженные Языковые Файлы"
+
+#~ msgid "Logarithmic Scaling"
+#~ msgstr "Логарифмическая Шкала"
+
+#~ msgid "Logout User"
+#~ msgstr "Выход"
+
+#~ msgid "Maximum"
+#~ msgstr "Максимум"
+
+#~ msgid "Maximum Value"
+#~ msgstr "Максимальное Значение"
+
+#~ msgid "Maximum:"
+#~ msgstr "Максимальное:"
+
+#~ msgid "Method:"
+#~ msgstr "Метод:"
+
+#~ msgid "Minimum"
+#~ msgstr "Минимум"
+
+#~ msgid "Minimum Value"
+#~ msgstr "Минимальное Значение"
+
+#~ msgid "New Username:"
+#~ msgstr "Новое Имя Пользователя:"
+
+#~ msgid "No Access"
+#~ msgstr "Нет Доступа"
+
+#~ msgid "No Language Files Loaded."
+#~ msgstr "Языковые Файлы Не Загружены"
+
+#~ msgid "No Trees"
+#~ msgstr "Нет Деревьев"
+
+#~ msgid "No VDEF's"
+#~ msgstr "Нет VDEF"
+
+#~ msgid "Note: "
+#~ msgstr "Примечание:"
+
+#~ msgid "OK: DIR FOUND"
+#~ msgstr "ОК: ДИРЕКТОРИЯ НАЙДЕНА"
+
+#~ msgid "OK: FILE FOUND"
+#~ msgstr "ОК: ФАЙЛ НАЙДЕН"
+
+#~ msgid "Page Top"
+#~ msgstr "Начало Страницы"
+
+#~ msgid "Password:"
+#~ msgstr "Пароль:"
+
+#~ msgid "Please enter a new password for cacti:"
+#~ msgstr "Пожайлуста введите новый пароль для cacti"
+
+#~ msgid "Please visit the"
+#~ msgstr "Пожайлуста посетите"
+
+#~ msgid "Poller:"
+#~ msgstr "Регистратор:"
+
+#~ msgid "RRDTool Utility Version"
+#~ msgstr "Версия RRDTool"
+
+#~ msgid "RRDTool Version"
+#~ msgstr "Версия RRDTool"
+
+#~ msgid "Red:"
+#~ msgstr "Красный:"
+
+#~ msgid "Redirect all HTTP connections to HTTPS."
+#~ msgstr "Перенаправление всех HTTP соединений на HTTPS"
+
+#~ msgid "Require SSL Encryption"
+#~ msgstr "Необходимо SSL шифрование"
+
+#~ msgid "Rows:"
+#~ msgstr "Строк:"
+
+#~ msgid "SNMP Utility Version"
+#~ msgstr "Версия SNMP"
+
+#~ msgid "Search:"
+#~ msgstr "Поиск:"
+
+#~ msgid "Showing All Graphs"
+#~ msgstr "Показаны Все Графики"
+
+#~ msgid "Showing Graphs"
+#~ msgstr "Показать Графики"
+
+#~ msgid "Showing Rows"
+#~ msgstr "Показать Строки"
+
+#~ msgid "Some sites not removed as they contain devices!"
+#~ msgstr "Узел нельзя удалить если он содержит устройства!"
+
+#~ msgid "Status:"
+#~ msgstr "Статус:"
+
+#~ msgid "Supported Languages"
+#~ msgstr "Поддерживаемые Языки"
+
+#~ msgid "The full path to the RRD file."
+#~ msgstr "Полный путь к RRD файлам"
+
+#~ msgid "The version of RRDTool that you have installed."
+#~ msgstr "Версия RRDTool которую вы установили."
+
+#~ msgid "To:"
+#~ msgstr "По:"
+
+#~ msgid "Total Lines:"
+#~ msgstr "Всего Строк:"
+
+#~ msgid "Trees:"
+#~ msgstr "Деревья:"
+
+#~ msgid "Type:"
+#~ msgstr "Тип:"
+
+#~ msgid "User Name:"
+#~ msgstr "Логин:"
+
+#~ msgid "VDEF Title"
+#~ msgstr "Название VDEF"
+
+#~ msgid "View Cacti Log File"
+#~ msgstr "Посмотреть Лог Cacti"
+
+#~ msgid "WARNING: Function does not exist\n"
+#~ msgstr "Внимание: Функция не существует\n"
+
+#~ msgid "Watermark"
+#~ msgstr "Водяной Знак"
+
+#~ msgid "Width"
+#~ msgstr "Ширина"
+
+#~ msgid "Would you like to copy this user?"
+#~ msgstr "Хотите скопировать этого пользователя?"
+
+#~ msgid "YOU DO NOT HAVE RIGHTS TO CHANGE GRAPH SETTINGS"
+#~ msgstr "У ВАС НЕДОСТАТОЧНО ПРАВ ДЛЯ ИЗМЕНЕНИЯ СВОЙСТВ ГРАФИКА"
+
+#~ msgid "You must first select a Device Template.  Please select 'Return' to return to the previous menu."
+#~ msgstr "Сначала вы должны выбрать Шаблон Устройства. Пожайлуста нажмите 'Назад' для возврата в предыдущее меню."
+
+#~ msgid "[edit: "
+#~ msgstr "[редакция:"
+
+#~ msgid "[update]"
+#~ msgstr "[обновлено]"
+
+#~ msgid "_Apr_"
+#~ msgstr "_Апр_"
+
+#~ msgid "_Aug_"
+#~ msgstr "_Авг_"
+
+#~ msgid "_Dec_"
+#~ msgstr "_Дек_"
+
+#~ msgid "_Feb_"
+#~ msgstr "_Фев_"
+
+#~ msgid "_Jan_"
+#~ msgstr "_Янв_"
+
+#~ msgid "_Jul_"
+#~ msgstr "_Июль_"
+
+#~ msgid "_Jun_"
+#~ msgstr "_Июнь_"
+
+#~ msgid "_Mar_"
+#~ msgstr "_Март_"
+
+#~ msgid "_Nov_"
+#~ msgstr "_Ноя_"
+
+#~ msgid "_Oct_"
+#~ msgstr "_Окт_"
+
+#~ msgid "_Sep_"
+#~ msgstr "_Сен_"
+
+#~ msgid "and select the correct RRDTool Utility Version."
+#~ msgstr "и выбирите корректную версию RRDTool"
+
+#~ msgid "limit"
+#~ msgstr "лимит"
+
+#~ msgid "loading"
+#~ msgstr "загрузка"
+
+#~ msgid "mode"
+#~ msgstr "режим"
+
+#~ msgid "of"
+#~ msgstr "из"
+
+#~ msgid "on:off"
+#~ msgstr "вкл.:выкл."
+
+#~ msgid "position"
+#~ msgstr "позиция"
+
+#~ msgid "string"
+#~ msgstr "строка"
+
+#~ msgid "to"
+#~ msgstr "по"
+
+#~ msgid "width"
+#~ msgstr "ширина"
 
 #, fuzzy
-#~ msgid "Template Not Found"
-#~ msgstr "Шаблон не найден"
+#~ msgid "The file holding the SSL Certificate Authority to use to connect to the remote database."
+#~ msgstr "Файл, содержащий центр сертификации SSL для подключения к удаленной базе данных."
 
 #, fuzzy
-#~ msgid "Non Templated"
-#~ msgstr "Без шаблонов"
+#~ msgid "%d Outliers"
+#~ msgstr "d Промахи"
 
 #, fuzzy
-#~ msgid "The default timeshift you wish to be displayed when you display graphs"
-#~ msgstr "Сброс по умолчанию, который вы хотите отображать при отображении графиков"
+#~ msgid "%s Standard Deviations"
+#~ msgstr "%s Стандартные отклонения"
+
+#~ msgid "No Task"
+#~ msgstr "Нет задачи"
 
 #, fuzzy
-#~ msgid "Default Graph View Timeshift"
-#~ msgstr "Default Graph View Timeshift"
+#~ msgid "%d Samples"
+#~ msgstr "d Образцы"
 
 #, fuzzy
-#~ msgid "The default timespan you wish to be displayed when you display graphs"
-#~ msgstr "Значения по умолчанию, которые вы хотите отображать при отображении графиков"
+#~ msgid "When using Cacti with languages other than English, it is important to use the utf8 character set as some characters take more than a single byte. If you are first just now installing Cacti, stop, make the changes and start over again. If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
+#~ msgstr "При использовании Cacti с языками, отличными от английского, важно использовать набор символов utf8, так как некоторые символы занимают больше одного байта. Если вы только что установили Cacti, остановитесь, внесите изменения и начните все сначала. Если кактусы Cacti работали и находятся в производстве, см. инструкции по преобразованию баз данных и таблиц в Интернете, если вы планируете поддерживать другие языки."
 
 #, fuzzy
-#~ msgid "Default Graph View Timespan"
-#~ msgstr "Графический график по умолчанию"
-
-#~ msgid "Template [new]"
-#~ msgstr "Шаблон [новый]"
-
-#~ msgid "Template [edit: %s]"
-#~ msgstr "Шаблон [редактировать: %s]"
-
-#, fuzzy
-#~ msgid "Provide the Maintenance Schedule a meaningful name"
-#~ msgstr "Укажите график обслуживания значимого имени"
-
-#, fuzzy
-#~ msgid "Debugging Data Source"
-#~ msgstr "Отладка источника данных"
-
-#~ msgid "New Check"
-#~ msgstr "Новая проверка"
-
-#, fuzzy
-#~ msgid "Click to show Data Query output for sfield '%s'"
-#~ msgstr "Нажмите, чтобы показать вывод Data Query для sfield &#39; %s&#39;"
-
-#, fuzzy
-#~ msgid "Data Debug"
-#~ msgstr "Отладка данных"
-
-#, fuzzy
-#~ msgid "Data Source Debugger [%s]"
-#~ msgstr "Отладчик источника данных"
-
-#, fuzzy
-#~ msgid "Data Source Debugger"
-#~ msgstr "Отладчик источника данных"
-
-#, fuzzy
-#~ msgid "Your Web Servers PHP is properly setup with a Timezone."
-#~ msgstr "Ваши веб-серверы PHP правильно настроены с помощью часового пояса."
-
-#, fuzzy
-#~ msgid "Your Web Servers PHP Timezone settings have not been set.  Please edit php.ini and uncomment the 'date.timezone' setting and set it to the Web Servers Timezone per the PHP installation instructions prior to installing Cacti."
-#~ msgstr "Ваши настройки часового пояса PHP веб-серверов не были установлены.  Пожалуйста, отредактируйте php.ini и удалите настройку 'date.time zone' и установите ее на часовой пояс веб серверов в соответствии с инструкциями по установке PHP перед установкой Cacti."
-
-#, fuzzy
-#~ msgid "PHP - Timezone Support"
-#~ msgstr "PHP - Поддержка часовых поясов"
-
-#, fuzzy
-#~ msgid " Poller RunAs: "
-#~ msgstr " Poller RunAs:"
-
-#, fuzzy
-#~ msgid "Data Source Troubleshooter"
-#~ msgstr "Поиск и устранение неисправностей в источнике данных"
-
-#, fuzzy
-#~ msgid "Does the RRA Profile match the RRDfile structure?"
-#~ msgstr "Соответствует ли RRA-профиль структуре RRD-файла?"
-
-#, fuzzy
-#~ msgid "Mailer Error: No <b>TO</b> address set!!<br>If using the <i>Test Mail</i> link, please set the <b>Alert Email</b> setting."
-#~ msgstr "Почтовая ошибка: Нет <b>TO</b> Адрес установлен!!<br>Если используется ссылка <i>Test Mail</i>, пожалуйста, установите параметр <b>Alert e-mail</b>."
-
-#, fuzzy
-#~ msgid "Created Threshold: %s<br>"
-#~ msgstr "Созданный график: %s"
-
-#, fuzzy
-#~ msgid "No Threshold(s) Created.  They either already exist, or there were not matching combinations found."
-#~ msgstr "Порог не установлен.  Они либо уже существуют, либо не были найдены совпадающие комбинации."
-
-#, fuzzy
-#~ msgid "No Thresholds Templates associated with the Device's Template."
-#~ msgstr "Государство, связанное с этим сайтом."
-
-#, fuzzy
-#~ msgid "'%s' must be set to positive integer value!<br>RECORD NOT UPDATED!"
-#~ msgstr "\"%s\" должно быть установлено в положительное целое значение!<br>ЗНАЗНАЧИТЬ НЕ ВЫБОРУЕТСЯ!"
-
-#, fuzzy
-#~ msgid "Created threshold: %s"
-#~ msgstr "Созданный график: %s"
-
-#, fuzzy
-#~ msgid " What? Permission Denied"
-#~ msgstr "Доступ запрещён"
-
-#, fuzzy
-#~ msgid "Failed to find linked Graph Template Item '%d' on Threshold '%d'"
-#~ msgstr "Не удалось найти связанный элемент шаблона графика '%d' на Пороговом уровне '%d'."
-
-#, fuzzy
-#~ msgid "You must specify either 'Baseline Deviation UP' or 'Baseline Deviation DOWN' or both!<br>RECORD NOT UPDATED!"
-#~ msgstr "Вы должны указать либо 'Baseline Deviation UP', либо 'Baseline Deviation DOWN', либо 'Baseline DeOWN', либо оба!<br>RECORD NOT UPDATED!"
-
-#, fuzzy
-#~ msgid "With baseline thresholds enabled."
-#~ msgstr "С включенными исходными пороговыми значениями."
-
-#, fuzzy
-#~ msgid "Impossible thresholds: 'High Warning Threshold' smaller than or equal to 'Low Warning Threshold'<br>RECORD NOT UPDATED!"
-#~ msgstr "Невозможные пороги: 'Высокий порог предупреждения' меньше или равен 'Низкий порог предупреждения' <br> Записывать НЕ УДАЛИТЬСЯ!"
-
-#, fuzzy
-#~ msgid "Impossible thresholds: 'High Threshold' smaller than or equal to 'Low Threshold'<br>RECORD NOT UPDATED!"
-#~ msgstr "Невозможные пороги: \"Высокий порог\" меньше или равен \"Низкий порог\" <br> Записывать НЕ УДАЛИТЬСЯ!"
-
-#, fuzzy
-#~ msgid "You must specify either 'High Alert Threshold' or 'Low Alert Threshold' or both!<br>RECORD NOT UPDATED!"
-#~ msgstr "Вы должны указать либо 'Порог высокой тревоги', либо 'Порог низкой тревоги', либо оба!<br> Записывать НЕ ПОСЛЕДУЕТСЯ!"
-
-#, fuzzy
-#~ msgid "Record Updated"
-#~ msgstr "RRD Обновлено"
-
-#, fuzzy
-#~ msgid "Threshold was Autocreated due to Device Template mapping"
-#~ msgstr "Добавить запрос данных в шаблон устройства"
-
-#, fuzzy
-#~ msgid "The Graph Creation failed for Threshold Template"
-#~ msgstr "График, который будет использоваться для данного пункта отчета."
-
-#, fuzzy
-#~ msgid "The Threshold Template ID was not set while trying to create Graph and Threshold"
-#~ msgstr "Идентификатор шаблона не был установлен при попытке создания графика и порогового значения."
-
-#, fuzzy
-#~ msgid "The Device ID was not set while trying to create Graph and Threshold"
-#~ msgstr "ID устройства не был установлен при попытке создания графика и порогового значения."
-
-#, fuzzy
-#~ msgid "<html><body>A warning has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
-#~ msgstr "<html><body><html><body>Вышло предупреждение, требующее вашего внимания.<br><br><br><b>Устройство</b>: <ОПИСАНИЕ> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Мессендж</b>: <SUBJECT><br><br><br><GRAPH></body></html></html>"
-
-#, fuzzy
-#~ msgid "<html><body>An alert has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
-#~ msgstr "<html><body><html><body>Вышло предупреждение, которое требует вашего внимания.<br><br><br><b>Устройство</b>: <ОПИСАНИЕ> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Мессендж</b>: <SUBJECT><br><br><br><GRAPH></body></html></html>"
-
-#, fuzzy
-#~ msgid "Link to Graph in Cacti"
-#~ msgstr "Вход на сайт Cacti"
-
-#, fuzzy
-#~ msgid "Pages:"
-#~ msgstr "Страницы:"
-
-#, fuzzy
-#~ msgid "Swaps:"
-#~ msgstr "Обмен:"
-
-#, fuzzy
-#~ msgid "Time:"
-#~ msgstr "Время"
-
-#, fuzzy
-#~ msgid "Log"
-#~ msgstr "Лог"
-
-#, fuzzy
-#~ msgid "Thresholds"
-#~ msgstr "порог"
-
-#, fuzzy
-#~ msgid "Non-Device"
-#~ msgstr "Не-устройство"
-
-#, fuzzy
-#~ msgid "Graph Size"
-#~ msgstr "Размер графика"
-
-#, fuzzy
-#~ msgid "Sort field returned no data.  Can not continue Re-Index for GET data.."
-#~ msgstr "Поле сортировки не возвращает никаких данных.  Невозможно продолжить переиндекс для GET-данных..."
-
-#, fuzzy
-#~ msgid "With modern SSD type storage, this operation actually degrades the disk more rapidly and adds a 50%% overhead on all write operations."
-#~ msgstr "В современных SSD-накопителях эта операция приводит к более быстрому разложению диска и увеличивает накладные расходы на все операции записи на 50%."
-
-#, fuzzy
-#~ msgid "Create Aggregate"
-#~ msgstr "Создать агрегированный отчет"
-
-#, fuzzy
-#~ msgid "Resize Selected Graph(s)"
-#~ msgstr "Изменить размер выбранного графика(ов)"
-
-#, fuzzy
-#~ msgid "The following data sources are in use by these graphs:"
-#~ msgstr "На этих графиках используются следующие источники данных:"
-
-#~ msgid "Resize"
-#~ msgstr "Изменить размер"
-
-#, fuzzy
-#~ msgid "Legacy 1.x Plugins"
-#~ msgstr "Наследие 1.x Плагины"
-
-#, fuzzy
-#~ msgid "View SNMPAgent Notification Log"
-#~ msgstr "Просмотр журнала уведомлений SNMPAgent"
-
-#, fuzzy
-#~ msgid "View SNMPAgent Cache"
-#~ msgstr "Просмотр кэша SNMPAgent"
+#~ msgid "When using Cacti with languages other than English, it is important to use the utf8_general_ci collation type as some characters take more than a single byte.  If you are first just now installing Cacti, stop, make the changes and start over again.  If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
+#~ msgstr "При использовании Cacti с языками, отличными от английского, важно использовать тип сопоставления utf8_g General_ci, так как некоторые символы занимают больше одного байта.  Если вы только что установили Cacti, остановитесь, внесите изменения и начните все сначала.  Если кактусы Cacti работали и находятся в производстве, см. инструкции по преобразованию баз данных и таблиц в Интернете, если вы планируете поддерживать другие языки."

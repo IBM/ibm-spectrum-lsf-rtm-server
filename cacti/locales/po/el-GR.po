@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: developers@cacti.net\n"
-"POT-Creation-Date: 2020-10-28 16:57-0400\n"
+"POT-Creation-Date: 2020-11-02 03:26+0000\n"
 "PO-Revision-Date: 2020-09-13 18:10-0400\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1214,7 +1214,7 @@ msgstr "Διαγραφή συσκευών"
 #: automation_devices.php:409 automation_devices.php:419
 #: automation_devices.php:647 automation_devices.php:648 host.php:1596
 #: lib/api_automation.php:173 lib/api_automation.php:1099
-#: lib/html_utility.php:931 pollers.php:46
+#: lib/html_utility.php:939 pollers.php:46
 msgid "Down"
 msgstr "Πεσμένος"
 
@@ -1222,7 +1222,7 @@ msgstr "Πεσμένος"
 #: automation_devices.php:411 automation_devices.php:421
 #: automation_devices.php:647 automation_devices.php:648 host.php:1595
 #: lib/api_automation.php:172 lib/api_automation.php:1098
-#: lib/html_utility.php:937
+#: lib/html_utility.php:945
 msgid "Up"
 msgstr "Πάνω"
 
@@ -1563,7 +1563,7 @@ msgstr "Ενεργοποιημένο"
 #: include/global_settings.php:1427 include/global_settings.php:1441
 #: include/global_settings.php:1501 include/global_settings.php:2146
 #: lib/api_automation.php:170 lib/api_automation.php:1096 lib/html.php:2472
-#: lib/html_reports.php:1513 lib/html_reports.php:1651 lib/html_utility.php:927
+#: lib/html_reports.php:1513 lib/html_reports.php:1651 lib/html_utility.php:935
 #: links.php:500 managers.php:243 managers.php:598 pollers.php:47
 #: user_admin.php:1164 user_domains.php:411 user_group_admin.php:697
 #: utilities.php:2377
@@ -6067,12 +6067,12 @@ msgid "Not Up"
 msgstr "Δεν είναι επάνω"
 
 #: host.php:1597 lib/api_automation.php:174 lib/api_automation.php:1100
-#: lib/html_utility.php:934 pollers.php:48
+#: lib/html_utility.php:942 pollers.php:48
 msgid "Recovering"
 msgstr "αναληπτικό"
 
 #: host.php:1598 lib/api_automation.php:175 lib/api_automation.php:1101
-#: lib/html_utility.php:943 lib/plugins.php:1086 lib/plugins.php:1087
+#: lib/html_utility.php:951 lib/plugins.php:1088 lib/plugins.php:1089
 #: lib/rrd.php:2919 lib/rrd.php:2931 user_admin.php:820 utilities.php:216
 #: utilities.php:217 utilities.php:2241
 msgid "Unknown"
@@ -7346,7 +7346,7 @@ msgid "Export Templates"
 msgstr "Εξαγωγή προτύπων"
 
 #: include/global_arrays.php:927 include/global_arrays.php:949
-#: include/global_arrays.php:967 lib/plugins.php:1041
+#: include/global_arrays.php:967 lib/plugins.php:1043
 msgid "Configuration"
 msgstr "Παραμετροποίηση"
 
@@ -15512,32 +15512,32 @@ msgstr "Επιλεγμένο"
 msgid "The regular expression \"%s\" is not valid. Error is %s"
 msgstr "Ο όρος αναζήτησης &quot; %s&quot; δεν είναι έγκυρος. Το σφάλμα είναι %s"
 
-#: lib/html_utility.php:884
+#: lib/html_utility.php:892
 #, fuzzy
 msgid "There was an internal error!"
 msgstr "Υπήρξε ένα εσωτερικό σφάλμα!"
 
-#: lib/html_utility.php:885
+#: lib/html_utility.php:893
 #, fuzzy
 msgid "Backtrack limit was exhausted!"
 msgstr "Το όριο Backtrack εξαντλήθηκε!"
 
-#: lib/html_utility.php:886
+#: lib/html_utility.php:894
 #, fuzzy
 msgid "Recursion limit was exhausted!"
 msgstr "Το όριο επαναφοράς εξαντλήθηκε!"
 
-#: lib/html_utility.php:887
+#: lib/html_utility.php:895
 #, fuzzy
 msgid "Bad UTF-8 error!"
 msgstr "Κακό σφάλμα UTF-8!"
 
-#: lib/html_utility.php:888
+#: lib/html_utility.php:896
 #, fuzzy
 msgid "Bad UTF-8 offset error!"
 msgstr "Κακό σφάλμα αντιστάθμισης UTF-8!"
 
-#: lib/html_utility.php:940 lib/installer.php:1803 lib/installer.php:3533
+#: lib/html_utility.php:948 lib/installer.php:1803 lib/installer.php:3533
 msgid "Error"
 msgstr "Σφάλμα"
 
@@ -17010,21 +17010,21 @@ msgstr "Το %s απαιτείται για το %s και δεν είναι ε�
 msgid "Plugin cannot be installed."
 msgstr "Δεν είναι δυνατή η εγκατάσταση της προσθήκης."
 
-#: lib/plugins.php:1041 lib/plugins.php:1048 plugins.php:367 plugins.php:447
+#: lib/plugins.php:1043 lib/plugins.php:1050 plugins.php:367 plugins.php:447
 msgid "Plugins"
 msgstr "Πρόσθετα"
 
-#: lib/plugins.php:1060 lib/plugins.php:1066
+#: lib/plugins.php:1062 lib/plugins.php:1068
 #, fuzzy, php-format
 msgid "Requires: Cacti >= %s"
 msgstr "Απαιτεί: Cacti&gt; = %s"
 
-#: lib/plugins.php:1063
+#: lib/plugins.php:1065
 #, fuzzy
 msgid "Legacy Plugin"
 msgstr "Plugin Legacy"
 
-#: lib/plugins.php:1088
+#: lib/plugins.php:1090
 #, fuzzy
 msgid "Not Stated"
 msgstr "Δεν αναφέρεται"
@@ -21005,260 +21005,260 @@ msgid "No VDEFs"
 msgstr "Δεν υπάρχουν VDEF"
 
 #, fuzzy
-#~ msgid "When using Cacti with languages other than English, it is important to use the utf8_general_ci collation type as some characters take more than a single byte.  If you are first just now installing Cacti, stop, make the changes and start over again.  If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
-#~ msgstr "Όταν χρησιμοποιείτε το Cacti με γλώσσες διαφορετικές από την αγγλική, είναι σημαντικό να χρησιμοποιήσετε τον τύπο ταξινόμησης utf8_general_ci καθώς ορισμένοι χαρακτήρες παίρνουν περισσότερα από ένα μόνο byte. Εάν πρώτα εγκαταστήσετε τώρα το Cacti, σταματήστε, κάντε τις αλλαγές και ξεκινήστε ξανά. Εάν ο κάκτος σας λειτουργεί και βρίσκεται σε παραγωγή, ανατρέξτε στο διαδίκτυο για οδηγίες σχετικά με τη μετατροπή των βάσεων δεδομένων και των πινάκων σας εάν σκοπεύετε να υποστηρίξετε άλλες γλώσσες."
-
-#, fuzzy
-#~ msgid "When using Cacti with languages other than English, it is important to use the utf8 character set as some characters take more than a single byte. If you are first just now installing Cacti, stop, make the changes and start over again. If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
-#~ msgstr "Όταν χρησιμοποιείτε το Cacti με γλώσσες διαφορετικές από την αγγλική, είναι σημαντικό να χρησιμοποιήσετε το σύνολο χαρακτήρων utf8 καθώς ορισμένοι χαρακτήρες παίρνουν περισσότερα από ένα μόνο byte. Εάν πρώτα εγκαταστήσετε τώρα το Cacti, σταματήστε, κάντε τις αλλαγές και ξεκινήστε ξανά. Εάν ο κάκτος σας λειτουργεί και βρίσκεται σε παραγωγή, ανατρέξτε στο διαδίκτυο για οδηγίες σχετικά με τη μετατροπή των βάσεων δεδομένων και των πινάκων σας εάν σκοπεύετε να υποστηρίξετε άλλες γλώσσες."
-
-#, fuzzy
-#~ msgid "%d Samples"
-#~ msgstr "% d Δείγματα"
-
-#, fuzzy
-#~ msgid "No Task"
-#~ msgstr "Δεν υπάρχει εργασία"
-
-#, fuzzy
-#~ msgid "%s Standard Deviations"
-#~ msgstr "%s Τυπικές αποκλίσεις"
-
-#, fuzzy
-#~ msgid "%d Outliers"
-#~ msgstr "% d Απόκριες"
-
-#, fuzzy
-#~ msgid "The file holding the SSL Certificate Authority to use to connect to the remote database."
-#~ msgstr "Το αρχείο που περιέχει την Αρχή Πιστοποίησης SSL για να συνδεθεί με την απομακρυσμένη βάση δεδομένων."
-
-#, fuzzy
-#~ msgid "Template Not Found"
-#~ msgstr "Το πρότυπο δεν βρέθηκε"
-
-#, fuzzy
-#~ msgid "Non Templated"
-#~ msgstr "Μη προτυποποιημένο"
-
-#, fuzzy
-#~ msgid "The default timeshift you wish to be displayed when you display graphs"
-#~ msgstr "Η προεπιλεγμένη χρονική μετατόπιση που θέλετε να εμφανίζεται όταν εμφανίζετε γραφήματα"
-
-#, fuzzy
-#~ msgid "Default Graph View Timeshift"
-#~ msgstr "Προεπιλεγμένη προβολή γραφήματος Timeshift"
-
-#, fuzzy
-#~ msgid "The default timespan you wish to be displayed when you display graphs"
-#~ msgstr "Το προεπιλεγμένο χρονικό διάστημα που θέλετε να εμφανίζεται όταν εμφανίζετε γραφήματα"
-
-#, fuzzy
-#~ msgid "Default Graph View Timespan"
-#~ msgstr "Προεπιλεγμένο χρονικό διάστημα προβολής γραφήματος"
-
-#, fuzzy
-#~ msgid "Template [new]"
-#~ msgstr "Πρότυπο [νέο]"
-
-#, fuzzy
-#~ msgid "Template [edit: %s]"
-#~ msgstr "Πρότυπο [επεξεργασία: %s]"
-
-#, fuzzy
-#~ msgid "Provide the Maintenance Schedule a meaningful name"
-#~ msgstr "Παρέχετε στο πρόγραμμα συντήρησης ένα σωστό όνομα"
-
-#, fuzzy
-#~ msgid "Debugging Data Source"
-#~ msgstr "Πηγή δεδομένων σφαλμάτων"
-
-#, fuzzy
-#~ msgid "New Check"
-#~ msgstr "Νέος έλεγχος"
-
-#, fuzzy
-#~ msgid "Click to show Data Query output for sfield '%s'"
-#~ msgstr "Κάντε κλικ για να εμφανιστεί η έξοδος δεδομένων Query για sfield &#39; %s&#39;"
-
-#, fuzzy
-#~ msgid "Data Debug"
-#~ msgstr "Αποκατάσταση δεδομένων"
-
-#, fuzzy
-#~ msgid "Data Source Debugger [%s]"
-#~ msgstr "Προσαρμογέας πηγής δεδομένων"
-
-#, fuzzy
-#~ msgid "Data Source Debugger"
-#~ msgstr "Προσαρμογέας πηγής δεδομένων"
-
-#, fuzzy
-#~ msgid "Your Web Servers PHP is properly setup with a Timezone."
-#~ msgstr "Οι διακομιστές ιστού σας PHP είναι σωστά ρυθμισμένοι με μια ζώνη ώρας."
-
-#, fuzzy
-#~ msgid "Your Web Servers PHP Timezone settings have not been set.  Please edit php.ini and uncomment the 'date.timezone' setting and set it to the Web Servers Timezone per the PHP installation instructions prior to installing Cacti."
-#~ msgstr "Οι διακομιστές ιστού σας PHP Ρυθμίσεις ζώνης ώρας δεν έχουν ρυθμιστεί. Επεξεργαστείτε το php.ini και αποσυνδέστε τη ρύθμιση &#39;date.timezone&#39; και ρυθμίστε την στη ζώνη ώρας των διακομιστών Web σύμφωνα με τις οδηγίες εγκατάστασης της PHP πριν από την εγκατάσταση του Cacti."
-
-#, fuzzy
-#~ msgid "PHP - Timezone Support"
-#~ msgstr "PHP - Υποστήριξη ζώνης ώρας"
-
-#, fuzzy
-#~ msgid " Poller RunAs: "
-#~ msgstr "Poller RunAs:"
-
-#, fuzzy
-#~ msgid "Data Source Troubleshooter"
-#~ msgstr "Αντιμετώπιση προβλημάτων πηγής δεδομένων"
-
-#, fuzzy
-#~ msgid "Does the RRA Profile match the RRDfile structure?"
-#~ msgstr "Το προφίλ RRA ταιριάζει με τη δομή RRDfile;"
-
-#, fuzzy
-#~ msgid "Mailer Error: No <b>TO</b> address set!!<br>If using the <i>Test Mail</i> link, please set the <b>Alert Email</b> setting."
-#~ msgstr "Mailer Σφάλμα: Δεν <b>Για την</b> αντιμετώπιση που !! <br> Εάν χρησιμοποιείτε το σύνδεσμο <i>Δοκιμαστική αλληλογραφία</i> , ορίστε τη ρύθμιση <b>E-mail ειδοποίησης</b> ."
-
-#, fuzzy
-#~ msgid "Created Threshold: %s<br>"
-#~ msgstr "Δημιουργήθηκε γράφημα: %s"
-
-#, fuzzy
-#~ msgid "No Threshold(s) Created.  They either already exist, or there were not matching combinations found."
-#~ msgstr "Δεν δημιουργήθηκαν κατώτατα όρια. Αυτά είτε υπάρχουν ήδη, είτε δεν βρέθηκαν συνδυασμοί που να ταιριάζουν."
-
-#, fuzzy
-#~ msgid "No Thresholds Templates associated with the Device's Template."
-#~ msgstr "Το κράτος που συνδέεται με αυτόν τον ιστότοπο."
-
-#, fuzzy
-#~ msgid "'%s' must be set to positive integer value!<br>RECORD NOT UPDATED!"
-#~ msgstr "Το ' %s' πρέπει να ρυθμιστεί σε θετική ακέραια τιμή! <br> Η εγγραφή δεν ενημερώθηκε!"
-
-#, fuzzy
-#~ msgid "Created threshold: %s"
-#~ msgstr "Δημιουργήθηκε γράφημα: %s"
-
-#, fuzzy
-#~ msgid " What? Permission Denied"
-#~ msgstr "Η άδεια αρνήθηκε"
-
-#, fuzzy
-#~ msgid "Failed to find linked Graph Template Item '%d' on Threshold '%d'"
-#~ msgstr "Αποτυχία εύρεσης συνδεδεμένου στοιχείου πρότυπου γραφήματος '% d' στο κατώφλι '% d'"
-
-#, fuzzy
-#~ msgid "You must specify either 'Baseline Deviation UP' or 'Baseline Deviation DOWN' or both!<br>RECORD NOT UPDATED!"
-#~ msgstr "Πρέπει να καθορίσετε είτε την \"Απόκλιση βασικής γραμμής UP\" είτε την \"Απόκλιση βασικής γραμμής κάτω\" ή και τα δύο! <br> Η εγγραφή δεν ενημερώθηκε!"
-
-#, fuzzy
-#~ msgid "With baseline thresholds enabled."
-#~ msgstr "Με τα βασικά όρια ενεργοποιημένα."
-
-#, fuzzy
-#~ msgid "Impossible thresholds: 'High Warning Threshold' smaller than or equal to 'Low Warning Threshold'<br>RECORD NOT UPDATED!"
-#~ msgstr "Αδύνατα κατώτατα όρια: «Όριο υψηλής προειδοποίησης» μικρότερο ή ίσο με το «χαμηλό όριο προειδοποίησης» <br> Η εγγραφή δεν ενημερώθηκε!"
-
-#, fuzzy
-#~ msgid "Impossible thresholds: 'High Threshold' smaller than or equal to 'Low Threshold'<br>RECORD NOT UPDATED!"
-#~ msgstr "Αδύνατα κατώτατα όρια: \"Υψηλό όριο\" μικρότερο ή ίσο με το \"Χαμηλό όριο\" <br> Η εγγραφή δεν ενημερώθηκε!"
-
-#, fuzzy
-#~ msgid "You must specify either 'High Alert Threshold' or 'Low Alert Threshold' or both!<br>RECORD NOT UPDATED!"
-#~ msgstr "Πρέπει να ορίσετε είτε το \"Κατώτατο όριο ειδοποίησης\" είτε το κατώτατο όριο ειδοποίησης ή και τα δύο! <br> Η εγγραφή δεν ενημερώθηκε!"
-
-#, fuzzy
-#~ msgid "Record Updated"
-#~ msgstr "RRD Ενημερώθηκε"
-
-#, fuzzy
-#~ msgid "Threshold was Autocreated due to Device Template mapping"
-#~ msgstr "Προσθήκη ερώτησης δεδομένων σε πρότυπο συσκευής"
-
-#, fuzzy
-#~ msgid "The Graph Creation failed for Threshold Template"
-#~ msgstr "Το γράφημα που θέλετε να χρησιμοποιήσετε για αυτό το στοιχείο αναφοράς."
-
-#, fuzzy
-#~ msgid "The Threshold Template ID was not set while trying to create Graph and Threshold"
-#~ msgstr "Το αναγνωριστικό προτύπου ουράς δεν έχει οριστεί κατά την προσπάθεια δημιουργίας γραφήματος και κατωφλίου"
-
-#, fuzzy
-#~ msgid "The Device ID was not set while trying to create Graph and Threshold"
-#~ msgstr "Το αναγνωριστικό συσκευής δεν έχει οριστεί κατά την προσπάθεια δημιουργίας γραφήματος και κατωφλίου"
-
-#, fuzzy
-#~ msgid "<html><body>A warning has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
-#~ msgstr "<html><body> Έχει εκδοθεί μια προειδοποίηση που απαιτεί την προσοχή σας. <br><br> <b>Συσκευή</b> : <DESCRIPTION> ( <HOSTNAME> ) <br> <b>URL</b> : <URL><br> <b>Μήνυμα</b> : <SUBJECT><br><br><GRAPH></body></html>"
-
-#, fuzzy
-#~ msgid "<html><body>An alert has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
-#~ msgstr "<html><body> Έχει εκδοθεί μια προειδοποίηση που απαιτεί την προσοχή σας. <br><br> <b>Συσκευή</b> : <DESCRIPTION> ( <HOSTNAME> ) <br> <b>URL</b> : <URL><br> <b>Μήνυμα</b> : <SUBJECT><br><br><GRAPH></body></html>"
-
-#, fuzzy
-#~ msgid "Link to Graph in Cacti"
-#~ msgstr "Σύνδεση στο Cacti"
-
-#, fuzzy
-#~ msgid "Pages:"
-#~ msgstr "Σελίδες:"
-
-#, fuzzy
-#~ msgid "Swaps:"
-#~ msgstr "Ανταλλαγές:"
-
-#, fuzzy
-#~ msgid "Time:"
-#~ msgstr "Ώρα"
-
-#, fuzzy
-#~ msgid "Log"
-#~ msgstr "Αρχείο Καταγραφής"
-
-#, fuzzy
-#~ msgid "Thresholds"
-#~ msgstr "Θέματα"
-
-#, fuzzy
-#~ msgid "Non-Device"
-#~ msgstr "Μη-συσκευή"
-
-#, fuzzy
-#~ msgid "Graph Size"
-#~ msgstr "Μέγεθος γραφήματος"
-
-#, fuzzy
-#~ msgid "Sort field returned no data.  Can not continue Re-Index for GET data.."
-#~ msgstr "Το πεδίο ταξινόμησης δεν επέστρεψε δεδομένα. Δεν είναι δυνατή η συνέχιση της επανάκλησης των δεδομένων GET .."
-
-#, fuzzy
-#~ msgid "With modern SSD type storage, this operation actually degrades the disk more rapidly and adds a 50%% overhead on all write operations."
-#~ msgstr "Με τη σύγχρονη αποθήκευση τύπου SSD, αυτή η λειτουργία υποβαθμίζει το δίσκο πιο γρήγορα και προσθέτει ένα 50 %% επιβάρυνση σε όλες τις λειτουργίες εγγραφής."
-
-#, fuzzy
-#~ msgid "Create Aggregate"
-#~ msgstr "Δημιουργία συνόλου"
-
-#, fuzzy
-#~ msgid "Resize Selected Graph(s)"
-#~ msgstr "Αλλαγή μεγέθους επιλεγμένου γραφήματος"
-
-#, fuzzy
-#~ msgid "The following data sources are in use by these graphs:"
-#~ msgstr "Οι ακόλουθες πηγές δεδομένων χρησιμοποιούνται από αυτά τα γραφήματα:"
-
-#~ msgid "Resize"
-#~ msgstr "Αλλαγή μεγέθους"
-
-#, fuzzy
-#~ msgid "Legacy 1.x Plugins"
-#~ msgstr "Κληρονομιά 1.x Plugins"
+#~ msgid "View SNMPAgent Cache"
+#~ msgstr "Προβολή SNMPAgent Cache"
 
 #, fuzzy
 #~ msgid "View SNMPAgent Notification Log"
 #~ msgstr "Δείτε το αρχείο ειδοποιήσεων SNMPAgent"
 
 #, fuzzy
-#~ msgid "View SNMPAgent Cache"
-#~ msgstr "Προβολή SNMPAgent Cache"
+#~ msgid "Legacy 1.x Plugins"
+#~ msgstr "Κληρονομιά 1.x Plugins"
+
+#~ msgid "Resize"
+#~ msgstr "Αλλαγή μεγέθους"
+
+#, fuzzy
+#~ msgid "The following data sources are in use by these graphs:"
+#~ msgstr "Οι ακόλουθες πηγές δεδομένων χρησιμοποιούνται από αυτά τα γραφήματα:"
+
+#, fuzzy
+#~ msgid "Resize Selected Graph(s)"
+#~ msgstr "Αλλαγή μεγέθους επιλεγμένου γραφήματος"
+
+#, fuzzy
+#~ msgid "Create Aggregate"
+#~ msgstr "Δημιουργία συνόλου"
+
+#, fuzzy
+#~ msgid "With modern SSD type storage, this operation actually degrades the disk more rapidly and adds a 50%% overhead on all write operations."
+#~ msgstr "Με τη σύγχρονη αποθήκευση τύπου SSD, αυτή η λειτουργία υποβαθμίζει το δίσκο πιο γρήγορα και προσθέτει ένα 50 %% επιβάρυνση σε όλες τις λειτουργίες εγγραφής."
+
+#, fuzzy
+#~ msgid "Sort field returned no data.  Can not continue Re-Index for GET data.."
+#~ msgstr "Το πεδίο ταξινόμησης δεν επέστρεψε δεδομένα. Δεν είναι δυνατή η συνέχιση της επανάκλησης των δεδομένων GET .."
+
+#, fuzzy
+#~ msgid "Graph Size"
+#~ msgstr "Μέγεθος γραφήματος"
+
+#, fuzzy
+#~ msgid "Non-Device"
+#~ msgstr "Μη-συσκευή"
+
+#, fuzzy
+#~ msgid "Thresholds"
+#~ msgstr "Θέματα"
+
+#, fuzzy
+#~ msgid "Log"
+#~ msgstr "Αρχείο Καταγραφής"
+
+#, fuzzy
+#~ msgid "Time:"
+#~ msgstr "Ώρα"
+
+#, fuzzy
+#~ msgid "Swaps:"
+#~ msgstr "Ανταλλαγές:"
+
+#, fuzzy
+#~ msgid "Pages:"
+#~ msgstr "Σελίδες:"
+
+#, fuzzy
+#~ msgid "Link to Graph in Cacti"
+#~ msgstr "Σύνδεση στο Cacti"
+
+#, fuzzy
+#~ msgid "<html><body>An alert has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
+#~ msgstr "<html><body> Έχει εκδοθεί μια προειδοποίηση που απαιτεί την προσοχή σας. <br><br> <b>Συσκευή</b> : <DESCRIPTION> ( <HOSTNAME> ) <br> <b>URL</b> : <URL><br> <b>Μήνυμα</b> : <SUBJECT><br><br><GRAPH></body></html>"
+
+#, fuzzy
+#~ msgid "<html><body>A warning has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
+#~ msgstr "<html><body> Έχει εκδοθεί μια προειδοποίηση που απαιτεί την προσοχή σας. <br><br> <b>Συσκευή</b> : <DESCRIPTION> ( <HOSTNAME> ) <br> <b>URL</b> : <URL><br> <b>Μήνυμα</b> : <SUBJECT><br><br><GRAPH></body></html>"
+
+#, fuzzy
+#~ msgid "The Device ID was not set while trying to create Graph and Threshold"
+#~ msgstr "Το αναγνωριστικό συσκευής δεν έχει οριστεί κατά την προσπάθεια δημιουργίας γραφήματος και κατωφλίου"
+
+#, fuzzy
+#~ msgid "The Threshold Template ID was not set while trying to create Graph and Threshold"
+#~ msgstr "Το αναγνωριστικό προτύπου ουράς δεν έχει οριστεί κατά την προσπάθεια δημιουργίας γραφήματος και κατωφλίου"
+
+#, fuzzy
+#~ msgid "The Graph Creation failed for Threshold Template"
+#~ msgstr "Το γράφημα που θέλετε να χρησιμοποιήσετε για αυτό το στοιχείο αναφοράς."
+
+#, fuzzy
+#~ msgid "Threshold was Autocreated due to Device Template mapping"
+#~ msgstr "Προσθήκη ερώτησης δεδομένων σε πρότυπο συσκευής"
+
+#, fuzzy
+#~ msgid "Record Updated"
+#~ msgstr "RRD Ενημερώθηκε"
+
+#, fuzzy
+#~ msgid "You must specify either 'High Alert Threshold' or 'Low Alert Threshold' or both!<br>RECORD NOT UPDATED!"
+#~ msgstr "Πρέπει να ορίσετε είτε το \"Κατώτατο όριο ειδοποίησης\" είτε το κατώτατο όριο ειδοποίησης ή και τα δύο! <br> Η εγγραφή δεν ενημερώθηκε!"
+
+#, fuzzy
+#~ msgid "Impossible thresholds: 'High Threshold' smaller than or equal to 'Low Threshold'<br>RECORD NOT UPDATED!"
+#~ msgstr "Αδύνατα κατώτατα όρια: \"Υψηλό όριο\" μικρότερο ή ίσο με το \"Χαμηλό όριο\" <br> Η εγγραφή δεν ενημερώθηκε!"
+
+#, fuzzy
+#~ msgid "Impossible thresholds: 'High Warning Threshold' smaller than or equal to 'Low Warning Threshold'<br>RECORD NOT UPDATED!"
+#~ msgstr "Αδύνατα κατώτατα όρια: «Όριο υψηλής προειδοποίησης» μικρότερο ή ίσο με το «χαμηλό όριο προειδοποίησης» <br> Η εγγραφή δεν ενημερώθηκε!"
+
+#, fuzzy
+#~ msgid "With baseline thresholds enabled."
+#~ msgstr "Με τα βασικά όρια ενεργοποιημένα."
+
+#, fuzzy
+#~ msgid "You must specify either 'Baseline Deviation UP' or 'Baseline Deviation DOWN' or both!<br>RECORD NOT UPDATED!"
+#~ msgstr "Πρέπει να καθορίσετε είτε την \"Απόκλιση βασικής γραμμής UP\" είτε την \"Απόκλιση βασικής γραμμής κάτω\" ή και τα δύο! <br> Η εγγραφή δεν ενημερώθηκε!"
+
+#, fuzzy
+#~ msgid "Failed to find linked Graph Template Item '%d' on Threshold '%d'"
+#~ msgstr "Αποτυχία εύρεσης συνδεδεμένου στοιχείου πρότυπου γραφήματος '% d' στο κατώφλι '% d'"
+
+#, fuzzy
+#~ msgid " What? Permission Denied"
+#~ msgstr "Η άδεια αρνήθηκε"
+
+#, fuzzy
+#~ msgid "Created threshold: %s"
+#~ msgstr "Δημιουργήθηκε γράφημα: %s"
+
+#, fuzzy
+#~ msgid "'%s' must be set to positive integer value!<br>RECORD NOT UPDATED!"
+#~ msgstr "Το ' %s' πρέπει να ρυθμιστεί σε θετική ακέραια τιμή! <br> Η εγγραφή δεν ενημερώθηκε!"
+
+#, fuzzy
+#~ msgid "No Thresholds Templates associated with the Device's Template."
+#~ msgstr "Το κράτος που συνδέεται με αυτόν τον ιστότοπο."
+
+#, fuzzy
+#~ msgid "No Threshold(s) Created.  They either already exist, or there were not matching combinations found."
+#~ msgstr "Δεν δημιουργήθηκαν κατώτατα όρια. Αυτά είτε υπάρχουν ήδη, είτε δεν βρέθηκαν συνδυασμοί που να ταιριάζουν."
+
+#, fuzzy
+#~ msgid "Created Threshold: %s<br>"
+#~ msgstr "Δημιουργήθηκε γράφημα: %s"
+
+#, fuzzy
+#~ msgid "Mailer Error: No <b>TO</b> address set!!<br>If using the <i>Test Mail</i> link, please set the <b>Alert Email</b> setting."
+#~ msgstr "Mailer Σφάλμα: Δεν <b>Για την</b> αντιμετώπιση που !! <br> Εάν χρησιμοποιείτε το σύνδεσμο <i>Δοκιμαστική αλληλογραφία</i> , ορίστε τη ρύθμιση <b>E-mail ειδοποίησης</b> ."
+
+#, fuzzy
+#~ msgid "Does the RRA Profile match the RRDfile structure?"
+#~ msgstr "Το προφίλ RRA ταιριάζει με τη δομή RRDfile;"
+
+#, fuzzy
+#~ msgid "Data Source Troubleshooter"
+#~ msgstr "Αντιμετώπιση προβλημάτων πηγής δεδομένων"
+
+#, fuzzy
+#~ msgid " Poller RunAs: "
+#~ msgstr "Poller RunAs:"
+
+#, fuzzy
+#~ msgid "PHP - Timezone Support"
+#~ msgstr "PHP - Υποστήριξη ζώνης ώρας"
+
+#, fuzzy
+#~ msgid "Your Web Servers PHP Timezone settings have not been set.  Please edit php.ini and uncomment the 'date.timezone' setting and set it to the Web Servers Timezone per the PHP installation instructions prior to installing Cacti."
+#~ msgstr "Οι διακομιστές ιστού σας PHP Ρυθμίσεις ζώνης ώρας δεν έχουν ρυθμιστεί. Επεξεργαστείτε το php.ini και αποσυνδέστε τη ρύθμιση &#39;date.timezone&#39; και ρυθμίστε την στη ζώνη ώρας των διακομιστών Web σύμφωνα με τις οδηγίες εγκατάστασης της PHP πριν από την εγκατάσταση του Cacti."
+
+#, fuzzy
+#~ msgid "Your Web Servers PHP is properly setup with a Timezone."
+#~ msgstr "Οι διακομιστές ιστού σας PHP είναι σωστά ρυθμισμένοι με μια ζώνη ώρας."
+
+#, fuzzy
+#~ msgid "Data Source Debugger"
+#~ msgstr "Προσαρμογέας πηγής δεδομένων"
+
+#, fuzzy
+#~ msgid "Data Source Debugger [%s]"
+#~ msgstr "Προσαρμογέας πηγής δεδομένων"
+
+#, fuzzy
+#~ msgid "Data Debug"
+#~ msgstr "Αποκατάσταση δεδομένων"
+
+#, fuzzy
+#~ msgid "Click to show Data Query output for sfield '%s'"
+#~ msgstr "Κάντε κλικ για να εμφανιστεί η έξοδος δεδομένων Query για sfield &#39; %s&#39;"
+
+#, fuzzy
+#~ msgid "New Check"
+#~ msgstr "Νέος έλεγχος"
+
+#, fuzzy
+#~ msgid "Debugging Data Source"
+#~ msgstr "Πηγή δεδομένων σφαλμάτων"
+
+#, fuzzy
+#~ msgid "Provide the Maintenance Schedule a meaningful name"
+#~ msgstr "Παρέχετε στο πρόγραμμα συντήρησης ένα σωστό όνομα"
+
+#, fuzzy
+#~ msgid "Template [edit: %s]"
+#~ msgstr "Πρότυπο [επεξεργασία: %s]"
+
+#, fuzzy
+#~ msgid "Template [new]"
+#~ msgstr "Πρότυπο [νέο]"
+
+#, fuzzy
+#~ msgid "Default Graph View Timespan"
+#~ msgstr "Προεπιλεγμένο χρονικό διάστημα προβολής γραφήματος"
+
+#, fuzzy
+#~ msgid "The default timespan you wish to be displayed when you display graphs"
+#~ msgstr "Το προεπιλεγμένο χρονικό διάστημα που θέλετε να εμφανίζεται όταν εμφανίζετε γραφήματα"
+
+#, fuzzy
+#~ msgid "Default Graph View Timeshift"
+#~ msgstr "Προεπιλεγμένη προβολή γραφήματος Timeshift"
+
+#, fuzzy
+#~ msgid "The default timeshift you wish to be displayed when you display graphs"
+#~ msgstr "Η προεπιλεγμένη χρονική μετατόπιση που θέλετε να εμφανίζεται όταν εμφανίζετε γραφήματα"
+
+#, fuzzy
+#~ msgid "Non Templated"
+#~ msgstr "Μη προτυποποιημένο"
+
+#, fuzzy
+#~ msgid "Template Not Found"
+#~ msgstr "Το πρότυπο δεν βρέθηκε"
+
+#, fuzzy
+#~ msgid "The file holding the SSL Certificate Authority to use to connect to the remote database."
+#~ msgstr "Το αρχείο που περιέχει την Αρχή Πιστοποίησης SSL για να συνδεθεί με την απομακρυσμένη βάση δεδομένων."
+
+#, fuzzy
+#~ msgid "%d Outliers"
+#~ msgstr "% d Απόκριες"
+
+#, fuzzy
+#~ msgid "%s Standard Deviations"
+#~ msgstr "%s Τυπικές αποκλίσεις"
+
+#, fuzzy
+#~ msgid "No Task"
+#~ msgstr "Δεν υπάρχει εργασία"
+
+#, fuzzy
+#~ msgid "%d Samples"
+#~ msgstr "% d Δείγματα"
+
+#, fuzzy
+#~ msgid "When using Cacti with languages other than English, it is important to use the utf8 character set as some characters take more than a single byte. If you are first just now installing Cacti, stop, make the changes and start over again. If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
+#~ msgstr "Όταν χρησιμοποιείτε το Cacti με γλώσσες διαφορετικές από την αγγλική, είναι σημαντικό να χρησιμοποιήσετε το σύνολο χαρακτήρων utf8 καθώς ορισμένοι χαρακτήρες παίρνουν περισσότερα από ένα μόνο byte. Εάν πρώτα εγκαταστήσετε τώρα το Cacti, σταματήστε, κάντε τις αλλαγές και ξεκινήστε ξανά. Εάν ο κάκτος σας λειτουργεί και βρίσκεται σε παραγωγή, ανατρέξτε στο διαδίκτυο για οδηγίες σχετικά με τη μετατροπή των βάσεων δεδομένων και των πινάκων σας εάν σκοπεύετε να υποστηρίξετε άλλες γλώσσες."
+
+#, fuzzy
+#~ msgid "When using Cacti with languages other than English, it is important to use the utf8_general_ci collation type as some characters take more than a single byte.  If you are first just now installing Cacti, stop, make the changes and start over again.  If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
+#~ msgstr "Όταν χρησιμοποιείτε το Cacti με γλώσσες διαφορετικές από την αγγλική, είναι σημαντικό να χρησιμοποιήσετε τον τύπο ταξινόμησης utf8_general_ci καθώς ορισμένοι χαρακτήρες παίρνουν περισσότερα από ένα μόνο byte. Εάν πρώτα εγκαταστήσετε τώρα το Cacti, σταματήστε, κάντε τις αλλαγές και ξεκινήστε ξανά. Εάν ο κάκτος σας λειτουργεί και βρίσκεται σε παραγωγή, ανατρέξτε στο διαδίκτυο για οδηγίες σχετικά με τη μετατροπή των βάσεων δεδομένων και των πινάκων σας εάν σκοπεύετε να υποστηρίξετε άλλες γλώσσες."

@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+<!--$Id$ -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+	<xsd:element name="meta">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="object" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="section" minOccurs="1" maxOccurs="unbounded">
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="column" type="section-columns" minOccurs="1" maxOccurs="unbounded"/>
+									</xsd:sequence>
+									<xsd:attribute name="name" type="xsd:string" use="required"/>
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:sequence>
+						<xsd:attribute name="type" type="object-types" use="required"/>
+					</xsd:complexType>
+					<xsd:unique name="unique-section-name">
+						<xsd:selector xpath="section"/>
+						<xsd:field xpath="@name"/>
+					</xsd:unique>
+					<xsd:unique name="unique-db-columns">
+						<xsd:selector xpath="section/column"/>
+						<xsd:field xpath="db_column"/>
+					</xsd:unique>
+					<xsd:unique name="unique-position">
+						<xsd:selector xpath="section/column"/>
+						<xsd:field xpath="position"/>
+					</xsd:unique>
+					<xsd:unique name="unique-display-name">
+						<xsd:selector xpath="section/column"/>
+						<xsd:field xpath="display_name"/>
+					</xsd:unique>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+		<xsd:unique name="unique-object-type">
+			<xsd:selector xpath="object"/>
+			<xsd:field xpath="@type"/>
+		</xsd:unique>
+	</xsd:element>
+
+	<xsd:complexType name="section-columns">
+		<xsd:sequence>
+			<xsd:element name="db_column" type="db-columns"/>
+			<xsd:element name="display_name">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="100"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="description">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="1000"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="data_type" type="data-types"/>
+			<xsd:element name="position" type="xsd:integer"/>
+			<xsd:element name="summary" type="boolean"/>
+			<xsd:element name="search" type="boolean"/>
+			<xsd:element name="popup" type="boolean"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:simpleType name="object-types">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="user"/>
+			<xsd:enumeration value="user-group"/>
+			<xsd:enumeration value="host"/>
+			<xsd:enumeration value="host-group"/>
+			<xsd:enumeration value="job-group"/>
+			<xsd:enumeration value="queue"/>
+			<xsd:enumeration value="project"/>
+			<xsd:enumeration value="license-project"/>
+			<xsd:enumeration value="application"/>
+			<xsd:enumeration value="queue-group"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="data-types">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="text"/>
+			<xsd:enumeration value="url"/>
+			<xsd:enumeration value="callback"/>
+			<xsd:enumeration value="cluster_id"/>
+			<xsd:enumeration value="display_name"/>
+			<xsd:enumeration value="queue_list"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="db-columns">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="meta_col1"/>
+			<xsd:enumeration value="meta_col2"/>
+			<xsd:enumeration value="meta_col3"/>
+			<xsd:enumeration value="meta_col4"/>
+			<xsd:enumeration value="meta_col5"/>
+			<xsd:enumeration value="meta_col6"/>
+			<xsd:enumeration value="meta_col7"/>
+			<xsd:enumeration value="meta_col8"/>
+			<xsd:enumeration value="meta_col9"/>
+			<xsd:enumeration value="meta_col10"/>
+			<xsd:enumeration value="meta_col11"/>
+			<xsd:enumeration value="meta_col12"/>
+			<xsd:enumeration value="meta_col13"/>
+			<xsd:enumeration value="meta_col14"/>
+			<xsd:enumeration value="meta_col15"/>
+			<xsd:enumeration value="meta_col16"/>
+			<xsd:enumeration value="meta_col17"/>
+			<xsd:enumeration value="meta_col18"/>
+			<xsd:enumeration value="meta_col19"/>
+			<xsd:enumeration value="meta_col20"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="boolean">
+		<xsd:restriction base="xsd:integer">
+			<xsd:enumeration value="0"/>
+			<xsd:enumeration value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+</xsd:schema>

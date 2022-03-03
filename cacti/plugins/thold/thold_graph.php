@@ -1567,4 +1567,3 @@ function form_thold_log_filter() {
 	</tr>
 	<?php
 }
-

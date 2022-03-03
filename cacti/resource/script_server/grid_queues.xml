@@ -1,0 +1,53 @@
+<!-- $Id$ -->
+<interface>
+	<name>Grid Queue Information</name>
+	<script_path>|path_cacti|/scripts/ss_grid_queues.php</script_path>
+	<script_function>ss_grid_queues</script_function>
+	<script_server>php</script_server>
+	<arg_prepend>|clusterid|</arg_prepend>
+	<arg_index>index</arg_index>
+	<arg_query>query</arg_query>
+	<arg_get>get</arg_get>
+	<output_delimeter>!</output_delimeter>
+	<index_order>gridQname</index_order>
+	<index_order_type>numeric</index_order_type>
+	<index_title_format>|chosen_order_field|</index_title_format>
+
+	<fields>
+	        <gridQname>
+	                <name>Queue Name</name>
+	                <direction>input</direction>
+	                <query_name>queue</query_name>
+	        </gridQname>
+	        <gridDescr>
+	                <name>Description</name>
+	                <direction>input</direction>
+	                <query_name>description</query_name>
+	        </gridDescr>
+	        <gridPriority>
+	                <name>Queue Priority</name>
+	                <direction>input</direction>
+	                <query_name>prio</query_name>
+	        </gridPriority>
+	        <gridNumJobs>
+	                <name>Total Jobs</name>
+	                <direction>output</direction>
+	                <query_name>total</query_name>
+	        </gridNumJobs>
+	        <gridPendJobs>
+	                <name>Pending Jobs</name>
+	                <direction>output</direction>
+	                <query_name>pending</query_name>
+	        </gridPendJobs>
+	        <gridRunJobs>
+	                <name>Running Jobs</name>
+	                <direction>output</direction>
+	                <query_name>running</query_name>
+	        </gridRunJobs>
+	        <gridSuspendJobs>
+	                <name>Suspended Jobs</name>
+	                <direction>output</direction>
+	                <query_name>suspended</query_name>
+	        </gridSuspendJobs>
+	</fields>
+</interface>

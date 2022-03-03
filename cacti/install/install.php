@@ -75,7 +75,7 @@ if ($hasEverything) {
 	print Installer::sectionTitle(__('Initializing'));
 	print Installer::sectionNormal(__('Please wait while the installation system for Cacti Version %s initializes. You must have JavaScript enabled for this to work.', CACTI_VERSION));
 } else {
-	print '<div class="installErrorImage"><img src=\'../images/cacti_logo.svg\'></div>';
+	print '<div class="installErrorImage"></div>';
 	print '<div class="installErrorText">';
 	print '<p>' . __('FATAL: We are unable to continue with this installation. In order to install Cacti, PHP must be at version 5.4 or later.') . '</p>';
 	print '<ul>';
@@ -91,7 +91,7 @@ if ($hasEverything) {
 ?>
 			</div>
 			<div class='cactiInstallLoader' id='installLoader'>
-				<div class='cactiInstallLoaderLogo'><img src='../images/cacti_logo.svg' /></div>
+				<div class='cactiInstallLoaderLogo'></div>
 				<div class='cactiInstallLoaderSpinnerTheme cactiInstallLoaderSpinner'></div>
 			</div>
 		</div>

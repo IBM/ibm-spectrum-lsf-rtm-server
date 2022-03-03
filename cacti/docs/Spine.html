@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Spine</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="spine">Spine</h1>
+<p>Spine is the fast replacement for <code>cmd.php</code>. It is written in C to ensure ultimate performance for device polling. Expect a decrease in polling time of an order of magnitude. Polling times far less than 60 seconds for about 20,000 data sources are achievable e.g. on a dual XEON system supplied with 4 GB RAM and standard local disks.</p>
+<p>When using Spine, don't change crontab settings! Always use poller.php with crontab! To activate Spine instead of cmd.php, please visit Settings and select the Poller tab. Select Spine and save. Once saved, poller.php will use Spine on all subsequent polling cycles.</p>
+<p>While Spine is really fast, choosing the correct setup will ensure that all processor resources are used. Required settings for Maximum Concurrent Poller Processes are 1-2 times the number of CPU cores available for Spine.</p>
+<h6 id="table-15-1-spine-specific-execution-parameters">Table 15-1. Spine Specific Execution Parameters</h6>
+<table>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Maximum Threads per Process</td>
+<td>The maximum threads allowed per process. Using a higher number when using Spine will improve performance. Required settings are 10-15. Values above 50 are most often insane and may degrade performance</td>
+</tr>
+<tr class="even">
+<td>Number of PHP Script Servers</td>
+<td>The number of concurrent script server processes to run per Spine process. Settings between 1 and 10 are accepted. Script Servers will pre-load a PHP environment. Then, the Script Server Scripts are included into that environment to save the overhead of reloading PHP each and every time.</td>
+</tr>
+<tr class="odd">
+<td>Script and Script Server Timeout Value</td>
+<td>The maximum time that Spine will wait on a script to complete, in units of seconds. If a Script Server Script is terminated due to timeout conditions, the value entered into the RRD file will be NaN</td>
+</tr>
+<tr class="even">
+<td>The Maximum SNMP OIDs Per SNMP Get Request</td>
+<td>The maximum number of SNMP get OIDs to issue per SNMP request. Increasing this value speeds poller performance over slow links. The maximum value is 60 OIDs. Please bear in mind, that some type of devices do not accept huge OID numbers and may fail if set above 1. That's why cacti 0.8.7 allows to define this value at device level</td>
+</tr>
+</tbody>
+</table>
+<h3 id="installing-spine">Installing Spine</h3>
+<p>As Spine is written in C is must be compiled on the local system that it is to be installed on below is an example of compiling on centos and Ubuntu</p>
+<h3 id="ubuntu">Ubuntu</h3>
+<p>Install the required system packages</p>
+<pre class="console"><code>apt-get install -y build-essential dos2unix dh-autoreconf libtool help2man libssl-dev libmysql++-dev librrds-perl libsnmp-dev
+</code></pre>
+<p>Next, download the version of spine you are looking for Typically this should match the version of Cacti you are using. In this case we will download Version 1.2.3 of Spine</p>
+<pre class="console"><code>wget &lt;https://github.com/Cacti/spine/archive/release/1.2.3.zip&gt;
+unzip 1.2.3
+cd spine-release-1.2.3
+</code></pre>
+<p>Once you are in the spine directory its time to compile the poller by issuing the following commands:</p>
+<pre class="console"><code>./bootstrap
+./configure
+make
+make install
+chown root:root /usr/local/spine/bin/spine
+chmod u+s /usr/local/spine/bin/spine
+</code></pre>
+<p>Once that has completed, you will need to configure spine's config file</p>
+<pre class="console"><code>vi /usr/local/spine/etc/spine.conf
+</code></pre>
+<p>Below is an example of a configuration however yours should match your cacti database username and password</p>
+<pre class="console"><code>DB_Host       localhost
+DB_Database   cacti
+DB_User       spine
+DB_Pass       spine
+DB_Port       3306
+#DB_UseSSL    0
+#RDB_SSL_Key
+#RDB_SSL_Cert
+#RDB_SSL_CA
+</code></pre>
+<h3 id="centos">Centos</h3>
+<p>Install required system packages</p>
+<pre class="console"><code>yum install -y gcc mysql-devel net-snmp-devel autoconf automake libtool dos2unix help2man
+</code></pre>
+<p>Then compile using the folowing commands</p>
+<pre class="console"><code>./bootstrap
+./configure
+make
+make install
+chown root:root /usr/local/spine/bin/spine
+chmod u+s /usr/local/spine/bin/spine
+</code></pre>
+<hr />
+<p>Copyright (c) 2004-2020 The Cacti Group</p>
+</body>
+</html>

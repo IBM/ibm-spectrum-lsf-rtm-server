@@ -417,7 +417,7 @@ class Net_Ping
 						$errno = socket_last_error($this->socket);
 						socket_clear_error($this->socket);
 
-						if (($code == -1 || empty($code)) && 
+						if (($code == -1 || empty($code)) &&
 							($errno == EHOSTUNREACH || $errno == ECONNRESET || $errno == ECONNREFUSED)) {
 
 							/* set the return message */

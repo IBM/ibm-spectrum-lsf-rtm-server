@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: developers@cacti.net\n"
-"POT-Creation-Date: 2020-10-28 16:57-0400\n"
+"POT-Creation-Date: 2020-11-02 03:26+0000\n"
 "PO-Revision-Date: 2020-09-13 19:44-0400\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1213,7 +1213,7 @@ msgstr "Aygıtları Sil"
 #: automation_devices.php:409 automation_devices.php:419
 #: automation_devices.php:647 automation_devices.php:648 host.php:1596
 #: lib/api_automation.php:173 lib/api_automation.php:1099
-#: lib/html_utility.php:931 pollers.php:46
+#: lib/html_utility.php:939 pollers.php:46
 msgid "Down"
 msgstr "Aşağı"
 
@@ -1221,7 +1221,7 @@ msgstr "Aşağı"
 #: automation_devices.php:411 automation_devices.php:421
 #: automation_devices.php:647 automation_devices.php:648 host.php:1595
 #: lib/api_automation.php:172 lib/api_automation.php:1098
-#: lib/html_utility.php:937
+#: lib/html_utility.php:945
 msgid "Up"
 msgstr "Yukarı"
 
@@ -1559,7 +1559,7 @@ msgstr "Etkin"
 #: include/global_settings.php:1427 include/global_settings.php:1441
 #: include/global_settings.php:1501 include/global_settings.php:2146
 #: lib/api_automation.php:170 lib/api_automation.php:1096 lib/html.php:2472
-#: lib/html_reports.php:1513 lib/html_reports.php:1651 lib/html_utility.php:927
+#: lib/html_reports.php:1513 lib/html_reports.php:1651 lib/html_utility.php:935
 #: links.php:500 managers.php:243 managers.php:598 pollers.php:47
 #: user_admin.php:1164 user_domains.php:411 user_group_admin.php:697
 #: utilities.php:2377
@@ -6053,13 +6053,13 @@ msgid "Not Up"
 msgstr "Up değil"
 
 #: host.php:1597 lib/api_automation.php:174 lib/api_automation.php:1100
-#: lib/html_utility.php:934 pollers.php:48
+#: lib/html_utility.php:942 pollers.php:48
 #, fuzzy
 msgid "Recovering"
 msgstr "kurtarma"
 
 #: host.php:1598 lib/api_automation.php:175 lib/api_automation.php:1101
-#: lib/html_utility.php:943 lib/plugins.php:1086 lib/plugins.php:1087
+#: lib/html_utility.php:951 lib/plugins.php:1088 lib/plugins.php:1089
 #: lib/rrd.php:2919 lib/rrd.php:2931 user_admin.php:820 utilities.php:216
 #: utilities.php:217 utilities.php:2241
 msgid "Unknown"
@@ -7330,7 +7330,7 @@ msgid "Export Templates"
 msgstr "Şablonları Dışa Aktar"
 
 #: include/global_arrays.php:927 include/global_arrays.php:949
-#: include/global_arrays.php:967 lib/plugins.php:1041
+#: include/global_arrays.php:967 lib/plugins.php:1043
 msgid "Configuration"
 msgstr "Yapılandırma"
 
@@ -15462,32 +15462,32 @@ msgstr "Seçili"
 msgid "The regular expression \"%s\" is not valid. Error is %s"
 msgstr "&quot; %s&quot; arama terimi geçerli değil. Hata %s"
 
-#: lib/html_utility.php:884
+#: lib/html_utility.php:892
 #, fuzzy
 msgid "There was an internal error!"
 msgstr "Dahili bir hata oluştu!"
 
-#: lib/html_utility.php:885
+#: lib/html_utility.php:893
 #, fuzzy
 msgid "Backtrack limit was exhausted!"
 msgstr "Geri izleme sınırı tükendi!"
 
-#: lib/html_utility.php:886
+#: lib/html_utility.php:894
 #, fuzzy
 msgid "Recursion limit was exhausted!"
 msgstr "Özyineleme sınırı tükendi!"
 
-#: lib/html_utility.php:887
+#: lib/html_utility.php:895
 #, fuzzy
 msgid "Bad UTF-8 error!"
 msgstr "Kötü UTF-8 hatası!"
 
-#: lib/html_utility.php:888
+#: lib/html_utility.php:896
 #, fuzzy
 msgid "Bad UTF-8 offset error!"
 msgstr "Kötü UTF-8 ofset hatası!"
 
-#: lib/html_utility.php:940 lib/installer.php:1803 lib/installer.php:3533
+#: lib/html_utility.php:948 lib/installer.php:1803 lib/installer.php:3533
 msgid "Error"
 msgstr "Hata"
 
@@ -16959,21 +16959,21 @@ msgstr "%s %s için gerekli ve yüklenmemiş."
 msgid "Plugin cannot be installed."
 msgstr "Eklenti yüklenemiyor."
 
-#: lib/plugins.php:1041 lib/plugins.php:1048 plugins.php:367 plugins.php:447
+#: lib/plugins.php:1043 lib/plugins.php:1050 plugins.php:367 plugins.php:447
 msgid "Plugins"
 msgstr "Eklentiler"
 
-#: lib/plugins.php:1060 lib/plugins.php:1066
+#: lib/plugins.php:1062 lib/plugins.php:1068
 #, fuzzy, php-format
 msgid "Requires: Cacti >= %s"
 msgstr "Gerektirir: Kaktüsler&gt; = %s"
 
-#: lib/plugins.php:1063
+#: lib/plugins.php:1065
 #, fuzzy
 msgid "Legacy Plugin"
 msgstr "Eski Eklenti"
 
-#: lib/plugins.php:1088
+#: lib/plugins.php:1090
 #, fuzzy
 msgid "Not Stated"
 msgstr "Belirtilmeyen"
@@ -20940,259 +20940,259 @@ msgid "No VDEFs"
 msgstr "VDEF yok"
 
 #, fuzzy
-#~ msgid "When using Cacti with languages other than English, it is important to use the utf8_general_ci collation type as some characters take more than a single byte.  If you are first just now installing Cacti, stop, make the changes and start over again.  If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
-#~ msgstr "Cacti&#39;yi İngilizce dışındaki dillerle kullanırken, bazı karakterler tek bayttan daha fazla sürdüğü için utf8_general_ci harmanlama türünü kullanmak önemlidir. İlk önce şimdi Cacti&#39;yi yüklüyorsanız, durun, değişiklikleri yapın ve yeniden başlayın. Cacti&#39;niz çalışıyor ve yapım aşamasındaysa, diğer dilleri desteklemeyi düşünüyorsanız, veritabanlarınızı ve tablolarınızı dönüştürmeyle ilgili talimatlar için internete bakın."
-
-#, fuzzy
-#~ msgid "When using Cacti with languages other than English, it is important to use the utf8 character set as some characters take more than a single byte. If you are first just now installing Cacti, stop, make the changes and start over again. If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
-#~ msgstr "Cacti&#39;yi İngilizce dışındaki dillerle kullanırken, bazı karakterler tek bir bayttan daha fazla sürdüğü utf8 karakterini kullanmak önemlidir. İlk önce şimdi Cacti&#39;yi yüklüyorsanız, durun, değişiklikleri yapın ve yeniden başlayın. Cacti&#39;niz çalışıyor ve yapım aşamasındaysa, diğer dilleri desteklemeyi düşünüyorsanız, veritabanlarınızı ve tablolarınızı dönüştürmeyle ilgili talimatlar için internete bakın."
-
-#, fuzzy
-#~ msgid "%d Samples"
-#~ msgstr "% d Örnekler"
-
-#, fuzzy
-#~ msgid "No Task"
-#~ msgstr "Sorma"
-
-#, fuzzy
-#~ msgid "%s Standard Deviations"
-#~ msgstr "%s Standart Sapmalar"
-
-#, fuzzy
-#~ msgid "%d Outliers"
-#~ msgstr "% d Aykırı Değerler"
-
-#, fuzzy
-#~ msgid "The file holding the SSL Certificate Authority to use to connect to the remote database."
-#~ msgstr "Uzak veritabanına bağlanmak için kullanılacak SSL Sertifika Yetkilisi&#39;ni tutan dosya."
-
-#, fuzzy
-#~ msgid "Template Not Found"
-#~ msgstr "Şablon Bulunamadı"
-
-#, fuzzy
-#~ msgid "Non Templated"
-#~ msgstr "Tempuluslanmamış"
-
-#, fuzzy
-#~ msgid "The default timeshift you wish to be displayed when you display graphs"
-#~ msgstr "Grafikleri görüntülediğinizde görüntülenmesini istediğiniz varsayılan zaman kayması"
-
-#, fuzzy
-#~ msgid "Default Graph View Timeshift"
-#~ msgstr "Varsayılan Grafik Görünümü Timeshift"
-
-#, fuzzy
-#~ msgid "The default timespan you wish to be displayed when you display graphs"
-#~ msgstr "Grafikler görüntülediğinizde görüntülenmesini istediğiniz varsayılan zaman aralığı"
-
-#, fuzzy
-#~ msgid "Default Graph View Timespan"
-#~ msgstr "Varsayılan Grafik Görünümü Zaman Çizelgesi"
-
-#, fuzzy
-#~ msgid "Template [new]"
-#~ msgstr "Şablon [yeni]"
-
-#, fuzzy
-#~ msgid "Template [edit: %s]"
-#~ msgstr "Şablon [değiştir: %s]"
-
-#, fuzzy
-#~ msgid "Provide the Maintenance Schedule a meaningful name"
-#~ msgstr "Bakım Çizelgesine anlamlı bir ad verin"
-
-#, fuzzy
-#~ msgid "Debugging Data Source"
-#~ msgstr "Veri Kaynağında Hata Ayıklama"
-
-#~ msgid "New Check"
-#~ msgstr "Yeni Kontrol"
-
-#, fuzzy
-#~ msgid "Click to show Data Query output for sfield '%s'"
-#~ msgstr "Sfield &#39; %s&#39; için Veri Sorgu çıkışını göstermek için tıklayın"
-
-#, fuzzy
-#~ msgid "Data Debug"
-#~ msgstr "Veri Hata Ayıklama"
-
-#, fuzzy
-#~ msgid "Data Source Debugger [%s]"
-#~ msgstr "Veri Kaynağı Hata Ayıklayıcısı"
-
-#, fuzzy
-#~ msgid "Data Source Debugger"
-#~ msgstr "Veri Kaynağı Hata Ayıklayıcısı"
-
-#, fuzzy
-#~ msgid "Your Web Servers PHP is properly setup with a Timezone."
-#~ msgstr "Web Sunucuları PHP&#39;niz bir Zaman Dilimi ile uygun şekilde ayarlanmış."
-
-#, fuzzy
-#~ msgid "Your Web Servers PHP Timezone settings have not been set.  Please edit php.ini and uncomment the 'date.timezone' setting and set it to the Web Servers Timezone per the PHP installation instructions prior to installing Cacti."
-#~ msgstr "Web Sunucularınız PHP Zaman Dilimi ayarları yapılmadı. Lütfen php.ini dosyasını düzenleyin ve &#39;date.timezone&#39; ayarını kaldırın ve Cacti&#39;yi yüklemeden önce PHP kurulum yönergelerine göre Web Sunucuları Saat Dilimine ayarlayın."
-
-#, fuzzy
-#~ msgid "PHP - Timezone Support"
-#~ msgstr "PHP - Saat Dilimi Desteği"
-
-#, fuzzy
-#~ msgid " Poller RunAs: "
-#~ msgstr "Poller RunAs:"
-
-#, fuzzy
-#~ msgid "Data Source Troubleshooter"
-#~ msgstr "Veri Kaynağı Sorun Giderici"
-
-#, fuzzy
-#~ msgid "Does the RRA Profile match the RRDfile structure?"
-#~ msgstr "RRA Profili RRD dosya yapısıyla eşleşiyor mu?"
-
-#, fuzzy
-#~ msgid "Mailer Error: No <b>TO</b> address set!!<br>If using the <i>Test Mail</i> link, please set the <b>Alert Email</b> setting."
-#~ msgstr "Mailer Hata: set adrese <b>İÇİN</b> !! <br> <i>Posta Testi</i> bağlantısını kullanıyorsanız, lütfen <b>Uyarı e-posta</b> ayarını ayarlayın."
-
-#, fuzzy
-#~ msgid "Created Threshold: %s<br>"
-#~ msgstr "Oluşturulan grafik: %s"
-
-#, fuzzy
-#~ msgid "No Threshold(s) Created.  They either already exist, or there were not matching combinations found."
-#~ msgstr "Eşik Oluşturulmadı. Ya zaten varlar ya da eşleşen bir kombinasyon bulunamadı."
-
-#, fuzzy
-#~ msgid "No Thresholds Templates associated with the Device's Template."
-#~ msgstr "Bu Siteyle İlişkili Devlet."
-
-#, fuzzy
-#~ msgid "'%s' must be set to positive integer value!<br>RECORD NOT UPDATED!"
-#~ msgstr "' %s' pozitif tamsayı değerine ayarlanmış olmalı! <br> KAYIT GÜNCELLEME!"
-
-#, fuzzy
-#~ msgid "Created threshold: %s"
-#~ msgstr "Oluşturulan grafik: %s"
-
-#, fuzzy
-#~ msgid " What? Permission Denied"
-#~ msgstr "İzin reddedildi"
-
-#, fuzzy
-#~ msgid "Failed to find linked Graph Template Item '%d' on Threshold '%d'"
-#~ msgstr "'% D' Eşiğindeki '% d' Bağlantılı Grafik Şablonu Öğesi bulunamadı"
-
-#, fuzzy
-#~ msgid "You must specify either 'Baseline Deviation UP' or 'Baseline Deviation DOWN' or both!<br>RECORD NOT UPDATED!"
-#~ msgstr "'Temel Sapma YUKARI' veya 'Temel Sapma AŞAĞI' veya her ikisini de belirtmelisiniz! <br> KAYIT GÜNCELLEME!"
-
-#, fuzzy
-#~ msgid "With baseline thresholds enabled."
-#~ msgstr "Temel eşikler etkinken."
-
-#, fuzzy
-#~ msgid "Impossible thresholds: 'High Warning Threshold' smaller than or equal to 'Low Warning Threshold'<br>RECORD NOT UPDATED!"
-#~ msgstr "İmkansız eşikler: 'Düşük Uyarı Eşiğine' eşit veya daha küçük 'Yüksek Uyarı Eşiği' <br> KAYIT GÜNCELLEME!"
-
-#, fuzzy
-#~ msgid "Impossible thresholds: 'High Threshold' smaller than or equal to 'Low Threshold'<br>RECORD NOT UPDATED!"
-#~ msgstr "İmkansız eşikler: 'Düşük Eşik' e eşit veya daha küçük 'Yüksek Eşik' <br> KAYIT GÜNCELLEME!"
-
-#, fuzzy
-#~ msgid "You must specify either 'High Alert Threshold' or 'Low Alert Threshold' or both!<br>RECORD NOT UPDATED!"
-#~ msgstr "'Yüksek Uyarı Eşiği' veya 'Düşük Uyarı Eşiği' veya her ikisini de belirtmelisiniz! <br> KAYIT GÜNCELLEME!"
-
-#, fuzzy
-#~ msgid "Record Updated"
-#~ msgstr "Kayıt güncellendi"
-
-#, fuzzy
-#~ msgid "Threshold was Autocreated due to Device Template mapping"
-#~ msgstr "Aygıt Şablonuna Veri Sorgusu Ekleme"
-
-#, fuzzy
-#~ msgid "The Graph Creation failed for Threshold Template"
-#~ msgstr "Bu rapor öğesi için kullanılacak Grafik."
-
-#, fuzzy
-#~ msgid "The Threshold Template ID was not set while trying to create Graph and Threshold"
-#~ msgstr "Graph ve Threshold oluşturmaya çalışırken Eşik Şablonu Kimliği ayarlanmadı"
-
-#, fuzzy
-#~ msgid "The Device ID was not set while trying to create Graph and Threshold"
-#~ msgstr "Grafik ve Eşik oluşturmaya çalışırken Cihaz Kimliği ayarlanmadı"
-
-#, fuzzy
-#~ msgid "<html><body>A warning has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
-#~ msgstr "<html><body> Dikkatinizi gerektiren bir uyarı verildi. <br><br> <b>Cihaz</b> : <DESCRIPTION> ( <HOSTNAME> ) <br> <b>URL</b> : <URL><br> <b>Mesaj</b> : <SUBJECT><br><br><GRAPH></body></html>"
-
-#, fuzzy
-#~ msgid "<html><body>An alert has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
-#~ msgstr "<html><body> Dikkatinizi gerektiren bir uyarı verildi. <br><br> <b>Cihaz</b> : <DESCRIPTION> ( <HOSTNAME> ) <br> <b>URL</b> : <URL><br> <b>Mesaj</b> : <SUBJECT><br><br><GRAPH></body></html>"
-
-#, fuzzy
-#~ msgid "Link to Graph in Cacti"
-#~ msgstr "Cacti&#39;ye giriş yapın"
-
-#, fuzzy
-#~ msgid "Pages:"
-#~ msgstr "Sayfalar:"
-
-#, fuzzy
-#~ msgid "Swaps:"
-#~ msgstr "Swap:"
-
-#, fuzzy
-#~ msgid "Time:"
-#~ msgstr "Zaman"
-
-#, fuzzy
-#~ msgid "Log"
-#~ msgstr "Günlük"
-
-#, fuzzy
-#~ msgid "Thresholds"
-#~ msgstr "Konular"
-
-#, fuzzy
-#~ msgid "Non-Device"
-#~ msgstr "Sigara Cihaz"
-
-#, fuzzy
-#~ msgid "Graph Size"
-#~ msgstr "Grafik boyutu"
-
-#, fuzzy
-#~ msgid "Sort field returned no data.  Can not continue Re-Index for GET data.."
-#~ msgstr "Sıralama alanı veri döndürmedi. GET verileri için Re-Index devam edilemiyor."
-
-#, fuzzy
-#~ msgid "With modern SSD type storage, this operation actually degrades the disk more rapidly and adds a 50%% overhead on all write operations."
-#~ msgstr "Modern SSD tipi depolamayla, bu işlem diski daha hızlı bir şekilde düşürür ve tüm yazma işlemlerinde% 50 genel masraf ekler."
-
-#, fuzzy
-#~ msgid "Create Aggregate"
-#~ msgstr "Toplama Oluştur"
-
-#, fuzzy
-#~ msgid "Resize Selected Graph(s)"
-#~ msgstr "Seçilen Grafikleri Yeniden Boyutlandır"
-
-#, fuzzy
-#~ msgid "The following data sources are in use by these graphs:"
-#~ msgstr "Aşağıdaki grafikler bu grafikler tarafından kullanılmaktadır:"
-
-#~ msgid "Resize"
-#~ msgstr "Yyeniden Boyutlandırma"
-
-#, fuzzy
-#~ msgid "Legacy 1.x Plugins"
-#~ msgstr "Legacy 1.x Eklentileri"
+#~ msgid "View SNMPAgent Cache"
+#~ msgstr "SNMPAgent Önbelleğini Görüntüle"
 
 #, fuzzy
 #~ msgid "View SNMPAgent Notification Log"
 #~ msgstr "SNMPAgent Bildirim Günlüğünü Görüntüle"
 
 #, fuzzy
-#~ msgid "View SNMPAgent Cache"
-#~ msgstr "SNMPAgent Önbelleğini Görüntüle"
+#~ msgid "Legacy 1.x Plugins"
+#~ msgstr "Legacy 1.x Eklentileri"
+
+#~ msgid "Resize"
+#~ msgstr "Yyeniden Boyutlandırma"
+
+#, fuzzy
+#~ msgid "The following data sources are in use by these graphs:"
+#~ msgstr "Aşağıdaki grafikler bu grafikler tarafından kullanılmaktadır:"
+
+#, fuzzy
+#~ msgid "Resize Selected Graph(s)"
+#~ msgstr "Seçilen Grafikleri Yeniden Boyutlandır"
+
+#, fuzzy
+#~ msgid "Create Aggregate"
+#~ msgstr "Toplama Oluştur"
+
+#, fuzzy
+#~ msgid "With modern SSD type storage, this operation actually degrades the disk more rapidly and adds a 50%% overhead on all write operations."
+#~ msgstr "Modern SSD tipi depolamayla, bu işlem diski daha hızlı bir şekilde düşürür ve tüm yazma işlemlerinde% 50 genel masraf ekler."
+
+#, fuzzy
+#~ msgid "Sort field returned no data.  Can not continue Re-Index for GET data.."
+#~ msgstr "Sıralama alanı veri döndürmedi. GET verileri için Re-Index devam edilemiyor."
+
+#, fuzzy
+#~ msgid "Graph Size"
+#~ msgstr "Grafik boyutu"
+
+#, fuzzy
+#~ msgid "Non-Device"
+#~ msgstr "Sigara Cihaz"
+
+#, fuzzy
+#~ msgid "Thresholds"
+#~ msgstr "Konular"
+
+#, fuzzy
+#~ msgid "Log"
+#~ msgstr "Günlük"
+
+#, fuzzy
+#~ msgid "Time:"
+#~ msgstr "Zaman"
+
+#, fuzzy
+#~ msgid "Swaps:"
+#~ msgstr "Swap:"
+
+#, fuzzy
+#~ msgid "Pages:"
+#~ msgstr "Sayfalar:"
+
+#, fuzzy
+#~ msgid "Link to Graph in Cacti"
+#~ msgstr "Cacti&#39;ye giriş yapın"
+
+#, fuzzy
+#~ msgid "<html><body>An alert has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
+#~ msgstr "<html><body> Dikkatinizi gerektiren bir uyarı verildi. <br><br> <b>Cihaz</b> : <DESCRIPTION> ( <HOSTNAME> ) <br> <b>URL</b> : <URL><br> <b>Mesaj</b> : <SUBJECT><br><br><GRAPH></body></html>"
+
+#, fuzzy
+#~ msgid "<html><body>A warning has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
+#~ msgstr "<html><body> Dikkatinizi gerektiren bir uyarı verildi. <br><br> <b>Cihaz</b> : <DESCRIPTION> ( <HOSTNAME> ) <br> <b>URL</b> : <URL><br> <b>Mesaj</b> : <SUBJECT><br><br><GRAPH></body></html>"
+
+#, fuzzy
+#~ msgid "The Device ID was not set while trying to create Graph and Threshold"
+#~ msgstr "Grafik ve Eşik oluşturmaya çalışırken Cihaz Kimliği ayarlanmadı"
+
+#, fuzzy
+#~ msgid "The Threshold Template ID was not set while trying to create Graph and Threshold"
+#~ msgstr "Graph ve Threshold oluşturmaya çalışırken Eşik Şablonu Kimliği ayarlanmadı"
+
+#, fuzzy
+#~ msgid "The Graph Creation failed for Threshold Template"
+#~ msgstr "Bu rapor öğesi için kullanılacak Grafik."
+
+#, fuzzy
+#~ msgid "Threshold was Autocreated due to Device Template mapping"
+#~ msgstr "Aygıt Şablonuna Veri Sorgusu Ekleme"
+
+#, fuzzy
+#~ msgid "Record Updated"
+#~ msgstr "Kayıt güncellendi"
+
+#, fuzzy
+#~ msgid "You must specify either 'High Alert Threshold' or 'Low Alert Threshold' or both!<br>RECORD NOT UPDATED!"
+#~ msgstr "'Yüksek Uyarı Eşiği' veya 'Düşük Uyarı Eşiği' veya her ikisini de belirtmelisiniz! <br> KAYIT GÜNCELLEME!"
+
+#, fuzzy
+#~ msgid "Impossible thresholds: 'High Threshold' smaller than or equal to 'Low Threshold'<br>RECORD NOT UPDATED!"
+#~ msgstr "İmkansız eşikler: 'Düşük Eşik' e eşit veya daha küçük 'Yüksek Eşik' <br> KAYIT GÜNCELLEME!"
+
+#, fuzzy
+#~ msgid "Impossible thresholds: 'High Warning Threshold' smaller than or equal to 'Low Warning Threshold'<br>RECORD NOT UPDATED!"
+#~ msgstr "İmkansız eşikler: 'Düşük Uyarı Eşiğine' eşit veya daha küçük 'Yüksek Uyarı Eşiği' <br> KAYIT GÜNCELLEME!"
+
+#, fuzzy
+#~ msgid "With baseline thresholds enabled."
+#~ msgstr "Temel eşikler etkinken."
+
+#, fuzzy
+#~ msgid "You must specify either 'Baseline Deviation UP' or 'Baseline Deviation DOWN' or both!<br>RECORD NOT UPDATED!"
+#~ msgstr "'Temel Sapma YUKARI' veya 'Temel Sapma AŞAĞI' veya her ikisini de belirtmelisiniz! <br> KAYIT GÜNCELLEME!"
+
+#, fuzzy
+#~ msgid "Failed to find linked Graph Template Item '%d' on Threshold '%d'"
+#~ msgstr "'% D' Eşiğindeki '% d' Bağlantılı Grafik Şablonu Öğesi bulunamadı"
+
+#, fuzzy
+#~ msgid " What? Permission Denied"
+#~ msgstr "İzin reddedildi"
+
+#, fuzzy
+#~ msgid "Created threshold: %s"
+#~ msgstr "Oluşturulan grafik: %s"
+
+#, fuzzy
+#~ msgid "'%s' must be set to positive integer value!<br>RECORD NOT UPDATED!"
+#~ msgstr "' %s' pozitif tamsayı değerine ayarlanmış olmalı! <br> KAYIT GÜNCELLEME!"
+
+#, fuzzy
+#~ msgid "No Thresholds Templates associated with the Device's Template."
+#~ msgstr "Bu Siteyle İlişkili Devlet."
+
+#, fuzzy
+#~ msgid "No Threshold(s) Created.  They either already exist, or there were not matching combinations found."
+#~ msgstr "Eşik Oluşturulmadı. Ya zaten varlar ya da eşleşen bir kombinasyon bulunamadı."
+
+#, fuzzy
+#~ msgid "Created Threshold: %s<br>"
+#~ msgstr "Oluşturulan grafik: %s"
+
+#, fuzzy
+#~ msgid "Mailer Error: No <b>TO</b> address set!!<br>If using the <i>Test Mail</i> link, please set the <b>Alert Email</b> setting."
+#~ msgstr "Mailer Hata: set adrese <b>İÇİN</b> !! <br> <i>Posta Testi</i> bağlantısını kullanıyorsanız, lütfen <b>Uyarı e-posta</b> ayarını ayarlayın."
+
+#, fuzzy
+#~ msgid "Does the RRA Profile match the RRDfile structure?"
+#~ msgstr "RRA Profili RRD dosya yapısıyla eşleşiyor mu?"
+
+#, fuzzy
+#~ msgid "Data Source Troubleshooter"
+#~ msgstr "Veri Kaynağı Sorun Giderici"
+
+#, fuzzy
+#~ msgid " Poller RunAs: "
+#~ msgstr "Poller RunAs:"
+
+#, fuzzy
+#~ msgid "PHP - Timezone Support"
+#~ msgstr "PHP - Saat Dilimi Desteği"
+
+#, fuzzy
+#~ msgid "Your Web Servers PHP Timezone settings have not been set.  Please edit php.ini and uncomment the 'date.timezone' setting and set it to the Web Servers Timezone per the PHP installation instructions prior to installing Cacti."
+#~ msgstr "Web Sunucularınız PHP Zaman Dilimi ayarları yapılmadı. Lütfen php.ini dosyasını düzenleyin ve &#39;date.timezone&#39; ayarını kaldırın ve Cacti&#39;yi yüklemeden önce PHP kurulum yönergelerine göre Web Sunucuları Saat Dilimine ayarlayın."
+
+#, fuzzy
+#~ msgid "Your Web Servers PHP is properly setup with a Timezone."
+#~ msgstr "Web Sunucuları PHP&#39;niz bir Zaman Dilimi ile uygun şekilde ayarlanmış."
+
+#, fuzzy
+#~ msgid "Data Source Debugger"
+#~ msgstr "Veri Kaynağı Hata Ayıklayıcısı"
+
+#, fuzzy
+#~ msgid "Data Source Debugger [%s]"
+#~ msgstr "Veri Kaynağı Hata Ayıklayıcısı"
+
+#, fuzzy
+#~ msgid "Data Debug"
+#~ msgstr "Veri Hata Ayıklama"
+
+#, fuzzy
+#~ msgid "Click to show Data Query output for sfield '%s'"
+#~ msgstr "Sfield &#39; %s&#39; için Veri Sorgu çıkışını göstermek için tıklayın"
+
+#~ msgid "New Check"
+#~ msgstr "Yeni Kontrol"
+
+#, fuzzy
+#~ msgid "Debugging Data Source"
+#~ msgstr "Veri Kaynağında Hata Ayıklama"
+
+#, fuzzy
+#~ msgid "Provide the Maintenance Schedule a meaningful name"
+#~ msgstr "Bakım Çizelgesine anlamlı bir ad verin"
+
+#, fuzzy
+#~ msgid "Template [edit: %s]"
+#~ msgstr "Şablon [değiştir: %s]"
+
+#, fuzzy
+#~ msgid "Template [new]"
+#~ msgstr "Şablon [yeni]"
+
+#, fuzzy
+#~ msgid "Default Graph View Timespan"
+#~ msgstr "Varsayılan Grafik Görünümü Zaman Çizelgesi"
+
+#, fuzzy
+#~ msgid "The default timespan you wish to be displayed when you display graphs"
+#~ msgstr "Grafikler görüntülediğinizde görüntülenmesini istediğiniz varsayılan zaman aralığı"
+
+#, fuzzy
+#~ msgid "Default Graph View Timeshift"
+#~ msgstr "Varsayılan Grafik Görünümü Timeshift"
+
+#, fuzzy
+#~ msgid "The default timeshift you wish to be displayed when you display graphs"
+#~ msgstr "Grafikleri görüntülediğinizde görüntülenmesini istediğiniz varsayılan zaman kayması"
+
+#, fuzzy
+#~ msgid "Non Templated"
+#~ msgstr "Tempuluslanmamış"
+
+#, fuzzy
+#~ msgid "Template Not Found"
+#~ msgstr "Şablon Bulunamadı"
+
+#, fuzzy
+#~ msgid "The file holding the SSL Certificate Authority to use to connect to the remote database."
+#~ msgstr "Uzak veritabanına bağlanmak için kullanılacak SSL Sertifika Yetkilisi&#39;ni tutan dosya."
+
+#, fuzzy
+#~ msgid "%d Outliers"
+#~ msgstr "% d Aykırı Değerler"
+
+#, fuzzy
+#~ msgid "%s Standard Deviations"
+#~ msgstr "%s Standart Sapmalar"
+
+#, fuzzy
+#~ msgid "No Task"
+#~ msgstr "Sorma"
+
+#, fuzzy
+#~ msgid "%d Samples"
+#~ msgstr "% d Örnekler"
+
+#, fuzzy
+#~ msgid "When using Cacti with languages other than English, it is important to use the utf8 character set as some characters take more than a single byte. If you are first just now installing Cacti, stop, make the changes and start over again. If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
+#~ msgstr "Cacti&#39;yi İngilizce dışındaki dillerle kullanırken, bazı karakterler tek bir bayttan daha fazla sürdüğü utf8 karakterini kullanmak önemlidir. İlk önce şimdi Cacti&#39;yi yüklüyorsanız, durun, değişiklikleri yapın ve yeniden başlayın. Cacti&#39;niz çalışıyor ve yapım aşamasındaysa, diğer dilleri desteklemeyi düşünüyorsanız, veritabanlarınızı ve tablolarınızı dönüştürmeyle ilgili talimatlar için internete bakın."
+
+#, fuzzy
+#~ msgid "When using Cacti with languages other than English, it is important to use the utf8_general_ci collation type as some characters take more than a single byte.  If you are first just now installing Cacti, stop, make the changes and start over again.  If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
+#~ msgstr "Cacti&#39;yi İngilizce dışındaki dillerle kullanırken, bazı karakterler tek bayttan daha fazla sürdüğü için utf8_general_ci harmanlama türünü kullanmak önemlidir. İlk önce şimdi Cacti&#39;yi yüklüyorsanız, durun, değişiklikleri yapın ve yeniden başlayın. Cacti&#39;niz çalışıyor ve yapım aşamasındaysa, diğer dilleri desteklemeyi düşünüyorsanız, veritabanlarınızı ve tablolarınızı dönüştürmeyle ilgili talimatlar için internete bakın."

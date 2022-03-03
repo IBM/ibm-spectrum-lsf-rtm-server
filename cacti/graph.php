@@ -254,13 +254,13 @@ case 'view':
 				});
 		});
 		$('a[id$="_csv"]').each(function() {
-			$(this).off('click').on('click', function(event) {
-				event.preventDefault();
+	   		$(this).off('click').on('click', function(event) {
+		   		event.preventDefault();
 				event.stopPropagation();
 				document.location = $(this).attr('href');
 				Pace.stop();
 			});
-		});
+ 	   });
 	}
 
 	$(function() {

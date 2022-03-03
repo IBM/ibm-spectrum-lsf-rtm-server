@@ -1,0 +1,67 @@
+<!-- $Id$ -->
+<interface>
+	<name>Grid Applications Statistics</name>
+	<script_path>|path_cacti|/scripts/ss_grid_app_stats.php</script_path>
+	<script_function>ss_grid_app_stats</script_function>
+	<script_server>php</script_server>
+	<arg_prepend>|clusterid|</arg_prepend>
+	<arg_index>index</arg_index>
+	<arg_query>query</arg_query>
+	<arg_get>get</arg_get>
+	<output_delimeter>!</output_delimeter>
+	<index_order>appName</index_order>
+	<index_order_type>alpha</index_order_type>
+	<index_title_format>|chosen_order_field|</index_title_format>
+	<fields>
+		<appName>
+			<name>Application Name</name>
+			<direction>input</direction>
+			<query_name>appName</query_name>
+		</appName>
+		<numRUN>
+			<name>Running Jobs</name>
+			<direction>output</direction>
+			<query_name>numRUN</query_name>
+		</numRUN>
+		<numPEND>
+			<name>Pending Jobs</name>
+			<direction>output</direction>
+			<query_name>numPEND</query_name>
+		</numPEND>
+		<numJOBS>
+			<name>Total Jobs</name>
+			<direction>output</direction>
+			<query_name>numJOBS</query_name>
+		</numJOBS>
+		<efficiency>
+			<name>CPU Efficiency</name>
+			<direction>output</direction>
+			<query_name>efficiency</query_name>
+		</efficiency>
+		<avg_mem>
+			<name>Average Memory</name>
+			<direction>output</direction>
+			<query_name>avg_mem</query_name>
+		</avg_mem>
+		<max_mem>
+			<name>Maximum Memory</name>
+			<direction>output</direction>
+			<query_name>max_mem</query_name>
+		</max_mem>
+		<avg_swap>
+			<name>Average Swap</name>
+			<direction>output</direction>
+			<query_name>avg_swap</query_name>
+		</avg_swap>
+		<max_swap>
+			<name>Maximum Swap</name>
+			<direction>output</direction>
+			<query_name>max_swap</query_name>
+		</max_swap>
+		<total_cpu>
+			<name>Total CPU</name>
+			<direction>output</direction>
+			<query_name>total_cpu</query_name>
+		</total_cpu>
+	</fields>
+</interface>

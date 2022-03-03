@@ -1,0 +1,111 @@
+## $Id$
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type='text/css'>
+
+td, input, textarea {
+    font-family: Arial, Helvetica, sans-serif;
+	font-size: 1.0em;
+}
+
+table.report_table {
+	background-color:#F9F9F9;
+	align: center;
+	border:0;
+	width:100%;
+    padding: 4px;
+}
+
+td.text {
+	font-size: 1.2em !important;
+	font-weight: bold;
+    padding: 2px !important;
+    border:1px solid #B5B8C8;
+    background-color: #F9FBFB;
+}
+
+td.title, tr.title_row {
+    font-size: 1.1em;
+	font-weight: bold;
+    padding:2px;
+    border:1px solid #B5B8C8;
+    background-color: #F9FBFB;
+}
+
+.image_table {
+}
+
+.image_row {
+    padding: 2px !important;
+    border:1px solid #B5B8C8;
+    background-color: #F9FBFB;
+}
+
+.image_column {	align:center;
+}
+
+.image {
+}
+
+table.header_table {
+    background-color: #E5E9EC;
+	align: center;
+	width:100%;
+	color: #353535;
+    padding: 4px;
+}
+
+tr.header_row {
+    background-color: #F9FBFB;
+}
+
+td.header {
+    background-color: #F9FBFB;
+	font-size:1.3em;
+	font-weight: bold;
+	text-align: left;
+	padding: 5px;
+	color: #353535;
+}
+
+td.footer {
+    background-color: #F9FBFB;
+	font-size:0.8em;
+	text-align:right;
+	align:center;
+	color: #353535;
+}
+
+.tableSubHeader td strong font {
+    color: #353535 !important;
+}
+
+td.tableSubHeaderColumn {
+    background-color: #CBCBCB;
+    border-style: none solid none none;
+    border-width: medium 1px medium medium;
+    border-right-color: #CBCBCB;
+    color: #353535 !important;
+    margin: 0;
+    padding: 3px;
+    font-weight: bold;
+    vertical-align: bottom;
+}
+
+</style>
+</head>
+<body>
+<table class="header_table">
+	<tr class='header_row'>
+		<td class='header'>RTM Alert Report</td>
+	</tr>
+	<tr>
+		<td><REPORT></td>
+	</tr>
+	<tr class='header_row'>
+		<td class='footer'>&copy; Copyright International Business Machines Corp, 2005-2019.</td>
+	</tr>
+</table>
+</body>
+</html>

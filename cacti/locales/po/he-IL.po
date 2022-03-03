@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: developers@cacti.net\n"
-"POT-Creation-Date: 2020-10-28 16:57-0400\n"
+"POT-Creation-Date: 2020-11-02 03:26+0000\n"
 "PO-Revision-Date: 2020-09-13 18:27-0400\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1217,7 +1217,7 @@ msgstr "מחק מכשירים"
 #: automation_devices.php:409 automation_devices.php:419
 #: automation_devices.php:647 automation_devices.php:648 host.php:1596
 #: lib/api_automation.php:173 lib/api_automation.php:1099
-#: lib/html_utility.php:931 pollers.php:46
+#: lib/html_utility.php:939 pollers.php:46
 msgid "Down"
 msgstr "למטה"
 
@@ -1225,7 +1225,7 @@ msgstr "למטה"
 #: automation_devices.php:411 automation_devices.php:421
 #: automation_devices.php:647 automation_devices.php:648 host.php:1595
 #: lib/api_automation.php:172 lib/api_automation.php:1098
-#: lib/html_utility.php:937
+#: lib/html_utility.php:945
 msgid "Up"
 msgstr "למעלה"
 
@@ -1568,7 +1568,7 @@ msgstr "מאופשר"
 #: include/global_settings.php:1427 include/global_settings.php:1441
 #: include/global_settings.php:1501 include/global_settings.php:2146
 #: lib/api_automation.php:170 lib/api_automation.php:1096 lib/html.php:2472
-#: lib/html_reports.php:1513 lib/html_reports.php:1651 lib/html_utility.php:927
+#: lib/html_reports.php:1513 lib/html_reports.php:1651 lib/html_utility.php:935
 #: links.php:500 managers.php:243 managers.php:598 pollers.php:47
 #: user_admin.php:1164 user_domains.php:411 user_group_admin.php:697
 #: utilities.php:2377
@@ -6147,13 +6147,13 @@ msgid "Not Up"
 msgstr "לא למעלה"
 
 #: host.php:1597 lib/api_automation.php:174 lib/api_automation.php:1100
-#: lib/html_utility.php:934 pollers.php:48
+#: lib/html_utility.php:942 pollers.php:48
 #, fuzzy
 msgid "Recovering"
 msgstr "שחזור"
 
 #: host.php:1598 lib/api_automation.php:175 lib/api_automation.php:1101
-#: lib/html_utility.php:943 lib/plugins.php:1086 lib/plugins.php:1087
+#: lib/html_utility.php:951 lib/plugins.php:1088 lib/plugins.php:1089
 #: lib/rrd.php:2919 lib/rrd.php:2931 user_admin.php:820 utilities.php:216
 #: utilities.php:217 utilities.php:2241
 msgid "Unknown"
@@ -7436,7 +7436,7 @@ msgid "Export Templates"
 msgstr "תבניות ייצוא"
 
 #: include/global_arrays.php:927 include/global_arrays.php:949
-#: include/global_arrays.php:967 lib/plugins.php:1041
+#: include/global_arrays.php:967 lib/plugins.php:1043
 msgid "Configuration"
 msgstr "הגדרות תצורה"
 
@@ -15625,32 +15625,32 @@ msgstr "נבחר"
 msgid "The regular expression \"%s\" is not valid. Error is %s"
 msgstr "מונח החיפוש &quot; %s&quot; אינו חוקי. השגיאה היא %s"
 
-#: lib/html_utility.php:884
+#: lib/html_utility.php:892
 #, fuzzy
 msgid "There was an internal error!"
 msgstr "אירעה שגיאה פנימית!"
 
-#: lib/html_utility.php:885
+#: lib/html_utility.php:893
 #, fuzzy
 msgid "Backtrack limit was exhausted!"
 msgstr "גבול המגבלה היה מותש!"
 
-#: lib/html_utility.php:886
+#: lib/html_utility.php:894
 #, fuzzy
 msgid "Recursion limit was exhausted!"
 msgstr "גבול רקורסיון היה מותש!"
 
-#: lib/html_utility.php:887
+#: lib/html_utility.php:895
 #, fuzzy
 msgid "Bad UTF-8 error!"
 msgstr "שגיאת UTF-8 רעה!"
 
-#: lib/html_utility.php:888
+#: lib/html_utility.php:896
 #, fuzzy
 msgid "Bad UTF-8 offset error!"
 msgstr "שגיאת היסט לקויה של UTF-8!"
 
-#: lib/html_utility.php:940 lib/installer.php:1803 lib/installer.php:3533
+#: lib/html_utility.php:948 lib/installer.php:1803 lib/installer.php:3533
 msgid "Error"
 msgstr "שגיאה"
 
@@ -17130,21 +17130,21 @@ msgstr "%s נדרש עבור %s, והוא אינו מותקן."
 msgid "Plugin cannot be installed."
 msgstr "אין אפשרות להתקין את הפלאגין."
 
-#: lib/plugins.php:1041 lib/plugins.php:1048 plugins.php:367 plugins.php:447
+#: lib/plugins.php:1043 lib/plugins.php:1050 plugins.php:367 plugins.php:447
 msgid "Plugins"
 msgstr "תוספים"
 
-#: lib/plugins.php:1060 lib/plugins.php:1066
+#: lib/plugins.php:1062 lib/plugins.php:1068
 #, fuzzy, php-format
 msgid "Requires: Cacti >= %s"
 msgstr "דורש: Cacti&gt; = %s"
 
-#: lib/plugins.php:1063
+#: lib/plugins.php:1065
 #, fuzzy
 msgid "Legacy Plugin"
 msgstr "תוסף מדור קודם"
 
-#: lib/plugins.php:1088
+#: lib/plugins.php:1090
 #, fuzzy
 msgid "Not Stated"
 msgstr "לא צויין"
@@ -21217,47 +21217,214 @@ msgid "No VDEFs"
 msgstr "אין VDEFs"
 
 #, fuzzy
-#~ msgid "When using Cacti with languages other than English, it is important to use the utf8_general_ci collation type as some characters take more than a single byte.  If you are first just now installing Cacti, stop, make the changes and start over again.  If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
-#~ msgstr "בעת שימוש ב- Cacti עם שפות שאינן אנגלית, חשוב להשתמש בסוג utf8_general_ci איסוף כמו כמה תווים לקחת יותר מאשר בית אחד. אם אתה רק עכשיו התקנת Cacti, להפסיק, לבצע את השינויים ולהתחיל מחדש. אם Cacti שלך כבר פועל והוא בהפקה, לראות באינטרנט לקבלת הוראות על המרת מסדי הנתונים שלך ואת הטבלאות אם אתה מתכנן על תמיכה בשפות אחרות."
+#~ msgid "View SNMPAgent Cache"
+#~ msgstr "הצג מטמון SNMPAgent"
 
 #, fuzzy
-#~ msgid "When using Cacti with languages other than English, it is important to use the utf8 character set as some characters take more than a single byte. If you are first just now installing Cacti, stop, make the changes and start over again. If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
-#~ msgstr "בעת שימוש Cacti עם שפות אחרות מאשר אנגלית, חשוב להשתמש אופי utf8 להגדיר כמו תווים מסוימים לקחת יותר מאשר בתים בודדים. אם אתה רק עכשיו התקנת Cacti, להפסיק, לבצע את השינויים ולהתחיל מחדש. אם Cacti שלך כבר פועל והוא בהפקה, לראות באינטרנט לקבלת הוראות על המרת מסדי הנתונים שלך ואת הטבלאות אם אתה מתכנן על תמיכה בשפות אחרות."
+#~ msgid "View SNMPAgent Notification Log"
+#~ msgstr "הצג יומן הודעות SNMPAgent"
 
 #, fuzzy
-#~ msgid "%d Samples"
-#~ msgstr "% d דוגמאות"
+#~ msgid "Legacy 1.x Plugins"
+#~ msgstr "מורשת תוספים 1.x"
+
+#~ msgid "Resize"
+#~ msgstr "Resize"
 
 #, fuzzy
-#~ msgid "No Task"
-#~ msgstr "אין משימה"
+#~ msgid "The following data sources are in use by these graphs:"
+#~ msgstr "מקורות הנתונים הבאים נמצאים בשימוש על ידי תרשימים אלה:"
 
 #, fuzzy
-#~ msgid "%s Standard Deviations"
-#~ msgstr "%s סטיות תקן"
+#~ msgid "Resize Selected Graph(s)"
+#~ msgstr "שינוי גודל של גרפים נבחרים"
 
 #, fuzzy
-#~ msgid "%d Outliers"
-#~ msgstr "% d Outliers"
+#~ msgid "Create Aggregate"
+#~ msgstr "צור צבירה"
 
 #, fuzzy
-#~ msgid "The file holding the SSL Certificate Authority to use to connect to the remote database."
-#~ msgstr "הקובץ המחזיק ברשות אישור SSL לשימוש כדי להתחבר למסד הנתונים המרוחק."
+#~ msgid "With modern SSD type storage, this operation actually degrades the disk more rapidly and adds a 50%% overhead on all write operations."
+#~ msgstr "עם אחסון מסוג SSD מודרני, פעולה זו למעשה מבזה את הדיסק מהר יותר ומוסיף תקורה 50 %% על כל פעולות לכתוב."
 
 #, fuzzy
-#~ msgid "Template Not Found"
-#~ msgstr "תבנית לא נמצאה"
+#~ msgid "Sort field returned no data.  Can not continue Re-Index for GET data.."
+#~ msgstr "שדה מיון לא החזיר נתונים. לא ניתן להמשיך בהדפסה מחדש עבור נתוני GET .."
 
 #, fuzzy
-#~ msgid "Non Templated"
-#~ msgstr "לא מתבנית"
+#~ msgid "Graph Size"
+#~ msgstr "גודל גרף"
 
 #, fuzzy
-#~ msgid "The default timeshift you wish to be displayed when you display graphs"
-#~ msgstr "שעון הזמן המוגדר כברירת מחדל שברצונך להציג בעת הצגת תרשימים"
+#~ msgid "Non-Device"
+#~ msgstr "ללא מכשיר"
 
 #, fuzzy
-#~ msgid "Default Graph View Timeshift"
+#~ msgid "Thresholds"
+#~ msgstr "ליכי"
+
+#, fuzzy
+#~ msgid "Log"
+#~ msgstr "יומן"
+
+#, fuzzy
+#~ msgid "Time:"
+#~ msgstr "זמן"
+
+#, fuzzy
+#~ msgid "Swaps:"
+#~ msgstr "החלפות:"
+
+#, fuzzy
+#~ msgid "Pages:"
+#~ msgstr "עמודים:"
+
+#, fuzzy
+#~ msgid "Link to Graph in Cacti"
+#~ msgstr "כניסה ל Cacti"
+
+#, fuzzy
+#~ msgid "<html><body>An alert has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
+#~ msgstr "<html><body style=\";text-align:right;direction:rtl\"> הוצגה התראה המחייבת את תשומת לבך. <br><br> <b>Device</b> : <DESCRIPTION> ( <HOSTNAME> ) <br> <b>כתובת אתר</b> : <URL><br> <b>הודעה</b> : <SUBJECT><br><br><GRAPH></body></html>"
+
+#, fuzzy
+#~ msgid "<html><body>A warning has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
+#~ msgstr "<html><body style=\";text-align:right;direction:rtl\"> הוצא אזהרה הדורשת את תשומת לבך. <br><br> <b>Device</b> : <DESCRIPTION> ( <HOSTNAME> ) <br> <b>כתובת אתר</b> : <URL><br> <b>הודעה</b> : <SUBJECT><br><br><GRAPH></body></html>"
+
+#, fuzzy
+#~ msgid "The Device ID was not set while trying to create Graph and Threshold"
+#~ msgstr "מזהה המכשיר לא הוגדר בעת ניסיון ליצור תרשים וסף"
+
+#, fuzzy
+#~ msgid "The Threshold Template ID was not set while trying to create Graph and Threshold"
+#~ msgstr "המזהה של תבנית הסף לא הוגדר בעת ניסיון ליצור תרשים וסף"
+
+#, fuzzy
+#~ msgid "The Graph Creation failed for Threshold Template"
+#~ msgstr "התרשים לשימוש עבור דוח זה."
+
+#, fuzzy
+#~ msgid "Threshold was Autocreated due to Device Template mapping"
+#~ msgstr "הוסף שאילתת נתונים לתבנית מכשיר"
+
+#, fuzzy
+#~ msgid "Record Updated"
+#~ msgstr "RRD עודכן"
+
+#, fuzzy
+#~ msgid "You must specify either 'High Alert Threshold' or 'Low Alert Threshold' or both!<br>RECORD NOT UPDATED!"
+#~ msgstr "עליך לציין 'סף התראה גבוהה' או 'סף התראה נמוכה' או שניהם! <br> הרשומה לא עודכנה!"
+
+#, fuzzy
+#~ msgid "Impossible thresholds: 'High Threshold' smaller than or equal to 'Low Threshold'<br>RECORD NOT UPDATED!"
+#~ msgstr "סף בלתי אפשרי: 'סף גבוה' קטן או שווה ל'סף נמוך ' <br> הרשומה לא עודכנה!"
+
+#, fuzzy
+#~ msgid "Impossible thresholds: 'High Warning Threshold' smaller than or equal to 'Low Warning Threshold'<br>RECORD NOT UPDATED!"
+#~ msgstr "סף בלתי אפשרי: 'סף אזהרה גבוה' קטן או שווה ל 'סף אזהרה נמוך' <br> הרשומה לא עודכנה!"
+
+#, fuzzy
+#~ msgid "With baseline thresholds enabled."
+#~ msgstr "עם סף בסיס מופעלת."
+
+#, fuzzy
+#~ msgid "You must specify either 'Baseline Deviation UP' or 'Baseline Deviation DOWN' or both!<br>RECORD NOT UPDATED!"
+#~ msgstr "אתה חייב לציין או 'Baseline deviation UP' או 'Baseline Stiation DOWN' או שניהם! <br> הרשומה לא עודכנה!"
+
+#, fuzzy
+#~ msgid "Failed to find linked Graph Template Item '%d' on Threshold '%d'"
+#~ msgstr "הפריט 'תבנית' גרף מקושר '% d' לא נמצא על 'סף'% d '"
+
+#, fuzzy
+#~ msgid " What? Permission Denied"
+#~ msgstr "ההרשאה נדחתה"
+
+#, fuzzy
+#~ msgid "Created threshold: %s"
+#~ msgstr "גרף שנוצר: %s"
+
+#, fuzzy
+#~ msgid "'%s' must be set to positive integer value!<br>RECORD NOT UPDATED!"
+#~ msgstr "' %s' חייב להיות מוגדר ערך שלם חיובי! <br> הרשומה לא עודכנה!"
+
+#, fuzzy
+#~ msgid "No Thresholds Templates associated with the Device's Template."
+#~ msgstr "המדינה המשויכת לאתר זה."
+
+#, fuzzy
+#~ msgid "No Threshold(s) Created.  They either already exist, or there were not matching combinations found."
+#~ msgstr "לא נוצר סף. הם כבר קיימים, או שלא נמצאו שילובים תואמים."
+
+#, fuzzy
+#~ msgid "Created Threshold: %s<br>"
+#~ msgstr "גרף שנוצר: %s"
+
+#, fuzzy
+#~ msgid "Mailer Error: No <b>TO</b> address set!!<br>If using the <i>Test Mail</i> link, please set the <b>Alert Email</b> setting."
+#~ msgstr "שגיאת מיילר: לא כתובת <b>TO</b> מוגדר! <br> אם אתה משתמש בקישור <i>Test Mail (דואר בדיקה)</i> , הגדר את הגדרת <b>הדואר האלקטרוני של ההתראה</b> ."
+
+#, fuzzy
+#~ msgid "Does the RRA Profile match the RRDfile structure?"
+#~ msgstr "האם פרופיל ה- RRA מתאים למבנה RRDfile?"
+
+#, fuzzy
+#~ msgid "Data Source Troubleshooter"
+#~ msgstr "פותר בעיות מקור הנתונים"
+
+#, fuzzy
+#~ msgid " Poller RunAs: "
+#~ msgstr "פולר רונאס:"
+
+#, fuzzy
+#~ msgid "PHP - Timezone Support"
+#~ msgstr "PHP - תמיכה אזור זמן"
+
+#, fuzzy
+#~ msgid "Your Web Servers PHP Timezone settings have not been set.  Please edit php.ini and uncomment the 'date.timezone' setting and set it to the Web Servers Timezone per the PHP installation instructions prior to installing Cacti."
+#~ msgstr "שרתי האינטרנט שלך הגדרות אזור הזמן של PHP לא הוגדרו. ערוך את php.ini ובטל את ההגדרה &#39;date.timezone&#39; והגדר אותו לאזור הזמן של שרתי האינטרנט לפי הוראות ההתקנה של PHP לפני התקנת Cacti."
+
+#, fuzzy
+#~ msgid "Your Web Servers PHP is properly setup with a Timezone."
+#~ msgstr "שרתי האינטרנט שלך PHP מוגדר כראוי עם אזור זמן."
+
+#, fuzzy
+#~ msgid "Data Source Debugger"
+#~ msgstr "מאתר הבאגים של מקור הנתונים"
+
+#, fuzzy
+#~ msgid "Data Source Debugger [%s]"
+#~ msgstr "מאתר הבאגים של מקור הנתונים"
+
+#, fuzzy
+#~ msgid "Data Debug"
+#~ msgstr "ניפוי נתונים"
+
+#, fuzzy
+#~ msgid "Click to show Data Query output for sfield '%s'"
+#~ msgstr "לחץ כדי להציג פלט שאילתת נתונים עבור sfield &#39; %s&#39;"
+
+#, fuzzy
+#~ msgid "New Check"
+#~ msgstr "בדיקה חדשה"
+
+#, fuzzy
+#~ msgid "Debugging Data Source"
+#~ msgstr "ניפוי מקור נתונים"
+
+#, fuzzy
+#~ msgid "Provide the Maintenance Schedule a meaningful name"
+#~ msgstr "לספק את תזמון תחזוקה שם משמעותי"
+
+#, fuzzy
+#~ msgid "Template [edit: %s]"
+#~ msgstr "תבנית [עריכה: %s]"
+
+#, fuzzy
+#~ msgid "Template [new]"
+#~ msgstr "תבנית [חדש]"
+
+#, fuzzy
+#~ msgid "Default Graph View Timespan"
 #~ msgstr "תצוגת גרף ברירת מחדל"
 
 #, fuzzy
@@ -21265,212 +21432,45 @@ msgstr "אין VDEFs"
 #~ msgstr "לוח הזמנים המוגדר כברירת מחדל שברצונך להציג בעת הצגת תרשימים"
 
 #, fuzzy
-#~ msgid "Default Graph View Timespan"
+#~ msgid "Default Graph View Timeshift"
 #~ msgstr "תצוגת גרף ברירת מחדל"
 
 #, fuzzy
-#~ msgid "Template [new]"
-#~ msgstr "תבנית [חדש]"
+#~ msgid "The default timeshift you wish to be displayed when you display graphs"
+#~ msgstr "שעון הזמן המוגדר כברירת מחדל שברצונך להציג בעת הצגת תרשימים"
 
 #, fuzzy
-#~ msgid "Template [edit: %s]"
-#~ msgstr "תבנית [עריכה: %s]"
+#~ msgid "Non Templated"
+#~ msgstr "לא מתבנית"
 
 #, fuzzy
-#~ msgid "Provide the Maintenance Schedule a meaningful name"
-#~ msgstr "לספק את תזמון תחזוקה שם משמעותי"
+#~ msgid "Template Not Found"
+#~ msgstr "תבנית לא נמצאה"
 
 #, fuzzy
-#~ msgid "Debugging Data Source"
-#~ msgstr "ניפוי מקור נתונים"
+#~ msgid "The file holding the SSL Certificate Authority to use to connect to the remote database."
+#~ msgstr "הקובץ המחזיק ברשות אישור SSL לשימוש כדי להתחבר למסד הנתונים המרוחק."
 
 #, fuzzy
-#~ msgid "New Check"
-#~ msgstr "בדיקה חדשה"
+#~ msgid "%d Outliers"
+#~ msgstr "% d Outliers"
 
 #, fuzzy
-#~ msgid "Click to show Data Query output for sfield '%s'"
-#~ msgstr "לחץ כדי להציג פלט שאילתת נתונים עבור sfield &#39; %s&#39;"
+#~ msgid "%s Standard Deviations"
+#~ msgstr "%s סטיות תקן"
 
 #, fuzzy
-#~ msgid "Data Debug"
-#~ msgstr "ניפוי נתונים"
+#~ msgid "No Task"
+#~ msgstr "אין משימה"
 
 #, fuzzy
-#~ msgid "Data Source Debugger [%s]"
-#~ msgstr "מאתר הבאגים של מקור הנתונים"
+#~ msgid "%d Samples"
+#~ msgstr "% d דוגמאות"
 
 #, fuzzy
-#~ msgid "Data Source Debugger"
-#~ msgstr "מאתר הבאגים של מקור הנתונים"
+#~ msgid "When using Cacti with languages other than English, it is important to use the utf8 character set as some characters take more than a single byte. If you are first just now installing Cacti, stop, make the changes and start over again. If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
+#~ msgstr "בעת שימוש Cacti עם שפות אחרות מאשר אנגלית, חשוב להשתמש אופי utf8 להגדיר כמו תווים מסוימים לקחת יותר מאשר בתים בודדים. אם אתה רק עכשיו התקנת Cacti, להפסיק, לבצע את השינויים ולהתחיל מחדש. אם Cacti שלך כבר פועל והוא בהפקה, לראות באינטרנט לקבלת הוראות על המרת מסדי הנתונים שלך ואת הטבלאות אם אתה מתכנן על תמיכה בשפות אחרות."
 
 #, fuzzy
-#~ msgid "Your Web Servers PHP is properly setup with a Timezone."
-#~ msgstr "שרתי האינטרנט שלך PHP מוגדר כראוי עם אזור זמן."
-
-#, fuzzy
-#~ msgid "Your Web Servers PHP Timezone settings have not been set.  Please edit php.ini and uncomment the 'date.timezone' setting and set it to the Web Servers Timezone per the PHP installation instructions prior to installing Cacti."
-#~ msgstr "שרתי האינטרנט שלך הגדרות אזור הזמן של PHP לא הוגדרו. ערוך את php.ini ובטל את ההגדרה &#39;date.timezone&#39; והגדר אותו לאזור הזמן של שרתי האינטרנט לפי הוראות ההתקנה של PHP לפני התקנת Cacti."
-
-#, fuzzy
-#~ msgid "PHP - Timezone Support"
-#~ msgstr "PHP - תמיכה אזור זמן"
-
-#, fuzzy
-#~ msgid " Poller RunAs: "
-#~ msgstr "פולר רונאס:"
-
-#, fuzzy
-#~ msgid "Data Source Troubleshooter"
-#~ msgstr "פותר בעיות מקור הנתונים"
-
-#, fuzzy
-#~ msgid "Does the RRA Profile match the RRDfile structure?"
-#~ msgstr "האם פרופיל ה- RRA מתאים למבנה RRDfile?"
-
-#, fuzzy
-#~ msgid "Mailer Error: No <b>TO</b> address set!!<br>If using the <i>Test Mail</i> link, please set the <b>Alert Email</b> setting."
-#~ msgstr "שגיאת מיילר: לא כתובת <b>TO</b> מוגדר! <br> אם אתה משתמש בקישור <i>Test Mail (דואר בדיקה)</i> , הגדר את הגדרת <b>הדואר האלקטרוני של ההתראה</b> ."
-
-#, fuzzy
-#~ msgid "Created Threshold: %s<br>"
-#~ msgstr "גרף שנוצר: %s"
-
-#, fuzzy
-#~ msgid "No Threshold(s) Created.  They either already exist, or there were not matching combinations found."
-#~ msgstr "לא נוצר סף. הם כבר קיימים, או שלא נמצאו שילובים תואמים."
-
-#, fuzzy
-#~ msgid "No Thresholds Templates associated with the Device's Template."
-#~ msgstr "המדינה המשויכת לאתר זה."
-
-#, fuzzy
-#~ msgid "'%s' must be set to positive integer value!<br>RECORD NOT UPDATED!"
-#~ msgstr "' %s' חייב להיות מוגדר ערך שלם חיובי! <br> הרשומה לא עודכנה!"
-
-#, fuzzy
-#~ msgid "Created threshold: %s"
-#~ msgstr "גרף שנוצר: %s"
-
-#, fuzzy
-#~ msgid " What? Permission Denied"
-#~ msgstr "ההרשאה נדחתה"
-
-#, fuzzy
-#~ msgid "Failed to find linked Graph Template Item '%d' on Threshold '%d'"
-#~ msgstr "הפריט 'תבנית' גרף מקושר '% d' לא נמצא על 'סף'% d '"
-
-#, fuzzy
-#~ msgid "You must specify either 'Baseline Deviation UP' or 'Baseline Deviation DOWN' or both!<br>RECORD NOT UPDATED!"
-#~ msgstr "אתה חייב לציין או 'Baseline deviation UP' או 'Baseline Stiation DOWN' או שניהם! <br> הרשומה לא עודכנה!"
-
-#, fuzzy
-#~ msgid "With baseline thresholds enabled."
-#~ msgstr "עם סף בסיס מופעלת."
-
-#, fuzzy
-#~ msgid "Impossible thresholds: 'High Warning Threshold' smaller than or equal to 'Low Warning Threshold'<br>RECORD NOT UPDATED!"
-#~ msgstr "סף בלתי אפשרי: 'סף אזהרה גבוה' קטן או שווה ל 'סף אזהרה נמוך' <br> הרשומה לא עודכנה!"
-
-#, fuzzy
-#~ msgid "Impossible thresholds: 'High Threshold' smaller than or equal to 'Low Threshold'<br>RECORD NOT UPDATED!"
-#~ msgstr "סף בלתי אפשרי: 'סף גבוה' קטן או שווה ל'סף נמוך ' <br> הרשומה לא עודכנה!"
-
-#, fuzzy
-#~ msgid "You must specify either 'High Alert Threshold' or 'Low Alert Threshold' or both!<br>RECORD NOT UPDATED!"
-#~ msgstr "עליך לציין 'סף התראה גבוהה' או 'סף התראה נמוכה' או שניהם! <br> הרשומה לא עודכנה!"
-
-#, fuzzy
-#~ msgid "Record Updated"
-#~ msgstr "RRD עודכן"
-
-#, fuzzy
-#~ msgid "Threshold was Autocreated due to Device Template mapping"
-#~ msgstr "הוסף שאילתת נתונים לתבנית מכשיר"
-
-#, fuzzy
-#~ msgid "The Graph Creation failed for Threshold Template"
-#~ msgstr "התרשים לשימוש עבור דוח זה."
-
-#, fuzzy
-#~ msgid "The Threshold Template ID was not set while trying to create Graph and Threshold"
-#~ msgstr "המזהה של תבנית הסף לא הוגדר בעת ניסיון ליצור תרשים וסף"
-
-#, fuzzy
-#~ msgid "The Device ID was not set while trying to create Graph and Threshold"
-#~ msgstr "מזהה המכשיר לא הוגדר בעת ניסיון ליצור תרשים וסף"
-
-#, fuzzy
-#~ msgid "<html><body>A warning has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
-#~ msgstr "<html><body style=\";text-align:right;direction:rtl\"> הוצא אזהרה הדורשת את תשומת לבך. <br><br> <b>Device</b> : <DESCRIPTION> ( <HOSTNAME> ) <br> <b>כתובת אתר</b> : <URL><br> <b>הודעה</b> : <SUBJECT><br><br><GRAPH></body></html>"
-
-#, fuzzy
-#~ msgid "<html><body>An alert has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
-#~ msgstr "<html><body style=\";text-align:right;direction:rtl\"> הוצגה התראה המחייבת את תשומת לבך. <br><br> <b>Device</b> : <DESCRIPTION> ( <HOSTNAME> ) <br> <b>כתובת אתר</b> : <URL><br> <b>הודעה</b> : <SUBJECT><br><br><GRAPH></body></html>"
-
-#, fuzzy
-#~ msgid "Link to Graph in Cacti"
-#~ msgstr "כניסה ל Cacti"
-
-#, fuzzy
-#~ msgid "Pages:"
-#~ msgstr "עמודים:"
-
-#, fuzzy
-#~ msgid "Swaps:"
-#~ msgstr "החלפות:"
-
-#, fuzzy
-#~ msgid "Time:"
-#~ msgstr "זמן"
-
-#, fuzzy
-#~ msgid "Log"
-#~ msgstr "יומן"
-
-#, fuzzy
-#~ msgid "Thresholds"
-#~ msgstr "ליכי"
-
-#, fuzzy
-#~ msgid "Non-Device"
-#~ msgstr "ללא מכשיר"
-
-#, fuzzy
-#~ msgid "Graph Size"
-#~ msgstr "גודל גרף"
-
-#, fuzzy
-#~ msgid "Sort field returned no data.  Can not continue Re-Index for GET data.."
-#~ msgstr "שדה מיון לא החזיר נתונים. לא ניתן להמשיך בהדפסה מחדש עבור נתוני GET .."
-
-#, fuzzy
-#~ msgid "With modern SSD type storage, this operation actually degrades the disk more rapidly and adds a 50%% overhead on all write operations."
-#~ msgstr "עם אחסון מסוג SSD מודרני, פעולה זו למעשה מבזה את הדיסק מהר יותר ומוסיף תקורה 50 %% על כל פעולות לכתוב."
-
-#, fuzzy
-#~ msgid "Create Aggregate"
-#~ msgstr "צור צבירה"
-
-#, fuzzy
-#~ msgid "Resize Selected Graph(s)"
-#~ msgstr "שינוי גודל של גרפים נבחרים"
-
-#, fuzzy
-#~ msgid "The following data sources are in use by these graphs:"
-#~ msgstr "מקורות הנתונים הבאים נמצאים בשימוש על ידי תרשימים אלה:"
-
-#~ msgid "Resize"
-#~ msgstr "Resize"
-
-#, fuzzy
-#~ msgid "Legacy 1.x Plugins"
-#~ msgstr "מורשת תוספים 1.x"
-
-#, fuzzy
-#~ msgid "View SNMPAgent Notification Log"
-#~ msgstr "הצג יומן הודעות SNMPAgent"
-
-#, fuzzy
-#~ msgid "View SNMPAgent Cache"
-#~ msgstr "הצג מטמון SNMPAgent"
+#~ msgid "When using Cacti with languages other than English, it is important to use the utf8_general_ci collation type as some characters take more than a single byte.  If you are first just now installing Cacti, stop, make the changes and start over again.  If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
+#~ msgstr "בעת שימוש ב- Cacti עם שפות שאינן אנגלית, חשוב להשתמש בסוג utf8_general_ci איסוף כמו כמה תווים לקחת יותר מאשר בית אחד. אם אתה רק עכשיו התקנת Cacti, להפסיק, לבצע את השינויים ולהתחיל מחדש. אם Cacti שלך כבר פועל והוא בהפקה, לראות באינטרנט לקבלת הוראות על המרת מסדי הנתונים שלך ואת הטבלאות אם אתה מתכנן על תמיכה בשפות אחרות."

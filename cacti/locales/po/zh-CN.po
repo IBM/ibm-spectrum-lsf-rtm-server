@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Cacti Chinese Language File\n"
 "Report-Msgid-Bugs-To: developers@cacti.net\n"
-"POT-Creation-Date: 2020-10-28 16:57-0400\n"
+"POT-Creation-Date: 2020-11-02 03:26+0000\n"
 "PO-Revision-Date: 2020-09-13 19:52-0400\n"
 "Last-Translator: tomcat <luis_126@126.com>\n"
 "Language-Team: Chinese (Simplified) <http://translate.cacti.net/projects/cacti/core/zh-CN/>\n"
@@ -1117,7 +1117,7 @@ msgstr "删除图形(s)"
 #: automation_devices.php:409 automation_devices.php:419
 #: automation_devices.php:647 automation_devices.php:648 host.php:1596
 #: lib/api_automation.php:173 lib/api_automation.php:1099
-#: lib/html_utility.php:931 pollers.php:46
+#: lib/html_utility.php:939 pollers.php:46
 msgid "Down"
 msgstr "Down"
 
@@ -1125,7 +1125,7 @@ msgstr "Down"
 #: automation_devices.php:411 automation_devices.php:421
 #: automation_devices.php:647 automation_devices.php:648 host.php:1595
 #: lib/api_automation.php:172 lib/api_automation.php:1098
-#: lib/html_utility.php:937
+#: lib/html_utility.php:945
 msgid "Up"
 msgstr "Up"
 
@@ -1436,7 +1436,7 @@ msgstr "启用"
 #: include/global_settings.php:1427 include/global_settings.php:1441
 #: include/global_settings.php:1501 include/global_settings.php:2146
 #: lib/api_automation.php:170 lib/api_automation.php:1096 lib/html.php:2472
-#: lib/html_reports.php:1513 lib/html_reports.php:1651 lib/html_utility.php:927
+#: lib/html_reports.php:1513 lib/html_reports.php:1651 lib/html_utility.php:935
 #: links.php:500 managers.php:243 managers.php:598 pollers.php:47
 #: user_admin.php:1164 user_domains.php:411 user_group_admin.php:697
 #: utilities.php:2377
@@ -5343,12 +5343,12 @@ msgid "Not Up"
 msgstr "Not UP"
 
 #: host.php:1597 lib/api_automation.php:174 lib/api_automation.php:1100
-#: lib/html_utility.php:934 pollers.php:48
+#: lib/html_utility.php:942 pollers.php:48
 msgid "Recovering"
 msgstr "恢复中"
 
 #: host.php:1598 lib/api_automation.php:175 lib/api_automation.php:1101
-#: lib/html_utility.php:943 lib/plugins.php:1086 lib/plugins.php:1087
+#: lib/html_utility.php:951 lib/plugins.php:1088 lib/plugins.php:1089
 #: lib/rrd.php:2919 lib/rrd.php:2931 user_admin.php:820 utilities.php:216
 #: utilities.php:217 utilities.php:2241
 msgid "Unknown"
@@ -6442,7 +6442,7 @@ msgid "Export Templates"
 msgstr "导出模板"
 
 #: include/global_arrays.php:927 include/global_arrays.php:949
-#: include/global_arrays.php:967 lib/plugins.php:1041
+#: include/global_arrays.php:967 lib/plugins.php:1043
 msgid "Configuration"
 msgstr "系统配置"
 
@@ -13521,27 +13521,27 @@ msgstr "选"
 msgid "The regular expression \"%s\" is not valid. Error is %s"
 msgstr "搜索字词 \"%s\"无效. 错误是%s"
 
-#: lib/html_utility.php:884
+#: lib/html_utility.php:892
 msgid "There was an internal error!"
 msgstr "发生内部错误!"
 
-#: lib/html_utility.php:885
+#: lib/html_utility.php:893
 msgid "Backtrack limit was exhausted!"
 msgstr "回溯极限已经耗尽!"
 
-#: lib/html_utility.php:886
+#: lib/html_utility.php:894
 msgid "Recursion limit was exhausted!"
 msgstr "递归极限已经耗尽!"
 
-#: lib/html_utility.php:887
+#: lib/html_utility.php:895
 msgid "Bad UTF-8 error!"
 msgstr "UTF-8 错误!"
 
-#: lib/html_utility.php:888
+#: lib/html_utility.php:896
 msgid "Bad UTF-8 offset error!"
 msgstr "UTF-8 偏移错误!"
 
-#: lib/html_utility.php:940 lib/installer.php:1803 lib/installer.php:3533
+#: lib/html_utility.php:948 lib/installer.php:1803 lib/installer.php:3533
 msgid "Error"
 msgstr "错误"
 
@@ -14877,20 +14877,20 @@ msgstr "%s 是必需的, 且未安装."
 msgid "Plugin cannot be installed."
 msgstr "插件无法安装."
 
-#: lib/plugins.php:1041 lib/plugins.php:1048 plugins.php:367 plugins.php:447
+#: lib/plugins.php:1043 lib/plugins.php:1050 plugins.php:367 plugins.php:447
 msgid "Plugins"
 msgstr "插件"
 
-#: lib/plugins.php:1060 lib/plugins.php:1066
+#: lib/plugins.php:1062 lib/plugins.php:1068
 #, php-format
 msgid "Requires: Cacti >= %s"
 msgstr "需要:Cacti >= %s"
 
-#: lib/plugins.php:1063
+#: lib/plugins.php:1065
 msgid "Legacy Plugin"
 msgstr "旧版插件"
 
-#: lib/plugins.php:1088
+#: lib/plugins.php:1090
 msgid "Not Stated"
 msgstr "没有说明"
 
@@ -18323,182 +18323,182 @@ msgstr "使用此VDEF 的图形模板的数量."
 msgid "No VDEFs"
 msgstr "没有VDEF"
 
-#~ msgid "When using Cacti with languages other than English, it is important to use the utf8_general_ci collation type as some characters take more than a single byte.  If you are first just now installing Cacti, stop, make the changes and start over again.  If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
-#~ msgstr "当Cacti 用于非英语的其它语言环境时,数据库使用utf8_general_ci 排序规则非常重要,因为某些字符的值不止一个字节.如果您是第一次安装Cacti, 请立即停止,并对数据库排序规则进行修改,再重新安装Cacti.如果您的Cacti 已经运行并且已投入生产,如需支持其他语言,请参考互联网上的有关说明,转换数据库和表的排序规则."
+#~ msgid "View SNMPAgent Cache"
+#~ msgstr "查看SNMPAgent 缓存"
 
-#~ msgid "When using Cacti with languages other than English, it is important to use the utf8 character set as some characters take more than a single byte. If you are first just now installing Cacti, stop, make the changes and start over again. If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
-#~ msgstr "当Cacti 用于非英语的其它语言环境时,数据库使用utf8_general_ci 排序规则非常重要,因为某些字符的值不止一个字节.如果您是第一次安装Cacti, 请立即停止,并对数据库排序规则进行修改,再重新安装Cacti.如果您的Cacti 已经运行并且已投入生产,如需支持其他语言,请参考互联网上的有关说明,转换数据库和表的排序规则."
+#~ msgid "View SNMPAgent Notification Log"
+#~ msgstr "查看SNMPAgent 通知日志"
 
-#~ msgid "%d Samples"
-#~ msgstr "%d 个样品"
+#~ msgid "Legacy 1.x Plugins"
+#~ msgstr "Legacy 1.x 插件"
 
-#~ msgid "No Task"
-#~ msgstr "没有任务"
+#~ msgid "Resize"
+#~ msgstr "调整"
 
-#~ msgid "%s Standard Deviations"
-#~ msgstr "%s 个标准偏差"
+#~ msgid "The following data sources are in use by these graphs:"
+#~ msgstr "以下数据源正在被这些图形使用:"
 
-#~ msgid "%d Outliers"
-#~ msgstr "%d 个异常值"
+#~ msgid "Resize Selected Graph(s)"
+#~ msgstr "调整所选图形的大小"
 
-#, fuzzy
-#~ msgid "The file holding the SSL Certificate Authority to use to connect to the remote database."
-#~ msgstr "包含SSL 证书颁发机构的文件,用于连接到远程数据库."
-
-#~ msgid "Your Web Servers PHP is properly setup with a Timezone."
-#~ msgstr "您的Web 服务器PHP 使用时区正确设置."
-
-#~ msgid "Your Web Servers PHP Timezone settings have not been set.  Please edit php.ini and uncomment the 'date.timezone' setting and set it to the Web Servers Timezone per the PHP installation instructions prior to installing Cacti."
-#~ msgstr "您的Web 服务器PHP 时区设置尚未设置. 在安装Cacti 之前,请编辑 php.ini 并取消注释 'date.timezone' 设置,并根据PHP 安装说明将其设置为Web 服务器时区."
-
-#~ msgid "PHP - Timezone Support"
-#~ msgstr "PHP - 时区支持"
+#~ msgid "Create Aggregate"
+#~ msgstr "创建聚合"
 
 #, fuzzy
-#~ msgid " Poller RunAs: "
-#~ msgstr "Poller RunAs:"
-
-#~ msgid "Data Source Troubleshooter"
-#~ msgstr "数据源排障"
-
-#~ msgid "Does the RRA Profile match the RRDfile structure?"
-#~ msgstr "RRA 配置文件是否与RRD 文件结构匹配?"
+#~ msgid "With modern SSD type storage, this operation actually degrades the disk more rapidly and adds a 50%% overhead on all write operations."
+#~ msgstr "使用现代SSD类型的存储器，此操作实际上会更快速地降低磁盘，并在所有写入操作中增加50％的开销。"
 
 #, fuzzy
-#~ msgid "Mailer Error: No <b>TO</b> address set!!<br>If using the <i>Test Mail</i> link, please set the <b>Alert Email</b> setting."
-#~ msgstr "Mailer Error: 没有设置<b> 收件人 </b>地址!! 如果使用 <i>邮件测试</i> 链接,请设置<b> 报警邮件 </b>设置."
+#~ msgid "Sort field returned no data.  Can not continue Re-Index for GET data.."
+#~ msgstr "排序字段未返回任何数据.无法继续重新索引GET数据.."
+
+#~ msgid "Graph Size"
+#~ msgstr "图形大小"
+
+#~ msgid "Non-Device"
+#~ msgstr "无设备"
 
 #, fuzzy
-#~ msgid "Created Threshold: %s<br>"
-#~ msgstr "创建图形: '%s'"
-
-#, fuzzy
-#~ msgid "No Threshold(s) Created.  They either already exist, or there were not matching combinations found."
-#~ msgstr "没有创建阈值。它们已经存在，或者找不到匹配的组合。"
-
-#, fuzzy
-#~ msgid "No Thresholds Templates associated with the Device's Template."
-#~ msgstr "与本站点有关的国家."
-
-#, fuzzy
-#~ msgid "'%s' must be set to positive integer value!<br>RECORD NOT UPDATED!"
-#~ msgstr "'％s'必须设置为正整数值！ <br>记录没有更新！"
-
-#, fuzzy
-#~ msgid "Created threshold: %s"
-#~ msgstr "创建图形: '%s'"
-
-#, fuzzy
-#~ msgid " What? Permission Denied"
-#~ msgstr "没有权限"
-
-#, fuzzy
-#~ msgid "Failed to find linked Graph Template Item '%d' on Threshold '%d'"
-#~ msgstr "无法在阈值'％d'上找到链接的图表模板项'％d'"
-
-#, fuzzy
-#~ msgid "You must specify either 'Baseline Deviation UP' or 'Baseline Deviation DOWN' or both!<br>RECORD NOT UPDATED!"
-#~ msgstr "您必须指定“Baseline Deviation UP”或“Baseline Deviation DOWN”或两者！ <br>记录没有更新！"
-
-#, fuzzy
-#~ msgid "With baseline thresholds enabled."
-#~ msgstr "启用基线阈值。"
-
-#, fuzzy
-#~ msgid "Impossible thresholds: 'High Warning Threshold' smaller than or equal to 'Low Warning Threshold'<br>RECORD NOT UPDATED!"
-#~ msgstr "不可能的阈值：'高警告阈值'小于或等于'低警告阈值' <br>记录没有更新！"
-
-#, fuzzy
-#~ msgid "Impossible thresholds: 'High Threshold' smaller than or equal to 'Low Threshold'<br>RECORD NOT UPDATED!"
-#~ msgstr "不可能的阈值：“高阈值”小于或等于“低阈值” <br>记录没有更新！"
-
-#, fuzzy
-#~ msgid "You must specify either 'High Alert Threshold' or 'Low Alert Threshold' or both!<br>RECORD NOT UPDATED!"
-#~ msgstr "您必须指定“高警报阈值”或“低警报阈值”或两者！ <br>记录没有更新！"
-
-#, fuzzy
-#~ msgid "Record Updated"
-#~ msgstr "RRD 更新"
-
-#, fuzzy
-#~ msgid "Threshold was Autocreated due to Device Template mapping"
-#~ msgstr "将数据查询添加到设备模板"
-
-#, fuzzy
-#~ msgid "The Graph Creation failed for Threshold Template"
-#~ msgstr "用于此报表项目的图形."
-
-#, fuzzy
-#~ msgid "The Threshold Template ID was not set while trying to create Graph and Threshold"
-#~ msgstr "尝试创建图形和阈值时未设置阈值模板ID"
-
-#, fuzzy
-#~ msgid "The Device ID was not set while trying to create Graph and Threshold"
-#~ msgstr "尝试创建图形和阈值时未设置设备ID"
-
-#, fuzzy
-#~ msgid "<html><body>A warning has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
-#~ msgstr "<html><body>已发出警告，需要您注意。 <br><br> <b>装置</b> ： <DESCRIPTION> （ <HOSTNAME> ） <br> <b>网址</b> ： <URL><br> <b>消息</b> ： <SUBJECT><br><br><GRAPH></body></html>"
-
-#, fuzzy
-#~ msgid "<html><body>An alert has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
-#~ msgstr "<html><body>已发出警报，需要您注意。 <br><br> <b>装置</b> ： <DESCRIPTION> （ <HOSTNAME> ） <br> <b>网址</b> ： <URL><br> <b>消息</b> ： <SUBJECT><br><br><GRAPH></body></html>"
-
-#, fuzzy
-#~ msgid "Link to Graph in Cacti"
-#~ msgstr "登录到Cacti"
-
-#, fuzzy
-#~ msgid "Pages:"
-#~ msgstr "页面："
-
-#, fuzzy
-#~ msgid "Swaps:"
-#~ msgstr "互换："
-
-#, fuzzy
-#~ msgid "Time:"
-#~ msgstr "时间"
+#~ msgid "Thresholds"
+#~ msgstr "阈值"
 
 #, fuzzy
 #~ msgid "Log"
 #~ msgstr "日志"
 
 #, fuzzy
-#~ msgid "Thresholds"
-#~ msgstr "阈值"
-
-#~ msgid "Non-Device"
-#~ msgstr "无设备"
-
-#~ msgid "Graph Size"
-#~ msgstr "图形大小"
+#~ msgid "Time:"
+#~ msgstr "时间"
 
 #, fuzzy
-#~ msgid "Sort field returned no data.  Can not continue Re-Index for GET data.."
-#~ msgstr "排序字段未返回任何数据.无法继续重新索引GET数据.."
+#~ msgid "Swaps:"
+#~ msgstr "互换："
 
 #, fuzzy
-#~ msgid "With modern SSD type storage, this operation actually degrades the disk more rapidly and adds a 50%% overhead on all write operations."
-#~ msgstr "使用现代SSD类型的存储器，此操作实际上会更快速地降低磁盘，并在所有写入操作中增加50％的开销。"
+#~ msgid "Pages:"
+#~ msgstr "页面："
 
-#~ msgid "Create Aggregate"
-#~ msgstr "创建聚合"
+#, fuzzy
+#~ msgid "Link to Graph in Cacti"
+#~ msgstr "登录到Cacti"
 
-#~ msgid "Resize Selected Graph(s)"
-#~ msgstr "调整所选图形的大小"
+#, fuzzy
+#~ msgid "<html><body>An alert has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
+#~ msgstr "<html><body>已发出警报，需要您注意。 <br><br> <b>装置</b> ： <DESCRIPTION> （ <HOSTNAME> ） <br> <b>网址</b> ： <URL><br> <b>消息</b> ： <SUBJECT><br><br><GRAPH></body></html>"
 
-#~ msgid "The following data sources are in use by these graphs:"
-#~ msgstr "以下数据源正在被这些图形使用:"
+#, fuzzy
+#~ msgid "<html><body>A warning has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
+#~ msgstr "<html><body>已发出警告，需要您注意。 <br><br> <b>装置</b> ： <DESCRIPTION> （ <HOSTNAME> ） <br> <b>网址</b> ： <URL><br> <b>消息</b> ： <SUBJECT><br><br><GRAPH></body></html>"
 
-#~ msgid "Resize"
-#~ msgstr "调整"
+#, fuzzy
+#~ msgid "The Device ID was not set while trying to create Graph and Threshold"
+#~ msgstr "尝试创建图形和阈值时未设置设备ID"
 
-#~ msgid "Legacy 1.x Plugins"
-#~ msgstr "Legacy 1.x 插件"
+#, fuzzy
+#~ msgid "The Threshold Template ID was not set while trying to create Graph and Threshold"
+#~ msgstr "尝试创建图形和阈值时未设置阈值模板ID"
 
-#~ msgid "View SNMPAgent Notification Log"
-#~ msgstr "查看SNMPAgent 通知日志"
+#, fuzzy
+#~ msgid "The Graph Creation failed for Threshold Template"
+#~ msgstr "用于此报表项目的图形."
 
-#~ msgid "View SNMPAgent Cache"
-#~ msgstr "查看SNMPAgent 缓存"
+#, fuzzy
+#~ msgid "Threshold was Autocreated due to Device Template mapping"
+#~ msgstr "将数据查询添加到设备模板"
+
+#, fuzzy
+#~ msgid "Record Updated"
+#~ msgstr "RRD 更新"
+
+#, fuzzy
+#~ msgid "You must specify either 'High Alert Threshold' or 'Low Alert Threshold' or both!<br>RECORD NOT UPDATED!"
+#~ msgstr "您必须指定“高警报阈值”或“低警报阈值”或两者！ <br>记录没有更新！"
+
+#, fuzzy
+#~ msgid "Impossible thresholds: 'High Threshold' smaller than or equal to 'Low Threshold'<br>RECORD NOT UPDATED!"
+#~ msgstr "不可能的阈值：“高阈值”小于或等于“低阈值” <br>记录没有更新！"
+
+#, fuzzy
+#~ msgid "Impossible thresholds: 'High Warning Threshold' smaller than or equal to 'Low Warning Threshold'<br>RECORD NOT UPDATED!"
+#~ msgstr "不可能的阈值：'高警告阈值'小于或等于'低警告阈值' <br>记录没有更新！"
+
+#, fuzzy
+#~ msgid "With baseline thresholds enabled."
+#~ msgstr "启用基线阈值。"
+
+#, fuzzy
+#~ msgid "You must specify either 'Baseline Deviation UP' or 'Baseline Deviation DOWN' or both!<br>RECORD NOT UPDATED!"
+#~ msgstr "您必须指定“Baseline Deviation UP”或“Baseline Deviation DOWN”或两者！ <br>记录没有更新！"
+
+#, fuzzy
+#~ msgid "Failed to find linked Graph Template Item '%d' on Threshold '%d'"
+#~ msgstr "无法在阈值'％d'上找到链接的图表模板项'％d'"
+
+#, fuzzy
+#~ msgid " What? Permission Denied"
+#~ msgstr "没有权限"
+
+#, fuzzy
+#~ msgid "Created threshold: %s"
+#~ msgstr "创建图形: '%s'"
+
+#, fuzzy
+#~ msgid "'%s' must be set to positive integer value!<br>RECORD NOT UPDATED!"
+#~ msgstr "'％s'必须设置为正整数值！ <br>记录没有更新！"
+
+#, fuzzy
+#~ msgid "No Thresholds Templates associated with the Device's Template."
+#~ msgstr "与本站点有关的国家."
+
+#, fuzzy
+#~ msgid "No Threshold(s) Created.  They either already exist, or there were not matching combinations found."
+#~ msgstr "没有创建阈值。它们已经存在，或者找不到匹配的组合。"
+
+#, fuzzy
+#~ msgid "Created Threshold: %s<br>"
+#~ msgstr "创建图形: '%s'"
+
+#, fuzzy
+#~ msgid "Mailer Error: No <b>TO</b> address set!!<br>If using the <i>Test Mail</i> link, please set the <b>Alert Email</b> setting."
+#~ msgstr "Mailer Error: 没有设置<b> 收件人 </b>地址!! 如果使用 <i>邮件测试</i> 链接,请设置<b> 报警邮件 </b>设置."
+
+#~ msgid "Does the RRA Profile match the RRDfile structure?"
+#~ msgstr "RRA 配置文件是否与RRD 文件结构匹配?"
+
+#~ msgid "Data Source Troubleshooter"
+#~ msgstr "数据源排障"
+
+#, fuzzy
+#~ msgid " Poller RunAs: "
+#~ msgstr "Poller RunAs:"
+
+#~ msgid "PHP - Timezone Support"
+#~ msgstr "PHP - 时区支持"
+
+#~ msgid "Your Web Servers PHP Timezone settings have not been set.  Please edit php.ini and uncomment the 'date.timezone' setting and set it to the Web Servers Timezone per the PHP installation instructions prior to installing Cacti."
+#~ msgstr "您的Web 服务器PHP 时区设置尚未设置. 在安装Cacti 之前,请编辑 php.ini 并取消注释 'date.timezone' 设置,并根据PHP 安装说明将其设置为Web 服务器时区."
+
+#~ msgid "Your Web Servers PHP is properly setup with a Timezone."
+#~ msgstr "您的Web 服务器PHP 使用时区正确设置."
+
+#, fuzzy
+#~ msgid "The file holding the SSL Certificate Authority to use to connect to the remote database."
+#~ msgstr "包含SSL 证书颁发机构的文件,用于连接到远程数据库."
+
+#~ msgid "%d Outliers"
+#~ msgstr "%d 个异常值"
+
+#~ msgid "%s Standard Deviations"
+#~ msgstr "%s 个标准偏差"
+
+#~ msgid "No Task"
+#~ msgstr "没有任务"
+
+#~ msgid "%d Samples"
+#~ msgstr "%d 个样品"
+
+#~ msgid "When using Cacti with languages other than English, it is important to use the utf8 character set as some characters take more than a single byte. If you are first just now installing Cacti, stop, make the changes and start over again. If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
+#~ msgstr "当Cacti 用于非英语的其它语言环境时,数据库使用utf8_general_ci 排序规则非常重要,因为某些字符的值不止一个字节.如果您是第一次安装Cacti, 请立即停止,并对数据库排序规则进行修改,再重新安装Cacti.如果您的Cacti 已经运行并且已投入生产,如需支持其他语言,请参考互联网上的有关说明,转换数据库和表的排序规则."
+
+#~ msgid "When using Cacti with languages other than English, it is important to use the utf8_general_ci collation type as some characters take more than a single byte.  If you are first just now installing Cacti, stop, make the changes and start over again.  If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
+#~ msgstr "当Cacti 用于非英语的其它语言环境时,数据库使用utf8_general_ci 排序规则非常重要,因为某些字符的值不止一个字节.如果您是第一次安装Cacti, 请立即停止,并对数据库排序规则进行修改,再重新安装Cacti.如果您的Cacti 已经运行并且已投入生产,如需支持其他语言,请参考互联网上的有关说明,转换数据库和表的排序规则."

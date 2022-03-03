@@ -1,0 +1,78 @@
+<!-- $Id$ -->
+<interface>
+	<name>Grid User Statistics</name>
+	<script_path>|path_cacti|/scripts/ss_grid_user_stats.php</script_path>
+	<script_function>ss_grid_user_stats</script_function>
+	<script_server>php</script_server>
+	<arg_prepend>|clusterid|</arg_prepend>
+	<arg_index>index</arg_index>
+	<arg_query>query</arg_query>
+	<arg_get>get</arg_get>
+	<output_delimeter>!</output_delimeter>
+	<index_order>user</index_order>
+	<index_order_type>alpha</index_order_type>
+	<index_title_format>|chosen_order_field|</index_title_format>
+
+	<fields>
+		<user>
+			<name>User Name</name>
+			<direction>input</direction>
+			<query_name>user</query_name>
+		</user>
+		<numJobs>
+			<name>Total Jobs</name>
+			<direction>output</direction>
+			<query_name>numJobs</query_name>
+		</numJobs>
+		<numPEND>
+			<name>Pending Jobs</name>
+			<direction>output</direction>
+			<query_name>numPEND</query_name>
+		</numPEND>
+		<numRUN>
+			<name>Running Jobs</name>
+			<direction>output</direction>
+			<query_name>numRUN</query_name>
+		</numRUN>
+		<numSUSP>
+			<name>Suspended Jobs</name>
+			<direction>output</direction>
+			<query_name>numSUSP</query_name>
+		</numSUSP>
+		<numDONE>
+			<name>Completed Jobs</name>
+			<direction>output</direction>
+			<query_name>numDONE</query_name>
+		</numDONE>
+		<numEXIT>
+			<name>Exited Jobs</name>
+			<direction>output</direction>
+			<query_name>numEXIT</query_name>
+		</numEXIT>
+		<numSTARTED>
+			<name>Started Jobs</name>
+			<direction>output</direction>
+			<query_name>numSTARTED</query_name>
+		</numSTARTED>
+		<numSUBMITTED>
+			<name>Submitted Jobs</name>
+			<direction>output</direction>
+			<query_name>numSUBMITTED</query_name>
+		</numSUBMITTED>
+		<minEffic>
+			<name>Minimum Efficiency</name>
+			<direction>output</direction>
+			<query_name>minEffic</query_name>
+		</minEffic>
+		<maxEffic>
+			<name>Maximum Efficiency</name>
+			<direction>output</direction>
+			<query_name>maxEffic</query_name>
+		</maxEffic>
+		<avgEffic>
+			<name>Average Efficiency</name>
+			<direction>output</direction>
+			<query_name>avgEffic</query_name>
+		</avgEffic>
+	</fields>
+</interface>

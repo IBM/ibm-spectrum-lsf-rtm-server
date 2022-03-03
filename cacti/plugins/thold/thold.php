@@ -232,6 +232,7 @@ function do_actions() {
 							db_execute_prepared('DELETE FROM plugin_thold_log
 								WHERE threshold_id = ?',
 								array($thold_id));
+							api_plugin_hook_function('thold_delete_hostsalarm',$thold_id);
 						}
 					}
 					break;
@@ -2313,4 +2314,3 @@ function thold_edit() {
 	</script>
 	<?php
 }
-

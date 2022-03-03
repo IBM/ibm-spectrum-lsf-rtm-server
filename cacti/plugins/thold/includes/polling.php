@@ -512,6 +512,7 @@ function thold_check_all_thresholds() {
 	}
 
 	$tholds = api_plugin_hook_function('thold_get_live_hosts', db_fetch_assoc($sql_query));
+	api_plugin_hook('thold_reset_hostsalarm');
 
 	$total_tholds = sizeof($tholds);
 	foreach ($tholds as $thold) {
@@ -536,6 +537,7 @@ function thold_check_all_thresholds() {
 		}
 	} else {
 		db_execute('UPDATE thold_data AS td SET td.tcheck = 0');
+		api_plugin_hook_function('thold_delete_hostsalarm');
 	}
 
 	return $total_tholds;

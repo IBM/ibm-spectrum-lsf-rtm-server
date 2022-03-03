@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Principles of Operation</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="principles-of-operation">Principles of Operation</h1>
+<p>Cacti operation may be divided into three different tasks:</p>
+<p><img src="images/principles_of_operation.png" alt="Principles of Operation" /></p>
+<h2 id="data-retrieval">Data Retrieval</h2>
+<p>First task is to retrieve data. Cacti will do so using its Poller. The Poller is executed from the operating system's scheduler, e.g. crontab for Unix flavored OSes.</p>
+<p>In current IT installations, you're dealing with lots of devices of different kind, e.g. servers, network equipment, appliances and the like. To retrieve data from remote targets/hosts, cacti will mainly use the Simple Network Management Protocol SNMP. Thus, all devices capable of using SNMP will be eligible to be monitored by cacti.</p>
+<p>Later on, we demonstrate how to extend Cacti's capabilities of retrieving data to scripts, script queries and more.</p>
+<h2 id="data-storage">Data Storage</h2>
+<p>There are lots of different approaches for this task. Some may use an (SQL) database, others flat files. Cacti uses <a href="http://www.RRDTool.org/">RRDTool</a> to store data.</p>
+<p>RRD is the acronym for Round Robin Database. RRD is a system to store and display time-series data (i.e. network bandwidth, machine-room temperature, server load average). It stores the data in a very compact way that will not expand over time, and it can create beautiful graphs. This keeps storage requirements at bay.</p>
+<p>Likewise, RRDTool will perform some specific tasks. It performs consolidation to combine raw data (a primary data point in RRDTool lingo) to consolidated data (a consolidated data point). This way, historical data is compressed to save space. RRDTool knows different consolidation functions: AVERAGE, MAXIMUM, MINIMUM and LAST.</p>
+<h2 id="data-presentation">Data Presentation</h2>
+<p>One of the most appreciated features of <a href="http://www.RRDTool.org/">RRDTool</a> is the built-in graphing function. This comes in useful when combining this with some commonly used webserver. Such, it is possible to access the graphs from merely any browser on any platform.</p>
+<p>Graphing can be done in very different ways. It is possible, to graph one or many items in one graph. Autoscaling is supported and logarithmic y-axis as well. You may stack items onto another and print pretty legends denoting characteristics such as minimum, average, maximum and lots more.</p>
+<h2 id="extending-built-in-capabilities">Extending Built-in capabilities</h2>
+<p>Scripts and Queries can extend Cacti's capabilities beyond SNMP. They allow for data retrieval using custom-made code. This is not even restricted to certain programming languages; you will find php, perl, shell/batch and more. These scripts and queries are executed locally by Cacti's poller. But they may retrieve data from remote hosts by different protocols, e.g.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Protocol</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ICMP</td>
+<td>ping to measure round trip times and availability</td>
+</tr>
+<tr class="even">
+<td>telnet</td>
+<td>programming telnet scripts to retrieve data available to sysadmins only</td>
+</tr>
+<tr class="odd">
+<td>ssh</td>
+<td>much like telnet, but more secure (and more complicated)</td>
+</tr>
+<tr class="even">
+<td>http(s)</td>
+<td>invoke remote cgi scripts to retrieve data via a web server or parse web pages for statistical data (e.g. some network printers)</td>
+</tr>
+<tr class="odd">
+<td>snmp</td>
+<td>use net-snmp's exec/pass functions to call remote scripts and get data</td>
+</tr>
+<tr class="even">
+<td>ldap</td>
+<td>to retrieve statistical about your ldap server's activities</td>
+</tr>
+<tr class="odd">
+<td>use your own</td>
+<td>invoke nagios agents</td>
+</tr>
+</tbody>
+</table>
+<p>and much more...</p>
+<p>There a two ways extending Cacti's build-in capabilities:</p>
+<p><a href="Data-Input-Methods.html">Data Input Methods</a> for querying <strong>single or multiple</strong>, but <strong>non-indexed</strong> readings</p>
+<ul>
+<li>temperature, humidity, wind, ...</li>
+<li>cpu, memory usage</li>
+<li>number of users logged in</li>
+<li>IP readings like ipInReceives (number of ip packets received per host)</li>
+<li>TCP readings like tcpActiveOpens (number of tcp open sockets)</li>
+<li>UDP readings like udpInDatagrams (number of UDP packets received)</li>
+</ul>
+<p><a href="Data-Queries.html">Data Queries</a> for <strong>indexed</strong> readings</p>
+<ul>
+<li>network interfaces with e.g. traffic, errors, discards</li>
+<li>other SNMP Tables, e.g. hrStorageTable for disk usage</li>
+<li>you may even create Data Queries as scripts e.g. for querying a name server (index = domain) for requests per domain</li>
+</ul>
+<p><img src="images/data-input-method-and-query.png" alt="Basic Principle of Operation for Data Input Method &amp; Data Query" /></p>
+<p>By using the Exporting and Importing facilities, it is possible to share your results with others.</p>
+<hr />
+<p>Copyright (c) 2004-2020 The Cacti Group</p>
+</body>
+</html>

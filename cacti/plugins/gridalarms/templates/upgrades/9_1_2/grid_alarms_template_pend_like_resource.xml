@@ -1,0 +1,185 @@
+<!-- $Id$ -->
+<cacti>
+	<hash_180021b3480d5b7821978c98fd7cd4511f6a76>
+		<id>21</id>
+		<name>Jobs Pending for |input_resource| over |input_days| Day(s) in Cluster |alert_clustername|</name>
+		<clusterid>0</clusterid>
+		<type>0</type>
+		<expression_id>20</expression_id>
+		<aggregation>0</aggregation>
+		<metric>0</metric>
+		<base_time_display>12:00am</base_time_display>
+		<base_time>0000-00-00 00:00:00</base_time>
+		<frequency>72</frequency>
+		<alarm_type>0</alarm_type>
+		<alarm_hi>0</alarm_hi>
+		<alarm_low></alarm_low>
+		<alarm_fail_trigger>72</alarm_fail_trigger>
+		<time_hi>0</time_hi>
+		<time_low></time_low>
+		<time_fail_trigger>0</time_fail_trigger>
+		<time_fail_length>1</time_fail_length>
+		<warning_pct></warning_pct>
+		<trigger_cmd_high></trigger_cmd_high>
+		<trigger_cmd_low></trigger_cmd_low>
+		<trigger_cmd_norm></trigger_cmd_norm>
+		<repeat_alert>0</repeat_alert>
+		<notify_extra></notify_extra>
+		<notify_cluster_admin>1</notify_cluster_admin>
+		<notify_alert>0</notify_alert>
+		<notify_users>on</notify_users>
+		<syslog_priority>4</syslog_priority>
+		<syslog_facility>24</syslog_facility>
+		<syslog_enabled></syslog_enabled>
+		<tcheck>0</tcheck>
+		<exempt>off</exempt>
+		<acknowledgement>off</acknowledgement>
+		<restored_alert>off</restored_alert>
+		<req_ack>off</req_ack>
+		<email_body>A triggered alert requires your attention. &lt;br&gt;&lt;br&gt;&lt;strong&gt;&lt;NAME&gt;&lt;/strong&gt;: has breached threshold limits HI:&lt;HI&gt;/LOW:&lt;LOW&gt; with current value:&lt;VALUE&gt;&lt;br&gt;&lt;DETAILS&gt;&lt;br&gt;&lt;br&gt;</email_body>
+		<email_subject>ALERT: &lt;NAME&gt; Breached Threshold Limits</email_subject>
+		<gridalarms_template_contacts>
+		</gridalarms_template_contacts>
+		<gridalarms_template_layout>
+			<hash_2000214889d4545e798a74a905a55f20e642dd>
+				<id>191</id>
+				<alarm_id>21</alarm_id>
+				<display_name>Jobid</display_name>
+				<column_name>jobid</column_name>
+				<sequence>9</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_2000214889d4545e798a74a905a55f20e642dd>
+			<hash_200021db8784bf9f75ff8c9b74967800afbfb0>
+				<id>192</id>
+				<alarm_id>21</alarm_id>
+				<display_name>Indexid</display_name>
+				<column_name>indexid</column_name>
+				<sequence>10</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200021db8784bf9f75ff8c9b74967800afbfb0>
+			<hash_200021bce51e87e1e74e897bef0fbe6ee1c3bf>
+				<id>193</id>
+				<alarm_id>21</alarm_id>
+				<display_name>Clusterid</display_name>
+				<column_name>clusterid</column_name>
+				<sequence>11</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200021bce51e87e1e74e897bef0fbe6ee1c3bf>
+			<hash_200021ad3d8cc7af34b06c22ab6da1f1843bef>
+				<id>194</id>
+				<alarm_id>21</alarm_id>
+				<display_name>Submit Time</display_name>
+				<column_name>submit_time</column_name>
+				<sequence>12</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200021ad3d8cc7af34b06c22ab6da1f1843bef>
+			<hash_200021a2cd6796c3da61306a4919584e0fdcb8>
+				<id>195</id>
+				<alarm_id>21</alarm_id>
+				<display_name>Reason Start Time</display_name>
+				<column_name>pend_start_time</column_name>
+				<sequence>13</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200021a2cd6796c3da61306a4919584e0fdcb8>
+			<hash_2000217792f078e1d3da3892bbfcc875868a62>
+				<id>196</id>
+				<alarm_id>21</alarm_id>
+				<display_name>Cluster Name</display_name>
+				<column_name>clustername</column_name>
+				<sequence>1</sequence>
+				<sortposition>1</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_2000217792f078e1d3da3892bbfcc875868a62>
+			<hash_2000215130a76b45f71c92fad0c4168250e8d8>
+				<id>197</id>
+				<alarm_id>21</alarm_id>
+				<display_name>Job Name</display_name>
+				<column_name>jobname</column_name>
+				<sequence>2</sequence>
+				<sortposition>2</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_2000215130a76b45f71c92fad0c4168250e8d8>
+			<hash_200021e90bd843aa9e3261984b9d147dc7b478>
+				<id>198</id>
+				<alarm_id>21</alarm_id>
+				<display_name>Queue Name</display_name>
+				<column_name>queue</column_name>
+				<sequence>3</sequence>
+				<sortposition>3</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200021e90bd843aa9e3261984b9d147dc7b478>
+			<hash_200021c57993fb270fa3cb11bb5216c061fe63>
+				<id>199</id>
+				<alarm_id>21</alarm_id>
+				<display_name>User Name</display_name>
+				<column_name>user</column_name>
+				<sequence>8</sequence>
+				<sortposition>4</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200021c57993fb270fa3cb11bb5216c061fe63>
+			<hash_200021e97af9171ad72c39f8c67bb6f265c877>
+				<id>200</id>
+				<alarm_id>21</alarm_id>
+				<display_name>Reason Name</display_name>
+				<column_name>reason</column_name>
+				<sequence>14</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200021e97af9171ad72c39f8c67bb6f265c877>
+		</gridalarms_template_layout>
+		<gridalarms_template_expression>
+			<hash_210021a310215f97833578eca09f2ca086c61b>
+				<id>20</id>
+				<name>Pend Reason like Resource</name>
+				<description>Job is pending for |input_days| days because a resource it needs is not available.</description>
+				<ds_type>1</ds_type>
+				<type>1</type>
+				<db_table>grid_jobs</db_table>
+				<sql_query>SELECT gc.clustername, gj.*, gjp.start_time AS pend_start_time, gjpm.reason AS reason
+FROM grid_clusters AS gc
+INNER JOIN grid_jobs AS gj
+ON gj.clusterid=gc.clusterid
+INNER JOIN grid_jobs_pendreasons AS gjp
+ON gj.clusterid=gjp.clusterid
+AND gj.jobid=gjp.jobid
+AND gj.indexid=gjp.indexid
+AND gj.submit_time=gjp.submit_time
+INNER JOIN grid_jobs_pendreason_maps AS gjpm 
+ON gjp.issusp=gjpm.issusp AND gjp.reason=gjpm.reason_code AND gjp.subreason=gjpm.sub_reason_code 
+WHERE gjpm.reason LIKE &#039;%(|input_resource|)%&#039;
+AND gjp.end_time=&#039;0000-00-00&#039;
+AND gjp.start_time&lt; SUBDATE(NOW(),INTERVAL |input_days| day)</sql_query>
+				<script_thold></script_thold>
+				<script_data></script_data>
+				<script_data_type>0</script_data_type>
+			</hash_210021a310215f97833578eca09f2ca086c61b>
+		</gridalarms_template_expression>
+		<gridalarms_template_expression_item>
+		</gridalarms_template_expression_item>
+		<gridalarms_template_metric>
+		</gridalarms_template_metric>
+		<gridalarms_template_metric_expression>
+		</gridalarms_template_metric_expression>
+		<gridalarms_template_expression_input>
+			<hash_2400212079c5c0e4a894e8d045dcf4d4ff642e>
+				<id>17</id>
+				<expression_id>20</expression_id>
+				<name>days</name>
+				<description>Enter the number of pending days for the job</description>
+				<value>1</value>
+			</hash_2400212079c5c0e4a894e8d045dcf4d4ff642e>
+			<hash_240021338125c6a380ad6531f5cd3c6ba43767>
+				<id>18</id>
+				<expression_id>20</expression_id>
+				<name>resource</name>
+				<description>Please input the resource name which jobs pending for</description>
+				<value>mem</value>
+			</hash_240021338125c6a380ad6531f5cd3c6ba43767>
+		</gridalarms_template_expression_input>
+	</hash_180021b3480d5b7821978c98fd7cd4511f6a76>
+</cacti>

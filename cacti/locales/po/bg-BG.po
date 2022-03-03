@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Cacti\n"
 "Report-Msgid-Bugs-To: developers@cacti.net\n"
-"POT-Creation-Date: 2020-10-28 16:57-0400\n"
+"POT-Creation-Date: 2020-11-02 03:26+0000\n"
 "PO-Revision-Date: 2020-09-13 18:02-0400\n"
 "Last-Translator: Patrick Rademaker\n"
 "Language-Team: Bulgarian <bg@li.org>\n"
@@ -1212,7 +1212,7 @@ msgstr "Изтриване на устройствата"
 #: automation_devices.php:409 automation_devices.php:419
 #: automation_devices.php:647 automation_devices.php:648 host.php:1596
 #: lib/api_automation.php:173 lib/api_automation.php:1099
-#: lib/html_utility.php:931 pollers.php:46
+#: lib/html_utility.php:939 pollers.php:46
 msgid "Down"
 msgstr "Надолу"
 
@@ -1220,7 +1220,7 @@ msgstr "Надолу"
 #: automation_devices.php:411 automation_devices.php:421
 #: automation_devices.php:647 automation_devices.php:648 host.php:1595
 #: lib/api_automation.php:172 lib/api_automation.php:1098
-#: lib/html_utility.php:937
+#: lib/html_utility.php:945
 msgid "Up"
 msgstr "Нагоре"
 
@@ -1559,7 +1559,7 @@ msgstr "Разрешен"
 #: include/global_settings.php:1427 include/global_settings.php:1441
 #: include/global_settings.php:1501 include/global_settings.php:2146
 #: lib/api_automation.php:170 lib/api_automation.php:1096 lib/html.php:2472
-#: lib/html_reports.php:1513 lib/html_reports.php:1651 lib/html_utility.php:927
+#: lib/html_reports.php:1513 lib/html_reports.php:1651 lib/html_utility.php:935
 #: links.php:500 managers.php:243 managers.php:598 pollers.php:47
 #: user_admin.php:1164 user_domains.php:411 user_group_admin.php:697
 #: utilities.php:2377
@@ -6071,13 +6071,13 @@ msgid "Not Up"
 msgstr "Не е горе"
 
 #: host.php:1597 lib/api_automation.php:174 lib/api_automation.php:1100
-#: lib/html_utility.php:934 pollers.php:48
+#: lib/html_utility.php:942 pollers.php:48
 #, fuzzy
 msgid "Recovering"
 msgstr "Възстановяване"
 
 #: host.php:1598 lib/api_automation.php:175 lib/api_automation.php:1101
-#: lib/html_utility.php:943 lib/plugins.php:1086 lib/plugins.php:1087
+#: lib/html_utility.php:951 lib/plugins.php:1088 lib/plugins.php:1089
 #: lib/rrd.php:2919 lib/rrd.php:2931 user_admin.php:820 utilities.php:216
 #: utilities.php:217 utilities.php:2241
 msgid "Unknown"
@@ -7358,7 +7358,7 @@ msgid "Export Templates"
 msgstr "Експортиране на шаблони"
 
 #: include/global_arrays.php:927 include/global_arrays.php:949
-#: include/global_arrays.php:967 lib/plugins.php:1041
+#: include/global_arrays.php:967 lib/plugins.php:1043
 msgid "Configuration"
 msgstr "Конфигурация"
 
@@ -15522,32 +15522,32 @@ msgstr "Избран"
 msgid "The regular expression \"%s\" is not valid. Error is %s"
 msgstr "Терминът „ %s“ не е валиден. Грешка е %s"
 
-#: lib/html_utility.php:884
+#: lib/html_utility.php:892
 #, fuzzy
 msgid "There was an internal error!"
 msgstr "Възникна вътрешна грешка!"
 
-#: lib/html_utility.php:885
+#: lib/html_utility.php:893
 #, fuzzy
 msgid "Backtrack limit was exhausted!"
 msgstr "Лимитът за връщане назад бе изчерпан!"
 
-#: lib/html_utility.php:886
+#: lib/html_utility.php:894
 #, fuzzy
 msgid "Recursion limit was exhausted!"
 msgstr "Лимитът за рекурсия беше изчерпан!"
 
-#: lib/html_utility.php:887
+#: lib/html_utility.php:895
 #, fuzzy
 msgid "Bad UTF-8 error!"
 msgstr "Лоша грешка на UTF-8!"
 
-#: lib/html_utility.php:888
+#: lib/html_utility.php:896
 #, fuzzy
 msgid "Bad UTF-8 offset error!"
 msgstr "Лоша грешка при отместването на UTF-8!"
 
-#: lib/html_utility.php:940 lib/installer.php:1803 lib/installer.php:3533
+#: lib/html_utility.php:948 lib/installer.php:1803 lib/installer.php:3533
 msgid "Error"
 msgstr "Грешка"
 
@@ -17032,21 +17032,21 @@ msgstr "%s е необходим за %s и не е инсталиран."
 msgid "Plugin cannot be installed."
 msgstr "Приставката не може да бъде инсталирана."
 
-#: lib/plugins.php:1041 lib/plugins.php:1048 plugins.php:367 plugins.php:447
+#: lib/plugins.php:1043 lib/plugins.php:1050 plugins.php:367 plugins.php:447
 msgid "Plugins"
 msgstr "Плъгини"
 
-#: lib/plugins.php:1060 lib/plugins.php:1066
+#: lib/plugins.php:1062 lib/plugins.php:1068
 #, fuzzy, php-format
 msgid "Requires: Cacti >= %s"
 msgstr "Изисква: Cacti&gt; = %s"
 
-#: lib/plugins.php:1063
+#: lib/plugins.php:1065
 #, fuzzy
 msgid "Legacy Plugin"
 msgstr "Наследство на приставката"
 
-#: lib/plugins.php:1088
+#: lib/plugins.php:1090
 #, fuzzy
 msgid "Not Stated"
 msgstr "Не е посочено"
@@ -21041,52 +21041,291 @@ msgid "No VDEFs"
 msgstr "Няма VDEF"
 
 #, fuzzy
-#~ msgid "When using Cacti with languages other than English, it is important to use the utf8_general_ci collation type as some characters take more than a single byte.  If you are first just now installing Cacti, stop, make the changes and start over again.  If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
-#~ msgstr "Когато използвате Cacti с езици, различни от английски, важно е да използвате типа на сортиране utf8_general_ci, тъй като някои символи заемат повече от един байт. Ако за пръв път инсталирате Cacti, спрете, направете промените и започнете отново. Ако вашият Cacti е стартиран и е в производство, вижте интернет за инструкции за конвертиране на вашите бази данни и таблици, ако планирате да поддържате други езици."
+#~ msgid "View SNMPAgent Cache"
+#~ msgstr "Преглед на кеш за SNMPAgent"
 
 #, fuzzy
-#~ msgid "When using Cacti with languages other than English, it is important to use the utf8 character set as some characters take more than a single byte. If you are first just now installing Cacti, stop, make the changes and start over again. If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
-#~ msgstr "Когато използвате Cacti с езици, различни от английски, важно е да използвате набора от символи utf8, тъй като някои символи заемат повече от един байт. Ако за пръв път инсталирате Cacti, спрете, направете промените и започнете отново. Ако вашият Cacti е стартиран и е в производство, вижте интернет за инструкции за конвертиране на вашите бази данни и таблици, ако планирате да поддържате други езици."
+#~ msgid "View SNMPAgent Notification Log"
+#~ msgstr "Преглед на протокола за уведомления за SNMPAgent"
 
 #, fuzzy
-#~ msgid "%d Samples"
-#~ msgstr "% d Проби"
+#~ msgid "Legacy 1.x Plugins"
+#~ msgstr "Приставки на Legacy 1.x"
 
 #, fuzzy
-#~ msgid "No Task"
-#~ msgstr "Няма задача"
+#~ msgid "Resize"
+#~ msgstr "Resize"
 
 #, fuzzy
-#~ msgid "%s Standard Deviations"
-#~ msgstr "%s Стандартни отклонения"
+#~ msgid "The following data sources are in use by these graphs:"
+#~ msgstr "Следните източници на данни се използват от тези графики:"
 
 #, fuzzy
-#~ msgid "%d Outliers"
-#~ msgstr "% d Отклонения"
+#~ msgid "Resize Selected Graph(s)"
+#~ msgstr "Преоразмеряване на избраните графики"
 
 #, fuzzy
-#~ msgid "The file holding the SSL Certificate Authority to use to connect to the remote database."
-#~ msgstr "Файлът, притежаващ SSL сертификат, който да се използва за свързване към отдалечена база данни."
-
-#~ msgid "Which RRA's to use when entering data. (It is recommended that you select all of these values)."
-#~ msgstr "Кои RRA да се ползват при въвеждане на данни. (Препоръчва се да изберете всяка една от тези стойност)."
+#~ msgid "Create Aggregate"
+#~ msgstr "Създаване на съвкупност"
 
 #, fuzzy
-#~ msgid "Graph Export"
+#~ msgid "With modern SSD type storage, this operation actually degrades the disk more rapidly and adds a 50%% overhead on all write operations."
+#~ msgstr "С модерното хранилище за SSD тип, тази операция всъщност влошава диска по-бързо и добавя 50% натоварване върху всички операции по писане."
+
+#, fuzzy
+#~ msgid "Sort field returned no data.  Can not continue Re-Index for GET data.."
+#~ msgstr "Полето за сортиране не връща данни. Не може да се продължи повторното индексиране за GET данни .."
+
+#, fuzzy
+#~ msgid "Graph Size"
+#~ msgstr "Размер на графиката"
+
+#, fuzzy
+#~ msgid "Non-Device"
+#~ msgstr "Не-Device"
+
+#, fuzzy
+#~ msgid "Thresholds"
+#~ msgstr "Теми"
+
+#, fuzzy
+#~ msgid "Log"
+#~ msgstr "Регистър"
+
+#, fuzzy
+#~ msgid "Time:"
+#~ msgstr "Време"
+
+#, fuzzy
+#~ msgid "Swaps:"
+#~ msgstr "Суаповете:"
+
+#, fuzzy
+#~ msgid "Pages:"
+#~ msgstr "Страници:"
+
+#, fuzzy
+#~ msgid "Link to Graph in Cacti"
+#~ msgstr "Влезте в Cacti"
+
+#, fuzzy
+#~ msgid "<html><body>An alert has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
+#~ msgstr "<html><body> Издаден е сигнал, който изисква вашето внимание. <br><br> <b>Устройство</b> : <DESCRIPTION> ( <HOSTNAME> ) <br> <b>URL адрес</b> : <URL><br> <b>Съобщение</b> : <SUBJECT><br><br><GRAPH></body></html>"
+
+#, fuzzy
+#~ msgid "<html><body>A warning has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
+#~ msgstr "<html><body> Издадено е предупреждение, което изисква вашето внимание. <br><br> <b>Устройство</b> : <DESCRIPTION> ( <HOSTNAME> ) <br> <b>URL адрес</b> : <URL><br> <b>Съобщение</b> : <SUBJECT><br><br><GRAPH></body></html>"
+
+#, fuzzy
+#~ msgid "The Device ID was not set while trying to create Graph and Threshold"
+#~ msgstr "Идентификаторът на устройството не е зададен, докато се опитва да създаде графика и праг"
+
+#, fuzzy
+#~ msgid "The Threshold Template ID was not set while trying to create Graph and Threshold"
+#~ msgstr "Идентификационният номер на шаблона за прага не е зададен, докато се опитва да създаде графика и праг"
+
+#, fuzzy
+#~ msgid "The Graph Creation failed for Threshold Template"
+#~ msgstr "Графиката, която да се използва за този елемент от отчета."
+
+#, fuzzy
+#~ msgid "Threshold was Autocreated due to Device Template mapping"
+#~ msgstr "Добавете заявка за данни към шаблона на устройството"
+
+#, fuzzy
+#~ msgid "Record Updated"
+#~ msgstr "RRD Updated"
+
+#, fuzzy
+#~ msgid "You must specify either 'High Alert Threshold' or 'Low Alert Threshold' or both!<br>RECORD NOT UPDATED!"
+#~ msgstr "Трябва да укажете или 'High Alert Threshold' или 'Low Alert Threshold' или и двете! <br> RECORD НЕ АКТУАЛНО!"
+
+#, fuzzy
+#~ msgid "Impossible thresholds: 'High Threshold' smaller than or equal to 'Low Threshold'<br>RECORD NOT UPDATED!"
+#~ msgstr "Невъзможни прагове: „висок праг“ по-малък или равен на „нисък праг“ <br> RECORD НЕ АКТУАЛНО!"
+
+#, fuzzy
+#~ msgid "Impossible thresholds: 'High Warning Threshold' smaller than or equal to 'Low Warning Threshold'<br>RECORD NOT UPDATED!"
+#~ msgstr "Невъзможни прагове: „Голям праг на предупреждение“ по-малък или равен на „Нисък праг на предупреждение“ <br> RECORD НЕ АКТУАЛНО!"
+
+#, fuzzy
+#~ msgid "With baseline thresholds enabled."
+#~ msgstr "При включени базови прагове."
+
+#, fuzzy
+#~ msgid "You must specify either 'Baseline Deviation UP' or 'Baseline Deviation DOWN' or both!<br>RECORD NOT UPDATED!"
+#~ msgstr "Трябва да посочите или „Базово отклонение UP“, или „Baseline Deviation DOWN“, или и двете! <br> RECORD НЕ АКТУАЛНО!"
+
+#, fuzzy
+#~ msgid "Failed to find linked Graph Template Item '%d' on Threshold '%d'"
+#~ msgstr "Неуспешно намиране на свързан шаблон за график „% d“ на праг „% d“"
+
+#, fuzzy
+#~ msgid " What? Permission Denied"
+#~ msgstr "Разрешението е отказано"
+
+#, fuzzy
+#~ msgid "Created threshold: %s"
+#~ msgstr "Създадена графика: %s"
+
+#, fuzzy
+#~ msgid "'%s' must be set to positive integer value!<br>RECORD NOT UPDATED!"
+#~ msgstr "„ %s“ трябва да е с положителна цяло число! <br> RECORD НЕ АКТУАЛНО!"
+
+#, fuzzy
+#~ msgid "No Thresholds Templates associated with the Device's Template."
+#~ msgstr "Държавата, свързана с този сайт."
+
+#, fuzzy
+#~ msgid "No Threshold(s) Created.  They either already exist, or there were not matching combinations found."
+#~ msgstr "Не са създадени прагове. Те или вече съществуват, или не са намерени съответстващи комбинации."
+
+#, fuzzy
+#~ msgid "Created Threshold: %s<br>"
+#~ msgstr "Създадена графика: %s"
+
+#, fuzzy
+#~ msgid "Mailer Error: No <b>TO</b> address set!!<br>If using the <i>Test Mail</i> link, please set the <b>Alert Email</b> setting."
+#~ msgstr "Мейлър Грешка: Не е <b>за</b> справяне <b>с</b> определени !! <br> Ако използвате връзката <i>Test Mail,</i> моля, задайте настройката за <b>електронна поща предупреждение.</b>"
+
+#, fuzzy
+#~ msgid "Does the RRA Profile match the RRDfile structure?"
+#~ msgstr "Дали профилът на RRA съответства на структурата на RRDfile?"
+
+#, fuzzy
+#~ msgid "Data Source Troubleshooter"
+#~ msgstr "Инструмент за отстраняване на неизправности в източника на данни"
+
+#, fuzzy
+#~ msgid " Poller RunAs: "
+#~ msgstr "Поленски RunAs:"
+
+#, fuzzy
+#~ msgid "PHP - Timezone Support"
+#~ msgstr "PHP - Поддръжка на часовата зона"
+
+#, fuzzy
+#~ msgid "Your Web Servers PHP Timezone settings have not been set.  Please edit php.ini and uncomment the 'date.timezone' setting and set it to the Web Servers Timezone per the PHP installation instructions prior to installing Cacti."
+#~ msgstr "Вашите уеб сървъри PHP Настройките на часовата зона не са зададени. Моля, редактирайте php.ini и разкоментирайте настройката &#39;date.timezone&#39; и я настройте на Web сървърите по часовата зона, съгласно инструкциите за инсталиране на PHP, преди да инсталирате Cacti."
+
+#, fuzzy
+#~ msgid "Your Web Servers PHP is properly setup with a Timezone."
+#~ msgstr "Вашите уеб сървъри PHP е правилно настроен с Timezone."
+
+#, fuzzy
+#~ msgid "Data Source Debugger"
+#~ msgstr "Дебъгер за източник на данни"
+
+#, fuzzy
+#~ msgid "Data Source Debugger [%s]"
+#~ msgstr "Дебъгер за източник на данни"
+
+#, fuzzy
+#~ msgid "Data Debug"
+#~ msgstr "Отстраняване на данни"
+
+#, fuzzy
+#~ msgid "Click to show Data Query output for sfield '%s'"
+#~ msgstr "Кликнете, за да се покаже изходът на заявката за данни за sfield &#39; %s&#39;"
+
+#, fuzzy
+#~ msgid "New Check"
+#~ msgstr "Нова проверка"
+
+#, fuzzy
+#~ msgid "Debugging Data Source"
+#~ msgstr "Източник на данни за отстраняване на грешки"
+
+#, fuzzy
+#~ msgid "Provide the Maintenance Schedule a meaningful name"
+#~ msgstr "Представете на графиката за поддръжка смислено име"
+
+#, fuzzy
+#~ msgid "Template [edit: %s]"
+#~ msgstr "Шаблон [редактиране: %s]"
+
+#, fuzzy
+#~ msgid "Template [new]"
+#~ msgstr "Шаблон [нов]"
+
+#, fuzzy
+#~ msgid "Default Graph View Timespan"
+#~ msgstr "По подразбиране График за преглед на графиката"
+
+#, fuzzy
+#~ msgid "The default timespan you wish to be displayed when you display graphs"
+#~ msgstr "Основният период от време, който искате да се показва, когато показвате графики"
+
+#, fuzzy
+#~ msgid "Default Graph View Timeshift"
+#~ msgstr "По подразбиране График View Timeshift"
+
+#, fuzzy
+#~ msgid "The default timeshift you wish to be displayed when you display graphs"
+#~ msgstr "Подразбиращото се време, което искате да се показва, когато показвате графики"
+
+#, fuzzy
+#~ msgid "Non Templated"
+#~ msgstr "Без шаблон"
+
+#, fuzzy
+#~ msgid "Template Not Found"
+#~ msgstr "Шаблонът не е намерен"
+
+#, fuzzy
+#~ msgid "Cacti Community Forum"
+#~ msgstr "SNMP Общност"
+
+#, fuzzy
+#~ msgid "SNMP Context"
+#~ msgstr "SNMP Общност"
+
+#, fuzzy
+#~ msgid "Created 1 Graph from %s"
+#~ msgstr "Създаване на нови графики"
+
+#, fuzzy
+#~ msgid "Automation Settings"
+#~ msgstr "Настройки на cacti"
+
+#, fuzzy
+#~ msgid "Export Data"
+#~ msgstr "Експортиране на шаблони"
+
+#, fuzzy
+#~ msgid "Import Data"
+#~ msgstr "Импортиране на шаблони"
+
+#~ msgid "SNMP Community"
+#~ msgstr "SNMP Общност"
+
+#, fuzzy
+#~ msgid "Discovery Rules"
+#~ msgstr "Устройства"
+
+#, fuzzy
+#~ msgid "The UDP port to be used for SNMP traps. Typically, 162."
+#~ msgstr "Въведете UDP порт номер който да се използва за SNMP (стандартно 161)"
+
+#, fuzzy
+#~ msgid "Graph Syntax"
 #~ msgstr "Графични елементи"
 
 #, fuzzy
-#~ msgid "Graph Template Selection [new]"
-#~ msgstr "Шаблони за елементи на графиката"
+#~ msgid "Developer Mode"
+#~ msgstr "Общ изглед"
 
 #, fuzzy
-#~ msgid "Graph Template Selection [edit: %s]"
-#~ msgstr "Шаблони за елементи на графиката"
+#~ msgid "Username (v3)"
+#~ msgstr "Потребител"
 
 #, fuzzy
-#~ msgctxt "Dialog: go to the next page"
-#~ msgid "Next"
-#~ msgstr "Следващ"
+#~ msgid "Password (v3)"
+#~ msgstr "Парола"
+
+#, fuzzy
+#~ msgid "Upgrade Results"
+#~ msgstr "Експортиране на резултати"
 
 #, fuzzy
 #~ msgctxt "Dialog: previous"
@@ -21094,288 +21333,49 @@ msgstr "Няма VDEF"
 #~ msgstr "Общ изглед"
 
 #, fuzzy
-#~ msgid "Upgrade Results"
-#~ msgstr "Експортиране на резултати"
+#~ msgctxt "Dialog: go to the next page"
+#~ msgid "Next"
+#~ msgstr "Следващ"
 
 #, fuzzy
-#~ msgid "Password (v3)"
-#~ msgstr "Парола"
+#~ msgid "Graph Template Selection [edit: %s]"
+#~ msgstr "Шаблони за елементи на графиката"
 
 #, fuzzy
-#~ msgid "Username (v3)"
-#~ msgstr "Потребител"
+#~ msgid "Graph Template Selection [new]"
+#~ msgstr "Шаблони за елементи на графиката"
 
 #, fuzzy
-#~ msgid "Developer Mode"
-#~ msgstr "Общ изглед"
-
-#, fuzzy
-#~ msgid "Graph Syntax"
+#~ msgid "Graph Export"
 #~ msgstr "Графични елементи"
 
-#, fuzzy
-#~ msgid "The UDP port to be used for SNMP traps. Typically, 162."
-#~ msgstr "Въведете UDP порт номер който да се използва за SNMP (стандартно 161)"
-
-#, fuzzy
-#~ msgid "Discovery Rules"
-#~ msgstr "Устройства"
-
-#~ msgid "SNMP Community"
-#~ msgstr "SNMP Общност"
-
-#, fuzzy
-#~ msgid "Import Data"
-#~ msgstr "Импортиране на шаблони"
-
-#, fuzzy
-#~ msgid "Export Data"
-#~ msgstr "Експортиране на шаблони"
-
-#, fuzzy
-#~ msgid "Automation Settings"
-#~ msgstr "Настройки на cacti"
-
-#, fuzzy
-#~ msgid "Created 1 Graph from %s"
-#~ msgstr "Създаване на нови графики"
-
-#, fuzzy
-#~ msgid "SNMP Context"
-#~ msgstr "SNMP Общност"
-
-#, fuzzy
-#~ msgid "Cacti Community Forum"
-#~ msgstr "SNMP Общност"
-
-#, fuzzy
-#~ msgid "Template Not Found"
-#~ msgstr "Шаблонът не е намерен"
-
-#, fuzzy
-#~ msgid "Non Templated"
-#~ msgstr "Без шаблон"
-
-#, fuzzy
-#~ msgid "The default timeshift you wish to be displayed when you display graphs"
-#~ msgstr "Подразбиращото се време, което искате да се показва, когато показвате графики"
-
-#, fuzzy
-#~ msgid "Default Graph View Timeshift"
-#~ msgstr "По подразбиране График View Timeshift"
-
-#, fuzzy
-#~ msgid "The default timespan you wish to be displayed when you display graphs"
-#~ msgstr "Основният период от време, който искате да се показва, когато показвате графики"
-
-#, fuzzy
-#~ msgid "Default Graph View Timespan"
-#~ msgstr "По подразбиране График за преглед на графиката"
-
-#, fuzzy
-#~ msgid "Template [new]"
-#~ msgstr "Шаблон [нов]"
-
-#, fuzzy
-#~ msgid "Template [edit: %s]"
-#~ msgstr "Шаблон [редактиране: %s]"
-
-#, fuzzy
-#~ msgid "Provide the Maintenance Schedule a meaningful name"
-#~ msgstr "Представете на графиката за поддръжка смислено име"
-
-#, fuzzy
-#~ msgid "Debugging Data Source"
-#~ msgstr "Източник на данни за отстраняване на грешки"
-
-#, fuzzy
-#~ msgid "New Check"
-#~ msgstr "Нова проверка"
-
-#, fuzzy
-#~ msgid "Click to show Data Query output for sfield '%s'"
-#~ msgstr "Кликнете, за да се покаже изходът на заявката за данни за sfield &#39; %s&#39;"
-
-#, fuzzy
-#~ msgid "Data Debug"
-#~ msgstr "Отстраняване на данни"
-
-#, fuzzy
-#~ msgid "Data Source Debugger [%s]"
-#~ msgstr "Дебъгер за източник на данни"
-
-#, fuzzy
-#~ msgid "Data Source Debugger"
-#~ msgstr "Дебъгер за източник на данни"
-
-#, fuzzy
-#~ msgid "Your Web Servers PHP is properly setup with a Timezone."
-#~ msgstr "Вашите уеб сървъри PHP е правилно настроен с Timezone."
-
-#, fuzzy
-#~ msgid "Your Web Servers PHP Timezone settings have not been set.  Please edit php.ini and uncomment the 'date.timezone' setting and set it to the Web Servers Timezone per the PHP installation instructions prior to installing Cacti."
-#~ msgstr "Вашите уеб сървъри PHP Настройките на часовата зона не са зададени. Моля, редактирайте php.ini и разкоментирайте настройката &#39;date.timezone&#39; и я настройте на Web сървърите по часовата зона, съгласно инструкциите за инсталиране на PHP, преди да инсталирате Cacti."
-
-#, fuzzy
-#~ msgid "PHP - Timezone Support"
-#~ msgstr "PHP - Поддръжка на часовата зона"
-
-#, fuzzy
-#~ msgid " Poller RunAs: "
-#~ msgstr "Поленски RunAs:"
-
-#, fuzzy
-#~ msgid "Data Source Troubleshooter"
-#~ msgstr "Инструмент за отстраняване на неизправности в източника на данни"
-
-#, fuzzy
-#~ msgid "Does the RRA Profile match the RRDfile structure?"
-#~ msgstr "Дали профилът на RRA съответства на структурата на RRDfile?"
-
-#, fuzzy
-#~ msgid "Mailer Error: No <b>TO</b> address set!!<br>If using the <i>Test Mail</i> link, please set the <b>Alert Email</b> setting."
-#~ msgstr "Мейлър Грешка: Не е <b>за</b> справяне <b>с</b> определени !! <br> Ако използвате връзката <i>Test Mail,</i> моля, задайте настройката за <b>електронна поща предупреждение.</b>"
-
-#, fuzzy
-#~ msgid "Created Threshold: %s<br>"
-#~ msgstr "Създадена графика: %s"
-
-#, fuzzy
-#~ msgid "No Threshold(s) Created.  They either already exist, or there were not matching combinations found."
-#~ msgstr "Не са създадени прагове. Те или вече съществуват, или не са намерени съответстващи комбинации."
-
-#, fuzzy
-#~ msgid "No Thresholds Templates associated with the Device's Template."
-#~ msgstr "Държавата, свързана с този сайт."
-
-#, fuzzy
-#~ msgid "'%s' must be set to positive integer value!<br>RECORD NOT UPDATED!"
-#~ msgstr "„ %s“ трябва да е с положителна цяло число! <br> RECORD НЕ АКТУАЛНО!"
-
-#, fuzzy
-#~ msgid "Created threshold: %s"
-#~ msgstr "Създадена графика: %s"
-
-#, fuzzy
-#~ msgid " What? Permission Denied"
-#~ msgstr "Разрешението е отказано"
-
-#, fuzzy
-#~ msgid "Failed to find linked Graph Template Item '%d' on Threshold '%d'"
-#~ msgstr "Неуспешно намиране на свързан шаблон за график „% d“ на праг „% d“"
-
-#, fuzzy
-#~ msgid "You must specify either 'Baseline Deviation UP' or 'Baseline Deviation DOWN' or both!<br>RECORD NOT UPDATED!"
-#~ msgstr "Трябва да посочите или „Базово отклонение UP“, или „Baseline Deviation DOWN“, или и двете! <br> RECORD НЕ АКТУАЛНО!"
-
-#, fuzzy
-#~ msgid "With baseline thresholds enabled."
-#~ msgstr "При включени базови прагове."
-
-#, fuzzy
-#~ msgid "Impossible thresholds: 'High Warning Threshold' smaller than or equal to 'Low Warning Threshold'<br>RECORD NOT UPDATED!"
-#~ msgstr "Невъзможни прагове: „Голям праг на предупреждение“ по-малък или равен на „Нисък праг на предупреждение“ <br> RECORD НЕ АКТУАЛНО!"
-
-#, fuzzy
-#~ msgid "Impossible thresholds: 'High Threshold' smaller than or equal to 'Low Threshold'<br>RECORD NOT UPDATED!"
-#~ msgstr "Невъзможни прагове: „висок праг“ по-малък или равен на „нисък праг“ <br> RECORD НЕ АКТУАЛНО!"
-
-#, fuzzy
-#~ msgid "You must specify either 'High Alert Threshold' or 'Low Alert Threshold' or both!<br>RECORD NOT UPDATED!"
-#~ msgstr "Трябва да укажете или 'High Alert Threshold' или 'Low Alert Threshold' или и двете! <br> RECORD НЕ АКТУАЛНО!"
-
-#, fuzzy
-#~ msgid "Record Updated"
-#~ msgstr "RRD Updated"
-
-#, fuzzy
-#~ msgid "Threshold was Autocreated due to Device Template mapping"
-#~ msgstr "Добавете заявка за данни към шаблона на устройството"
-
-#, fuzzy
-#~ msgid "The Graph Creation failed for Threshold Template"
-#~ msgstr "Графиката, която да се използва за този елемент от отчета."
-
-#, fuzzy
-#~ msgid "The Threshold Template ID was not set while trying to create Graph and Threshold"
-#~ msgstr "Идентификационният номер на шаблона за прага не е зададен, докато се опитва да създаде графика и праг"
-
-#, fuzzy
-#~ msgid "The Device ID was not set while trying to create Graph and Threshold"
-#~ msgstr "Идентификаторът на устройството не е зададен, докато се опитва да създаде графика и праг"
-
-#, fuzzy
-#~ msgid "<html><body>A warning has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
-#~ msgstr "<html><body> Издадено е предупреждение, което изисква вашето внимание. <br><br> <b>Устройство</b> : <DESCRIPTION> ( <HOSTNAME> ) <br> <b>URL адрес</b> : <URL><br> <b>Съобщение</b> : <SUBJECT><br><br><GRAPH></body></html>"
-
-#, fuzzy
-#~ msgid "<html><body>An alert has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
-#~ msgstr "<html><body> Издаден е сигнал, който изисква вашето внимание. <br><br> <b>Устройство</b> : <DESCRIPTION> ( <HOSTNAME> ) <br> <b>URL адрес</b> : <URL><br> <b>Съобщение</b> : <SUBJECT><br><br><GRAPH></body></html>"
-
-#, fuzzy
-#~ msgid "Link to Graph in Cacti"
-#~ msgstr "Влезте в Cacti"
-
-#, fuzzy
-#~ msgid "Pages:"
-#~ msgstr "Страници:"
-
-#, fuzzy
-#~ msgid "Swaps:"
-#~ msgstr "Суаповете:"
-
-#, fuzzy
-#~ msgid "Time:"
-#~ msgstr "Време"
-
-#, fuzzy
-#~ msgid "Log"
-#~ msgstr "Регистър"
-
-#, fuzzy
-#~ msgid "Thresholds"
-#~ msgstr "Теми"
-
-#, fuzzy
-#~ msgid "Non-Device"
-#~ msgstr "Не-Device"
-
-#, fuzzy
-#~ msgid "Graph Size"
-#~ msgstr "Размер на графиката"
-
-#, fuzzy
-#~ msgid "Sort field returned no data.  Can not continue Re-Index for GET data.."
-#~ msgstr "Полето за сортиране не връща данни. Не може да се продължи повторното индексиране за GET данни .."
-
-#, fuzzy
-#~ msgid "With modern SSD type storage, this operation actually degrades the disk more rapidly and adds a 50%% overhead on all write operations."
-#~ msgstr "С модерното хранилище за SSD тип, тази операция всъщност влошава диска по-бързо и добавя 50% натоварване върху всички операции по писане."
+#~ msgid "Which RRA's to use when entering data. (It is recommended that you select all of these values)."
+#~ msgstr "Кои RRA да се ползват при въвеждане на данни. (Препоръчва се да изберете всяка една от тези стойност)."
 
 #, fuzzy
-#~ msgid "Create Aggregate"
-#~ msgstr "Създаване на съвкупност"
+#~ msgid "The file holding the SSL Certificate Authority to use to connect to the remote database."
+#~ msgstr "Файлът, притежаващ SSL сертификат, който да се използва за свързване към отдалечена база данни."
 
 #, fuzzy
-#~ msgid "Resize Selected Graph(s)"
-#~ msgstr "Преоразмеряване на избраните графики"
+#~ msgid "%d Outliers"
+#~ msgstr "% d Отклонения"
 
 #, fuzzy
-#~ msgid "The following data sources are in use by these graphs:"
-#~ msgstr "Следните източници на данни се използват от тези графики:"
+#~ msgid "%s Standard Deviations"
+#~ msgstr "%s Стандартни отклонения"
 
 #, fuzzy
-#~ msgid "Resize"
-#~ msgstr "Resize"
+#~ msgid "No Task"
+#~ msgstr "Няма задача"
 
 #, fuzzy
-#~ msgid "Legacy 1.x Plugins"
-#~ msgstr "Приставки на Legacy 1.x"
+#~ msgid "%d Samples"
+#~ msgstr "% d Проби"
 
 #, fuzzy
-#~ msgid "View SNMPAgent Notification Log"
-#~ msgstr "Преглед на протокола за уведомления за SNMPAgent"
+#~ msgid "When using Cacti with languages other than English, it is important to use the utf8 character set as some characters take more than a single byte. If you are first just now installing Cacti, stop, make the changes and start over again. If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
+#~ msgstr "Когато използвате Cacti с езици, различни от английски, важно е да използвате набора от символи utf8, тъй като някои символи заемат повече от един байт. Ако за пръв път инсталирате Cacti, спрете, направете промените и започнете отново. Ако вашият Cacti е стартиран и е в производство, вижте интернет за инструкции за конвертиране на вашите бази данни и таблици, ако планирате да поддържате други езици."
 
 #, fuzzy
-#~ msgid "View SNMPAgent Cache"
-#~ msgstr "Преглед на кеш за SNMPAgent"
+#~ msgid "When using Cacti with languages other than English, it is important to use the utf8_general_ci collation type as some characters take more than a single byte.  If you are first just now installing Cacti, stop, make the changes and start over again.  If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
+#~ msgstr "Когато използвате Cacti с езици, различни от английски, важно е да използвате типа на сортиране utf8_general_ci, тъй като някои символи заемат повече от един байт. Ако за пръв път инсталирате Cacti, спрете, направете промените и започнете отново. Ако вашият Cacti е стартиран и е в производство, вижте интернет за инструкции за конвертиране на вашите бази данни и таблици, ако планирате да поддържате други езици."

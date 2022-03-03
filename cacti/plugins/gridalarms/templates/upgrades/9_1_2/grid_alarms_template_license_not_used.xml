@@ -1,0 +1,75 @@
+<!-- $Id$ -->
+<cacti>
+	<hash_1800218101639df814222ff5d5a74319c4add6>
+		<id>16</id>
+		<name>Licenses Not Used in |input_days| Day(s)</name>
+		<clusterid>0</clusterid>
+		<type>0</type>
+		<expression_id>15</expression_id>
+		<aggregation>0</aggregation>
+		<metric>0</metric>
+		<base_time_display>12:00am</base_time_display>
+		<base_time>0000-00-00 00:00:00</base_time>
+		<frequency>72</frequency>
+		<alarm_type>0</alarm_type>
+		<alarm_hi>0</alarm_hi>
+		<alarm_low></alarm_low>
+		<alarm_fail_trigger>72</alarm_fail_trigger>
+		<time_hi>0</time_hi>
+		<time_low></time_low>
+		<time_fail_trigger>0</time_fail_trigger>
+		<time_fail_length>1</time_fail_length>
+		<warning_pct></warning_pct>
+		<trigger_cmd_high></trigger_cmd_high>
+		<trigger_cmd_low></trigger_cmd_low>
+		<trigger_cmd_norm></trigger_cmd_norm>
+		<repeat_alert>0</repeat_alert>
+		<notify_extra></notify_extra>
+		<notify_cluster_admin>0</notify_cluster_admin>
+		<notify_alert>0</notify_alert>
+		<notify_users></notify_users>
+		<syslog_priority>4</syslog_priority>
+		<syslog_facility>24</syslog_facility>
+		<syslog_enabled></syslog_enabled>
+		<tcheck>0</tcheck>
+		<exempt>off</exempt>
+		<acknowledgement>off</acknowledgement>
+		<restored_alert>off</restored_alert>
+		<req_ack>off</req_ack>
+		<email_body>The following is the list of license features that have not been used in |input_days| Day(s).&lt;br&gt;&lt;br&gt;&lt;DETAILS&gt;&lt;br&gt;</email_body>
+		<email_subject>ALERT: &lt;NAME&gt;</email_subject>
+		<gridalarms_template_contacts>
+		</gridalarms_template_contacts>
+		<gridalarms_template_layout>
+		</gridalarms_template_layout>
+		<gridalarms_template_expression>
+			<hash_210021f905ea2357da200f750eb4515e44da45>
+				<id>15</id>
+				<name>License Not Used</name>
+				<description>This script returns a list of license features that are not used in a pre-defined number of days.</description>
+				<ds_type>2</ds_type>
+				<type>1</type>
+				<db_table>grid_jobs</db_table>
+				<sql_query></sql_query>
+				<script_thold>/usr/bin/php |path_cacti|/scripts/alert_lic_license_not_used.php query |input_days|</script_thold>
+				<script_data>/usr/bin/php |path_cacti|/scripts/alert_lic_license_not_used.php get |input_days|</script_data>
+				<script_data_type>0</script_data_type>
+			</hash_210021f905ea2357da200f750eb4515e44da45>
+		</gridalarms_template_expression>
+		<gridalarms_template_expression_item>
+		</gridalarms_template_expression_item>
+		<gridalarms_template_metric>
+		</gridalarms_template_metric>
+		<gridalarms_template_metric_expression>
+		</gridalarms_template_metric_expression>
+		<gridalarms_template_expression_input>
+			<hash_2400219c6fff4c22d8a0ec935e7d6af1b0d345>
+				<id>13</id>
+				<expression_id>15</expression_id>
+				<name>days</name>
+				<description>Enter the number of days the license hasn&#039;t been used</description>
+				<value>2</value>
+			</hash_2400219c6fff4c22d8a0ec935e7d6af1b0d345>
+		</gridalarms_template_expression_input>
+	</hash_1800218101639df814222ff5d5a74319c4add6>
+</cacti>

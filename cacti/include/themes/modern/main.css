@@ -689,7 +689,7 @@ label {
 }
 
 .cactiGraphPageHeadBackdrop {
-	background: transparent url("./images/cacti_logo.svg") no-repeat scroll left 40% / 380px auto;
+	background: transparent;
 	padding-bottom: 0px;
 	float: right;
 	width: 400px;
@@ -701,7 +701,7 @@ label {
 }
 
 .cactiConsolePageHeadBackdrop {
-	background: transparent url("./images/cacti_logo.svg") no-repeat scroll left 40% / 380px auto;
+	background: transparent;
 	padding-bottom: 0px;
 	float: right;
 	width: 400px;
@@ -891,7 +891,7 @@ ul#breadcrumbs {
 }
 
 .cactiLogo {
-	background: #efefef url('./images/cacti_logo.svg') no-repeat 30px;
+	background: #efefef;
 	display: block;
 	cursor: pointer;
 	padding-bottom: 160px;
@@ -931,7 +931,7 @@ ul#breadcrumbs {
 .cactiLoginLogo, .cactiLogoutLogo {
 	position: relative;
 	float: right;
-	background: transparent url('./images/cacti_logo.svg') no-repeat center;
+	background: transparent;
 	width: 120px;
 	height: 148px;
 	z-index: 2;
@@ -1318,6 +1318,12 @@ legend {
 	background: -o-linear-gradient(top, rgba(98,125,77,1) 0%, rgba(31,59,8,1) 100%);
 	background: -ms-linear-gradient(top, rgba(98,125,77,1) 0%, rgba(31,59,8,1) 100%);
 	color: snow;
+}
+
+tr.cactiTableTitle th, tr.cactiTableTitle td{
+    color: snow;
+    padding: 0px 5px;
+    font-size: 12px;
 }
 
 .cactiTableButton {
@@ -1930,7 +1936,7 @@ td#tabs {
 }
 
 .cactiGraphHeaderBackground {
-	background: transparent url("./images/cacti_logo.svg") no-repeat scroll left 10% / 380px auto;
+	background: transparent;
 	height: 35px;
 	width: 400px;
 	float: right;
@@ -2519,7 +2525,6 @@ tr#realtime td:first-child {
 	left: 4px;
 	bottom: 4px;
 	background-color: white;
-	background-image: url('./images/cacti_logo.svg');
 	background-repeat: no-repeat;
 	background-size: 7px;
 	background-position: center;
@@ -2601,7 +2606,6 @@ input:checked + .checkboxSlider:before {
 	left: 4px;
 	bottom: 4px;
 	background-color: white;
-	background-image: url('./images/cacti_logo.svg');
 	background-repeat: no-repeat;
 	background-size: 7px;
 	background-position: center;

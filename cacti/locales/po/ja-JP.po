@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cacti\n"
 "Report-Msgid-Bugs-To: developers@cacti.net\n"
-"POT-Creation-Date: 2020-10-28 16:57-0400\n"
+"POT-Creation-Date: 2020-11-02 03:26+0000\n"
 "PO-Revision-Date: 2020-09-13 18:45-0400\n"
 "Last-Translator: Patrick Rademaker\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -1201,7 +1201,7 @@ msgstr "デバイスを削除"
 #: automation_devices.php:409 automation_devices.php:419
 #: automation_devices.php:647 automation_devices.php:648 host.php:1596
 #: lib/api_automation.php:173 lib/api_automation.php:1099
-#: lib/html_utility.php:931 pollers.php:46
+#: lib/html_utility.php:939 pollers.php:46
 msgid "Down"
 msgstr "下"
 
@@ -1209,7 +1209,7 @@ msgstr "下"
 #: automation_devices.php:411 automation_devices.php:421
 #: automation_devices.php:647 automation_devices.php:648 host.php:1595
 #: lib/api_automation.php:172 lib/api_automation.php:1098
-#: lib/html_utility.php:937
+#: lib/html_utility.php:945
 msgid "Up"
 msgstr "上"
 
@@ -1547,7 +1547,7 @@ msgstr "有効"
 #: include/global_settings.php:1427 include/global_settings.php:1441
 #: include/global_settings.php:1501 include/global_settings.php:2146
 #: lib/api_automation.php:170 lib/api_automation.php:1096 lib/html.php:2472
-#: lib/html_reports.php:1513 lib/html_reports.php:1651 lib/html_utility.php:927
+#: lib/html_reports.php:1513 lib/html_reports.php:1651 lib/html_utility.php:935
 #: links.php:500 managers.php:243 managers.php:598 pollers.php:47
 #: user_admin.php:1164 user_domains.php:411 user_group_admin.php:697
 #: utilities.php:2377
@@ -5987,12 +5987,12 @@ msgid "Not Up"
 msgstr "上"
 
 #: host.php:1597 lib/api_automation.php:174 lib/api_automation.php:1100
-#: lib/html_utility.php:934 pollers.php:48
+#: lib/html_utility.php:942 pollers.php:48
 msgid "Recovering"
 msgstr "復元中"
 
 #: host.php:1598 lib/api_automation.php:175 lib/api_automation.php:1101
-#: lib/html_utility.php:943 lib/plugins.php:1086 lib/plugins.php:1087
+#: lib/html_utility.php:951 lib/plugins.php:1088 lib/plugins.php:1089
 #: lib/rrd.php:2919 lib/rrd.php:2931 user_admin.php:820 utilities.php:216
 #: utilities.php:217 utilities.php:2241
 msgid "Unknown"
@@ -7238,7 +7238,7 @@ msgid "Export Templates"
 msgstr "テンプレートエクスポート"
 
 #: include/global_arrays.php:927 include/global_arrays.php:949
-#: include/global_arrays.php:967 lib/plugins.php:1041
+#: include/global_arrays.php:967 lib/plugins.php:1043
 msgid "Configuration"
 msgstr "構成"
 
@@ -15304,32 +15304,32 @@ msgstr "選択中"
 msgid "The regular expression \"%s\" is not valid. Error is %s"
 msgstr "検索語 &quot;％s&quot;は無効です。エラーは％sです"
 
-#: lib/html_utility.php:884
+#: lib/html_utility.php:892
 #, fuzzy
 msgid "There was an internal error!"
 msgstr "内部エラーがありました。"
 
-#: lib/html_utility.php:885
+#: lib/html_utility.php:893
 #, fuzzy
 msgid "Backtrack limit was exhausted!"
 msgstr "バックトラックの制限がなくなりました！"
 
-#: lib/html_utility.php:886
+#: lib/html_utility.php:894
 #, fuzzy
 msgid "Recursion limit was exhausted!"
 msgstr "再帰制限が尽きました！"
 
-#: lib/html_utility.php:887
+#: lib/html_utility.php:895
 #, fuzzy
 msgid "Bad UTF-8 error!"
 msgstr "不正なUTF-8エラーです。"
 
-#: lib/html_utility.php:888
+#: lib/html_utility.php:896
 #, fuzzy
 msgid "Bad UTF-8 offset error!"
 msgstr "不正なUTF-8オフセットエラーです。"
 
-#: lib/html_utility.php:940 lib/installer.php:1803 lib/installer.php:3533
+#: lib/html_utility.php:948 lib/installer.php:1803 lib/installer.php:3533
 msgid "Error"
 msgstr "エラー"
 
@@ -16800,21 +16800,21 @@ msgstr "％sは％sに必須であり、インストールされていません�
 msgid "Plugin cannot be installed."
 msgstr "プラグインをインストールできません。"
 
-#: lib/plugins.php:1041 lib/plugins.php:1048 plugins.php:367 plugins.php:447
+#: lib/plugins.php:1043 lib/plugins.php:1050 plugins.php:367 plugins.php:447
 msgid "Plugins"
 msgstr "プラグイン"
 
-#: lib/plugins.php:1060 lib/plugins.php:1066
+#: lib/plugins.php:1062 lib/plugins.php:1068
 #, fuzzy, php-format
 msgid "Requires: Cacti >= %s"
 msgstr "必要なもの：サボテン&gt; =％s"
 
-#: lib/plugins.php:1063
+#: lib/plugins.php:1065
 #, fuzzy
 msgid "Legacy Plugin"
 msgstr "レガシプラグイン"
 
-#: lib/plugins.php:1088
+#: lib/plugins.php:1090
 #, fuzzy
 msgid "Not Stated"
 msgstr "言及なし"
@@ -20738,136 +20738,309 @@ msgid "No VDEFs"
 msgstr "VDEFなし"
 
 #, fuzzy
-#~ msgid "When using Cacti with languages other than English, it is important to use the utf8_general_ci collation type as some characters take more than a single byte.  If you are first just now installing Cacti, stop, make the changes and start over again.  If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
-#~ msgstr "英語以外の言語でCactiを使用する場合は、一部の文字が1バイトを超えるため、utf8_general_ci照合タイプを使用することが重要です。あなたが最初にCactiをインストールしたばかりの場合は、中止し、変更を加えて、最初からやり直してください。あなたのCactiが稼働していて生産中の場合、他の言語をサポートすることを計画しているなら、あなたのデータベースとテーブルを変換するための指示についてはインターネットを見てください。"
+#~ msgid "View SNMPAgent Cache"
+#~ msgstr "SNMPエージェントキャッシュの表示"
 
 #, fuzzy
-#~ msgid "When using Cacti with languages other than English, it is important to use the utf8 character set as some characters take more than a single byte. If you are first just now installing Cacti, stop, make the changes and start over again. If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
-#~ msgstr "英語以外の言語でCactiを使用する場合、文字によっては1バイトを超える文字が使用されるため、utf8文字セットを使用することが重要です。あなたが最初にCactiをインストールしたばかりの場合は、中止し、変更を加えて、最初からやり直してください。あなたのCactiが稼働していて生産中の場合、他の言語をサポートすることを計画しているなら、あなたのデータベースとテーブルを変換するための指示についてはインターネットを見てください。"
+#~ msgid "View SNMPAgent Notification Log"
+#~ msgstr "SNMPエージェント通知ログを表示する"
 
 #, fuzzy
-#~ msgid "%d Samples"
-#~ msgstr "％dサンプル"
+#~ msgid "Legacy 1.x Plugins"
+#~ msgstr "レガシー1.xプラグイン"
+
+#~ msgid "Resize"
+#~ msgstr "リサイズ"
 
 #, fuzzy
-#~ msgid "No Task"
-#~ msgstr "聞かない"
+#~ msgid "The following data sources are in use by these graphs:"
+#~ msgstr "これらのグラフでは、以下のデータソースが使用されています。"
 
 #, fuzzy
-#~ msgid "%s Standard Deviations"
-#~ msgstr "標準偏差％s"
+#~ msgid "Resize Selected Graph(s)"
+#~ msgstr "選択したグラフのサイズ変更"
 
 #, fuzzy
-#~ msgid "%d Outliers"
-#~ msgstr "％d外れ値"
+#~ msgid "Create Aggregate"
+#~ msgstr "集計を作成"
 
 #, fuzzy
-#~ msgid "The file holding the SSL Certificate Authority to use to connect to the remote database."
-#~ msgstr "リモートデータベースへの接続に使用するSSL認証局を保持しているファイル。"
-
-#~ msgid "Version 3"
-#~ msgstr "バージョン 3"
-
-#~ msgid "Version 2"
-#~ msgstr "バージョン 2"
-
-#~ msgid "Use passive mode"
-#~ msgstr "パッシブモードを使う"
-
-#~ msgid "Upper Limit"
-#~ msgstr "上限"
-
-#~ msgid "Tree View (Single Pane)"
-#~ msgstr "ツリー表示 (単一ペイン)"
-
-#~ msgid "Tree View (Dual Pane)"
-#~ msgstr "ツリービュー (二重ペイン)"
-
-#~ msgid "To enable the following devices, press the \"yes\" button below."
-#~ msgstr "次のデバイスを有効にする場合、下の「はい」ボタンを押します。"
-
-#~ msgid "To disable the following devices, press the \"yes\" button below."
-#~ msgstr "次のデバイスを無効にする場合、下の「はい」ボタンを押します。"
-
-#~ msgid "Timing"
-#~ msgstr "タイミング"
-
-#~ msgid "RRDTool Utility Version"
-#~ msgstr "RRDTool ユーティリティバージョン"
-
-#~ msgid "RRDTool Default Font Path"
-#~ msgstr "RRDTおおｌ デフォルトフォントのパス"
-
-#~ msgid "RRAs"
-#~ msgstr "RRA"
-
-#~ msgid "Password:"
-#~ msgstr "パスワード:"
-
-#~ msgid "Password for the remote ftp account (leave empty for blank)."
-#~ msgstr "リモート ftp アカウントのパスワード(パスワードなしは空にします)"
-
-#~ msgid "Parent Item"
-#~ msgstr "親の項目"
-
-#~ msgid "Minimum Value"
-#~ msgstr "最小値"
-
-#~ msgid "Hosts"
-#~ msgstr "ホスト"
-
-#~ msgid "Graph Permissions (By Graph)"
-#~ msgstr "グラフ権限 (グラフより)"
-
-#~ msgid "Graph Permissions (By Graph Template)"
-#~ msgstr "グラフ権限 (グラフテンプレートより)"
-
-#~ msgid "FTP Host"
-#~ msgstr "FTP ホスト"
-
-#~ msgid "Edit (Realm Permissions)"
-#~ msgstr "編集 (領域権限)"
-
-#~ msgid "Edit (Graph Settings)"
-#~ msgstr "編集 (グラフ設定)"
-
-#~ msgid "Edit (Graph Permissions)"
-#~ msgstr "編集 (グラフ権限)"
-
-#~ msgid "ACCESS DENIED"
-#~ msgstr "アクセスが拒否されました"
-
-#~ msgid "Graph Export"
-#~ msgstr "グラフエクスポート"
+#~ msgid "With modern SSD type storage, this operation actually degrades the disk more rapidly and adds a 50%% overhead on all write operations."
+#~ msgstr "最近のSSDタイプのストレージでは、この操作は実際にはより急速にディスクを劣化させ、すべての書き込み操作に50％のオーバーヘッドを追加します。"
 
 #, fuzzy
-#~ msgid "Graph Template Selection [new]"
-#~ msgstr "グラフテンプレートの項目"
+#~ msgid "Sort field returned no data.  Can not continue Re-Index for GET data.."
+#~ msgstr "ソートフィールドからデータが返されませんでした。 GETデータの再インデックスを続行できません。"
 
 #, fuzzy
-#~ msgid "Graph Template Selection [edit: %s]"
-#~ msgstr "グラフテンプレートの項目"
+#~ msgid "Graph Size"
+#~ msgstr "グラフサイズ"
 
 #, fuzzy
-#~ msgid "new"
-#~ msgstr "[新規]"
+#~ msgid "Non-Device"
+#~ msgstr "非デバイス"
 
 #, fuzzy
-#~ msgid "edit"
-#~ msgstr "[編集: "
+#~ msgid "Thresholds"
+#~ msgstr "スレッド"
 
 #, fuzzy
-#~ msgid "Web Site Hostname"
-#~ msgstr "ホスト名"
+#~ msgid "Log"
+#~ msgstr "最大ログサイズ"
 
 #, fuzzy
-#~ msgid "PHP version does not support IPv6"
-#~ msgstr "XML: ハッシュバージョンが存在しません。"
+#~ msgid "Time:"
+#~ msgstr "時間"
 
 #, fuzzy
-#~ msgctxt "Dialog: go to the next page"
-#~ msgid "Next"
-#~ msgstr "次に"
+#~ msgid "Swaps:"
+#~ msgstr "スワップ："
+
+#, fuzzy
+#~ msgid "Pages:"
+#~ msgstr "ページ:"
+
+#, fuzzy
+#~ msgid "Link to Graph in Cacti"
+#~ msgstr "サボテンにログイン"
+
+#, fuzzy
+#~ msgid "<html><body>An alert has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
+#~ msgstr "<html><body>注意が必要な警告が出されました。 <br><br> <b>デバイス</b> ： <DESCRIPTION> （ <HOSTNAME> ） <br> <b>URL</b> ： <URL><br> <b>メッセージ</b> ： <SUBJECT><br><br><GRAPH></body></html>"
+
+#, fuzzy
+#~ msgid "<html><body>A warning has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
+#~ msgstr "<html><body>注意が必要な警告が出されました。 <br><br> <b>デバイス</b> ： <DESCRIPTION> （ <HOSTNAME> ） <br> <b>URL</b> ： <URL><br> <b>メッセージ</b> ： <SUBJECT><br><br><GRAPH></body></html>"
+
+#, fuzzy
+#~ msgid "The Device ID was not set while trying to create Graph and Threshold"
+#~ msgstr "グラフとしきい値の作成中にデバイスIDが設定されませんでした"
+
+#, fuzzy
+#~ msgid "The Threshold Template ID was not set while trying to create Graph and Threshold"
+#~ msgstr "グラフとしきい値を作成しようとしたときに、しきい値テンプレートIDが設定されませんでした"
+
+#, fuzzy
+#~ msgid "The Graph Creation failed for Threshold Template"
+#~ msgstr "このレポートアイテムに使用するグラフ。"
+
+#, fuzzy
+#~ msgid "Threshold was Autocreated due to Device Template mapping"
+#~ msgstr "デバイステンプレートへのデータクエリの追加"
+
+#, fuzzy
+#~ msgid "Record Updated"
+#~ msgstr "レコード更新"
+
+#, fuzzy
+#~ msgid "You must specify either 'High Alert Threshold' or 'Low Alert Threshold' or both!<br>RECORD NOT UPDATED!"
+#~ msgstr "'High Alert Threshold'または 'Low Alert Threshold'、あるいはその両方を指定する必要があります。 <br>記録は更新されていません！"
+
+#, fuzzy
+#~ msgid "Impossible thresholds: 'High Threshold' smaller than or equal to 'Low Threshold'<br>RECORD NOT UPDATED!"
+#~ msgstr "不可能なしきい値：「低しきい値」以下の「高しきい値」 <br>記録は更新されていません！"
+
+#, fuzzy
+#~ msgid "Impossible thresholds: 'High Warning Threshold' smaller than or equal to 'Low Warning Threshold'<br>RECORD NOT UPDATED!"
+#~ msgstr "不可能なしきい値：「低警告しきい値」以下の「高警告しきい値」 <br>記録は更新されていません！"
+
+#, fuzzy
+#~ msgid "With baseline thresholds enabled."
+#~ msgstr "ベースラインしきい値が有効になっている。"
+
+#, fuzzy
+#~ msgid "You must specify either 'Baseline Deviation UP' or 'Baseline Deviation DOWN' or both!<br>RECORD NOT UPDATED!"
+#~ msgstr "'Baseline Deviation UP'または 'Baseline Deviation DOWN'、あるいはその両方を指定する必要があります。 <br>記録は更新されていません！"
+
+#, fuzzy
+#~ msgid "Failed to find linked Graph Template Item '%d' on Threshold '%d'"
+#~ msgstr "しきい値 '％d'でリンクされたグラフテンプレート項目 '％d'が見つかりませんでした"
+
+#, fuzzy
+#~ msgid " What? Permission Denied"
+#~ msgstr "権限がありません"
+
+#, fuzzy
+#~ msgid "Created threshold: %s"
+#~ msgstr "作成したグラフ：％s"
+
+#, fuzzy
+#~ msgid "'%s' must be set to positive integer value!<br>RECORD NOT UPDATED!"
+#~ msgstr "'％s'は正の整数値に設定する必要があります。 <br>記録は更新されていません！"
+
+#, fuzzy
+#~ msgid "No Thresholds Templates associated with the Device's Template."
+#~ msgstr "このサイトに関連付けられている州。"
+
+#, fuzzy
+#~ msgid "No Threshold(s) Created.  They either already exist, or there were not matching combinations found."
+#~ msgstr "しきい値が作成されていません。それらはすでに存在するか、一致する組み合わせが見つかりませんでした。"
+
+#, fuzzy
+#~ msgid "Created Threshold: %s<br>"
+#~ msgstr "作成したグラフ：％s"
+
+#, fuzzy
+#~ msgid "Mailer Error: No <b>TO</b> address set!!<br>If using the <i>Test Mail</i> link, please set the <b>Alert Email</b> setting."
+#~ msgstr "メーラーのエラー：いいえ設定したアドレス<b>に</b> !! <br> [ <i>テストメール]</i>リンクを使用している場合は、[ <b>警告メール]</b>設定を設定してください。"
+
+#, fuzzy
+#~ msgid "Does the RRA Profile match the RRDfile structure?"
+#~ msgstr "RRAプロファイルはRRDファイル構造と一致しますか？"
+
+#, fuzzy
+#~ msgid "Data Source Troubleshooter"
+#~ msgstr "データソースのトラブルシューティング"
+
+#, fuzzy
+#~ msgid " Poller RunAs: "
+#~ msgstr "ポーラーRunAs："
+
+#, fuzzy
+#~ msgid "PHP - Timezone Support"
+#~ msgstr "PHP  - タイムゾーンのサポート"
+
+#, fuzzy
+#~ msgid "Your Web Servers PHP Timezone settings have not been set.  Please edit php.ini and uncomment the 'date.timezone' setting and set it to the Web Servers Timezone per the PHP installation instructions prior to installing Cacti."
+#~ msgstr "WebサーバーのPHPタイムゾーン設定が設定されていません。 Cactiをインストールする前に、php.iniを編集して &#39;date.timezone&#39;設定のコメントを外し、PHPのインストール手順に従ってWebサーバのタイムゾーンに設定してください。"
+
+#, fuzzy
+#~ msgid "Your Web Servers PHP is properly setup with a Timezone."
+#~ msgstr "あなたのWebサーバーPHPはタイムゾーンで正しく設定されています。"
+
+#, fuzzy
+#~ msgid "Data Source Debugger"
+#~ msgstr "データソースデバッガ"
+
+#, fuzzy
+#~ msgid "Data Source Debugger [%s]"
+#~ msgstr "データソースデバッガ"
+
+#, fuzzy
+#~ msgid "Data Debug"
+#~ msgstr "データデバッグ"
+
+#, fuzzy
+#~ msgid "Click to show Data Query output for sfield '%s'"
+#~ msgstr "sfield &#39;％s&#39;のデータクエリ出力を表示するにはクリックしてください"
+
+#, fuzzy
+#~ msgid "New Check"
+#~ msgstr "新しいチェック"
+
+#, fuzzy
+#~ msgid "Debugging Data Source"
+#~ msgstr "データソースのデバッグ"
+
+#, fuzzy
+#~ msgid "Provide the Maintenance Schedule a meaningful name"
+#~ msgstr "メンテナンススケジュールに意味のある名前を付ける"
+
+#, fuzzy
+#~ msgid "Template [edit: %s]"
+#~ msgstr "テンプレート[編集：％s]"
+
+#, fuzzy
+#~ msgid "Template [new]"
+#~ msgstr "テンプレート[新規]"
+
+#, fuzzy
+#~ msgid "Default Graph View Timespan"
+#~ msgstr "デフォルトのグラフ表示時間"
+
+#, fuzzy
+#~ msgid "The default timespan you wish to be displayed when you display graphs"
+#~ msgstr "グラフを表示するときに表示するデフォルトのタイムパン"
+
+#, fuzzy
+#~ msgid "Default Graph View Timeshift"
+#~ msgstr "デフォルトのグラフビュータイムシフト"
+
+#, fuzzy
+#~ msgid "The default timeshift you wish to be displayed when you display graphs"
+#~ msgstr "グラフを表示するときに表示するデフォルトのタイムシフト"
+
+#, fuzzy
+#~ msgid "Non Templated"
+#~ msgstr "テンプレートなし"
+
+#, fuzzy
+#~ msgid "Template Not Found"
+#~ msgstr "テンプレートが見つかりません"
+
+#, fuzzy
+#~ msgid "CN found"
+#~ msgstr "グラフが見つかりません"
+
+#, fuzzy
+#~ msgid "Protocol Error"
+#~ msgstr "プロトコルバージョン"
+
+#, fuzzy
+#~ msgid "Insufficient Access"
+#~ msgstr "コンソールアクセス"
+
+#, fuzzy
+#~ msgid "Cacti Community Forum"
+#~ msgstr "SNMP コミュニティ"
+
+#, fuzzy
+#~ msgid "SNMP Context"
+#~ msgstr "SNMP コミュニティ"
+
+#, fuzzy
+#~ msgid "Real-time"
+#~ msgstr "領域"
+
+#, fuzzy
+#~ msgid "Created 1 Graph from %s"
+#~ msgstr "新規グラフを作成"
+
+#~ msgid "MD5 (default)"
+#~ msgstr "MD5 (デフォルト)"
+
+#~ msgid "DES (default)"
+#~ msgstr "DES (デフォルト)"
+
+#, fuzzy
+#~ msgid "Automation Settings"
+#~ msgstr "Cacti 設定"
+
+#~ msgid "Export Data"
+#~ msgstr "データをエクスポートする"
+
+#~ msgid "Import Data"
+#~ msgstr "データをインポートする"
+
+#~ msgid "SNMP Community"
+#~ msgstr "SNMP コミュニティ"
+
+#, fuzzy
+#~ msgid "Discovery Rules"
+#~ msgstr "検索フィルター"
+
+#~ msgid "Event Logging"
+#~ msgstr "イベントのログ記録"
+
+#, fuzzy
+#~ msgid "Graph Syntax"
+#~ msgstr "グラフ設定"
+
+#, fuzzy
+#~ msgid "Developer Mode"
+#~ msgstr "プレビューモード"
+
+#, fuzzy
+#~ msgid "Username (v3)"
+#~ msgstr "ユーザー名"
+
+#, fuzzy
+#~ msgid "Password (v3)"
+#~ msgstr "パスワード"
+
+#, fuzzy
+#~ msgid "Upgrade Results"
+#~ msgstr "エクスポート結果"
 
 #, fuzzy
 #~ msgctxt "Dialog: previous"
@@ -20875,306 +21048,133 @@ msgstr "VDEFなし"
 #~ msgstr "前に"
 
 #, fuzzy
-#~ msgid "Upgrade Results"
-#~ msgstr "エクスポート結果"
+#~ msgctxt "Dialog: go to the next page"
+#~ msgid "Next"
+#~ msgstr "次に"
 
 #, fuzzy
-#~ msgid "Password (v3)"
-#~ msgstr "パスワード"
+#~ msgid "PHP version does not support IPv6"
+#~ msgstr "XML: ハッシュバージョンが存在しません。"
 
 #, fuzzy
-#~ msgid "Username (v3)"
-#~ msgstr "ユーザー名"
+#~ msgid "Web Site Hostname"
+#~ msgstr "ホスト名"
 
 #, fuzzy
-#~ msgid "Developer Mode"
-#~ msgstr "プレビューモード"
+#~ msgid "edit"
+#~ msgstr "[編集: "
 
 #, fuzzy
-#~ msgid "Graph Syntax"
-#~ msgstr "グラフ設定"
+#~ msgid "new"
+#~ msgstr "[新規]"
 
-#~ msgid "Event Logging"
-#~ msgstr "イベントのログ記録"
-
-#, fuzzy
-#~ msgid "Discovery Rules"
-#~ msgstr "検索フィルター"
-
-#~ msgid "SNMP Community"
-#~ msgstr "SNMP コミュニティ"
-
-#~ msgid "Import Data"
-#~ msgstr "データをインポートする"
-
-#~ msgid "Export Data"
-#~ msgstr "データをエクスポートする"
-
-#, fuzzy
-#~ msgid "Automation Settings"
-#~ msgstr "Cacti 設定"
-
-#~ msgid "DES (default)"
-#~ msgstr "DES (デフォルト)"
-
-#~ msgid "MD5 (default)"
-#~ msgstr "MD5 (デフォルト)"
-
-#, fuzzy
-#~ msgid "Created 1 Graph from %s"
-#~ msgstr "新規グラフを作成"
-
-#, fuzzy
-#~ msgid "Real-time"
-#~ msgstr "領域"
-
-#, fuzzy
-#~ msgid "SNMP Context"
-#~ msgstr "SNMP コミュニティ"
-
-#, fuzzy
-#~ msgid "Cacti Community Forum"
-#~ msgstr "SNMP コミュニティ"
-
-#, fuzzy
-#~ msgid "Insufficient Access"
-#~ msgstr "コンソールアクセス"
-
-#, fuzzy
-#~ msgid "Protocol Error"
-#~ msgstr "プロトコルバージョン"
-
-#, fuzzy
-#~ msgid "CN found"
-#~ msgstr "グラフが見つかりません"
-
-#, fuzzy
-#~ msgid "Template Not Found"
-#~ msgstr "テンプレートが見つかりません"
-
-#, fuzzy
-#~ msgid "Non Templated"
-#~ msgstr "テンプレートなし"
-
-#, fuzzy
-#~ msgid "The default timeshift you wish to be displayed when you display graphs"
-#~ msgstr "グラフを表示するときに表示するデフォルトのタイムシフト"
-
-#, fuzzy
-#~ msgid "Default Graph View Timeshift"
-#~ msgstr "デフォルトのグラフビュータイムシフト"
-
-#, fuzzy
-#~ msgid "The default timespan you wish to be displayed when you display graphs"
-#~ msgstr "グラフを表示するときに表示するデフォルトのタイムパン"
-
-#, fuzzy
-#~ msgid "Default Graph View Timespan"
-#~ msgstr "デフォルトのグラフ表示時間"
-
-#, fuzzy
-#~ msgid "Template [new]"
-#~ msgstr "テンプレート[新規]"
-
-#, fuzzy
-#~ msgid "Template [edit: %s]"
-#~ msgstr "テンプレート[編集：％s]"
-
-#, fuzzy
-#~ msgid "Provide the Maintenance Schedule a meaningful name"
-#~ msgstr "メンテナンススケジュールに意味のある名前を付ける"
-
-#, fuzzy
-#~ msgid "Debugging Data Source"
-#~ msgstr "データソースのデバッグ"
-
-#, fuzzy
-#~ msgid "New Check"
-#~ msgstr "新しいチェック"
-
-#, fuzzy
-#~ msgid "Click to show Data Query output for sfield '%s'"
-#~ msgstr "sfield &#39;％s&#39;のデータクエリ出力を表示するにはクリックしてください"
-
 #, fuzzy
-#~ msgid "Data Debug"
-#~ msgstr "データデバッグ"
+#~ msgid "Graph Template Selection [edit: %s]"
+#~ msgstr "グラフテンプレートの項目"
 
 #, fuzzy
-#~ msgid "Data Source Debugger [%s]"
-#~ msgstr "データソースデバッガ"
+#~ msgid "Graph Template Selection [new]"
+#~ msgstr "グラフテンプレートの項目"
 
-#, fuzzy
-#~ msgid "Data Source Debugger"
-#~ msgstr "データソースデバッガ"
-
-#, fuzzy
-#~ msgid "Your Web Servers PHP is properly setup with a Timezone."
-#~ msgstr "あなたのWebサーバーPHPはタイムゾーンで正しく設定されています。"
-
-#, fuzzy
-#~ msgid "Your Web Servers PHP Timezone settings have not been set.  Please edit php.ini and uncomment the 'date.timezone' setting and set it to the Web Servers Timezone per the PHP installation instructions prior to installing Cacti."
-#~ msgstr "WebサーバーのPHPタイムゾーン設定が設定されていません。 Cactiをインストールする前に、php.iniを編集して &#39;date.timezone&#39;設定のコメントを外し、PHPのインストール手順に従ってWebサーバのタイムゾーンに設定してください。"
-
-#, fuzzy
-#~ msgid "PHP - Timezone Support"
-#~ msgstr "PHP  - タイムゾーンのサポート"
-
-#, fuzzy
-#~ msgid " Poller RunAs: "
-#~ msgstr "ポーラーRunAs："
-
-#, fuzzy
-#~ msgid "Data Source Troubleshooter"
-#~ msgstr "データソースのトラブルシューティング"
-
-#, fuzzy
-#~ msgid "Does the RRA Profile match the RRDfile structure?"
-#~ msgstr "RRAプロファイルはRRDファイル構造と一致しますか？"
-
-#, fuzzy
-#~ msgid "Mailer Error: No <b>TO</b> address set!!<br>If using the <i>Test Mail</i> link, please set the <b>Alert Email</b> setting."
-#~ msgstr "メーラーのエラー：いいえ設定したアドレス<b>に</b> !! <br> [ <i>テストメール]</i>リンクを使用している場合は、[ <b>警告メール]</b>設定を設定してください。"
-
-#, fuzzy
-#~ msgid "Created Threshold: %s<br>"
-#~ msgstr "作成したグラフ：％s"
-
-#, fuzzy
-#~ msgid "No Threshold(s) Created.  They either already exist, or there were not matching combinations found."
-#~ msgstr "しきい値が作成されていません。それらはすでに存在するか、一致する組み合わせが見つかりませんでした。"
-
-#, fuzzy
-#~ msgid "No Thresholds Templates associated with the Device's Template."
-#~ msgstr "このサイトに関連付けられている州。"
+#~ msgid "Graph Export"
+#~ msgstr "グラフエクスポート"
 
-#, fuzzy
-#~ msgid "'%s' must be set to positive integer value!<br>RECORD NOT UPDATED!"
-#~ msgstr "'％s'は正の整数値に設定する必要があります。 <br>記録は更新されていません！"
-
-#, fuzzy
-#~ msgid "Created threshold: %s"
-#~ msgstr "作成したグラフ：％s"
+#~ msgid "ACCESS DENIED"
+#~ msgstr "アクセスが拒否されました"
 
-#, fuzzy
-#~ msgid " What? Permission Denied"
-#~ msgstr "権限がありません"
+#~ msgid "Edit (Graph Permissions)"
+#~ msgstr "編集 (グラフ権限)"
 
-#, fuzzy
-#~ msgid "Failed to find linked Graph Template Item '%d' on Threshold '%d'"
-#~ msgstr "しきい値 '％d'でリンクされたグラフテンプレート項目 '％d'が見つかりませんでした"
+#~ msgid "Edit (Graph Settings)"
+#~ msgstr "編集 (グラフ設定)"
 
-#, fuzzy
-#~ msgid "You must specify either 'Baseline Deviation UP' or 'Baseline Deviation DOWN' or both!<br>RECORD NOT UPDATED!"
-#~ msgstr "'Baseline Deviation UP'または 'Baseline Deviation DOWN'、あるいはその両方を指定する必要があります。 <br>記録は更新されていません！"
+#~ msgid "Edit (Realm Permissions)"
+#~ msgstr "編集 (領域権限)"
 
-#, fuzzy
-#~ msgid "With baseline thresholds enabled."
-#~ msgstr "ベースラインしきい値が有効になっている。"
+#~ msgid "FTP Host"
+#~ msgstr "FTP ホスト"
 
-#, fuzzy
-#~ msgid "Impossible thresholds: 'High Warning Threshold' smaller than or equal to 'Low Warning Threshold'<br>RECORD NOT UPDATED!"
-#~ msgstr "不可能なしきい値：「低警告しきい値」以下の「高警告しきい値」 <br>記録は更新されていません！"
+#~ msgid "Graph Permissions (By Graph Template)"
+#~ msgstr "グラフ権限 (グラフテンプレートより)"
 
-#, fuzzy
-#~ msgid "Impossible thresholds: 'High Threshold' smaller than or equal to 'Low Threshold'<br>RECORD NOT UPDATED!"
-#~ msgstr "不可能なしきい値：「低しきい値」以下の「高しきい値」 <br>記録は更新されていません！"
+#~ msgid "Graph Permissions (By Graph)"
+#~ msgstr "グラフ権限 (グラフより)"
 
-#, fuzzy
-#~ msgid "You must specify either 'High Alert Threshold' or 'Low Alert Threshold' or both!<br>RECORD NOT UPDATED!"
-#~ msgstr "'High Alert Threshold'または 'Low Alert Threshold'、あるいはその両方を指定する必要があります。 <br>記録は更新されていません！"
+#~ msgid "Hosts"
+#~ msgstr "ホスト"
 
-#, fuzzy
-#~ msgid "Record Updated"
-#~ msgstr "レコード更新"
+#~ msgid "Minimum Value"
+#~ msgstr "最小値"
 
-#, fuzzy
-#~ msgid "Threshold was Autocreated due to Device Template mapping"
-#~ msgstr "デバイステンプレートへのデータクエリの追加"
+#~ msgid "Parent Item"
+#~ msgstr "親の項目"
 
-#, fuzzy
-#~ msgid "The Graph Creation failed for Threshold Template"
-#~ msgstr "このレポートアイテムに使用するグラフ。"
+#~ msgid "Password for the remote ftp account (leave empty for blank)."
+#~ msgstr "リモート ftp アカウントのパスワード(パスワードなしは空にします)"
 
-#, fuzzy
-#~ msgid "The Threshold Template ID was not set while trying to create Graph and Threshold"
-#~ msgstr "グラフとしきい値を作成しようとしたときに、しきい値テンプレートIDが設定されませんでした"
+#~ msgid "Password:"
+#~ msgstr "パスワード:"
 
-#, fuzzy
-#~ msgid "The Device ID was not set while trying to create Graph and Threshold"
-#~ msgstr "グラフとしきい値の作成中にデバイスIDが設定されませんでした"
+#~ msgid "RRAs"
+#~ msgstr "RRA"
 
-#, fuzzy
-#~ msgid "<html><body>A warning has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
-#~ msgstr "<html><body>注意が必要な警告が出されました。 <br><br> <b>デバイス</b> ： <DESCRIPTION> （ <HOSTNAME> ） <br> <b>URL</b> ： <URL><br> <b>メッセージ</b> ： <SUBJECT><br><br><GRAPH></body></html>"
+#~ msgid "RRDTool Default Font Path"
+#~ msgstr "RRDTおおｌ デフォルトフォントのパス"
 
-#, fuzzy
-#~ msgid "<html><body>An alert has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
-#~ msgstr "<html><body>注意が必要な警告が出されました。 <br><br> <b>デバイス</b> ： <DESCRIPTION> （ <HOSTNAME> ） <br> <b>URL</b> ： <URL><br> <b>メッセージ</b> ： <SUBJECT><br><br><GRAPH></body></html>"
+#~ msgid "RRDTool Utility Version"
+#~ msgstr "RRDTool ユーティリティバージョン"
 
-#, fuzzy
-#~ msgid "Link to Graph in Cacti"
-#~ msgstr "サボテンにログイン"
+#~ msgid "Timing"
+#~ msgstr "タイミング"
 
-#, fuzzy
-#~ msgid "Pages:"
-#~ msgstr "ページ:"
+#~ msgid "To disable the following devices, press the \"yes\" button below."
+#~ msgstr "次のデバイスを無効にする場合、下の「はい」ボタンを押します。"
 
-#, fuzzy
-#~ msgid "Swaps:"
-#~ msgstr "スワップ："
+#~ msgid "To enable the following devices, press the \"yes\" button below."
+#~ msgstr "次のデバイスを有効にする場合、下の「はい」ボタンを押します。"
 
-#, fuzzy
-#~ msgid "Time:"
-#~ msgstr "時間"
+#~ msgid "Tree View (Dual Pane)"
+#~ msgstr "ツリービュー (二重ペイン)"
 
-#, fuzzy
-#~ msgid "Log"
-#~ msgstr "最大ログサイズ"
+#~ msgid "Tree View (Single Pane)"
+#~ msgstr "ツリー表示 (単一ペイン)"
 
-#, fuzzy
-#~ msgid "Thresholds"
-#~ msgstr "スレッド"
+#~ msgid "Upper Limit"
+#~ msgstr "上限"
 
-#, fuzzy
-#~ msgid "Non-Device"
-#~ msgstr "非デバイス"
+#~ msgid "Use passive mode"
+#~ msgstr "パッシブモードを使う"
 
-#, fuzzy
-#~ msgid "Graph Size"
-#~ msgstr "グラフサイズ"
+#~ msgid "Version 2"
+#~ msgstr "バージョン 2"
 
-#, fuzzy
-#~ msgid "Sort field returned no data.  Can not continue Re-Index for GET data.."
-#~ msgstr "ソートフィールドからデータが返されませんでした。 GETデータの再インデックスを続行できません。"
+#~ msgid "Version 3"
+#~ msgstr "バージョン 3"
 
 #, fuzzy
-#~ msgid "With modern SSD type storage, this operation actually degrades the disk more rapidly and adds a 50%% overhead on all write operations."
-#~ msgstr "最近のSSDタイプのストレージでは、この操作は実際にはより急速にディスクを劣化させ、すべての書き込み操作に50％のオーバーヘッドを追加します。"
+#~ msgid "The file holding the SSL Certificate Authority to use to connect to the remote database."
+#~ msgstr "リモートデータベースへの接続に使用するSSL認証局を保持しているファイル。"
 
 #, fuzzy
-#~ msgid "Create Aggregate"
-#~ msgstr "集計を作成"
+#~ msgid "%d Outliers"
+#~ msgstr "％d外れ値"
 
 #, fuzzy
-#~ msgid "Resize Selected Graph(s)"
-#~ msgstr "選択したグラフのサイズ変更"
+#~ msgid "%s Standard Deviations"
+#~ msgstr "標準偏差％s"
 
 #, fuzzy
-#~ msgid "The following data sources are in use by these graphs:"
-#~ msgstr "これらのグラフでは、以下のデータソースが使用されています。"
-
-#~ msgid "Resize"
-#~ msgstr "リサイズ"
+#~ msgid "No Task"
+#~ msgstr "聞かない"
 
 #, fuzzy
-#~ msgid "Legacy 1.x Plugins"
-#~ msgstr "レガシー1.xプラグイン"
+#~ msgid "%d Samples"
+#~ msgstr "％dサンプル"
 
 #, fuzzy
-#~ msgid "View SNMPAgent Notification Log"
-#~ msgstr "SNMPエージェント通知ログを表示する"
+#~ msgid "When using Cacti with languages other than English, it is important to use the utf8 character set as some characters take more than a single byte. If you are first just now installing Cacti, stop, make the changes and start over again. If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
+#~ msgstr "英語以外の言語でCactiを使用する場合、文字によっては1バイトを超える文字が使用されるため、utf8文字セットを使用することが重要です。あなたが最初にCactiをインストールしたばかりの場合は、中止し、変更を加えて、最初からやり直してください。あなたのCactiが稼働していて生産中の場合、他の言語をサポートすることを計画しているなら、あなたのデータベースとテーブルを変換するための指示についてはインターネットを見てください。"
 
 #, fuzzy
-#~ msgid "View SNMPAgent Cache"
-#~ msgstr "SNMPエージェントキャッシュの表示"
+#~ msgid "When using Cacti with languages other than English, it is important to use the utf8_general_ci collation type as some characters take more than a single byte.  If you are first just now installing Cacti, stop, make the changes and start over again.  If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
+#~ msgstr "英語以外の言語でCactiを使用する場合は、一部の文字が1バイトを超えるため、utf8_general_ci照合タイプを使用することが重要です。あなたが最初にCactiをインストールしたばかりの場合は、中止し、変更を加えて、最初からやり直してください。あなたのCactiが稼働していて生産中の場合、他の言語をサポートすることを計画しているなら、あなたのデータベースとテーブルを変換するための指示についてはインターネットを見てください。"

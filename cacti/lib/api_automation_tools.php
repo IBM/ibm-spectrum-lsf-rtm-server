@@ -230,10 +230,10 @@ function getSNMPQueries() {
 function getSNMPQueryTypes($snmpQueryId) {
 	$types    = array();
 
-	$tmpArray = db_fetch_assoc_prepared('SELECT id, name 
-		FROM snmp_query_graph 
-		WHERE snmp_query_id = ? 
-		ORDER BY id', 
+	$tmpArray = db_fetch_assoc_prepared('SELECT id, name
+		FROM snmp_query_graph
+		WHERE snmp_query_id = ?
+		ORDER BY id',
 		array($snmpQueryId));
 
 	if ($tmpArray !== false && cacti_sizeof($tmpArray)) {
@@ -333,8 +333,8 @@ function displayCommunities($quietMode = false) {
 		print 'Known SNMP Communities: (community)' . PHP_EOL;
 	}
 
-	$communities = db_fetch_assoc('SELECT DISTINCT snmp_community 
-		FROM host 
+	$communities = db_fetch_assoc('SELECT DISTINCT snmp_community
+		FROM host
 		ORDER BY snmp_community');
 
 	if ($communities !== false &&cacti_sizeof($communities)) {
@@ -467,8 +467,8 @@ function displayTrees($quietMode = false) {
 		print 'Known Trees: (id, sort method, name)' . PHP_EOL;
 	}
 
-	$trees = db_fetch_assoc('SELECT id, sort_type, name 
-		FROM graph_tree 
+	$trees = db_fetch_assoc('SELECT id, sort_type, name
+		FROM graph_tree
 		ORDER BY id');
 
 	if (cacti_sizeof($trees)) {
@@ -631,8 +631,8 @@ function displayUsers($quietMode = false) {
 		print 'Known Users: (id, username, full_name)'. PHP_EOL;
 	}
 
-	$groups = db_fetch_assoc('SELECT id, username, full_name 
-		FROM user_auth 
+	$groups = db_fetch_assoc('SELECT id, username, full_name
+		FROM user_auth
 		ORDER BY id');
 
 	if (cacti_sizeof($groups)) {

@@ -934,7 +934,7 @@ function reportNetworkStatus($network_id, $old_devices) {
 					$fromemail = read_config_option('settings_from_email');
 
 					if ($fromemail == '') {
-						$fromemail = 'root@cacti.net';
+						$fromemail = 'root@localhost';
 					}
 				}
 			} else {

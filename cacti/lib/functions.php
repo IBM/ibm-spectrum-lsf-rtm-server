@@ -3220,6 +3220,20 @@ function cacti_escapeshellarg($string, $quote = true) {
 }
 
 /**
+ * error_no_deprecated, show php all error message
+ * but suppress deprecated warnings
+ *
+ * @deprecated
+ */
+function error_no_deprecated(){
+	if (defined("E_DEPRECATED")) {
+		error_reporting(E_ALL ^ E_DEPRECATED);
+	}else{
+		error_reporting(E_ALL);
+	}
+}
+
+/**
  * set a page refresh in Cacti through a callback
  * @param $refresh - an array containing the page, seconds, and logout
  * @return         - nill

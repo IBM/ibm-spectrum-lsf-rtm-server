@@ -1,0 +1,52 @@
+<!-- $Id$ -->
+<interface>
+  <name>Grid Licenses Summary Usage Information</name>
+  <script_path>|path_cacti|/scripts/ss_lic_flexlm_licenses_summary.php</script_path>
+  <script_function>ss_lic_flexlm_licenses_summary</script_function>
+  <script_server>php</script_server>
+  <arg_prepend>|host_hostname|</arg_prepend>
+  <arg_index>index</arg_index>
+  <arg_query>query</arg_query>
+  <arg_get>get</arg_get>
+  <output_delimeter>!</output_delimeter>
+  <index_order>gridFeatureName</index_order>
+  <index_order_type>alpha</index_order_type>
+  <index_title_format>|choosen_field_order|</index_title_format>
+  <fields>
+    <gridVendor>
+      <name>Vendor Name</name>
+      <direction>input</direction>
+      <query_name>vendor</query_name>
+    </gridVendor>
+    <gridFeatureName>
+      <name>Feature Name</name>
+      <direction>input</direction>
+      <query_name>feature</query_name>
+    </gridFeatureName>
+    <gridMaxLicenses>
+      <name>Max Licenses</name>
+      <direction>input</direction>
+      <query_name>licenses</query_name>
+    </gridMaxLicenses>
+    <gridMaxInUseLicenses>
+      <name>Max Licenses</name>
+      <direction>output</direction>
+      <query_name>maxavail</query_name>
+    </gridMaxInUseLicenses>
+    <gridInUseLicenses>
+      <name>In Use Licenses</name>
+      <direction>output</direction>
+      <query_name>inuse</query_name>
+    </gridInUseLicenses>
+    <gridQueuedLicenses>
+      <name>Queued Licenses</name>
+      <direction>output</direction>
+      <query_name>queued</query_name>
+    </gridQueuedLicenses>
+    <gridReservedLicenses>
+      <name>Reserved Licenses</name>
+      <direction>output</direction>
+      <query_name>reserved</query_name>
+    </gridReservedLicenses>
+  </fields>
+</interface>

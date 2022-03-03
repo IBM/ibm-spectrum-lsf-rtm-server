@@ -93,11 +93,11 @@ save_log_files() {
 			echo "DEBUG: Dumping $CACTI_LOG"
 			cat $CACTI_LOG ${logBase}/cacti.log
 			echo "DEBUG: Dumping $CACTI_ERRLOG"
-			cat $CACTI_ERRLOG 
+			cat $CACTI_ERRLOG
 			echo "DEBUG: Dumping $APACHE_ACCESS"
-			cat $APACHE_ACCESS 
+			cat $APACHE_ACCESS
 			echo "DEBUG: Dumping $APACHE_ERROR"
-			cat $APACHE_ERROR 
+			cat $APACHE_ERROR
 		fi
 	fi
 }

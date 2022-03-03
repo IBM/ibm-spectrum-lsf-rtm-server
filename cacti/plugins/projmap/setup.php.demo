@@ -1,0 +1,128 @@
+<?php
+// $Id: $
+/*
+ +-------------------------------------------------------------------------+
+ | Copyright IBM Corp. 2006, 2021                                          |
+ |                                                                         |
+ | Licensed under the Apache License, Version 2.0 (the "License");         |
+ | you may not use this file except in compliance with the License.        |
+ | You may obtain a copy of the License at                                 |
+ |                                                                         |
+ | http://www.apache.org/licenses/LICENSE-2.0                              |
+ |                                                                         |
+ | Unless required by applicable law or agreed to in writing, software     |
+ | distributed under the License is distributed on an "AS IS" BASIS,       |
+ | WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.|
+ | See the License for the specific language governing permissions and     |
+ | limitations under the License.                                          |
+ +-------------------------------------------------------------------------+
+*/
+
+function plugin_projmap_install() {
+	global $config;
+	/*Project Name map*/
+	api_plugin_register_hook('projmap', 'job_project_name_expr', 'projmap_job_project_name_expr', 'setup.php');
+	api_plugin_register_hook('projmap', 'job_project_name_url', 'projmap_job_project_name_url', 'setup.php');
+	api_plugin_register_hook('projmap', 'job_project_name_show', 'projmap_job_project_name_show', 'setup.php');
+}
+
+function projmap_version () {
+	return array(
+		'name'     => 'projmap',
+		'version'	=> read_config_option("grid_version"),
+		'longname' => 'LSF Project Map Plugin',
+		'author'   => 'IBM Corporation',
+		'homepage' => 'http://www.ibm.com',
+		'email'    => '',
+		'url'      => 'http://www.ibm.com'
+		);
+}
+
+function plugin_projmap_version() {
+	return projmap_version();
+}
+
+/*Aggregate project as queue name which associate projectname is random generated.*/
+function projmap_job_project_name_expr($projectName = "projectName") {
+	$queue = read_config_option("grid_random_proj_queue");
+	$queue = trim($queue);
+	if(!strlen($queue))
+		return $projectName;
+
+	$condstr = "";
+
+	$identical_proj = read_config_option("grid_valid_proj_identical");
+	if(strlen(trim($identical_proj))){
+		$id_projs = explode(",", $identical_proj);
+		if(!empty($id_projs))
+			foreach($id_projs as $id_proj){
+				$id_proja = trim($id_proj);
+				if(strlen($id_proja)){
+					if(strlen($condstr))
+						$condstr .= " AND ";
+					$condstr .= "projectName<>'$id_proja'";
+				}
+			}
+	}
+
+	$beginwith_proj = read_config_option("grid_valid_proj_beginwith");
+	if(strlen(trim($beginwith_proj))){
+		$bw_projs = explode(",", $beginwith_proj);
+		if(!empty($bw_projs))
+			foreach($bw_projs as $bw_proj){
+				$bw_proja = trim($bw_proj);
+				if(strlen($bw_proja)){
+					if(strlen($condstr))
+						$condstr .= " AND ";
+					$condstr .= "projectName NOT LIKE '$bw_proja%'";
+				}
+			}
+	}
+
+	if(strlen($condstr))
+		$condstr = " AND $condstr";
+
+	return "IF(queue='$queue' $condstr, '" . strtolower($queue) . "', $projectName)";
+}
+
+/*Drilldown with queue name instead of project when projectname is random generated.*/
+function projmap_job_project_name_url($projrow = array()) {
+	$queue = read_config_option("grid_random_proj_queue");
+	$queue = trim($queue);
+
+	if(strlen($queue) && !empty($projrow)
+		&& isset($projrow["projectName"]) && strlen($projrow["projectName"])
+		&& $projrow["projectName"]== strtolower($queue))
+		return "&queue=$queue";
+	return "&filter=" . urlencode($projrow["projectName"]);
+}
+
+function projmap_job_project_name_show($jobrow = array()) {
+	$queue = read_config_option("grid_random_proj_queue");
+	$queue = trim($queue);
+	if(strtolower($queue) != strtolower($jobrow["queue"]))
+		return $jobrow["projectName"];
+
+	$identical_proj = read_config_option("grid_valid_proj_identical");
+	if(strlen(trim($identical_proj))){
+		$id_projs = explode(",", $identical_proj);
+		if(!empty($id_projs))
+			foreach($id_projs as $id_proj){
+				$id_proja = trim($id_proj);
+				if(strlen($id_proja) && $id_proja == $jobrow["projectName"])
+					return $jobrow["projectName"];
+			}
+	}
+	$beginwith_proj = read_config_option("grid_valid_proj_beginwith");
+	if(strlen(trim($beginwith_proj))){
+		$bw_projs = explode(",", $beginwith_proj);
+		if(!empty($bw_projs))
+			foreach($bw_projs as $bw_proj){
+				$bw_proja = trim($bw_proj);
+				if(strlen($bw_proja) && strpos($jobrow["projectName"], $bw_proja) === 0)
+					return $jobrow["projectName"];
+			}
+	}
+	return strtolower($queue);
+}
+?>

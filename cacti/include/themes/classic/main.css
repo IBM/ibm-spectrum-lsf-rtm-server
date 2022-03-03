@@ -701,7 +701,7 @@ label {
 }
 
 .cactiPageHead {
-	background: #A9A9A9 url("./images/cacti_logo.svg") no-repeat scroll right 40% / 400px auto;
+	background: #A9A9A9;
 	border-bottom: 1px solid #00438C;
 	height: 36px;
 	width: 100%;
@@ -828,7 +828,7 @@ ul#breadcrumbs {
 
 .cactiLogo {
 	padding-top: 20px;
-	background: #F5F5F5 url('./images/cacti_logo.svg') no-repeat 30px;
+	background: #F5F5F5;
 	display: block;
 	cursor: pointer;
 	height: 140px;

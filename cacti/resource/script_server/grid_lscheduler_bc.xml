@@ -1,0 +1,93 @@
+<!-- $Id$ -->
+<interface>
+	<name>Grid License Scheduler By Feature</name>
+	<script_path>|path_cacti|/scripts/ss_grid_lssched_bc.php</script_path>
+	<script_function>ss_grid_lssched_bc</script_function>
+	<script_server>php</script_server>
+	<arg_prepend>|host_id|</arg_prepend>
+	<arg_index>index</arg_index>
+	<arg_query>query</arg_query>
+	<arg_get>get</arg_get>
+	<output_delimeter>!</output_delimeter>
+	<index_order>lsid_feature_pr_cl</index_order>
+	<index_order_type>alpha</index_order_type>
+	<index_title_format>|chosen_order_field|</index_title_format>
+
+	<fields>
+		<lsid_feature_pr_cl>
+			<name>Feature/Project/Cluster</name>
+			<direction>input</direction>
+			<query_name>lsid_feature_pr_cl</query_name>
+		</lsid_feature_pr_cl>
+		<dataCollector>
+			<name>Data Collector</name>
+			<direction>input</direction>
+			<query_name>collector</query_name>
+		</dataCollector>
+		<region>
+			<name>Region</name>
+			<direction>input</direction>
+			<query_name>region</query_name>
+		</region>
+		<feature>
+			<name>Feature</name>
+			<direction>input</direction>
+			<query_name>feature</query_name>
+		</feature>
+		<project>
+			<name>Project</name>
+			<direction>input</direction>
+			<query_name>project</query_name>
+		</project>
+		<cluster>
+			<name>Cluster</name>
+			<direction>input</direction>
+			<query_name>cluster</query_name>
+		</cluster>
+		<totalInUse>
+			<name>Total In Use</name>
+			<direction>output</direction>
+			<query_name>totalInUse</query_name>
+		</totalInUse>
+		<totalReserve>
+			<name>Total Reserve</name>
+			<direction>output</direction>
+			<query_name>totalReserve</query_name>
+		</totalReserve>
+		<totalFree>
+			<name>Total Free</name>
+			<direction>output</direction>
+			<query_name>totalFree</query_name>
+		</totalFree>
+		<totalNeed>
+			<name>Total Need</name>
+			<direction>output</direction>
+			<query_name>totalNeed</query_name>
+		</totalNeed>
+		<acumUse>
+			<name>Accumulated Use</name>
+			<direction>output</direction>
+			<query_name>acumUse</query_name>
+		</acumUse>
+		<scaledAcum>
+			<name>Scaled Accumulated Use</name>
+			<direction>output</direction>
+			<query_name>scaledAcum</query_name>
+		</scaledAcum>
+		<featQueued>
+			<name>Features Queued</name>
+			<direction>output</direction>
+			<query_name>featQueued</query_name>
+		</featQueued>
+		<featAvail>
+			<name>Features Available</name>
+			<direction>output</direction>
+			<query_name>featAvail</query_name>
+		</featAvail>
+		<totalOthers>
+			<name>Total Others</name>
+			<direction>output</direction>
+			<query_name>totalOthers</query_name>
+		</totalOthers>
+	</fields>
+</interface>

@@ -675,7 +675,7 @@ label {
 }
 
 .cactiGraphPageHeadBackdrop {
-	background: transparent url("./images/cacti_logo.svg") no-repeat scroll left 40% / 380px auto;
+	background: transparent;
 	padding-bottom: 0px;
 	float: right;
 	width: 400px;
@@ -687,7 +687,7 @@ label {
 }
 
 .cactiConsolePageHeadBackdrop {
-	background: transparent url("./images/cacti_logo.svg") no-repeat scroll left 40% / 380px auto;
+	background: transparent;
 	padding-bottom: 0px;
 	float: right;
 	width: 400px;
@@ -889,7 +889,7 @@ ul#breadcrumbs {
 }
 
 .cactiLogo {
-	background: #161616 url('./images/cacti_logo.svg') no-repeat 30px;
+	background: #161616;
 	display: block;
 	cursor: pointer;
 	padding-bottom: 178px;
@@ -928,7 +928,7 @@ ul#breadcrumbs {
 .cactiLoginLogo, .cactiLogoutLogo {
 	position: relative;
 	float: right;
-	background: transparent url('./images/cacti_logo.svg') no-repeat center;
+	background: transparent;
 	width: 120px;
 	height: 148px;
 	z-index: 2;
@@ -1892,7 +1892,7 @@ td#tabs {
 }
 
 .cactiGraphHeaderBackground {
-	background: transparent url("./images/cacti_logo.svg") no-repeat scroll left 10% / 380px auto;
+	background: transparent;
 	height: 35px;
 	width: 500px;
 	float: right;
@@ -2388,7 +2388,6 @@ tr#realtime td:first-child {
 	left: 4px;
 	bottom: 4px;
 	background-color: white;
-	background-image: url('./images/cacti_logo.svg');
 	background-repeat: no-repeat;
 	background-size: 7px;
 	background-position: center;
@@ -2477,7 +2476,6 @@ input:checked + .checkboxSlider:before {
 	left: 4px;
 	bottom: 4px;
 	background-color: white;
-	background-image: url('./images/cacti_logo.svg');
 	background-repeat: no-repeat;
 	background-size: 7px;
 	background-position: center;

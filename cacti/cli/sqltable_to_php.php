@@ -173,7 +173,7 @@ function sqltable_to_php($table, $create, $plugin = '') {
 			//exit;
 		}
 
-		$result = db_fetch_row_prepared('SELECT ENGINE, TABLE_COMMENT, ROW_FORMAT, CHARACTER_SET_NAME 
+		$result = db_fetch_row_prepared('SELECT ENGINE, TABLE_COMMENT, ROW_FORMAT, CHARACTER_SET_NAME
 			FROM information_schema.TABLES tbl JOIN information_schema.COLLATIONS coll ON tbl.TABLE_COLLATION=coll.COLLATION_NAME
 			WHERE TABLE_SCHEMA = SCHEMA()
 			AND TABLE_NAME = ?',

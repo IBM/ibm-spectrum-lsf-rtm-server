@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Cacti\n"
 "Report-Msgid-Bugs-To: developers@cacti.net\n"
-"POT-Creation-Date: 2020-10-28 16:57-0400\n"
+"POT-Creation-Date: 2020-11-02 03:26+0000\n"
 "PO-Revision-Date: 2020-09-13 18:54-0400\n"
 "Last-Translator: Patrick Rademaker\n"
 "Language-Team: Patrick Rademaker\n"
@@ -1118,7 +1118,7 @@ msgstr "Verwijder appara(a)t(en)"
 #: automation_devices.php:409 automation_devices.php:419
 #: automation_devices.php:647 automation_devices.php:648 host.php:1596
 #: lib/api_automation.php:173 lib/api_automation.php:1099
-#: lib/html_utility.php:931 pollers.php:46
+#: lib/html_utility.php:939 pollers.php:46
 msgid "Down"
 msgstr "Offline"
 
@@ -1126,7 +1126,7 @@ msgstr "Offline"
 #: automation_devices.php:411 automation_devices.php:421
 #: automation_devices.php:647 automation_devices.php:648 host.php:1595
 #: lib/api_automation.php:172 lib/api_automation.php:1098
-#: lib/html_utility.php:937
+#: lib/html_utility.php:945
 msgid "Up"
 msgstr "Online"
 
@@ -1438,7 +1438,7 @@ msgstr "Ingeschakeld"
 #: include/global_settings.php:1427 include/global_settings.php:1441
 #: include/global_settings.php:1501 include/global_settings.php:2146
 #: lib/api_automation.php:170 lib/api_automation.php:1096 lib/html.php:2472
-#: lib/html_reports.php:1513 lib/html_reports.php:1651 lib/html_utility.php:927
+#: lib/html_reports.php:1513 lib/html_reports.php:1651 lib/html_utility.php:935
 #: links.php:500 managers.php:243 managers.php:598 pollers.php:47
 #: user_admin.php:1164 user_domains.php:411 user_group_admin.php:697
 #: utilities.php:2377
@@ -5415,12 +5415,12 @@ msgid "Not Up"
 msgstr "Niet online"
 
 #: host.php:1597 lib/api_automation.php:174 lib/api_automation.php:1100
-#: lib/html_utility.php:934 pollers.php:48
+#: lib/html_utility.php:942 pollers.php:48
 msgid "Recovering"
 msgstr "Herstellende"
 
 #: host.php:1598 lib/api_automation.php:175 lib/api_automation.php:1101
-#: lib/html_utility.php:943 lib/plugins.php:1086 lib/plugins.php:1087
+#: lib/html_utility.php:951 lib/plugins.php:1088 lib/plugins.php:1089
 #: lib/rrd.php:2919 lib/rrd.php:2931 user_admin.php:820 utilities.php:216
 #: utilities.php:217 utilities.php:2241
 msgid "Unknown"
@@ -6534,7 +6534,7 @@ msgid "Export Templates"
 msgstr "Exporteer templates"
 
 #: include/global_arrays.php:927 include/global_arrays.php:949
-#: include/global_arrays.php:967 lib/plugins.php:1041
+#: include/global_arrays.php:967 lib/plugins.php:1043
 msgid "Configuration"
 msgstr "Configuratie"
 
@@ -14072,31 +14072,31 @@ msgstr "Geselecteerd"
 msgid "The regular expression \"%s\" is not valid. Error is %s"
 msgstr "De zoekterm \"%s\" is niet geldig. Foutmelding is %s"
 
-#: lib/html_utility.php:884
+#: lib/html_utility.php:892
 msgid "There was an internal error!"
 msgstr "Er was een interne fout!"
 
-#: lib/html_utility.php:885
+#: lib/html_utility.php:893
 #, fuzzy
 msgid "Backtrack limit was exhausted!"
 msgstr "Backtrack limiet was uitgeput!"
 
-#: lib/html_utility.php:886
+#: lib/html_utility.php:894
 #, fuzzy
 msgid "Recursion limit was exhausted!"
 msgstr "Recurrentielimiet was uitgeput!"
 
-#: lib/html_utility.php:887
+#: lib/html_utility.php:895
 #, fuzzy
 msgid "Bad UTF-8 error!"
 msgstr "Slechte UTF-8 fout!"
 
-#: lib/html_utility.php:888
+#: lib/html_utility.php:896
 #, fuzzy
 msgid "Bad UTF-8 offset error!"
 msgstr "Slechte UTF-8 offset fout!"
 
-#: lib/html_utility.php:940 lib/installer.php:1803 lib/installer.php:3533
+#: lib/html_utility.php:948 lib/installer.php:1803 lib/installer.php:3533
 msgid "Error"
 msgstr "Fout"
 
@@ -15496,20 +15496,20 @@ msgstr "%s is vereist voor %s, en het is niet geïnstalleerd."
 msgid "Plugin cannot be installed."
 msgstr "Plugin kan niet worden geïnstalleerd."
 
-#: lib/plugins.php:1041 lib/plugins.php:1048 plugins.php:367 plugins.php:447
+#: lib/plugins.php:1043 lib/plugins.php:1050 plugins.php:367 plugins.php:447
 msgid "Plugins"
 msgstr "Plugins"
 
-#: lib/plugins.php:1060 lib/plugins.php:1066
+#: lib/plugins.php:1062 lib/plugins.php:1068
 #, php-format
 msgid "Requires: Cacti >= %s"
 msgstr "Benodigd: Cacti >= %s"
 
-#: lib/plugins.php:1063
+#: lib/plugins.php:1065
 msgid "Legacy Plugin"
 msgstr "Oude plugin(s)"
 
-#: lib/plugins.php:1088
+#: lib/plugins.php:1090
 msgid "Not Stated"
 msgstr "Niet vermeld"
 
@@ -19207,1219 +19207,1219 @@ msgstr "Het aantal grafiektemplates die deze VDEF gebruiken."
 msgid "No VDEFs"
 msgstr "Geen VDEF's"
 
-#~ msgid "When using Cacti with languages other than English, it is important to use the utf8_general_ci collation type as some characters take more than a single byte.  If you are first just now installing Cacti, stop, make the changes and start over again.  If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
-#~ msgstr "Wanneer Cacti gebruikt wordt met talen anders dan Engels, is het belangrijk om de utf8_general_ci karakterset te gebruiken, omdat sommige karakters multi-byte zijn. Als u de installatie nu voor het eerst uitvoert, stop dan, wijzig de collatie en begin opnieuw. Als Cacti al draait in een productieomgeving, kijk op het internet voor instructies over het converteren van uw database en tabellen voor de ondersteuning van andere talen."
+#~ msgid "View SNMPAgent Cache"
+#~ msgstr "Toon SNMPAgent cache"
 
-#~ msgid "When using Cacti with languages other than English, it is important to use the utf8 character set as some characters take more than a single byte. If you are first just now installing Cacti, stop, make the changes and start over again. If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
-#~ msgstr "Wanneer Cacti gebruikt wordt met talen anders dan Engels, is het belangrijk om de UTF8 karakterset te gebruiken, omdat sommige karakters multi-byte zijn. Als u de installatie nu voor het eerst uitvoert, stop dan, wijzig de collatie en begin opnieuw. Als Cacti al draait in een productieomgeving, kijk op het internet voor instructies over het converteren van uw database en tabellen voor de ondersteuning van andere talen."
-
-#~ msgid "%d Samples"
-#~ msgstr "%d Voorbeelden"
-
-#~ msgid "No Task"
-#~ msgstr "Geen taak"
-
-#~ msgid "%s Standard Deviations"
-#~ msgstr "%s standaardafwijkingen"
-
-#~ msgid "%d Outliers"
-#~ msgstr "%d Uitschieters"
+#~ msgid "View SNMPAgent Notification Log"
+#~ msgstr "Toon SNMP agent notificatie log"
 
 #, fuzzy
-#~ msgid "The file holding the SSL Certificate Authority to use to connect to the remote database."
-#~ msgstr "Het bestand met het SSL Certificaat Autoriteit om te gebruiken om verbinding te maken met de database op afstand."
+#~ msgid "Legacy 1.x Plugins"
+#~ msgstr "Legacy 1.x Plugins"
 
-#~ msgid "Uptime Goes Backwards"
-#~ msgstr "Uptime gaat achteruit"
+#~ msgid "Resize"
+#~ msgstr "Grootte wijzigen"
 
-#~ msgid "WQL Query"
-#~ msgstr "WQL query"
+#~ msgid "The following data sources are in use by these graphs:"
+#~ msgstr "De volgende data bronnen zijn in gebruik bij deze grafieken:"
 
-#~ msgid "You must select at least one WMI Query."
-#~ msgstr "U moet op zijn minst een WMI query selecteren."
-
-#~ msgid "Click 'Continue' to Delete the following WMI Queries."
-#~ msgstr "Klik op ‘Volgende’ om de volgende WMI query te verwijderen."
-
-#~ msgid "Query"
-#~ msgstr "Query"
-
-#~ msgid "No Accounts Found"
-#~ msgstr "Geen accounts gevonden"
-
-#~ msgid "Account [edit: %s]"
-#~ msgstr "Account [wijzig: %s]"
-
-#~ msgid "You must select at least one account."
-#~ msgstr "U moet tenminste een account selecteren."
-
-#~ msgid "Remove WMI Query"
-#~ msgstr "Verwijder WMI query"
-
-#~ msgid "WMI Settings"
-#~ msgstr "WMI instellingen"
-
-#~ msgid "Display Name of this server"
-#~ msgstr "De naam van deze server"
-
-#~ msgid "Master Server"
-#~ msgstr "Master server"
-
-#~ msgid "No Users Selected"
-#~ msgstr "Geen gebruikers geselecteerd"
-
-#~ msgid "Requires Authentication"
-#~ msgstr "Authenticatie vereist"
-
-#~ msgid "Query [new]"
-#~ msgstr "Query [nieuw]"
-
-#~ msgid "Query [edit: %s]"
-#~ msgstr "Query [wijzig: %s]"
-
-#~ msgid "No Servers Found"
-#~ msgstr "Geen servers gevonden"
-
-#~ msgid "Disable Site"
-#~ msgstr "Locatie uitschakelen"
-
-#~ msgid "Enable Site"
-#~ msgstr "Activeer locatie"
-
-#~ msgid "Please select a Device"
-#~ msgstr "Selecteer alstublieft een apparaat"
-
-#~ msgid "Updated"
-#~ msgstr "Bijgewerkt"
-
-#~ msgid "Imported"
-#~ msgstr "Geimporteerd"
-
-#~ msgid "%d Seconds (Average)"
-#~ msgstr "%d Seconden (gemiddeld)"
-
-#~ msgid "Percent Datasource"
-#~ msgstr "Aanwezige data bron"
-
-#~ msgid "Data Field"
-#~ msgstr "Data veld"
-
-#~ msgid "Measured Value"
-#~ msgstr "Gemeten waarde"
-
-#~ msgid "The official hostname for this Device"
-#~ msgstr "De officiële hostname van dit apparaat."
-
-#~ msgid "The number of Data Sources for this Device"
-#~ msgstr "Het aantal data bronnen van dit apparaat"
-
-#~ msgid "The number of Graphs for this Device"
-#~ msgstr "Het aantal grafieken voor dit apparaat"
-
-#~ msgid "View Graph"
-#~ msgstr "Toon grafiek"
-
-#~ msgid "Disable Threshold"
-#~ msgstr "Drempelwaarde uitschakelen"
-
-#~ msgid "All Users Selected"
-#~ msgstr "Alle gebruikers geselecteerd"
-
-#~ msgid "Users Selected"
-#~ msgstr "Geselecteerde gebruikers"
-
-#~ msgid "Data Type"
-#~ msgstr "Data type"
-
-#~ msgid "Data Manipulation"
-#~ msgstr "Data manipulatie"
-
-#~ msgid "Breach Duration"
-#~ msgstr "Duur breuk"
-
-#~ msgid "Template Settings"
-#~ msgstr "Template instellingen"
-
-#~ msgid "Data Sources: %s"
-#~ msgstr "Data bronnen: %s"
-
-#~ msgid "Last:"
-#~ msgstr "Laatste:"
-
-#~ msgid "Return to Defaults"
-#~ msgstr "Standaardinstellingen"
-
-#~ msgid "Apply Filters"
-#~ msgstr "Filter toepassen"
-
-#~ msgid "List Name"
-#~ msgstr "Lijstnaam"
-
-#~ msgid "Log Only"
-#~ msgstr "Uitsluitend loggen"
-
-#~ msgid "Current List"
-#~ msgstr "Huidige lijst"
-
-#~ msgid "Select Users"
-#~ msgstr "Geselecteerde gebruikers"
-
-#~ msgid "Current List Only"
-#~ msgstr "Alleen de huidige lijst"
-
-#~ msgid "Associated Lists"
-#~ msgstr "Gekoppelde lijsten"
-
-#~ msgid "Enter a name for this Notification List."
-#~ msgstr "Voer een naam in voor deze berichtenlijst."
-
-#~ msgid "Default Status"
-#~ msgstr "Standaard status"
-
-#~ msgid "Exact Value"
-#~ msgstr "Exacte waarde"
-
-#~ msgid "Every %d Pollings"
-#~ msgstr "Iedere %d pollers"
-
-#~ msgid "Every Polling"
-#~ msgstr "Iedere poller"
-
-#~ msgid "%0.1f Hours"
-#~ msgstr "%0.1f Uren"
-
-#~ msgid "Report Email Addresses"
-#~ msgstr "E-mailadressen rapportage"
-
-#~ msgid "Click 'Continue' to Enable the following Syslog Report(s)."
-#~ msgstr "Klik op 'Volgende' om de volgende Syslog rapportage in te schakelen."
-
-#~ msgid "Click 'Continue' to Disable the following Syslog Report(s)."
-#~ msgstr "Klik op 'Volgende' om de volgende Syslog rapportage uit te schakelen."
-
-#~ msgid "Click 'Continue' to Delete the following Syslog Report(s)."
-#~ msgstr "Klik op 'Volgende' om de volgende Syslog rapportage te verwijderen."
-
-#~ msgid "Deletion"
-#~ msgstr "Verwijdering"
-
-#~ msgid "Enabled?"
-#~ msgstr "Ingeschakeld?"
-
-#~ msgid "Name:"
-#~ msgstr "Naam:"
-
-#~ msgid "Search String"
-#~ msgstr "Zoekterm"
-
-#~ msgid "Month"
-#~ msgstr "Maand"
-
-#~ msgid "Not Set"
-#~ msgstr "Niet ingesteld"
-
-#~ msgid "All Programs"
-#~ msgstr "Alle programma’s"
-
-#~ msgid "Save Default Settings"
-#~ msgstr "Standaardinstellingen opslaan"
-
-#~ msgid "All Devices Selected"
-#~ msgstr "Alle apparaten geselecteerd"
-
-#~ msgid "Select Device(s)"
-#~ msgstr "Selecteer appara(a)t(en)"
-
-#~ msgid "Time Range"
-#~ msgstr "Tijdperiode"
-
-#~ msgid "Program"
-#~ msgstr "Programma"
-
-#~ msgid "(Actions)"
-#~ msgstr "(Acties)"
-
-#~ msgid "%d Per Day"
-#~ msgstr "%d Per dag"
-
-#~ msgid "From Address"
-#~ msgstr "Afzender e-mailadres"
-
-#~ msgid "Edit Device Type"
-#~ msgstr "Wijzig apparaattype"
-
-#~ msgid "Show Version"
-#~ msgstr "Toon versie"
-
-#~ msgid "Password Prompt"
-#~ msgstr "Wachtwoord melding"
-
-#~ msgid "Last Backup"
-#~ msgstr "Laatste backup"
-
-#~ msgid "Router: [new]"
-#~ msgstr "Router: [nieuw]"
-
-#~ msgid "Router: [edit: %s]"
-#~ msgstr "Router: [wijzig: %s]"
-
-#~ msgid "This is the IP Address used to communicate with the device."
-#~ msgstr "Dit is het IP adres dat gebruikt wordt om met het apparaat te communiceren."
-
-#~ msgid "File: %s/%s"
-#~ msgstr "Bestand: %s/%s"
-
-#~ msgid "Enable Password"
-#~ msgstr "Activeer wachtwoord"
-
-#~ msgid "Device Monitoring Settings"
-#~ msgstr "Apparaat monitoring instellingen"
-
-#~ msgid "Agent Uptime:"
-#~ msgstr "Agent uptime:"
-
-#~ msgid "Availability:"
-#~ msgstr "Beschikbaarheid:"
-
-#~ msgid "Time In State:"
-#~ msgstr "Tijd in staat:"
-
-#~ msgid "IP/Hostname:"
-#~ msgstr "IP/Hostname:"
-
-#~ msgid "Status:"
-#~ msgstr "Status:"
-
-#~ msgid "Last Refresh: %s"
-#~ msgstr "Laatste update: %s"
-
-#~ msgid "Refresh the Device List"
-#~ msgstr "Vernieuw apparatenlijst"
-
-#~ msgid "You must select at least one User."
-#~ msgstr "U moet tenminste een gebruiker selecteren."
-
-#~ msgid "View Users"
-#~ msgstr "Toon gebruikers"
-
-#~ msgid "Total Disk"
-#~ msgstr "Totaal schijf"
-
-#~ msgid "Total Out"
-#~ msgstr "Totaal uitgaand"
-
-#~ msgid "Total In"
-#~ msgstr "Totaal inkomend"
-
-#~ msgid "Active Users"
-#~ msgstr "Actieve gebruikers"
-
-#~ msgid "Total Packets"
-#~ msgstr "Totaal pakketten"
-
-#~ msgid "Total Bytes"
-#~ msgstr "Totaal bytes"
-
-#~ msgid "General Site Settings"
-#~ msgstr "Algemene locatie instellingen"
-
-#~ msgid "SSH"
-#~ msgstr "SSH"
-
-#~ msgid "Fill in the fully qualified hostname for this device."
-#~ msgstr "Voer de volledige hostname in voor dit apparaat."
-
-#~ msgid "Specified the number of OID's that can be obtained in a single SNMP Get request."
-#~ msgstr "Specificeer het aantal OID’s dat in een enkele SNMP GET request mag worden opgehaald."
-
-#~ msgid "Fill in the name for the vendor of this device type."
-#~ msgstr "Voer de naam van de fabrikant in voor dit apparaattype."
-
-#~ msgid "Every %d Hour"
-#~ msgstr "Iedere %d uren"
-
-#~ msgid "Sync MacTrack Device to Cacti Device"
-#~ msgstr "Synchroniseer apparaten naar apparaattemplate(s"
-
-#~ msgid "Full"
-#~ msgstr "Volledig"
-
-#~ msgid "Contains"
-#~ msgstr "Bevat"
-
-#~ msgid "(Import)"
-#~ msgstr "(Importeren)"
-
-#~ msgid "Communities"
-#~ msgstr "Communities"
-
-#~ msgid "MacAuth Report Email Addresses"
-#~ msgstr "MacAuth Rapportage e-mailadressen"
-
-#~ msgid "DNS Settings"
-#~ msgstr "DNS instellingen"
-
-#~ msgid "Colon [:]"
-#~ msgstr "Dubbele punt [:]"
-
-#~ msgid "View IP Addresses"
-#~ msgstr "Toon IP adressen"
-
-#~ msgid "Edit Site"
-#~ msgstr "Wijzig locatie"
-
-#~ msgid "Portname"
-#~ msgstr "Poortnaam"
-
-#~ msgid "Authorized"
-#~ msgstr "Geautoriseerd"
-
-#~ msgid "Aggregated"
-#~ msgstr "Geaggregeerd"
-
-#~ msgid "VLAN Name"
-#~ msgstr "VLAN naam"
-
-#~ msgid "Port Name"
-#~ msgstr "Poortnaam"
-
-#~ msgid "MAC Addresses"
-#~ msgstr "MAC adressen"
-
-#~ msgid "Are you sure you want to Delete the following rows from Aggregated table?"
-#~ msgstr "Weet u zeker dat u de volgende rijen van de geaggregeerde tabel wilt verwijderen?"
-
-#~ msgid "You must select at least one Row."
-#~ msgstr "U moet tenminste een regel selecteren."
-
-#~ msgid "You must select at least one MAC Address."
-#~ msgstr "U moet tenminste een MAC adres selecteren."
-
-#~ msgid "Are you sure you want to Revoke the following MAC Addresses?"
-#~ msgstr "Weet u zeker dat u het volgende MAC adres wilt intrekken?"
-
-#~ msgid "Are you sure you want to Authorize the following MAC Addresses?"
-#~ msgstr "Weet u zeker dat u het volgende MAC adres wilt autoriseren?"
-
-#~ msgid "Maximum IP Addresses"
-#~ msgstr "Maximum aantal IP adressen"
-
-#~ msgid "Current IP Addresses"
-#~ msgstr "Huidig IP adres"
-
-#~ msgid "IP Range"
-#~ msgstr "IP reeks"
-
-#~ msgid "IP Address Ranges"
-#~ msgstr "IP adres bereik"
-
-#~ msgid "Show Totals"
-#~ msgstr "Toon totalen"
-
-#~ msgid "View MAC Addresses"
-#~ msgstr "Toon MAC adressen"
-
-#~ msgid "Total VLAN's"
-#~ msgstr "Totaal VLAN’s"
-
-#~ msgid "Switch Device"
-#~ msgstr "Wissel apparaat"
-
-#~ msgid "ED MAC Address"
-#~ msgstr "ED MACadres"
-
-#~ msgid "Address"
-#~ msgstr "Adres"
-
-#~ msgid "Corporation"
-#~ msgstr "Bedrijf"
-
-#~ msgid "Are you sure you want to delete all the Aggregated Port to MAC to IP results from the system?"
-#~ msgstr "Weet u zeker dat u alle geaggregeerde poort naar MAC adres naar IP resultaten wilt verwijderen uit het systeem?"
-
-#~ msgid "Are you sure you want to delete all the Port to MAC to IP results from the system?"
-#~ msgstr "Weet u zeker dat u alle poort naar MAC adres naar IP resultaten wilt verwijderen van het systeem?"
-
-#~ msgid "Secondary DNS Server:"
-#~ msgstr "Alternatieve DNS server:"
-
-#~ msgid "Primary DNS Server:"
-#~ msgstr "Primaire DNS server:"
-
-#~ msgid "Options"
-#~ msgstr "Opties"
-
-#~ msgid "Max OIDs"
-#~ msgstr "Maximum aantal OID’s"
-
-#~ msgid "Total Trunks"
-#~ msgstr "Totaal aantal trunks"
-
-#~ msgid "Total Devices"
-#~ msgstr "Totaal aantal apparaten"
-
-#~ msgid "Total IP's"
-#~ msgstr "Totaal aantal IP’s"
-
-#~ msgid "You must select at least one site."
-#~ msgstr "U moet tenminste een locatie selecteren."
-
-#~ msgid "First Seen"
-#~ msgstr "Eerste keer gezien"
-
-#~ msgid "Mac Address"
-#~ msgstr "MAC-adres"
-
-#~ msgid "Last Duration"
-#~ msgstr "Laatste duur"
-
-#~ msgid "Change Device Port Values"
-#~ msgstr "Wijzig apparaat poort"
-
-#~ msgid "You must select at least one device type."
-#~ msgstr "U moet tenminste een apparaattype selecteren."
-
-#~ msgid "MAC Address"
-#~ msgstr "MAC-adres"
-
-#~ msgid "OS Version"
-#~ msgstr "OS Versie"
-
-#~ msgid "You must select at least one Host Type."
-#~ msgstr "U moet tenminste een host type selecteren."
-
-#~ msgid "View Storage"
-#~ msgstr "Toon opslag"
-
-#~ msgid "Total Swap"
-#~ msgstr "Totaal swap"
-
-#~ msgid "Total Mem"
-#~ msgstr "Totaal geheugen"
-
-#~ msgid "Uptime(d:h:m)"
-#~ msgstr "Uptime (d:h:m)"
-
-#~ msgid "Total (MB)"
-#~ msgstr "Totaal (MB)"
-
-#~ msgid "Total CPU [h]:"
-#~ msgstr "Totaal CPU [h]:"
-
-#~ msgid "Remote Port"
-#~ msgstr "Verwijder poort"
-
-#~ msgid "Export Timing"
-#~ msgstr "Export timing"
-
-#~ msgid "Sec"
-#~ msgstr "Sec"
-
-#~ msgid "All Sites"
-#~ msgstr "Alle locaties"
-
-#~ msgid "Export Name"
-#~ msgstr "Exportnaam"
-
-#~ msgid "Exports"
-#~ msgstr "Exports"
-
-#~ msgid "All Sites Selected"
-#~ msgstr "Alle locaties geselecteerd"
-
-#~ msgid "Sites Selected"
-#~ msgstr "Geselecteerde locaties"
-
-#~ msgid "Hourly"
-#~ msgstr "Ieder uur"
-
-#~ msgid "Export Now"
-#~ msgstr "Exporteren"
-
-#~ msgid "Alternate DNS Server"
-#~ msgstr "Alternatieve DNS server"
-
-#~ msgid "(actions)"
-#~ msgstr "(Acties)"
-
-#~ msgid "(edit)"
-#~ msgstr "(wijzig)"
-
-#~ msgid "Filters"
-#~ msgstr "Filters"
-
-#~ msgid "Show/Hide"
-#~ msgstr "Toon/verberg"
-
-#~ msgid "Email Addresses"
-#~ msgstr "E-mailadressen"
-
-#~ msgid "Filter Name"
-#~ msgstr "Filternaam"
-
-#~ msgid "Every Month"
-#~ msgstr "Iedere maand"
-
-#~ msgid "Every %d Weeks, 2"
-#~ msgstr "Iedere %d weken, 2"
-
-#~ msgid "No Devices"
-#~ msgstr "Geen apparaten"
-
-#~ msgid "Expiration"
-#~ msgstr "Vervaldatum"
-
-#~ msgid "Directory"
-#~ msgstr "Directorie"
-
-#~ msgid "0 (Disabled)"
-#~ msgstr "0 (Uitgeschakeld)"
-
-#~ msgid "Save As"
-#~ msgstr "Opslaan als"
-
-#~ msgid "Defaults"
-#~ msgstr "Standaardwaarden"
-
-#~ msgid "Sort Field:"
-#~ msgstr "Sorteerveld:"
-
-#~ msgid "Statistics:"
-#~ msgstr "Statistieken:"
-
-#~ msgid "Protocols"
-#~ msgstr "Protocollen"
-
-#~ msgid "Start Time"
-#~ msgstr "Starttijd"
-
-#~ msgid "Protocol"
-#~ msgstr "Protocol"
-
-#~ msgid "No Limit"
-#~ msgstr "Geen limiet"
-
-#~ msgid "BNA"
-#~ msgstr "BNA"
-
-#~ msgid "IGP"
-#~ msgstr "IGP"
-
-#~ msgid "ICMP"
-#~ msgstr "ICMP"
-
-#~ msgid "Select One"
-#~ msgstr "Selecteer een"
-
-#~ msgid "IP Protocol"
-#~ msgstr "IP protocol"
-
-#~ msgid "Source/Destination IP"
-#~ msgstr "Bron/doel IP adres"
-
-#~ msgid "Source IP"
-#~ msgstr "Bron IP adres"
-
-#~ msgid "Destination IP"
-#~ msgstr "Doel IP adres"
-
-#~ msgid "UDP/TCP Destination Port"
-#~ msgstr "UDP/TCP bestemming poort"
-
-#~ msgid "%d Graphs"
-#~ msgstr "%d Grafieken"
-
-#~ msgid "Set"
-#~ msgstr "Set"
-
-#~ msgid "User Agent"
-#~ msgstr "Browser"
-
-#~ msgid "Action:"
-#~ msgstr "Actie:"
-
-#~ msgid "IP Address:"
-#~ msgstr "IP adres:"
-
-#~ msgid "LINE LIMIT OF 1000 LINES REACHED!!"
-#~ msgstr "LIMIT VAN 1000 REGELS BEREIKT!!"
-
-#~ msgid "new"
-#~ msgstr "nieuw"
-
-#~ msgid "edit"
-#~ msgstr "wijzig"
-
-#~ msgid "[Not Ran]"
-#~ msgstr "[Niet gedraaid]"
-
-#~ msgid "You Cacti database has been upgraded.  You can view the results below."
-#~ msgstr "Uw Cacti database is bijgewerkt. U kunt hieronder de resultaten bekijken."
-
-#~ msgid "You have three Cacti installation options to choose from:"
-#~ msgstr "U heeft drie Cacti installatie opties om uit te kiezen:"
-
-#~ msgid "%d Row]"
-#~ msgid_plural "%d Rows]"
-#~ msgstr[0] "%d rij]"
-#~ msgstr[1] "%d rijen]"
-
-#~ msgid "%s to Export"
-#~ msgstr "%s om te exporteren"
-
-#~ msgid "Cacti Log"
-#~ msgstr "Cacti log"
-
-#~ msgid "Message Type"
-#~ msgstr "Bericht type"
-
-#~ msgid "File to show"
-#~ msgstr "Toon bestand"
-
-#~ msgid "Purge cacti.log"
-#~ msgstr "Cacti.log legen"
-
-#~ msgid "Press Ctrl+Shift+X to Clear Filter"
-#~ msgstr "Druk op Ctrl+Shift+X om het filter te legen"
-
-#~ msgid "Effective Timespan"
-#~ msgstr "Effectieve tijdperiode"
-
-#~ msgid "Deleted rra(s) from rrd file: %s"
-#~ msgstr "Verwijderd rra(s) van rrd bestand: %s"
-
-#~ msgid "PHP binary does not support IPv6"
-#~ msgstr "PHP binary ondersteund geen IPv6"
-
-#~ msgid "PHP version does not support IPv6"
-#~ msgstr "PHP versie ondersteund geen IPv6"
-
-#~ msgid "This is a unique string that will be matched to a devices sysDescr string to pair it to this Discovery Template.  Any Perl regular expression can be used in addition to any SQL Where expression."
-#~ msgstr "Dit is een unieke waarde dat gekoppeld wordt aan de sysDescr waarde van een apparaat om het te koppelen aan dit scantemplate. Iedere Perl reguliere expressie kan hier worden gebruikt evenals ieder SQL Where statement."
-
-#~ msgid "ERROR: RRD file %s not writeable"
-#~ msgstr "FOUT: RRD bestand %s is niet schrijfbaar"
-
-#~ msgctxt "Dialog: go to the next page"
-#~ msgid "Next"
-#~ msgstr "Volgende"
-
-#~ msgid "WARNING - If you are upgrading from a previous version please close all Cacti browser sessions and clear cache before continuing"
-#~ msgstr "WAARSCHUWING - Als u upgrade van een vorige versie, sluit dan alle Cacti browserschermen en schoon de lokale cache op voordat u doorgaat"
-
-#~ msgid "DES (default)"
-#~ msgstr "DES (standaard)"
-
-#~ msgid "MD5 (default)"
-#~ msgstr "MD5 (standaard)"
-
-#~ msgid "Use Per-Graph Value (Ignore this Value)"
-#~ msgstr "Gebruik per-grafiek waarde (negeer deze waarde)"
-
-#~ msgid "Use Per-Data Source Value (Ignore this Value)"
-#~ msgstr "Gebruik per-data bron waarde (negeer deze waarde)"
-
-#~ msgid "Password (v3)"
-#~ msgstr "Wachtwoord (v3)"
-
-#~ msgid "Username (v3)"
-#~ msgstr "Gebruikersnaam (v3)"
-
-#~ msgid "The SNMP v3 Security Level."
-#~ msgstr "Het SNMPv3 beveiligingsniveau."
-
-#~ msgid "Created 1 Graph from %s"
-#~ msgstr "1 Grafiek gemaakt van %s"
-
-#~ msgid "You must select at least one VDEF."
-#~ msgstr "U moet tenminste een VDEF selecteren."
-
-#~ msgid "You must select at least one Group."
-#~ msgstr "U moet tenminste een groep selecteren."
-
-#~ msgid "You must select at least one User Domain."
-#~ msgstr "U moet op zijn minst een gebruikersdomein selecteren."
-
-#~ msgid "Show Exceptions<"
-#~ msgstr "Toon uitzonderingen<"
-
-#~ msgid "You must select at least one user."
-#~ msgstr "U moet tenminste een gebruiker selecteren."
-
-#~ msgid "You must select at least one Tree."
-#~ msgstr "U moet op zijn minst een menu selecteren."
-
-#~ msgid "Site Notes"
-#~ msgstr "Locatie aantekeningen"
-
-#~ msgid "You must select at least one Site."
-#~ msgstr "U moet tenminste een locatie selecteren."
-
-#~ msgid "Unknown/Down"
-#~ msgstr "Onbekend/Offline"
-
-#~ msgid "Plugin does not include an INFO file"
-#~ msgstr "Plugin bevat geen INFO bestand"
-
-#~ msgid "ERROR: Directory Missing"
-#~ msgstr "FOUT: Directorie ontbreekt"
-
-#~ msgid "You must select at least one page."
-#~ msgstr "U moet op zijn minst een pagina selecteren."
-
-#~ msgid "Unable to Create LDAP Object"
-#~ msgstr "Het was niet mogelijk om een LDAP object aan te maken"
-
-#~ msgid "View Cacti Log"
-#~ msgstr "Toon Cacti log"
-
-#~ msgid " - No Admin Filter in Affect"
-#~ msgstr " - Geen admin filter toegepast"
-
-#~ msgid "Test remote database connection"
-#~ msgstr "Database verbinding testen"
-
-#~ msgctxt "Dialog: test connection"
-#~ msgid "Test Connection"
-#~ msgstr "Test verbinding"
-
-#~ msgctxt "Dialog: complete"
-#~ msgid "Finish"
-#~ msgstr "Afronden"
-
-#~ msgctxt "Dialog: previous"
-#~ msgid "Previous"
-#~ msgstr "Vorige"
-
-#~ msgid "No database action needed."
-#~ msgstr "Geen database actie noodzakelijk."
-
-#~ msgid "Version: "
-#~ msgstr "Versie: "
-
-#~ msgid "Upgrade Results"
-#~ msgstr "Upgrade resultaten"
-
-#~ msgid "<p>%s is <font color=\"#FF0000\">Not Writable</font></p>"
-#~ msgstr "<p>%s is <font color=\"#FF0000\">niet schrijfbaar</font></p>"
-
-#~ msgid "<p>%s is <font color=\"#008000\">Writable</font></p>"
-#~ msgstr "<p>%s is <font color=\"#008000\">schrijfbaar</font></p>"
-
-#~ msgid "You must also set the $poller_id variable in the config.php."
-#~ msgstr "U moet ook de $poller_id variabel in de config.php invullen."
-
-#~ msgid "Optional PHP Module Support"
-#~ msgstr "Optionele PHP modules"
-
-#~ msgid "Invalid Cacti version <strong>%1$s</strong>, cannot upgrade to <strong>%2$s</strong>"
-#~ msgstr "Ongeldige Cacti versie <strong>%1$s</strong>, kan niet upgraden naar <strong>%2$s</strong>"
-
-#~ msgid "GRANT SELECT ON mysql.time_zone_name to '%s'@'localhost' IDENTIFIED BY '%s'"
-#~ msgstr "GRANT SELECT ON mysql.time_zone_name to '%s'@'localhost' IDENTIFIED BY '%s'"
-
-#~ msgid "mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root -p mysql"
-#~ msgstr "mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root -p mysql"
-
-#~ msgid "You are attempting to install Cacti %s onto a 0.6.x database. To continue, you must create a new database, import \"cacti.sql\" into it, and update \"include/config.php\" to point to the new database."
-#~ msgstr "U probeert Cacti %s te installeren op een 0.6.x database. Om door te gaan moet u een nieuwe database selecteren, \"cacti.sql\" hierin importeren en de \"include/config.php\" bijwerken door de nieuwe database hierin te configureren."
-
-#~ msgid "This installation is already up-to-date. Click <a href=\"%s\">here</a> to use Cacti."
-#~ msgstr "Deze installatie is al up-to-date. Klik <a href=\"%s\">hier</a> om Cacti te gaan gebruiken."
-
-#~ msgid "Developer Mode"
-#~ msgstr "Ontwikkelmodus"
-
-#~ msgid "Graph Syntax"
-#~ msgstr "Grafiek syntax"
-
-#~ msgid "SNMP Messages"
-#~ msgstr "SNMP berichten"
-
-#~ msgid "What Cacti website messages should be placed in the log."
-#~ msgstr "Welke Cacti website berichten zouden in het log bestand moeten worden geplaatst."
-
-#~ msgid "Event Logging"
-#~ msgstr "Gebeurtenis registratie"
-
-#~ msgid "SNMP Engine ID"
-#~ msgstr "SNMP Engine ID"
-
-#~ msgid "SNMP Privacy Password (v3)"
-#~ msgstr "SNMP privacy wachtwoord (v3)"
-
-#~ msgid "Choose the SNMPv3 Privacy Protocol.<br>Note: DES/AES encryption support is only available if you have OpenSSL installed."
-#~ msgstr "Kies het SNMPv3 privacy protocol.<br>Let op: Ondersteuning voor DES/AES encryptie is alleen beschikbaar als u OpenSSL heeft geinstalleerd."
-
-#~ msgid "SNMP v3 user password for this device."
-#~ msgstr "SNMP v3 gebruiker wachtwoord voor dit apparaat."
-
-#~ msgid "SNMP Auth Password (v3)"
-#~ msgstr "SNMP Auth wachtwoord (v3)"
-
-#~ msgid "Choose the SNMPv3 Authorization Protocol.<br>Note: SHA authentication support is only available if you have OpenSSL installed."
-#~ msgstr "Kies het SNMPv3 authenticatie protocol.<br>Let op: Ondersteuning voor SHA authenticatie is alleen beschikbaar als u OpenSSL heeft geinstalleerd."
-
-#~ msgid "Enter the SNMP v3 context to use for this device."
-#~ msgstr "Voor de SNMP v3 context in voor dit apparaat."
-
-#~ msgid "Choose the SNMPv3 privacy passphrase."
-#~ msgstr "Kies het SNMPv3 privé wachtwoord."
-
-#~ msgid "Choose the SNMPv3 privacy protocol."
-#~ msgstr "Kies het SNMPv3 privacy protocol."
-
-#~ msgid "SNMP v3 authentication pass phrase for this device."
-#~ msgstr "SNMP v3 authenticatie wachtwoord voor dit apparaat."
-
-#~ msgid "Choose the SNMPv3 authentication protocol."
-#~ msgstr "Kies het SNMPv3 authenticatie protocol."
-
-#~ msgid "SNMP read community for this device."
-#~ msgstr "SNMP read community voor dit apparaat."
-
-#~ msgid "SNMP Community"
-#~ msgstr "SNMP Community"
-
-#~ msgid "Choose the SNMP version for this device."
-#~ msgstr "Kies de SNMP versie voor dit apparaat."
-
-#~ msgid "does not match with"
-#~ msgstr "komt niet overeen"
-
-#~ msgid "Import Data"
-#~ msgstr "Importeer data"
-
-#~ msgid "Export Data"
-#~ msgstr "Exporteer data"
-
-#~ msgid "Colors/GPrints/CDEFs/VDEFs"
-#~ msgstr "Kleuren/GPrints/CDEF's/VDEF's"
-
-#~ msgid "Remove Spikes from Graphs"
-#~ msgstr "Haal pieken uit grafieken"
-
-#~ msgid "Automation Settings"
-#~ msgstr "Automatisering instellingen"
-
-#~ msgid "You must select at least one device."
-#~ msgstr "U moet tenminste een apparaat selecteren."
-
-#~ msgid "You must select at least one Graph."
-#~ msgstr "U moet tenminste een grafiek selecteren."
-
-#~ msgid "ERROR: You must select at least one graph template."
-#~ msgstr "FOUT: U moet op zijn minst een grafiektemplate selecteren."
-
-#~ msgid "Real-time"
-#~ msgstr "Real-time"
-
-#~ msgid "You must select at least one GPRINT Preset."
-#~ msgstr "U moet op zijn minst een GPRINT voorinstelling selecteren."
-
-#~ msgid "You must select at least one data template."
-#~ msgstr "U moet op zijn minst een data template selecteren."
-
-#~ msgid "You must select at least one data source."
-#~ msgstr "U moet tenminste een data bron selecteren."
-
-#~ msgid "You must select at least one Data Source Profile."
-#~ msgstr "U moet op zijn minst een data bron profiel selecteren."
-
-#~ msgid "You must select at least one data query."
-#~ msgstr "U moet op zijn minst een data query selecteren."
-
-#~ msgid "You must select at least one data input method."
-#~ msgstr "U moet op zijn minst een data invoer methode selecteren."
-
-#~ msgid "You must select at least one Color Template."
-#~ msgstr "U moet tenminste een kleurentemplate kiezen."
-
-#~ msgid "You must select at least one Color."
-#~ msgstr "U moet tenminste een kleur selecteren."
-
-#~ msgid "You must select at least one CDEF."
-#~ msgstr "U moet op zijn minst een CDEF selecteren."
-
-#~ msgid "You must select at least one Automation Template."
-#~ msgstr "U moet op zijn minst een automatiseringstemplate selecteren."
-
-#~ msgid "The UDP/TCP Port to poll the SNMP agent on."
-#~ msgstr "De UDP/TCP poort waarop de SNMP agent moet pollen."
-
-#~ msgid "SNMP Context"
-#~ msgstr "SNMP context"
-
-#~ msgid "You must select at least one SNMP Option."
-#~ msgstr "U moet op zijn minst een SNMP optie kiezen."
-
-#~ msgid "You must select at least one Network."
-#~ msgstr "U moet tenminste een netwerk selecteren."
-
-#~ msgid "You must select at least one Rule."
-#~ msgstr "U moet tenminste een regel selecteren."
-
-#~ msgid "You must select at least one Device."
-#~ msgstr "U moet tenminste een apparaat selecteren."
-
-#~ msgid "You must select at least one Aggregate Graph Template."
-#~ msgstr "U moet tenminste een geaggregeerde grafiektemplate selecteren."
-
-#~ msgid "You must select at least one graph."
-#~ msgstr "U moet tenminste een grafiek selecteren."
+#~ msgid "Resize Selected Graph(s)"
+#~ msgstr "Formaat wijzigen van geselecteerde grafiek(en)"
 
 #, fuzzy
-#~ msgid "WARNING"
-#~ msgstr "WAARSCHUWING:"
-
-#~ msgid "NOTE:"
-#~ msgstr "LET OP:"
-
-#, fuzzy
-#~ msgid "Ensure Host Process Has Access"
-#~ msgstr "Gelijktijdige processen"
-
-#~ msgid "Cacti Community Forum"
-#~ msgstr "Cacti community forum"
-
-#~ msgid "Insufficient Access"
-#~ msgstr "Onvoldoende toegang"
-
-#~ msgid "Invalid Credentials"
-#~ msgstr "Ongeldige inloggegevens"
-
-#~ msgid "Protocol Error"
-#~ msgstr "Protocol fout"
-
-#, fuzzy
-#~ msgid "CN found"
-#~ msgstr "Niet gevonden"
-
-#~ msgid "Protocol Error, unable to set version"
-#~ msgstr "Protocol fout, instellen van versie niet mogelijk"
-
-#~ msgid "User found"
-#~ msgstr "Gebruiker gevonden"
-
-#, fuzzy
-#~ msgid "Template Not Found"
-#~ msgstr "Sjabloon niet gevonden"
-
-#, fuzzy
-#~ msgid "Non Templated"
-#~ msgstr "Niet getempereerd"
-
-#, fuzzy
-#~ msgid "The default timeshift you wish to be displayed when you display graphs"
-#~ msgstr "De standaard tijdverschuiving die u wilt weergeven wanneer u grafieken weergeeft"
-
-#, fuzzy
-#~ msgid "Default Graph View Timeshift"
-#~ msgstr "Standaard grafiekweergave Timeshift"
-
-#, fuzzy
-#~ msgid "The default timespan you wish to be displayed when you display graphs"
-#~ msgstr "De standaard tijdspanne die u wilt weergeven wanneer u grafieken weergeeft"
-
-#, fuzzy
-#~ msgid "Default Graph View Timespan"
-#~ msgstr "Standaard Grafiekweergave Tijdspanne"
-
-#~ msgid "Template [new]"
-#~ msgstr "Template [nieuw]"
-
-#~ msgid "Template [edit: %s]"
-#~ msgstr "Template [wijzig: %s]"
-
-#, fuzzy
-#~ msgid "Provide the Maintenance Schedule a meaningful name"
-#~ msgstr "Geef het onderhoudsschema een betekenisvolle naam"
-
-#, fuzzy
-#~ msgid "Debugging Data Source"
-#~ msgstr "Debugging Gegevensbron"
-
-#, fuzzy
-#~ msgid "New Check"
-#~ msgstr "Nieuwe controle"
-
-#, fuzzy
-#~ msgid "Click to show Data Query output for sfield '%s'"
-#~ msgstr "Klik om de uitvoer van de gegevensvraag voor sfield '%s' te tonen"
-
-#, fuzzy
-#~ msgid "Data Debug"
-#~ msgstr "Data bron debug modus inschakelen."
-
-#, fuzzy
-#~ msgid "Data Source Debugger [%s]"
-#~ msgstr "Gegevensbron Debugger"
-
-#, fuzzy
-#~ msgid "Data Source Debugger"
-#~ msgstr "Gegevensbron Debugger"
-
-#~ msgid "Your Web Servers PHP is properly setup with a Timezone."
-#~ msgstr "Op uw webserver is PHP correct ingesteld met een tijdzone."
-
-#~ msgid "Your Web Servers PHP Timezone settings have not been set.  Please edit php.ini and uncomment the 'date.timezone' setting and set it to the Web Servers Timezone per the PHP installation instructions prior to installing Cacti."
-#~ msgstr "Op uw webserver heeft PHP geen correcte tijdzone instelling. Wijzig alstublieft de php.ini en activeer de 'date.timezone' instelling en stel deze in op de tijdzone van de webserver voordat u Cacti gaat installeren."
-
-#, fuzzy
-#~ msgid "PHP - Timezone Support"
-#~ msgstr "PHP - Tijdzone ondersteuning"
-
-#, fuzzy
-#~ msgid " Poller RunAs: "
-#~ msgstr " Poller RunAs:"
-
-#, fuzzy
-#~ msgid "Data Source Troubleshooter"
-#~ msgstr "Gegevensbron Probleemoplosser"
-
-#, fuzzy
-#~ msgid "Does the RRA Profile match the RRDfile structure?"
-#~ msgstr "Komt het RRA-profiel overeen met de structuur van het RRD-profiel?"
-
-#, fuzzy
-#~ msgid "Mailer Error: No <b>TO</b> address set!!<br>If using the <i>Test Mail</i> link, please set the <b>Alert Email</b> setting."
-#~ msgstr "Fout in de mailer: Nee <b>TO</b> adres ingesteld! <br>Als u de link <i>Test Mail</i> gebruikt, stelt u de instelling <b>Alert e-mail</b> in."
-
-#, fuzzy
-#~ msgid "Created Threshold: %s<br>"
-#~ msgstr "Grafiek: %s gemaakt"
-
-#, fuzzy
-#~ msgid "No Threshold(s) Created.  They either already exist, or there were not matching combinations found."
-#~ msgstr "Geen drempel(s) Gemaakt.  Ze bestaan al, of er zijn geen overeenkomende combinaties gevonden."
-
-#, fuzzy
-#~ msgid "No Thresholds Templates associated with the Device's Template."
-#~ msgstr "De met deze site geassocieerde staat."
-
-#, fuzzy
-#~ msgid "'%s' must be set to positive integer value!<br>RECORD NOT UPDATED!"
-#~ msgstr "%s' moet worden ingesteld op de positieve gehele waarde <br>RECORD NOT UPDATED!"
-
-#, fuzzy
-#~ msgid "Created threshold: %s"
-#~ msgstr "Grafiek: %s gemaakt"
-
-#, fuzzy
-#~ msgid " What? Permission Denied"
-#~ msgstr "Toegang geweigerd"
-
-#, fuzzy
-#~ msgid "Failed to find linked Graph Template Item '%d' on Threshold '%d'"
-#~ msgstr "Geen gekoppelde Grafieksjabloonitem '%d' op Drempel '%d' gevonden"
-
-#, fuzzy
-#~ msgid "You must specify either 'Baseline Deviation UP' or 'Baseline Deviation DOWN' or both!<br>RECORD NOT UPDATED!"
-#~ msgstr "U moet ofwel 'Baseline Deviation UP' of 'Baseline Deviation DOWN' of beide specificeren: <br>RECORD NOT UPDATED!"
-
-#, fuzzy
-#~ msgid "With baseline thresholds enabled."
-#~ msgstr "Met ingeschakelde basislijndrempels."
-
-#, fuzzy
-#~ msgid "Impossible thresholds: 'High Warning Threshold' smaller than or equal to 'Low Warning Threshold'<br>RECORD NOT UPDATED!"
-#~ msgstr "Onmogelijke drempels: 'Hoge Waarschuwingsdrempel' kleiner dan of gelijk aan 'Lage Waarschuwingsdrempel'<br>RECORD NOT UPDATED!"
-
-#, fuzzy
-#~ msgid "Impossible thresholds: 'High Threshold' smaller than or equal to 'Low Threshold'<br>RECORD NOT UPDATED!"
-#~ msgstr "Onmogelijke drempels: 'High Threshold' kleiner dan of gelijk aan 'Low Threshold'<br>RECORD NOT UPDATED!"
-
-#, fuzzy
-#~ msgid "You must specify either 'High Alert Threshold' or 'Low Alert Threshold' or both!<br>RECORD NOT UPDATED!"
-#~ msgstr "U moet ofwel 'Hoge Waarschuwingsdrempel' of 'Lage Waarschuwingsdrempel' of beide specificeren!<br>RECORD NOT UPDATED!"
-
-#, fuzzy
-#~ msgid "Record Updated"
-#~ msgstr "RRD bijgewerkt"
-
-#, fuzzy
-#~ msgid "Threshold was Autocreated due to Device Template mapping"
-#~ msgstr "Data query aan apparaat template toevoegen"
-
-#, fuzzy
-#~ msgid "The Graph Creation failed for Threshold Template"
-#~ msgstr "De grafiek om te gebruiken voor dit rapport-item."
-
-#, fuzzy
-#~ msgid "The Threshold Template ID was not set while trying to create Graph and Threshold"
-#~ msgstr "De Threshold Template ID is niet ingesteld tijdens het maken van Graph en Threshold"
-
-#, fuzzy
-#~ msgid "The Device ID was not set while trying to create Graph and Threshold"
-#~ msgstr "De apparaat-ID is niet ingesteld tijdens het maken van Graph en Threshold"
-
-#, fuzzy
-#~ msgid "<html><body>A warning has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
-#~ msgstr "<html><body><body>Er is een waarschuwing uitgegeven die uw aandacht vereist.<br><br><br><b></b>Apparaat</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b><b>Bericht</b>: <SUBJECT><br><br><br><br><GRAPH></body></html>"
-
-#, fuzzy
-#~ msgid "<html><body>An alert has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
-#~ msgstr "<html><body>Er is een waarschuwing gegeven die uw aandacht vereist.<br><br><br><b></b>Apparaat</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b><b>Bericht</b>: <SUBJECT><br><br><br><br><GRAPH></body></html>"
-
-#, fuzzy
-#~ msgid "Link to Graph in Cacti"
-#~ msgstr "Login in Cacti"
-
-#, fuzzy
-#~ msgid "Pages:"
-#~ msgstr "Pagina’s:"
-
-#, fuzzy
-#~ msgid "Swaps:"
-#~ msgstr "Swaps:"
-
-#~ msgid "Time:"
-#~ msgstr "Tijd:"
-
-#, fuzzy
-#~ msgid "Log"
-#~ msgstr "Log"
-
-#, fuzzy
-#~ msgid "Thresholds"
-#~ msgstr "Threads"
-
-#~ msgid "Maximum OID's Per Get Request"
-#~ msgstr "Maximaal aantal OID's per GET request"
-
-#~ msgid "Non-Device"
-#~ msgstr "Geen-apparaat"
-
-#~ msgid "Graph Size"
-#~ msgstr "Grafiekgrootte"
-
-#, fuzzy
-#~ msgid "Sort field returned no data.  Can not continue Re-Index for GET data.."
-#~ msgstr "Sorteerveld retourneerde geen gegevens.  Kan niet doorgaan met Re-Index voor GET-gegevens....."
+#~ msgid "Create Aggregate"
+#~ msgstr "Maak geaggregeerde grafiek"
 
 #, fuzzy
 #~ msgid "With modern SSD type storage, this operation actually degrades the disk more rapidly and adds a 50%% overhead on all write operations."
 #~ msgstr "Met moderne SSD opslag verslechtert deze optie de schijf sneller en zorgt tevens voor 50% overhead op alle schrijfacties."
 
 #, fuzzy
-#~ msgid "Create Aggregate"
-#~ msgstr "Maak geaggregeerde grafiek"
+#~ msgid "Sort field returned no data.  Can not continue Re-Index for GET data.."
+#~ msgstr "Sorteerveld retourneerde geen gegevens.  Kan niet doorgaan met Re-Index voor GET-gegevens....."
 
-#~ msgid "Resize Selected Graph(s)"
-#~ msgstr "Formaat wijzigen van geselecteerde grafiek(en)"
+#~ msgid "Graph Size"
+#~ msgstr "Grafiekgrootte"
 
-#~ msgid "The following data sources are in use by these graphs:"
-#~ msgstr "De volgende data bronnen zijn in gebruik bij deze grafieken:"
+#~ msgid "Non-Device"
+#~ msgstr "Geen-apparaat"
 
-#~ msgid "Resize"
-#~ msgstr "Grootte wijzigen"
+#~ msgid "Maximum OID's Per Get Request"
+#~ msgstr "Maximaal aantal OID's per GET request"
 
 #, fuzzy
-#~ msgid "Legacy 1.x Plugins"
-#~ msgstr "Legacy 1.x Plugins"
+#~ msgid "Thresholds"
+#~ msgstr "Threads"
 
-#~ msgid "View SNMPAgent Notification Log"
-#~ msgstr "Toon SNMP agent notificatie log"
+#, fuzzy
+#~ msgid "Log"
+#~ msgstr "Log"
 
-#~ msgid "View SNMPAgent Cache"
-#~ msgstr "Toon SNMPAgent cache"
+#~ msgid "Time:"
+#~ msgstr "Tijd:"
+
+#, fuzzy
+#~ msgid "Swaps:"
+#~ msgstr "Swaps:"
+
+#, fuzzy
+#~ msgid "Pages:"
+#~ msgstr "Pagina’s:"
+
+#, fuzzy
+#~ msgid "Link to Graph in Cacti"
+#~ msgstr "Login in Cacti"
+
+#, fuzzy
+#~ msgid "<html><body>An alert has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
+#~ msgstr "<html><body>Er is een waarschuwing gegeven die uw aandacht vereist.<br><br><br><b></b>Apparaat</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b><b>Bericht</b>: <SUBJECT><br><br><br><br><GRAPH></body></html>"
+
+#, fuzzy
+#~ msgid "<html><body>A warning has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
+#~ msgstr "<html><body><body>Er is een waarschuwing uitgegeven die uw aandacht vereist.<br><br><br><b></b>Apparaat</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b><b>Bericht</b>: <SUBJECT><br><br><br><br><GRAPH></body></html>"
+
+#, fuzzy
+#~ msgid "The Device ID was not set while trying to create Graph and Threshold"
+#~ msgstr "De apparaat-ID is niet ingesteld tijdens het maken van Graph en Threshold"
+
+#, fuzzy
+#~ msgid "The Threshold Template ID was not set while trying to create Graph and Threshold"
+#~ msgstr "De Threshold Template ID is niet ingesteld tijdens het maken van Graph en Threshold"
+
+#, fuzzy
+#~ msgid "The Graph Creation failed for Threshold Template"
+#~ msgstr "De grafiek om te gebruiken voor dit rapport-item."
+
+#, fuzzy
+#~ msgid "Threshold was Autocreated due to Device Template mapping"
+#~ msgstr "Data query aan apparaat template toevoegen"
+
+#, fuzzy
+#~ msgid "Record Updated"
+#~ msgstr "RRD bijgewerkt"
+
+#, fuzzy
+#~ msgid "You must specify either 'High Alert Threshold' or 'Low Alert Threshold' or both!<br>RECORD NOT UPDATED!"
+#~ msgstr "U moet ofwel 'Hoge Waarschuwingsdrempel' of 'Lage Waarschuwingsdrempel' of beide specificeren!<br>RECORD NOT UPDATED!"
+
+#, fuzzy
+#~ msgid "Impossible thresholds: 'High Threshold' smaller than or equal to 'Low Threshold'<br>RECORD NOT UPDATED!"
+#~ msgstr "Onmogelijke drempels: 'High Threshold' kleiner dan of gelijk aan 'Low Threshold'<br>RECORD NOT UPDATED!"
+
+#, fuzzy
+#~ msgid "Impossible thresholds: 'High Warning Threshold' smaller than or equal to 'Low Warning Threshold'<br>RECORD NOT UPDATED!"
+#~ msgstr "Onmogelijke drempels: 'Hoge Waarschuwingsdrempel' kleiner dan of gelijk aan 'Lage Waarschuwingsdrempel'<br>RECORD NOT UPDATED!"
+
+#, fuzzy
+#~ msgid "With baseline thresholds enabled."
+#~ msgstr "Met ingeschakelde basislijndrempels."
+
+#, fuzzy
+#~ msgid "You must specify either 'Baseline Deviation UP' or 'Baseline Deviation DOWN' or both!<br>RECORD NOT UPDATED!"
+#~ msgstr "U moet ofwel 'Baseline Deviation UP' of 'Baseline Deviation DOWN' of beide specificeren: <br>RECORD NOT UPDATED!"
+
+#, fuzzy
+#~ msgid "Failed to find linked Graph Template Item '%d' on Threshold '%d'"
+#~ msgstr "Geen gekoppelde Grafieksjabloonitem '%d' op Drempel '%d' gevonden"
+
+#, fuzzy
+#~ msgid " What? Permission Denied"
+#~ msgstr "Toegang geweigerd"
+
+#, fuzzy
+#~ msgid "Created threshold: %s"
+#~ msgstr "Grafiek: %s gemaakt"
+
+#, fuzzy
+#~ msgid "'%s' must be set to positive integer value!<br>RECORD NOT UPDATED!"
+#~ msgstr "%s' moet worden ingesteld op de positieve gehele waarde <br>RECORD NOT UPDATED!"
+
+#, fuzzy
+#~ msgid "No Thresholds Templates associated with the Device's Template."
+#~ msgstr "De met deze site geassocieerde staat."
+
+#, fuzzy
+#~ msgid "No Threshold(s) Created.  They either already exist, or there were not matching combinations found."
+#~ msgstr "Geen drempel(s) Gemaakt.  Ze bestaan al, of er zijn geen overeenkomende combinaties gevonden."
+
+#, fuzzy
+#~ msgid "Created Threshold: %s<br>"
+#~ msgstr "Grafiek: %s gemaakt"
+
+#, fuzzy
+#~ msgid "Mailer Error: No <b>TO</b> address set!!<br>If using the <i>Test Mail</i> link, please set the <b>Alert Email</b> setting."
+#~ msgstr "Fout in de mailer: Nee <b>TO</b> adres ingesteld! <br>Als u de link <i>Test Mail</i> gebruikt, stelt u de instelling <b>Alert e-mail</b> in."
+
+#, fuzzy
+#~ msgid "Does the RRA Profile match the RRDfile structure?"
+#~ msgstr "Komt het RRA-profiel overeen met de structuur van het RRD-profiel?"
+
+#, fuzzy
+#~ msgid "Data Source Troubleshooter"
+#~ msgstr "Gegevensbron Probleemoplosser"
+
+#, fuzzy
+#~ msgid " Poller RunAs: "
+#~ msgstr " Poller RunAs:"
+
+#, fuzzy
+#~ msgid "PHP - Timezone Support"
+#~ msgstr "PHP - Tijdzone ondersteuning"
+
+#~ msgid "Your Web Servers PHP Timezone settings have not been set.  Please edit php.ini and uncomment the 'date.timezone' setting and set it to the Web Servers Timezone per the PHP installation instructions prior to installing Cacti."
+#~ msgstr "Op uw webserver heeft PHP geen correcte tijdzone instelling. Wijzig alstublieft de php.ini en activeer de 'date.timezone' instelling en stel deze in op de tijdzone van de webserver voordat u Cacti gaat installeren."
+
+#~ msgid "Your Web Servers PHP is properly setup with a Timezone."
+#~ msgstr "Op uw webserver is PHP correct ingesteld met een tijdzone."
+
+#, fuzzy
+#~ msgid "Data Source Debugger"
+#~ msgstr "Gegevensbron Debugger"
+
+#, fuzzy
+#~ msgid "Data Source Debugger [%s]"
+#~ msgstr "Gegevensbron Debugger"
+
+#, fuzzy
+#~ msgid "Data Debug"
+#~ msgstr "Data bron debug modus inschakelen."
+
+#, fuzzy
+#~ msgid "Click to show Data Query output for sfield '%s'"
+#~ msgstr "Klik om de uitvoer van de gegevensvraag voor sfield '%s' te tonen"
+
+#, fuzzy
+#~ msgid "New Check"
+#~ msgstr "Nieuwe controle"
+
+#, fuzzy
+#~ msgid "Debugging Data Source"
+#~ msgstr "Debugging Gegevensbron"
+
+#, fuzzy
+#~ msgid "Provide the Maintenance Schedule a meaningful name"
+#~ msgstr "Geef het onderhoudsschema een betekenisvolle naam"
+
+#~ msgid "Template [edit: %s]"
+#~ msgstr "Template [wijzig: %s]"
+
+#~ msgid "Template [new]"
+#~ msgstr "Template [nieuw]"
+
+#, fuzzy
+#~ msgid "Default Graph View Timespan"
+#~ msgstr "Standaard Grafiekweergave Tijdspanne"
+
+#, fuzzy
+#~ msgid "The default timespan you wish to be displayed when you display graphs"
+#~ msgstr "De standaard tijdspanne die u wilt weergeven wanneer u grafieken weergeeft"
+
+#, fuzzy
+#~ msgid "Default Graph View Timeshift"
+#~ msgstr "Standaard grafiekweergave Timeshift"
+
+#, fuzzy
+#~ msgid "The default timeshift you wish to be displayed when you display graphs"
+#~ msgstr "De standaard tijdverschuiving die u wilt weergeven wanneer u grafieken weergeeft"
+
+#, fuzzy
+#~ msgid "Non Templated"
+#~ msgstr "Niet getempereerd"
+
+#, fuzzy
+#~ msgid "Template Not Found"
+#~ msgstr "Sjabloon niet gevonden"
+
+#~ msgid "User found"
+#~ msgstr "Gebruiker gevonden"
+
+#~ msgid "Protocol Error, unable to set version"
+#~ msgstr "Protocol fout, instellen van versie niet mogelijk"
+
+#, fuzzy
+#~ msgid "CN found"
+#~ msgstr "Niet gevonden"
+
+#~ msgid "Protocol Error"
+#~ msgstr "Protocol fout"
+
+#~ msgid "Invalid Credentials"
+#~ msgstr "Ongeldige inloggegevens"
+
+#~ msgid "Insufficient Access"
+#~ msgstr "Onvoldoende toegang"
+
+#~ msgid "Cacti Community Forum"
+#~ msgstr "Cacti community forum"
+
+#, fuzzy
+#~ msgid "Ensure Host Process Has Access"
+#~ msgstr "Gelijktijdige processen"
+
+#~ msgid "NOTE:"
+#~ msgstr "LET OP:"
+
+#, fuzzy
+#~ msgid "WARNING"
+#~ msgstr "WAARSCHUWING:"
+
+#~ msgid "You must select at least one graph."
+#~ msgstr "U moet tenminste een grafiek selecteren."
+
+#~ msgid "You must select at least one Aggregate Graph Template."
+#~ msgstr "U moet tenminste een geaggregeerde grafiektemplate selecteren."
+
+#~ msgid "You must select at least one Device."
+#~ msgstr "U moet tenminste een apparaat selecteren."
+
+#~ msgid "You must select at least one Rule."
+#~ msgstr "U moet tenminste een regel selecteren."
+
+#~ msgid "You must select at least one Network."
+#~ msgstr "U moet tenminste een netwerk selecteren."
+
+#~ msgid "You must select at least one SNMP Option."
+#~ msgstr "U moet op zijn minst een SNMP optie kiezen."
+
+#~ msgid "SNMP Context"
+#~ msgstr "SNMP context"
+
+#~ msgid "The UDP/TCP Port to poll the SNMP agent on."
+#~ msgstr "De UDP/TCP poort waarop de SNMP agent moet pollen."
+
+#~ msgid "You must select at least one Automation Template."
+#~ msgstr "U moet op zijn minst een automatiseringstemplate selecteren."
+
+#~ msgid "You must select at least one CDEF."
+#~ msgstr "U moet op zijn minst een CDEF selecteren."
+
+#~ msgid "You must select at least one Color."
+#~ msgstr "U moet tenminste een kleur selecteren."
+
+#~ msgid "You must select at least one Color Template."
+#~ msgstr "U moet tenminste een kleurentemplate kiezen."
+
+#~ msgid "You must select at least one data input method."
+#~ msgstr "U moet op zijn minst een data invoer methode selecteren."
+
+#~ msgid "You must select at least one data query."
+#~ msgstr "U moet op zijn minst een data query selecteren."
+
+#~ msgid "You must select at least one Data Source Profile."
+#~ msgstr "U moet op zijn minst een data bron profiel selecteren."
+
+#~ msgid "You must select at least one data source."
+#~ msgstr "U moet tenminste een data bron selecteren."
+
+#~ msgid "You must select at least one data template."
+#~ msgstr "U moet op zijn minst een data template selecteren."
+
+#~ msgid "You must select at least one GPRINT Preset."
+#~ msgstr "U moet op zijn minst een GPRINT voorinstelling selecteren."
+
+#~ msgid "Real-time"
+#~ msgstr "Real-time"
+
+#~ msgid "ERROR: You must select at least one graph template."
+#~ msgstr "FOUT: U moet op zijn minst een grafiektemplate selecteren."
+
+#~ msgid "You must select at least one Graph."
+#~ msgstr "U moet tenminste een grafiek selecteren."
+
+#~ msgid "You must select at least one device."
+#~ msgstr "U moet tenminste een apparaat selecteren."
+
+#~ msgid "Automation Settings"
+#~ msgstr "Automatisering instellingen"
+
+#~ msgid "Remove Spikes from Graphs"
+#~ msgstr "Haal pieken uit grafieken"
+
+#~ msgid "Colors/GPrints/CDEFs/VDEFs"
+#~ msgstr "Kleuren/GPrints/CDEF's/VDEF's"
+
+#~ msgid "Export Data"
+#~ msgstr "Exporteer data"
+
+#~ msgid "Import Data"
+#~ msgstr "Importeer data"
+
+#~ msgid "does not match with"
+#~ msgstr "komt niet overeen"
+
+#~ msgid "Choose the SNMP version for this device."
+#~ msgstr "Kies de SNMP versie voor dit apparaat."
+
+#~ msgid "SNMP Community"
+#~ msgstr "SNMP Community"
+
+#~ msgid "SNMP read community for this device."
+#~ msgstr "SNMP read community voor dit apparaat."
+
+#~ msgid "Choose the SNMPv3 authentication protocol."
+#~ msgstr "Kies het SNMPv3 authenticatie protocol."
+
+#~ msgid "SNMP v3 authentication pass phrase for this device."
+#~ msgstr "SNMP v3 authenticatie wachtwoord voor dit apparaat."
+
+#~ msgid "Choose the SNMPv3 privacy protocol."
+#~ msgstr "Kies het SNMPv3 privacy protocol."
+
+#~ msgid "Choose the SNMPv3 privacy passphrase."
+#~ msgstr "Kies het SNMPv3 privé wachtwoord."
+
+#~ msgid "Enter the SNMP v3 context to use for this device."
+#~ msgstr "Voor de SNMP v3 context in voor dit apparaat."
+
+#~ msgid "Choose the SNMPv3 Authorization Protocol.<br>Note: SHA authentication support is only available if you have OpenSSL installed."
+#~ msgstr "Kies het SNMPv3 authenticatie protocol.<br>Let op: Ondersteuning voor SHA authenticatie is alleen beschikbaar als u OpenSSL heeft geinstalleerd."
+
+#~ msgid "SNMP Auth Password (v3)"
+#~ msgstr "SNMP Auth wachtwoord (v3)"
+
+#~ msgid "SNMP v3 user password for this device."
+#~ msgstr "SNMP v3 gebruiker wachtwoord voor dit apparaat."
+
+#~ msgid "Choose the SNMPv3 Privacy Protocol.<br>Note: DES/AES encryption support is only available if you have OpenSSL installed."
+#~ msgstr "Kies het SNMPv3 privacy protocol.<br>Let op: Ondersteuning voor DES/AES encryptie is alleen beschikbaar als u OpenSSL heeft geinstalleerd."
+
+#~ msgid "SNMP Privacy Password (v3)"
+#~ msgstr "SNMP privacy wachtwoord (v3)"
+
+#~ msgid "SNMP Engine ID"
+#~ msgstr "SNMP Engine ID"
+
+#~ msgid "Event Logging"
+#~ msgstr "Gebeurtenis registratie"
+
+#~ msgid "What Cacti website messages should be placed in the log."
+#~ msgstr "Welke Cacti website berichten zouden in het log bestand moeten worden geplaatst."
+
+#~ msgid "SNMP Messages"
+#~ msgstr "SNMP berichten"
+
+#~ msgid "Graph Syntax"
+#~ msgstr "Grafiek syntax"
+
+#~ msgid "Developer Mode"
+#~ msgstr "Ontwikkelmodus"
+
+#~ msgid "This installation is already up-to-date. Click <a href=\"%s\">here</a> to use Cacti."
+#~ msgstr "Deze installatie is al up-to-date. Klik <a href=\"%s\">hier</a> om Cacti te gaan gebruiken."
+
+#~ msgid "You are attempting to install Cacti %s onto a 0.6.x database. To continue, you must create a new database, import \"cacti.sql\" into it, and update \"include/config.php\" to point to the new database."
+#~ msgstr "U probeert Cacti %s te installeren op een 0.6.x database. Om door te gaan moet u een nieuwe database selecteren, \"cacti.sql\" hierin importeren en de \"include/config.php\" bijwerken door de nieuwe database hierin te configureren."
+
+#~ msgid "mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root -p mysql"
+#~ msgstr "mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root -p mysql"
+
+#~ msgid "GRANT SELECT ON mysql.time_zone_name to '%s'@'localhost' IDENTIFIED BY '%s'"
+#~ msgstr "GRANT SELECT ON mysql.time_zone_name to '%s'@'localhost' IDENTIFIED BY '%s'"
+
+#~ msgid "Invalid Cacti version <strong>%1$s</strong>, cannot upgrade to <strong>%2$s</strong>"
+#~ msgstr "Ongeldige Cacti versie <strong>%1$s</strong>, kan niet upgraden naar <strong>%2$s</strong>"
+
+#~ msgid "Optional PHP Module Support"
+#~ msgstr "Optionele PHP modules"
+
+#~ msgid "You must also set the $poller_id variable in the config.php."
+#~ msgstr "U moet ook de $poller_id variabel in de config.php invullen."
+
+#~ msgid "<p>%s is <font color=\"#008000\">Writable</font></p>"
+#~ msgstr "<p>%s is <font color=\"#008000\">schrijfbaar</font></p>"
+
+#~ msgid "<p>%s is <font color=\"#FF0000\">Not Writable</font></p>"
+#~ msgstr "<p>%s is <font color=\"#FF0000\">niet schrijfbaar</font></p>"
+
+#~ msgid "Upgrade Results"
+#~ msgstr "Upgrade resultaten"
+
+#~ msgid "Version: "
+#~ msgstr "Versie: "
+
+#~ msgid "No database action needed."
+#~ msgstr "Geen database actie noodzakelijk."
+
+#~ msgctxt "Dialog: previous"
+#~ msgid "Previous"
+#~ msgstr "Vorige"
+
+#~ msgctxt "Dialog: complete"
+#~ msgid "Finish"
+#~ msgstr "Afronden"
+
+#~ msgctxt "Dialog: test connection"
+#~ msgid "Test Connection"
+#~ msgstr "Test verbinding"
+
+#~ msgid "Test remote database connection"
+#~ msgstr "Database verbinding testen"
+
+#~ msgid " - No Admin Filter in Affect"
+#~ msgstr " - Geen admin filter toegepast"
+
+#~ msgid "View Cacti Log"
+#~ msgstr "Toon Cacti log"
+
+#~ msgid "Unable to Create LDAP Object"
+#~ msgstr "Het was niet mogelijk om een LDAP object aan te maken"
+
+#~ msgid "You must select at least one page."
+#~ msgstr "U moet op zijn minst een pagina selecteren."
+
+#~ msgid "ERROR: Directory Missing"
+#~ msgstr "FOUT: Directorie ontbreekt"
+
+#~ msgid "Plugin does not include an INFO file"
+#~ msgstr "Plugin bevat geen INFO bestand"
+
+#~ msgid "Unknown/Down"
+#~ msgstr "Onbekend/Offline"
+
+#~ msgid "You must select at least one Site."
+#~ msgstr "U moet tenminste een locatie selecteren."
+
+#~ msgid "Site Notes"
+#~ msgstr "Locatie aantekeningen"
+
+#~ msgid "You must select at least one Tree."
+#~ msgstr "U moet op zijn minst een menu selecteren."
+
+#~ msgid "You must select at least one user."
+#~ msgstr "U moet tenminste een gebruiker selecteren."
+
+#~ msgid "Show Exceptions<"
+#~ msgstr "Toon uitzonderingen<"
+
+#~ msgid "You must select at least one User Domain."
+#~ msgstr "U moet op zijn minst een gebruikersdomein selecteren."
+
+#~ msgid "You must select at least one Group."
+#~ msgstr "U moet tenminste een groep selecteren."
+
+#~ msgid "You must select at least one VDEF."
+#~ msgstr "U moet tenminste een VDEF selecteren."
+
+#~ msgid "Created 1 Graph from %s"
+#~ msgstr "1 Grafiek gemaakt van %s"
+
+#~ msgid "The SNMP v3 Security Level."
+#~ msgstr "Het SNMPv3 beveiligingsniveau."
+
+#~ msgid "Username (v3)"
+#~ msgstr "Gebruikersnaam (v3)"
+
+#~ msgid "Password (v3)"
+#~ msgstr "Wachtwoord (v3)"
+
+#~ msgid "Use Per-Data Source Value (Ignore this Value)"
+#~ msgstr "Gebruik per-data bron waarde (negeer deze waarde)"
+
+#~ msgid "Use Per-Graph Value (Ignore this Value)"
+#~ msgstr "Gebruik per-grafiek waarde (negeer deze waarde)"
+
+#~ msgid "MD5 (default)"
+#~ msgstr "MD5 (standaard)"
+
+#~ msgid "DES (default)"
+#~ msgstr "DES (standaard)"
+
+#~ msgid "WARNING - If you are upgrading from a previous version please close all Cacti browser sessions and clear cache before continuing"
+#~ msgstr "WAARSCHUWING - Als u upgrade van een vorige versie, sluit dan alle Cacti browserschermen en schoon de lokale cache op voordat u doorgaat"
+
+#~ msgctxt "Dialog: go to the next page"
+#~ msgid "Next"
+#~ msgstr "Volgende"
+
+#~ msgid "ERROR: RRD file %s not writeable"
+#~ msgstr "FOUT: RRD bestand %s is niet schrijfbaar"
+
+#~ msgid "This is a unique string that will be matched to a devices sysDescr string to pair it to this Discovery Template.  Any Perl regular expression can be used in addition to any SQL Where expression."
+#~ msgstr "Dit is een unieke waarde dat gekoppeld wordt aan de sysDescr waarde van een apparaat om het te koppelen aan dit scantemplate. Iedere Perl reguliere expressie kan hier worden gebruikt evenals ieder SQL Where statement."
+
+#~ msgid "PHP version does not support IPv6"
+#~ msgstr "PHP versie ondersteund geen IPv6"
+
+#~ msgid "PHP binary does not support IPv6"
+#~ msgstr "PHP binary ondersteund geen IPv6"
+
+#~ msgid "Deleted rra(s) from rrd file: %s"
+#~ msgstr "Verwijderd rra(s) van rrd bestand: %s"
+
+#~ msgid "Effective Timespan"
+#~ msgstr "Effectieve tijdperiode"
+
+#~ msgid "Press Ctrl+Shift+X to Clear Filter"
+#~ msgstr "Druk op Ctrl+Shift+X om het filter te legen"
+
+#~ msgid "Purge cacti.log"
+#~ msgstr "Cacti.log legen"
+
+#~ msgid "File to show"
+#~ msgstr "Toon bestand"
+
+#~ msgid "Message Type"
+#~ msgstr "Bericht type"
+
+#~ msgid "Cacti Log"
+#~ msgstr "Cacti log"
+
+#~ msgid "%s to Export"
+#~ msgstr "%s om te exporteren"
+
+#~ msgid "%d Row]"
+#~ msgid_plural "%d Rows]"
+#~ msgstr[0] "%d rij]"
+#~ msgstr[1] "%d rijen]"
+
+#~ msgid "You have three Cacti installation options to choose from:"
+#~ msgstr "U heeft drie Cacti installatie opties om uit te kiezen:"
+
+#~ msgid "You Cacti database has been upgraded.  You can view the results below."
+#~ msgstr "Uw Cacti database is bijgewerkt. U kunt hieronder de resultaten bekijken."
+
+#~ msgid "[Not Ran]"
+#~ msgstr "[Niet gedraaid]"
+
+#~ msgid "edit"
+#~ msgstr "wijzig"
+
+#~ msgid "new"
+#~ msgstr "nieuw"
+
+#~ msgid "LINE LIMIT OF 1000 LINES REACHED!!"
+#~ msgstr "LIMIT VAN 1000 REGELS BEREIKT!!"
+
+#~ msgid "IP Address:"
+#~ msgstr "IP adres:"
+
+#~ msgid "Action:"
+#~ msgstr "Actie:"
+
+#~ msgid "User Agent"
+#~ msgstr "Browser"
+
+#~ msgid "Set"
+#~ msgstr "Set"
+
+#~ msgid "%d Graphs"
+#~ msgstr "%d Grafieken"
+
+#~ msgid "UDP/TCP Destination Port"
+#~ msgstr "UDP/TCP bestemming poort"
+
+#~ msgid "Destination IP"
+#~ msgstr "Doel IP adres"
+
+#~ msgid "Source IP"
+#~ msgstr "Bron IP adres"
+
+#~ msgid "Source/Destination IP"
+#~ msgstr "Bron/doel IP adres"
+
+#~ msgid "IP Protocol"
+#~ msgstr "IP protocol"
+
+#~ msgid "Select One"
+#~ msgstr "Selecteer een"
+
+#~ msgid "ICMP"
+#~ msgstr "ICMP"
+
+#~ msgid "IGP"
+#~ msgstr "IGP"
+
+#~ msgid "BNA"
+#~ msgstr "BNA"
+
+#~ msgid "No Limit"
+#~ msgstr "Geen limiet"
+
+#~ msgid "Protocol"
+#~ msgstr "Protocol"
+
+#~ msgid "Start Time"
+#~ msgstr "Starttijd"
+
+#~ msgid "Protocols"
+#~ msgstr "Protocollen"
+
+#~ msgid "Statistics:"
+#~ msgstr "Statistieken:"
+
+#~ msgid "Sort Field:"
+#~ msgstr "Sorteerveld:"
+
+#~ msgid "Defaults"
+#~ msgstr "Standaardwaarden"
+
+#~ msgid "Save As"
+#~ msgstr "Opslaan als"
+
+#~ msgid "0 (Disabled)"
+#~ msgstr "0 (Uitgeschakeld)"
+
+#~ msgid "Directory"
+#~ msgstr "Directorie"
+
+#~ msgid "Expiration"
+#~ msgstr "Vervaldatum"
+
+#~ msgid "No Devices"
+#~ msgstr "Geen apparaten"
+
+#~ msgid "Every %d Weeks, 2"
+#~ msgstr "Iedere %d weken, 2"
+
+#~ msgid "Every Month"
+#~ msgstr "Iedere maand"
+
+#~ msgid "Filter Name"
+#~ msgstr "Filternaam"
+
+#~ msgid "Email Addresses"
+#~ msgstr "E-mailadressen"
+
+#~ msgid "Show/Hide"
+#~ msgstr "Toon/verberg"
+
+#~ msgid "Filters"
+#~ msgstr "Filters"
+
+#~ msgid "(edit)"
+#~ msgstr "(wijzig)"
+
+#~ msgid "(actions)"
+#~ msgstr "(Acties)"
+
+#~ msgid "Alternate DNS Server"
+#~ msgstr "Alternatieve DNS server"
+
+#~ msgid "Export Now"
+#~ msgstr "Exporteren"
+
+#~ msgid "Hourly"
+#~ msgstr "Ieder uur"
+
+#~ msgid "Sites Selected"
+#~ msgstr "Geselecteerde locaties"
+
+#~ msgid "All Sites Selected"
+#~ msgstr "Alle locaties geselecteerd"
+
+#~ msgid "Exports"
+#~ msgstr "Exports"
+
+#~ msgid "Export Name"
+#~ msgstr "Exportnaam"
+
+#~ msgid "All Sites"
+#~ msgstr "Alle locaties"
+
+#~ msgid "Sec"
+#~ msgstr "Sec"
+
+#~ msgid "Export Timing"
+#~ msgstr "Export timing"
+
+#~ msgid "Remote Port"
+#~ msgstr "Verwijder poort"
+
+#~ msgid "Total CPU [h]:"
+#~ msgstr "Totaal CPU [h]:"
+
+#~ msgid "Total (MB)"
+#~ msgstr "Totaal (MB)"
+
+#~ msgid "Uptime(d:h:m)"
+#~ msgstr "Uptime (d:h:m)"
+
+#~ msgid "Total Mem"
+#~ msgstr "Totaal geheugen"
+
+#~ msgid "Total Swap"
+#~ msgstr "Totaal swap"
+
+#~ msgid "View Storage"
+#~ msgstr "Toon opslag"
+
+#~ msgid "You must select at least one Host Type."
+#~ msgstr "U moet tenminste een host type selecteren."
+
+#~ msgid "OS Version"
+#~ msgstr "OS Versie"
+
+#~ msgid "MAC Address"
+#~ msgstr "MAC-adres"
+
+#~ msgid "You must select at least one device type."
+#~ msgstr "U moet tenminste een apparaattype selecteren."
+
+#~ msgid "Change Device Port Values"
+#~ msgstr "Wijzig apparaat poort"
+
+#~ msgid "Last Duration"
+#~ msgstr "Laatste duur"
+
+#~ msgid "Mac Address"
+#~ msgstr "MAC-adres"
+
+#~ msgid "First Seen"
+#~ msgstr "Eerste keer gezien"
+
+#~ msgid "You must select at least one site."
+#~ msgstr "U moet tenminste een locatie selecteren."
+
+#~ msgid "Total IP's"
+#~ msgstr "Totaal aantal IP’s"
+
+#~ msgid "Total Devices"
+#~ msgstr "Totaal aantal apparaten"
+
+#~ msgid "Total Trunks"
+#~ msgstr "Totaal aantal trunks"
+
+#~ msgid "Max OIDs"
+#~ msgstr "Maximum aantal OID’s"
+
+#~ msgid "Options"
+#~ msgstr "Opties"
+
+#~ msgid "Primary DNS Server:"
+#~ msgstr "Primaire DNS server:"
+
+#~ msgid "Secondary DNS Server:"
+#~ msgstr "Alternatieve DNS server:"
+
+#~ msgid "Are you sure you want to delete all the Port to MAC to IP results from the system?"
+#~ msgstr "Weet u zeker dat u alle poort naar MAC adres naar IP resultaten wilt verwijderen van het systeem?"
+
+#~ msgid "Are you sure you want to delete all the Aggregated Port to MAC to IP results from the system?"
+#~ msgstr "Weet u zeker dat u alle geaggregeerde poort naar MAC adres naar IP resultaten wilt verwijderen uit het systeem?"
+
+#~ msgid "Corporation"
+#~ msgstr "Bedrijf"
+
+#~ msgid "Address"
+#~ msgstr "Adres"
+
+#~ msgid "ED MAC Address"
+#~ msgstr "ED MACadres"
+
+#~ msgid "Switch Device"
+#~ msgstr "Wissel apparaat"
+
+#~ msgid "Total VLAN's"
+#~ msgstr "Totaal VLAN’s"
+
+#~ msgid "View MAC Addresses"
+#~ msgstr "Toon MAC adressen"
+
+#~ msgid "Show Totals"
+#~ msgstr "Toon totalen"
+
+#~ msgid "IP Address Ranges"
+#~ msgstr "IP adres bereik"
+
+#~ msgid "IP Range"
+#~ msgstr "IP reeks"
+
+#~ msgid "Current IP Addresses"
+#~ msgstr "Huidig IP adres"
+
+#~ msgid "Maximum IP Addresses"
+#~ msgstr "Maximum aantal IP adressen"
+
+#~ msgid "Are you sure you want to Authorize the following MAC Addresses?"
+#~ msgstr "Weet u zeker dat u het volgende MAC adres wilt autoriseren?"
+
+#~ msgid "Are you sure you want to Revoke the following MAC Addresses?"
+#~ msgstr "Weet u zeker dat u het volgende MAC adres wilt intrekken?"
+
+#~ msgid "You must select at least one MAC Address."
+#~ msgstr "U moet tenminste een MAC adres selecteren."
+
+#~ msgid "You must select at least one Row."
+#~ msgstr "U moet tenminste een regel selecteren."
+
+#~ msgid "Are you sure you want to Delete the following rows from Aggregated table?"
+#~ msgstr "Weet u zeker dat u de volgende rijen van de geaggregeerde tabel wilt verwijderen?"
+
+#~ msgid "MAC Addresses"
+#~ msgstr "MAC adressen"
+
+#~ msgid "Port Name"
+#~ msgstr "Poortnaam"
+
+#~ msgid "VLAN Name"
+#~ msgstr "VLAN naam"
+
+#~ msgid "Aggregated"
+#~ msgstr "Geaggregeerd"
+
+#~ msgid "Authorized"
+#~ msgstr "Geautoriseerd"
+
+#~ msgid "Portname"
+#~ msgstr "Poortnaam"
+
+#~ msgid "Edit Site"
+#~ msgstr "Wijzig locatie"
+
+#~ msgid "View IP Addresses"
+#~ msgstr "Toon IP adressen"
+
+#~ msgid "Colon [:]"
+#~ msgstr "Dubbele punt [:]"
+
+#~ msgid "DNS Settings"
+#~ msgstr "DNS instellingen"
+
+#~ msgid "MacAuth Report Email Addresses"
+#~ msgstr "MacAuth Rapportage e-mailadressen"
+
+#~ msgid "Communities"
+#~ msgstr "Communities"
+
+#~ msgid "(Import)"
+#~ msgstr "(Importeren)"
+
+#~ msgid "Contains"
+#~ msgstr "Bevat"
+
+#~ msgid "Full"
+#~ msgstr "Volledig"
+
+#~ msgid "Sync MacTrack Device to Cacti Device"
+#~ msgstr "Synchroniseer apparaten naar apparaattemplate(s"
+
+#~ msgid "Every %d Hour"
+#~ msgstr "Iedere %d uren"
+
+#~ msgid "Fill in the name for the vendor of this device type."
+#~ msgstr "Voer de naam van de fabrikant in voor dit apparaattype."
+
+#~ msgid "Specified the number of OID's that can be obtained in a single SNMP Get request."
+#~ msgstr "Specificeer het aantal OID’s dat in een enkele SNMP GET request mag worden opgehaald."
+
+#~ msgid "Fill in the fully qualified hostname for this device."
+#~ msgstr "Voer de volledige hostname in voor dit apparaat."
+
+#~ msgid "SSH"
+#~ msgstr "SSH"
+
+#~ msgid "General Site Settings"
+#~ msgstr "Algemene locatie instellingen"
+
+#~ msgid "Total Bytes"
+#~ msgstr "Totaal bytes"
+
+#~ msgid "Total Packets"
+#~ msgstr "Totaal pakketten"
+
+#~ msgid "Active Users"
+#~ msgstr "Actieve gebruikers"
+
+#~ msgid "Total In"
+#~ msgstr "Totaal inkomend"
+
+#~ msgid "Total Out"
+#~ msgstr "Totaal uitgaand"
+
+#~ msgid "Total Disk"
+#~ msgstr "Totaal schijf"
+
+#~ msgid "View Users"
+#~ msgstr "Toon gebruikers"
+
+#~ msgid "You must select at least one User."
+#~ msgstr "U moet tenminste een gebruiker selecteren."
+
+#~ msgid "Refresh the Device List"
+#~ msgstr "Vernieuw apparatenlijst"
+
+#~ msgid "Last Refresh: %s"
+#~ msgstr "Laatste update: %s"
+
+#~ msgid "Status:"
+#~ msgstr "Status:"
+
+#~ msgid "IP/Hostname:"
+#~ msgstr "IP/Hostname:"
+
+#~ msgid "Time In State:"
+#~ msgstr "Tijd in staat:"
+
+#~ msgid "Availability:"
+#~ msgstr "Beschikbaarheid:"
+
+#~ msgid "Agent Uptime:"
+#~ msgstr "Agent uptime:"
+
+#~ msgid "Device Monitoring Settings"
+#~ msgstr "Apparaat monitoring instellingen"
+
+#~ msgid "Enable Password"
+#~ msgstr "Activeer wachtwoord"
+
+#~ msgid "File: %s/%s"
+#~ msgstr "Bestand: %s/%s"
+
+#~ msgid "This is the IP Address used to communicate with the device."
+#~ msgstr "Dit is het IP adres dat gebruikt wordt om met het apparaat te communiceren."
+
+#~ msgid "Router: [edit: %s]"
+#~ msgstr "Router: [wijzig: %s]"
+
+#~ msgid "Router: [new]"
+#~ msgstr "Router: [nieuw]"
+
+#~ msgid "Last Backup"
+#~ msgstr "Laatste backup"
+
+#~ msgid "Password Prompt"
+#~ msgstr "Wachtwoord melding"
+
+#~ msgid "Show Version"
+#~ msgstr "Toon versie"
+
+#~ msgid "Edit Device Type"
+#~ msgstr "Wijzig apparaattype"
+
+#~ msgid "From Address"
+#~ msgstr "Afzender e-mailadres"
+
+#~ msgid "%d Per Day"
+#~ msgstr "%d Per dag"
+
+#~ msgid "(Actions)"
+#~ msgstr "(Acties)"
+
+#~ msgid "Program"
+#~ msgstr "Programma"
+
+#~ msgid "Time Range"
+#~ msgstr "Tijdperiode"
+
+#~ msgid "Select Device(s)"
+#~ msgstr "Selecteer appara(a)t(en)"
+
+#~ msgid "All Devices Selected"
+#~ msgstr "Alle apparaten geselecteerd"
+
+#~ msgid "Save Default Settings"
+#~ msgstr "Standaardinstellingen opslaan"
+
+#~ msgid "All Programs"
+#~ msgstr "Alle programma’s"
+
+#~ msgid "Not Set"
+#~ msgstr "Niet ingesteld"
+
+#~ msgid "Month"
+#~ msgstr "Maand"
+
+#~ msgid "Search String"
+#~ msgstr "Zoekterm"
+
+#~ msgid "Name:"
+#~ msgstr "Naam:"
+
+#~ msgid "Enabled?"
+#~ msgstr "Ingeschakeld?"
+
+#~ msgid "Deletion"
+#~ msgstr "Verwijdering"
+
+#~ msgid "Click 'Continue' to Delete the following Syslog Report(s)."
+#~ msgstr "Klik op 'Volgende' om de volgende Syslog rapportage te verwijderen."
+
+#~ msgid "Click 'Continue' to Disable the following Syslog Report(s)."
+#~ msgstr "Klik op 'Volgende' om de volgende Syslog rapportage uit te schakelen."
+
+#~ msgid "Click 'Continue' to Enable the following Syslog Report(s)."
+#~ msgstr "Klik op 'Volgende' om de volgende Syslog rapportage in te schakelen."
+
+#~ msgid "Report Email Addresses"
+#~ msgstr "E-mailadressen rapportage"
+
+#~ msgid "%0.1f Hours"
+#~ msgstr "%0.1f Uren"
+
+#~ msgid "Every Polling"
+#~ msgstr "Iedere poller"
+
+#~ msgid "Every %d Pollings"
+#~ msgstr "Iedere %d pollers"
+
+#~ msgid "Exact Value"
+#~ msgstr "Exacte waarde"
+
+#~ msgid "Default Status"
+#~ msgstr "Standaard status"
+
+#~ msgid "Enter a name for this Notification List."
+#~ msgstr "Voer een naam in voor deze berichtenlijst."
+
+#~ msgid "Associated Lists"
+#~ msgstr "Gekoppelde lijsten"
+
+#~ msgid "Current List Only"
+#~ msgstr "Alleen de huidige lijst"
+
+#~ msgid "Select Users"
+#~ msgstr "Geselecteerde gebruikers"
+
+#~ msgid "Current List"
+#~ msgstr "Huidige lijst"
+
+#~ msgid "Log Only"
+#~ msgstr "Uitsluitend loggen"
+
+#~ msgid "List Name"
+#~ msgstr "Lijstnaam"
+
+#~ msgid "Apply Filters"
+#~ msgstr "Filter toepassen"
+
+#~ msgid "Return to Defaults"
+#~ msgstr "Standaardinstellingen"
+
+#~ msgid "Last:"
+#~ msgstr "Laatste:"
+
+#~ msgid "Data Sources: %s"
+#~ msgstr "Data bronnen: %s"
+
+#~ msgid "Template Settings"
+#~ msgstr "Template instellingen"
+
+#~ msgid "Breach Duration"
+#~ msgstr "Duur breuk"
+
+#~ msgid "Data Manipulation"
+#~ msgstr "Data manipulatie"
+
+#~ msgid "Data Type"
+#~ msgstr "Data type"
+
+#~ msgid "Users Selected"
+#~ msgstr "Geselecteerde gebruikers"
+
+#~ msgid "All Users Selected"
+#~ msgstr "Alle gebruikers geselecteerd"
+
+#~ msgid "Disable Threshold"
+#~ msgstr "Drempelwaarde uitschakelen"
+
+#~ msgid "View Graph"
+#~ msgstr "Toon grafiek"
+
+#~ msgid "The number of Graphs for this Device"
+#~ msgstr "Het aantal grafieken voor dit apparaat"
+
+#~ msgid "The number of Data Sources for this Device"
+#~ msgstr "Het aantal data bronnen van dit apparaat"
+
+#~ msgid "The official hostname for this Device"
+#~ msgstr "De officiële hostname van dit apparaat."
+
+#~ msgid "Measured Value"
+#~ msgstr "Gemeten waarde"
+
+#~ msgid "Data Field"
+#~ msgstr "Data veld"
+
+#~ msgid "Percent Datasource"
+#~ msgstr "Aanwezige data bron"
+
+#~ msgid "%d Seconds (Average)"
+#~ msgstr "%d Seconden (gemiddeld)"
+
+#~ msgid "Imported"
+#~ msgstr "Geimporteerd"
+
+#~ msgid "Updated"
+#~ msgstr "Bijgewerkt"
+
+#~ msgid "Please select a Device"
+#~ msgstr "Selecteer alstublieft een apparaat"
+
+#~ msgid "Enable Site"
+#~ msgstr "Activeer locatie"
+
+#~ msgid "Disable Site"
+#~ msgstr "Locatie uitschakelen"
+
+#~ msgid "No Servers Found"
+#~ msgstr "Geen servers gevonden"
+
+#~ msgid "Query [edit: %s]"
+#~ msgstr "Query [wijzig: %s]"
+
+#~ msgid "Query [new]"
+#~ msgstr "Query [nieuw]"
+
+#~ msgid "Requires Authentication"
+#~ msgstr "Authenticatie vereist"
+
+#~ msgid "No Users Selected"
+#~ msgstr "Geen gebruikers geselecteerd"
+
+#~ msgid "Master Server"
+#~ msgstr "Master server"
+
+#~ msgid "Display Name of this server"
+#~ msgstr "De naam van deze server"
+
+#~ msgid "WMI Settings"
+#~ msgstr "WMI instellingen"
+
+#~ msgid "Remove WMI Query"
+#~ msgstr "Verwijder WMI query"
+
+#~ msgid "You must select at least one account."
+#~ msgstr "U moet tenminste een account selecteren."
+
+#~ msgid "Account [edit: %s]"
+#~ msgstr "Account [wijzig: %s]"
+
+#~ msgid "No Accounts Found"
+#~ msgstr "Geen accounts gevonden"
+
+#~ msgid "Query"
+#~ msgstr "Query"
+
+#~ msgid "Click 'Continue' to Delete the following WMI Queries."
+#~ msgstr "Klik op ‘Volgende’ om de volgende WMI query te verwijderen."
+
+#~ msgid "You must select at least one WMI Query."
+#~ msgstr "U moet op zijn minst een WMI query selecteren."
+
+#~ msgid "WQL Query"
+#~ msgstr "WQL query"
+
+#~ msgid "Uptime Goes Backwards"
+#~ msgstr "Uptime gaat achteruit"
+
+#, fuzzy
+#~ msgid "The file holding the SSL Certificate Authority to use to connect to the remote database."
+#~ msgstr "Het bestand met het SSL Certificaat Autoriteit om te gebruiken om verbinding te maken met de database op afstand."
+
+#~ msgid "%d Outliers"
+#~ msgstr "%d Uitschieters"
+
+#~ msgid "%s Standard Deviations"
+#~ msgstr "%s standaardafwijkingen"
+
+#~ msgid "No Task"
+#~ msgstr "Geen taak"
+
+#~ msgid "%d Samples"
+#~ msgstr "%d Voorbeelden"
+
+#~ msgid "When using Cacti with languages other than English, it is important to use the utf8 character set as some characters take more than a single byte. If you are first just now installing Cacti, stop, make the changes and start over again. If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
+#~ msgstr "Wanneer Cacti gebruikt wordt met talen anders dan Engels, is het belangrijk om de UTF8 karakterset te gebruiken, omdat sommige karakters multi-byte zijn. Als u de installatie nu voor het eerst uitvoert, stop dan, wijzig de collatie en begin opnieuw. Als Cacti al draait in een productieomgeving, kijk op het internet voor instructies over het converteren van uw database en tabellen voor de ondersteuning van andere talen."
+
+#~ msgid "When using Cacti with languages other than English, it is important to use the utf8_general_ci collation type as some characters take more than a single byte.  If you are first just now installing Cacti, stop, make the changes and start over again.  If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
+#~ msgstr "Wanneer Cacti gebruikt wordt met talen anders dan Engels, is het belangrijk om de utf8_general_ci karakterset te gebruiken, omdat sommige karakters multi-byte zijn. Als u de installatie nu voor het eerst uitvoert, stop dan, wijzig de collatie en begin opnieuw. Als Cacti al draait in een productieomgeving, kijk op het internet voor instructies over het converteren van uw database en tabellen voor de ondersteuning van andere talen."

@@ -1450,11 +1450,11 @@ CREATE TABLE `data_source_purge_temp` (
   ROW_FORMAT=Dynamic
   COMMENT='RRD Cleaner File Repository';
 
-	
+
 --
 -- Table structure for table `data_source_stats_daily`
 --
-	
+
 CREATE TABLE `data_source_stats_daily` (
   `local_data_id` mediumint(8) unsigned NOT NULL,
   `rrd_name` varchar(19) NOT NULL,
@@ -2391,8 +2391,8 @@ CREATE TABLE `reports` (
   `lastsent` bigint(20) unsigned NOT NULL DEFAULT '0',
   `enabled` char(2) DEFAULT '',
   PRIMARY KEY (`id`),
-  KEY `mailtime` (`mailtime`)) 
-  ENGINE=InnoDB 
+  KEY `mailtime` (`mailtime`))
+  ENGINE=InnoDB
   ROW_FORMAT=Dynamic
   COMMENT='Cacri Reporting Reports';
 
@@ -2418,8 +2418,8 @@ CREATE TABLE `reports_items` (
   `font_size` smallint(2) unsigned NOT NULL DEFAULT '10',
   `sequence` smallint(5) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  KEY `report_id` (`report_id`)) 
-  ENGINE=InnoDB 
+  KEY `report_id` (`report_id`))
+  ENGINE=InnoDB
   ROW_FORMAT=Dynamic
   COMMENT='Cacti Reporting Items';
 

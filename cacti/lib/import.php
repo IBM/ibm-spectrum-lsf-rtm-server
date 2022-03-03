@@ -22,6 +22,7 @@ function import_xml_data(&$xml_data, $import_as_new, $profile_id, $remove_orphan
 	global $config, $hash_type_codes, $cacti_version_codes, $preview_only, $import_debug_info, $legacy_template;
 
 	include_once($config['library_path'] . '/xml.php');
+	include_once($config['library_path'] . '/utility.php');
 
 	$info_array    = array();
 	$debug_session = array();

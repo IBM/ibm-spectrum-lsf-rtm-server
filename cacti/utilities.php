@@ -600,7 +600,7 @@ function utilities_view_tech() {
 
 		foreach($changelog as $s) {
 			if (strlen(trim($s)) && stripos($s, 'CHANGELOG') === false) {
-				if (strpos($s, '-') === false) {
+				if (strpos($s, '-') === false || strpos($s, '-') !== 0) {
 					html_section_header(__('Version %s', $s), 2);
 				} else {
 					form_alternate_row();

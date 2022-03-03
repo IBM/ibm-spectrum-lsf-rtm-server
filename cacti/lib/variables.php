@@ -93,7 +93,7 @@ function update_data_source_title_cache($local_data_id) {
 		FROM data_template_data
 		WHERE local_data_id = ?',
 		array($local_data_id));
-	
+
 	$data_source = get_data_source_title($local_data_id);
 
 	if (strstr($data_source, '|query_') !== false || strstr($data_source, '|host_') !== false) {
@@ -469,4 +469,3 @@ function substitute_data_input_data($string, $graph, $local_data_id, $max_chars 
 
 	return $string;
 }
-

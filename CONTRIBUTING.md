@@ -2,7 +2,7 @@
 
 Thank you for your interest in helping us improve the project! The following set of guidelines will help you get started.
 
-When contributing to this repository, please first discuss the change you wish to make via issue, email, or any other method with the owners of this repository before making a change. 
+When contributing to this repository, please first discuss the change you wish to make via issue, email, or any other method with the owners of this repository before making a change.
 
 ## IBMers Contributing
 

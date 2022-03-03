@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Installing Cacti 1.x in Ubuntu/Debian LAMP stack</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="installing-cacti-1x-in-ubuntudebian-lamp-stack">Installing Cacti 1.x in Ubuntu/Debian LAMP stack</h1>
+<h2 id="installing-the-required-packages-needed-for-the-lamp-stack">Installing the required packages needed for the LAMP stack</h2>
+<pre class="console"><code>apt-get update
+apt-get install -y apache2 rrdtool mariadb-server snmp snmpd php7.0 php-mysql php7.0-snmp php7.0-xml php7.0-mbstring php7.0-json php7.0-gd php7.0-gmp php7.0-zip php7.0-ldap php7.0-mc
+</code></pre>
+<h3 id="downloading-the-cacti-software">Downloading the Cacti software</h3>
+<p>Once the OS packages are installed, you will need to download the Cacti files you can do this by using the git command</p>
+<pre class="console"><code>git clone https://github.com/Cacti/cacti.git
+Cloning into &#39;cacti&#39;...
+remote: Enumerating objects: 81, done.
+remote: Counting objects: 100% (81/81), done.
+remote: Compressing objects: 100% (55/55), done.
+remote: Total 59936 (delta 40), reused 51 (delta 26), pack-reused 59855&amp;
+Receiving objects: 100% (59936/59936), 76.33 MiB | 1.81 MiB/s, done.
+Resolving deltas: 100% (43598/43598), done.
+</code></pre>
+<p>After cloning the Cacti repository, move the files into the /var/www/html directory</p>
+<pre class="console"><code>mv cacti /var/www/html
+</code></pre>
+<h4 id="database-creation">Database Creation</h4>
+<p>Next we will create a database for the cacti installation to use</p>
+<pre class="console"><code>mysql -u root -p
+CREATE DATABASE cacti DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ;
+GRANT ALL PRIVILEGES ON cacti.* TO &#39;cacti&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;cacti&#39;;
+GRANT SELECT ON mysql.time_zone_name TO cacti@localhost;
+ALTER DATABASE cacti CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+FLUSH PRIVILEGES;
+</code></pre>
+<p>You will now need to pre-populate the database used by cacti</p>
+<pre class="console"><code>mysql -u root cacti &lt; /var/www/html/cacti/cacti.sql
+</code></pre>
+<p>Next, you will need to create the config.php file in /var/www/html/cacti/include</p>
+<pre class="console"><code>cd /var/www/html/cacti/include
+cp config.php.dist config.php
+</code></pre>
+<p>Now, edit the config.php file and make sure to change the database settings as needed to match the below entries (though it is highly recommended to use a customised username/password combination for security)</p>
+<pre class="console"><code>$database_type     = &#39;mysql&#39;;
+$database_default  = &#39;cacti&#39;;
+$database_hostname = &#39;localhost&#39;;
+$database_username = &#39;cactiuser&#39;;
+$database_password = &#39;cactiuser&#39;;
+$database_port     = &#39;3306&#39;;
+$database_retries  = 5;
+$database_ssl      = false;
+$database_ssl_key  = &#39;&#39;;
+</code></pre>
+<p>The system is now ready to finialise the steps by browsing to <a href="http://serverip/cacti">http://serverip/cacti</a> to start the cacti initalization wizard.</p>
+<hr />
+<p>Copyright (c) 2004-2020 The Cacti Group</p>
+</body>
+</html>

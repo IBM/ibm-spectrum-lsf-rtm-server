@@ -1,0 +1,35 @@
+<!-- $Id$ -->
+<cacti>
+	<hash_0100219b8c92d3c32703900ff7dd653bfc9cd8>
+		<name>Unix - Processes</name>
+		<ds>
+			<t_name></t_name>
+			<name>|host_description| - Processes</name>
+			<data_input_id>hash_030021a637359e0a4287ba43048a5fdf202066</data_input_id>
+			<t_rra_id></t_rra_id>
+			<t_rrd_step></t_rrd_step>
+			<rrd_step>300</rrd_step>
+			<t_active></t_active>
+			<active>on</active>
+			<rra_items>hash_150021c21df5178e5c955013591239eb0afd46|hash_1500210d9c0af8b8acdc7807943937b3208e29|hash_1500216fc2d038fb42950138b0ce3e9874cc60|hash_150021e36f3adb9f152adfa5dc50fd2b23337e</rra_items>
+		</ds>
+		<items>
+			<hash_080021f1ba3a5b17b95825021241398bb0f277>
+				<t_data_source_name></t_data_source_name>
+				<data_source_name>proc</data_source_name>
+				<t_rrd_minimum></t_rrd_minimum>
+				<rrd_minimum>0</rrd_minimum>
+				<t_rrd_maximum></t_rrd_maximum>
+				<rrd_maximum>0</rrd_maximum>
+				<t_data_source_type_id></t_data_source_type_id>
+				<data_source_type_id>1</data_source_type_id>
+				<t_rrd_heartbeat></t_rrd_heartbeat>
+				<rrd_heartbeat>600</rrd_heartbeat>
+				<t_data_input_field_id></t_data_input_field_id>
+				<data_input_field_id>hash_070021d5a8dd5fbe6a5af11667c0039af41386</data_input_field_id>
+			</hash_080021f1ba3a5b17b95825021241398bb0f277>
+		</items>
+		<data>
+		</data>
+	</hash_0100219b8c92d3c32703900ff7dd653bfc9cd8>
+</cacti>

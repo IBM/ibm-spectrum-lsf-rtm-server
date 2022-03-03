@@ -1,0 +1,1149 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-03-23 19:58-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../disku_paths.php:28
+msgid "Disable"
+msgstr ""
+
+#: ../disku_paths.php:29
+msgid "Enable"
+msgstr ""
+
+#: ../disku_paths.php:30 ../disku_applications.php:28 ../disku_extenreg.php:31
+#: ../disku_pollers.php:30
+msgid "Delete"
+msgstr ""
+
+#: ../disku_paths.php:31
+msgid "Clear Stats"
+msgstr ""
+
+#: ../disku_paths.php:190
+msgid "Click 'Continue' to Delete the following Scanner Path(s)."
+msgstr ""
+
+#: ../disku_paths.php:195
+msgid "Delete Disk Monitor Scan Path(s)"
+msgstr ""
+
+#: ../disku_paths.php:199
+msgid "Click 'Continue' to Disable Poller of the following Scanner Path(s)."
+msgstr ""
+
+#: ../disku_paths.php:204
+msgid "Disable Disk Monitor Scan Path(s)"
+msgstr ""
+
+#: ../disku_paths.php:208
+msgid "Click 'Continue' to Enable the following Scanner Path(s)."
+msgstr ""
+
+#: ../disku_paths.php:213
+msgid "Enable Disk Monitor Scan Path(s)"
+msgstr ""
+
+#: ../disku_paths.php:217
+msgid "Click 'Continue' to Clear Statistics on the following Scanner Path(s)."
+msgstr ""
+
+#: ../disku_paths.php:222
+msgid "Clear Disk Monitor Scan Path Stats"
+msgstr ""
+
+#: ../disku_paths.php:225 ../disku_pollers.php:218
+msgid "Cancel"
+msgstr ""
+
+#: ../disku_paths.php:225 ../disku_pollers.php:218
+msgid "Continue"
+msgstr ""
+
+#: ../disku_paths.php:227
+msgid "You must select at least one Disk Monitor Scan Path."
+msgstr ""
+
+#: ../disku_paths.php:263 ../disku_paths.php:609 ../setup.php:687
+#: ../setup.php:695 ../setup.php:703 ../disku_applications.php:331
+#: ../disku_extenreg.php:803 ../disku_extenreg.php:1205
+#: ../disku_extensions.php:139 ../disku_extensions.php:313
+#: ../disku_orgview.php:131 ../disku_orgview.php:141
+msgid "Undefined"
+msgstr ""
+
+#: ../disku_paths.php:263
+#, php-format
+msgid "Disk Monitoring Path [edit: %s]"
+msgstr ""
+
+#: ../disku_paths.php:265
+msgid "Disk Monitoring Path [new]"
+msgstr ""
+
+#: ../disku_paths.php:272
+msgid "Path to Monitor"
+msgstr ""
+
+#: ../disku_paths.php:273
+msgid "Enter the path that must be scanned."
+msgstr ""
+
+#: ../disku_paths.php:281 ../disku_paths.php:581
+msgid "Path Name"
+msgstr ""
+
+#: ../disku_paths.php:282
+msgid "Give the path a common name for others."
+msgstr ""
+
+#: ../disku_paths.php:290
+msgid "Path Descripton"
+msgstr ""
+
+#: ../disku_paths.php:291
+msgid "Details about this path for support purposes."
+msgstr ""
+
+#: ../disku_paths.php:299
+msgid "Tag Name for Accounting"
+msgstr ""
+
+#: ../disku_paths.php:300
+msgid "Aggregates file statistical information under this name."
+msgstr ""
+
+#: ../disku_paths.php:308
+msgid "Poller Name"
+msgstr ""
+
+#: ../disku_paths.php:309
+msgid "Select the poller that collects data for the configured path."
+msgstr ""
+
+#: ../disku_paths.php:316
+msgid "Directory Depth"
+msgstr ""
+
+#: ../disku_paths.php:317
+msgid "For parallelization support, what depth to you want to traverse the file system to determine the number of threads."
+msgstr ""
+
+#: ../disku_paths.php:321
+#, php-format
+msgid "%d Directory Deep"
+msgstr ""
+
+#: ../disku_paths.php:322 ../disku_paths.php:323 ../disku_paths.php:324
+#, php-format
+msgid "%d Directories Deep"
+msgstr ""
+
+#: ../disku_paths.php:329
+msgid "Max Concurrent Threads"
+msgstr ""
+
+#: ../disku_paths.php:330
+msgid "Select the default maximum concurrent threads that you want to use in parallel on the configured path for that host. For example, if you set the path as <span class=\"filepath\">/tmp</span> with a Depth 2 and Thread 5, then<span class=\"filepath\">/tmp</span> is scanned until two directories depth by initiating 5 concurrent processes. Default is 5 Threads per path."
+msgstr ""
+
+#: ../disku_paths.php:334
+#, php-format
+msgid "%d Thread"
+msgstr ""
+
+#: ../disku_paths.php:335 ../disku_paths.php:336 ../disku_paths.php:337
+#: ../disku_paths.php:338 ../disku_paths.php:339 ../disku_paths.php:340
+#: ../disku_paths.php:341 ../disku_paths.php:342 ../disku_paths.php:343
+#, php-format
+msgid "%d Threads"
+msgstr ""
+
+#: ../disku_paths.php:348
+msgid "Do Not Monitor this Path"
+msgstr ""
+
+#: ../disku_paths.php:349
+msgid "Check this box if you want to disable scanning for this path."
+msgstr ""
+
+#: ../disku_paths.php:384
+#, php-format
+msgid "%d Hrs"
+msgstr ""
+
+#: ../disku_paths.php:386
+#, php-format
+msgid "%d Mins"
+msgstr ""
+
+#: ../disku_paths.php:389
+#, php-format
+msgid "%d Secs"
+msgstr ""
+
+#: ../disku_paths.php:402 ../disku_paths.php:584 ../disku_dashboard.php:128
+#: ../disku_dashboard.php:227 ../disku_pollers.php:486
+msgid "Location"
+msgstr ""
+
+#: ../disku_paths.php:406 ../setup.php:569 ../disku_dashboard.php:231
+#: ../disku_extensions.php:138 ../disku_extensions.php:161
+#: ../disku_groups.php:128 ../disku_orgview.php:208 ../disku_orgview.php:245
+#: ../disku_orgview.php:283 ../disku_users.php:135 ../disku_users.php:166
+msgid "All"
+msgstr ""
+
+#: ../disku_paths.php:422 ../disku_paths.php:586 ../disku_pollers.php:481
+msgid "Status"
+msgstr ""
+
+#: ../disku_paths.php:426
+msgid "Any"
+msgstr ""
+
+#: ../disku_paths.php:427 ../disku_paths.php:585
+msgid "Enabled"
+msgstr ""
+
+#: ../disku_paths.php:428 ../disku_paths.php:614
+msgid "Disabled"
+msgstr ""
+
+#: ../disku_paths.php:432 ../disku_paths.php:596 ../disku_pollers.php:506
+msgid "Paths"
+msgstr ""
+
+#: ../disku_paths.php:436 ../disku_tagview.php:131 ../setup.php:557
+#: ../disku_applications.php:402 ../disku_appview.php:131
+#: ../disku_dashboard.php:250 ../disku_extensions.php:171
+#: ../disku_groups.php:138 ../disku_orgview.php:320 ../disku_pollers.php:635
+#: ../disku_users.php:176
+msgid "Default"
+msgstr ""
+
+#: ../disku_paths.php:448 ../disku_tagview.php:142
+#: ../disku_applications.php:414 ../disku_appview.php:143
+#: ../disku_dashboard.php:262 ../disku_extenreg.php:1071
+#: ../disku_extensions.php:183 ../disku_groups.php:150 ../disku_orgview.php:332
+#: ../disku_pollers.php:646 ../disku_users.php:188
+msgid "Go"
+msgstr ""
+
+#: ../disku_paths.php:448 ../disku_paths.php:457 ../disku_tagview.php:121
+#: ../disku_applications.php:392 ../disku_applications.php:414
+#: ../disku_appview.php:121 ../disku_dashboard.php:262
+#: ../disku_dashboard.php:271 ../disku_extenreg.php:1080
+#: ../disku_extensions.php:192 ../disku_groups.php:159 ../disku_orgview.php:341
+#: ../disku_pollers.php:625 ../disku_pollers.php:646 ../disku_users.php:197
+msgid "Search"
+msgstr ""
+
+#: ../disku_paths.php:449 ../disku_tagview.php:143
+#: ../disku_applications.php:415 ../disku_appview.php:144
+#: ../disku_dashboard.php:263 ../disku_extenreg.php:1072
+#: ../disku_extensions.php:184 ../disku_groups.php:151 ../disku_orgview.php:333
+#: ../disku_pollers.php:647 ../disku_users.php:189
+msgid "Clear"
+msgstr ""
+
+#: ../disku_paths.php:449 ../disku_tagview.php:143
+#: ../disku_applications.php:415 ../disku_appview.php:144
+#: ../disku_dashboard.php:263 ../disku_extenreg.php:1072
+#: ../disku_extensions.php:184 ../disku_groups.php:151 ../disku_orgview.php:333
+#: ../disku_pollers.php:647 ../disku_users.php:189
+msgid "Clear Filters"
+msgstr ""
+
+#: ../disku_paths.php:517
+msgid "Disk Monitoring Paths"
+msgstr ""
+
+#: ../disku_paths.php:582
+msgid "Path"
+msgstr ""
+
+#: ../disku_paths.php:583 ../disku_tagview.php:177
+msgid "Tag Name"
+msgstr ""
+
+#: ../disku_paths.php:587 ../disku_pollers.php:511
+msgid "Pending"
+msgstr ""
+
+#: ../disku_paths.php:588 ../disku_paths.php:614 ../disku_pollers.php:516
+#: ../disku_pollers.php:564
+msgid "Running"
+msgstr ""
+
+#: ../disku_paths.php:589
+msgid "Depth/Threads"
+msgstr ""
+
+#: ../disku_paths.php:590
+msgid "Cur Time"
+msgstr ""
+
+#: ../disku_paths.php:591 ../disku_pollers.php:526
+msgid "Avg Time"
+msgstr ""
+
+#: ../disku_paths.php:592 ../disku_pollers.php:531
+msgid "Max Time"
+msgstr ""
+
+#: ../disku_paths.php:593 ../disku_pollers.php:536
+msgid "Last Started"
+msgstr ""
+
+#: ../disku_paths.php:594 ../disku_pollers.php:541
+msgid "Last Ended"
+msgstr ""
+
+#: ../disku_paths.php:613 ../disku_extenreg.php:1206
+#: ../disku_extensions.php:163 ../disku_extensions.php:314
+msgid "No"
+msgstr ""
+
+#: ../disku_paths.php:613 ../disku_extenreg.php:1206
+#: ../disku_extensions.php:162 ../disku_extensions.php:314
+msgid "Yes"
+msgstr ""
+
+#: ../disku_paths.php:614
+msgid "Idle"
+msgstr ""
+
+#: ../disku_paths.php:627
+msgid "No Disk Data Collector Paths Defined"
+msgstr ""
+
+#: ../disku_tagview.php:112
+msgid "Disk Monitoring by Tag Name"
+msgstr ""
+
+#: ../disku_tagview.php:127 ../disku_tagview.php:212
+msgid "Tags"
+msgstr ""
+
+#: ../disku_tagview.php:142 ../disku_appview.php:143 ../disku_extenreg.php:1071
+#: ../disku_extensions.php:183 ../disku_groups.php:150 ../disku_orgview.php:332
+#: ../disku_users.php:188
+msgid "Set/Refresh Filters"
+msgstr ""
+
+#: ../disku_tagview.php:173 ../setup.php:768 ../setup.php:778 ../setup.php:783
+#: ../setup.php:789 ../setup.php:804 ../disku_appview.php:166
+#: ../disku_dashboard.php:117 ../disku_extenreg.php:1114
+#: ../disku_extensions.php:220 ../disku_groups.php:199 ../disku_orgview.php:375
+#: ../disku_users.php:235
+msgid "Actions"
+msgstr ""
+
+#: ../disku_tagview.php:181 ../disku_appview.php:178 ../disku_extenreg.php:1134
+#: ../disku_extensions.php:240 ../disku_groups.php:211 ../disku_orgview.php:404
+msgid "Total Users"
+msgstr ""
+
+#: ../disku_tagview.php:186 ../disku_appview.php:183 ../disku_extenreg.php:1139
+#: ../disku_extensions.php:245 ../disku_groups.php:215 ../disku_orgview.php:409
+#: ../disku_users.php:255
+msgid "Total Files"
+msgstr ""
+
+#: ../disku_tagview.php:191 ../disku_appview.php:188 ../disku_extenreg.php:1144
+#: ../disku_extensions.php:250 ../disku_groups.php:225 ../disku_orgview.php:419
+#: ../disku_users.php:265
+msgid "Total Size"
+msgstr ""
+
+#: ../disku_tagview.php:196 ../disku_appview.php:193 ../disku_extenreg.php:1149
+#: ../disku_extensions.php:255 ../disku_groups.php:230 ../disku_orgview.php:424
+#: ../disku_users.php:270
+msgid "Less 6 Months"
+msgstr ""
+
+#: ../disku_tagview.php:201 ../disku_appview.php:198 ../disku_extenreg.php:1154
+#: ../disku_extensions.php:260 ../disku_groups.php:235 ../disku_orgview.php:429
+#: ../disku_users.php:275
+msgid "Between 6-12 Months"
+msgstr ""
+
+#: ../disku_tagview.php:206 ../disku_appview.php:203 ../disku_extenreg.php:1159
+#: ../disku_extensions.php:265 ../disku_groups.php:240 ../disku_orgview.php:434
+#: ../disku_users.php:280
+msgid "12 Months Plus"
+msgstr ""
+
+#: ../disku_tagview.php:265
+msgid "No Tag Name Found"
+msgstr ""
+
+#: ../setup.php:465
+msgid "Management"
+msgstr ""
+
+#: ../setup.php:466 ../setup.php:467 ../setup.php:468 ../setup.php:469
+#: ../setup.php:474
+msgid "Disk Monitoring"
+msgstr ""
+
+#: ../setup.php:466
+msgid "File System Pollers"
+msgstr ""
+
+#: ../setup.php:467
+msgid "File System Scan Paths"
+msgstr ""
+
+#: ../setup.php:468 ../setup.php:800 ../setup.php:801
+#: ../disku_applications.php:398 ../disku_applications.php:537
+#: ../disku_appview.php:127 ../disku_appview.php:209
+msgid "Applications"
+msgstr ""
+
+#: ../setup.php:469
+msgid "Extension Registry"
+msgstr ""
+
+#: ../setup.php:481
+msgid "Weekly at Day/Time"
+msgstr ""
+
+#: ../setup.php:482
+msgid "Daily at Time"
+msgstr ""
+
+#: ../setup.php:486
+msgid "Sunday"
+msgstr ""
+
+#: ../setup.php:487
+msgid "Monday"
+msgstr ""
+
+#: ../setup.php:488
+msgid "Tuesday"
+msgstr ""
+
+#: ../setup.php:489
+msgid "Wednesday"
+msgstr ""
+
+#: ../setup.php:490
+msgid "Thursday"
+msgstr ""
+
+#: ../setup.php:491
+msgid "Friday"
+msgstr ""
+
+#: ../setup.php:492
+msgid "Saturday"
+msgstr ""
+
+#: ../setup.php:496
+msgid "Level 1"
+msgstr ""
+
+#: ../setup.php:497
+msgid "Level 2"
+msgstr ""
+
+#: ../setup.php:498
+msgid "Level 1 + Level 2"
+msgstr ""
+
+#: ../setup.php:499
+msgid "Level 3"
+msgstr ""
+
+#: ../setup.php:500
+msgid "Level 1 + Level 3"
+msgstr ""
+
+#: ../setup.php:501
+msgid "Level 2 + Level 3"
+msgstr ""
+
+#: ../setup.php:502
+msgid "Level 1 + Level 2 + Level 3"
+msgstr ""
+
+#: ../setup.php:573 ../setup.php:574
+#, php-format
+msgid "%d Days"
+msgstr ""
+
+#: ../setup.php:575
+#, php-format
+msgid "%d Week"
+msgstr ""
+
+#: ../setup.php:576 ../setup.php:577
+#, php-format
+msgid "%d Weeks"
+msgstr ""
+
+#: ../setup.php:578
+#, php-format
+msgid "%d Month"
+msgstr ""
+
+#: ../setup.php:579 ../setup.php:580 ../setup.php:581 ../setup.php:582
+#, php-format
+msgid "%d Months"
+msgstr ""
+
+#: ../setup.php:583
+#, php-format
+msgid "%d Year"
+msgstr ""
+
+#: ../setup.php:584 ../setup.php:585
+#, php-format
+msgid "%d Years"
+msgstr ""
+
+#: ../setup.php:588
+msgid "Duplicated Extension. The Extension has exsited already."
+msgstr ""
+
+#: ../setup.php:591
+msgid "Duplicated Extension. And the Extension has mapped to the same application."
+msgstr ""
+
+#: ../setup.php:594
+msgid "Duplicated Extension. The Extension will map to more than one application."
+msgstr ""
+
+#: ../setup.php:597
+msgid "A absolute path is needed."
+msgstr ""
+
+#: ../setup.php:600
+msgid "Duplicated Path. The Path of the Poller has exsited already."
+msgstr ""
+
+#: ../setup.php:619
+msgid "RTM Plugins"
+msgstr ""
+
+#: ../setup.php:623
+msgid "Disk Monitoring General Settings"
+msgstr ""
+
+#: ../setup.php:633
+msgid "Add Disk Monitoring Device Automatically"
+msgstr ""
+
+#: ../setup.php:634
+msgid "RTM will add device and the related graphs for monitoring"
+msgstr ""
+
+#: ../setup.php:639
+msgid "Bypass Directories"
+msgstr ""
+
+#: ../setup.php:640
+msgid "The directories and files of which path content these strings will be bypassed during raw data scanning. Some directory paths can lead to misleading data, and cause the scanning process to take an excessive amount of time.  One important path that should always be ignored are one that include \".snapshot\" folders.  Scanning these folders will result in not only longer scan times, but erroneous data. If multiple strings need to be bypassed, separated them by semi-colon. For example, \"ex1;/ex2/\" will bypass directories and files of which path contents \"ex1\", and will bypass directories of which path contents \"/ex2/\"."
+msgstr ""
+
+#: ../setup.php:647
+msgid "Disk Monitoring Data Retention Settings"
+msgstr ""
+
+#: ../setup.php:651
+msgid "Historical Data Retention"
+msgstr ""
+
+#: ../setup.php:652
+msgid "Select the period you want to store Daily Statistics data. Default is 1 year."
+msgstr ""
+
+#: ../setup.php:658
+msgid "Rotation Frequency"
+msgstr ""
+
+#: ../setup.php:659
+msgid "Select the data partition frequency. For example, if your poller runs once a day, then select Daily, if it runs once a week, then select Weekly. Default is Daily."
+msgstr ""
+
+#: ../setup.php:662
+msgid "Daily"
+msgstr ""
+
+#: ../setup.php:662
+msgid "Weekly"
+msgstr ""
+
+#: ../setup.php:665
+msgid "Data Storage Rotation Schedule "
+msgstr ""
+
+#: ../setup.php:666
+msgid "Only when using Weekly rotation, what day should this rotation take place. Select a day to back up data. Default is Sunday."
+msgstr ""
+
+#: ../setup.php:672
+msgid "Rotation Time"
+msgstr ""
+
+#: ../setup.php:673
+msgid "Set the time for back up rotation schedule. Please make this of day a time when no pollers are collecting data."
+msgstr ""
+
+#: ../setup.php:679
+msgid "Disk Monitoring Organizational Hierarchy"
+msgstr ""
+
+#: ../setup.php:683
+msgid "Level 1 Hierarchy"
+msgstr ""
+
+#: ../setup.php:684
+msgid "Set the highest level of hierarchy"
+msgstr ""
+
+#: ../setup.php:691
+msgid "Level 2 Hierarchy"
+msgstr ""
+
+#: ../setup.php:692
+msgid "Set the second level of hierarchy"
+msgstr ""
+
+#: ../setup.php:699
+msgid "Level 3 Hierarchy"
+msgstr ""
+
+#: ../setup.php:700
+msgid "Set the third level of hierarchy"
+msgstr ""
+
+#: ../setup.php:707
+msgid "Organizational Graph Level"
+msgstr ""
+
+#: ../setup.php:708
+msgid "Create graphs on which organization level."
+msgstr ""
+
+#: ../setup.php:714
+msgid "Disk Monitoring User/Group Settings"
+msgstr ""
+
+#: ../setup.php:718
+msgid "User/Group Collection Method"
+msgstr ""
+
+#: ../setup.php:719
+msgid "What method should be used to determine users and group membership"
+msgstr ""
+
+#: ../setup.php:726
+msgid "Valid Unique Identifier (UID) User ID Range"
+msgstr ""
+
+#: ../setup.php:727
+msgid "Define a range  to uniquely identify users. By default, it is 1000 - 100000"
+msgstr ""
+
+#: ../setup.php:734
+msgid "Valid Unique Identifier (GID) Group ID Range"
+msgstr ""
+
+#: ../setup.php:735
+msgid "Define a range to uniquely identify user groups. By default, it is 500 - 10000"
+msgstr ""
+
+#: ../setup.php:765
+msgid "Disk Pollers"
+msgstr ""
+
+#: ../setup.php:766 ../setup.php:776 ../setup.php:781 ../setup.php:787
+#: ../setup.php:802
+msgid "(Edit)"
+msgstr ""
+
+#: ../setup.php:767 ../setup.php:777 ../setup.php:782 ../setup.php:788
+#: ../setup.php:803
+msgid "(Save)"
+msgstr ""
+
+#: ../setup.php:775
+msgid "Monitoring Paths"
+msgstr ""
+
+#: ../setup.php:780
+msgid "Unix Group Data Managers"
+msgstr ""
+
+#: ../setup.php:785
+msgid "File Extension Registry"
+msgstr ""
+
+#: ../setup.php:786
+msgid "File Extensions"
+msgstr ""
+
+#: ../setup.php:791 ../setup.php:792
+msgid "Disk Usage by Extension"
+msgstr ""
+
+#: ../setup.php:794 ../setup.php:795
+msgid "Disk Usage by Application"
+msgstr ""
+
+#: ../setup.php:797 ../setup.php:798
+msgid "Disk Usage by Tag Name"
+msgstr ""
+
+#: ../setup.php:806 ../setup.php:807
+msgid "Disk Usage By Operating System Users"
+msgstr ""
+
+#: ../setup.php:809 ../setup.php:810
+msgid "Disk Usage By Operating System Groups"
+msgstr ""
+
+#: ../setup.php:812 ../setup.php:813
+msgid "Disk Usage By Organization"
+msgstr ""
+
+#: ../setup.php:815 ../setup.php:816
+msgid "Disk Monitoring Dashboard"
+msgstr ""
+
+#: ../setup.php:835 ../setup.php:875 ../setup.php:890 ../setup.php:891
+msgid "Disk Utilization"
+msgstr ""
+
+#: ../setup.php:876
+msgid "By Volume"
+msgstr ""
+
+#: ../setup.php:877
+msgid "By Organization"
+msgstr ""
+
+#: ../setup.php:878
+msgid "By OS User"
+msgstr ""
+
+#: ../setup.php:879
+msgid "By OS Group"
+msgstr ""
+
+#: ../setup.php:880
+msgid "By File Extension"
+msgstr ""
+
+#: ../setup.php:881
+msgid "By Application"
+msgstr ""
+
+#: ../setup.php:882
+msgid "By Tag Name"
+msgstr ""
+
+#: ../setup.php:889
+msgid "Dashboards"
+msgstr ""
+
+#: ../disku_applications.php:208
+msgid "Delete Application(s)"
+msgstr ""
+
+#: ../disku_applications.php:213
+msgid "You must select at least one Application."
+msgstr ""
+
+#: ../disku_applications.php:333
+msgid "Disk Monitoring Application [new]"
+msgstr ""
+
+#: ../disku_applications.php:340 ../disku_applications.php:341
+#: ../disku_applications.php:522
+msgid "Application Name"
+msgstr ""
+
+#: ../disku_applications.php:349 ../disku_applications.php:350
+#: ../disku_appview.php:174
+msgid "Vendor"
+msgstr ""
+
+#: ../disku_applications.php:467
+msgid "Disk Monitoring Applications"
+msgstr ""
+
+#: ../disku_applications.php:526
+msgid "Vendor Name"
+msgstr ""
+
+#: ../disku_applications.php:530
+msgid "ID"
+msgstr ""
+
+#: ../disku_applications.php:555
+msgid "No Applications Found"
+msgstr ""
+
+#: ../disku_appview.php:112
+msgid "Disk Monitoring by Application"
+msgstr ""
+
+#: ../disku_appview.php:170 ../disku_extenreg.php:825
+#: ../disku_extenreg.php:1122 ../disku_extensions.php:228
+msgid "Application"
+msgstr ""
+
+#: ../disku_appview.php:262
+msgid "No Application Found"
+msgstr ""
+
+#: ../disku_dashboard.php:74
+msgid "Disk Monitoring File Systems"
+msgstr ""
+
+#: ../disku_dashboard.php:120
+msgid "Mount Point"
+msgstr ""
+
+#: ../disku_dashboard.php:124
+msgid "Device"
+msgstr ""
+
+#: ../disku_dashboard.php:132 ../disku_pollers.php:476
+msgid "Hostname"
+msgstr ""
+
+#: ../disku_dashboard.php:136
+msgid "Size"
+msgstr ""
+
+#: ../disku_dashboard.php:141
+msgid "Used"
+msgstr ""
+
+#: ../disku_dashboard.php:146
+msgid "Available"
+msgstr ""
+
+#: ../disku_dashboard.php:151
+msgid "Percent Used"
+msgstr ""
+
+#: ../disku_dashboard.php:157 ../disku_dashboard.php:246
+msgid "File Systems"
+msgstr ""
+
+#: ../disku_extenreg.php:29
+msgid "Monitor"
+msgstr ""
+
+#: ../disku_extenreg.php:30
+msgid "Unmonitor"
+msgstr ""
+
+#: ../disku_extenreg.php:587
+msgid "You must select at least one Extension."
+msgstr ""
+
+#: ../disku_extenreg.php:780
+msgid "[edit]"
+msgstr ""
+
+#: ../disku_extenreg.php:783
+msgid "[new]"
+msgstr ""
+
+#: ../disku_extenreg.php:803
+#, php-format
+msgid "[edit: %s]"
+msgstr ""
+
+#: ../disku_extenreg.php:809
+msgid "Registry Extension Name"
+msgstr ""
+
+#: ../disku_extenreg.php:817
+msgid "Extension Description"
+msgstr ""
+
+#: ../disku_extenreg.php:837
+msgid "Application Level Extension Description"
+msgstr ""
+
+#: ../disku_extenreg.php:1013 ../disku_extensions.php:125
+msgid "Disk Monitoring by Extension"
+msgstr ""
+
+#: ../disku_extenreg.php:1022 ../disku_extensions.php:134
+msgid "App"
+msgstr ""
+
+#: ../disku_extenreg.php:1045 ../disku_extenreg.php:1126
+#: ../disku_extensions.php:157 ../disku_extensions.php:232
+msgid "Monitored"
+msgstr ""
+
+#: ../disku_extenreg.php:1055 ../disku_extenreg.php:1108
+#: ../disku_extensions.php:167 ../disku_extensions.php:271
+msgid "Extensions"
+msgstr ""
+
+#: ../disku_extenreg.php:1118 ../disku_extensions.php:224
+msgid "Extension"
+msgstr ""
+
+#: ../disku_extenreg.php:1130 ../disku_extensions.php:236
+msgid "Description and Application Level Description"
+msgstr ""
+
+#: ../disku_extenreg.php:1219 ../disku_extensions.php:331
+msgid "No Extensions Found"
+msgstr ""
+
+#: ../disku_groups.php:86
+msgid "Disk Monitoring by Group"
+msgstr ""
+
+#: ../disku_groups.php:124 ../disku_users.php:162
+msgid "Type"
+msgstr ""
+
+#: ../disku_groups.php:129 ../disku_users.php:167
+msgid "System"
+msgstr ""
+
+#: ../disku_groups.php:130 ../disku_users.php:131 ../disku_users.php:168
+#: ../disku_users.php:239
+msgid "User"
+msgstr ""
+
+#: ../disku_groups.php:134 ../disku_groups.php:246 ../disku_users.php:251
+msgid "Groups"
+msgstr ""
+
+#: ../disku_groups.php:203
+msgid "Group Name"
+msgstr ""
+
+#: ../disku_groups.php:207
+msgid "Group ID"
+msgstr ""
+
+#: ../disku_groups.php:220 ../disku_orgview.php:414 ../disku_users.php:260
+msgid "Total Dirs"
+msgstr ""
+
+#: ../disku_orgview.php:152
+msgid "Organization View"
+msgstr ""
+
+#: ../disku_orgview.php:209 ../disku_orgview.php:246 ../disku_orgview.php:284
+msgid "N/A"
+msgstr ""
+
+#: ../disku_orgview.php:316 ../disku_orgview.php:440
+msgid "Organizations"
+msgstr ""
+
+#: ../disku_orgview.php:561
+msgid "No Disk Utilization Records Found"
+msgstr ""
+
+#: ../disku_pollers.php:31
+msgid "Reset Counters"
+msgstr ""
+
+#: ../disku_pollers.php:145
+msgid "Unable to delete Pollers that have services running.  Shutdown diskud on the host prior to removing it."
+msgstr ""
+
+#: ../disku_pollers.php:183
+msgid "Click 'Continue' to Delete the following Disk Monitoring Poller(s)."
+msgstr ""
+
+#: ../disku_pollers.php:188
+msgid "Delete Disk Monitoring Poller(s)"
+msgstr ""
+
+#: ../disku_pollers.php:192
+msgid "Click 'Continue' to Disable the following Disk Monitoring Poller(s)."
+msgstr ""
+
+#: ../disku_pollers.php:197
+msgid "Disable Disk Monitoring Poller(s)"
+msgstr ""
+
+#: ../disku_pollers.php:201
+msgid "Click 'Continue' to Enable the following Disk Monitoring Poller(s)."
+msgstr ""
+
+#: ../disku_pollers.php:206
+msgid "Enable Disk Monitoring Poller(s)"
+msgstr ""
+
+#: ../disku_pollers.php:210
+msgid "Click 'Continue' to Reset Counters on the following Disk Monitoring Poller(s)."
+msgstr ""
+
+#: ../disku_pollers.php:215
+msgid "Reset Counters for Disk Monitoring Poller(s)"
+msgstr ""
+
+#: ../disku_pollers.php:220
+msgid "You must select at least one Disk Monitoring Poller."
+msgstr ""
+
+#: ../disku_pollers.php:287
+#, php-format
+msgid "Disk Monitoring Poller [edit: %s (%s) ]"
+msgstr ""
+
+#: ../disku_pollers.php:289
+msgid "Disk Monitoring Poller [new]"
+msgstr ""
+
+#: ../disku_pollers.php:295
+msgid "Poller Location"
+msgstr ""
+
+#: ../disku_pollers.php:296
+msgid "The location where the Poller is located"
+msgstr ""
+
+#: ../disku_pollers.php:304
+msgid "Collection Timing"
+msgstr ""
+
+#: ../disku_pollers.php:305
+msgid "How often will the collectors be launched for this poller?"
+msgstr ""
+
+#: ../disku_pollers.php:312
+msgid "Day of Week"
+msgstr ""
+
+#: ../disku_pollers.php:313
+msgid "When scanning weekly, what day of week should the scan be run?"
+msgstr ""
+
+#: ../disku_pollers.php:320
+msgid "Time of Day"
+msgstr ""
+
+#: ../disku_pollers.php:321
+msgid "What time of the day should scanning start?"
+msgstr ""
+
+#: ../disku_pollers.php:328
+msgid "Collect all file system disk space usage"
+msgstr ""
+
+#: ../disku_pollers.php:329
+msgid "Collect disk space usage, not only the usage of local file systems, but also NFS file systems. If checked on more than one poller, and pollers in the same NFS, may cause duplicate records in Disk Monitoring Dashboard (Grid > Disk Utilization > By Volume)"
+msgstr ""
+
+#: ../disku_pollers.php:408
+msgid "Disk Monitoring Pollers"
+msgstr ""
+
+#: ../disku_pollers.php:491
+msgid "Launch Frequency"
+msgstr ""
+
+#: ../disku_pollers.php:496
+msgid "Launch Time"
+msgstr ""
+
+#: ../disku_pollers.php:501
+msgid "Launch Day"
+msgstr ""
+
+#: ../disku_pollers.php:521
+msgid "Last Time"
+msgstr ""
+
+#: ../disku_pollers.php:547 ../disku_pollers.php:631
+msgid "Pollers"
+msgstr ""
+
+#: ../disku_pollers.php:564
+msgid "Up"
+msgstr ""
+
+#: ../disku_pollers.php:566
+msgid "Orphaned"
+msgstr ""
+
+#: ../disku_pollers.php:566
+msgid "Down"
+msgstr ""
+
+#: ../disku_pollers.php:588
+msgid "No Pollers Defined"
+msgstr ""
+
+#: ../disku_pollers.php:607
+#, php-format
+msgid "%s Hrs"
+msgstr ""
+
+#: ../disku_pollers.php:609
+#, php-format
+msgid "%s Mins"
+msgstr ""
+
+#: ../disku_pollers.php:612
+#, php-format
+msgid "%s Secs"
+msgstr ""
+
+#: ../disku_users.php:88
+msgid "Operating System Users"
+msgstr ""
+
+#: ../disku_users.php:172 ../disku_users.php:286
+msgid "Users"
+msgstr ""
+
+#: ../disku_users.php:243
+msgid "Name"
+msgstr ""
+
+#: ../disku_users.php:247
+msgid "Default Group"
+msgstr ""
+
+#: ../disku_users.php:351
+msgid "No Users Found"
+msgstr ""
+
+#: ../disku_users.php:361
+msgid "User Range in Settings is invalid. Upper and lower range must be separated with a hypen."
+msgstr ""
+
+#: ../disku_users.php:363
+msgid "User Range in Settings is invalid.  Ranges are not numeric."
+msgstr ""
+
+#: ../disku_users.php:365
+msgid "User Range in Settings is invalid.  Lower range limit must be less than the upper range limit."
+msgstr ""

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Cacti 1.2.15\n"
 "Report-Msgid-Bugs-To: developers@cacti.net\n"
-"POT-Creation-Date: 2020-10-28 16:57-0400\n"
+"POT-Creation-Date: 2020-11-02 03:26+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1100,7 +1100,7 @@ msgstr ""
 #: automation_devices.php:409 automation_devices.php:419
 #: automation_devices.php:647 automation_devices.php:648 host.php:1596
 #: lib/api_automation.php:173 lib/api_automation.php:1099
-#: lib/html_utility.php:931 pollers.php:46
+#: lib/html_utility.php:939 pollers.php:46
 msgid "Down"
 msgstr ""
 
@@ -1108,7 +1108,7 @@ msgstr ""
 #: automation_devices.php:411 automation_devices.php:421
 #: automation_devices.php:647 automation_devices.php:648 host.php:1595
 #: lib/api_automation.php:172 lib/api_automation.php:1098
-#: lib/html_utility.php:937
+#: lib/html_utility.php:945
 msgid "Up"
 msgstr ""
 
@@ -1418,7 +1418,7 @@ msgstr ""
 #: include/global_settings.php:1427 include/global_settings.php:1441
 #: include/global_settings.php:1501 include/global_settings.php:2146
 #: lib/api_automation.php:170 lib/api_automation.php:1096 lib/html.php:2472
-#: lib/html_reports.php:1513 lib/html_reports.php:1651 lib/html_utility.php:927
+#: lib/html_reports.php:1513 lib/html_reports.php:1651 lib/html_utility.php:935
 #: links.php:500 managers.php:243 managers.php:598 pollers.php:47
 #: user_admin.php:1164 user_domains.php:411 user_group_admin.php:697
 #: utilities.php:2377
@@ -5280,12 +5280,12 @@ msgid "Not Up"
 msgstr ""
 
 #: host.php:1597 lib/api_automation.php:174 lib/api_automation.php:1100
-#: lib/html_utility.php:934 pollers.php:48
+#: lib/html_utility.php:942 pollers.php:48
 msgid "Recovering"
 msgstr ""
 
 #: host.php:1598 lib/api_automation.php:175 lib/api_automation.php:1101
-#: lib/html_utility.php:943 lib/plugins.php:1086 lib/plugins.php:1087
+#: lib/html_utility.php:951 lib/plugins.php:1088 lib/plugins.php:1089
 #: lib/rrd.php:2919 lib/rrd.php:2931 user_admin.php:820 utilities.php:216
 #: utilities.php:217 utilities.php:2241
 msgid "Unknown"
@@ -6357,7 +6357,7 @@ msgid "Export Templates"
 msgstr ""
 
 #: include/global_arrays.php:927 include/global_arrays.php:949
-#: include/global_arrays.php:967 lib/plugins.php:1041
+#: include/global_arrays.php:967 lib/plugins.php:1043
 msgid "Configuration"
 msgstr ""
 
@@ -13284,27 +13284,27 @@ msgstr ""
 msgid "The regular expression \"%s\" is not valid. Error is %s"
 msgstr ""
 
-#: lib/html_utility.php:884
+#: lib/html_utility.php:892
 msgid "There was an internal error!"
 msgstr ""
 
-#: lib/html_utility.php:885
+#: lib/html_utility.php:893
 msgid "Backtrack limit was exhausted!"
 msgstr ""
 
-#: lib/html_utility.php:886
+#: lib/html_utility.php:894
 msgid "Recursion limit was exhausted!"
 msgstr ""
 
-#: lib/html_utility.php:887
+#: lib/html_utility.php:895
 msgid "Bad UTF-8 error!"
 msgstr ""
 
-#: lib/html_utility.php:888
+#: lib/html_utility.php:896
 msgid "Bad UTF-8 offset error!"
 msgstr ""
 
-#: lib/html_utility.php:940 lib/installer.php:1803 lib/installer.php:3533
+#: lib/html_utility.php:948 lib/installer.php:1803 lib/installer.php:3533
 msgid "Error"
 msgstr ""
 
@@ -14582,20 +14582,20 @@ msgstr ""
 msgid "Plugin cannot be installed."
 msgstr ""
 
-#: lib/plugins.php:1041 lib/plugins.php:1048 plugins.php:367 plugins.php:447
+#: lib/plugins.php:1043 lib/plugins.php:1050 plugins.php:367 plugins.php:447
 msgid "Plugins"
 msgstr ""
 
-#: lib/plugins.php:1060 lib/plugins.php:1066
+#: lib/plugins.php:1062 lib/plugins.php:1068
 #, php-format
 msgid "Requires: Cacti >= %s"
 msgstr ""
 
-#: lib/plugins.php:1063
+#: lib/plugins.php:1065
 msgid "Legacy Plugin"
 msgstr ""
 
-#: lib/plugins.php:1088
+#: lib/plugins.php:1090
 msgid "Not Stated"
 msgstr ""
 

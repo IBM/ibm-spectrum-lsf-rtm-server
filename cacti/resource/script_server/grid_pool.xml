@@ -1,0 +1,62 @@
+<!-- $Id$ -->
+<interface>
+    <name>Grid Guarantee Resource Pool Effective Utilization</name>
+    <script_path>|path_cacti|/scripts/ss_grid_pool_stats.php</script_path>
+    <script_function>ss_grid_pool_stats</script_function>
+    <script_server>php</script_server>
+    <arg_prepend>|clusterid|</arg_prepend>
+    <arg_index>index</arg_index>
+    <arg_query>query</arg_query>
+    <arg_get>get</arg_get>
+    <output_delimeter>!</output_delimeter>
+    <index_order>gridGResPool</index_order>
+    <index_order_type>alpha</index_order_type>
+    <index_title_format>|chosen_order_field|</index_title_format>
+    <fields>
+        <gridGResPool>
+            <name>Guarantee Pool Name</name>
+            <direction>input</direction>
+            <query_name>name</query_name>
+        </gridGResPool>
+		<gridGResSLAs>
+			<name>Guarantee Pool SLAs</name>
+			<direction>input</direction>
+			<query_name>slas</query_name>
+		</gridGResSLAs>
+        <gridGResHosts>
+            <name>Guarantee Pool Hosts</name>
+            <direction>input</direction>
+            <query_name>hosts</query_name>
+		</gridGResHosts>
+        <gridSlotUtil>
+            <name>Slot Utilization</name>
+            <direction>output</direction>
+            <query_name>slotUtil</query_name>
+        </gridSlotUtil>
+        <gridCPUUtil>
+            <name>CPU Utilization</name>
+            <direction>output</direction>
+            <query_name>cpuUtil</query_name>
+        </gridCPUUtil>
+        <gridMemSlotUtil>
+            <name>Memory Slot Utilization</name>
+            <direction>output</direction>
+            <query_name>memSlotUtil</query_name>
+        </gridMemSlotUtil>
+        <gridMemUsed>
+            <name>Memory Used Utilization</name>
+            <direction>output</direction>
+            <query_name>memUsed</query_name>
+        </gridMemUsed>
+        <gridMemReserved>
+            <name>Memory Reserved Utilization</name>
+            <direction>output</direction>
+            <query_name>memReserved</query_name>
+        </gridMemReserved>
+        <gridMemSelected>
+            <name>Memory Selected Utilization</name>
+            <direction>output</direction>
+            <query_name>memSelected</query_name>
+        </gridMemSelected>
+    </fields>
+</interface>

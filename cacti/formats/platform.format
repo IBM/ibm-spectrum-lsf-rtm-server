@@ -1,0 +1,217 @@
+## $Id$
+# Description: IBM Spectrum LSF RTM Format
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+<body>
+<style type='text/css'>
+
+td, input, textarea {
+    font-family: Arial, Helvetica, sans-serif;
+	font-size: 1.0em;
+}
+
+table.report_table {
+	background-color:#F9F9F9;
+	align: center;
+	border:0;
+	width:100%;
+    padding: 4px;
+}
+
+td.text {
+	font-size: 1.2em !important;
+	font-weight: bold;
+    padding: 2px !important;
+    border:1px solid #B5B8C8;
+    background: #F9FBFB;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F0F3F3', endColorstr='#F9FBFB');
+    background: -webkit-gradient(linear, left top, left bottom, from(#F0F3F3), to(#F9FBFB));
+    background: -moz-linear-gradient(top,  #F0F3F3,  #F9FBFB);
+}
+
+td.title, tr.title_row {
+    font-size: 1.1em;
+	font-weight: bold;
+    padding:2px;
+    border:1px solid #B5B8C8;
+    background: #F9FBFB;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F0F3F3', endColorstr='#F9FBFB');
+    background: -webkit-gradient(linear, left top, left bottom, from(#F0F3F3), to(#F9FBFB));
+    background: -moz-linear-gradient(top,  #F0F3F3,  #F9FBFB);
+}
+
+.image_table {
+}
+
+.image_row {
+    padding: 2px !important;
+    border:1px solid #B5B8C8;
+    background: #F9FBFB;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F0F3F3', endColorstr='#F9FBFB');
+    background: -webkit-gradient(linear, left top, left bottom, from(#F0F3F3), to(#F9FBFB));
+    background: -moz-linear-gradient(top,  #F0F3F3,  #F9FBFB);
+}
+
+.image_column {	align:center;
+}
+
+.image {
+}
+
+table.header_table {
+    background: #E5E9EC;
+	align: center;
+	width:100%;
+	color: #353535;
+    padding: 4px;
+}
+
+tr.header_row {
+    background: #F9FBFB;
+}
+
+td.header {
+    background: #F9FBFB;
+	font-size:1.3em;
+	font-weight: bold;
+	text-align: left;
+	padding: 5px;
+	color: #353535;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F0F3F3', endColorstr='#F9FBFB');
+    background: -webkit-gradient(linear, left top, left bottom, from(#F0F3F3), to(#F9FBFB));
+    background: -moz-linear-gradient(top,  #F0F3F3,  #F9FBFB);
+}
+
+td.footer {
+    background: #F9FBFB;
+	font-size:0.8em;
+	text-align:right;
+	align:center;
+	color: #353535;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F0F3F3', endColorstr='#F9FBFB');
+    background: -webkit-gradient(linear, left top, left bottom, from(#F0F3F3), to(#F9FBFB));
+    background: -moz-linear-gradient(top,  #F0F3F3,  #F9FBFB);
+}
+</style>
+<!-- header -->
+<table class="header_table">
+<tr class="header_row" ><td class="header">RTM Graphical Report</td></tr>
+<!-- main report -->
+<tr><td>
+<REPORT>
+</td></tr>
+<!-- footer -->
+<tr class="header_row"><td class="footer">&copy; Copyright International Business Machines Corp, 2005-2018.</td></tr>
+</table>
+</body>
+</html>
+# Description: IBM Spectrum LSF RTM Format
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+<body>
+<style type='text/css'>
+
+td, input, textarea {
+    font-family: Arial, Helvetica, sans-serif;
+	font-size: 1.0em;
+}
+
+table.report_table {
+	background-color:#F9F9F9;
+	align: center;
+	border:0;
+	width:100%;
+    padding: 4px;
+}
+
+td.text {
+	font-size: 1.2em !important;
+	font-weight: bold;
+    padding: 2px !important;
+    border:1px solid #B5B8C8;
+    background: #F9FBFB;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F0F3F3', endColorstr='#F9FBFB');
+    background: -webkit-gradient(linear, left top, left bottom, from(#F0F3F3), to(#F9FBFB));
+    background: -moz-linear-gradient(top,  #F0F3F3,  #F9FBFB);
+}
+
+td.title, tr.title_row {
+    font-size: 1.1em;
+	font-weight: bold;
+    padding:2px;
+    border:1px solid #B5B8C8;
+    background: #F9FBFB;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F0F3F3', endColorstr='#F9FBFB');
+    background: -webkit-gradient(linear, left top, left bottom, from(#F0F3F3), to(#F9FBFB));
+    background: -moz-linear-gradient(top,  #F0F3F3,  #F9FBFB);
+}
+
+.image_table {
+}
+
+.image_row {
+    padding: 2px !important;
+    border:1px solid #B5B8C8;
+    background: #F9FBFB;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F0F3F3', endColorstr='#F9FBFB');
+    background: -webkit-gradient(linear, left top, left bottom, from(#F0F3F3), to(#F9FBFB));
+    background: -moz-linear-gradient(top,  #F0F3F3,  #F9FBFB);
+}
+
+.image_column {	align:center;
+}
+
+.image {
+}
+
+table.header_table {
+    background: #E5E9EC;
+	align: center;
+	width:100%;
+	color: #353535;
+    padding: 4px;
+}
+
+tr.header_row {
+    background: #F9FBFB;
+}
+
+td.header {
+    background: #F9FBFB;
+	font-size:1.3em;
+	font-weight: bold;
+	text-align: left;
+	padding: 5px;
+	color: #353535;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F0F3F3', endColorstr='#F9FBFB');
+    background: -webkit-gradient(linear, left top, left bottom, from(#F0F3F3), to(#F9FBFB));
+    background: -moz-linear-gradient(top,  #F0F3F3,  #F9FBFB);
+}
+
+td.footer {
+    background: #F9FBFB;
+	font-size:0.8em;
+	text-align:right;
+	align:center;
+	color: #353535;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F0F3F3', endColorstr='#F9FBFB');
+    background: -webkit-gradient(linear, left top, left bottom, from(#F0F3F3), to(#F9FBFB));
+    background: -moz-linear-gradient(top,  #F0F3F3,  #F9FBFB);
+}
+</style>
+<!-- header -->
+<table class="header_table">
+<tr class="header_row" ><td class="header">RTM Graphical Report</td></tr>
+<!-- main report -->
+<tr><td>
+<REPORT>
+</td></tr>
+<!-- footer -->
+<tr class="header_row"><td class="footer">&copy; Copyright International Business Machines Corp, 2005-2019.</td></tr>
+</table>
+</body>
+</html>

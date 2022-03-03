@@ -22,14 +22,14 @@ table {
 	text-align: center;
 	border:0;
 	width:100%;
-    border: 3px outset #CCCCCC; 
+    border: 3px outset #CCCCCC;
     padding: 4px;
 	margin: auto;
 }
 
 .title_row {
 	background-color: #EAEAEA;
-    border: 2px double #CCCCCC; 
+    border: 2px double #CCCCCC;
     padding: 3px;
 }
 
@@ -37,7 +37,7 @@ table {
 	background-color: #EAEAEA;
 	font-size: 16pt;
 	text-align: left;
-    border: 2px double #CCCCCC; 
+    border: 2px double #CCCCCC;
     padding: 3px;
 	margin: auto;
 }
@@ -48,7 +48,7 @@ table {
 .image_row {
 }
 
-.image_column {	
+.image_column {
 	margin: auto;
 }
 
@@ -63,7 +63,7 @@ table {
 	background-color: #EAEAEA;
 	font-size: 16pt;
 	text-align: left;
-    border: 1px solid #CCCCCC; 
+    border: 1px solid #CCCCCC;
     padding: 0px;
 
 }
@@ -72,7 +72,7 @@ table {
 	background-color: #00438C;
 	margin: auto;
 	width: 100%;
-    border: 3px ridge #00438C; 
+    border: 3px ridge #00438C;
     padding: 4px;
 	margin: auto;
 }

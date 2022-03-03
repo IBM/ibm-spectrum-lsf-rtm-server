@@ -1,0 +1,78 @@
+<!-- $Id$ -->
+<interface>
+	<name>Grid Queue Fairshare Tree Statistics</name>
+	<script_path>|path_cacti|/scripts/ss_grid_fstree.php</script_path>
+	<script_function>ss_grid_fstree</script_function>
+	<script_server>php</script_server>
+	<arg_prepend>|clusterid|</arg_prepend>
+	<arg_index>index</arg_index>
+	<arg_query>query</arg_query>
+	<arg_get>get</arg_get>
+	<output_delimeter>!</output_delimeter>
+	<index_order>gridQtree</index_order>
+	<index_order_type>numeric</index_order_type>
+	<index_title_format>|chosen_order_field|</index_title_format>
+
+	<fields>
+		<gridQname>
+			<name>Queue Name</name>
+			<direction>input</direction>
+			<query_name>queue</query_name>
+		</gridQname>
+		<gridQtree>
+			<name>Share Account Path</name>
+			<direction>input</direction>
+			<query_name>shareAcctPath</query_name>
+		</gridQtree>
+		<gridPriority>
+			<name>Share Priority</name>
+			<direction>output</direction>
+			<query_name>priority</query_name>
+		</gridPriority>
+		<gridShare>
+			<name>Shares</name>
+			<direction>output</direction>
+			<query_name>shares</query_name>
+		</gridShare>
+		<gridStarted>
+			<name>Started Jobs</name>
+			<direction>output</direction>
+			<query_name>started</query_name>
+		</gridStarted>
+		<gridReserved>
+			<name>Reserved Jobs</name>
+			<direction>output</direction>
+			<query_name>reserved</query_name>
+		</gridReserved>
+		<gridCPUTime>
+			<name>CPU Time</name>
+			<direction>output</direction>
+			<query_name>cpu_time</query_name>
+		</gridCPUTime>
+		<gridRunTime>
+			<name>Run Time</name>
+			<direction>output</direction>
+			<query_name>run_time</query_name>
+		</gridRunTime>
+		<gridRunJobs>
+			<name>Running Jobs</name>
+			<direction>output</direction>
+			<query_name>run_jobs</query_name>
+		</gridRunJobs>
+		<gridRunSlots>
+			<name>Running Slots</name>
+			<direction>output</direction>
+			<query_name>run_slots</query_name>
+		</gridRunSlots>
+		<gridPendJobs>
+			<name>Pending Jobs</name>
+			<direction>output</direction>
+			<query_name>pend_jobs</query_name>
+		</gridPendJobs>
+		<gridPendSlots>
+			<name>Pending Slots</name>
+			<direction>output</direction>
+			<query_name>pend_slots</query_name>
+		</gridPendSlots>
+	</fields>
+</interface>

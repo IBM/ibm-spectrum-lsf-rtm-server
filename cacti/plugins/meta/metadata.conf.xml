@@ -1,0 +1,218 @@
+<!-- $Id$ -->
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<meta>
+	<object type="user">
+		<section name="General">
+			<column>
+				<db_column>meta_col1</db_column>
+    				<display_name>Full Name</display_name>
+    				<description>Full name of the user</description>
+				<data_type>text</data_type>
+				<position>1</position>
+				<summary>1</summary>
+				<search>1</search>
+				<popup>1</popup>
+			</column>
+			<column>
+				<db_column>meta_col2</db_column>
+    				<display_name>Telephone number</display_name>
+    				<description>Telephone number of the user</description>
+				<data_type>text</data_type>
+				<position>2</position>
+				<summary>1</summary>
+				<search>0</search>
+				<popup>1</popup>
+			</column>
+			<column>
+				<db_column>meta_col3</db_column>
+    				<display_name>E-mail</display_name>
+    				<description>E-mail of the user</description>
+				<data_type>url</data_type>
+				<position>3</position>
+				<summary>1</summary>
+				<search>0</search>
+				<popup>1</popup>
+			</column>
+			<column>
+				<db_column>meta_col4</db_column>
+    				<display_name>Division</display_name>
+    				<description>Division of the user</description>
+				<data_type>text</data_type>
+				<position>4</position>
+				<summary>1</summary>
+				<search>1</search>
+				<popup>1</popup>
+			</column>
+			<column>
+				<db_column>meta_col5</db_column>
+    				<display_name>Group</display_name>
+    				<description>Group of the user</description>
+				<data_type>text</data_type>
+				<position>5</position>
+				<summary>1</summary>
+				<search>1</search>
+				<popup>1</popup>
+			</column>
+			<column>
+				<db_column>meta_col6</db_column>
+    				<display_name>Department</display_name>
+    				<description>Department of the user</description>
+				<data_type>text</data_type>
+				<position>6</position>
+				<summary>1</summary>
+				<search>1</search>
+				<popup>1</popup>
+			</column>
+		</section>
+	</object>
+	<object type="host">
+		<section name="Location">
+			<column>
+				<db_column>meta_col1</db_column>
+    				<display_name>Rack Location</display_name>
+    				<description>The rack identifier for this host</description>
+				<data_type>text</data_type>
+				<position>1</position>
+				<summary>1</summary>
+				<search>1</search>
+				<popup>1</popup>
+			</column>
+			<column>
+				<db_column>meta_col2</db_column>
+    				<display_name>Site</display_name>
+    				<description>The site for this host</description>
+				<data_type>text</data_type>
+				<position>2</position>
+				<summary>1</summary>
+				<search>0</search>
+				<popup>0</popup>
+			</column>
+		</section>
+		<section name="Hardware">
+			<column>
+				<db_column>meta_col3</db_column>
+    				<display_name>iDRAC</display_name>
+    				<description>The iDRAC URL for this host</description>
+				<data_type>url</data_type>
+				<position>3</position>
+				<summary>1</summary>
+				<search>0</search>
+				<popup>1</popup>
+			</column>
+			<column>
+				<db_column>meta_col4</db_column>
+    				<display_name>CMC</display_name>
+    				<description>The CMC URL for this blade's chassis controller</description>
+				<data_type>url</data_type>
+				<position>4</position>
+				<summary>1</summary>
+				<search>0</search>
+				<popup>1</popup>
+			</column>
+		</section>
+	</object>
+	<object type="project">
+		<section name="Project Details">
+			<column>
+				<db_column>meta_col1</db_column>
+    				<display_name>Project Manager</display_name>
+    				<description>Project Manager of this project</description>
+				<data_type>text</data_type>
+				<position>1</position>
+				<summary>1</summary>
+				<search>1</search>
+				<popup>1</popup>
+			</column>
+			<column>
+				<db_column>meta_col2</db_column>
+    				<display_name>Project Manager Email</display_name>
+    				<description>Email address for this project manager</description>
+				<data_type>text</data_type>
+				<position>2</position>
+				<summary>1</summary>
+				<search>0</search>
+				<popup>0</popup>
+			</column>
+		</section>
+	</object>
+	<object type="queue">
+		<section name="Queue Details">
+			<column>
+				<db_column>meta_col1</db_column>
+    				<display_name>Used By</display_name>
+    				<description>Groups that use this queue</description>
+				<data_type>text</data_type>
+				<position>1</position>
+				<summary>1</summary>
+				<search>1</search>
+				<popup>1</popup>
+			</column>
+		</section>
+	</object>
+	<object type="job-group">
+		<section name="Job Group Details">
+			<column>
+				<db_column>meta_col1</db_column>
+    				<display_name>Development Group</display_name>
+    				<description>Development Group that uses this job group</description>
+				<data_type>text</data_type>
+				<position>1</position>
+				<summary>1</summary>
+				<search>1</search>
+				<popup>1</popup>
+			</column>
+		</section>
+	</object>
+	<object type="application">
+		<section name="Application Details">
+			<column>
+				<db_column>meta_col1</db_column>
+    				<display_name>Development Group</display_name>
+    				<description>Development Group that uses this application</description>
+				<data_type>text</data_type>
+				<position>1</position>
+				<summary>1</summary>
+				<search>1</search>
+				<popup>1</popup>
+			</column>
+		</section>
+	</object>
+	<object type="license-project">
+		<section name="License Project Details">
+			<column>
+				<db_column>meta_col1</db_column>
+    				<display_name>Development Group</display_name>
+    				<description>Development Group that uses this license project</description>
+				<data_type>text</data_type>
+				<position>1</position>
+				<summary>1</summary>
+				<search>1</search>
+				<popup>1</popup>
+			</column>
+		</section>
+	</object>
+	<object type="queue-group">
+		<section name="Queue Group">
+			<column>
+				<db_column>meta_col1</db_column>
+    				<display_name>Queue Group Name</display_name>
+    				<description>Name of this Queue Group</description>
+				<data_type>display_name</data_type>
+				<position>1</position>
+				<summary>1</summary>
+				<search>1</search>
+				<popup>1</popup>
+			</column>
+			<column>
+				<db_column>meta_col2</db_column>
+    				<display_name>Queue List</display_name>
+    				<description>List of queues in this Queue Group</description>
+				<data_type>queue_list</data_type>
+				<position>2</position>
+				<summary>1</summary>
+				<search>1</search>
+				<popup>1</popup>
+			</column>
+		</section>
+	</object>
+</meta>

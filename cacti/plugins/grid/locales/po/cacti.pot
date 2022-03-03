@@ -1,0 +1,6483 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-09-18 03:53-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: ../grid_clients.php:35
+msgid "IBM Spectrum LSF RTM - Client History"
+msgstr ""
+
+#: ../grid_clients.php:92 ../grid_clients.php:128 ../grid_bhgroups.php:209
+#: ../grid_bhgroups.php:252 ../grid_barrays.php:252 ../grid_barrays.php:396
+#: ../grid_summary.php:1731 ../grid_summary.php:1960 ../grid_bjgroups.php:159
+#: ../grid_bjgroups.php:169 ../grid_bmgroup.php:144 ../grid_bmgroup.php:154
+#: ../grid_bugroup.php:263 ../grid_bugroup.php:273 ../grid_shared.php:134
+#: ../grid_shared.php:144 ../grid_lshosts.php:158 ../grid_lshosts.php:232
+#: ../grid_bhosts_closed.php:550 ../grid_bhosts_closed.php:637
+#: ../grid_manage_hosts.php:375 ../grid_manage_hosts.php:409
+#: ../grid_bhosts.php:626 ../grid_bhosts.php:757 ../grid_bapps.php:154
+#: ../grid_bapps.php:164 ../grid_busers.php:238 ../grid_busers.php:310
+#: ../grid_lsload.php:325 ../grid_lsload.php:414 ../grid_projects.php:155
+#: ../grid_projects.php:165 ../grid_queue_distrib.php:483
+#: ../grid_queue_distrib.php:593 ../grid_params.php:109 ../grid_params.php:115
+#: ../grid_license_projects.php:137 ../grid_license_projects.php:147
+#: ../grid_lsgload.php:188 ../grid_lsgload.php:231 ../grid_elim_graphs.php:447
+#: ../grid_elim_graphs.php:747
+msgid "Search"
+msgstr ""
+
+#: ../grid_clients.php:98 ../grid_clients.php:241 ../grid_bhgroups.php:155
+#: ../grid_bhgroups.php:425 ../grid_barrays.php:178 ../grid_summary.php:1659
+#: ../grid_bjgroups.php:113 ../grid_bmgroup.php:88 ../grid_bmgroup.php:285
+#: ../grid_bjobs.php:1932 ../grid_bugroup.php:198 ../grid_shared.php:103
+#: ../grid_utilities.php:122 ../grid_lshosts.php:100 ../grid_lshosts.php:371
+#: ../grid_bhosts_closed.php:491 ../grid_bhosts_closed.php:815
+#: ../grid_manage_hosts.php:419 ../grid_bhosts.php:486 ../grid_bhosts.php:1013
+#: ../grid_bapps.php:123 ../grid_busers.php:193 ../grid_lsload.php:240
+#: ../grid_lsload.php:592 ../grid_projects.php:105
+#: ../grid_queue_distrib.php:392 ../grid_queue_distrib.php:803
+#: ../grid_queue_distrib.php:900 ../grid_params.php:79 ../grid_params.php:230
+#: ../grid_license_projects.php:106 ../grid_lsgload.php:115
+#: ../grid_lsgload.php:378 ../setup.php:5439
+msgid "Cluster"
+msgstr ""
+
+#: ../grid_clients.php:102 ../grid_bhgroups.php:159 ../grid_bhgroups.php:175
+#: ../grid_barrays.php:182 ../grid_barrays.php:198 ../grid_barrays.php:227
+#: ../grid_summary.php:1663 ../grid_summary.php:1692 ../grid_summary.php:1709
+#: ../grid_summary.php:1762 ../grid_summary.php:1774 ../grid_summary.php:1805
+#: ../grid_summary.php:1884 ../grid_bjgroups.php:117 ../grid_bmgroup.php:108
+#: ../grid_bjobs.php:1341 ../grid_bjobs.php:1346 ../grid_bugroup.php:202
+#: ../grid_shared.php:107 ../grid_utilities.php:126 ../grid_lshosts.php:104
+#: ../grid_lshosts.php:120 ../grid_lshosts.php:170 ../grid_lshosts.php:201
+#: ../grid_bhosts_closed.php:495 ../grid_bhosts_closed.php:511
+#: ../grid_bhosts_closed.php:564 ../grid_bhosts_closed.php:593
+#: ../grid_manage_hosts.php:423 ../grid_manage_hosts.php:440
+#: ../grid_manage_hosts.php:451 ../grid_bhosts.php:490 ../grid_bhosts.php:518
+#: ../grid_bhosts.php:586 ../grid_bhosts.php:638 ../grid_bhosts.php:669
+#: ../grid_bhosts.php:709 ../grid_bapps.php:127 ../grid_busers.php:197
+#: ../grid_busers.php:252 ../grid_busers.php:281 ../grid_lsload.php:244
+#: ../grid_lsload.php:260 ../grid_lsload.php:288 ../grid_lsload.php:339
+#: ../grid_lsload.php:370 ../grid_projects.php:109
+#: ../grid_queue_distrib.php:396 ../grid_queue_distrib.php:412
+#: ../grid_queue_distrib.php:503 ../grid_queue_distrib.php:535
+#: ../grid_queue_distrib.php:585 ../grid_params.php:83
+#: ../grid_license_projects.php:110 ../grid_lsgload.php:119
+#: ../grid_lsgload.php:135 ../grid_lsgload.php:162 ../grid_lsgload.php:406
+#: ../setup.php:3285
+msgid "All"
+msgstr ""
+
+#: ../grid_clients.php:114 ../grid_bhgroups.php:234 ../grid_bjgroups.php:145
+#: ../grid_bmgroup.php:130 ../grid_bugroup.php:234 ../grid_shared.php:120
+#: ../grid_lshosts.php:144 ../grid_bhosts_closed.php:619
+#: ../grid_manage_hosts.php:395 ../grid_busers.php:209 ../grid_lsload.php:311
+#: ../grid_queue_distrib.php:563 ../grid_params.php:95
+#: ../grid_license_projects.php:123
+msgid "Records"
+msgstr ""
+
+#: ../grid_clients.php:128 ../grid_bhgroups.php:209 ../grid_barrays.php:252
+#: ../grid_summary.php:1731 ../grid_bjgroups.php:159 ../grid_bmgroup.php:144
+#: ../grid_bugroup.php:263 ../grid_shared.php:134 ../grid_lshosts.php:158
+#: ../grid_bhosts_closed.php:550 ../grid_manage_hosts.php:409
+#: ../grid_bhosts.php:626 ../grid_bapps.php:154 ../grid_busers.php:238
+#: ../grid_lsload.php:325 ../grid_projects.php:155
+#: ../grid_queue_distrib.php:483 ../grid_params.php:115
+#: ../grid_license_projects.php:137 ../grid_lsgload.php:188
+#: ../grid_elim_graphs.php:468 ../grid_elim_graphs.php:768
+msgid "Go"
+msgstr ""
+
+#: ../grid_clients.php:131 ../grid_bhgroups.php:212 ../grid_barrays.php:255
+#: ../grid_summary.php:1734 ../grid_bjgroups.php:162 ../grid_bmgroup.php:147
+#: ../grid_bugroup.php:266 ../grid_shared.php:137 ../grid_lshosts.php:161
+#: ../grid_bhosts_closed.php:553 ../grid_manage_hosts.php:412
+#: ../grid_bhosts.php:627 ../grid_bapps.php:157 ../grid_busers.php:241
+#: ../grid_lsload.php:328 ../grid_projects.php:158
+#: ../grid_queue_distrib.php:486 ../grid_params.php:118
+#: ../grid_license_projects.php:140 ../grid_lsgload.php:191
+#: ../grid_elim_graphs.php:471 ../grid_elim_graphs.php:771
+msgid "Clear"
+msgstr ""
+
+#: ../grid_clients.php:131 ../grid_bhgroups.php:212 ../grid_barrays.php:255
+#: ../grid_summary.php:1734 ../grid_bjgroups.php:162 ../grid_bmgroup.php:147
+#: ../grid_bugroup.php:266 ../grid_shared.php:137 ../grid_lshosts.php:161
+#: ../grid_bhosts_closed.php:553 ../grid_manage_hosts.php:412
+#: ../grid_bhosts.php:627 ../grid_bapps.php:157 ../grid_busers.php:241
+#: ../grid_lsload.php:328 ../grid_projects.php:158
+#: ../grid_queue_distrib.php:486 ../grid_params.php:118
+#: ../grid_license_projects.php:140 ../grid_lsgload.php:191
+#: ../grid_elim_graphs.php:471 ../grid_elim_graphs.php:771
+msgid "Clear Filters"
+msgstr ""
+
+#: ../grid_clients.php:182
+msgid "Client History Filters"
+msgstr ""
+
+#: ../grid_clients.php:240
+msgid "Client Name"
+msgstr ""
+
+#: ../grid_clients.php:242
+msgid "Client Type"
+msgstr ""
+
+#: ../grid_clients.php:243 ../grid_manage_hosts.php:590
+msgid "First Seen"
+msgstr ""
+
+#: ../grid_clients.php:244 ../grid_manage_hosts.php:447
+#: ../grid_manage_hosts.php:591
+msgid "Last Seen"
+msgstr ""
+
+#: ../grid_clients.php:248 ../setup.php:5464
+msgid "Clients"
+msgstr ""
+
+#: ../grid_clients.php:271
+msgid "No Client Records Found"
+msgstr ""
+
+#: ../grid_bhgroups.php:35
+msgid "IBM Spectrum LSF RTM - Host Group Batch Statistics"
+msgstr ""
+
+#: ../grid_bhgroups.php:171 ../grid_barrays.php:262 ../grid_bjobs.php:1975
+#: ../grid_bhosts.php:544 ../grid_lsload.php:284 ../grid_lsload.php:601
+#: ../grid_queue_distrib.php:907 ../grid_lsgload.php:158
+#: ../grid_lsgload.php:379 ../grid_pollers.php:323
+msgid "Status"
+msgstr ""
+
+#: ../grid_bhgroups.php:176 ../setup.php:1994
+msgid "Out of Service"
+msgstr ""
+
+#: ../grid_bhgroups.php:219 ../grid_summary.php:1921 ../grid_bugroup.php:248
+#: ../grid_utilities.php:149 ../grid_bhosts_closed.php:535
+#: ../grid_bhosts.php:611 ../grid_busers.php:223 ../grid_lsload.php:395
+#: ../grid_queue_distrib.php:468 ../grid_lsgload.php:212
+msgid "Refresh"
+msgstr ""
+
+#: ../grid_bhgroups.php:261
+msgid "Include Unused Host Groups"
+msgstr ""
+
+#: ../grid_bhgroups.php:375
+msgid "Batch Host Group Filters"
+msgstr ""
+
+#: ../grid_bhgroups.php:423 ../grid_bugroup.php:116 ../grid_lshosts.php:369
+#: ../grid_bhosts_closed.php:813 ../grid_bhosts.php:1008 ../grid_busers.php:141
+#: ../grid_lsload.php:588 ../grid_queue_distrib.php:801
+#: ../grid_queue_distrib.php:898 ../grid_lsgload.php:376 ../setup.php:4671
+#: ../setup.php:4719 ../setup.php:4731 ../setup.php:4755 ../setup.php:4785
+#: ../setup.php:4815 ../setup.php:4827 ../setup.php:4857 ../setup.php:5031
+#: ../setup.php:5055 ../setup.php:5073 ../setup.php:5103
+msgid "Actions"
+msgstr ""
+
+#: ../grid_bhgroups.php:424 ../setup.php:5458
+msgid "Host Group"
+msgstr ""
+
+#: ../grid_bhgroups.php:426 ../grid_bhosts.php:1025
+msgid "Load/Batch"
+msgstr ""
+
+#: ../grid_bhgroups.php:427
+msgid "Num Hosts"
+msgstr ""
+
+#: ../grid_bhgroups.php:431
+msgid "Out of Service(%)"
+msgstr ""
+
+#: ../grid_bhgroups.php:435
+msgid "Avg CPU %"
+msgstr ""
+
+#: ../grid_bhgroups.php:436
+msgid "Avg r1m"
+msgstr ""
+
+#: ../grid_bhgroups.php:437 ../grid_bjgroups.php:431 ../grid_bapps.php:405
+#: ../grid_projects.php:466 ../grid_license_projects.php:385
+msgid "Avg Effic"
+msgstr ""
+
+#: ../grid_bhgroups.php:438 ../grid_bjgroups.php:436 ../grid_bugroup.php:182
+#: ../grid_bapps.php:410 ../grid_projects.php:481
+#: ../grid_license_projects.php:390
+msgid "Total CPU"
+msgstr ""
+
+#: ../grid_bhgroups.php:439 ../setup.php:3904
+msgid "Max Memory"
+msgstr ""
+
+#: ../grid_bhgroups.php:440 ../grid_bjgroups.php:434 ../grid_bmgroup.php:292
+#: ../grid_lshosts.php:377 ../grid_bapps.php:408 ../grid_projects.php:475
+#: ../grid_license_projects.php:388
+msgid "Max Swap"
+msgstr ""
+
+#: ../grid_bhgroups.php:441 ../grid_bugroup.php:122 ../grid_bhosts.php:1042
+#: ../grid_busers.php:144 ../grid_queue_distrib.php:805
+#: ../grid_queue_distrib.php:902
+#, php-format
+msgid "Max %s"
+msgstr ""
+
+#: ../grid_bhgroups.php:442 ../grid_bugroup.php:138 ../grid_bhosts.php:1043
+#: ../grid_busers.php:154
+#, php-format
+msgid "Num %s"
+msgstr ""
+
+#: ../grid_bhgroups.php:443 ../grid_bhosts.php:1044
+#, php-format
+msgid "Run %s"
+msgstr ""
+
+#: ../grid_bhgroups.php:446 ../grid_bjgroups.php:429 ../grid_bugroup.php:150
+#: ../grid_bhosts.php:1048
+#, php-format
+msgid "SSUSP %s"
+msgstr ""
+
+#: ../grid_bhgroups.php:450 ../grid_bjgroups.php:430 ../grid_bugroup.php:154
+#: ../grid_bhosts.php:1052
+#, php-format
+msgid "USUSP %s"
+msgstr ""
+
+#: ../grid_bhgroups.php:454 ../grid_bugroup.php:158 ../grid_bhosts.php:1056
+#: ../grid_busers.php:161 ../grid_busers.php:175
+#, php-format
+msgid "Reserve %s"
+msgstr ""
+
+#: ../grid_bhgroups.php:458 ../grid_lshosts.php:384
+#: ../grid_bhosts_closed.php:840 ../grid_manage_hosts.php:595
+#: ../grid_bhosts.php:739 ../grid_lsload.php:648 ../setup.php:1587
+#: ../setup.php:3234
+msgid "Hosts"
+msgstr ""
+
+#: ../grid_bhgroups.php:509 ../grid_busers.php:535 ../grid_busers.php:571
+#: ../grid_queue_distrib.php:867 ../grid_lsgload.php:441
+msgid "View Batch Hosts"
+msgstr ""
+
+#: ../grid_bhgroups.php:510 ../grid_barrays.php:665 ../grid_bjgroups.php:372
+#: ../grid_bugroup.php:491 ../grid_lshosts.php:412 ../grid_bhosts.php:1106
+#: ../grid_bapps.php:352 ../grid_busers.php:539 ../grid_busers.php:573
+#: ../grid_lsload.php:676 ../grid_projects.php:369
+#: ../grid_queue_distrib.php:868 ../grid_license_projects.php:332
+#: ../grid_lsgload.php:442
+msgid "View Active Jobs"
+msgstr ""
+
+#: ../grid_bhgroups.php:512 ../grid_queue_distrib.php:870
+#: ../grid_lsgload.php:444
+msgid "View Host Group Graphs"
+msgstr ""
+
+#: ../grid_bhgroups.php:530 ../grid_summary.php:1697 ../grid_bjgroups.php:118
+#: ../grid_bjgroups.php:388 ../grid_bjobs.php:722 ../grid_bjobs.php:1776
+#: ../grid_shared.php:108 ../grid_shared.php:345 ../grid_utilities.php:217
+#: ../grid_bapps.php:128 ../grid_bapps.php:367 ../grid_busers.php:560
+#: ../grid_busers.php:586 ../grid_busers.php:587 ../grid_busers.php:590
+#: ../grid_busers.php:593 ../grid_busers.php:595 ../grid_busers.php:596
+#: ../grid_busers.php:597 ../grid_projects.php:110 ../grid_projects.php:385
+#: ../grid_license_projects.php:111 ../grid_license_projects.php:348
+#: ../grid_pollers.php:370 ../grid_pollers.php:371 ../setup.php:678
+#: ../setup.php:1087 ../setup.php:1096
+msgid "N/A"
+msgstr ""
+
+#: ../grid_bhgroups.php:532
+msgid "Total Hosts/Ok Hosts/Closed Hosts/Un* Hosts"
+msgstr ""
+
+#: ../grid_bhgroups.php:576 ../grid_bmgroup.php:339
+msgid "No Host Group Records Found"
+msgstr ""
+
+#: ../grid_barrays.php:35
+msgid "IBM Spectrum LSF RTM - Batch Job Array Statistics"
+msgstr ""
+
+#: ../grid_barrays.php:194 ../grid_bjobs.php:1952
+msgid "UGroup"
+msgstr ""
+
+#: ../grid_barrays.php:223 ../grid_bjobs.php:1948 ../grid_bhosts.php:696
+#: ../setup.php:2769 ../setup.php:2952 ../setup.php:2986 ../setup.php:3019
+#: ../setup.php:3738
+msgid "User"
+msgstr ""
+
+#: ../grid_barrays.php:266
+msgid "ACTIVE"
+msgstr ""
+
+#: ../grid_barrays.php:267
+msgid "PEND"
+msgstr ""
+
+#: ../grid_barrays.php:268
+msgid "RUNNING"
+msgstr ""
+
+#: ../grid_barrays.php:269
+msgid "COMPLETE"
+msgstr ""
+
+#: ../grid_barrays.php:273 ../grid_bjobs.php:1940 ../grid_bhosts.php:582
+#: ../grid_busers.php:248 ../setup.php:3743
+msgid "Queue"
+msgstr ""
+
+#: ../grid_barrays.php:299 ../grid_barrays.php:653 ../setup.php:3240
+msgid "Arrays"
+msgstr ""
+
+#: ../grid_barrays.php:318
+msgid "Presets"
+msgstr ""
+
+#: ../grid_barrays.php:324 ../grid_summary.php:1908
+msgid "Custom"
+msgstr ""
+
+#: ../grid_barrays.php:345
+msgid "From"
+msgstr ""
+
+#: ../grid_barrays.php:354
+msgid "To"
+msgstr ""
+
+#: ../grid_barrays.php:363
+msgid "Shift Left"
+msgstr ""
+
+#: ../grid_barrays.php:366
+msgid "Define Shifting Interval"
+msgstr ""
+
+#: ../grid_barrays.php:379
+msgid "Shift Right"
+msgstr ""
+
+#: ../grid_barrays.php:599
+msgid "Batch Array Filters"
+msgstr ""
+
+#: ../grid_barrays.php:666
+msgid "View Finished Jobs"
+msgstr ""
+
+#: ../grid_barrays.php:765
+msgid "No Array Records Found"
+msgstr ""
+
+#: ../grid_summary.php:1628
+msgid "Host Status Legend"
+msgstr ""
+
+#: ../grid_summary.php:1675 ../grid_bmgroup.php:104
+#: ../grid_bhosts_closed.php:507 ../grid_bhosts.php:505 ../grid_lsload.php:256
+#: ../grid_queue_distrib.php:408 ../grid_lsgload.php:131
+msgid "Group"
+msgstr ""
+
+#: ../grid_summary.php:1704 ../console.php:46
+msgid "Cacti"
+msgstr ""
+
+#: ../grid_summary.php:1710
+msgid "Not Integrated"
+msgstr ""
+
+#: ../grid_summary.php:1711 ../grid_bjobs.php:2093 ../grid_shared.php:363
+#: ../grid_manage_hosts.php:390 ../grid_pollers.php:367 ../grid_pollers.php:368
+#: ../grid_clusters.php:1277
+msgid "Unknown"
+msgstr ""
+
+#: ../grid_summary.php:1712 ../grid_pollers.php:362 ../grid_clusters.php:1269
+msgid "Down"
+msgstr ""
+
+#: ../grid_summary.php:1713
+msgid "Recovering"
+msgstr ""
+
+#: ../grid_summary.php:1714 ../grid_pollers.php:359 ../grid_clusters.php:1264
+msgid "Up"
+msgstr ""
+
+#: ../grid_summary.php:1719
+msgid "Order"
+msgstr ""
+
+#: ../grid_summary.php:1740 ../grid_summary.php:1746
+msgid "Mute"
+msgstr ""
+
+#: ../grid_summary.php:1740 ../grid_summary.php:1746
+msgid ""
+"Mute Alert Sound Acknowledging Host Down Conditions and Host Alerts. New "
+"Host Alerts and Down Conditions will Unmute."
+msgstr ""
+
+#: ../grid_summary.php:1743 ../grid_summary.php:1749
+msgid "Unmute"
+msgstr ""
+
+#: ../grid_summary.php:1743 ../grid_summary.php:1749
+msgid "Unmute Sounds"
+msgstr ""
+
+#: ../grid_summary.php:1757
+msgid "Thresholds"
+msgstr ""
+
+#: ../grid_summary.php:1770 ../grid_bjobs.php:2033 ../grid_lshosts.php:166
+#: ../grid_lshosts.php:372 ../grid_bhosts_closed.php:589 ../grid_bhosts.php:665
+#: ../grid_bhosts.php:1017 ../grid_lsload.php:335 ../grid_lsload.php:595
+#: ../grid_queue_distrib.php:531 ../grid_queue_distrib.php:904
+#: ../setup.php:1522
+msgid "Type"
+msgstr ""
+
+#: ../grid_summary.php:1801 ../grid_bjobs.php:2037 ../grid_lshosts.php:197
+#: ../grid_lshosts.php:373 ../grid_bhosts_closed.php:560 ../grid_bhosts.php:634
+#: ../grid_bhosts.php:1021 ../grid_lsload.php:366 ../grid_lsload.php:598
+#: ../grid_queue_distrib.php:499 ../grid_queue_distrib.php:903
+msgid "Model"
+msgstr ""
+
+#: ../grid_summary.php:1835
+msgid "Apply Exclusion Filter"
+msgstr ""
+
+#: ../grid_summary.php:1839
+msgid "Load Stat"
+msgstr ""
+
+#: ../grid_summary.php:1880
+msgid "Batch Stat"
+msgstr ""
+
+#: ../grid_summary.php:1936
+msgid "Alert Action"
+msgstr ""
+
+#: ../grid_settings_system.php:119 ../grid_settings_system.php:121
+#: ../grid_settings.php:158 ../grid_settings.php:160
+#, php-format
+msgid "Grid Settings (%s)"
+msgstr ""
+
+#: ../grid_settings_system.php:119 ../grid_utilities.php:357
+#: ../grid_settings.php:158 ../grid_clusterdb.php:654 ../grid_clusters.php:1245
+msgid "(Learn More)"
+msgstr ""
+
+#: ../grid_bjgroups.php:36
+msgid "IBM Spectrum LSF RTM - Batch Job Group Statistics"
+msgstr ""
+
+#: ../grid_bjgroups.php:130 ../grid_bugroup.php:215 ../grid_projects.php:123
+msgid "Level"
+msgstr ""
+
+#: ../grid_bjgroups.php:178
+msgid "Include Unused Groups"
+msgstr ""
+
+#: ../grid_bjgroups.php:281
+msgid "Batch Job Groups Filters"
+msgstr ""
+
+#: ../grid_bjgroups.php:314 ../setup.php:2157
+msgid "Job Groups"
+msgstr ""
+
+#: ../grid_bjgroups.php:374
+msgid "ViewJob GroupGraphs"
+msgstr ""
+
+#: ../grid_bjgroups.php:408
+msgid "No Job Group Records Found"
+msgstr ""
+
+#: ../grid_bjgroups.php:423 ../grid_shared.php:395 ../grid_bapps.php:399
+#: ../grid_projects.php:451 ../grid_license_projects.php:379
+msgid "Action"
+msgstr ""
+
+#: ../grid_bjgroups.php:424 ../grid_bmgroup.php:284 ../grid_bugroup.php:118
+#: ../grid_queue_distrib.php:802 ../grid_lsgload.php:377
+msgid "Group Name"
+msgstr ""
+
+#: ../grid_bjgroups.php:425 ../grid_bugroup.php:119 ../grid_shared.php:397
+#: ../grid_manage_hosts.php:585 ../grid_bapps.php:401 ../grid_busers.php:143
+#: ../grid_busers.php:165 ../grid_projects.php:453
+#: ../grid_license_projects.php:381 ../setup.php:757 ../setup.php:1380
+#: ../setup.php:1394 ../setup.php:3548 ../setup.php:3829
+#: ../grid_clusters.php:1231 ../grid_elim_graphs.php:623
+msgid "Cluster Name"
+msgstr ""
+
+#: ../grid_bjgroups.php:426 ../grid_bapps.php:402 ../grid_projects.php:456
+#: ../grid_license_projects.php:382
+#, php-format
+msgid "Total %s"
+msgstr ""
+
+#: ../grid_bjgroups.php:427 ../grid_bugroup.php:142 ../grid_bapps.php:403
+#: ../grid_busers.php:156 ../grid_busers.php:171 ../grid_projects.php:460
+#: ../grid_license_projects.php:383
+#, php-format
+msgid "Pending %s"
+msgstr ""
+
+#: ../grid_bjgroups.php:428 ../grid_bugroup.php:146 ../grid_bapps.php:404
+#: ../grid_busers.php:157 ../grid_busers.php:172 ../grid_projects.php:463
+#: ../grid_license_projects.php:384
+#, php-format
+msgid "Running %s"
+msgstr ""
+
+#: ../grid_bjgroups.php:432 ../grid_bmgroup.php:291 ../grid_bjobs.php:2002
+#: ../grid_bugroup.php:170 ../grid_lshosts.php:376 ../grid_bapps.php:406
+#: ../grid_projects.php:469 ../grid_license_projects.php:386
+msgid "Max Mem"
+msgstr ""
+
+#: ../grid_bjgroups.php:433 ../grid_bugroup.php:166 ../grid_bapps.php:407
+#: ../grid_projects.php:472 ../grid_license_projects.php:387
+msgid "Avg Mem"
+msgstr ""
+
+#: ../grid_bjgroups.php:435 ../grid_bapps.php:409 ../grid_projects.php:478
+#: ../grid_license_projects.php:389
+msgid "Avg Swap"
+msgstr ""
+
+#: ../grid_bmgroup.php:35
+msgid "IBM Spectrum LSF RTM - Host Group Information"
+msgstr ""
+
+#: ../grid_bmgroup.php:221
+msgid "Host Group Information Filters"
+msgstr ""
+
+#: ../grid_bmgroup.php:286 ../grid_lshosts.php:370
+#: ../grid_bhosts_closed.php:814 ../grid_manage_hosts.php:586
+#: ../grid_bhosts.php:1009 ../grid_lsload.php:589 ../grid_elim_graphs.php:496
+msgid "Host Name"
+msgstr ""
+
+#: ../grid_bmgroup.php:287 ../grid_manage_hosts.php:381
+#: ../grid_manage_hosts.php:587
+msgid "Host Type"
+msgstr ""
+
+#: ../grid_bmgroup.php:288 ../grid_manage_hosts.php:588 ../setup.php:1530
+msgid "Host Model"
+msgstr ""
+
+#: ../grid_bmgroup.php:289 ../grid_lshosts.php:374
+msgid "CPU Factor"
+msgstr ""
+
+#: ../grid_bmgroup.php:290
+msgid "Max CPUS"
+msgstr ""
+
+#: ../grid_bmgroup.php:293
+msgid "Max Tmp"
+msgstr ""
+
+#: ../grid_bmgroup.php:297 ../grid_lsgload.php:393
+msgid "Host Groups"
+msgstr ""
+
+#: ../grid_bjobs.php:43
+msgid "Set First in Queue"
+msgstr ""
+
+#: ../grid_bjobs.php:44
+msgid "Set Last in Queue"
+msgstr ""
+
+#: ../grid_bjobs.php:45
+msgid "Switch Queue"
+msgstr ""
+
+#: ../grid_bjobs.php:46
+msgid "Run Now"
+msgstr ""
+
+#: ../grid_bjobs.php:47
+msgid "Suspend Job"
+msgstr ""
+
+#: ../grid_bjobs.php:48
+msgid "Resume Job"
+msgstr ""
+
+#: ../grid_bjobs.php:49
+msgid "Terminate Job"
+msgstr ""
+
+#: ../grid_bjobs.php:50
+msgid "Force Kill"
+msgstr ""
+
+#: ../grid_bjobs.php:51
+msgid "Signal Kill"
+msgstr ""
+
+#: ../grid_bjobs.php:70
+msgid "IBM Spectrum LSF RTM - Batch Jobs Utility"
+msgstr ""
+
+#: ../grid_bjobs.php:723
+msgid "Warning"
+msgstr ""
+
+#: ../grid_bjobs.php:1196
+msgid "Batch Job Filters"
+msgstr ""
+
+#: ../grid_bjobs.php:1203
+msgid "Batch Job Filters [ Updated % Minutes and %s Seconds Ago ]"
+msgstr ""
+
+#: ../grid_bjobs.php:1205
+msgid "Batch Job Filters [ Updated % Minutes Ago ]"
+msgstr ""
+
+#: ../grid_bjobs.php:1209
+msgid "Batch Job Filters [ Updated % Seconds Ago"
+msgstr ""
+
+#: ../grid_bjobs.php:1211
+msgid "Batch Job Filters [ Just Updated ]"
+msgstr ""
+
+#: ../grid_bjobs.php:1347
+msgid "Uncategorized Reason (-p0)"
+msgstr ""
+
+#: ../grid_bjobs.php:1348
+msgid "Single Key Reason (-p1)"
+msgstr ""
+
+#: ../grid_bjobs.php:1349
+msgid "Candidate Host Reason (-p2)"
+msgstr ""
+
+#: ../grid_bjobs.php:1361
+msgid "Pend with Host"
+msgstr ""
+
+#: ../grid_bjobs.php:1362
+msgid "Pend with Resource"
+msgstr ""
+
+#: ../grid_bjobs.php:1363
+msgid "Pend with Queue"
+msgstr ""
+
+#: ../grid_bjobs.php:1364
+msgid "Pend with JobGroup"
+msgstr ""
+
+#: ../grid_bjobs.php:1365
+msgid "Pend with UserGroup"
+msgstr ""
+
+#: ../grid_bjobs.php:1366
+msgid "Pend with Limit"
+msgstr ""
+
+#: ../grid_bjobs.php:1445 ../grid_bjobs.php:1447
+#: ../lib/grid_functions.php:12745 ../setup.php:2027 ../setup.php:3238
+msgid "Jobs"
+msgstr ""
+
+#: ../grid_bjobs.php:1707
+msgid "View Jobs and Graphs"
+msgstr ""
+
+#: ../grid_bjobs.php:1853
+msgid "Warning Efficiency"
+msgstr ""
+
+#: ../grid_bjobs.php:1857
+msgid "Alarm Efficiency"
+msgstr ""
+
+#: ../grid_bjobs.php:1861
+msgid "Flapping"
+msgstr ""
+
+#: ../grid_bjobs.php:1865
+msgid "Dependencies"
+msgstr ""
+
+#: ../grid_bjobs.php:1869
+msgid "Invalid Dependencies"
+msgstr ""
+
+#: ../grid_bjobs.php:1873
+msgid "Exited"
+msgstr ""
+
+#: ../grid_bjobs.php:1877
+msgid "Exclusive"
+msgstr ""
+
+#: ../grid_bjobs.php:1881
+msgid "Interactive"
+msgstr ""
+
+#: ../grid_bjobs.php:1885
+msgid "Susp Lic Sched"
+msgstr ""
+
+#: ../grid_bjobs.php:1925
+msgid "JobID"
+msgstr ""
+
+#: ../grid_bjobs.php:1928 ../setup.php:3824 ../grid_clusters.php:1232
+#: ../grid_elim_graphs.php:818
+msgid "Cluster ID"
+msgstr ""
+
+#: ../grid_bjobs.php:1936 ../setup.php:3723 ../setup.php:3834
+msgid "Job Name"
+msgstr ""
+
+#: ../grid_bjobs.php:1944
+msgid "SLA"
+msgstr ""
+
+#: ../grid_bjobs.php:1956 ../setup.php:3859
+msgid "Charged SAAP"
+msgstr ""
+
+#: ../grid_bjobs.php:1960 ../setup.php:3236 ../setup.php:3748
+msgid "Project"
+msgstr ""
+
+#: ../grid_bjobs.php:1964
+msgid "Lic Proj"
+msgstr ""
+
+#: ../grid_bjobs.php:1968
+msgid "App"
+msgstr ""
+
+#: ../grid_bjobs.php:1972
+msgid "JGroup"
+msgstr ""
+
+#: ../grid_bjobs.php:1978 ../setup.php:3924
+msgid "Exit Code"
+msgstr ""
+
+#: ../grid_bjobs.php:1982 ../setup.php:3929
+msgid "State Changes"
+msgstr ""
+
+#: ../grid_bjobs.php:1986 ../setup.php:3563
+msgid "Nice"
+msgstr ""
+
+#: ../grid_bjobs.php:1990
+msgid "Mem Req"
+msgstr ""
+
+#: ../grid_bjobs.php:1994
+msgid "Mem Res"
+msgstr ""
+
+#: ../grid_bjobs.php:1998
+msgid "Mem Wasted"
+msgstr ""
+
+#: ../grid_bjobs.php:2006 ../grid_bugroup.php:178
+msgid "Max VMem"
+msgstr ""
+
+#: ../grid_bjobs.php:2010 ../grid_bhosts_closed.php:828 ../grid_bhosts.php:1039
+msgid "Mem Usage"
+msgstr ""
+
+#: ../grid_bjobs.php:2014
+msgid "VMem"
+msgstr ""
+
+#: ../grid_bjobs.php:2016
+msgid "CPU Usage"
+msgstr ""
+
+#: ../grid_bjobs.php:2017
+msgid "CPU Effic"
+msgstr ""
+
+#: ../grid_bjobs.php:2020
+msgid "Num Nodes"
+msgstr ""
+
+#: ../grid_bjobs.php:2021
+msgid "Num CPUs"
+msgstr ""
+
+#: ../grid_bjobs.php:2025
+msgid "Max Procs"
+msgstr ""
+
+#: ../grid_bjobs.php:2029 ../grid_queue_distrib.php:899 ../setup.php:5457
+#: ../setup.php:5479
+msgid "Host"
+msgstr ""
+
+#: ../grid_bjobs.php:2041
+msgid "SubHost"
+msgstr ""
+
+#: ../grid_bjobs.php:2045 ../setup.php:3728 ../setup.php:3998
+msgid "Submit Time"
+msgstr ""
+
+#: ../grid_bjobs.php:2049 ../setup.php:4003
+msgid "Start Time"
+msgstr ""
+
+#: ../grid_bjobs.php:2053 ../setup.php:4008
+msgid "End Time"
+msgstr ""
+
+#: ../grid_bjobs.php:2057
+msgid "Pend"
+msgstr ""
+
+#: ../grid_bjobs.php:2061
+msgid "Ineligible Pend"
+msgstr ""
+
+#: ../grid_bjobs.php:2065
+msgid "Pend Time Limit"
+msgstr ""
+
+#: ../grid_bjobs.php:2069
+msgid "Eligible Pend Time Limit"
+msgstr ""
+
+#: ../grid_bjobs.php:2073 ../grid_busers.php:177 ../setup.php:3664
+#: ../setup.php:4033
+msgid "Run Time"
+msgstr ""
+
+#: ../grid_bjobs.php:2077
+msgid "Run Est"
+msgstr ""
+
+#: ../grid_bjobs.php:2081
+msgid "SSusp"
+msgstr ""
+
+#: ../grid_bjobs.php:2085
+msgid "USusp"
+msgstr ""
+
+#: ../grid_bjobs.php:2089
+msgid "PSusp"
+msgstr ""
+
+#: ../grid_bjobs.php:2097
+msgid "Prov"
+msgstr ""
+
+#: ../grid_dailystats.php:952 ../grid_bresourcespool.php:1024
+msgid "SLAs"
+msgstr ""
+
+#: ../grid_bhpart.php:46
+msgid "Under Construction"
+msgstr ""
+
+#: ../grid_bhpart.php:47
+msgid "This link is currently under construction. Thanks for being patient."
+msgstr ""
+
+#: ../grid_bugroup.php:34
+msgid "IBM Spectrum LSF RTM - Batch User Group Statistics"
+msgstr ""
+
+#: ../grid_bugroup.php:126 ../grid_busers.php:147
+msgid "Max Pending"
+msgstr ""
+
+#: ../grid_bugroup.php:130 ../grid_busers.php:151
+msgid "Proc Limit"
+msgstr ""
+
+#: ../grid_bugroup.php:134 ../grid_busers.php:155 ../grid_busers.php:170
+#, php-format
+msgid "Started %s"
+msgstr ""
+
+#: ../grid_bugroup.php:162
+msgid "Efic %"
+msgstr ""
+
+#: ../grid_bugroup.php:174
+msgid "Avg VMem"
+msgstr ""
+
+#: ../grid_bugroup.php:282
+msgid "Show Inactive Groups"
+msgstr ""
+
+#: ../grid_bugroup.php:394
+msgid "Batch User Group Filters"
+msgstr ""
+
+#: ../grid_bugroup.php:439 ../grid_busers.php:277 ../grid_lsgload.php:198
+#: ../setup.php:3235 ../setup.php:5454 ../setup.php:5465
+msgid "Groups"
+msgstr ""
+
+#: ../grid_bugroup.php:458
+msgid "default"
+msgstr ""
+
+#: ../grid_bugroup.php:489
+msgid "View Users"
+msgstr ""
+
+#: ../grid_bugroup.php:494
+msgid "View User Group Graphs"
+msgstr ""
+
+#: ../grid_bugroup.php:583
+msgid "No User Group Records Found"
+msgstr ""
+
+#: ../grid_shared.php:36
+msgid "IBM Spectrum LSF RTM - Batch Shared Resources"
+msgstr ""
+
+#: ../grid_shared.php:246
+msgid "Batch Shared Resources Filters"
+msgstr ""
+
+#: ../grid_shared.php:271 ../grid_lshosts.php:116 ../grid_lshosts.php:380
+#: ../setup.php:1500 ../setup.php:1816
+msgid "Resources"
+msgstr ""
+
+#: ../grid_shared.php:329
+msgid "View Active Jobs by Host ResReq"
+msgstr ""
+
+#: ../grid_shared.php:331 ../grid_bapps.php:354
+msgid "View Application Graphs"
+msgstr ""
+
+#: ../grid_shared.php:354 ../setup.php:1421
+msgid "Numeric"
+msgstr ""
+
+#: ../grid_shared.php:357 ../setup.php:1420
+msgid "Boolean"
+msgstr ""
+
+#: ../grid_shared.php:360 ../setup.php:1422
+msgid "String"
+msgstr ""
+
+#: ../grid_shared.php:380
+msgid "No Shared Resource Records Found"
+msgstr ""
+
+#: ../grid_shared.php:396 ../grid_elim_graphs.php:497
+msgid "Resource Name"
+msgstr ""
+
+#: ../grid_shared.php:398
+msgid "Resource Type"
+msgstr ""
+
+#: ../grid_shared.php:399
+msgid "Available Value"
+msgstr ""
+
+#: ../grid_shared.php:400
+msgid "Reserved Value"
+msgstr ""
+
+#: ../grid_shared.php:401
+msgid "Total Value"
+msgstr ""
+
+#: ../grid_bresourcespool.php:456
+msgid "Pools"
+msgstr ""
+
+#: ../grid_utilities.php:138
+msgid "Refresh Interval"
+msgstr ""
+
+#: ../grid_utilities.php:149
+msgid "Refresh Values"
+msgstr ""
+
+#: ../grid_utilities.php:194
+msgid "Current Process Status"
+msgstr ""
+
+#: ../grid_utilities.php:197
+msgid "Grid Pollers are:"
+msgstr ""
+
+#: ../grid_utilities.php:197 ../grid_utilities.php:277
+msgid "ENABLED"
+msgstr ""
+
+#: ../grid_utilities.php:197 ../grid_utilities.php:277
+msgid "DISABLED"
+msgstr ""
+
+#: ../grid_utilities.php:200
+msgid "Main Poller Run Stats"
+msgstr ""
+
+#: ../grid_utilities.php:203 ../grid_utilities.php:211
+#: ../grid_utilities.php:226
+msgid "Last Runtime:"
+msgstr ""
+
+#: ../grid_utilities.php:206 ../grid_utilities.php:214
+#: ../grid_utilities.php:229
+msgid "Last Statistics:"
+msgstr ""
+
+#: ../grid_utilities.php:208
+msgid "Database Maintenance Stats"
+msgstr ""
+
+#: ../grid_utilities.php:217
+msgid "Next Runtime:"
+msgstr ""
+
+#: ../grid_utilities.php:220
+msgid "Database Archive Stats"
+msgstr ""
+
+#: ../grid_utilities.php:223
+msgid "Frequency:"
+msgstr ""
+
+#: ../grid_utilities.php:223 ../setup.php:970 ../setup.php:971 ../setup.php:972
+#: ../setup.php:1975 ../setup.php:2847 ../setup.php:2848 ../setup.php:2849
+#: ../setup.php:2850
+#, php-format
+msgid "%d Minutes"
+msgstr ""
+
+#: ../grid_utilities.php:233
+msgid "License Collection Stats"
+msgstr ""
+
+#: ../grid_utilities.php:241
+msgid "Runtime for Poller(s)"
+msgstr ""
+
+#: ../grid_utilities.php:249
+msgid "Runtime for Poller:"
+msgstr ""
+
+#: ../grid_utilities.php:249
+msgid "None Found"
+msgstr ""
+
+#: ../grid_utilities.php:255
+#, php-format
+msgid "Grid: %s"
+msgstr ""
+
+#: ../grid_utilities.php:257
+msgid "Grid Collection Frequencies"
+msgstr ""
+
+#: ../grid_utilities.php:260
+msgid "Host and Queue Stats:"
+msgstr ""
+
+#: ../grid_utilities.php:260 ../grid_utilities.php:263
+#: ../grid_utilities.php:266 ../grid_utilities.php:269
+#: ../grid_utilities.php:272
+#, php-format
+msgid "%d Seconds"
+msgstr ""
+
+#: ../grid_utilities.php:263
+msgid "Minor Job Stats:"
+msgstr ""
+
+#: ../grid_utilities.php:266
+msgid "Major Job and Parameter Stats:"
+msgstr ""
+
+#: ../grid_utilities.php:269
+msgid "Max Host/Queue/Load Runtime:"
+msgstr ""
+
+#: ../grid_utilities.php:272
+msgid "Max Job Collection Runtime:"
+msgstr ""
+
+#: ../grid_utilities.php:274
+msgid "Recent Runtimes"
+msgstr ""
+
+#: ../grid_utilities.php:277
+msgid "Polling for this Cluster is:"
+msgstr ""
+
+#: ../grid_utilities.php:280
+msgid "Host Load and Resources:"
+msgstr ""
+
+#: ../grid_utilities.php:283
+msgid "Batch Host Info:"
+msgstr ""
+
+#: ../grid_utilities.php:286
+msgid "Batch Host Groups:"
+msgstr ""
+
+#: ../grid_utilities.php:289
+msgid "Batch Users:"
+msgstr ""
+
+#: ../grid_utilities.php:292
+msgid "Batch User Groups:"
+msgstr ""
+
+#: ../grid_utilities.php:295
+msgid "Batch Queue Info:"
+msgstr ""
+
+#: ../grid_utilities.php:298
+msgid "Minor Job Acquisition:"
+msgstr ""
+
+#: ../grid_utilities.php:301
+msgid "Major Job Acquisition:"
+msgstr ""
+
+#: ../grid_utilities.php:304
+msgid "Job Array Acquisition:"
+msgstr ""
+
+#: ../grid_utilities.php:307
+msgid "Base Host Config Info:"
+msgstr ""
+
+#: ../grid_utilities.php:310
+msgid "Batch System Parameters:"
+msgstr ""
+
+#: ../grid_utilities.php:342
+msgid "Grid Database Maintenance Results"
+msgstr ""
+
+#: ../grid_utilities.php:345
+msgid ""
+"UI Interface DB Maintenance does not optimize the tables, it only removes "
+"records.  Database optimization will take only take place during shceudled "
+"db maintenance only."
+msgstr ""
+
+#: ../grid_utilities.php:346
+#, php-format
+msgid "Job Records Removed: %d"
+msgstr ""
+
+#: ../grid_utilities.php:347
+#, php-format
+msgid "Job Rusage Records Removed: %d"
+msgstr ""
+
+#: ../grid_utilities.php:348
+#, php-format
+msgid "Job Interval Records Removed: %d"
+msgstr ""
+
+#: ../grid_utilities.php:357
+msgid "RTM System Utilities"
+msgstr ""
+
+#: ../grid_utilities.php:359
+msgid "Process Status Information"
+msgstr ""
+
+#: ../grid_utilities.php:364
+msgid "View Grid Process Status"
+msgstr ""
+
+#: ../grid_utilities.php:367
+msgid ""
+"This option will let you show process information associated with the Grid "
+"polling processes."
+msgstr ""
+
+#: ../grid_utilities.php:371
+msgid "Database Administration"
+msgstr ""
+
+#: ../grid_utilities.php:375
+msgid "Force Cacti Backup"
+msgstr ""
+
+#: ../grid_utilities.php:378
+msgid ""
+"Performs a backup of key Cacti and RTM database tables.  This is useful if "
+"you are performing imports of Cacti templates and wish to have a backup in "
+"case a template ends up affecting system performance."
+msgstr ""
+
+#: ../grid_utilities.php:384
+msgid "Manage Grid Hosts"
+msgstr ""
+
+#: ../grid_utilities.php:406
+msgid "Backup Files"
+msgstr ""
+
+#: ../grid_utilities.php:408 ../grid_params.php:229 ../grid_pollers.php:321
+msgid "Name"
+msgstr ""
+
+#: ../grid_utilities.php:408
+msgid "Last Modified"
+msgstr ""
+
+#: ../grid_utilities.php:408 ../grid_elim_graphs.php:499
+msgid "Size"
+msgstr ""
+
+#: ../grid_lshosts.php:35
+msgid "IBM Spectrum LSF RTM - Host Information"
+msgstr ""
+
+#: ../grid_lshosts.php:121 ../setup.php:994 ../setup.php:2768 ../setup.php:2780
+#: ../setup.php:2951 ../setup.php:2985 ../setup.php:3018
+#: ../grid_elim_graphs.php:831
+msgid "None"
+msgstr ""
+
+#: ../grid_lshosts.php:306
+msgid "Host Information Filters"
+msgstr ""
+
+#: ../grid_lshosts.php:375
+msgid "Max CPUs"
+msgstr ""
+
+#: ../grid_lshosts.php:378
+msgid "Max Temp"
+msgstr ""
+
+#: ../grid_lshosts.php:379
+msgid "Total Disks"
+msgstr ""
+
+#: ../grid_lshosts.php:413 ../grid_bhosts.php:1107 ../grid_lsload.php:677
+msgid "View Host Job Detail"
+msgstr ""
+
+#: ../grid_lshosts.php:415 ../grid_bhosts_closed.php:872
+#: ../grid_bhosts.php:1109 ../grid_busers.php:538 ../grid_lsload.php:679
+#: ../grid_queue_distrib.php:983
+msgid "View License Checkouts"
+msgstr ""
+
+#: ../grid_lshosts.php:416 ../grid_bhosts_closed.php:873
+#: ../grid_bhosts.php:1110 ../grid_lsload.php:680 ../grid_queue_distrib.php:984
+msgid "View Host Graphs"
+msgstr ""
+
+#: ../grid_lshosts.php:446
+msgid "No Host Records Found"
+msgstr ""
+
+#: ../grid_settings.php:239
+msgid "Host Custom ELIM Values"
+msgstr ""
+
+#: ../grid_settings.php:246
+#, php-format
+msgid "%s ELIM Value"
+msgstr ""
+
+#: ../grid_bhosts_closed.php:36
+msgid "IBM Spectrum LSF RTM - Closed Admin Hosts"
+msgstr ""
+
+#: ../grid_bhosts_closed.php:39 ../grid_bhosts.php:38
+msgid "Open"
+msgstr ""
+
+#: ../grid_bhosts_closed.php:169 ../grid_bhosts_closed.php:186
+msgid "Host:"
+msgstr ""
+
+#: ../grid_bhosts_closed.php:169 ../grid_bhosts_closed.php:186
+msgid "from Cluster Name:"
+msgstr ""
+
+#: ../grid_bhosts_closed.php:786
+msgid "Closed Admin Host Filters"
+msgstr ""
+
+#: ../grid_bhosts_closed.php:816
+msgid "Host Control Message"
+msgstr ""
+
+#: ../grid_bhosts_closed.php:820 ../grid_bhosts.php:1029 ../grid_lsload.php:604
+#: ../grid_queue_distrib.php:910
+msgid "TIS"
+msgstr ""
+
+#: ../grid_bhosts_closed.php:824
+msgid "Run Jobs"
+msgstr ""
+
+#: ../grid_bhosts_closed.php:825
+msgid "Susp Jobs"
+msgstr ""
+
+#: ../grid_bhosts_closed.php:826 ../grid_bhosts.php:1037
+msgid "CPU Pct"
+msgstr ""
+
+#: ../grid_bhosts_closed.php:827 ../grid_bhosts.php:1038
+msgid "RunQ 1m"
+msgstr ""
+
+#: ../grid_bhosts_closed.php:829 ../grid_bhosts.php:1040
+msgid "Page Usage"
+msgstr ""
+
+#: ../grid_bhosts_closed.php:830 ../grid_bhosts.php:1041 ../grid_lsload.php:619
+#: ../setup.php:3512
+msgid "Page Rate"
+msgstr ""
+
+#: ../grid_bhosts_closed.php:906
+msgid "No Closed Admin Hosts"
+msgstr ""
+
+#: ../grid_manage_hosts.php:39 ../grid_pollers.php:32 ../grid_clusters.php:40
+#: ../grid_elim_graphs.php:33
+msgid "Delete"
+msgstr ""
+
+#: ../grid_manage_hosts.php:216
+msgid "Click 'Continue' to Delete the following hosts."
+msgstr ""
+
+#: ../grid_manage_hosts.php:220
+msgid "Disable All Cacti Hosts. Preserving Legacy Graphs and Data Soures."
+msgstr ""
+
+#: ../grid_manage_hosts.php:221
+msgid "Delete All Cacti Hosts. Removing Legacy Graphs and Data Sources"
+msgstr ""
+
+#: ../grid_manage_hosts.php:230
+msgid "You must select at least one host."
+msgstr ""
+
+#: ../grid_manage_hosts.php:233 ../grid_pollers.php:144
+#: ../grid_clusters.php:442 ../grid_elim_graphs.php:227
+#: ../grid_elim_graphs.php:236 ../grid_elim_graphs.php:244
+msgid "Continue"
+msgstr ""
+
+#: ../grid_manage_hosts.php:241 ../grid_bhosts.php:234 ../grid_pollers.php:147
+#: ../grid_clusters.php:445
+msgid "Return"
+msgstr ""
+
+#: ../grid_manage_hosts.php:385
+msgid "All Clients"
+msgstr ""
+
+#: ../grid_manage_hosts.php:386
+msgid "Fixed Clients"
+msgstr ""
+
+#: ../grid_manage_hosts.php:387
+msgid "Float Clients"
+msgstr ""
+
+#: ../grid_manage_hosts.php:388 ../setup.php:5463
+msgid "Servers"
+msgstr ""
+
+#: ../grid_manage_hosts.php:436
+msgid "Integrated"
+msgstr ""
+
+#: ../grid_manage_hosts.php:441
+msgid "Fully Integrated"
+msgstr ""
+
+#: ../grid_manage_hosts.php:442
+msgid "Not in LSF"
+msgstr ""
+
+#: ../grid_manage_hosts.php:443
+msgid "Not in RTM"
+msgstr ""
+
+#: ../grid_manage_hosts.php:452
+msgid "Current"
+msgstr ""
+
+#: ../grid_manage_hosts.php:453 ../setup.php:1015 ../setup.php:1032
+#: ../setup.php:2236 ../setup.php:6568
+#, php-format
+msgid "%d Week"
+msgstr ""
+
+#: ../grid_manage_hosts.php:454 ../setup.php:6571
+#, php-format
+msgid "%d Month"
+msgstr ""
+
+#: ../grid_manage_hosts.php:517 ../setup.php:4725
+msgid "Manage Hosts"
+msgstr ""
+
+#: ../grid_manage_hosts.php:589
+msgid "Host License"
+msgstr ""
+
+#: ../grid_manage_hosts.php:611 ../grid_manage_hosts.php:612 ../setup.php:1454
+#: ../setup.php:1467
+msgid "Auto Detect"
+msgstr ""
+
+#: ../grid_manage_hosts.php:613
+msgid "Fixed Client"
+msgstr ""
+
+#: ../grid_manage_hosts.php:613
+msgid "Float Client"
+msgstr ""
+
+#: ../grid_manage_hosts.php:620
+msgid "No Hosts Defined"
+msgstr ""
+
+#: ../grid_bhosts.php:39
+msgid "Close"
+msgstr ""
+
+#: ../grid_bhosts.php:42
+msgid "IBM Spectrum LSF RTM - Batch Host Management"
+msgstr ""
+
+#: ../grid_bhosts.php:79
+#, php-format
+msgid "'%s' - by RTM User '%s'"
+msgstr ""
+
+#: ../grid_bhosts.php:140
+msgid "Ok"
+msgstr ""
+
+#: ../grid_bhosts.php:144
+#, php-format
+msgid "Failed. Status Code: %d"
+msgstr ""
+
+#: ../grid_bhosts.php:232
+msgid "You must select at least one queue."
+msgstr ""
+
+#: ../grid_bhosts.php:960
+msgid "Batch Host Filters"
+msgstr ""
+
+#: ../grid_bhosts.php:1033
+msgid "CPU Fact"
+msgstr ""
+
+#: ../grid_bhosts.php:1073 ../setup.php:1818
+msgid "Batch Hosts"
+msgstr ""
+
+#: ../grid_bhosts.php:1218
+msgid "No Batch Host Records Found"
+msgstr ""
+
+#: ../console.php:45
+#, php-format
+msgid "IBM Spectrum LSF RTM Version %s"
+msgstr ""
+
+#: ../console.php:84
+msgid "New Install Waiting for Configuration"
+msgstr ""
+
+#: ../console.php:87
+#, php-format
+msgid "Monitoring %s Hosts on %d Clusters"
+msgstr ""
+
+#: ../console.php:89
+#, php-format
+msgid "Monitoring %s Hosts on %d Cluster"
+msgstr ""
+
+#: ../console.php:93
+#, php-format
+msgid "Monitoring %s Host on %d Clusters"
+msgstr ""
+
+#: ../console.php:95
+#, php-format
+msgid "Monitoring %s Host on %d Cluster"
+msgstr ""
+
+#: ../console.php:113 ../setup.php:3233 ../setup.php:4701 ../setup.php:5414
+#: ../setup.php:5415 ../setup.php:5434 ../grid_clusters.php:1245
+msgid "Clusters"
+msgstr ""
+
+#: ../console.php:119
+msgid "Configure Cluster Monitoring"
+msgstr ""
+
+#: ../console.php:122
+msgid "Set up monitoring of LSF clusters"
+msgstr ""
+
+#: ../console.php:125
+msgid "Create graphs for monitoring clusters"
+msgstr ""
+
+#: ../console.php:128
+msgid "Configure License Scheduler to collect license usage"
+msgstr ""
+
+#: ../console.php:131
+msgid "Configure Global Settings"
+msgstr ""
+
+#: ../console.php:134
+msgid "Set up email server for notifications"
+msgstr ""
+
+#: ../console.php:137
+msgid "Set up grid display"
+msgstr ""
+
+#: ../console.php:140
+msgid "Monitor Clusters and Jobs"
+msgstr ""
+
+#: ../console.php:143
+msgid "Monitor cluster performance"
+msgstr ""
+
+#: ../console.php:146
+msgid "Monitor jobs"
+msgstr ""
+
+#: ../console.php:149
+msgid "Monitor license usage using License Scheduler"
+msgstr ""
+
+#: ../console.php:152
+msgid "Monitor job throughput with benchmark jobs"
+msgstr ""
+
+#: ../console.php:159
+msgid "License Services"
+msgstr ""
+
+#: ../console.php:165
+msgid "Configure License Monitoring"
+msgstr ""
+
+#: ../console.php:168
+msgid "Set up monitoring of license services"
+msgstr ""
+
+#: ../console.php:171
+msgid "Create graphs for monitoring licenses"
+msgstr ""
+
+#: ../console.php:174
+msgid "Monitor License Services and Licenses"
+msgstr ""
+
+#: ../console.php:177
+msgid "Monitor license services"
+msgstr ""
+
+#: ../console.php:180
+msgid "Monitor license usage"
+msgstr ""
+
+#: ../console.php:187
+msgid "Alerts"
+msgstr ""
+
+#: ../console.php:193
+msgid "Configure Grid Alerts"
+msgstr ""
+
+#: ../console.php:196
+msgid "Set up a new grid alert"
+msgstr ""
+
+#: ../console.php:199
+msgid "Create a new grid alert template"
+msgstr ""
+
+#: ../console.php:202
+msgid "Configure Threshold Alerts"
+msgstr ""
+
+#: ../console.php:205
+msgid "Set up a new threshold alert"
+msgstr ""
+
+#: ../console.php:208
+msgid "Create a new threshold alert template"
+msgstr ""
+
+#: ../console.php:211
+msgid "Configure Syslog Alerts"
+msgstr ""
+
+#: ../console.php:214
+msgid "Set up syslog monitoring on a cluster"
+msgstr ""
+
+#: ../console.php:217
+msgid "Set up RTM to write to syslog"
+msgstr ""
+
+#: ../console.php:220
+msgid "Create syslog alerts"
+msgstr ""
+
+#: ../console.php:223
+msgid "Monitor Alerts"
+msgstr ""
+
+#: ../console.php:226
+msgid "View triggered grid alerts"
+msgstr ""
+
+#: ../console.php:229
+msgid "View triggered thresholds"
+msgstr ""
+
+#: ../console.php:232
+msgid "View hosts monitored by thresholds"
+msgstr ""
+
+#: ../console.php:235
+msgid "View syslog messages"
+msgstr ""
+
+#: ../console.php:238
+msgid "View syslog alert history"
+msgstr ""
+
+#: ../console.php:241
+msgid "View host level alerts"
+msgstr ""
+
+#: ../grid_bapps.php:36
+msgid "IBM Spectrum LSF RTM - Batch Application Details"
+msgstr ""
+
+#: ../grid_bapps.php:140
+msgid "Applicaitons"
+msgstr ""
+
+#: ../grid_bapps.php:173
+msgid "Include Unused Applications"
+msgstr ""
+
+#: ../grid_bapps.php:266
+msgid "Batch Applications Filters"
+msgstr ""
+
+#: ../grid_bapps.php:295 ../setup.php:2142
+msgid "Applications"
+msgstr ""
+
+#: ../grid_bapps.php:385
+msgid "No Application Records Found"
+msgstr ""
+
+#: ../grid_bapps.php:400
+msgid "Application Name"
+msgstr ""
+
+#: ../grid_busers.php:35
+msgid "IBM Spectrum LSF RTM - Batch User Statistics"
+msgstr ""
+
+#: ../grid_busers.php:142 ../grid_busers.php:164 ../setup.php:3849
+msgid "User Name"
+msgstr ""
+
+#: ../grid_busers.php:158
+#, php-format
+msgid "Efic %% %s"
+msgstr ""
+
+#: ../grid_busers.php:159
+#, php-format
+msgid "Sys Susp %s"
+msgstr ""
+
+#: ../grid_busers.php:160
+#, php-format
+msgid "User Susp %s"
+msgstr ""
+
+#: ../grid_busers.php:166
+msgid "User Shares"
+msgstr ""
+
+#: ../grid_busers.php:167
+msgid "User Priority"
+msgstr ""
+
+#: ../grid_busers.php:168
+msgid "User Limit"
+msgstr ""
+
+#: ../grid_busers.php:169
+msgid "Num Jobs"
+msgstr ""
+
+#: ../grid_busers.php:173
+#, php-format
+msgid "Efic %%"
+msgstr ""
+
+#: ../grid_busers.php:174
+#, php-format
+msgid "Susp %s"
+msgstr ""
+
+#: ../grid_busers.php:176
+msgid "CPU Time"
+msgstr ""
+
+#: ../grid_busers.php:450
+msgid "Batch User Filters"
+msgstr ""
+
+#: ../grid_busers.php:490 ../setup.php:1579 ../setup.php:5453
+#: ../grid_bqueues.php:4573 ../grid_bqueues.php:5834
+msgid "Users"
+msgstr ""
+
+#: ../grid_busers.php:536 ../grid_busers.php:572
+msgid "View Batch Queues"
+msgstr ""
+
+#: ../grid_busers.php:541 ../grid_busers.php:575
+msgid "View User Graphs"
+msgstr ""
+
+#: ../grid_busers.php:547 ../grid_busers.php:580
+msgid "Show User Jobs"
+msgstr ""
+
+#: ../grid_busers.php:603
+msgid "No User Records Found"
+msgstr ""
+
+#: ../grid_lsload.php:36
+msgid "IBM Spectrum LSF RTM - Host Load Statistics"
+msgstr ""
+
+#: ../grid_lsload.php:136
+msgid "No hosts returned"
+msgstr ""
+
+#: ../grid_lsload.php:138
+msgid "Invalid Resource String"
+msgstr ""
+
+#: ../grid_lsload.php:140
+#, php-format
+msgid "Unknown LSF Error: %s"
+msgstr ""
+
+#: ../grid_lsload.php:516
+msgid "Host Load Filters"
+msgstr ""
+
+#: ../grid_lsload.php:607 ../setup.php:3492
+msgid "RunQ 15sec"
+msgstr ""
+
+#: ../grid_lsload.php:610 ../setup.php:3497
+msgid "RunQ 1min"
+msgstr ""
+
+#: ../grid_lsload.php:613
+msgid "RunQ 15m"
+msgstr ""
+
+#: ../grid_lsload.php:616 ../setup.php:3507
+msgid "CPU %"
+msgstr ""
+
+#: ../grid_lsload.php:622 ../setup.php:1887 ../setup.php:1927 ../setup.php:3517
+msgid "I/O Rate"
+msgstr ""
+
+#: ../grid_lsload.php:625
+msgid "Cur Logins"
+msgstr ""
+
+#: ../grid_lsload.php:628 ../setup.php:3527
+msgid "Idle Time"
+msgstr ""
+
+#: ../grid_lsload.php:631
+msgid "Temp Avail"
+msgstr ""
+
+#: ../grid_lsload.php:634
+msgid "Swap Avail"
+msgstr ""
+
+#: ../grid_lsload.php:637
+msgid "Mem Avail"
+msgstr ""
+
+#: ../grid_lsload.php:772
+msgid "No Host Load Records Found"
+msgstr ""
+
+#: ../grid_projects.php:36
+msgid "IBM Spectrum LSF RTM - Batch Project Details"
+msgstr ""
+
+#: ../grid_projects.php:141 ../grid_projects.php:311
+#: ../grid_license_projects.php:274 ../setup.php:2137
+msgid "Projects"
+msgstr ""
+
+#: ../grid_projects.php:174
+msgid "Include Unused Projects"
+msgstr ""
+
+#: ../grid_projects.php:277
+msgid "Batch Projects Filters"
+msgstr ""
+
+#: ../grid_projects.php:371
+msgid "View Project Graphs"
+msgstr ""
+
+#: ../grid_projects.php:437
+msgid "No Project Records Found"
+msgstr ""
+
+#: ../grid_projects.php:452 ../setup.php:3864
+msgid "Project Name"
+msgstr ""
+
+#: ../grid_queue_distrib.php:36
+msgid "IBM Spectrum LSF RTM - Host Queue Distribution"
+msgstr ""
+
+#: ../grid_queue_distrib.php:443
+msgid "HG: Roll-Up"
+msgstr ""
+
+#: ../grid_queue_distrib.php:489
+msgid "Export"
+msgstr ""
+
+#: ../grid_queue_distrib.php:489
+msgid "Export Records"
+msgstr ""
+
+#: ../grid_queue_distrib.php:492
+msgid "Rebuild"
+msgstr ""
+
+#: ../grid_queue_distrib.php:492
+msgid "Rebuild Distribution Table"
+msgstr ""
+
+#: ../grid_queue_distrib.php:581
+msgid "UType"
+msgstr ""
+
+#: ../grid_queue_distrib.php:586
+msgid "Shared"
+msgstr ""
+
+#: ../grid_queue_distrib.php:587
+msgid "Dedicated"
+msgstr ""
+
+#: ../grid_queue_distrib.php:588
+msgid "Used"
+msgstr ""
+
+#: ../grid_queue_distrib.php:589
+msgid "Unused"
+msgstr ""
+
+#: ../grid_queue_distrib.php:738
+msgid "Queue Host Distribution Matrix"
+msgstr ""
+
+#: ../grid_queue_distrib.php:793 ../setup.php:1817 ../setup.php:3237
+#: ../grid_bqueues.php:692 ../grid_bqueues.php:1998
+msgid "Queues"
+msgstr ""
+
+#: ../grid_queue_distrib.php:804 ../grid_queue_distrib.php:901
+msgid "Use Type"
+msgstr ""
+
+#: ../grid_queue_distrib.php:806 ../grid_queue_distrib.php:906
+msgid "Running"
+msgstr ""
+
+#: ../grid_queue_distrib.php:894
+msgid "No Host Groups Found for Queue Distribution"
+msgstr ""
+
+#: ../grid_queue_distrib.php:905
+msgid "Memory"
+msgstr ""
+
+#: ../grid_queue_distrib.php:1033
+msgid "Totals"
+msgstr ""
+
+#: ../grid_queue_distrib.php:1043
+msgid "No Hosts Found for Queue Distribution"
+msgstr ""
+
+#: ../grid_queue_distrib.php:1050
+#, php-format
+msgid "Table Last Rebuilt : %s"
+msgstr ""
+
+#: ../grid_queue_distrib.php:1051
+msgid "NOTE:"
+msgstr ""
+
+#: ../grid_queue_distrib.php:1051
+msgid ""
+"To view a summary report of used and total slot counts by Host Group, select "
+"'HG: Roll-Up' from the Group dropdown.  You may also search for groups of "
+"queues by entering values separated by a space."
+msgstr ""
+
+#: ../grid_params.php:33
+msgid "IBM Spectrum LSF RTM - Batch System Parameters"
+msgstr ""
+
+#: ../grid_params.php:169
+msgid "Batch System Parameter Fitlers"
+msgstr ""
+
+#: ../grid_params.php:231 ../setup.php:3553
+msgid "Description"
+msgstr ""
+
+#: ../grid_params.php:232
+msgid "Value"
+msgstr ""
+
+#: ../grid_params.php:236
+msgid "Settings"
+msgstr ""
+
+#: ../grid_params.php:255
+msgid "No Batch System Parameters Found"
+msgstr ""
+
+#: ../grid_license_projects.php:36
+msgid "IBM Spectrum LSF RTM - Batch License Project Details"
+msgstr ""
+
+#: ../grid_license_projects.php:156
+msgid "Include Unused License Projects"
+msgstr ""
+
+#: ../grid_license_projects.php:245
+msgid "Batch License Projects Filters"
+msgstr ""
+
+#: ../grid_license_projects.php:334
+msgid "View License Project Graphs"
+msgstr ""
+
+#: ../grid_license_projects.php:366
+msgid "No License Project Records Found"
+msgstr ""
+
+#: ../grid_license_projects.php:380 ../setup.php:3869
+msgid "License Project"
+msgstr ""
+
+#: ../grid_elim_functions.php:298
+msgid "Graph Item"
+msgstr ""
+
+#: ../grid_elim_functions.php:298
+msgid "ELIM Source"
+msgstr ""
+
+#: ../grid_elim_functions.php:298
+msgid "Graph Item Type"
+msgstr ""
+
+#: ../grid_elim_functions.php:298
+msgid "CF Type"
+msgstr ""
+
+#: ../grid_elim_functions.php:298
+msgid "Item Color"
+msgstr ""
+
+#: ../grid_elim_functions.php:341
+msgid "No Resource defined"
+msgstr ""
+
+#: ../grid_elim_functions.php:379
+msgid "No Items"
+msgstr ""
+
+#: ../grid_lsgload.php:33
+msgid "IBM Spectrum LSF RTM - Host Group Load Statistics"
+msgstr ""
+
+#: ../grid_lsgload.php:380
+msgid "AvgRq 15sec"
+msgstr ""
+
+#: ../grid_lsgload.php:381
+msgid "AvgRq 1min"
+msgstr ""
+
+#: ../grid_lsgload.php:382
+msgid "AvgRq 15m"
+msgstr ""
+
+#: ../grid_lsgload.php:383
+msgid "Avg CPU%"
+msgstr ""
+
+#: ../grid_lsgload.php:384
+msgid "Avg Page Rate"
+msgstr ""
+
+#: ../grid_lsgload.php:385
+msgid "Avg I/O Rate"
+msgstr ""
+
+#: ../grid_lsgload.php:386
+msgid "Total Logins"
+msgstr ""
+
+#: ../grid_lsgload.php:387
+msgid "Avg Idle Time"
+msgstr ""
+
+#: ../grid_lsgload.php:388
+msgid "Avg Temp Avail"
+msgstr ""
+
+#: ../grid_lsgload.php:389
+msgid "Avg Swap Avail"
+msgstr ""
+
+#: ../grid_lsgload.php:390
+msgid "Avg Mem Avail"
+msgstr ""
+
+#: ../grid_lsgload.php:482
+msgid "No Group Load Records Found"
+msgstr ""
+
+#: ../grid_clusterdb.php:35
+msgid "IBM Spectrum LSF RTM - Cluster Management"
+msgstr ""
+
+#: ../grid_clusterdb.php:654
+msgid "Cluster Filter"
+msgstr ""
+
+#: ../grid_pollers.php:136
+msgid "If you click 'Continue', the following Grid Poller(s) will be deleted"
+msgstr ""
+
+#: ../grid_pollers.php:141
+msgid "Delete Poller(s)"
+msgstr ""
+
+#: ../grid_pollers.php:144 ../grid_clusters.php:442 ../grid_elim_graphs.php:227
+#: ../grid_elim_graphs.php:236 ../grid_elim_graphs.php:244
+msgid "Cancel"
+msgstr ""
+
+#: ../grid_pollers.php:146
+msgid "You must select at least one Grid Poller."
+msgstr ""
+
+#: ../grid_pollers.php:241
+#, php-format
+msgid "RTM Poller [edit: %s]"
+msgstr ""
+
+#: ../grid_pollers.php:259
+msgid "RTM Poller [new]"
+msgstr ""
+
+#: ../grid_pollers.php:316 ../setup.php:4737
+msgid "RTM Pollers"
+msgstr ""
+
+#: ../grid_pollers.php:322 ../grid_elim_graphs.php:816
+msgid "ID"
+msgstr ""
+
+#: ../grid_pollers.php:324 ../setup.php:1206
+msgid "LSF Version"
+msgstr ""
+
+#: ../grid_pollers.php:325
+msgid "Physical Location"
+msgstr ""
+
+#: ../grid_pollers.php:326
+msgid "Last Finish"
+msgstr ""
+
+#: ../grid_pollers.php:327 ../setup.php:1228
+msgid "Support Information"
+msgstr ""
+
+#: ../grid_pollers.php:387
+msgid "No RTM Pollers Defined"
+msgstr ""
+
+#: ../setup.php:109 ../setup.php:5233
+msgid "General LSF Data"
+msgstr ""
+
+#: ../setup.php:110 ../setup.php:5234
+msgid "LSF Admin Data"
+msgstr ""
+
+#: ../setup.php:111 ../setup.php:5235
+msgid "LSF Host Group Data"
+msgstr ""
+
+#: ../setup.php:112 ../setup.php:5236
+msgid "LSF Advanced Options"
+msgstr ""
+
+#: ../setup.php:113 ../setup.php:5237
+msgid "LSF Job Array Data"
+msgstr ""
+
+#: ../setup.php:114 ../setup.php:5238
+msgid "LSF User Group Data"
+msgstr ""
+
+#: ../setup.php:115 ../setup.php:5239
+msgid "LSF Project Data"
+msgstr ""
+
+#: ../setup.php:116 ../setup.php:5240
+msgid "LSF License Project Data"
+msgstr ""
+
+#: ../setup.php:117 ../setup.php:5241
+msgid "LSF Application Data"
+msgstr ""
+
+#: ../setup.php:118 ../setup.php:5242
+msgid "LSF Job Group Data"
+msgstr ""
+
+#: ../setup.php:119 ../setup.php:5243
+msgid "LSF Queue Distribution"
+msgstr ""
+
+#: ../setup.php:120 ../setup.php:5244
+msgid "LSF Extended History"
+msgstr ""
+
+#: ../setup.php:121 ../setup.php:5245
+msgid "LSF Host Alert Stop/Resume"
+msgstr ""
+
+#: ../setup.php:122 ../setup.php:5246
+msgid "LSF Cluster Control"
+msgstr ""
+
+#: ../setup.php:255
+msgid "Press 'Continue' to associate the following Devices with the Cluster."
+msgstr ""
+
+#: ../setup.php:270
+msgid "Update this Field"
+msgstr ""
+
+#: ../setup.php:285
+msgid "Press 'Continue' to Monitor these Devices on the Cluster Host Dashboard"
+msgstr ""
+
+#: ../setup.php:292
+msgid ""
+"Press 'Continue' to turn off Monitoring of these Hosts on the Cluster Host "
+"Dashboard"
+msgstr ""
+
+#: ../setup.php:300
+msgid "Associate with Cluster"
+msgstr ""
+
+#: ../setup.php:301
+msgid "Monitor Hosts"
+msgstr ""
+
+#: ../setup.php:302
+msgid "Stop Monitoring Hosts"
+msgstr ""
+
+#: ../setup.php:405
+msgid "LSF settings control how LSF Clusters are displayed for this user."
+msgstr ""
+
+#: ../setup.php:411 ../setup.php:5420
+msgid "RTM Settings"
+msgstr ""
+
+#: ../setup.php:676
+msgid "Host LSF Association"
+msgstr ""
+
+#: ../setup.php:677
+msgid "The Cluster that this host belongs to."
+msgstr ""
+
+#: ../setup.php:687
+msgid "Monitor Host"
+msgstr ""
+
+#: ../setup.php:688
+msgid "Check this box to monitor this host in the LSF Summary."
+msgstr ""
+
+#: ../setup.php:705
+msgid "Allow this User to Keep Custom RTM Settings"
+msgstr ""
+
+#: ../setup.php:753
+msgid "General Cluster Settings"
+msgstr ""
+
+#: ../setup.php:758
+msgid "Enter a name for this Cluster."
+msgstr ""
+
+#: ../setup.php:764
+msgid "LSF Master LIM Hostname"
+msgstr ""
+
+#: ../setup.php:765
+msgid ""
+"To enable LSF Fail over monitoring, enter the list of LSF Master Hostname(s) "
+"separated by either a colon or a space."
+msgstr ""
+
+#: ../setup.php:771
+msgid "LSF Master IP Address"
+msgstr ""
+
+#: ../setup.php:772
+msgid ""
+"To enable Fail over capability, please enter the list of Lsf Master IP "
+"Address(es) separated by either a colon or a space.<br><font "
+"color='red'>Note: Omit this field if you do not wish to allow RTM Host to "
+"edit the /etc/hosts file</font>"
+msgstr ""
+
+#: ../setup.php:779
+msgid "LSF Master LIM Port"
+msgstr ""
+
+#: ../setup.php:780
+msgid "Specify the LIM port on the master. LSF 7 or above default = 7869."
+msgstr ""
+
+#: ../setup.php:788
+msgid "LSF Poller"
+msgstr ""
+
+#: ../setup.php:789
+msgid "The LSF Poller to poll this service."
+msgstr ""
+
+#: ../setup.php:795
+msgid "EGO Enabled"
+msgstr ""
+
+#: ../setup.php:796
+msgid "Specify whether EGO is enabled if you are using LSF 7 and above"
+msgstr ""
+
+#: ../setup.php:799 ../setup.php:810 ../setup.php:1442 ../setup.php:1455
+#: ../setup.php:1468 ../setup.php:1642 ../setup.php:2209
+msgid "Yes"
+msgstr ""
+
+#: ../setup.php:800 ../setup.php:811 ../setup.php:1443 ../setup.php:1456
+#: ../setup.php:1469 ../setup.php:1643 ../setup.php:2210
+msgid "No"
+msgstr ""
+
+#: ../setup.php:806
+msgid "Strict Checking"
+msgstr ""
+
+#: ../setup.php:807
+msgid ""
+"Specify whether strict checking of communications between LSF daemons is "
+"enabled if you are using LSF 7 and above"
+msgstr ""
+
+#: ../setup.php:818
+msgid "Cluster Timezone"
+msgstr ""
+
+#: ../setup.php:819
+msgid "The timezone of this monitored cluster."
+msgstr ""
+
+#: ../setup.php:820 ../setup.php:1441 ../setup.php:1453 ../setup.php:1466
+#: ../grid_elim_graphs.php:457 ../grid_elim_graphs.php:757
+msgid "Default"
+msgstr ""
+
+#: ../setup.php:825
+msgid "LSF conf directory(Advanced)"
+msgstr ""
+
+#: ../setup.php:826
+msgid ""
+"Allow modification of the LSF_ENVDIR path.<br>Do not modify if you are "
+"unsure!"
+msgstr ""
+
+#: ../setup.php:833
+msgid "User Authentication settings (Required for Cluster Operation)"
+msgstr ""
+
+#: ../setup.php:838
+msgid "Primary LSF Administrator Username"
+msgstr ""
+
+#: ../setup.php:839
+msgid ""
+"Specify the username of the Primary LSF Administrator for the LSF machine."
+msgstr ""
+
+#: ../setup.php:846
+msgid "Primary LSF Administrator Password"
+msgstr ""
+
+#: ../setup.php:846
+msgid "Private Key Path (SSH)"
+msgstr ""
+
+#: ../setup.php:847
+msgid ""
+"Specify the password of the Primary LSF Administrator for the LSF machine. "
+"Retype the password in the second field to confirm."
+msgstr ""
+
+#: ../setup.php:847
+msgid ""
+"Specify the Path which contains the private key for SSH connection. Leave "
+"blank for RTM to ask for SSH password where applicable."
+msgstr ""
+
+#: ../setup.php:864
+msgid "Remote Connection Type"
+msgstr ""
+
+#: ../setup.php:865
+msgid ""
+"Remote connection type for LSF Control / Configuration. For RSH, only "
+"username is required. Modify rhosts file in LSF master to include RTM host "
+"IP and root username.<br>For SSH, username and password/private key are "
+"required.<br>For WinRS, both RTM and LSF Master host need to have WinRS set "
+"up correctly.<br>Local does not use remote protocol, commands are executed "
+"using local shell."
+msgstr ""
+
+#: ../setup.php:873
+msgid "Add Host Setting"
+msgstr ""
+
+#: ../setup.php:877
+msgid "Add Host Frequency"
+msgstr ""
+
+#: ../setup.php:878
+msgid "Choose how often to add host to the device list."
+msgstr ""
+
+#: ../setup.php:886
+msgid "Device Template"
+msgstr ""
+
+#: ../setup.php:887
+msgid ""
+"Choose what type of Device, Device Template this is. The Device Template "
+"will govern what kinds of data should be gathered from this type of Device."
+msgstr ""
+
+#: ../setup.php:893
+msgid "Add Graph Frequency"
+msgstr ""
+
+#: ../setup.php:894
+msgid "Choose how often to check for new graphs to be added to the Device."
+msgstr ""
+
+#: ../setup.php:903 ../setup.php:2200
+msgid "Queue/Host/Load Collection Settings"
+msgstr ""
+
+#: ../setup.php:907
+msgid "Collection Frequency"
+msgstr ""
+
+#: ../setup.php:908
+msgid ""
+"Choose how often collect host and queue information from the LSF cluster."
+msgstr ""
+
+#: ../setup.php:915 ../setup.php:943
+msgid "Max Allowed Runtime"
+msgstr ""
+
+#: ../setup.php:916
+msgid ""
+"The maximum time, in seconds, that the task of refreshing Queue/Host/Load "
+"information should be allowed to run."
+msgstr ""
+
+#: ../setup.php:923 ../setup.php:2250
+msgid "Job Collection Settings"
+msgstr ""
+
+#: ../setup.php:927
+msgid "Minor Collection Frequency"
+msgstr ""
+
+#: ../setup.php:928
+msgid ""
+"Choose how often job records for All jobs in the schedulers memory be "
+"updated."
+msgstr ""
+
+#: ../setup.php:935
+msgid "Major Collection Frequency"
+msgstr ""
+
+#: ../setup.php:936
+msgid ""
+"Choose how often reference information for Running job records should be "
+"updated.  This scan will also update rusage, and job filter pull downs."
+msgstr ""
+
+#: ../setup.php:944
+msgid ""
+"The maximum time, in seconds, that the task of refreshing Job information "
+"should be allowed to run."
+msgstr ""
+
+#: ../setup.php:951
+msgid "LSF PerfMon Settings"
+msgstr ""
+
+#: ../setup.php:955
+msgid "Enable LSF Perfmon Collection"
+msgstr ""
+
+#: ../setup.php:956
+msgid ""
+"If this feature is enabled, the poller will periodically check for "
+"performance data and optionally submit an LSF job to the cluster. The time "
+"window is defined as the time range between Minor Collection Frequency and "
+"Minor Collection Frequency + Badmin Perfmon Interval. The poller runs on "
+"each Minor Collection cycle."
+msgstr ""
+
+#: ../setup.php:962
+msgid "Badmin Perfmon Interval"
+msgstr ""
+
+#: ../setup.php:963
+msgid "Set the badmin perfmon interval to this setting automatically."
+msgstr ""
+
+#: ../setup.php:968
+msgid "Don't Change"
+msgstr ""
+
+#: ../setup.php:969
+#, php-format
+msgid "%d Minute"
+msgstr ""
+
+#: ../setup.php:978 ../setup.php:2715
+msgid "Idle Job Detection"
+msgstr ""
+
+#: ../setup.php:982
+msgid "Enable Idle Job Detection"
+msgstr ""
+
+#: ../setup.php:983
+msgid "If you want to search for Idle jobs, please check this checkbox."
+msgstr ""
+
+#: ../setup.php:988
+msgid "E-Mail Notification Type"
+msgstr ""
+
+#: ../setup.php:989
+msgid "Choose the notification type to use relative to idled jobs."
+msgstr ""
+
+#: ../setup.php:995
+msgid "Notify User"
+msgstr ""
+
+#: ../setup.php:996
+msgid "Notify User and Admin"
+msgstr ""
+
+#: ../setup.php:997
+msgid "Notify Admin"
+msgstr ""
+
+#: ../setup.php:1001
+msgid "Minimum Runtime"
+msgstr ""
+
+#: ../setup.php:1002
+msgid ""
+"Jobs must run longer than this period of time to be eligible for detection"
+msgstr ""
+
+#: ../setup.php:1007 ../setup.php:1024 ../setup.php:1976 ../setup.php:2851
+#, php-format
+msgid "%d Hour"
+msgstr ""
+
+#: ../setup.php:1008 ../setup.php:1009 ../setup.php:1010 ../setup.php:1011
+#: ../setup.php:1025 ../setup.php:1026 ../setup.php:1027 ../setup.php:1028
+#: ../setup.php:1977 ../setup.php:1978 ../setup.php:1979 ../setup.php:2852
+#: ../setup.php:2853
+#, php-format
+msgid "%d Hours"
+msgstr ""
+
+#: ../setup.php:1012 ../setup.php:1014 ../setup.php:1029 ../setup.php:1031
+#: ../setup.php:1980 ../setup.php:2235 ../setup.php:6565
+#, php-format
+msgid "%d Day"
+msgstr ""
+
+#: ../setup.php:1013 ../setup.php:1030 ../setup.php:1981 ../setup.php:6566
+#: ../setup.php:6567
+#, php-format
+msgid "%d Days"
+msgstr ""
+
+#: ../setup.php:1018
+msgid "Floating Window"
+msgstr ""
+
+#: ../setup.php:1019
+msgid ""
+"The window if time that will be evaluated to determine if a job is idle.  "
+"For example, in the case of a one hour window, the difference in cpu time "
+"from the beginning of the last hour till the present time will be the window."
+msgstr ""
+
+#: ../setup.php:1035
+msgid "CPU Time Threshold"
+msgstr ""
+
+#: ../setup.php:1036
+msgid ""
+"If the job has accumulated less than this amount of CPU time during the "
+"Floating Window.  It will be marked Idle."
+msgstr ""
+
+#: ../setup.php:1044
+msgid "Include Job Types"
+msgstr ""
+
+#: ../setup.php:1045
+msgid ""
+"The types of jobs to include in the assessment. If you select 'All Matching "
+"Regex' and leave the Regex value empty, all Idle jobs will be included."
+msgstr ""
+
+#: ../setup.php:1050
+msgid "All Matching Regex"
+msgstr ""
+
+#: ../setup.php:1051
+msgid "Interactive and Regex"
+msgstr ""
+
+#: ../setup.php:1052
+msgid "Exclusive and Regex"
+msgstr ""
+
+#: ../setup.php:1053
+msgid "Exclusive/Interactive and Regex"
+msgstr ""
+
+#: ../setup.php:1056
+msgid "Job Commands"
+msgstr ""
+
+#: ../setup.php:1057
+msgid ""
+"A Regex list of commands to flag in addition to the job types.  A example "
+"would be '(xterm|emacs)' to also flag X-Terminals E-Macs Sessions."
+msgstr ""
+
+#: ../setup.php:1068
+msgid "Idles Jobs Exclude Queues"
+msgstr ""
+
+#: ../setup.php:1069
+msgid "A list of queues delimited by '|' to exclude from idle jobs detection."
+msgstr ""
+
+#: ../setup.php:1080
+msgid "Device/Tree Mapping"
+msgstr ""
+
+#: ../setup.php:1085
+msgid "Cacti Host Mapping"
+msgstr ""
+
+#: ../setup.php:1086
+msgid ""
+"Each Cluster must also have a corresponding Cacti host in order to graph "
+"metrics for the Overall Cluster, Queues, Host Groups, User Groups, "
+"Resources, Host Models and Types, etc."
+msgstr ""
+
+#: ../setup.php:1094
+msgid "Cacti Tree"
+msgstr ""
+
+#: ../setup.php:1095
+msgid ""
+"Each Cluster can be associated with a Cacti Tree.  If this is completed, you "
+"will receive a graph link on the Cluster Dashboard link that will direct you "
+"to the requested tree."
+msgstr ""
+
+#: ../setup.php:1102
+msgid "Notification"
+msgstr ""
+
+#: ../setup.php:1106
+msgid "LSF Cluster Email Domain"
+msgstr ""
+
+#: ../setup.php:1107
+msgid ""
+"LSF Cluster mail domain to use for event reporting.  If not set, no event "
+"emails will be sent to cluster users."
+msgstr ""
+
+#: ../setup.php:1113
+msgid "Administrator's Email"
+msgstr ""
+
+#: ../setup.php:1114
+msgid ""
+"Comma separated list of administrator email address(es) for event reporting"
+msgstr ""
+
+#: ../setup.php:1122 ../setup.php:1126
+msgid "Job Efficiency Exclude Queues"
+msgstr ""
+
+#: ../setup.php:1127
+msgid ""
+"A list of queues delimited by '|' to exclude from overall cluster job "
+"efficiency calculations.  This can be helpful in cases where you don't want "
+"account for interactive queue efficiency in your overall efficiency numbers."
+msgstr ""
+
+#: ../setup.php:1134 ../setup.php:1138
+msgid "Fairshare Tree Host Slot Selection Criteria"
+msgstr ""
+
+#: ../setup.php:1139
+msgid ""
+"Specify host resources to determine which hosts are included when updating "
+"share slots in queue fairshare tree. Here is an example to show supported "
+"syntax: res_num > 4000, res_str = 'lic1', res_bool1 = 1, res_bool2 = 0, "
+"res_bool3, (res_bool4|res_bool5).The name value pairs are comma separated "
+"combined.<br>1. As shown above in res_num and res_str, Numeric/String "
+"resource variables defined in table grid_hosts_resources support:'variable "
+"[ <= | >= | < | > | = ] value', string value is enclosed in quotes<br>2. As "
+"shown above in res_bool1 to res_bool5, Boolean resource variables defined in "
+"table grid_hostresources support:'variable or variable = 0 or variable = 1 "
+"or variableA|variableB|variableC|...'<br>In this example, the hosts "
+"containing res_bool2 resource are excluded, and the hosts containing "
+"resource res_bool1 or res_bool3 or any of res_bool4, res_bool5 are included."
+msgstr ""
+
+#: ../setup.php:1146
+msgid "Cluster Connection Timeout Settings"
+msgstr ""
+
+#: ../setup.php:1150
+msgid "Base Timeout"
+msgstr ""
+
+#: ../setup.php:1151
+msgid "Enter the base system connection/receive timeout in seconds."
+msgstr ""
+
+#: ../setup.php:1158
+msgid "Batch Timeout"
+msgstr ""
+
+#: ../setup.php:1159
+msgid "Enter the batch system connection/receive timeout in seconds."
+msgstr ""
+
+#: ../setup.php:1166
+msgid "Batch Job Info Timeout"
+msgstr ""
+
+#: ../setup.php:1167
+msgid "Enter the batch system timeout in minutes."
+msgstr ""
+
+#: ../setup.php:1174
+msgid "Batch Job Info Retries"
+msgstr ""
+
+#: ../setup.php:1175
+msgid ""
+"How many times do you want the batch system to be repolled for job "
+"information?"
+msgstr ""
+
+#: ../setup.php:1195
+msgid "General Information"
+msgstr ""
+
+#: ../setup.php:1199
+msgid "LSF Poller Name"
+msgstr ""
+
+#: ../setup.php:1200
+msgid "Enter a name for this LSF Poller."
+msgstr ""
+
+#: ../setup.php:1207
+msgid "Specify the LSF version for this grid."
+msgstr ""
+
+#: ../setup.php:1210
+msgid "LSF 8"
+msgstr ""
+
+#: ../setup.php:1211
+msgid "LSF 9.1"
+msgstr ""
+
+#: ../setup.php:1212
+msgid "LSF 10.1"
+msgstr ""
+
+#: ../setup.php:1217
+msgid "Important Paths"
+msgstr ""
+
+#: ../setup.php:1221
+msgid "Local RTM Poller Bin Directory"
+msgstr ""
+
+#: ../setup.php:1222
+msgid ""
+"Please enter the RTM poller binary directory.  This binary directory must be "
+"located both on the web server and any remote poller hosts."
+msgstr ""
+
+#: ../setup.php:1232
+msgid "Poller Location"
+msgstr ""
+
+#: ../setup.php:1233
+msgid "Please enter the physical location for the poller."
+msgstr ""
+
+#: ../setup.php:1239
+msgid "Support Contacts"
+msgstr ""
+
+#: ../setup.php:1240
+msgid "Please enter relevant contact information for the poller."
+msgstr ""
+
+#: ../setup.php:1258
+msgid "General Signal Information"
+msgstr ""
+
+#: ../setup.php:1262
+msgid "Host Type Match"
+msgstr ""
+
+#: ../setup.php:1263
+msgid "Enter a regular expression match string for all matching host types."
+msgstr ""
+
+#: ../setup.php:1269
+msgid "Signal ID"
+msgstr ""
+
+#: ../setup.php:1270
+msgid ""
+"Enter the integer value for the signal that can be experienced by this host."
+msgstr ""
+
+#: ../setup.php:1276
+msgid "Signal Macro Name"
+msgstr ""
+
+#: ../setup.php:1277
+msgid ""
+"Enter the Macro Name or abbreviation for this signal.  For example 'SIGINT', "
+"'SIGTERM', etc."
+msgstr ""
+
+#: ../setup.php:1282
+msgid "Default LSF Cluster"
+msgstr ""
+
+#: ../setup.php:1283
+msgid "The default action when the signal is experienced."
+msgstr ""
+
+#: ../setup.php:1291
+msgid "Signal Description"
+msgstr ""
+
+#: ../setup.php:1292
+msgid ""
+"Describe the signal so that users can understand the return what it means."
+msgstr ""
+
+#: ../setup.php:1366
+msgid "New LSF Configuration"
+msgstr ""
+
+#: ../setup.php:1370
+msgid "Configuration Name"
+msgstr ""
+
+#: ../setup.php:1371
+msgid "The name that is assigned to the new configuration."
+msgstr ""
+
+#: ../setup.php:1381
+msgid ""
+"Each template can be associated to a cluster only. Choose the correct "
+"cluster to link this configuration to the cluster"
+msgstr ""
+
+#: ../setup.php:1389
+msgid "Load LSF Configuration"
+msgstr ""
+
+#: ../setup.php:1395
+msgid "Choose the cluster to load the configuration to RTM"
+msgstr ""
+
+#: ../setup.php:1403
+msgid "LSF Resource Configuration"
+msgstr ""
+
+#: ../setup.php:1407
+msgid "Resource Name *"
+msgstr ""
+
+#: ../setup.php:1408
+msgid ""
+"An arbitrary character string.<br>A resource name cannot begin with a number."
+"<br>Resource names can be up to 39 characters in length."
+msgstr ""
+
+#: ../setup.php:1416
+msgid "Type *"
+msgstr ""
+
+#: ../setup.php:1417
+msgid "3 types: Boolean, Numeric, String"
+msgstr ""
+
+#: ../setup.php:1428
+msgid "Interval"
+msgstr ""
+
+#: ../setup.php:1429
+msgid ""
+"Number of seconds at which the dynamic resource is sampled by ELIM. "
+"(Optional)"
+msgstr ""
+
+#: ../setup.php:1437
+msgid "Increasing"
+msgstr ""
+
+#: ../setup.php:1438
+msgid ""
+"Boolean for numeric resource. Y = Larger number means greater load, N = "
+"Larger number means lower load."
+msgstr ""
+
+#: ../setup.php:1449
+msgid "Consumable"
+msgstr ""
+
+#: ../setup.php:1450
+msgid ""
+"Specify resources as consumable to explicitly control if a resource is "
+"consumable. Static and dynamic numeric resources can be specified as "
+"consumable."
+msgstr ""
+
+#: ../setup.php:1462
+msgid "Release"
+msgstr ""
+
+#: ../setup.php:1463
+msgid ""
+"Boolean, for numeric shared resource. Y = release the resource when a job "
+"using it is suspended."
+msgstr ""
+
+#: ../setup.php:1475
+msgid "Descriptions"
+msgstr ""
+
+#: ../setup.php:1476
+msgid "Brief description of the resource."
+msgstr ""
+
+#: ../setup.php:1487
+msgid "LSF Cluster Configuration"
+msgstr ""
+
+#: ../setup.php:1491
+msgid "Hostname *"
+msgstr ""
+
+#: ../setup.php:1492 ../setup.php:1713
+msgid "Official name of the host as returned by hostname."
+msgstr ""
+
+#: ../setup.php:1501
+msgid ""
+"The static Boolean resources available on this host.<br>You may list any "
+"number of resources, separated by spaces."
+msgstr ""
+
+#: ../setup.php:1511
+msgid "Server Type"
+msgstr ""
+
+#: ../setup.php:1512
+msgid ""
+"Specify \"Server\" if the host can receive jobs from other hosts; specify "
+"client otherwise."
+msgstr ""
+
+#: ../setup.php:1514
+msgid "Client"
+msgstr ""
+
+#: ../setup.php:1515
+msgid "Server"
+msgstr ""
+
+#: ../setup.php:1523
+msgid ""
+"The strings used for host types are determined by the system administrator."
+"<br>The host type is used to identify binary-compatible hosts."
+msgstr ""
+
+#: ../setup.php:1531
+msgid ""
+"This determines the CPU speed scaling factor applied in load and placement "
+"calculations."
+msgstr ""
+
+#: ../setup.php:1537 ../setup.php:1693 ../setup.php:1729
+msgid "Advanced Attributes"
+msgstr ""
+
+#: ../setup.php:1538 ../setup.php:1694 ../setup.php:1730
+msgid "Other LSF attributes that are not built in IBM Spectrum LSF RTM."
+msgstr ""
+
+#: ../setup.php:1548
+msgid "LSF Queues Configuration"
+msgstr ""
+
+#: ../setup.php:1552
+msgid "Queue Name *"
+msgstr ""
+
+#: ../setup.php:1553
+msgid "The queue name must be specified; all other parameters are optional."
+msgstr ""
+
+#: ../setup.php:1561
+msgid "QJOB_LIMIT"
+msgstr ""
+
+#: ../setup.php:1562
+msgid "Total number of job slots that this queue can use."
+msgstr ""
+
+#: ../setup.php:1570
+msgid "UJOB_LIMIT"
+msgstr ""
+
+#: ../setup.php:1571
+msgid "Maximum number of job slots that each user can use in this queue."
+msgstr ""
+
+#: ../setup.php:1580
+msgid ""
+"Space separated list of user names or user groups that can submit jobs to "
+"the queue."
+msgstr ""
+
+#: ../setup.php:1588
+msgid "Select the hosts on which jobs from this queue can run."
+msgstr ""
+
+#: ../setup.php:1595
+msgid "Preemption"
+msgstr ""
+
+#: ../setup.php:1596
+msgid ""
+"PREEMPTIVE[[queueX[+pref_level] ...]] specifies that this queue can preempt "
+"jobs running out of queueX. If no queues are listed, all queues can be "
+"preempted. If multiple queues are listed, pref_level specifies which to "
+"preempt first.<br>PREEMPTABLE[[queueY ...]] specifies that jobs started by "
+"this queue can be preempted by jobs from queueY."
+msgstr ""
+
+#: ../setup.php:1604 ../setup.php:3693
+msgid "Dispatch Window"
+msgstr ""
+
+#: ../setup.php:1605
+msgid ""
+"The time window during which jobs are dispatched.<br>Time windows can be "
+"specified as up to 3 fields -- [day:]hour[:minute].Note that day=[0-6]: 0 is "
+"Sunday, 1 is Monday and 6 is Saturday.If only one field exists, it is "
+"assumed to be hour; if two fields exist, it is assumed to be hour[:minute]."
+"<br>Eg. 5:19:00-1:8:30 20:00-8:30<b>"
+msgstr ""
+
+#: ../setup.php:1612 ../setup.php:3688
+msgid "Run Window"
+msgstr ""
+
+#: ../setup.php:1613
+msgid ""
+"The time window during which jobs in the queue are allowed to run and "
+"dispatched."
+msgstr ""
+
+#: ../setup.php:1621 ../setup.php:3568
+msgid "Priority"
+msgstr ""
+
+#: ../setup.php:1622
+msgid ""
+"The queue priority. A higher value indicates a higher LSF dispatching "
+"priority, relative to other queues.<br>[1 (lowest possible priority)]"
+msgstr ""
+
+#: ../setup.php:1630
+msgid "NICE"
+msgstr ""
+
+#: ../setup.php:1631
+msgid ""
+"Adjusts the UNIX scheduling priority at which jobs from this queue execute."
+"<br>The default value of 0 (zero) maintains the default scheduling priority "
+"for UNIX interactive jobs."
+msgstr ""
+
+#: ../setup.php:1638
+msgid "ReRunnable"
+msgstr ""
+
+#: ../setup.php:1639
+msgid ""
+"If yes, enables automatic job rerun (Job is restarted if the host becomes "
+"unavailable)."
+msgstr ""
+
+#: ../setup.php:1649 ../setup.php:3698
+msgid "Resource Requirements"
+msgstr ""
+
+#: ../setup.php:1650
+msgid "Resource Requirement to be applied on jobs submitted to this queue."
+msgstr ""
+
+#: ../setup.php:1658
+msgid "Job Starter"
+msgstr ""
+
+#: ../setup.php:1659
+msgid "Allow specification of job environment or job starter helper program"
+msgstr ""
+
+#: ../setup.php:1667
+msgid "Pre Execute"
+msgstr ""
+
+#: ../setup.php:1668
+msgid ""
+"Command to execute on job host right before the job starts.<br>Max length "
+"4096 chars for Unix and 255 chars for Windows."
+msgstr ""
+
+#: ../setup.php:1676
+msgid "Post Execute"
+msgstr ""
+
+#: ../setup.php:1677
+msgid ""
+"Command to execute on execution host after the job finishes.<br>Max length "
+"4096 chars for Unix and 255 chars for Windows."
+msgstr ""
+
+#: ../setup.php:1685
+msgid "Requeue Exit Values"
+msgstr ""
+
+#: ../setup.php:1686
+msgid ""
+"Enables automatic job requeue and sets the LSB_EXIT_REQUEUE environment "
+"variable. Use spaces to separate multiple exit codes"
+msgstr ""
+
+#: ../setup.php:1708
+msgid "LSF Hosts Configuration"
+msgstr ""
+
+#: ../setup.php:1712
+msgid "Host Name *"
+msgstr ""
+
+#: ../setup.php:1721
+msgid "Max Job Slots"
+msgstr ""
+
+#: ../setup.php:1722
+msgid ""
+"Number of job slots on the host.<br>Use \"!\" to make the number of job "
+"slots equal to the number of Cores on a host."
+msgstr ""
+
+#: ../setup.php:1738 ../setup.php:5282
+msgid "ELIM Template"
+msgstr ""
+
+#: ../setup.php:1771
+msgid "LIM Startup"
+msgstr ""
+
+#: ../setup.php:1772
+msgid "LIM Restart"
+msgstr ""
+
+#: ../setup.php:1773
+msgid "LIM Shutdown"
+msgstr ""
+
+#: ../setup.php:1774
+msgid "RES Startup"
+msgstr ""
+
+#: ../setup.php:1775
+msgid "RES Restart"
+msgstr ""
+
+#: ../setup.php:1776
+msgid "RES Shutdown"
+msgstr ""
+
+#: ../setup.php:1777
+msgid "MBD Startup"
+msgstr ""
+
+#: ../setup.php:1778
+msgid "MBD Restart"
+msgstr ""
+
+#: ../setup.php:1779
+msgid "MBD Shutdown"
+msgstr ""
+
+#: ../setup.php:1780
+msgid "Lsadmin Reconfig"
+msgstr ""
+
+#: ../setup.php:1781
+msgid "Badmin Reconfig"
+msgstr ""
+
+#: ../setup.php:1786 ../setup.php:3230 ../setup.php:3544
+msgid "General"
+msgstr ""
+
+#: ../setup.php:1787 ../setup.php:3231
+msgid "Visual"
+msgstr ""
+
+#: ../setup.php:1788 ../setup.php:1802
+msgid "Poller"
+msgstr ""
+
+#: ../setup.php:1789
+msgid "Maint"
+msgstr ""
+
+#: ../setup.php:1790
+msgid "Archiving"
+msgstr ""
+
+#: ../setup.php:1791
+msgid "Paths"
+msgstr ""
+
+#: ../setup.php:1792
+msgid "THold"
+msgstr ""
+
+#: ../setup.php:1793
+msgid "Aggregation"
+msgstr ""
+
+#: ../setup.php:1794
+msgid "Status/Events"
+msgstr ""
+
+#: ../setup.php:1795 ../setup.php:1805 ../setup.php:2723
+msgid "Idle Jobs"
+msgstr ""
+
+#: ../setup.php:1796
+msgid "Memory Exceptions"
+msgstr ""
+
+#: ../setup.php:1797
+msgid "Runlimit Exceptions"
+msgstr ""
+
+#: ../setup.php:1801 ../setup.php:5407 ../setup.php:5420
+msgid "Configuration"
+msgstr ""
+
+#: ../setup.php:1803
+msgid "Control"
+msgstr ""
+
+#: ../setup.php:1804
+msgid "Automation"
+msgstr ""
+
+#: ../setup.php:1806
+msgid "Advanced"
+msgstr ""
+
+#: ../setup.php:1810
+msgid "LSF Configuration(s)"
+msgstr ""
+
+#: ../setup.php:1811
+msgid "Audit Logs"
+msgstr ""
+
+#: ../setup.php:1815
+msgid "Cluster Hosts"
+msgstr ""
+
+#: ../setup.php:1823
+msgid "Idle/Closed Thresholds"
+msgstr ""
+
+#: ../setup.php:1827 ../setup.php:1947
+msgid "Job Slot Percent"
+msgstr ""
+
+#: ../setup.php:1828 ../setup.php:1948
+msgid ""
+"How full must the host be in terms of slots to qualify for idle "
+"consideration."
+msgstr ""
+
+#: ../setup.php:1836 ../setup.php:1907 ../setup.php:1958
+msgid "CPU Percentage"
+msgstr ""
+
+#: ../setup.php:1837
+msgid ""
+"If the CPU percentage is less that this value along with the above criteria, "
+"the host will be considered idle with jobs."
+msgstr ""
+
+#: ../setup.php:1844
+msgid "Low Resource Thresholds"
+msgstr ""
+
+#: ../setup.php:1848 ../setup.php:1915
+msgid "R1M Load Average"
+msgstr ""
+
+#: ../setup.php:1849
+msgid ""
+"When load average goes above this percentage relative to the number of CPUs "
+"for the host, it will be cosidered low on resources."
+msgstr ""
+
+#: ../setup.php:1863
+msgid "Physical Memory"
+msgstr ""
+
+#: ../setup.php:1864
+msgid ""
+"How low, in percentage, does Physical memory need to be to be considered "
+"urgent."
+msgstr ""
+
+#: ../setup.php:1871
+msgid "Swap Memory"
+msgstr ""
+
+#: ../setup.php:1872
+msgid ""
+"How low, in percentage, does Swap memory need to be to be considered urgent."
+msgstr ""
+
+#: ../setup.php:1879
+msgid "Temp Memory"
+msgstr ""
+
+#: ../setup.php:1880
+msgid ""
+"How low, in percentage, does Temp space (/tmp or /scratch) need to be to be "
+"considered urgent."
+msgstr ""
+
+#: ../setup.php:1888
+msgid ""
+"How high, in KBytes/Second, does the IO rate need to be in order to consider "
+"the host as having low resources."
+msgstr ""
+
+#: ../setup.php:1895 ../setup.php:1935
+msgid "Paging Rate"
+msgstr ""
+
+#: ../setup.php:1896
+msgid ""
+"How high, in Pages/Second, the Paging rate need to be in order to consider "
+"the host as having low resources."
+msgstr ""
+
+#: ../setup.php:1903
+msgid "Busy Thresholds"
+msgstr ""
+
+#: ../setup.php:1908
+msgid "How high must CPU be, in percentage, to be considered busy."
+msgstr ""
+
+#: ../setup.php:1916
+msgid ""
+"When load average goes above this percentage relative to the number of CPUs "
+"for the host, it will be cosidered busy."
+msgstr ""
+
+#: ../setup.php:1928
+msgid ""
+"How high must the hosts I/O Rate be, in KBytes/Second, to be considered busy."
+msgstr ""
+
+#: ../setup.php:1936
+msgid ""
+"How high must the hosts Paging Rate be, in Pages/Second, to be considered "
+"busy."
+msgstr ""
+
+#: ../setup.php:1943
+msgid "Idle w/Job Thresholds"
+msgstr ""
+
+#: ../setup.php:1952
+msgid "75%"
+msgstr ""
+
+#: ../setup.php:1953
+msgid ">= 50%"
+msgstr ""
+
+#: ../setup.php:1954
+msgid ">= 25%"
+msgstr ""
+
+#: ../setup.php:1959
+msgid "What must the maximum CPU percentage be to be considered idle."
+msgstr ""
+
+#: ../setup.php:1966
+msgid "Starved Host Thresholds"
+msgstr ""
+
+#: ../setup.php:1970
+msgid "Time Since Last Job"
+msgstr ""
+
+#: ../setup.php:1971
+msgid ""
+"How long must a host go without running jobs before it is marked starved."
+msgstr ""
+
+#: ../setup.php:1985
+msgid "Down Service Status"
+msgstr ""
+
+#: ../setup.php:1989
+msgid "RES Down Status"
+msgstr ""
+
+#: ../setup.php:1990
+msgid ""
+"LSF uses the RES service for many activities.  However, in some situations a "
+"RES Down condition does not imply an Out of Service condition.  Please "
+"indicated here, how a RES Down Status should be treated."
+msgstr ""
+
+#: ../setup.php:1995
+msgid "In Service"
+msgstr ""
+
+#: ../setup.php:2002 ../setup.php:2184 ../setup.php:3260
+msgid "General Settings"
+msgstr ""
+
+#: ../setup.php:2006
+msgid "Strip Domains"
+msgstr ""
+
+#: ../setup.php:2007
+msgid ""
+"A semi-colon separated list of domains name's to strip from the display.  "
+"The format is '*.mydomain.com; *.theother.domains.net'.  This setting will "
+"remove the list of domains from display within the user interface.  Please "
+"be advised that you still have to specify hosts in Cacti as they are "
+"displayed in LSF.  The hostname filed in Cacti must match the LSF Host as "
+"displayed with commands such as 'lsload'."
+msgstr ""
+
+#: ../setup.php:2014
+msgid "Summary Hostname Substitute"
+msgstr ""
+
+#: ../setup.php:2015
+msgid ""
+"A semi-colon separated list of host substrings that should be replaced with "
+"a blank for representation on the Host Dashboard to conserve screen real "
+"estate."
+msgstr ""
+
+#: ../setup.php:2022
+msgid "Slot Reference Method"
+msgstr ""
+
+#: ../setup.php:2023
+msgid ""
+"Choose how to refer to Job Slots. Select Job Tasks to change the concept to "
+"task instead of slots."
+msgstr ""
+
+#: ../setup.php:2028
+msgid "Job Slots"
+msgstr ""
+
+#: ../setup.php:2029
+msgid "Job CPUs"
+msgstr ""
+
+#: ../setup.php:2030
+msgid "Job Cores"
+msgstr ""
+
+#: ../setup.php:2031
+msgid "Job Tasks"
+msgstr ""
+
+#: ../setup.php:2035
+msgid "Minimum User Screen Refresh Interval"
+msgstr ""
+
+#: ../setup.php:2036
+msgid ""
+"This global setting will set the minimum refresh interval users are allowed "
+"to pick for pages."
+msgstr ""
+
+#: ../setup.php:2042
+msgid "Maximum Job Zoom Time Range"
+msgstr ""
+
+#: ../setup.php:2043
+msgid ""
+"This setting limits the time range in graph view when users query for grid "
+"jobs in range. This is being implemented to help avoid issues with database "
+"response time in larger systems."
+msgstr ""
+
+#: ../setup.php:2049
+msgid "Jobs Table Clean Period"
+msgstr ""
+
+#: ../setup.php:2050
+msgid ""
+"This setting controls how long jobs will be maintained in the main jobs "
+"table for users who do not have access to the archive data.  If using "
+"partitioning, this value must be less that the partitioning frequency!"
+msgstr ""
+
+#: ../setup.php:2056
+msgid "Maximum Export Rows"
+msgstr ""
+
+#: ../setup.php:2057
+msgid ""
+"This defines the maximum rows that may be exported from jobs and other RTM "
+"exportable pages."
+msgstr ""
+
+#: ../setup.php:2061 ../setup.php:2062 ../setup.php:2063 ../setup.php:2064
+#: ../setup.php:2065 ../setup.php:2066
+#, php-format
+msgid "%d Rows"
+msgstr ""
+
+#: ../setup.php:2070
+msgid "Cluster CPU Factor Leveling"
+msgstr ""
+
+#: ../setup.php:2071
+msgid ""
+"When measuring overall CPU Utilization, RTM has the ability to consider each "
+"hosts 'CPU Factor' in that calculation.  By default this is disabled due the "
+"advanced nature of this setting.  Before enabling this, make sure you "
+"understand how CPU Factors work and only after you verify that they are "
+"correct for your Cluster(s)."
+msgstr ""
+
+#: ../setup.php:2076
+msgid "Add Summary Device"
+msgstr ""
+
+#: ../setup.php:2077
+msgid ""
+"When this option is enabled, RTM will automatically add a summary device "
+"using the host template grid summary. All graphs for this summary device "
+"will be added automatically. A graph tree will be created and all graphs "
+"will be appended to this newly created tree node."
+msgstr ""
+
+#: ../setup.php:2082
+msgid "Add OS Users"
+msgstr ""
+
+#: ../setup.php:2083
+msgid ""
+"When creating a cluster, should RTM attempt to create the user accounts for "
+"the Cluster Control user.  This would not be required if your server is "
+"already setup in either NIS, LDAP or some other domain system"
+msgstr ""
+
+#: ../setup.php:2088
+msgid "Enable Ajax filter"
+msgstr ""
+
+#: ../setup.php:2089
+#, php-format
+msgid ""
+"It is disabled by default. RTM keeps the current non-Ajax static select "
+"filter. When it is enabled, RTM applies Ajax dynamic dropdown filter. The "
+"Ajax query starts after the third character is typed in. In particular, it "
+"shows all the records when three '%%' character ('%%%%%%') is inputted."
+msgstr ""
+
+#: ../setup.php:2094
+msgid "Disable Tooltip for Columns, Filters and Tabs"
+msgstr ""
+
+#: ../setup.php:2095
+msgid ""
+"Tooltip is enabled by default. When it is disabled, Tooltip on GUI Columns, "
+"Filters and Tabs will be closed. Tooltips on GUI fields and Startbox are "
+"always enabled"
+msgstr ""
+
+#: ../setup.php:2100
+msgid "RTM Help Location"
+msgstr ""
+
+#: ../setup.php:2101
+msgid ""
+"Specify the location of the help. If you have access to the Internet, "
+"specify Online Knowledge Center. If you do not have access to the Internet, "
+"specify local PDF file."
+msgstr ""
+
+#: ../setup.php:2105
+msgid "Online Knowledge Center"
+msgstr ""
+
+#: ../setup.php:2106
+msgid "Local PDF file"
+msgstr ""
+
+#: ../setup.php:2110
+msgid "Cluster Control Settings"
+msgstr ""
+
+#: ../setup.php:2114
+msgid "Mandatory Cluster Action Control Comments"
+msgstr ""
+
+#: ../setup.php:2115
+msgid ""
+"If you wish to enforce comments inputing when your grid admin take action on "
+"<strong>cluster/host/queue</strong>, check this box and they will have to "
+"imput some comments before control action submitted "
+msgstr ""
+
+#: ../setup.php:2123
+msgid ""
+"Tree Category - When a new cluster is added, display the selected categories "
+"in tree view."
+msgstr ""
+
+#: ../setup.php:2127
+msgid "Queue Stats"
+msgstr ""
+
+#: ../setup.php:2132
+msgid "Hostgroup Stats"
+msgstr ""
+
+#: ../setup.php:2147 ../setup.php:4689 ../setup.php:4695 ../setup.php:5468
+msgid "Shared Resources"
+msgstr ""
+
+#: ../setup.php:2152
+msgid "License Projects"
+msgstr ""
+
+#: ../setup.php:2162
+msgid "Guaranteed SLAs"
+msgstr ""
+
+#: ../setup.php:2167
+msgid "Guaranteed ResPools"
+msgstr ""
+
+#: ../setup.php:2172
+msgid "Benchmarks"
+msgstr ""
+
+#: ../setup.php:2177
+msgid ""
+"NOTE: If there are more number of items (> 999), do not check this box. Tree "
+"view do not support or will take too much time to display graphs."
+msgstr ""
+
+#: ../setup.php:2188
+msgid "Should Daemons be Enabled"
+msgstr ""
+
+#: ../setup.php:2189
+msgid ""
+"If you wish to stop your grid daemons from delivering data to the database "
+"for any reason, uncheck this box and they will stop forwarding information "
+"from the workload manager to the IBM Spectrum LSF RTM Plugin"
+msgstr ""
+
+#: ../setup.php:2194
+msgid "Should Daemons be Enabled (Overrides User Setting"
+msgstr ""
+
+#: ../setup.php:2195
+msgid ""
+"When the system performs database maintenance, it is important that the grid "
+"collection daemons be disabled.  This system setting controls that"
+msgstr ""
+
+#: ../setup.php:2204
+msgid "Host Auto Purge"
+msgstr ""
+
+#: ../setup.php:2205
+msgid ""
+"Should server hosts be automatically purged from the database when they are "
+"removed from the clusters?  <strong><u>NOTE:</strong> For security reasons, "
+"client hosts must always be manually purged.</u>"
+msgstr ""
+
+#: ../setup.php:2214
+msgid "CPU Run Queue Length Load Indices Type"
+msgstr ""
+
+#: ../setup.php:2215
+msgid ""
+"The load indices type for CPU Run Queue Length to be used by grid pollers. "
+"If EFFECTIVE is set, then the CPU run queue length load indices of each host "
+"returned are effective load."
+msgstr ""
+
+#: ../setup.php:2225
+msgid "Cluster Graph Management"
+msgstr ""
+
+#: ../setup.php:2229
+msgid "Queue, Host Group and Application Purge Frequency"
+msgstr ""
+
+#: ../setup.php:2230
+msgid ""
+"How long after a Queue, Host Group or Application is removed from the "
+"system, do you wish to have the corresponding graphs removed?"
+msgstr ""
+
+#: ../setup.php:2234 ../setup.php:2247
+msgid "Never"
+msgstr ""
+
+#: ../setup.php:2237 ../setup.php:6569 ../setup.php:6570
+#, php-format
+msgid "%d Weeks"
+msgstr ""
+
+#: ../setup.php:2238 ../setup.php:2239 ../setup.php:6572
+#, php-format
+msgid "%d Months"
+msgstr ""
+
+#: ../setup.php:2243
+msgid "User, User Group, Job Group, Project, License Project Purge Frequency"
+msgstr ""
+
+#: ../setup.php:2244
+msgid ""
+"How long must any of the following: Users, User Groups, Job Groups, Projects "
+"and License Projects not be updated, before the corresponding graphs will be "
+"removed automatically?  (If you not choose 'Never' and want to keep the data "
+"of users and projects for 'Daily Statistics', Please keep this value the "
+"same as the option of 'Daily Statistics Retention Period' in maint tab)"
+msgstr ""
+
+#: ../setup.php:2254
+msgid "Enable Pending Reason History Reporting"
+msgstr ""
+
+#: ../setup.php:2255
+msgid ""
+"If this option is enabled then the grid poller will collect and store all "
+"pending reasons throughout the life cycle of the job.  Pending reasons "
+"duration analysis will be performed and a graphical visual display will be "
+"available under the pending reason tab in the job's detail page.  Please be "
+"aware that enabling this option will cause a slow down in the overall job "
+"data collection."
+msgstr ""
+
+#: ../setup.php:2260
+msgid "Enable Rusage Collection when the sum of utime/stime is zero"
+msgstr ""
+
+#: ../setup.php:2261
+msgid ""
+"The grid poller will collect and store resource usage for a job when the sum "
+"of user time and system time is zero. If this option is enabled, then RTM "
+"performance is affected by slowing down the job data collection."
+msgstr ""
+
+#: ../setup.php:2266
+msgid "Enable Host Level Rusage Collection"
+msgstr ""
+
+#: ../setup.php:2267
+msgid ""
+"The grid poller will collect and store resource usage for a job when the job "
+"is submitted with 'blaunch' and the cluster configured with "
+"'LSF_HPC_EXTENSIONS = HOST_RUSAGE'. If this option is enabled, then RTM "
+"performance is affected by slowing down the job data collection."
+msgstr ""
+
+#: ../setup.php:2272
+msgid "Enable Dynamic Reserved Memory Collection for PEND Jobs"
+msgstr ""
+
+#: ../setup.php:2273
+msgid ""
+"The grid poller will collect and store dynamic reserved memory for a pending "
+"jobs when the job is submitted the LSF queue configured with "
+"'RESOURCE_RESERVE = MAX_RESERVE_TIME'. If this option is enabled, then RTM "
+"performance is affected by slowing down the job data collection."
+msgstr ""
+
+#: ../setup.php:2278
+msgid "Advocate Settings"
+msgstr ""
+
+#: ../setup.php:2282
+msgid "Advocate Port"
+msgstr ""
+
+#: ../setup.php:2283
+msgid ""
+"Enter the port name that Advocate should use.  Please remember to update the "
+"setting in /etc/init.d/advocate to match this setting."
+msgstr ""
+
+#: ../setup.php:2293
+msgid "Database Archiving Settings"
+msgstr ""
+
+#: ../setup.php:2297
+msgid "Enable Data Archiving"
+msgstr ""
+
+#: ../setup.php:2298
+msgid ""
+"Check this box if you want the maintenance script move legacy job and job "
+"related data to an archive storage facility or database."
+msgstr ""
+
+#: ../setup.php:2303
+msgid "Archive Frequency"
+msgstr ""
+
+#: ../setup.php:2304
+msgid ""
+"How often, in minutes, should the Archiver move Done, Exited and Unknown "
+"jobs from the active database to the Archive database?"
+msgstr ""
+
+#: ../setup.php:2310
+msgid "Database Type"
+msgstr ""
+
+#: ../setup.php:2311
+msgid ""
+"The type of database that will house the archive data.  RTM utilizes ADODB "
+"for connect and transfer data."
+msgstr ""
+
+#: ../setup.php:2317
+msgid "Database Host"
+msgstr ""
+
+#: ../setup.php:2318
+msgid ""
+"Provide the hostname of the host that will be receiving this data. "
+"'localhost' for the same server as your current RTM reposibory."
+msgstr ""
+
+#: ../setup.php:2325
+msgid "Database Name"
+msgstr ""
+
+#: ../setup.php:2326
+msgid "Provide the name of the database that will receive the data."
+msgstr ""
+
+#: ../setup.php:2333
+msgid "Database User"
+msgstr ""
+
+#: ../setup.php:2334
+msgid ""
+"Provide the database account user name for connecting with the database. "
+"<b>WARNING: Must have a different user/password from the Cacti Database!!!</"
+"b>"
+msgstr ""
+
+#: ../setup.php:2341
+msgid "Database Password"
+msgstr ""
+
+#: ../setup.php:2342
+msgid ""
+"Provide the database account user password for connecting with the database."
+msgstr ""
+
+#: ../setup.php:2349
+msgid "Database Port"
+msgstr ""
+
+#: ../setup.php:2350
+msgid "Provide the port to utilize in order to connect to this database."
+msgstr ""
+
+#: ../setup.php:2366
+msgid "System Maintenance Settings"
+msgstr ""
+
+#: ../setup.php:2370
+msgid "Database Maintenance Time"
+msgstr ""
+
+#: ../setup.php:2371
+msgid ""
+"When should old database records be removed from the database.  "
+"<strong><u>NOTE:</strong> During this maintenance process, access to job "
+"records will be impaired.</u>"
+msgstr ""
+
+#: ../setup.php:2378
+msgid "Detail Job Data Retention Period"
+msgstr ""
+
+#: ../setup.php:2379
+msgid ""
+"How long should Job Rusage details and Job interval runtime statistics be "
+"retained in the database? If checked below, RRD files will be created to "
+"store detailed CPU, Memory and PID/PGID usage prior to the details being "
+"deleted. <strong><u>NOTE:</strong> Once Job Interval data has been deleted, "
+"contention rrd's can no longer be re-generated before the deletion date.</u>"
+msgstr ""
+
+#: ../setup.php:2385
+msgid "Summary Job Data Retention Period"
+msgstr ""
+
+#: ../setup.php:2386
+msgid ""
+"How long individual Job records be stored in the system.  This includes Job "
+"Records, and Job Collection Records."
+msgstr ""
+
+#: ../setup.php:2392
+msgid "Daily Statistics Retention Period"
+msgstr ""
+
+#: ../setup.php:2393
+msgid ""
+"How long should LSF Summary statistics be retained in the database.  This "
+"currently only includes Daily Job Statistics accross four dimensions: User, "
+"Queue, Execution Host, and optionally Project and Submission Host."
+msgstr ""
+
+#: ../setup.php:2399
+msgid "Maximum Delete Size"
+msgstr ""
+
+#: ../setup.php:2400
+msgid ""
+"When performing database maintenance.  How many records can be deleted at a "
+"time.  This is effectively a commit size when pruning the database."
+msgstr ""
+
+#: ../setup.php:2406
+msgid "Maximum DB Maintenance Runtime"
+msgstr ""
+
+#: ../setup.php:2407
+msgid ""
+"Since the maintenance script disables daemons, how long should it be assumed "
+"to have run for before generating an error and re-enabling daemons."
+msgstr ""
+
+#: ../setup.php:2413
+msgid "Large System Settings"
+msgstr ""
+
+#: ../setup.php:2417
+msgid "Enable Record Partitioning"
+msgstr ""
+
+#: ../setup.php:2418
+msgid ""
+"For Large Systems, the removal of old jobs records can impact system "
+"performance.  By checking this option, RTM can speed the database "
+"maintenance process through a table partitioning methodology.  <u><b>NOTE:</"
+"b> Please refer to RTM Documentation prior to enabling this setting.</u>"
+msgstr ""
+
+#: ../setup.php:2423
+msgid "Partition Size"
+msgstr ""
+
+#: ../setup.php:2424
+msgid "Approximately what period of time should elapse between partitions."
+msgstr ""
+
+#: ../setup.php:2430
+msgid "Database Backups"
+msgstr ""
+
+#: ../setup.php:2434
+msgid "Backup Cacti Database"
+msgstr ""
+
+#: ../setup.php:2435
+msgid ""
+"Check this box if you want the maintenance script backup your Cacti "
+"database. <u><b>NOTE:</b> This option does not currently backup the "
+"grid_jobs, grid_jobs_rusage and grid_jobs_host_rusage tables due to size "
+"issues.</u>"
+msgstr ""
+
+#: ../setup.php:2440
+msgid "Backup Schedule"
+msgstr ""
+
+#: ../setup.php:2441
+msgid "Do you want to backup your Cacti Database 'Daily' or 'Weekly'?"
+msgstr ""
+
+#: ../setup.php:2445 ../setup.php:2534 ../setup.php:2781
+msgid "Daily"
+msgstr ""
+
+#: ../setup.php:2446 ../setup.php:2535 ../setup.php:2782
+msgid "Weekly"
+msgstr ""
+
+#: ../setup.php:2450
+msgid "Weekly Backup Day"
+msgstr ""
+
+#: ../setup.php:2451
+msgid "If you are backing up Weekly, what day do you want the backup to occur?"
+msgstr ""
+
+#: ../setup.php:2455 ../setup.php:2545
+msgid "Sunday"
+msgstr ""
+
+#: ../setup.php:2456 ../setup.php:2546
+msgid "Monday"
+msgstr ""
+
+#: ../setup.php:2457 ../setup.php:2547
+msgid "Tuesday"
+msgstr ""
+
+#: ../setup.php:2458 ../setup.php:2548
+msgid "Wednesday"
+msgstr ""
+
+#: ../setup.php:2459 ../setup.php:2549
+msgid "Thursday"
+msgstr ""
+
+#: ../setup.php:2460 ../setup.php:2550
+msgid "Friday"
+msgstr ""
+
+#: ../setup.php:2461 ../setup.php:2551
+msgid "Saturday"
+msgstr ""
+
+#: ../setup.php:2465
+msgid "Backup Generations"
+msgstr ""
+
+#: ../setup.php:2466
+msgid "How many copies of the backup file do you want to maintain?"
+msgstr ""
+
+#: ../setup.php:2470
+#, php-format
+msgid "%d Backup"
+msgstr ""
+
+#: ../setup.php:2471 ../setup.php:2472 ../setup.php:2473 ../setup.php:2474
+#: ../setup.php:2475 ../setup.php:2476
+#, php-format
+msgid "%d Backups"
+msgstr ""
+
+#: ../setup.php:2480
+msgid "Database Backup Location"
+msgstr ""
+
+#: ../setup.php:2481
+msgid ""
+"What directory do you want the backups to be saved to?  This directory must "
+"be writable and accessible to the Cacti poller userid."
+msgstr ""
+
+#: ../setup.php:2488
+msgid "Backup Table Partitions"
+msgstr ""
+
+#: ../setup.php:2489
+msgid ""
+"If using Database Partitions, how would you like to handle Table Partition "
+"backups?  <font color='red'><b>NOTE: Restoral of Table Partitions must be "
+"performend from the command line</b></font>"
+msgstr ""
+
+#: ../setup.php:2493
+msgid "Dont Backup"
+msgstr ""
+
+#: ../setup.php:2494
+msgid "Backup, Remove Aged"
+msgstr ""
+
+#: ../setup.php:2495
+msgid "Backup, Dont Remove Aged"
+msgstr ""
+
+#: ../setup.php:2499
+msgid "Post Backup Command"
+msgstr ""
+
+#: ../setup.php:2500
+msgid ""
+"Once the backup has been completed, the following command will be executed.  "
+"The file entered must be both executable and readable by the RTM service "
+"account."
+msgstr ""
+
+#: ../setup.php:2507 ../setup.php:2517
+msgid "Database Restore"
+msgstr ""
+
+#: ../setup.php:2511
+msgid "Restore /etc/hosts"
+msgstr ""
+
+#: ../setup.php:2512
+msgid ""
+"Check this box if you want RTM to restore the /etc/hosts file when restoring "
+"the database."
+msgstr ""
+
+#: ../setup.php:2518
+msgid ""
+"Upload and restore database?  This is a .tgz backup file. <u><b>Note:</b> "
+"Maximum upload file size depends on php.ini (Default: 1GB). Use command line "
+"tool (grid_backup_restore_rtm.php) for large database restore.</u>"
+msgstr ""
+
+#: ../setup.php:2524
+msgid "Database Optimization"
+msgstr ""
+
+#: ../setup.php:2528
+msgid "Optimization Schedule"
+msgstr ""
+
+#: ../setup.php:2529
+msgid ""
+"Do you want to optimize your Cacti Database 'Daily', 'Weekly' or 'Monthly'?"
+msgstr ""
+
+#: ../setup.php:2533 ../setup.php:2901 ../grid_clusters.php:1262
+msgid "Disabled"
+msgstr ""
+
+#: ../setup.php:2536
+msgid "Monthly"
+msgstr ""
+
+#: ../setup.php:2540
+msgid "Optimization Day of Week"
+msgstr ""
+
+#: ../setup.php:2541
+msgid ""
+"If you are optimizing weekly, what day do you want the optimization to occur?"
+msgstr ""
+
+#: ../setup.php:2555
+msgid "Optimization Date of Month"
+msgstr ""
+
+#: ../setup.php:2556
+msgid ""
+"If you are optimizing monthly, what date of month do you want the "
+"optimization to occur?"
+msgstr ""
+
+#: ../setup.php:2572
+msgid "Job Flapping Settings"
+msgstr ""
+
+#: ../setup.php:2576
+msgid "Should Job Flapping Detection be Enabled"
+msgstr ""
+
+#: ../setup.php:2577
+msgid ""
+"If you wish to have jobs that change state too many time to be highlighted "
+"on the Job details screen and generate log messages when they exceed the "
+"flapping threshold, check this box."
+msgstr ""
+
+#: ../setup.php:2582
+msgid "Job Flapping Threshold"
+msgstr ""
+
+#: ../setup.php:2583
+msgid ""
+"How many times must a Job changes states before it is considered in a "
+"flapping status?  <strong><u>NOTE:</strong> At a minimum, a job will always "
+"have at least 3 state changes from NEW, to RUNNING to DONE.</u>"
+msgstr ""
+
+#: ../setup.php:2589
+msgid "Job Flapping Background Color"
+msgstr ""
+
+#: ../setup.php:2590
+msgid ""
+"Jobs that are in the Flapping Warning state will be highlighted using this "
+"color."
+msgstr ""
+
+#: ../setup.php:2595
+msgid "LSF/Job Efficiency Settings"
+msgstr ""
+
+#: ../setup.php:2599
+msgid "Should LSF/Job Efficiency Detection be Enabled"
+msgstr ""
+
+#: ../setup.php:2600
+msgid ""
+"If you wish to have jobs that violate the Job efficiency threshold to be "
+"tracked in the user interface and to have cumulative LSF Job Efficiency be "
+"logged at the Cluster level, check this box.."
+msgstr ""
+
+#: ../setup.php:2605
+msgid "Job Start Window"
+msgstr ""
+
+#: ../setup.php:2606
+msgid ""
+"How long should a job run for before it is eligible to LSF Efficiency "
+"calculations? This measure is used to compensate for job startup delays"
+msgstr ""
+
+#: ../setup.php:2612
+msgid "Warning Threshold"
+msgstr ""
+
+#: ../setup.php:2613
+msgid ""
+"When the overall grid drops below this threshold, a WARNING log message will "
+"be issued to indicate so."
+msgstr ""
+
+#: ../setup.php:2619
+msgid "Warning Background Color"
+msgstr ""
+
+#: ../setup.php:2620
+msgid ""
+"Jobs that are in the Warning state will be highlighted using this color."
+msgstr ""
+
+#: ../setup.php:2625
+msgid "Alarm Threshold"
+msgstr ""
+
+#: ../setup.php:2626
+msgid ""
+"When the overall grid drops below this threshold, an ERROR log message will "
+"be issued to indicate so."
+msgstr ""
+
+#: ../setup.php:2632
+msgid "Alarm Background Color"
+msgstr ""
+
+#: ../setup.php:2633
+msgid "Jobs that are in the Alarm state will be highlighted using this color."
+msgstr ""
+
+#: ../setup.php:2638
+msgid "Event Trigger Count"
+msgstr ""
+
+#: ../setup.php:2639
+msgid ""
+"How many consecutive WARNING/ERROR event's must have occurred prior to "
+"issuing either a WARNING/ERROR event message."
+msgstr ""
+
+#: ../setup.php:2646
+msgid "Event Clear Count"
+msgstr ""
+
+#: ../setup.php:2647
+msgid ""
+"How many consecutive clear event's must have occurred prior to issuing a "
+"NOTICE event message."
+msgstr ""
+
+#: ../setup.php:2654
+msgid "Job PID Level Alarms"
+msgstr ""
+
+#: ../setup.php:2658
+msgid "Should PID levels be Tracked"
+msgstr ""
+
+#: ../setup.php:2659
+msgid ""
+"Some operating systems do not operate when there are large numbers of PID's "
+"in the system.  This is especially true for larger system.  If this feature "
+"is enabled, a log message will be generated whenever a job exceeds this "
+"threshold."
+msgstr ""
+
+#: ../setup.php:2664
+msgid "Number of PID"
+msgstr ""
+
+#: ../setup.php:2665
+msgid "How many PID's must a job generate prior to an alarm being generated."
+msgstr ""
+
+#: ../setup.php:2672
+msgid "Job Highlighing"
+msgstr ""
+
+#: ../setup.php:2676
+msgid "Dependency Background Color"
+msgstr ""
+
+#: ../setup.php:2677
+msgid ""
+"Pending Jobs that have dependency conditions will be highlighted using this "
+"color."
+msgstr ""
+
+#: ../setup.php:2682
+msgid "Invalid Dependency Background Color"
+msgstr ""
+
+#: ../setup.php:2683
+msgid ""
+"Pending Jobs that have dependency conditions that can never be satisfied "
+"will be highlighted using this color."
+msgstr ""
+
+#: ../setup.php:2688
+msgid "Exited Job Background Color"
+msgstr ""
+
+#: ../setup.php:2689
+msgid "What background color do you want to use for exited jobs?"
+msgstr ""
+
+#: ../setup.php:2694
+msgid "Exclusive Job Backgroud Color"
+msgstr ""
+
+#: ../setup.php:2695
+msgid "What background color do you want to use for exclusive jobs?"
+msgstr ""
+
+#: ../setup.php:2700
+msgid "Interactive Job Backgroud Color"
+msgstr ""
+
+#: ../setup.php:2701
+msgid "What background color do you want to use for interactive jobs?"
+msgstr ""
+
+#: ../setup.php:2706
+msgid "Preempted by License Scheduler"
+msgstr ""
+
+#: ../setup.php:2707
+msgid ""
+"What background color do you want to use jobs that are pending due to "
+"License Scheduler preemption?"
+msgstr ""
+
+#: ../setup.php:2719
+msgid "Filter Name"
+msgstr ""
+
+#: ../setup.php:2720 ../setup.php:2815
+msgid ""
+"What do you want this filter to be displayed as in the legend and in the Job "
+"exception filter display"
+msgstr ""
+
+#: ../setup.php:2728 ../setup.php:2873
+msgid "Email Subject"
+msgstr ""
+
+#: ../setup.php:2729
+msgid ""
+"Subject for Idle Jobs Email Message.  You may use the following replacement "
+"tags <CLUSTERNAME>, <JOBID>, <INDEXID>, <USER>, <SUBMITTIME>, <CPUSECS>"
+msgstr ""
+
+#: ../setup.php:2732
+msgid "RTM Idle Job Warning for <JOBID>[<INDEXID>] on Cluster <CLUSTERNAME>"
+msgstr ""
+
+#: ../setup.php:2736 ../setup.php:2881 ../setup.php:2968 ../setup.php:3001
+msgid "Email Message"
+msgstr ""
+
+#: ../setup.php:2737
+msgid ""
+"You may use the following replacement tags <CLUSTERNAME>, <JOBID>, "
+"<INDEXID>, <USER>, <SUBMITTIME>, <CPUSECS>"
+msgstr ""
+
+#: ../setup.php:2738
+msgid ""
+"<p>RTM has detected that job <JOBID>[<INDEXID>] Submitted at '<SUBMITTIME>' "
+"on Cluster <CLUSTERNAME> by <USER> is Idled.<br>The Job has accumulated "
+"<CPUSECS> CPU seconds in the last <WINDOW> secs and has run for <RUNTIME> "
+"secs.<br>REF: <URL></p>"
+msgstr ""
+
+#: ../setup.php:2744
+msgid "Legend Background Color"
+msgstr ""
+
+#: ../setup.php:2745 ../setup.php:2809
+msgid ""
+"The color of the legend.  If the color is set to none, this featue will be "
+"disabled."
+msgstr ""
+
+#: ../setup.php:2753
+msgid "Memory RUSAGE Violations"
+msgstr ""
+
+#: ../setup.php:2757
+msgid "Enable Memory RUSAGE Job Detection"
+msgstr ""
+
+#: ../setup.php:2758
+msgid ""
+"If you want to search for Memory Violation jobs, please check this checkbox."
+msgstr ""
+
+#: ../setup.php:2763
+msgid "Email Summary Reports"
+msgstr ""
+
+#: ../setup.php:2764
+msgid "Choose the notification type to use relative to memory violation jobs."
+msgstr ""
+
+#: ../setup.php:2770 ../setup.php:2953 ../setup.php:2987 ../setup.php:3020
+msgid "Admins and User"
+msgstr ""
+
+#: ../setup.php:2771 ../setup.php:2954 ../setup.php:2988 ../setup.php:3021
+msgid "Admins"
+msgstr ""
+
+#: ../setup.php:2775
+msgid "Email Schedule"
+msgstr ""
+
+#: ../setup.php:2776
+msgid ""
+"Choose the notification period that you would like to receive summary e-"
+"mails. Emails will be sent weekly on Sundays during database maintenance."
+msgstr ""
+
+#: ../setup.php:2786
+msgid "Memory Overusage Filter Name"
+msgstr ""
+
+#: ../setup.php:2787
+msgid ""
+"Please provide a filter to be displayed as in the job details legend for "
+"Memory Overuse."
+msgstr ""
+
+#: ../setup.php:2789
+msgid "Mem Overusage"
+msgstr ""
+
+#: ../setup.php:2794
+msgid "Memory Overusage Allocation"
+msgstr ""
+
+#: ../setup.php:2795
+msgid ""
+"The Memory use percentage above the RUsage level that is acceptable prior to "
+"flagging the job."
+msgstr ""
+
+#: ../setup.php:2808
+msgid "Memory Overusage Background Color"
+msgstr ""
+
+#: ../setup.php:2814
+msgid "Memory Underusage Filter Name"
+msgstr ""
+
+#: ../setup.php:2817
+msgid "Mem Underusage"
+msgstr ""
+
+#: ../setup.php:2822
+msgid "Memory Underusage Allocation"
+msgstr ""
+
+#: ../setup.php:2823
+msgid ""
+"The Memory use percentage below the RUsage level that is acceptable prior to "
+"flagging the job."
+msgstr ""
+
+#: ../setup.php:2836
+msgid "Memory Underusage Background Color"
+msgstr ""
+
+#: ../setup.php:2837
+msgid ""
+"The color of the legend and row display.  If the color is set to none, this "
+"featue will be disabled."
+msgstr ""
+
+#: ../setup.php:2842
+msgid "Minimum Run Window"
+msgstr ""
+
+#: ../setup.php:2843
+msgid ""
+"The time that a job must run before it is considered for memory exceptions."
+msgstr ""
+
+#: ../setup.php:2857
+msgid "Minimum Memory Limit"
+msgstr ""
+
+#: ../setup.php:2858
+msgid ""
+"Jobs that consume less than this amount of memory will not be evaluated for "
+"memory exceptions."
+msgstr ""
+
+#: ../setup.php:2862
+msgid "No Limit"
+msgstr ""
+
+#: ../setup.php:2863 ../setup.php:2864 ../setup.php:2865
+#, php-format
+msgid "%d MBytes"
+msgstr ""
+
+#: ../setup.php:2866 ../setup.php:2867 ../setup.php:2868
+#, php-format
+msgid "%d GBytes"
+msgstr ""
+
+#: ../setup.php:2874
+msgid ""
+"Subject for the Memory Excptions Email Message.  You may use the following "
+"replacement tags <CLUSTERNAME>, <OVERFILTER>, <UNDERFILTER>"
+msgstr ""
+
+#: ../setup.php:2877
+msgid "RTM Memory <OVERFILTER>/<UNDERFILTER> Report for Cluster <CLUSTERNAME>"
+msgstr ""
+
+#: ../setup.php:2882
+msgid ""
+"You may use the following replacement tags <CLUSTERNAME>, <REPORTTABLE>, "
+"<OVERSHOOT>, <UNDERSHOOT>, <OVERFILTER>, <UNDERFILTER>"
+msgstr ""
+
+#: ../setup.php:2883
+msgid ""
+"<p>This report summarizes violations with mem resource req by user on "
+"<CLUSTERNAME>.<br/><ul><li>Memory over usage - the job uses <OVERSHOOT> more "
+"memory than was requested when job submitted.</li><li>Memory under used - "
+"the job uses <UNDERSHOOT> less memory than was requested when job submitted."
+"</li></ul><REPORTTABLE></p>"
+msgstr ""
+
+#: ../setup.php:2892
+msgid "RunTime warning"
+msgstr ""
+
+#: ../setup.php:2896
+msgid "Enable job runtime detection"
+msgstr ""
+
+#: ../setup.php:2897
+msgid ""
+"This displays all the jobs that exceeds Runtime Limit and/or Estimation."
+msgstr ""
+
+#: ../setup.php:2902 ../setup.php:3944
+msgid "Runtime Estimation"
+msgstr ""
+
+#: ../setup.php:2903
+msgid "Runtime Limit"
+msgstr ""
+
+#: ../setup.php:2904
+msgid "Both Estimation and Limit"
+msgstr ""
+
+#: ../setup.php:2908
+msgid "Enable job killed notificaction"
+msgstr ""
+
+#: ../setup.php:2909
+msgid "This displays all the jobs that are killed because of Runtime Limit."
+msgstr ""
+
+#: ../setup.php:2914
+msgid "Set a runtime threshold in percentage"
+msgstr ""
+
+#: ../setup.php:2915
+msgid ""
+"Send out a warning e-mail when the Runtime Limit and/or Runtime Estimation "
+"reach this threshold value."
+msgstr ""
+
+#: ../setup.php:2927
+msgid "Provide a filter name to be displayed in the Jobs Detail page"
+msgstr ""
+
+#: ../setup.php:2930
+msgid "Runlimit time violation"
+msgstr ""
+
+#: ../setup.php:2936
+msgid "Specify a color to highlight in the Job Details page"
+msgstr ""
+
+#: ../setup.php:2937
+msgid "If the threshold of run time limit or estimation exceeds."
+msgstr ""
+
+#: ../setup.php:2942
+msgid "RunTime Limit Warning Email"
+msgstr ""
+
+#: ../setup.php:2946
+msgid "Notification for Runtime Limit"
+msgstr ""
+
+#: ../setup.php:2960 ../setup.php:2993
+msgid "Email subject"
+msgstr ""
+
+#: ../setup.php:2961
+msgid ""
+"You can use the following replacement tags <CLUSTERNAME>, "
+"<RUNTIMETHRESHOLD>, <USER>."
+msgstr ""
+
+#: ../setup.php:2964
+msgid "Runtime Limit Warning Report For the <CLUSTERNAME>"
+msgstr ""
+
+#: ../setup.php:2969
+msgid ""
+"You can use the following replacement tags<CLUSTERNAME>, <RUNTIMETHRESHOLD>,"
+"<USER>."
+msgstr ""
+
+#: ../setup.php:2970
+msgid ""
+"<p>This report summarizes warning with runlimit time by user on "
+"<CLUSTERNAME>.<br/><ul><li> the following jobs are within threshold of "
+"Runtime Limit</li></ul><REPORTTABLE></p>"
+msgstr ""
+
+#: ../setup.php:2976
+msgid "RunTime Estimation Warning Email"
+msgstr ""
+
+#: ../setup.php:2980
+msgid "Notification for Runtime Estimation"
+msgstr ""
+
+#: ../setup.php:2994
+msgid ""
+"You can use the following replacement tags <CLUSTERNAME>,<RUNTIMETHRESHOLD>,"
+"<USER>."
+msgstr ""
+
+#: ../setup.php:2997
+msgid "RTM Runtime Estimation Warning Report for Cluster <CLUSTERNAME>"
+msgstr ""
+
+#: ../setup.php:3002
+msgid ""
+"You can use the following replacement tags<CLUSTERNAME>,<RUNTIMETHRESHOLD>, "
+"<USER>."
+msgstr ""
+
+#: ../setup.php:3003
+msgid ""
+"<p>This report summarizes warning with runtime estimation by user on "
+"<CLUSTERNAME>.<br/><ul><li> the following jobs are within threshold of "
+"Runtime Estimation</li></ul><REPORTTABLE></p>"
+msgstr ""
+
+#: ../setup.php:3009
+msgid "Job Killed Email"
+msgstr ""
+
+#: ../setup.php:3013
+msgid "Notification for job killed because of Runtime Limit"
+msgstr ""
+
+#: ../setup.php:3026
+msgid "Email Subject of job killed"
+msgstr ""
+
+#: ../setup.php:3027 ../setup.php:3035
+msgid "You can use the following replacement tags <CLUSTERNAME>, <USER>."
+msgstr ""
+
+#: ../setup.php:3030
+msgid ""
+"RTM Job killed Report for Cluster <CLUSTERNAME> because of runtime limit"
+msgstr ""
+
+#: ../setup.php:3034
+msgid "Email Message of job killed"
+msgstr ""
+
+#: ../setup.php:3036
+msgid ""
+"<p>This report summarizes  the killed jobs because of RUNLIMIT on "
+"<CLUSTERNAME>.<br/><REPORTTABLE></p>"
+msgstr ""
+
+#: ../setup.php:3044
+msgid "General Aggregation Settings"
+msgstr ""
+
+#: ../setup.php:3048
+msgid "Wallclock Calculation Method"
+msgstr ""
+
+#: ../setup.php:3049
+msgid ""
+"There are essential two wall clock aggregation methods.  One that accounts "
+"for suspend time and one that does not.  Please select the method that you "
+"desire.  Statistics gathering using this method begins after it is selected."
+msgstr ""
+
+#: ../setup.php:3053
+msgid "EndTime - StartTime"
+msgstr ""
+
+#: ../setup.php:3054
+msgid "EndTime - StartTime - SuspendTime"
+msgstr ""
+
+#: ../setup.php:3058
+msgid "Should Project Names be Aggregated?"
+msgstr ""
+
+#: ../setup.php:3059
+msgid ""
+"Allows you to track what projects are being submitted.  As with the "
+"submission host information, large variations can cause the job interval "
+"stat's table to become large."
+msgstr ""
+
+#: ../setup.php:3064
+msgid "Should Submission Host Information be Aggregated?"
+msgstr ""
+
+#: ../setup.php:3065
+msgid ""
+"If you are not interested in where job's are being submitted from uncheck "
+"this box.  Please note that if you have large job volumes being submitted "
+"from large quantities of hosts, your job interval stat's table can become "
+"very large."
+msgstr ""
+
+#: ../setup.php:3070
+msgid "Project Aggregation"
+msgstr ""
+
+#: ../setup.php:3074
+msgid "Should Hierarchial Project Aggregation be Enabled?"
+msgstr ""
+
+#: ../setup.php:3075
+msgid ""
+"Checking this option will enable Hierarchial Project statistics gathering "
+"based upon a predefined Project Hierarchy delimiter.  You will then be able "
+"to view statistics at multiple levels within the Project Hierarchy."
+msgstr ""
+
+#: ../setup.php:3080 ../setup.php:3115
+msgid "Delimiter"
+msgstr ""
+
+#: ../setup.php:3081
+msgid ""
+"If you utilize the Project field to represent a Project Hierarchy, what "
+"delimiter do you use to separate each level of the Hierarchy?"
+msgstr ""
+
+#: ../setup.php:3088 ../setup.php:3123 ../setup.php:3150
+msgid "Maximum Aggregation Level"
+msgstr ""
+
+#: ../setup.php:3089
+msgid ""
+"Project are oftentimes treated as Hierarchal objests in LSF.  This has been "
+"historically done to support Project level Fairshare.  This option "
+"determines the highest meaningful level in that Hierarchy.  Select the "
+"maximum level of Hierarchy here that is meaningful for reporting.  "
+"<strong>All</strong> will potentially generate several thousand graphs that "
+"may not be relevant for reporting."
+msgstr ""
+
+#: ../setup.php:3095
+msgid "User Group Aggregation Details"
+msgstr ""
+
+#: ../setup.php:3099
+msgid "Should Hierarchial User Group Aggregation be Enabled?"
+msgstr ""
+
+#: ../setup.php:3100
+msgid ""
+"Checking this option will enable Hierarchial User Group statistics gathering "
+"based upon a predefined User Group delimiter.  You will then be able to view "
+"statistics at multiple levels within the User Group Hierarchy."
+msgstr ""
+
+#: ../setup.php:3105
+msgid "User Group Aggregation Method"
+msgstr ""
+
+#: ../setup.php:3106
+msgid ""
+"There are two ways to Aggregate jobs by User Group.  'User Group Membership' "
+"will display all jobs from all users in a group. 'Job Specification' will "
+"display only jobs submitted using the bsub -G option.  Please set the method "
+"that matches your configuration."
+msgstr ""
+
+#: ../setup.php:3110
+msgid "User Group Membership"
+msgstr ""
+
+#: ../setup.php:3111
+msgid "Job Specification"
+msgstr ""
+
+#: ../setup.php:3116
+msgid ""
+"If you utilize the User Group field for a User Group Hierarchy, what "
+"delimiter do you use to separate each level of the hierarchy?"
+msgstr ""
+
+#: ../setup.php:3124
+msgid ""
+"User Groups can be setup to be hierarchial in LSF.  This is done mainly to "
+"support group based Fairshare scheduling in LSF.  By setting this option, "
+"you can create aggregate statical graphs at each level of the User Group "
+"Hierarchy.  Select the maximum level of Hierarchy here that is meaningful "
+"for reporting.  <strong>All</strong> will potentially generate several "
+"thousand graphs that may not be relevant for reporting."
+msgstr ""
+
+#: ../setup.php:3130
+msgid "License Project Tracking"
+msgstr ""
+
+#: ../setup.php:3134
+msgid "Should License Project Job Performance be Tracked?"
+msgstr ""
+
+#: ../setup.php:3135
+msgid ""
+"This option will allow the tracking of running jobs that are associated with "
+"a License Project in LSF."
+msgstr ""
+
+#: ../setup.php:3140
+msgid "Job Group Aggregation"
+msgstr ""
+
+#: ../setup.php:3144
+msgid "Should Job Group Information be Tracked?"
+msgstr ""
+
+#: ../setup.php:3145
+msgid ""
+"Checking this option will enable Job Group statistics to be tracked in RTM.  "
+"You will then be able to aggregate statistics at multiple levels of the Job "
+"Group hierarchy by setting the option below."
+msgstr ""
+
+#: ../setup.php:3151
+msgid ""
+"Job Groups are, by their nature, hierarchial.  By setting this option, you "
+"can control to what level in the interface and on the graphs, the various "
+"rollup statistics for LSF Job Groups are reported.  Select the maximum level "
+"of Hierarchy here that is meaningful for reporting.  Keep in mind that "
+"<strong>All</strong> will potentially generate several thousand graphs that "
+"may not be relevant for reporting."
+msgstr ""
+
+#: ../setup.php:3157
+msgid "MultiCluster Resource Leasing Aggregation"
+msgstr ""
+
+#: ../setup.php:3161
+msgid "Resource Leasing Cluster Stats Aggregation"
+msgstr ""
+
+#: ../setup.php:3162
+msgid ""
+"If you are using LSF MultiCluster Resource Leasing, statistics at the "
+"Cluster level will be inaccurate unless this option is checked.  Please keep "
+"in mind that there is a performance penalty for large job volume "
+"environments.  Therefore, if you are not using Resource Leasing, you should "
+"not check this option."
+msgstr ""
+
+#: ../setup.php:3167
+msgid "Pend Job on Hostgroup Aggregation"
+msgstr ""
+
+#: ../setup.php:3171
+msgid "Host Group Pending Job Calculation Method"
+msgstr ""
+
+#: ../setup.php:3172
+msgid ""
+"There are two ways to calculate host group pending jobs.  Host/Host groups "
+"associated with the job - calculates pending jobs for the specified host/"
+"host group by the bsub -m command.  Host groups associated with Queues - "
+"calculates pending jobs for a host group by virtue of their queue "
+"association.  Note: This method of calculating pending jobs can introduce "
+"performance problems in very large clusters. Therefore, before implementing, "
+"contact support to evaluate your specific case."
+msgstr ""
+
+#: ../setup.php:3176
+msgid "Host/Host groups associated with the job"
+msgstr ""
+
+#: ../setup.php:3177
+msgid "Host groups associated with queues"
+msgstr ""
+
+#: ../setup.php:3184
+msgid "RTM Directories/File Paths"
+msgstr ""
+
+#: ../setup.php:3188
+msgid "Log File Path"
+msgstr ""
+
+#: ../setup.php:3189
+msgid ""
+"Specify the location of the log file that the RTM Binaries will log messages "
+"to.<br>Other log messages will still be log to $log_path"
+msgstr ""
+
+#: ../setup.php:3196
+msgid "RTM Cache Directory"
+msgstr ""
+
+#: ../setup.php:3197
+msgid ""
+"When viewing job detail records, or contention data where should Cacti store "
+"your job rusage RRD and Image files?"
+msgstr ""
+
+#: ../setup.php:3207
+msgid "Upload License File"
+msgstr ""
+
+#: ../setup.php:3208
+msgid "Please specify your license file."
+msgstr ""
+
+#: ../setup.php:3213
+msgid "License Text"
+msgstr ""
+
+#: ../setup.php:3214
+msgid "Please copy & paste your license in the textbox."
+msgstr ""
+
+#: ../setup.php:3232
+msgid "Timespans"
+msgstr ""
+
+#: ../setup.php:3239
+msgid "Job Export"
+msgstr ""
+
+#: ../setup.php:3241
+msgid "Job Graphs"
+msgstr ""
+
+#: ../setup.php:3242
+msgid "Reasons"
+msgstr ""
+
+#: ../setup.php:3246 ../setup.php:3269 ../setup.php:4677
+msgid "Host Dashboard"
+msgstr ""
+
+#: ../setup.php:3247 ../setup.php:3270 ../setup.php:4665
+msgid "Cluster Dashboard"
+msgstr ""
+
+#: ../setup.php:3248 ../setup.php:3271 ../setup.php:5470
+msgid "Daily Statistics"
+msgstr ""
+
+#: ../setup.php:3249 ../setup.php:3272
+msgid "Project View"
+msgstr ""
+
+#: ../setup.php:3250 ../setup.php:3273
+msgid "License Project View"
+msgstr ""
+
+#: ../setup.php:3251 ../setup.php:3274
+msgid "Jobs List"
+msgstr ""
+
+#: ../setup.php:3252 ../setup.php:3275
+msgid "Host Load View"
+msgstr ""
+
+#: ../setup.php:3253 ../setup.php:3276
+msgid "Jobs by Host"
+msgstr ""
+
+#: ../setup.php:3254 ../setup.php:3277
+msgid "Queue View"
+msgstr ""
+
+#: ../setup.php:3264
+msgid "Your Main Screen"
+msgstr ""
+
+#: ../setup.php:3265
+msgid ""
+"Which RTM Screen do you want to enter by default when selecting the LSF Tab."
+msgstr ""
+
+#: ../setup.php:3281
+msgid "Default Cluster"
+msgstr ""
+
+#: ../setup.php:3282
+msgid "The default Cluster to use viewing Cluster Statistics."
+msgstr ""
+
+#: ../setup.php:3289
+msgid "Default Cluster Timezone"
+msgstr ""
+
+#: ../setup.php:3290
+msgid ""
+"When viewing jobs, do you wish to view job event times in the Clusters "
+"timezone or the RTM servers?  By checking, you obtain the Clusters.  Note: "
+"this feature only works when viewing a single cluster."
+msgstr ""
+
+#: ../setup.php:3295
+msgid "Default Job Status"
+msgstr ""
+
+#: ../setup.php:3296
+msgid ""
+"When you first bring up the jobs display, what would you like to set the "
+"status filter to."
+msgstr ""
+
+#: ../setup.php:3307
+msgid "Make Job Filters Dynamic"
+msgstr ""
+
+#: ../setup.php:3308
+msgid ""
+"If checked, whenever you change a filter value in the Job Details display, "
+"the display will be updated."
+msgstr ""
+
+#: ../setup.php:3313
+msgid "All Job Status Option"
+msgstr ""
+
+#: ../setup.php:3314
+msgid ""
+"If checked, user will be allowed to choose ALL option from the job status "
+"dropdown list"
+msgstr ""
+
+#: ../setup.php:3319
+msgid "Show Inactive Users"
+msgstr ""
+
+#: ../setup.php:3320
+msgid "When viewing user details, should inactive users be displayed?"
+msgstr ""
+
+#: ../setup.php:3325
+msgid "Audible Alerting"
+msgstr ""
+
+#: ../setup.php:3326
+msgid "Should Audible Alerting be Enabled on the Dashboard?"
+msgstr ""
+
+#: ../setup.php:3331
+msgid "Show Alert"
+msgstr ""
+
+#: ../setup.php:3332
+msgid ""
+"Notify when an alert is triggered for syslog, thold, batchload, gridalarms"
+msgstr ""
+
+#: ../setup.php:3339
+msgid "Job Graph Settings"
+msgstr ""
+
+#: ../setup.php:3343
+msgid "Default RTM View Timespan"
+msgstr ""
+
+#: ../setup.php:3344
+msgid ""
+"The default timespan you wish to be displayed when you display LSF specific "
+"graphs"
+msgstr ""
+
+#: ../setup.php:3350
+msgid "Default Graph View Timeshift"
+msgstr ""
+
+#: ../setup.php:3351
+msgid "The default timeshift you wish to be displayed when you display graphs"
+msgstr ""
+
+#: ../setup.php:3357
+msgid "Allow Graph to extend to Future"
+msgstr ""
+
+#: ../setup.php:3358
+msgid "When displaying Graphs, allow Graph Dates to extend 'to future'"
+msgstr ""
+
+#: ../setup.php:3363
+msgid "First Day of the Week"
+msgstr ""
+
+#: ../setup.php:3364
+msgid "The first Day of the Week for weekly Graph Displays"
+msgstr ""
+
+#: ../setup.php:3370
+msgid "Start of Daily Shift"
+msgstr ""
+
+#: ../setup.php:3371
+msgid "Start Time of the Daily Shift."
+msgstr ""
+
+#: ../setup.php:3378
+msgid "End of Daily Shift"
+msgstr ""
+
+#: ../setup.php:3379
+msgid "End Time of the Daily Shift."
+msgstr ""
+
+#: ../setup.php:3388
+msgid "Visual Settings"
+msgstr ""
+
+#: ../setup.php:3392
+msgid "Screen Refresh Interval"
+msgstr ""
+
+#: ../setup.php:3393
+msgid "How often do you wish your screen to refresh with new data by default."
+msgstr ""
+
+#: ../setup.php:3399
+msgid "Exclusion Filter Status"
+msgstr ""
+
+#: ../setup.php:3400
+msgid "Should the Exclusion Filter be enabled by default."
+msgstr ""
+
+#: ../setup.php:3405
+msgid "Exclude Host States"
+msgstr ""
+
+#: ../setup.php:3406
+msgid ""
+"Which Host states are you not interested in viewing when the 'Exclusion "
+"Filter' is applied?"
+msgstr ""
+
+#: ../setup.php:3412
+msgid "Icon Size Transition Host Count"
+msgstr ""
+
+#: ../setup.php:3413
+msgid ""
+"When should the grid switch between large and small host grid icons "
+"displayed in the summary report."
+msgstr ""
+
+#: ../setup.php:3420
+msgid "Host Status Popup Transition Host Count"
+msgstr ""
+
+#: ../setup.php:3421
+msgid ""
+"Javascript generates overhead as more Dashboard Hosts are displayed.  "
+"Depending on your CPU and memory, the Host Dashboard may take several "
+"seconds to display.  To speed up screen display, after you have reached this "
+"many hosts, Javascript will be disabled allowing the screen to repaint "
+"faster."
+msgstr ""
+
+#: ../setup.php:3428
+msgid "Number of Records to Display"
+msgstr ""
+
+#: ../setup.php:3429
+msgid "How many results do you want to display in tables by default."
+msgstr ""
+
+#: ../setup.php:3435
+msgid "Maximum Display Length of Job Name"
+msgstr ""
+
+#: ../setup.php:3436
+msgid ""
+"The maximum display length of job name in list view of job info. The maximum "
+"value should be less than 120."
+msgstr ""
+
+#: ../setup.php:3445 ../setup.php:7046
+msgid "Cluster Summary"
+msgstr ""
+
+#: ../setup.php:3449
+msgid "Slot Percent Utilization"
+msgstr ""
+
+#: ../setup.php:3454
+msgid "Efficiency Status"
+msgstr ""
+
+#: ../setup.php:3459
+msgid "Efficiency Percent"
+msgstr ""
+
+#: ../setup.php:3464
+msgid "Badmin Reconfig Time"
+msgstr ""
+
+#: ../setup.php:3469
+msgid "Active Tholds/Alerts"
+msgstr ""
+
+#: ../setup.php:3474 ../setup.php:7047
+msgid "Cluster Status"
+msgstr ""
+
+#: ../setup.php:3478
+msgid "Total Hosts"
+msgstr ""
+
+#: ../setup.php:3483
+msgid "Total Clients"
+msgstr ""
+
+#: ../setup.php:3488 ../setup.php:7048
+msgid "Master Status"
+msgstr ""
+
+#: ../setup.php:3502
+msgid "RunQ 15min"
+msgstr ""
+
+#: ../setup.php:3522
+msgid "Current Logins"
+msgstr ""
+
+#: ../setup.php:3532
+msgid "Temp Available"
+msgstr ""
+
+#: ../setup.php:3537
+msgid "Memory Available"
+msgstr ""
+
+#: ../setup.php:3558
+msgid "Queue Attributes"
+msgstr ""
+
+#: ../setup.php:3573
+msgid "Performance"
+msgstr ""
+
+#: ../setup.php:3577 ../setup.php:3768
+msgid "Job Efficiency"
+msgstr ""
+
+#: ../setup.php:3582
+msgid "Job Total CPU"
+msgstr ""
+
+#: ../setup.php:3587 ../setup.php:3778
+msgid "Maximum Memory"
+msgstr ""
+
+#: ../setup.php:3592 ../setup.php:3783
+msgid "Average Memory"
+msgstr ""
+
+#: ../setup.php:3597
+msgid "Maximum VM Size"
+msgstr ""
+
+#: ../setup.php:3602
+msgid "Average VM Size"
+msgstr ""
+
+#: ../setup.php:3607
+msgid "Job Limits"
+msgstr ""
+
+#: ../setup.php:3611
+#, php-format
+msgid "Total Host %s"
+msgstr ""
+
+#: ../setup.php:3616
+msgid "Queue Job Slot Limit"
+msgstr ""
+
+#: ../setup.php:3621
+msgid "Per User Job Slot Limit"
+msgstr ""
+
+#: ../setup.php:3626
+msgid "Per Host Job Slot Limit"
+msgstr ""
+
+#: ../setup.php:3631
+#, php-format
+msgid "Minimum %s Per Job"
+msgstr ""
+
+#: ../setup.php:3636
+#, php-format
+msgid "Default %s Per Job"
+msgstr ""
+
+#: ../setup.php:3641
+#, php-format
+msgid "Maximum %s Per Job"
+msgstr ""
+
+#: ../setup.php:3646
+msgid "Slot Distribution"
+msgstr ""
+
+#: ../setup.php:3650
+msgid "Shared and Dedicated Slot Stats"
+msgstr ""
+
+#: ../setup.php:3655
+msgid "Time in State Information"
+msgstr ""
+
+#: ../setup.php:3659 ../setup.php:4013
+msgid "Pending Time"
+msgstr ""
+
+#: ../setup.php:3669
+msgid "Suspended while Pending (PSUSP) Time"
+msgstr ""
+
+#: ../setup.php:3674
+msgid "Suspended by System (SSUSP) Time"
+msgstr ""
+
+#: ../setup.php:3679
+msgid "Suspended by User (USUSP) Time"
+msgstr ""
+
+#: ../setup.php:3684
+msgid "Other Information"
+msgstr ""
+
+#: ../setup.php:3703
+msgid "MultiCluster Information"
+msgstr ""
+
+#: ../setup.php:3707
+msgid "Send Jobs To"
+msgstr ""
+
+#: ../setup.php:3712
+msgid "Receive Jobs From"
+msgstr ""
+
+#: ../setup.php:3719
+msgid "Show Job Array Detail Columns"
+msgstr ""
+
+#: ../setup.php:3733 ../setup.php:3854
+msgid "User Group"
+msgstr ""
+
+#: ../setup.php:3753
+msgid "System Suspended (SSUSP) Jobs"
+msgstr ""
+
+#: ../setup.php:3758
+msgid "User Suspended (USUSP) Jobs"
+msgstr ""
+
+#: ../setup.php:3763
+msgid "Pre-Exec Suspended (PSUSP) Jobs"
+msgstr ""
+
+#: ../setup.php:3773
+msgid "Minimum Memory"
+msgstr ""
+
+#: ../setup.php:3788
+msgid "Minimum Swap"
+msgstr ""
+
+#: ../setup.php:3793
+msgid "Maximum Swap"
+msgstr ""
+
+#: ../setup.php:3798
+msgid "Average Swap"
+msgstr ""
+
+#: ../setup.php:3803
+msgid "Total CPU Usage"
+msgstr ""
+
+#: ../setup.php:3808
+msgid "Total CPU User Time"
+msgstr ""
+
+#: ../setup.php:3813
+msgid "Total CPU System Time"
+msgstr ""
+
+#: ../setup.php:3820
+msgid "Show Job Detail Columns"
+msgstr ""
+
+#: ../setup.php:3839
+msgid "Queue Name"
+msgstr ""
+
+#: ../setup.php:3844
+msgid "Service Level (SLA)"
+msgstr ""
+
+#: ../setup.php:3874
+msgid "Application"
+msgstr ""
+
+#: ../setup.php:3879
+msgid "Job Group"
+msgstr ""
+
+#: ../setup.php:3884
+msgid "Default Nice Level"
+msgstr ""
+
+#: ../setup.php:3889
+msgid "Requested Memory"
+msgstr ""
+
+#: ../setup.php:3894
+msgid "Reserved Memory"
+msgstr ""
+
+#: ../setup.php:3899
+msgid "Wasted Memory"
+msgstr ""
+
+#: ../setup.php:3909
+msgid "Max V.Memory Size"
+msgstr ""
+
+#: ../setup.php:3914
+msgid "Current Memory"
+msgstr ""
+
+#: ../setup.php:3919
+msgid "Current V.Memory Size"
+msgstr ""
+
+#: ../setup.php:3934
+msgid "Nodes/CPUs"
+msgstr ""
+
+#: ../setup.php:3939
+msgid "Max Processors"
+msgstr ""
+
+#: ../setup.php:3949
+msgid "Execution Host(s)"
+msgstr ""
+
+#: ../setup.php:3954
+msgid "Execution Host Type"
+msgstr ""
+
+#: ../setup.php:3959
+msgid "Execution Host Model"
+msgstr ""
+
+#: ../setup.php:3964
+msgid "Submission Host"
+msgstr ""
+
+#: ../setup.php:3969
+#, php-format
+msgid "Queue %s Used/Limit"
+msgstr ""
+
+#: ../setup.php:3974
+#, php-format
+msgid "User/Queue %s Used/Limit"
+msgstr ""
+
+#: ../setup.php:3979
+#, php-format
+msgid "User %s Used/Limit"
+msgstr ""
+
+#: ../setup.php:3984
+#, php-format
+msgid "Number of Run/Pend %s for User"
+msgstr ""
+
+#: ../setup.php:3989
+#, php-format
+msgid "Available/Total %s for Queue"
+msgstr ""
+
+#: ../setup.php:3994
+msgid "Job Time State Options"
+msgstr ""
+
+#: ../setup.php:4018
+msgid "Ineligible Pending Time"
+msgstr ""
+
+#: ../setup.php:4023
+msgid "Effective Pending Time Limit"
+msgstr ""
+
+#: ../setup.php:4028
+msgid "Effective Eligible Pending Time Limit"
+msgstr ""
+
+#: ../setup.php:4038
+msgid "Pre-Exec Pending (PSUSP) Time"
+msgstr ""
+
+#: ../setup.php:4043
+msgid "System Suspend (SSUSP) Time"
+msgstr ""
+
+#: ../setup.php:4048
+msgid "User Suspend (USUSP) Time"
+msgstr ""
+
+#: ../setup.php:4053
+msgid "Unknown Time"
+msgstr ""
+
+#: ../setup.php:4058
+msgid "Total Prov Time"
+msgstr ""
+
+#: ../setup.php:4659
+msgid "RTM Default"
+msgstr ""
+
+#: ../setup.php:4683
+msgid "Job History Daily Statistics"
+msgstr ""
+
+#: ../setup.php:4707 ../setup.php:4743 ../setup.php:5049 ../setup.php:5079
+#: ../setup.php:5085 ../setup.php:5109
+msgid "(Edit)"
+msgstr ""
+
+#: ../setup.php:4713 ../setup.php:4749
+msgid "(Save)"
+msgstr ""
+
+#: ../setup.php:4761
+msgid "Host Based Jobs Viewer"
+msgstr ""
+
+#: ../setup.php:4767 ../setup.php:4773
+msgid "View Job Listing"
+msgstr ""
+
+#: ../setup.php:4779 ../setup.php:4791
+msgid "View Job Detail"
+msgstr ""
+
+#: ../setup.php:4797
+msgid "Job Array Viewer"
+msgstr ""
+
+#: ../setup.php:4803
+msgid "View Job Array Listing"
+msgstr ""
+
+#: ../setup.php:4809
+msgid "Host Job Statistics Viewer"
+msgstr ""
+
+#: ../setup.php:4821
+msgid "Closed Batch Hosts"
+msgstr ""
+
+#: ../setup.php:4833
+msgid "Batch Host Queue Distribution"
+msgstr ""
+
+#: ../setup.php:4839
+msgid "Host Group Job Statistics"
+msgstr ""
+
+#: ../setup.php:4845
+msgid "Queue Viewer"
+msgstr ""
+
+#: ../setup.php:4851
+msgid "Queue Details"
+msgstr ""
+
+#: ../setup.php:4863 ../setup.php:4869
+msgid "Project Viewer"
+msgstr ""
+
+#: ../setup.php:4875 ../setup.php:4881
+msgid "License Project Viewer"
+msgstr ""
+
+#: ../setup.php:4887
+msgid "Application Viewer"
+msgstr ""
+
+#: ../setup.php:4893
+msgid "Application Listing"
+msgstr ""
+
+#: ../setup.php:4899
+msgid "Job Group Viewer"
+msgstr ""
+
+#: ../setup.php:4905
+msgid "View Job Group Listing"
+msgstr ""
+
+#: ../setup.php:4911
+msgid "Group Queue Viewer"
+msgstr ""
+
+#: ../setup.php:4917
+msgid "Host Load Viewer"
+msgstr ""
+
+#: ../setup.php:4923
+msgid "Group Load Viewer"
+msgstr ""
+
+#: ../setup.php:4929 ../setup.php:4935
+msgid "Server Viewer"
+msgstr ""
+
+#: ../setup.php:4941
+msgid "Client Viewer"
+msgstr ""
+
+#: ../setup.php:4947
+msgid "Host Group Viewer"
+msgstr ""
+
+#: ../setup.php:4953
+msgid "Host Partition Viewer"
+msgstr ""
+
+#: ../setup.php:4959
+msgid "User Viewer"
+msgstr ""
+
+#: ../setup.php:4965
+msgid "User Groups Viewer"
+msgstr ""
+
+#: ../setup.php:4971 ../setup.php:5471
+msgid "Parameters"
+msgstr ""
+
+#: ../setup.php:4977
+msgid "RTM User Settings"
+msgstr ""
+
+#: ../setup.php:4983
+msgid "Save RTM User Settings"
+msgstr ""
+
+#: ../setup.php:4989
+msgid "RTM System Settings"
+msgstr ""
+
+#: ../setup.php:4995
+msgid "Save System Settings"
+msgstr ""
+
+#: ../setup.php:5001 ../setup.php:5406 ../setup.php:5418
+msgid "Utilities"
+msgstr ""
+
+#: ../setup.php:5007
+msgid "Perform Database Maintenance"
+msgstr ""
+
+#: ../setup.php:5013
+msgid "Manage LSF Hosts"
+msgstr ""
+
+#: ../setup.php:5019
+msgid "View RTM Process Status"
+msgstr ""
+
+#: ../setup.php:5025
+msgid "Edit (RTM Settings)"
+msgstr ""
+
+#: ../setup.php:5037
+msgid "LSF Configuration"
+msgstr ""
+
+#: ../setup.php:5043
+msgid "Save LSF Configuration"
+msgstr ""
+
+#: ../setup.php:5061
+msgid "Tabs"
+msgstr ""
+
+#: ../setup.php:5067 ../setup.php:5417
+msgid "ELIM Templates"
+msgstr ""
+
+#: ../setup.php:5091
+msgid "(Item)"
+msgstr ""
+
+#: ../setup.php:5097 ../setup.php:5413
+msgid "ELIMs"
+msgstr ""
+
+#: ../setup.php:5115 ../setup.php:5121
+msgid "Resource Pool"
+msgstr ""
+
+#: ../setup.php:5127
+msgid "Guaranteed Service Class"
+msgstr ""
+
+#: ../setup.php:5168
+msgid ""
+"<b>Notice:</b> Database upgrading in progress, you may experience slower "
+"page loading and job search will be limited during this period."
+msgstr ""
+
+#: ../setup.php:5299
+msgid "LSF poller requires a valid license. Please contact product support."
+msgstr ""
+
+#: ../setup.php:5303
+msgid ""
+"LSF poller and LIC poller require a valid license. Please contact product "
+"support."
+msgstr ""
+
+#: ../setup.php:5307
+#, php-format
+msgid ""
+"Your LIC poller license is expiring in %s days. Please contact product "
+"support."
+msgstr ""
+
+#: ../setup.php:5311
+#, php-format
+msgid ""
+"Your LSF poller license is expiring in %s days. Please contact product "
+"support."
+msgstr ""
+
+#: ../setup.php:5315
+msgid "Restore Successful."
+msgstr ""
+
+#: ../setup.php:5319
+msgid "Restore Failed."
+msgstr ""
+
+#: ../setup.php:5323
+msgid ""
+"Save Successful. Remember to add RTM host to the cluster as an LSF client "
+"and reconfigure the cluster."
+msgstr ""
+
+#: ../setup.php:5327
+msgid ""
+"Save Failed. LSF Poller and LIC Poller requires a valid license. Please "
+"contact product support."
+msgstr ""
+
+#: ../setup.php:5331
+msgid "Save Successful. Remember to set the time zone/data/time correctly."
+msgstr ""
+
+#: ../setup.php:5335
+msgid ""
+"Save Failed. Unable to locate lsf.conf/ego.conf. Please verify that the "
+"advocate server is running."
+msgstr ""
+
+#: ../setup.php:5339
+msgid ""
+"Save Failed. Unable to locate lsf.conf. Please verify that the advocate "
+"server is running."
+msgstr ""
+
+#: ../setup.php:5343
+msgid "Restore Failed. Backup is from a different version of RTM."
+msgstr ""
+
+#: ../setup.php:5347
+msgid "400 Bad Request. Make sure that you have chosen the correct entry."
+msgstr ""
+
+#: ../setup.php:5351
+msgid "500 internal server error. Restart Advocate."
+msgstr ""
+
+#: ../setup.php:5355
+msgid ""
+"Unable to get response from Advocate. Make sure that advocate is started."
+msgstr ""
+
+#: ../setup.php:5359
+msgid "Warning: Invalid LSF Poller license. Contact product support."
+msgstr ""
+
+#: ../setup.php:5363
+msgid "Warning: Invalid LIC Poller license. Contact product support."
+msgstr ""
+
+#: ../setup.php:5367
+msgid "Save Failed. No LSF Poller defined."
+msgstr ""
+
+#: ../setup.php:5371
+msgid "Invalid LSF ENV PATH"
+msgstr ""
+
+#: ../setup.php:5375
+msgid "Error parsing lsf.conf file. Uncheck advance mode if necessary."
+msgstr ""
+
+#: ../setup.php:5379
+msgid "Unable to locate lsf.conf in the given directory."
+msgstr ""
+
+#: ../setup.php:5383
+msgid "You can not delete this poller while it is in use"
+msgstr ""
+
+#: ../setup.php:5387
+msgid "Invalid RTM poller binary directory"
+msgstr ""
+
+#: ../setup.php:5391
+msgid ""
+"Duplicated cluster: One of master hostnames in list has already been added "
+"with the same port."
+msgstr ""
+
+#: ../setup.php:5395
+msgid ""
+"Input Failed: You must input your comments in field which is mandatory(Check "
+"Red Fields)"
+msgstr ""
+
+#: ../setup.php:5399
+msgid "ELIM Instance Saved: There are XXX Matching Hosts."
+msgstr ""
+
+#: ../setup.php:5403
+msgid "Save Failed: Invalid Database Maintenance Time."
+msgstr ""
+
+#: ../setup.php:5412
+msgid "Management"
+msgstr ""
+
+#: ../setup.php:5414
+msgid "Pollers"
+msgstr ""
+
+#: ../setup.php:5416 ../grid_elim_templates.php:703
+msgid "Templates"
+msgstr ""
+
+#: ../setup.php:5419
+msgid "RTM Utilities"
+msgstr ""
+
+#: ../setup.php:5428 ../setup.php:5438 ../setup.php:5476 ../setup.php:5479
+msgid "Dashboards"
+msgstr ""
+
+#: ../setup.php:5429 ../setup.php:5452
+msgid "User/Group Info"
+msgstr ""
+
+#: ../setup.php:5430 ../setup.php:5460
+msgid "Host Info"
+msgstr ""
+
+#: ../setup.php:5431 ../setup.php:5456
+msgid "Load Info"
+msgstr ""
+
+#: ../setup.php:5432 ../setup.php:5441
+msgid "Job Info"
+msgstr ""
+
+#: ../setup.php:5433 ../setup.php:5467
+msgid "Reports"
+msgstr ""
+
+#: ../setup.php:5442
+msgid "By Host"
+msgstr ""
+
+#: ../setup.php:5443
+msgid "By Host Group"
+msgstr ""
+
+#: ../setup.php:5444
+msgid "By Project"
+msgstr ""
+
+#: ../setup.php:5445
+msgid "By License Project"
+msgstr ""
+
+#: ../setup.php:5446
+msgid "By Queue"
+msgstr ""
+
+#: ../setup.php:5447
+msgid "By Array"
+msgstr ""
+
+#: ../setup.php:5448
+msgid "By Application"
+msgstr ""
+
+#: ../setup.php:5449
+msgid "By Group"
+msgstr ""
+
+#: ../setup.php:5450
+msgid "Details"
+msgstr ""
+
+#: ../setup.php:5461
+msgid "Closed"
+msgstr ""
+
+#: ../setup.php:5462
+msgid "QDistrib"
+msgstr ""
+
+#: ../setup.php:5469
+msgid "Resource Pools"
+msgstr ""
+
+#: ../setup.php:5476
+msgid "License"
+msgstr ""
+
+#: ../setup.php:6573
+#, php-format
+msgid "%d Quarter"
+msgstr ""
+
+#: ../setup.php:6574 ../setup.php:6575
+#, php-format
+msgid "%d Quarters"
+msgstr ""
+
+#: ../setup.php:6576
+#, php-format
+msgid "%d Year"
+msgstr ""
+
+#: ../setup.php:6577 ../setup.php:6578
+#, php-format
+msgid "%d Years"
+msgstr ""
+
+#: ../setup.php:6641
+msgid "RTM Version"
+msgstr ""
+
+#: ../setup.php:6805
+msgid "Invalid ELIM graph template."
+msgstr ""
+
+#: ../setup.php:7049
+msgid "Job Throughput Status"
+msgstr ""
+
+#: ../setup.php:7050
+msgid "Perfmon Status"
+msgstr ""
+
+#: ../setup.php:7051
+msgid "Benchmark Jobs Exceptions"
+msgstr ""
+
+#: ../setup.php:7054
+msgid "Views"
+msgstr ""
+
+#: ../setup.php:7079
+msgid "LIM Status"
+msgstr ""
+
+#: ../setup.php:7080
+msgid "Batch Status"
+msgstr ""
+
+#: ../setup.php:7081
+msgid "LSF Status"
+msgstr ""
+
+#: ../setup.php:7082
+msgid "Memory Slot Availability"
+msgstr ""
+
+#: ../setup.php:7085
+msgid "Charts"
+msgstr ""
+
+#: ../grid_clusters.php:41
+msgid "Disable"
+msgstr ""
+
+#: ../grid_clusters.php:42
+msgid "Enable"
+msgstr ""
+
+#: ../grid_clusters.php:404
+msgid ""
+"If you click 'Continue', the following Cluster(s) will be deleted.  Please "
+"keep in mind that, depending on the size of the cluster, this operation can "
+"take some time.  Therefore, please be patient."
+msgstr ""
+
+#: ../grid_clusters.php:407
+msgid ""
+"Leave Tree and all Device(s), Graph(s), Alert(s) and Data Source(s).  Note: "
+"Devices will be disabled."
+msgstr ""
+
+#: ../grid_clusters.php:410
+msgid "Delete Tree and all Device(s), Graph(s), Alert(s) and Data Source(s)."
+msgstr ""
+
+#: ../grid_clusters.php:417
+msgid "Delete Cluster(s)"
+msgstr ""
+
+#: ../grid_clusters.php:421
+msgid "If you click 'Continue', the following Cluster(s) will be disabled."
+msgstr ""
+
+#: ../grid_clusters.php:428
+msgid "Disable Cluster(s)"
+msgstr ""
+
+#: ../grid_clusters.php:432
+msgid "If you click 'Continue', the following Cluster(s) will be enabled."
+msgstr ""
+
+#: ../grid_clusters.php:439
+msgid "Enable Cluster(s)"
+msgstr ""
+
+#: ../grid_clusters.php:444
+msgid "You must select at least one Cluster."
+msgstr ""
+
+#: ../grid_clusters.php:1171
+#, php-format
+msgid "Cluster Settings (%s)"
+msgstr ""
+
+#: ../grid_clusters.php:1195
+#, php-format
+msgid "%s Hrs"
+msgstr ""
+
+#: ../grid_clusters.php:1197
+#, php-format
+msgid "%s Mins"
+msgstr ""
+
+#: ../grid_clusters.php:1200
+msgid "% Secs"
+msgstr ""
+
+#: ../grid_clusters.php:1233
+msgid "Poller Name"
+msgstr ""
+
+#: ../grid_clusters.php:1234
+msgid "Collect Status"
+msgstr ""
+
+#: ../grid_clusters.php:1235
+msgid "Hosts/Clients/CPUS"
+msgstr ""
+
+#: ../grid_clusters.php:1236
+msgid "Collect Freq"
+msgstr ""
+
+#: ../grid_clusters.php:1237
+msgid "Collect Timeout"
+msgstr ""
+
+#: ../grid_clusters.php:1238
+msgid "Job Minor Freq"
+msgstr ""
+
+#: ../grid_clusters.php:1239
+msgid "Job Major Freq"
+msgstr ""
+
+#: ../grid_clusters.php:1240
+msgid "Job Timeout"
+msgstr ""
+
+#: ../grid_clusters.php:1267
+msgid "Jobs Down"
+msgstr ""
+
+#: ../grid_clusters.php:1271
+msgid "Diminished"
+msgstr ""
+
+#: ../grid_clusters.php:1273
+msgid "Admin Down"
+msgstr ""
+
+#: ../grid_clusters.php:1275
+msgid "Maintenance"
+msgstr ""
+
+#: ../grid_clusters.php:1294
+msgid "No Clusters Defined"
+msgstr ""
+
+#: ../grid_elim_graphs.php:34
+msgid "Create Graph Immediately"
+msgstr ""
+
+#: ../grid_elim_graphs.php:83
+msgid "NoClusterName"
+msgstr ""
+
+#: ../grid_elim_graphs.php:116
+#, php-format
+msgid "ELIM Instance Saved: There is one Matching Host"
+msgid_plural "ELIM Instance Saved: There are %s Matching Hosts"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../grid_elim_graphs.php:222
+msgid ""
+"Click 'Continue' to Delete the following ELIM Template Graph instance(s)."
+msgstr ""
+
+#: ../grid_elim_graphs.php:227
+msgid "Delete Graph(s)"
+msgstr ""
+
+#: ../grid_elim_graphs.php:231
+msgid "Click 'Continue' to Create ELIM Template Graphs immediately."
+msgstr ""
+
+#: ../grid_elim_graphs.php:236
+msgid "Create Selected Graph(s)"
+msgstr ""
+
+#: ../grid_elim_graphs.php:247
+msgid "You must select at least one ELIM instance."
+msgstr ""
+
+#: ../grid_elim_graphs.php:279
+msgid "ELIM Instances"
+msgstr ""
+
+#: ../grid_elim_graphs.php:280 ../grid_elim_graphs.php:438
+msgid "Existing Graphs"
+msgstr ""
+
+#: ../grid_elim_graphs.php:453 ../grid_elim_graphs.php:753
+msgid "Rows"
+msgstr ""
+
+#: ../grid_elim_graphs.php:468
+msgid "Search for Graph"
+msgstr ""
+
+#: ../grid_elim_graphs.php:494
+msgid "Graph Title"
+msgstr ""
+
+#: ../grid_elim_graphs.php:495
+msgid "Graph ID"
+msgstr ""
+
+#: ../grid_elim_graphs.php:498
+msgid "ELIM Template ID"
+msgstr ""
+
+#: ../grid_elim_graphs.php:502 ../grid_elim_graphs.php:822
+msgid "Graphs"
+msgstr ""
+
+#: ../grid_elim_graphs.php:516
+msgid "No Resource"
+msgstr ""
+
+#: ../grid_elim_graphs.php:530
+msgid "No Graphs were found based on this ELIM Instance"
+msgstr ""
+
+#: ../grid_elim_graphs.php:591
+#, php-format
+msgid "ELIM Instance Selection [edit: %s]"
+msgstr ""
+
+#: ../grid_elim_graphs.php:597
+msgid "ELIM Instance Selection [new]"
+msgstr ""
+
+#: ../grid_elim_graphs.php:615
+msgid "Selected ELIM Template"
+msgstr ""
+
+#: ../grid_elim_graphs.php:616
+msgid ""
+"Select an ELIM template to apply to this instance. Note that the data might "
+"be lost if you try to reapply a different template."
+msgstr ""
+
+#: ../grid_elim_graphs.php:624
+msgid "Select the cluster that this graph belongs."
+msgstr ""
+
+#: ../grid_elim_graphs.php:631
+msgid "Select a Host Filter"
+msgstr ""
+
+#: ../grid_elim_graphs.php:632
+msgid ""
+"Choose the host Type, Model, or Host Group that this ELIM template will "
+"associate with."
+msgstr ""
+
+#: ../grid_elim_graphs.php:637
+msgid "Enter a value for this filter"
+msgstr ""
+
+#: ../grid_elim_graphs.php:638
+msgid ""
+"Associate the ELIM template to the selected hosts. (This filter supports "
+"regular expressions. For example, host names beginning with A will be "
+"queried as '^A')"
+msgstr ""
+
+#: ../grid_elim_graphs.php:739
+msgid "ELIM Instance Management"
+msgstr ""
+
+#: ../grid_elim_graphs.php:768
+msgid "Set/Refresh Filters"
+msgstr ""
+
+#: ../grid_elim_graphs.php:815
+msgid "ELIM Instance"
+msgstr ""
+
+#: ../grid_elim_graphs.php:817
+msgid "ELIM Template Name"
+msgstr ""
+
+#: ../grid_elim_graphs.php:841
+msgid "No ELIM Instances Found"
+msgstr ""

@@ -1,0 +1,62 @@
+<!-- $Id$ -->
+<interface>
+	<name>Disk Utilization File System Status</name>
+	<script_path>|path_cacti|/scripts/ss_disku_fs.php</script_path>
+	<script_function>ss_disku_fs</script_function>
+	<script_server>php</script_server>
+	<arg_prepend>|host_id|</arg_prepend>
+	<arg_index>index</arg_index>
+	<arg_query>query</arg_query>
+	<arg_get>get</arg_get>
+	<output_delimeter>!</output_delimeter>
+	<index_order>primaryKey</index_order>
+	<index_order_type>alphabetic</index_order_type>
+	<index_title_format>|chosen_order_field|</index_title_format>
+	<fields>
+	        <primaryKey>
+	                <name>Primary Key</name>
+	                <direction>input</direction>
+	                <query_name>primaryKey</query_name>
+	        </primaryKey>
+	        <mount>
+	                <name>Mount Point</name>
+	                <direction>input</direction>
+	                <query_name>mount</query_name>
+	        </mount>
+	        <location>
+	                <name>Poller Location</name>
+	                <direction>input</direction>
+	                <query_name>location</query_name>
+	        </location>
+	        <hostname>
+	                <name>Poller Hostname</name>
+	                <direction>input</direction>
+	                <query_name>hostname</query_name>
+	        </hostname>
+	        <device>
+	                <name>Device Name</name>
+	                <direction>input</direction>
+	                <query_name>device</query_name>
+	        </device>
+	        <blocks>
+	                <name>Total KBytes</name>
+	                <direction>output</direction>
+	                <query_name>blocks</query_name>
+	        </blocks>
+	        <used>
+	                <name>Total KBytes Used</name>
+	                <direction>output</direction>
+	                <query_name>used</query_name>
+	        </used>
+	        <available>
+	                <name>Total KBytes Available</name>
+	                <direction>output</direction>
+	                <query_name>available</query_name>
+	        </available>
+	        <percent>
+	                <name>Percent Used</name>
+	                <direction>output</direction>
+	                <query_name>percent</query_name>
+	        </percent>
+	</fields>
+</interface>

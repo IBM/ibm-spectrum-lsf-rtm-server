@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Cacti\n"
 "Report-Msgid-Bugs-To: developers@cacti.net\n"
-"POT-Creation-Date: 2020-10-28 16:57-0400\n"
+"POT-Creation-Date: 2020-11-02 03:26+0000\n"
 "PO-Revision-Date: 2020-09-13 18:18-0400\n"
 "Last-Translator: Olivier VOGEL <olivier.vogel@st.com>\n"
 "Language-Team: French <http://translate.cacti.net/projects/cacti/core/fr-FR/>\n"
@@ -1133,7 +1133,7 @@ msgstr "Supprimer le(s) appareil(s)"
 #: automation_devices.php:409 automation_devices.php:419
 #: automation_devices.php:647 automation_devices.php:648 host.php:1596
 #: lib/api_automation.php:173 lib/api_automation.php:1099
-#: lib/html_utility.php:931 pollers.php:46
+#: lib/html_utility.php:939 pollers.php:46
 msgid "Down"
 msgstr "Down"
 
@@ -1141,7 +1141,7 @@ msgstr "Down"
 #: automation_devices.php:411 automation_devices.php:421
 #: automation_devices.php:647 automation_devices.php:648 host.php:1595
 #: lib/api_automation.php:172 lib/api_automation.php:1098
-#: lib/html_utility.php:937
+#: lib/html_utility.php:945
 msgid "Up"
 msgstr "Up"
 
@@ -1474,7 +1474,7 @@ msgstr "Activé"
 #: include/global_settings.php:1427 include/global_settings.php:1441
 #: include/global_settings.php:1501 include/global_settings.php:2146
 #: lib/api_automation.php:170 lib/api_automation.php:1096 lib/html.php:2472
-#: lib/html_reports.php:1513 lib/html_reports.php:1651 lib/html_utility.php:927
+#: lib/html_reports.php:1513 lib/html_reports.php:1651 lib/html_utility.php:935
 #: links.php:500 managers.php:243 managers.php:598 pollers.php:47
 #: user_admin.php:1164 user_domains.php:411 user_group_admin.php:697
 #: utilities.php:2377
@@ -5696,12 +5696,12 @@ msgid "Not Up"
 msgstr "Pas Up"
 
 #: host.php:1597 lib/api_automation.php:174 lib/api_automation.php:1100
-#: lib/html_utility.php:934 pollers.php:48
+#: lib/html_utility.php:942 pollers.php:48
 msgid "Recovering"
 msgstr "En cours de récupération"
 
 #: host.php:1598 lib/api_automation.php:175 lib/api_automation.php:1101
-#: lib/html_utility.php:943 lib/plugins.php:1086 lib/plugins.php:1087
+#: lib/html_utility.php:951 lib/plugins.php:1088 lib/plugins.php:1089
 #: lib/rrd.php:2919 lib/rrd.php:2931 user_admin.php:820 utilities.php:216
 #: utilities.php:217 utilities.php:2241
 msgid "Unknown"
@@ -6880,7 +6880,7 @@ msgid "Export Templates"
 msgstr "Exporter les modèles"
 
 #: include/global_arrays.php:927 include/global_arrays.php:949
-#: include/global_arrays.php:967 lib/plugins.php:1041
+#: include/global_arrays.php:967 lib/plugins.php:1043
 msgid "Configuration"
 msgstr "Configuration"
 
@@ -14634,32 +14634,32 @@ msgstr "Sélectionné"
 msgid "The regular expression \"%s\" is not valid. Error is %s"
 msgstr "Le terme de recherche \"%s\" n'est pas valable. L'erreur est %s"
 
-#: lib/html_utility.php:884
+#: lib/html_utility.php:892
 #, fuzzy
 msgid "There was an internal error!"
 msgstr "Il y a eu une erreur interne !"
 
-#: lib/html_utility.php:885
+#: lib/html_utility.php:893
 #, fuzzy
 msgid "Backtrack limit was exhausted!"
 msgstr "La limite du backtrack était épuisée !"
 
-#: lib/html_utility.php:886
+#: lib/html_utility.php:894
 #, fuzzy
 msgid "Recursion limit was exhausted!"
 msgstr "La limite de récursivité était épuisée !"
 
-#: lib/html_utility.php:887
+#: lib/html_utility.php:895
 #, fuzzy
 msgid "Bad UTF-8 error!"
 msgstr "Mauvaise erreur UTF-8 !"
 
-#: lib/html_utility.php:888
+#: lib/html_utility.php:896
 #, fuzzy
 msgid "Bad UTF-8 offset error!"
 msgstr "Mauvaise erreur de décalage UTF-8 !"
 
-#: lib/html_utility.php:940 lib/installer.php:1803 lib/installer.php:3533
+#: lib/html_utility.php:948 lib/installer.php:1803 lib/installer.php:3533
 msgid "Error"
 msgstr "Erreur"
 
@@ -16115,21 +16115,21 @@ msgstr "%s est nécessaire pour %s, et il n'est pas installé."
 msgid "Plugin cannot be installed."
 msgstr "Le plugin ne peut pas être installé."
 
-#: lib/plugins.php:1041 lib/plugins.php:1048 plugins.php:367 plugins.php:447
+#: lib/plugins.php:1043 lib/plugins.php:1050 plugins.php:367 plugins.php:447
 msgid "Plugins"
 msgstr "Extensions"
 
-#: lib/plugins.php:1060 lib/plugins.php:1066
+#: lib/plugins.php:1062 lib/plugins.php:1068
 #, fuzzy, php-format
 msgid "Requires: Cacti >= %s"
 msgstr "Nécessite : Cacti >= %s"
 
-#: lib/plugins.php:1063
+#: lib/plugins.php:1065
 #, fuzzy
 msgid "Legacy Plugin"
 msgstr "Plugin Legacy"
 
-#: lib/plugins.php:1088
+#: lib/plugins.php:1090
 msgid "Not Stated"
 msgstr "Non indiqué"
 
@@ -19928,375 +19928,253 @@ msgid "No VDEFs"
 msgstr "Pas de VDEF"
 
 #, fuzzy
-#~ msgid "When using Cacti with languages other than English, it is important to use the utf8_general_ci collation type as some characters take more than a single byte.  If you are first just now installing Cacti, stop, make the changes and start over again.  If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
-#~ msgstr "Lorsque vous utilisez Cacti avec des langues autres que l'anglais, il est important d'utiliser le type de collation utf8_general_ci car certains caractères prennent plus d'un octet.  Si vous êtes en train d'installer Cacti, arrêtez, faites les changements et recommencez.  Si votre Cacti a été lancé et est en production, consultez les instructions sur Internet pour convertir vos bases de données et vos tables si vous prévoyez de prendre en charge d'autres langues."
+#~ msgid "View SNMPAgent Cache"
+#~ msgstr "Voir le cache de SNMPAgent"
 
 #, fuzzy
-#~ msgid "When using Cacti with languages other than English, it is important to use the utf8 character set as some characters take more than a single byte. If you are first just now installing Cacti, stop, make the changes and start over again. If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
-#~ msgstr "Lorsque vous utilisez Cacti avec des langues autres que l'anglais, il est important d'utiliser le jeu de caractères utf8 car certains caractères prennent plus d'un octet. Si vous êtes en train d'installer Cacti, arrêtez, faites les changements et recommencez. Si votre Cacti a été lancé et est en production, consultez les instructions sur Internet pour convertir vos bases de données et vos tables si vous prévoyez de prendre en charge d'autres langues."
+#~ msgid "View SNMPAgent Notification Log"
+#~ msgstr "Afficher les logs des notifications de SNMPAgent"
+
+#~ msgid "Resize"
+#~ msgstr "Redimensionner"
+
+#~ msgid "The following data sources are in use by these graphs:"
+#~ msgstr "Les sources de données suivantes sont utilisées ces graphiques :"
 
 #, fuzzy
-#~ msgid "%d Samples"
-#~ msgstr "d Échantillons"
+#~ msgid "Resize Selected Graph(s)"
+#~ msgstr "Redimensionner le(s) graphique(s) sélectionné(s)"
 
 #, fuzzy
-#~ msgid "No Task"
-#~ msgstr "Aucune tâche"
+#~ msgid "Create Aggregate"
+#~ msgstr "Créer un agrégat"
 
 #, fuzzy
-#~ msgid "%s Standard Deviations"
-#~ msgstr "Écarts-types (%s)"
+#~ msgid "With modern SSD type storage, this operation actually degrades the disk more rapidly and adds a 50%% overhead on all write operations."
+#~ msgstr "Avec le stockage moderne de type SSD, cette opération dégrade en fait le disque plus rapidement et ajoute une surcharge de 50% sur toutes les opérations d'écriture."
 
 #, fuzzy
-#~ msgid "%d Outliers"
-#~ msgstr "Valeurs aberrantes (%d)"
+#~ msgid "Sort field returned no data.  Can not continue Re-Index for GET data.."
+#~ msgstr "La zone de tri ne renvoie aucune donnée.  Impossible de continuer Re-Index pour les données GET..."
 
 #, fuzzy
-#~ msgid "The file holding the SSL Certificate Authority to use to connect to the remote database."
-#~ msgstr "Le fichier contenant l'autorité de certification SSL à utiliser pour se connecter à la base de données distante."
+#~ msgid "Graph Size"
+#~ msgstr "Taille du graphique"
 
 #, fuzzy
-#~ msgid "Legacy 1.x Plugins"
-#~ msgstr "Legacy 1.x Plugins"
-
-#~ msgid "YOU DO NOT HAVE RIGHTS TO CHANGE GRAPH SETTINGS"
-#~ msgstr "VOUS N'AVEZ PAS LES DROITS POUR MODIFIER LES PARAMÈTRES DU GRAPHIQUE"
-
-#~ msgid "Use passive mode"
-#~ msgstr "Utiliser le mode passif"
-
-#~ msgid "Upper Limit"
-#~ msgstr "Limite supérieure"
-
-#~ msgid "Update Round Robin Archives"
-#~ msgstr "Mettre à jour les archives Round Robin"
-
-#~ msgid "Tree View Mode"
-#~ msgstr "Mode de vue en arbre"
-
-#~ msgid "To end your Cacti session please close your web browser."
-#~ msgstr "Pour fermer votre session Cacti, veuillez fermer votre navigateur."
-
-#~ msgid "To enable the following devices, press the \"yes\" button below."
-#~ msgstr "Pour activer les équipements suivants, cliquez sur le bouton \"oui\" ci-dessous."
-
-#~ msgid "To disable the following devices, press the \"yes\" button below."
-#~ msgstr "Pour désactiver les équipements suivants, cliquez sur le bouton \"oui\" ci-dessous."
-
-#~ msgid "The number of rows to display on a single page for graph management."
-#~ msgstr "Nombre de lignes à afficher sur une seule page dans la gestion des graphiques."
-
-#~ msgid "The number of graphs to display on one page in list view mode."
-#~ msgstr "Le nombre de graphiques à afficher sur une page en vue par liste."
-
-#~ msgid "The maximum number of characters to display for a graph title."
-#~ msgstr "Nombre maximum de cacatères à afficher pour un titre de graphique."
-
-#~ msgid "Stop logging if maximum log size is exceeded"
-#~ msgstr "Arrèter les logs si la taille maximum est atteinte"
-
-#~ msgid "SNMP Utility Version"
-#~ msgstr "Version des outils SNMP"
-
-#~ msgid "RRDTool Utility Version"
-#~ msgstr "Version de l'utilitaire RRDTool"
-
-#~ msgid "RRDTool Default Font Path"
-#~ msgstr "Chemin par défaut pour les fontes RRDTool"
-
-#~ msgid "RRAs"
-#~ msgstr "RRAs"
-
-#~ msgid "Poller:"
-#~ msgstr "Agent de collecte :"
-
-#~ msgid "Password:"
-#~ msgstr "Mot de passe :"
-
-#~ msgid "Parent Item"
-#~ msgstr "Élément parent"
-
-#~ msgid "Overwrite events older than the maximum days"
-#~ msgstr "Écraser les évènements plus vieux que le nombre de maximum de jours"
-
-#~ msgid "Overwrite events as needed"
-#~ msgstr "Écraser les évènements si nécessaire"
-
-#~ msgid "No Host"
-#~ msgstr "Pas de machine"
-
-#~ msgid "No Graphs Trees"
-#~ msgstr "Pas d'arbre de graphiques"
-
-#~ msgid "Minimum Value"
-#~ msgstr "Valeur minimum"
-
-#~ msgid "Maximum Value"
-#~ msgstr "Valeur maximum"
-
-#~ msgid "List View Mode"
-#~ msgstr "Mode de vue en liste"
-
-#~ msgid "If you don't want Cacti to export static images every 5 minutes, put another number here. For instance, 3 would equal every 15 minutes."
-#~ msgstr "Si vous ne voullez pas que Cacti exporte les images statiques toutes les 5 minutes, donnez une autre valeur ici. 3 signifie toutes les 15 minutes par example."
-
-#~ msgid "Hourly at specified minutes"
-#~ msgstr "Toutes les heures à la minute indiquée"
-
-#~ msgid "Hosts"
-#~ msgstr "Machines"
-
-#~ msgid "Graph Permissions (By Graph)"
-#~ msgstr "Permission du graphique (par graphique)"
-
-#~ msgid "Graph Permissions (By Graph Template)"
-#~ msgstr "Permission du graphique (par modèle de graphique)"
-
-#~ msgid "FTP User"
-#~ msgstr "Utilisateur FTP"
-
-#~ msgid "FTP Host"
-#~ msgstr "Serveur FTP"
-
-#~ msgid "Export Every x Times"
-#~ msgstr "Export toutes les x fois"
-
-#~ msgid "Edit (Graph Settings)"
-#~ msgstr "Edition (Paramètres du graphique)"
-
-#~ msgid "Edit (Graph Permissions)"
-#~ msgstr "Edition (Permissions du graphique)"
-
-#~ msgid "Disabled (no exporting)"
-#~ msgstr "Désactivé (pas d'export)"
-
-#~ msgid "Default RRA"
-#~ msgstr "RRA par défaut"
-
-#~ msgid "Create:"
-#~ msgstr "Créer :"
-
-#~ msgid "Communication port with the ftp server (leave empty for defaults). Default: 21."
-#~ msgstr "Port de connection au serveur FTP (laisser vide pour prendre la valeur par défaut). Par défaut : 21."
-
-#~ msgid "Classic (export every x times)"
-#~ msgstr "Classique (export tous les x temps)"
-
-#~ msgid "Choose which export method to use."
-#~ msgstr "Chosissez la méthode d'exportation à utiliser."
-
-#~ msgid "Choose when to export graphs."
-#~ msgstr "Choisir quand exporter les graphiques."
-
-#~ msgid "Choose how children of this branch will be sorted."
-#~ msgstr "Choisir la façon dont les feuilles de cette branche vont être triées."
-
-#~ msgid "Choose a graph from this list to add it to the tree."
-#~ msgstr "Sélectionner un graphique dans cette liste à ajouter dans l'arbre."
-
-#~ msgid "Check this if you want to delete any existing files in the FTP remote directory. This option is in use only when using the PHP built-in ftp functions."
-#~ msgstr "Cocher cette option si vous voullez supprimer tous les fichiers existants sur le serveur FTP distant. Cette option n'est utilisée qu'avec les fonctions ftp internes à PHP."
-
-#~ msgid "Cacti Variables"
-#~ msgstr "Variables de Cacti"
-
-#~ msgid "Account to logon on the remote server (leave empty for defaults). Default: Anonymous."
-#~ msgstr "Non d'utilisateur distant (laisser vide pour la valeur par défaut). Par défaut : anonymous."
-
-#~ msgid "ACCESS DENIED"
-#~ msgstr "ACCÈS REFUSÉ"
-
-#~ msgid "Graph Export"
-#~ msgstr "Export de graphique"
+#~ msgid "Non-Device"
+#~ msgstr "Non-périphérique"
 
 #, fuzzy
-#~ msgid "Graph Template Selection [new]"
-#~ msgstr "Elements de modèle de graphique"
+#~ msgid "Thresholds"
+#~ msgstr "Seuils"
 
 #, fuzzy
-#~ msgid "Graph Template Selection [edit: %s]"
-#~ msgstr "Elements de modèle de graphique"
+#~ msgid "Log"
+#~ msgstr "Taille maximum du log"
 
 #, fuzzy
-#~ msgid "new"
-#~ msgstr "[nouveau]"
+#~ msgid "Time:"
+#~ msgstr "Heure"
 
 #, fuzzy
-#~ msgid "You must select at least one VDEF."
-#~ msgstr "Vous devez sélectionner au moins un champ."
+#~ msgid "Swaps:"
+#~ msgstr "Échanges :"
 
 #, fuzzy
-#~ msgid "You must select at least one Group."
-#~ msgstr "Vous devez sélectionner au moins un champ."
+#~ msgid "Pages:"
+#~ msgstr "Pages :"
 
 #, fuzzy
-#~ msgid "You must select at least one User Domain."
-#~ msgstr "Vous devez sélectionner au moins un champ."
+#~ msgid "Link to Graph in Cacti"
+#~ msgstr "Se connecter à Cacti"
 
 #, fuzzy
-#~ msgid "You must select at least one user."
-#~ msgstr "Vous devez sélectionner au moins un champ."
+#~ msgid "<html><body>An alert has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
+#~ msgstr "<html><body>An alert has been issued that requires your attention.<br><br><br><b>Device</b> : <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b> : <URL><br><b>Message</b> : <SUBJET><br><br><br><GRAPH></body></html>>"
 
 #, fuzzy
-#~ msgid "You must select at least one Tree."
-#~ msgstr "Vous devez sélectionner au moins un champ."
+#~ msgid "<html><body>A warning has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
+#~ msgstr "<html><body>A warning has been issued that requires your attention.<br><br><br><b>Device</b> : <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b> : <URL><br><b>Message</b> : <SUBJET><br><br><br><GRAPH></body></html>>"
 
 #, fuzzy
-#~ msgid "You must select at least one Site."
-#~ msgstr "Vous devez sélectionner au moins un champ."
+#~ msgid "The Device ID was not set while trying to create Graph and Threshold"
+#~ msgstr "Le Device ID n'a pas été défini lors de la création du graphique et du Threshold."
 
 #, fuzzy
-#~ msgid "Web Site Hostname"
-#~ msgstr "Nom de machine"
+#~ msgid "The Threshold Template ID was not set while trying to create Graph and Threshold"
+#~ msgstr "L'ID du modèle de seuil n'a pas été défini lors de la création du graphique et du seuil."
 
 #, fuzzy
-#~ msgid "Unknown/Down"
-#~ msgstr "Inconnu"
+#~ msgid "The Graph Creation failed for Threshold Template"
+#~ msgstr "Le graphique à utiliser pour ce poste d'état."
 
 #, fuzzy
-#~ msgid "You must select at least one page."
-#~ msgstr "Vous devez sélectionner au moins un champ."
+#~ msgid "Threshold was Autocreated due to Device Template mapping"
+#~ msgstr "Ajouter une requête de données au modèle de dispositif"
 
 #, fuzzy
-#~ msgctxt "Dialog: go to the next page"
-#~ msgid "Next"
-#~ msgstr "Suivant"
+#~ msgid "Record Updated"
+#~ msgstr "Mise à jour du RRD"
 
 #, fuzzy
-#~ msgctxt "Dialog: previous"
-#~ msgid "Previous"
-#~ msgstr "Précédent"
+#~ msgid "You must specify either 'High Alert Threshold' or 'Low Alert Threshold' or both!<br>RECORD NOT UPDATED!"
+#~ msgstr "Vous devez spécifier soit'Seuil d'alerte élevé' ou'Seuil d'alerte bas' ou les deux!<br>RECORD NOT UPDATED !"
 
 #, fuzzy
-#~ msgid "Upgrade Results"
-#~ msgstr "Résultat de l'exportation"
+#~ msgid "Impossible thresholds: 'High Threshold' smaller than or equal to 'Low Threshold'<br>RECORD NOT UPDATED!"
+#~ msgstr "Seuils impossibles:'Seuil haut' inférieur ou égal à'Seuil bas'<br>RECORD NOT UPDATED !"
 
-#~ msgid "Maximum Concurrent Poller Processes"
+#, fuzzy
+#~ msgid "Impossible thresholds: 'High Warning Threshold' smaller than or equal to 'Low Warning Threshold'<br>RECORD NOT UPDATED!"
+#~ msgstr "Seuils impossibles:'Seuil d'alerte élevé' inférieur ou égal à'Seuil d'alerte bas'<br>RECORD NOT UPDATED !"
+
+#, fuzzy
+#~ msgid "With baseline thresholds enabled."
+#~ msgstr "Avec les seuils de base activés."
+
+#, fuzzy
+#~ msgid "You must specify either 'Baseline Deviation UP' or 'Baseline Deviation DOWN' or both!<br>RECORD NOT UPDATED!"
+#~ msgstr "Vous devez spécifier'Baseline Deviation UP' ou'Baseline Deviation DOWN' ou les deux!<br>RECORD NOT UPDATED !"
+
+#, fuzzy
+#~ msgid "Failed to find linked Graph Template Item '%d' on Threshold '%d'"
+#~ msgstr "N'a pas réussi à trouver l'élément de modèle graphique lié'%d' sur le seuil'%d'."
+
+#, fuzzy
+#~ msgid " What? Permission Denied"
+#~ msgstr "Permission refusée"
+
+#, fuzzy
+#~ msgid "Created threshold: %s"
+#~ msgstr "Graphique créé : %s"
+
+#, fuzzy
+#~ msgid "'%s' must be set to positive integer value!<br>RECORD NOT UPDATED!"
+#~ msgstr "%s' doit être réglé sur une valeur entière positive!<br>RECORD NOT UPDATED !"
+
+#, fuzzy
+#~ msgid "No Thresholds Templates associated with the Device's Template."
+#~ msgstr "L'Etat associé à ce Site."
+
+#, fuzzy
+#~ msgid "No Threshold(s) Created.  They either already exist, or there were not matching combinations found."
+#~ msgstr "Aucun(s) seuil(s) créé(s).  Soit ils existent déjà, soit on n'a pas trouvé de combinaisons correspondantes."
+
+#, fuzzy
+#~ msgid "Created Threshold: %s<br>"
+#~ msgstr "Graphique créé : %s"
+
+#, fuzzy
+#~ msgid "Mailer Error: No <b>TO</b> address set!!<br>If using the <i>Test Mail</i> link, please set the <b>Alert Email</b> setting."
+#~ msgstr "Erreur d'expéditeur : Si vous utilisez le lien <i>Test Mail</i>, réglez le paramètre <b>Alerter e-mail</b>."
+
+#, fuzzy
+#~ msgid "Does the RRA Profile match the RRDfile structure?"
+#~ msgstr "Le profil de l'ARR correspond-il à la structure du fichier RRD ?"
+
+#, fuzzy
+#~ msgid "Data Source Troubleshooter"
+#~ msgstr "Dépannage des sources de données"
+
+#, fuzzy
+#~ msgid " Poller RunAs: "
+#~ msgstr " Poller RunAs :"
+
+#, fuzzy
+#~ msgid "PHP - Timezone Support"
+#~ msgstr "PHP - Prise en charge du fuseau horaire"
+
+#, fuzzy
+#~ msgid "Your Web Servers PHP Timezone settings have not been set.  Please edit php.ini and uncomment the 'date.timezone' setting and set it to the Web Servers Timezone per the PHP installation instructions prior to installing Cacti."
+#~ msgstr "Les paramètres de fuseau horaire PHP de vos serveurs Web n'ont pas été définis.  Veuillez éditer php.ini et décommentez le paramètre'date.timezone' et définissez-le dans le fuseau horaire des serveurs Web selon les instructions d'installation PHP avant d'installer Cacti."
+
+#, fuzzy
+#~ msgid "Your Web Servers PHP is properly setup with a Timezone."
+#~ msgstr "Votre serveur Web PHP est correctement configuré avec un fuseau horaire."
+
+#, fuzzy
+#~ msgid "Data Source Debugger"
+#~ msgstr "Débogueur de source de données"
+
+#, fuzzy
+#~ msgid "Data Source Debugger [%s]"
+#~ msgstr "Débogueur de source de données"
+
+#, fuzzy
+#~ msgid "Data Debug"
+#~ msgstr "Débogage des données"
+
+#, fuzzy
+#~ msgid "Click to show Data Query output for sfield '%s'"
+#~ msgstr "Cliquez pour afficher la sortie de la requête de données pour le champ'%s'."
+
+#, fuzzy
+#~ msgid "New Check"
+#~ msgstr "Nouveau chèque"
+
+#, fuzzy
+#~ msgid "Debugging Data Source"
+#~ msgstr "Débogage de la source de données"
+
+#, fuzzy
+#~ msgid "Provide the Maintenance Schedule a meaningful name"
+#~ msgstr "Donnez un nom significatif au programme d'entretien"
+
+#, fuzzy
+#~ msgid "Template [edit: %s]"
+#~ msgstr "Gabarit[modifier : %s]"
+
+#, fuzzy
+#~ msgid "Template [new]"
+#~ msgstr "Gabarit[new] (nouveau)"
+
+#, fuzzy
+#~ msgid "Default Graph View Timespan"
+#~ msgstr "Délai d'affichage du graphique par défaut"
+
+#, fuzzy
+#~ msgid "The default timespan you wish to be displayed when you display graphs"
+#~ msgstr "La durée par défaut que vous souhaitez afficher lorsque vous affichez des graphiques."
+
+#, fuzzy
+#~ msgid "Default Graph View Timeshift"
+#~ msgstr "Décalage temporel de l'affichage graphique par défaut"
+
+#, fuzzy
+#~ msgid "The default timeshift you wish to be displayed when you display graphs"
+#~ msgstr "Le timeshift par défaut que vous souhaitez afficher lorsque vous affichez des graphiques."
+
+#, fuzzy
+#~ msgid "Non Templated"
+#~ msgstr "Non trempée"
+
+#, fuzzy
+#~ msgid "Template Not Found"
+#~ msgstr "Modèle introuvable"
+
+#, fuzzy
+#~ msgid "CN found"
+#~ msgstr "Pas de graphique trouvé"
+
+#, fuzzy
+#~ msgid "Protocol Error"
+#~ msgstr "Version du protocole"
+
+#, fuzzy
+#~ msgid "Insufficient Access"
+#~ msgstr "Accès console"
+
+#, fuzzy
+#~ msgid "Cacti Community Forum"
+#~ msgstr "Comunnauté SNMP"
+
+#, fuzzy
+#~ msgid "Ensure Host Process Has Access"
 #~ msgstr "Nombre maximum de processus de collecte simultanés"
 
 #, fuzzy
-#~ msgid "Password (v3)"
-#~ msgstr "Mot de passe"
-
-#, fuzzy
-#~ msgid "Username (v3)"
-#~ msgstr "Nom d'utilisateur"
-
-#, fuzzy
-#~ msgid "Developer Mode"
-#~ msgstr "Mode de prévisualisation"
-
-#, fuzzy
-#~ msgid "Graph Syntax"
-#~ msgstr "Paramètres du graphique"
-
-#, fuzzy
-#~ msgid "Event Logging"
-#~ msgstr "Loguer"
-
-#, fuzzy
-#~ msgid "The UDP port to be used for SNMP traps. Typically, 162."
-#~ msgstr "Port UDP par défaut utilisé pour les requètes SNMP. En principe 161."
-
-#, fuzzy
-#~ msgid "Discovery Rules"
-#~ msgstr "Filtre de recherche"
-
-#~ msgid "SNMP Community"
-#~ msgstr "Comunnauté SNMP"
-
-#~ msgid "Import Data"
-#~ msgstr "Importer les données"
-
-#, fuzzy
-#~ msgid "Export Data"
-#~ msgstr "Importer les données"
-
-#, fuzzy
-#~ msgid "Automation Settings"
-#~ msgstr "Paramètres de Cacti"
-
-#, fuzzy
-#~ msgid "DES (default)"
-#~ msgstr "MD5 (défaut)"
-
-#~ msgid "MD5 (default)"
-#~ msgstr "MD5 (défaut)"
-
-#, fuzzy
-#~ msgid "You must select at least one device."
-#~ msgstr "Vous devez sélectionner au moins un champ."
-
-#, fuzzy
-#~ msgid "Created 1 Graph from %s"
-#~ msgstr "Créer de nouveaux graphiques"
-
-#, fuzzy
-#~ msgid "You must select at least one Graph."
-#~ msgstr "Vous devez sélectionner au moins un champ."
-
-#, fuzzy
-#~ msgid "ERROR: You must select at least one graph template."
-#~ msgstr "Vous devez sélectionner au moins un champ."
-
-#, fuzzy
-#~ msgid "You must select at least one GPRINT Preset."
-#~ msgstr "Vous devez sélectionner au moins un champ."
-
-#, fuzzy
-#~ msgid "You must select at least one data template."
-#~ msgstr "Vous devez sélectionner au moins un champ."
-
-#, fuzzy
-#~ msgid "You must select at least one data source."
-#~ msgstr "Vous devez sélectionner au moins un champ."
-
-#, fuzzy
-#~ msgid "You must select at least one Data Source Profile."
-#~ msgstr "Vous devez sélectionner au moins un champ."
-
-#, fuzzy
-#~ msgid "You must select at least one data query."
-#~ msgstr "Vous devez sélectionner au moins un champ."
-
-#, fuzzy
-#~ msgid "You must select at least one data input method."
-#~ msgstr "Vous devez sélectionner au moins un champ."
-
-#, fuzzy
-#~ msgid "You must select at least one Color Template."
-#~ msgstr "Vous devez sélectionner au moins un champ."
-
-#, fuzzy
-#~ msgid "You must select at least one Color."
-#~ msgstr "Vous devez sélectionner au moins un champ."
-
-#, fuzzy
-#~ msgid "You must select at least one CDEF."
-#~ msgstr "Vous devez sélectionner au moins un champ."
-
-#, fuzzy
-#~ msgid "You must select at least one Automation Template."
-#~ msgstr "Vous devez sélectionner au moins un champ."
-
-#, fuzzy
-#~ msgid "SNMP Context"
-#~ msgstr "Comunnauté SNMP"
-
-#, fuzzy
-#~ msgid "You must select at least one SNMP Option."
-#~ msgstr "Vous devez sélectionner au moins un champ."
-
-#, fuzzy
-#~ msgid "You must select at least one Network."
-#~ msgstr "Vous devez sélectionner au moins un champ."
-
-#, fuzzy
-#~ msgid "You must select at least one Rule."
-#~ msgstr "Vous devez sélectionner au moins un champ."
-
-#, fuzzy
-#~ msgid "You must select at least one Device."
+#~ msgid "You must select at least one graph."
 #~ msgstr "Vous devez sélectionner au moins un champ."
 
 #, fuzzy
@@ -20304,251 +20182,373 @@ msgstr "Pas de VDEF"
 #~ msgstr "Vous devez sélectionner au moins un champ."
 
 #, fuzzy
-#~ msgid "You must select at least one graph."
+#~ msgid "You must select at least one Device."
 #~ msgstr "Vous devez sélectionner au moins un champ."
 
 #, fuzzy
-#~ msgid "Ensure Host Process Has Access"
-#~ msgstr "Nombre maximum de processus de collecte simultanés"
+#~ msgid "You must select at least one Rule."
+#~ msgstr "Vous devez sélectionner au moins un champ."
 
 #, fuzzy
-#~ msgid "Cacti Community Forum"
+#~ msgid "You must select at least one Network."
+#~ msgstr "Vous devez sélectionner au moins un champ."
+
+#, fuzzy
+#~ msgid "You must select at least one SNMP Option."
+#~ msgstr "Vous devez sélectionner au moins un champ."
+
+#, fuzzy
+#~ msgid "SNMP Context"
 #~ msgstr "Comunnauté SNMP"
 
 #, fuzzy
-#~ msgid "Insufficient Access"
-#~ msgstr "Accès console"
+#~ msgid "You must select at least one Automation Template."
+#~ msgstr "Vous devez sélectionner au moins un champ."
 
 #, fuzzy
-#~ msgid "Protocol Error"
-#~ msgstr "Version du protocole"
+#~ msgid "You must select at least one CDEF."
+#~ msgstr "Vous devez sélectionner au moins un champ."
 
 #, fuzzy
-#~ msgid "CN found"
-#~ msgstr "Pas de graphique trouvé"
+#~ msgid "You must select at least one Color."
+#~ msgstr "Vous devez sélectionner au moins un champ."
 
 #, fuzzy
-#~ msgid "Template Not Found"
-#~ msgstr "Modèle introuvable"
+#~ msgid "You must select at least one Color Template."
+#~ msgstr "Vous devez sélectionner au moins un champ."
 
 #, fuzzy
-#~ msgid "Non Templated"
-#~ msgstr "Non trempée"
+#~ msgid "You must select at least one data input method."
+#~ msgstr "Vous devez sélectionner au moins un champ."
 
 #, fuzzy
-#~ msgid "The default timeshift you wish to be displayed when you display graphs"
-#~ msgstr "Le timeshift par défaut que vous souhaitez afficher lorsque vous affichez des graphiques."
+#~ msgid "You must select at least one data query."
+#~ msgstr "Vous devez sélectionner au moins un champ."
 
 #, fuzzy
-#~ msgid "Default Graph View Timeshift"
-#~ msgstr "Décalage temporel de l'affichage graphique par défaut"
+#~ msgid "You must select at least one Data Source Profile."
+#~ msgstr "Vous devez sélectionner au moins un champ."
 
 #, fuzzy
-#~ msgid "The default timespan you wish to be displayed when you display graphs"
-#~ msgstr "La durée par défaut que vous souhaitez afficher lorsque vous affichez des graphiques."
+#~ msgid "You must select at least one data source."
+#~ msgstr "Vous devez sélectionner au moins un champ."
 
 #, fuzzy
-#~ msgid "Default Graph View Timespan"
-#~ msgstr "Délai d'affichage du graphique par défaut"
+#~ msgid "You must select at least one data template."
+#~ msgstr "Vous devez sélectionner au moins un champ."
 
 #, fuzzy
-#~ msgid "Template [new]"
-#~ msgstr "Gabarit[new] (nouveau)"
+#~ msgid "You must select at least one GPRINT Preset."
+#~ msgstr "Vous devez sélectionner au moins un champ."
 
 #, fuzzy
-#~ msgid "Template [edit: %s]"
-#~ msgstr "Gabarit[modifier : %s]"
+#~ msgid "ERROR: You must select at least one graph template."
+#~ msgstr "Vous devez sélectionner au moins un champ."
 
 #, fuzzy
-#~ msgid "Provide the Maintenance Schedule a meaningful name"
-#~ msgstr "Donnez un nom significatif au programme d'entretien"
+#~ msgid "You must select at least one Graph."
+#~ msgstr "Vous devez sélectionner au moins un champ."
 
 #, fuzzy
-#~ msgid "Debugging Data Source"
-#~ msgstr "Débogage de la source de données"
+#~ msgid "Created 1 Graph from %s"
+#~ msgstr "Créer de nouveaux graphiques"
 
 #, fuzzy
-#~ msgid "New Check"
-#~ msgstr "Nouveau chèque"
+#~ msgid "You must select at least one device."
+#~ msgstr "Vous devez sélectionner au moins un champ."
+
+#~ msgid "MD5 (default)"
+#~ msgstr "MD5 (défaut)"
 
 #, fuzzy
-#~ msgid "Click to show Data Query output for sfield '%s'"
-#~ msgstr "Cliquez pour afficher la sortie de la requête de données pour le champ'%s'."
+#~ msgid "DES (default)"
+#~ msgstr "MD5 (défaut)"
 
 #, fuzzy
-#~ msgid "Data Debug"
-#~ msgstr "Débogage des données"
+#~ msgid "Automation Settings"
+#~ msgstr "Paramètres de Cacti"
 
 #, fuzzy
-#~ msgid "Data Source Debugger [%s]"
-#~ msgstr "Débogueur de source de données"
+#~ msgid "Export Data"
+#~ msgstr "Importer les données"
+
+#~ msgid "Import Data"
+#~ msgstr "Importer les données"
+
+#~ msgid "SNMP Community"
+#~ msgstr "Comunnauté SNMP"
 
 #, fuzzy
-#~ msgid "Data Source Debugger"
-#~ msgstr "Débogueur de source de données"
+#~ msgid "Discovery Rules"
+#~ msgstr "Filtre de recherche"
 
 #, fuzzy
-#~ msgid "Your Web Servers PHP is properly setup with a Timezone."
-#~ msgstr "Votre serveur Web PHP est correctement configuré avec un fuseau horaire."
+#~ msgid "The UDP port to be used for SNMP traps. Typically, 162."
+#~ msgstr "Port UDP par défaut utilisé pour les requètes SNMP. En principe 161."
 
 #, fuzzy
-#~ msgid "Your Web Servers PHP Timezone settings have not been set.  Please edit php.ini and uncomment the 'date.timezone' setting and set it to the Web Servers Timezone per the PHP installation instructions prior to installing Cacti."
-#~ msgstr "Les paramètres de fuseau horaire PHP de vos serveurs Web n'ont pas été définis.  Veuillez éditer php.ini et décommentez le paramètre'date.timezone' et définissez-le dans le fuseau horaire des serveurs Web selon les instructions d'installation PHP avant d'installer Cacti."
+#~ msgid "Event Logging"
+#~ msgstr "Loguer"
 
 #, fuzzy
-#~ msgid "PHP - Timezone Support"
-#~ msgstr "PHP - Prise en charge du fuseau horaire"
+#~ msgid "Graph Syntax"
+#~ msgstr "Paramètres du graphique"
 
 #, fuzzy
-#~ msgid " Poller RunAs: "
-#~ msgstr " Poller RunAs :"
+#~ msgid "Developer Mode"
+#~ msgstr "Mode de prévisualisation"
 
 #, fuzzy
-#~ msgid "Data Source Troubleshooter"
-#~ msgstr "Dépannage des sources de données"
+#~ msgid "Username (v3)"
+#~ msgstr "Nom d'utilisateur"
 
 #, fuzzy
-#~ msgid "Does the RRA Profile match the RRDfile structure?"
-#~ msgstr "Le profil de l'ARR correspond-il à la structure du fichier RRD ?"
+#~ msgid "Password (v3)"
+#~ msgstr "Mot de passe"
+
+#~ msgid "Maximum Concurrent Poller Processes"
+#~ msgstr "Nombre maximum de processus de collecte simultanés"
 
 #, fuzzy
-#~ msgid "Mailer Error: No <b>TO</b> address set!!<br>If using the <i>Test Mail</i> link, please set the <b>Alert Email</b> setting."
-#~ msgstr "Erreur d'expéditeur : Si vous utilisez le lien <i>Test Mail</i>, réglez le paramètre <b>Alerter e-mail</b>."
+#~ msgid "Upgrade Results"
+#~ msgstr "Résultat de l'exportation"
 
 #, fuzzy
-#~ msgid "Created Threshold: %s<br>"
-#~ msgstr "Graphique créé : %s"
+#~ msgctxt "Dialog: previous"
+#~ msgid "Previous"
+#~ msgstr "Précédent"
 
 #, fuzzy
-#~ msgid "No Threshold(s) Created.  They either already exist, or there were not matching combinations found."
-#~ msgstr "Aucun(s) seuil(s) créé(s).  Soit ils existent déjà, soit on n'a pas trouvé de combinaisons correspondantes."
+#~ msgctxt "Dialog: go to the next page"
+#~ msgid "Next"
+#~ msgstr "Suivant"
 
 #, fuzzy
-#~ msgid "No Thresholds Templates associated with the Device's Template."
-#~ msgstr "L'Etat associé à ce Site."
+#~ msgid "You must select at least one page."
+#~ msgstr "Vous devez sélectionner au moins un champ."
 
 #, fuzzy
-#~ msgid "'%s' must be set to positive integer value!<br>RECORD NOT UPDATED!"
-#~ msgstr "%s' doit être réglé sur une valeur entière positive!<br>RECORD NOT UPDATED !"
+#~ msgid "Unknown/Down"
+#~ msgstr "Inconnu"
 
 #, fuzzy
-#~ msgid "Created threshold: %s"
-#~ msgstr "Graphique créé : %s"
+#~ msgid "Web Site Hostname"
+#~ msgstr "Nom de machine"
 
 #, fuzzy
-#~ msgid " What? Permission Denied"
-#~ msgstr "Permission refusée"
+#~ msgid "You must select at least one Site."
+#~ msgstr "Vous devez sélectionner au moins un champ."
 
 #, fuzzy
-#~ msgid "Failed to find linked Graph Template Item '%d' on Threshold '%d'"
-#~ msgstr "N'a pas réussi à trouver l'élément de modèle graphique lié'%d' sur le seuil'%d'."
+#~ msgid "You must select at least one Tree."
+#~ msgstr "Vous devez sélectionner au moins un champ."
 
 #, fuzzy
-#~ msgid "You must specify either 'Baseline Deviation UP' or 'Baseline Deviation DOWN' or both!<br>RECORD NOT UPDATED!"
-#~ msgstr "Vous devez spécifier'Baseline Deviation UP' ou'Baseline Deviation DOWN' ou les deux!<br>RECORD NOT UPDATED !"
+#~ msgid "You must select at least one user."
+#~ msgstr "Vous devez sélectionner au moins un champ."
 
 #, fuzzy
-#~ msgid "With baseline thresholds enabled."
-#~ msgstr "Avec les seuils de base activés."
+#~ msgid "You must select at least one User Domain."
+#~ msgstr "Vous devez sélectionner au moins un champ."
 
 #, fuzzy
-#~ msgid "Impossible thresholds: 'High Warning Threshold' smaller than or equal to 'Low Warning Threshold'<br>RECORD NOT UPDATED!"
-#~ msgstr "Seuils impossibles:'Seuil d'alerte élevé' inférieur ou égal à'Seuil d'alerte bas'<br>RECORD NOT UPDATED !"
+#~ msgid "You must select at least one Group."
+#~ msgstr "Vous devez sélectionner au moins un champ."
 
 #, fuzzy
-#~ msgid "Impossible thresholds: 'High Threshold' smaller than or equal to 'Low Threshold'<br>RECORD NOT UPDATED!"
-#~ msgstr "Seuils impossibles:'Seuil haut' inférieur ou égal à'Seuil bas'<br>RECORD NOT UPDATED !"
+#~ msgid "You must select at least one VDEF."
+#~ msgstr "Vous devez sélectionner au moins un champ."
 
 #, fuzzy
-#~ msgid "You must specify either 'High Alert Threshold' or 'Low Alert Threshold' or both!<br>RECORD NOT UPDATED!"
-#~ msgstr "Vous devez spécifier soit'Seuil d'alerte élevé' ou'Seuil d'alerte bas' ou les deux!<br>RECORD NOT UPDATED !"
+#~ msgid "new"
+#~ msgstr "[nouveau]"
 
 #, fuzzy
-#~ msgid "Record Updated"
-#~ msgstr "Mise à jour du RRD"
+#~ msgid "Graph Template Selection [edit: %s]"
+#~ msgstr "Elements de modèle de graphique"
 
 #, fuzzy
-#~ msgid "Threshold was Autocreated due to Device Template mapping"
-#~ msgstr "Ajouter une requête de données au modèle de dispositif"
+#~ msgid "Graph Template Selection [new]"
+#~ msgstr "Elements de modèle de graphique"
+
+#~ msgid "Graph Export"
+#~ msgstr "Export de graphique"
+
+#~ msgid "ACCESS DENIED"
+#~ msgstr "ACCÈS REFUSÉ"
+
+#~ msgid "Account to logon on the remote server (leave empty for defaults). Default: Anonymous."
+#~ msgstr "Non d'utilisateur distant (laisser vide pour la valeur par défaut). Par défaut : anonymous."
+
+#~ msgid "Cacti Variables"
+#~ msgstr "Variables de Cacti"
+
+#~ msgid "Check this if you want to delete any existing files in the FTP remote directory. This option is in use only when using the PHP built-in ftp functions."
+#~ msgstr "Cocher cette option si vous voullez supprimer tous les fichiers existants sur le serveur FTP distant. Cette option n'est utilisée qu'avec les fonctions ftp internes à PHP."
+
+#~ msgid "Choose a graph from this list to add it to the tree."
+#~ msgstr "Sélectionner un graphique dans cette liste à ajouter dans l'arbre."
+
+#~ msgid "Choose how children of this branch will be sorted."
+#~ msgstr "Choisir la façon dont les feuilles de cette branche vont être triées."
+
+#~ msgid "Choose when to export graphs."
+#~ msgstr "Choisir quand exporter les graphiques."
+
+#~ msgid "Choose which export method to use."
+#~ msgstr "Chosissez la méthode d'exportation à utiliser."
+
+#~ msgid "Classic (export every x times)"
+#~ msgstr "Classique (export tous les x temps)"
+
+#~ msgid "Communication port with the ftp server (leave empty for defaults). Default: 21."
+#~ msgstr "Port de connection au serveur FTP (laisser vide pour prendre la valeur par défaut). Par défaut : 21."
+
+#~ msgid "Create:"
+#~ msgstr "Créer :"
+
+#~ msgid "Default RRA"
+#~ msgstr "RRA par défaut"
+
+#~ msgid "Disabled (no exporting)"
+#~ msgstr "Désactivé (pas d'export)"
+
+#~ msgid "Edit (Graph Permissions)"
+#~ msgstr "Edition (Permissions du graphique)"
+
+#~ msgid "Edit (Graph Settings)"
+#~ msgstr "Edition (Paramètres du graphique)"
+
+#~ msgid "Export Every x Times"
+#~ msgstr "Export toutes les x fois"
+
+#~ msgid "FTP Host"
+#~ msgstr "Serveur FTP"
+
+#~ msgid "FTP User"
+#~ msgstr "Utilisateur FTP"
+
+#~ msgid "Graph Permissions (By Graph Template)"
+#~ msgstr "Permission du graphique (par modèle de graphique)"
+
+#~ msgid "Graph Permissions (By Graph)"
+#~ msgstr "Permission du graphique (par graphique)"
+
+#~ msgid "Hosts"
+#~ msgstr "Machines"
+
+#~ msgid "Hourly at specified minutes"
+#~ msgstr "Toutes les heures à la minute indiquée"
+
+#~ msgid "If you don't want Cacti to export static images every 5 minutes, put another number here. For instance, 3 would equal every 15 minutes."
+#~ msgstr "Si vous ne voullez pas que Cacti exporte les images statiques toutes les 5 minutes, donnez une autre valeur ici. 3 signifie toutes les 15 minutes par example."
+
+#~ msgid "List View Mode"
+#~ msgstr "Mode de vue en liste"
+
+#~ msgid "Maximum Value"
+#~ msgstr "Valeur maximum"
+
+#~ msgid "Minimum Value"
+#~ msgstr "Valeur minimum"
+
+#~ msgid "No Graphs Trees"
+#~ msgstr "Pas d'arbre de graphiques"
+
+#~ msgid "No Host"
+#~ msgstr "Pas de machine"
+
+#~ msgid "Overwrite events as needed"
+#~ msgstr "Écraser les évènements si nécessaire"
+
+#~ msgid "Overwrite events older than the maximum days"
+#~ msgstr "Écraser les évènements plus vieux que le nombre de maximum de jours"
+
+#~ msgid "Parent Item"
+#~ msgstr "Élément parent"
+
+#~ msgid "Password:"
+#~ msgstr "Mot de passe :"
+
+#~ msgid "Poller:"
+#~ msgstr "Agent de collecte :"
+
+#~ msgid "RRAs"
+#~ msgstr "RRAs"
+
+#~ msgid "RRDTool Default Font Path"
+#~ msgstr "Chemin par défaut pour les fontes RRDTool"
+
+#~ msgid "RRDTool Utility Version"
+#~ msgstr "Version de l'utilitaire RRDTool"
+
+#~ msgid "SNMP Utility Version"
+#~ msgstr "Version des outils SNMP"
+
+#~ msgid "Stop logging if maximum log size is exceeded"
+#~ msgstr "Arrèter les logs si la taille maximum est atteinte"
+
+#~ msgid "The maximum number of characters to display for a graph title."
+#~ msgstr "Nombre maximum de cacatères à afficher pour un titre de graphique."
+
+#~ msgid "The number of graphs to display on one page in list view mode."
+#~ msgstr "Le nombre de graphiques à afficher sur une page en vue par liste."
+
+#~ msgid "The number of rows to display on a single page for graph management."
+#~ msgstr "Nombre de lignes à afficher sur une seule page dans la gestion des graphiques."
+
+#~ msgid "To disable the following devices, press the \"yes\" button below."
+#~ msgstr "Pour désactiver les équipements suivants, cliquez sur le bouton \"oui\" ci-dessous."
+
+#~ msgid "To enable the following devices, press the \"yes\" button below."
+#~ msgstr "Pour activer les équipements suivants, cliquez sur le bouton \"oui\" ci-dessous."
+
+#~ msgid "To end your Cacti session please close your web browser."
+#~ msgstr "Pour fermer votre session Cacti, veuillez fermer votre navigateur."
+
+#~ msgid "Tree View Mode"
+#~ msgstr "Mode de vue en arbre"
+
+#~ msgid "Update Round Robin Archives"
+#~ msgstr "Mettre à jour les archives Round Robin"
+
+#~ msgid "Upper Limit"
+#~ msgstr "Limite supérieure"
+
+#~ msgid "Use passive mode"
+#~ msgstr "Utiliser le mode passif"
+
+#~ msgid "YOU DO NOT HAVE RIGHTS TO CHANGE GRAPH SETTINGS"
+#~ msgstr "VOUS N'AVEZ PAS LES DROITS POUR MODIFIER LES PARAMÈTRES DU GRAPHIQUE"
 
 #, fuzzy
-#~ msgid "The Graph Creation failed for Threshold Template"
-#~ msgstr "Le graphique à utiliser pour ce poste d'état."
+#~ msgid "Legacy 1.x Plugins"
+#~ msgstr "Legacy 1.x Plugins"
 
 #, fuzzy
-#~ msgid "The Threshold Template ID was not set while trying to create Graph and Threshold"
-#~ msgstr "L'ID du modèle de seuil n'a pas été défini lors de la création du graphique et du seuil."
+#~ msgid "The file holding the SSL Certificate Authority to use to connect to the remote database."
+#~ msgstr "Le fichier contenant l'autorité de certification SSL à utiliser pour se connecter à la base de données distante."
 
 #, fuzzy
-#~ msgid "The Device ID was not set while trying to create Graph and Threshold"
-#~ msgstr "Le Device ID n'a pas été défini lors de la création du graphique et du Threshold."
+#~ msgid "%d Outliers"
+#~ msgstr "Valeurs aberrantes (%d)"
 
 #, fuzzy
-#~ msgid "<html><body>A warning has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
-#~ msgstr "<html><body>A warning has been issued that requires your attention.<br><br><br><b>Device</b> : <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b> : <URL><br><b>Message</b> : <SUBJET><br><br><br><GRAPH></body></html>>"
+#~ msgid "%s Standard Deviations"
+#~ msgstr "Écarts-types (%s)"
 
 #, fuzzy
-#~ msgid "<html><body>An alert has been issued that requires your attention.<br><br><b>Device</b>: <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b>: <URL><br><b>Message</b>: <SUBJECT><br><br><GRAPH></body></html>"
-#~ msgstr "<html><body>An alert has been issued that requires your attention.<br><br><br><b>Device</b> : <DESCRIPTION> (<HOSTNAME>)<br><b>URL</b> : <URL><br><b>Message</b> : <SUBJET><br><br><br><GRAPH></body></html>>"
+#~ msgid "No Task"
+#~ msgstr "Aucune tâche"
 
 #, fuzzy
-#~ msgid "Link to Graph in Cacti"
-#~ msgstr "Se connecter à Cacti"
+#~ msgid "%d Samples"
+#~ msgstr "d Échantillons"
 
 #, fuzzy
-#~ msgid "Pages:"
-#~ msgstr "Pages :"
+#~ msgid "When using Cacti with languages other than English, it is important to use the utf8 character set as some characters take more than a single byte. If you are first just now installing Cacti, stop, make the changes and start over again. If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
+#~ msgstr "Lorsque vous utilisez Cacti avec des langues autres que l'anglais, il est important d'utiliser le jeu de caractères utf8 car certains caractères prennent plus d'un octet. Si vous êtes en train d'installer Cacti, arrêtez, faites les changements et recommencez. Si votre Cacti a été lancé et est en production, consultez les instructions sur Internet pour convertir vos bases de données et vos tables si vous prévoyez de prendre en charge d'autres langues."
 
 #, fuzzy
-#~ msgid "Swaps:"
-#~ msgstr "Échanges :"
-
-#, fuzzy
-#~ msgid "Time:"
-#~ msgstr "Heure"
-
-#, fuzzy
-#~ msgid "Log"
-#~ msgstr "Taille maximum du log"
-
-#, fuzzy
-#~ msgid "Thresholds"
-#~ msgstr "Seuils"
-
-#, fuzzy
-#~ msgid "Non-Device"
-#~ msgstr "Non-périphérique"
-
-#, fuzzy
-#~ msgid "Graph Size"
-#~ msgstr "Taille du graphique"
-
-#, fuzzy
-#~ msgid "Sort field returned no data.  Can not continue Re-Index for GET data.."
-#~ msgstr "La zone de tri ne renvoie aucune donnée.  Impossible de continuer Re-Index pour les données GET..."
-
-#, fuzzy
-#~ msgid "With modern SSD type storage, this operation actually degrades the disk more rapidly and adds a 50%% overhead on all write operations."
-#~ msgstr "Avec le stockage moderne de type SSD, cette opération dégrade en fait le disque plus rapidement et ajoute une surcharge de 50% sur toutes les opérations d'écriture."
-
-#, fuzzy
-#~ msgid "Create Aggregate"
-#~ msgstr "Créer un agrégat"
-
-#, fuzzy
-#~ msgid "Resize Selected Graph(s)"
-#~ msgstr "Redimensionner le(s) graphique(s) sélectionné(s)"
-
-#~ msgid "The following data sources are in use by these graphs:"
-#~ msgstr "Les sources de données suivantes sont utilisées ces graphiques :"
-
-#~ msgid "Resize"
-#~ msgstr "Redimensionner"
-
-#, fuzzy
-#~ msgid "View SNMPAgent Notification Log"
-#~ msgstr "Afficher les logs des notifications de SNMPAgent"
-
-#, fuzzy
-#~ msgid "View SNMPAgent Cache"
-#~ msgstr "Voir le cache de SNMPAgent"
+#~ msgid "When using Cacti with languages other than English, it is important to use the utf8_general_ci collation type as some characters take more than a single byte.  If you are first just now installing Cacti, stop, make the changes and start over again.  If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages."
+#~ msgstr "Lorsque vous utilisez Cacti avec des langues autres que l'anglais, il est important d'utiliser le type de collation utf8_general_ci car certains caractères prennent plus d'un octet.  Si vous êtes en train d'installer Cacti, arrêtez, faites les changements et recommencez.  Si votre Cacti a été lancé et est en production, consultez les instructions sur Internet pour convertir vos bases de données et vos tables si vous prévoyez de prendre en charge d'autres langues."

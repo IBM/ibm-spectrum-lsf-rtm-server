@@ -1,0 +1,78 @@
+<!-- $Id$ -->
+<interface>
+	<name>Grid License Scheduler Cluster Mode Stats</name>
+	<script_path>|path_cacti|/scripts/ss_grid_lssched_bcms.php</script_path>
+	<script_function>ss_grid_lssched_bcms</script_function>
+	<script_server>php</script_server>
+	<arg_prepend>|host_id|</arg_prepend>
+	<arg_index>index</arg_index>
+	<arg_query>query</arg_query>
+	<arg_get>get</arg_get>
+	<output_delimeter>!</output_delimeter>
+	<index_order>lsid_feature_cl</index_order>
+	<index_order_type>alpha</index_order_type>
+	<index_title_format>|chosen_order_field|</index_title_format>
+
+	<fields>
+		<lsid_feature_cl>
+			<name>Data Collector/Feature/Cluster</name>
+			<direction>input</direction>
+			<query_name>lsid_feature_cl</query_name>
+		</lsid_feature_cl>
+		<dataCollector>
+			<name>Data Collector</name>
+			<direction>input</direction>
+			<query_name>collector</query_name>
+		</dataCollector>
+		<feature>
+			<name>Feature</name>
+			<direction>input</direction>
+			<query_name>feature</query_name>
+		</feature>
+		<cluster>
+			<name>Cluster</name>
+			<direction>input</direction>
+			<query_name>cluster</query_name>
+		</cluster>
+		<alloc>
+			<name>Allocation</name>
+			<direction>output</direction>
+			<query_name>alloc</query_name>
+		</alloc>
+		<inuse>
+			<name>In Use</name>
+			<direction>output</direction>
+			<query_name>inuse</query_name>
+		</inuse>
+		<reserve>
+			<name>Reserved</name>
+			<direction>output</direction>
+			<query_name>reserve</query_name>
+		</reserve>
+		<over>
+			<name>Over</name>
+			<direction>output</direction>
+			<query_name>over</query_name>
+		</over>
+		<free>
+			<name>Free</name>
+			<direction>output</direction>
+			<query_name>free</query_name>
+		</free>
+		<peak>
+			<name>Peak</name>
+			<direction>output</direction>
+			<query_name>peak</query_name>
+		</peak>
+		<share>
+			<name>Share</name>
+			<direction>output</direction>
+			<query_name>share</query_name>
+		</share>
+		<demand>
+			<name>Demand</name>
+			<direction>output</direction>
+			<query_name>demand</query_name>
+		</demand>
+	</fields>
+</interface>

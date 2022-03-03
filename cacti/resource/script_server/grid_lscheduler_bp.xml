@@ -1,0 +1,108 @@
+<!-- $Id$ -->
+<interface>
+	<name>Grid License Scheduler By Project</name>
+	<script_path>|path_cacti|/scripts/ss_grid_lssched_bp.php</script_path>
+	<script_function>ss_grid_lssched_bp</script_function>
+	<script_server>php</script_server>
+	<arg_prepend>|host_id|</arg_prepend>
+	<arg_index>index</arg_index>
+	<arg_query>query</arg_query>
+	<arg_get>get</arg_get>
+	<output_delimeter>!</output_delimeter>
+	<index_order>lsid_feature_sd_pr</index_order>
+	<index_order_type>alpha</index_order_type>
+	<index_title_format>|chosen_order_field|</index_title_format>
+
+	<fields>
+		<lsid_feature_sd_pr>
+			<name>Data Collector/Feature/Service Domain/Project</name>
+			<direction>input</direction>
+			<query_name>lsid_feature_sd_pr</query_name>
+		</lsid_feature_sd_pr>
+		<dataCollector>
+			<name>Data Collector</name>
+			<direction>input</direction>
+			<query_name>collector</query_name>
+		</dataCollector>
+		<region>
+			<name>Region</name>
+			<direction>input</direction>
+			<query_name>region</query_name>
+		</region>
+		<serviceDomain>
+			<name>Service Domain</name>
+			<direction>input</direction>
+			<query_name>sd</query_name>
+		</serviceDomain>
+		<feature>
+			<name>Feature</name>
+			<direction>input</direction>
+			<query_name>feature</query_name>
+		</feature>
+		<project>
+			<name>Project</name>
+			<direction>input</direction>
+			<query_name>project</query_name>
+		</project>
+		<share>
+			<name>Share</name>
+			<direction>output</direction>
+			<query_name>share</query_name>
+		</share>
+		<own>
+			<name>Own</name>
+			<direction>output</direction>
+			<query_name>own</query_name>
+		</own>
+		<inUse>
+			<name>In Use</name>
+			<direction>output</direction>
+			<query_name>inUse</query_name>
+		</inUse>
+		<reserve>
+			<name>Reserve</name>
+			<direction>output</direction>
+			<query_name>reserve</query_name>
+		</reserve>
+		<free>
+			<name>Free</name>
+			<direction>output</direction>
+			<query_name>free</query_name>
+		</free>
+		<demand>
+			<name>Demand</name>
+			<direction>output</direction>
+			<query_name>demand</query_name>
+		</demand>
+		<sum_total>
+			<name>Sum Total</name>
+			<direction>output</direction>
+			<query_name>sum_total</query_name>
+		</sum_total>
+		<sum_used>
+			<name>Sum Used</name>
+			<direction>output</direction>
+			<query_name>sum_used</query_name>
+		</sum_used>
+		<sum_queued>
+			<name>Sum Queued</name>
+			<direction>output</direction>
+			<query_name>sum_queued</query_name>
+		</sum_queued>
+		<proj_quota>
+			<name>Project Quota</name>
+			<direction>output</direction>
+			<query_name>proj_quota</query_name>
+		</proj_quota>
+		<proj_use>
+			<name>Project Used</name>
+			<direction>output</direction>
+			<query_name>proj_use</query_name>
+		</proj_use>
+		<proj_duse>
+			<name>Project Used and Demanded</name>
+			<direction>output</direction>
+			<query_name>proj_duse</query_name>
+		</proj_duse>
+	</fields>
+</interface>

@@ -1,0 +1,1229 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-01-25 17:31-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../blstat_collectors.php:32
+msgid "Delete"
+msgstr ""
+
+#: ../blstat_collectors.php:33
+msgid "Enable"
+msgstr ""
+
+#: ../blstat_collectors.php:34
+msgid "Disable"
+msgstr ""
+
+#: ../blstat_collectors.php:346
+msgid ""
+"Leave all <b>Device</b>, <b>Graph(s)</b> and <b>Data Source(s)</b> in "
+"place.  Device will be disabled."
+msgstr ""
+
+#: ../blstat_collectors.php:349
+msgid "Delete all <b>Device</b>, <b>Graph(s)</b> and <b>Data Source(s)</b>"
+msgstr ""
+
+#: ../blstat_collectors.php:399
+#, php-format
+msgid "License Scheduler Collector [edit: %s]"
+msgstr ""
+
+#: ../blstat_collectors.php:401
+msgid "License Scheduler Collector [new]"
+msgstr ""
+
+#: ../blstat_collectors.php:466
+msgid "General Information"
+msgstr ""
+
+#: ../blstat_collectors.php:470
+msgid "License Scheduler Data Collector Name"
+msgstr ""
+
+#: ../blstat_collectors.php:476 ../blstat_collectors.php:780
+#: ../grid_lsdashboard.php:66 ../grid_lsdashboard.php:142
+#: ../grid_lsdashboard.php:207 ../grid_lsdashboard.php:2190
+msgid "Region Name"
+msgstr ""
+
+#: ../blstat_collectors.php:482
+msgid "Enable the License Scheduler Data Collector"
+msgstr ""
+
+#: ../blstat_collectors.php:489
+msgid "License Scheduler Batch Daemon (bld) Service Information"
+msgstr ""
+
+#: ../blstat_collectors.php:493
+msgid "License Scheduler Version"
+msgstr ""
+
+#: ../blstat_collectors.php:496
+msgid "Version 9.x"
+msgstr ""
+
+#: ../blstat_collectors.php:497
+msgid "Version 10.x"
+msgstr ""
+
+#: ../blstat_collectors.php:503
+msgid "License Scheduler Master Host(s)"
+msgstr ""
+
+#: ../blstat_collectors.php:504
+msgid ""
+"To enable failover, enter the list of LS master hostnames separated by a "
+"space."
+msgstr ""
+
+#: ../blstat_collectors.php:511
+msgid "License Scheduler TCP Port for Communications"
+msgstr ""
+
+#: ../blstat_collectors.php:519
+msgid "Strict Checking"
+msgstr ""
+
+#: ../blstat_collectors.php:520
+msgid ""
+"Please specify whether strict checking of communications between LSF daemons "
+"is enabled or not."
+msgstr ""
+
+#: ../blstat_collectors.php:523 ../grid_lsdashboard.php:4713
+#: ../grid_lsdashboard.php:4723
+msgid "Yes"
+msgstr ""
+
+#: ../blstat_collectors.php:524 ../grid_lsdashboard.php:4714
+#: ../grid_lsdashboard.php:4724
+msgid "No"
+msgstr ""
+
+#: ../blstat_collectors.php:530
+msgid "Polling/Automation Settings"
+msgstr ""
+
+#: ../blstat_collectors.php:533
+msgid "Frequency to Collect License Data"
+msgstr ""
+
+#: ../blstat_collectors.php:537 ../blstat_collectors.php:538
+#: ../blstat_collectors.php:539
+#, php-format
+msgid "%d Seconds"
+msgstr ""
+
+#: ../blstat_collectors.php:540 ../setup.php:615
+#, php-format
+msgid "%d Minute"
+msgstr ""
+
+#: ../blstat_collectors.php:541 ../blstat_collectors.php:542 ../setup.php:616
+#: ../setup.php:617
+#, php-format
+msgid "%d Minutes"
+msgstr ""
+
+#: ../blstat_collectors.php:547
+msgid "Frequency to Create New License Scheduler Graphs"
+msgstr ""
+
+#: ../blstat_collectors.php:551 ../blstat_collectors.php:827
+#: ../blstat_collectors.php:831
+msgid "Disabled"
+msgstr ""
+
+#: ../blstat_collectors.php:552 ../blstat_collectors.php:553
+#: ../blstat_collectors.php:554 ../blstat_collectors.php:831
+#, php-format
+msgid "%d Hours"
+msgstr ""
+
+#: ../blstat_collectors.php:555
+msgid "1 Day"
+msgstr ""
+
+#: ../blstat_collectors.php:560
+msgid "LSF conf directory(Advanced)"
+msgstr ""
+
+#: ../blstat_collectors.php:561
+msgid ""
+"Allow modification of the LSF_ENVDIR path (under which has lsf.conf and lsf."
+"licensescheduler).<br>Do not modify if you are unsure!"
+msgstr ""
+
+#: ../blstat_collectors.php:663
+msgid "License Scheduler Collectors"
+msgstr ""
+
+#: ../blstat_collectors.php:663 ../grid_lsdashboard.php:595
+msgid "Learn More"
+msgstr ""
+
+#: ../blstat_collectors.php:671 ../grid_lsdashboard.php:5115
+msgid "Search"
+msgstr ""
+
+#: ../blstat_collectors.php:675
+msgid "Rows"
+msgstr ""
+
+#: ../blstat_collectors.php:678
+msgid "Default"
+msgstr ""
+
+#: ../blstat_collectors.php:768
+msgid "Collectors"
+msgstr ""
+
+#: ../blstat_collectors.php:779
+msgid "Collector Name"
+msgstr ""
+
+#: ../blstat_collectors.php:781 ../grid_lsdashboard.php:4554
+msgid "Status"
+msgstr ""
+
+#: ../blstat_collectors.php:782
+msgid "ID"
+msgstr ""
+
+#: ../blstat_collectors.php:783
+msgid "LS Version"
+msgstr ""
+
+#: ../blstat_collectors.php:784
+msgid "Poller Freq"
+msgstr ""
+
+#: ../blstat_collectors.php:785
+msgid "Graph Freq"
+msgstr ""
+
+#: ../blstat_collectors.php:786
+msgid "Poller Last Run"
+msgstr ""
+
+#: ../blstat_collectors.php:787
+msgid "Graph Last Run"
+msgstr ""
+
+#: ../blstat_collectors.php:800
+#, php-format
+msgid "%d secs Ago"
+msgstr ""
+
+#: ../blstat_collectors.php:802 ../blstat_collectors.php:809
+#, php-format
+msgid "%d Ago"
+msgstr ""
+
+#: ../blstat_collectors.php:805 ../blstat_collectors.php:811
+msgid "Never"
+msgstr ""
+
+#: ../blstat_collectors.php:827
+msgid "Enabled"
+msgstr ""
+
+#: ../blstat_collectors.php:841
+msgid "No License Scheduler Collectors Found"
+msgstr ""
+
+#: ../grid_lsdashboard.php:35
+msgid "IBM Spectrum LSF RTM - License Scheduler Dashboard"
+msgstr ""
+
+#: ../grid_lsdashboard.php:51 ../grid_lsdashboard.php:129
+#: ../grid_lsdashboard.php:193 ../grid_lsdashboard.php:2177
+#: ../grid_lsdashboard.php:4524
+msgid "Actions"
+msgstr ""
+
+#: ../grid_lsdashboard.php:54
+msgid "BLD Name"
+msgstr ""
+
+#: ../grid_lsdashboard.php:56
+msgid "License Scheduler token name"
+msgstr ""
+
+#: ../grid_lsdashboard.php:59
+msgid "LM Name"
+msgstr ""
+
+#: ../grid_lsdashboard.php:61 ../grid_lsdashboard.php:4529
+msgid "Feature name in Flexlm/RLM"
+msgstr ""
+
+#: ../grid_lsdashboard.php:64 ../grid_lsdashboard.php:140
+#: ../grid_lsdashboard.php:205 ../grid_lsdashboard.php:1160
+#: ../grid_lsdashboard.php:1255 ../grid_lsdashboard.php:1386
+#: ../grid_lsdashboard.php:1971 ../grid_lsdashboard.php:2188
+#: ../grid_lsdashboard.php:2519 ../grid_lsdashboard.php:2671
+#: ../grid_lsdashboard.php:2756 ../grid_lsdashboard.php:2867
+#: ../grid_lsdashboard.php:2929 ../grid_lsdashboard.php:4143
+#: ../grid_lsdashboard.php:4655 ../grid_lsdashboard.php:5065
+msgid "Region"
+msgstr ""
+
+#: ../grid_lsdashboard.php:69 ../grid_lsdashboard.php:2526
+#: ../grid_lsdashboard.php:2682
+msgid "Mode"
+msgstr ""
+
+#: ../grid_lsdashboard.php:71
+msgid "Cluster mode or project mode set in License Scheduler"
+msgstr ""
+
+#: ../grid_lsdashboard.php:74
+msgid "LM Max"
+msgstr ""
+
+#: ../grid_lsdashboard.php:77
+msgid "Max avail token"
+msgstr ""
+
+#: ../grid_lsdashboard.php:80
+msgid "BLD Use"
+msgstr ""
+
+#: ../grid_lsdashboard.php:83 ../grid_lsdashboard.php:2705
+msgid "The number of licenses in use in License Scheduler"
+msgstr ""
+
+#: ../grid_lsdashboard.php:86 ../grid_lsdashboard.php:2709
+msgid "LM Use"
+msgstr ""
+
+#: ../grid_lsdashboard.php:89 ../grid_lsdashboard.php:2711
+msgid "The number of licenses in use in Flexlm/RLM"
+msgstr ""
+
+#: ../grid_lsdashboard.php:92
+msgid "LM Queued"
+msgstr ""
+
+#: ../grid_lsdashboard.php:95
+msgid "The number of licenses queued in Flexlm/RLM"
+msgstr ""
+
+#: ../grid_lsdashboard.php:98
+msgid "BLD Reserve"
+msgstr ""
+
+#: ../grid_lsdashboard.php:101 ../grid_lsdashboard.php:2723
+msgid "The number of licenses reserved"
+msgstr ""
+
+#: ../grid_lsdashboard.php:104
+msgid "BLD Free"
+msgstr ""
+
+#: ../grid_lsdashboard.php:107 ../grid_lsdashboard.php:2729
+msgid "The number of licenses has free"
+msgstr ""
+
+#: ../grid_lsdashboard.php:110
+msgid "BLD Demand"
+msgstr ""
+
+#: ../grid_lsdashboard.php:113 ../grid_lsdashboard.php:2735
+msgid "Numeric value indicating the number of tokens required"
+msgstr ""
+
+#: ../grid_lsdashboard.php:116
+msgid "BLD Others"
+msgstr ""
+
+#: ../grid_lsdashboard.php:119 ../grid_lsdashboard.php:2717
+msgid ""
+"The number of licenses checked out by applications outside of License "
+"Scheduler"
+msgstr ""
+
+#: ../grid_lsdashboard.php:132 ../grid_lsdashboard.php:210
+msgid "Service Domain"
+msgstr ""
+
+#: ../grid_lsdashboard.php:136 ../grid_lsdashboard.php:201
+#: ../grid_lsdashboard.php:2184 ../grid_lsdashboard.php:4527
+msgid "Feature Name"
+msgstr ""
+
+#: ../grid_lsdashboard.php:145
+msgid "Total"
+msgstr ""
+
+#: ../grid_lsdashboard.php:150
+msgid "LSF Use"
+msgstr ""
+
+#: ../grid_lsdashboard.php:153
+msgid ""
+"The total number of licenses in use by License Scheduler projects in the LSF "
+"workload"
+msgstr ""
+
+#: ../grid_lsdashboard.php:156
+msgid "LSF Deserve"
+msgstr ""
+
+#: ../grid_lsdashboard.php:159
+msgid ""
+"The total number of licenses assigned to License Scheduler projects in the "
+"LSF workload"
+msgstr ""
+
+#: ../grid_lsdashboard.php:162
+msgid "LSF Free"
+msgstr ""
+
+#: ../grid_lsdashboard.php:165
+msgid ""
+"The total number of free licenses available to License Scheduler projects in "
+"the LSF workload"
+msgstr ""
+
+#: ../grid_lsdashboard.php:168
+msgid "Non-LSF Use"
+msgstr ""
+
+#: ../grid_lsdashboard.php:171
+msgid "The total number of licenses in use by projects in the non-LSF workload"
+msgstr ""
+
+#: ../grid_lsdashboard.php:174
+msgid "Non-LSF Deserve"
+msgstr ""
+
+#: ../grid_lsdashboard.php:177
+msgid ""
+"The total number of licenses assigned to projects in the non-LSF workload"
+msgstr ""
+
+#: ../grid_lsdashboard.php:180
+msgid "Non-LSF Free"
+msgstr ""
+
+#: ../grid_lsdashboard.php:183
+msgid ""
+"The total number of free licenses available to projects in the non-LSF "
+"workload"
+msgstr ""
+
+#: ../grid_lsdashboard.php:196 ../grid_lsdashboard.php:795
+#: ../grid_lsdashboard.php:2036 ../grid_lsdashboard.php:2197
+#: ../grid_lsdashboard.php:2530 ../grid_lsdashboard.php:2586
+#: ../grid_lsdashboard.php:2593 ../grid_lsdashboard.php:2751
+#: ../grid_lsdashboard.php:5071
+msgid "Project"
+msgstr ""
+
+#: ../grid_lsdashboard.php:214 ../grid_lsdashboard.php:2761
+#: ../grid_lsdashboard.php:2934
+msgid "Share"
+msgstr ""
+
+#: ../grid_lsdashboard.php:217
+msgid "The shares assigned to the hierarchical group member projects"
+msgstr ""
+
+#: ../grid_lsdashboard.php:220 ../grid_lsdashboard.php:2766
+msgid "Own"
+msgstr ""
+
+#: ../grid_lsdashboard.php:223
+msgid "Numeric value indicating the number of tokens owned by each project"
+msgstr ""
+
+#: ../grid_lsdashboard.php:226 ../grid_lsdashboard.php:1199
+#: ../grid_lsdashboard.php:1280 ../grid_lsdashboard.php:1411
+#: ../grid_lsdashboard.php:2205 ../grid_lsdashboard.php:2616
+#: ../grid_lsdashboard.php:2703 ../grid_lsdashboard.php:2771
+#: ../grid_lsdashboard.php:2872 ../grid_lsdashboard.php:2944
+#: ../grid_lsdashboard.php:4220
+msgid "In Use"
+msgstr ""
+
+#: ../grid_lsdashboard.php:229
+msgid ""
+"The number of licenses in use by the license project in License Scheduler"
+msgstr ""
+
+#: ../grid_lsdashboard.php:232 ../grid_lsdashboard.php:2211
+#: ../grid_lsdashboard.php:2721 ../grid_lsdashboard.php:2777
+#: ../grid_lsdashboard.php:2878 ../grid_lsdashboard.php:2950
+msgid "Reserve"
+msgstr ""
+
+#: ../grid_lsdashboard.php:235
+msgid "The number of licenses reserved for the license project"
+msgstr ""
+
+#: ../grid_lsdashboard.php:238 ../grid_lsdashboard.php:2217
+#: ../grid_lsdashboard.php:2727 ../grid_lsdashboard.php:2782
+#: ../grid_lsdashboard.php:2883 ../grid_lsdashboard.php:2965
+msgid "Free"
+msgstr ""
+
+#: ../grid_lsdashboard.php:241
+msgid "The number of licenses the license project has free"
+msgstr ""
+
+#: ../grid_lsdashboard.php:244 ../grid_lsdashboard.php:2227
+#: ../grid_lsdashboard.php:2236 ../grid_lsdashboard.php:2733
+#: ../grid_lsdashboard.php:2787 ../grid_lsdashboard.php:2888
+#: ../grid_lsdashboard.php:2970 ../grid_lsdashboard.php:4089
+msgid "Demand"
+msgstr ""
+
+#: ../grid_lsdashboard.php:247
+msgid "Numeric value indicating the number of tokens required by each project"
+msgstr ""
+
+#: ../grid_lsdashboard.php:595
+#, php-format
+msgid "Summary Filter %s %s"
+msgstr ""
+
+#: ../grid_lsdashboard.php:604
+msgid "Summary Data"
+msgstr ""
+
+#: ../grid_lsdashboard.php:683 ../grid_lsdashboard.php:686
+#: ../grid_lsdashboard.php:688 ../grid_lsdashboard.php:2475
+#: ../grid_lsdashboard.php:2476 ../grid_lsdashboard.php:2477
+#: ../grid_lsdashboard.php:2478 ../grid_lsdashboard.php:2479
+#: ../grid_lsdashboard.php:3207 ../grid_lsdashboard.php:3208
+#: ../grid_lsdashboard.php:3211 ../grid_lsdashboard.php:3224
+#: ../grid_lsdashboard.php:3397 ../grid_lsdashboard.php:4038
+#: ../grid_lsdashboard.php:4039 ../grid_lsdashboard.php:4040
+#: ../grid_lsdashboard.php:4041 ../grid_lsdashboard.php:4042
+msgid "N/A"
+msgstr ""
+
+#: ../grid_lsdashboard.php:701
+msgid "No License Scheduler Records Found"
+msgstr ""
+
+#: ../grid_lsdashboard.php:708
+msgid ""
+"<b>NOTE:</b> N/A Indicates that the LM Server is not being monitored by RTM"
+msgstr ""
+
+#: ../grid_lsdashboard.php:795 ../grid_lsdashboard.php:2042
+#: ../grid_lsdashboard.php:2180 ../grid_lsdashboard.php:2531
+#: ../grid_lsdashboard.php:2560 ../grid_lsdashboard.php:2817
+#: ../grid_lsdashboard.php:2849 ../grid_lsdashboard.php:2862
+#: ../grid_lsdashboard.php:2924 ../grid_lsdashboard.php:5077
+msgid "Cluster"
+msgstr ""
+
+#: ../grid_lsdashboard.php:825
+#, php-format
+msgid "Distribution Filter %s"
+msgstr ""
+
+#: ../grid_lsdashboard.php:831 ../lib/functions.php:78
+msgid "Distribution"
+msgstr ""
+
+#: ../grid_lsdashboard.php:874 ../grid_lsdashboard.php:1093
+#: ../grid_lsdashboard.php:2444
+msgid "View Feature Dashboard"
+msgstr ""
+
+#: ../grid_lsdashboard.php:877 ../grid_lsdashboard.php:880
+#: ../grid_lsdashboard.php:1092
+msgid "View Cluster Use"
+msgstr ""
+
+#: ../grid_lsdashboard.php:878
+msgid "View Project Use"
+msgstr ""
+
+#: ../grid_lsdashboard.php:883 ../grid_lsdashboard.php:1095
+msgid "View Feature Checkouts"
+msgstr ""
+
+#: ../grid_lsdashboard.php:886 ../grid_lsdashboard.php:1098
+msgid "View Feature Graphs"
+msgstr ""
+
+#: ../grid_lsdashboard.php:908
+msgid "No Records Found"
+msgstr ""
+
+#: ../grid_lsdashboard.php:1036
+#, php-format
+msgid "Project Filter %s"
+msgstr ""
+
+#: ../grid_lsdashboard.php:1042 ../lib/functions.php:77
+msgid "Projects"
+msgstr ""
+
+#: ../grid_lsdashboard.php:1121
+msgid "No Project Records Found"
+msgstr ""
+
+#: ../grid_lsdashboard.php:1154 ../grid_lsdashboard.php:1249
+#: ../grid_lsdashboard.php:1380 ../grid_lsdashboard.php:2513
+#: ../grid_lsdashboard.php:2666 ../grid_lsdashboard.php:4137
+#: ../grid_lsdashboard.php:4649 ../grid_lsdashboard.php:5059
+#: ../lib/functions.php:75
+msgid "Feature"
+msgstr ""
+
+#: ../grid_lsdashboard.php:1166 ../grid_lsdashboard.php:1261
+#: ../grid_lsdashboard.php:1392 ../grid_lsdashboard.php:1999
+#: ../grid_lsdashboard.php:2536 ../grid_lsdashboard.php:4177
+#: ../grid_lsdashboard.php:4667
+msgid "Refresh"
+msgstr ""
+
+#: ../grid_lsdashboard.php:1182 ../grid_lsdashboard.php:1322
+#: ../grid_lsdashboard.php:1433 ../grid_lsdashboard.php:2064
+#: ../grid_lsdashboard.php:2600 ../grid_lsdashboard.php:4728
+msgid "Records"
+msgstr ""
+
+#: ../grid_lsdashboard.php:1203 ../grid_lsdashboard.php:1284
+#: ../grid_lsdashboard.php:1415 ../grid_lsdashboard.php:2016
+#: ../grid_lsdashboard.php:2553 ../grid_lsdashboard.php:4167
+#: ../grid_lsdashboard.php:4683
+msgid "Go"
+msgstr ""
+
+#: ../grid_lsdashboard.php:1204 ../grid_lsdashboard.php:1285
+#: ../grid_lsdashboard.php:1416 ../grid_lsdashboard.php:2017
+#: ../grid_lsdashboard.php:2554 ../grid_lsdashboard.php:4168
+#: ../grid_lsdashboard.php:4684
+msgid "Clear"
+msgstr ""
+
+#: ../grid_lsdashboard.php:1296 ../grid_lsdashboard.php:1427
+#: ../grid_lsdashboard.php:1977 ../grid_lsdashboard.php:4661
+msgid "Domain"
+msgstr ""
+
+#: ../grid_lsdashboard.php:1303
+msgid "Level"
+msgstr ""
+
+#: ../grid_lsdashboard.php:1727
+msgid ""
+"User Filter [ Details may vary depending on license scheduler poller status ]"
+msgstr ""
+
+#: ../grid_lsdashboard.php:1797 ../grid_lsdashboard.php:1815
+#: ../grid_lsdashboard.php:1983 ../grid_lsdashboard.php:3425
+msgid "Demanding"
+msgstr ""
+
+#: ../grid_lsdashboard.php:1843 ../lib/functions.php:79
+msgid "Users"
+msgstr ""
+
+#: ../grid_lsdashboard.php:1944
+msgid "No User Records Found"
+msgstr ""
+
+#: ../grid_lsdashboard.php:1965
+msgid "Resource"
+msgstr ""
+
+#: ../grid_lsdashboard.php:1981 ../grid_lsdashboard.php:2046
+#: ../grid_lsdashboard.php:2564 ../grid_lsdashboard.php:4087
+#: ../grid_lsdashboard.php:4197 ../grid_lsdashboard.php:4712
+#: ../grid_lsdashboard.php:4722 ../grid_lsdashboard.php:5081
+msgid "All"
+msgstr ""
+
+#: ../grid_lsdashboard.php:1982
+msgid "Consuming"
+msgstr ""
+
+#: ../grid_lsdashboard.php:1984 ../grid_lsdashboard.php:3425
+msgid "Reserving"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2024 ../grid_lsdashboard.php:2797
+#: ../grid_lsdashboard.php:2829 ../grid_lsdashboard.php:4696
+msgid "User"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2030 ../grid_lsdashboard.php:4702
+msgid "Host"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2208
+msgid "The number of licenses checked out by jobs in the cluster"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2214
+msgid ""
+"The number of licenses reserved in the service domain for jobs running in "
+"the cluster"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2220
+msgid "The number of licenses the cluster has free"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2230 ../grid_lsdashboard.php:2239
+msgid "Numeric value indicating the number of tokens required by each cluster"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2246 ../grid_lsdashboard.php:2893
+#: ../grid_lsdashboard.php:2955
+msgid "Over"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2249
+msgid "The amount of license checkouts exceeding rusage, summed over all jobs"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2252 ../grid_lsdashboard.php:2898
+msgid "Alloc"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2255
+msgid "The number of licenses currently allocated to the cluster by the bld"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2262
+msgid "Accum Use"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2265
+msgid ""
+"The number of tokens accumulated by each consumer at runtime. It is the "
+"number of licenses assigned to a given consumer for a specific feature"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2268 ../grid_lsdashboard.php:2908
+msgid "Scaled Accum"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2271
+msgid ""
+"The number of tokens accumulated by each consumer at runtime divided by the "
+"SHARE value. License Scheduler uses this value to schedule the tokens for "
+"each project"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2274
+msgid "Available"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2277
+msgid "The number of tokens available"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2349
+#, php-format
+msgid "Cluster Filter %s"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2390 ../lib/functions.php:76
+msgid "Clusters"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2446
+msgid "View Users Jobs"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2448
+msgid "View User/Host License Checkouts"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2451 ../grid_lsdashboard.php:2453
+msgid "View User Graphs"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2466
+#, php-format
+msgid "%s (FD)"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2491
+msgid "No Cluster Records Found"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2677
+msgid "LM Feature"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2687
+msgid "LS Total"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2692
+msgid "LM Total"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2697
+msgid "Padding"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2699
+msgid "LS Total - LM Total"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2715 ../grid_lsdashboard.php:3425
+msgid "Others"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2739
+msgid "Taskman"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2741
+msgid ""
+"The number of jobs that is run by the LSF Task Manager (taskman) tool "
+"outside of LSF, but is scheduled by License Scheduler"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2773
+msgid ""
+"The number of jobs / licenses currently in use in License Scheduler for each "
+"project and the percentage of licenses in use in each project out of total "
+"licenses in use in the Service Domain"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2802 ../grid_lsdashboard.php:2834
+msgid "User Total"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2807 ../grid_lsdashboard.php:2839
+msgid "Cluster Total"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2812 ../grid_lsdashboard.php:2844
+msgid "MAX Duration"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2874
+msgid "The number of licenses in use in License Scheduler for each project"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2903
+msgid "Accum"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2913
+msgid "Avail"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2939
+#, php-format
+msgid "Allocation (% of total)"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2946
+msgid "The number of licenses in use in License Scheduler for each cluster"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2960
+msgid "Peak"
+msgstr ""
+
+#: ../grid_lsdashboard.php:2975
+msgid "Buffer"
+msgstr ""
+
+#: ../grid_lsdashboard.php:3052
+#, php-format
+msgid "Feature Dashboard %s"
+msgstr ""
+
+#: ../grid_lsdashboard.php:3178 ../grid_lsdashboard.php:3191
+msgid "Summary for Feature"
+msgstr ""
+
+#: ../grid_lsdashboard.php:3183
+msgid "No Feature Inputed"
+msgstr ""
+
+#: ../grid_lsdashboard.php:3236
+msgid "No Such Feature Found"
+msgstr ""
+
+#: ../grid_lsdashboard.php:3249
+msgid "License Project Usage"
+msgstr ""
+
+#: ../grid_lsdashboard.php:3313 ../grid_lsdashboard.php:3384
+#, php-format
+msgid "Service Domain: %s"
+msgstr ""
+
+#: ../grid_lsdashboard.php:3318
+msgid "View Project Graphs"
+msgstr ""
+
+#: ../grid_lsdashboard.php:3339
+msgid "No Projects Found"
+msgstr ""
+
+#: ../grid_lsdashboard.php:3346 ../grid_lsdashboard.php:3995
+msgid "Cluster Usage"
+msgstr ""
+
+#: ../grid_lsdashboard.php:3389 ../grid_lsdashboard.php:4032
+msgid "View Cluster Graphs"
+msgstr ""
+
+#: ../grid_lsdashboard.php:3416
+msgid "No Cluster Use Found"
+msgstr ""
+
+#: ../grid_lsdashboard.php:3425
+msgid "LMTotals"
+msgstr ""
+
+#: ../grid_lsdashboard.php:3428
+#, php-format
+msgid "Others (%s + Minutes)"
+msgstr ""
+
+#: ../grid_lsdashboard.php:3499 ../grid_lsdashboard.php:3634
+#: ../grid_lsdashboard.php:3821 ../grid_lsdashboard.php:3919
+msgid "Undefined"
+msgstr ""
+
+#: ../grid_lsdashboard.php:3511 ../grid_lsdashboard.php:3647
+#: ../grid_lsdashboard.php:3834 ../grid_lsdashboard.php:3932
+msgid "RESERVED"
+msgstr ""
+
+#: ../grid_lsdashboard.php:3548 ../grid_lsdashboard.php:3968
+msgid "LSFCLIENT"
+msgstr ""
+
+#: ../grid_lsdashboard.php:3550 ../grid_lsdashboard.php:3970
+msgid "UNKNOWN"
+msgstr ""
+
+#: ../grid_lsdashboard.php:3565
+msgid "No Other Exceptions Found"
+msgstr ""
+
+#: ../grid_lsdashboard.php:3570
+#, php-format
+msgid "Reservers (Current) %s"
+msgstr ""
+
+#: ../grid_lsdashboard.php:3702
+msgid "No Reservation Exceptions Found"
+msgstr ""
+
+#: ../grid_lsdashboard.php:3707
+#, php-format
+msgid "Cluster Demand %s"
+msgstr ""
+
+#: ../grid_lsdashboard.php:3844
+msgid "No Demanding Users Found"
+msgstr ""
+
+#: ../grid_lsdashboard.php:3849
+#, php-format
+msgid "LM Totals %s"
+msgstr ""
+
+#: ../grid_lsdashboard.php:3985
+msgid "No LM Checkouts Found"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4026
+#, php-format
+msgid "Project: %s"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4051
+msgid "No Cluster Project Use Found"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4059
+msgid "Custom Graphs"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4068 ../grid_lsdashboard.php:5270
+msgid "Presets"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4083
+msgid "Type"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4088
+msgid "Use"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4149
+msgid "LS Collector"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4169
+msgid "Save"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4193
+msgid "Display"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4198
+msgid "Stats"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4199 ../grid_lsdashboard.php:5140
+#: ../lib/functions.php:81
+msgid "Graphs"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4203
+msgid "TopX"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4255
+msgid "Filter Settings Saved"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4507
+msgid "Feature Checkout Filter"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4532
+msgid "Vendor Daemon"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4534
+msgid "Vendor daemon in Flexlm/RLM"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4537
+msgid "Service Name"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4541
+msgid "Version"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4543
+msgid "The version of licenses"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4546
+msgid "User Name"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4550
+msgid "Host Name"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4559 ../grid_lsdashboard.php:5102
+msgid "InUse"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4562
+msgid "The number of licenses in use"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4565
+msgid "Duration"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4568
+msgid "Time duration the feature is checked out"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4571
+msgid "Date"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4574
+msgid "The time when the feature is checked out"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4578 ../lib/functions.php:80
+msgid "Checkouts"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4627
+msgid "No License Checkouts Found"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4708
+msgid "Exceptions"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4718
+msgid "LSFHost"
+msgstr ""
+
+#: ../grid_lsdashboard.php:4893
+msgid "Graph Filter"
+msgstr ""
+
+#: ../grid_lsdashboard.php:5121
+msgid "Template"
+msgstr ""
+
+#: ../grid_lsdashboard.php:5125
+msgid "Any"
+msgstr ""
+
+#: ../grid_lsdashboard.php:5154
+msgid "Columns"
+msgstr ""
+
+#: ../grid_lsdashboard.php:5171
+msgid "Thumbnails"
+msgstr ""
+
+#: ../grid_lsdashboard.php:5276
+msgid "Custom"
+msgstr ""
+
+#: ../grid_lsdashboard.php:5297
+msgid "From"
+msgstr ""
+
+#: ../grid_lsdashboard.php:5306
+msgid "To"
+msgstr ""
+
+#: ../grid_lsdashboard.php:5486
+#, php-format
+msgid " [ Just Updated ] %s"
+msgstr ""
+
+#: ../lib/functions.php:74
+msgid "Summary"
+msgstr ""
+
+#: ../lib/functions.php:375
+msgid "You must first define the FLEXlm Feature Graph Template"
+msgstr ""
+
+#: ../lib/functions.php:384 ../lib/functions.php:465
+msgid "You must first Import the License Scheduler Host Template"
+msgstr ""
+
+#: ../setup.php:600
+msgid "License Scheduler Dashboard"
+msgstr ""
+
+#: ../setup.php:602
+msgid "RTM Plugins"
+msgstr ""
+
+#: ../setup.php:606
+msgid "RTM License Scheduler Display Presets"
+msgstr ""
+
+#: ../setup.php:610
+msgid "Exception Delay Time"
+msgstr ""
+
+#: ../setup.php:611
+msgid ""
+"How long must a license be checked out without an LSF Job before an "
+"Exception is triggered.  We add a delay to compensate for the asynchronous "
+"nature of RTM data collection."
+msgstr ""
+
+#: ../setup.php:621
+msgid "RTM License Scheduler Project Settings"
+msgstr ""
+
+#: ../setup.php:625
+msgid "Should Hierarchical License Project Aggregation be Enabled?"
+msgstr ""
+
+#: ../setup.php:626
+msgid ""
+"Checking this option will enable Hierarchical License Project statistics "
+"gathering based upon a predefined License Project Hierarchy delimiter.  You "
+"will then be able to view statistics at multiple levels within the License "
+"Project Hierarchy."
+msgstr ""
+
+#: ../setup.php:631
+msgid "License Project Hierarchy Delimiter"
+msgstr ""
+
+#: ../setup.php:632
+msgid ""
+"If you utilize the License Project field to represent a License Project "
+"Hierarchy, what delimiter do you use to separate each level of the Hierarchy?"
+msgstr ""
+
+#: ../setup.php:639
+msgid "Maximum Aggregation Level"
+msgstr ""
+
+#: ../setup.php:640
+msgid ""
+"License Projects are oftentimes treated as Hierarchal objects in LSF.  "
+"Select the maximum level of Hierarchy here that is meaningful for reporting."
+msgstr ""
+
+#: ../setup.php:654
+msgid ""
+"Duplicated LS Collector: One of master hostnames in list has already been "
+"added with the same port."
+msgstr ""
+
+#: ../setup.php:659
+msgid "Unable to locate lsf.licensescheduler in the given directory."
+msgstr ""
+
+#: ../setup.php:686 ../setup.php:688 ../setup.php:690
+msgid "Dashboards"
+msgstr ""
+
+#: ../setup.php:690
+msgid "License Scheduler"
+msgstr ""
+
+#: ../setup.php:708
+msgid "Collection Methods"
+msgstr ""
+
+#: ../setup.php:709
+msgid "Grid Management"
+msgstr ""
+
+#: ../setup.php:709
+msgid "License Schedulers"
+msgstr ""
+
+#: ../setup.php:724
+msgid "1 Level"
+msgstr ""
+
+#: ../setup.php:725
+msgid "2 Levels"
+msgstr ""
