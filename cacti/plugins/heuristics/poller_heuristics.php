@@ -560,7 +560,7 @@ function create_heuristics_sub_query($field_list, $sql_where = '') {
 			foreach($tables as $table) {
 				// Fix the table name
 				$table = str_replace('grid_jobs_finished', 'grid_heuristics_percentiles', $table);
-				
+
 				if (!db_table_exists($table)) {
 					db_execute("CREATE TABLE IF NOT EXISTS $table LIKE grid_heuristics_percentiles");
 				}
@@ -879,21 +879,21 @@ reportid
 */
 function create_table_grid_clusters_reportdata() {
 	db_execute("CREATE TABLE IF NOT EXISTS grid_clusters_reportdata (
-		`clusterid` int(10) unsigned NOT NULL default '0',
+		`clusterid` int(10) unsigned NOT NULL DEFAULT '0',
 		`reportid` VARCHAR(20) NOT NULL DEFAULT '',
 		`name` VARCHAR(20) NOT NULL DEFAULT '',
-		`value` double NOT NULL default '0',
-		`present` tinyint(3) unsigned NOT NULL,
+		`value` double NOT NULL DEFAULT '0',
+		`present` tinyint(3) unsigned NOT NULL DEFAULT '1',
 		PRIMARY KEY (`clusterid`,`reportid`,`name`)
 		) ENGINE = MEMORY COMMENT = 'cluster level reporting results table';");
 
 	db_execute("CREATE TABLE IF NOT EXISTS grid_clusters_queue_reportdata (
-		`clusterid` int(10) unsigned NOT NULL default '0',
-		`queue` varchar(45) NOT NULL default '',
+		`clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+		`queue` varchar(60) NOT NULL DEFAULT '',
 		`reportid` VARCHAR(20) NOT NULL DEFAULT '',
 		`name` VARCHAR(20) NOT NULL DEFAULT '',
-		`value` double NOT NULL default '0',
-		`present` tinyint(3) unsigned NOT NULL,
+		`value` double NOT NULL DEFAULT '0',
+		`present` tinyint(3) unsigned NOT NULL DEFAULT '1',
 		PRIMARY KEY (`clusterid`,`queue`,`reportid`,`name`)
 		) ENGINE = MEMORY COMMENT = 'queue level reporting results table';");
 

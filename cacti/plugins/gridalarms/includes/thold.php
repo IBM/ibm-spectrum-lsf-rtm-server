@@ -230,7 +230,8 @@ function gridalarms_th_edit_form_array($form_array) {
 				'1' => __('BSwitch', 'gridalarms'),
 				'2' => __('BKill', 'gridalarms'),
 				'3' => __('Force Kill', 'gridalarms'),
-				'4' => __('Signal Kill', 'gridalarms')
+				'4' => __('Signal Kill', 'gridalarms'),
+				'5' => __('Kill as DONE', 'gridalarms')
 			),
 			'default' => '0',
 			'none_value' => __('N/A', 'gridalarms'),
@@ -263,7 +264,8 @@ function gridalarms_th_edit_form_array($form_array) {
 				'1' => __('BSwitch', 'gridalarms'),
 				'2' => __('BKill', 'gridalarms'),
 				'3' => __('Force Kill', 'gridalarms'),
-				'4' => __('Signal Kill', 'gridalarms')
+				'4' => __('Signal Kill', 'gridalarms'),
+				'5' => __('Kill as DONE', 'gridalarms')
 			),
 			'default' => '0',
 			'none_value' => __('N/A', 'gridalarms'),
@@ -543,13 +545,13 @@ function gridalarms_thold_gridcontrol_exec($save) {
 			$message_array['action_lockid'] = $host_action_lockid;
 			$message = $message_array;
 			if ($host_action == 1) { // open host
-				$host_level_action  = 'open';
+				$lsf_control_action  = 'open';
 				$action_level       = 'host';
 				$run_grid           = 'true';
 				$json_return_format = sorting_json_format($targetvalue, $message, $action_level); // massage parameter in json format
 				$cmd = 'Open Host(s)';
 			} elseif ($host_action == 2) { // close host
-				$host_level_action = 'close';
+				$lsf_control_action = 'close';
 				$action_level      = 'host';
 				$run_grid          = 'true';
 				$json_return_format = sorting_json_format($targetvalue, $message, $action_level); // massage parameter in json format
@@ -562,33 +564,40 @@ function gridalarms_thold_gridcontrol_exec($save) {
 
 		if ($run_host == 'false') { // make sure that this is not a host related action
 			if ($job_action == 1) { // BSwitch, make sure the target queue is also chosen
-				$host_level_action  = 'switch';
+				$lsf_control_action  = 'switch';
 				$action_level       = 'job';
 				$json_return_format = sorting_json_format($targetvalue, $job_target, 'signal');
 				$run_job            = 'true';
 				$run_grid           = 'true';
 				$cmd                = 'Switch Job(s) to Target Queue: ' . $job_target;
 			} elseif ($job_action == 2) { // BKill
-				$host_level_action  = 'kill';
+				$lsf_control_action  = 'kill';
 				$action_level       = 'job';
 				$json_return_format = sorting_json_format($targetvalue);
 				$run_job            = 'true';
 				$run_grid           = 'true';
 				$cmd                = 'Kill Job(s)';
 			} elseif ($job_action == 3) { // Force Kill
-				$host_level_action  = 'forcekill';
+				$lsf_control_action  = 'forcekill';
 				$action_level       = 'job';
 				$json_return_format = sorting_json_format($targetvalue);
 				$run_job            = 'true';
 				$run_grid           = 'true';
 				$cmd                = 'Force Kill Job(s)';
 			} elseif ($job_action == 4 && $job_signal != '') { //Signal Kill
-				$host_level_action  = 'sigkill';
+				$lsf_control_action  = 'sigkill';
 				$action_level       = 'job';
 				$json_return_format = sorting_json_format($targetvalue, $job_signal, 'signal');
 				$run_job            = 'true';
 				$run_grid           = 'true';
 				$cmd                = 'Signal Kill Job(s) using signal: ' . $job_signal;
+			} elseif ($job_action == 5) { // kill as DONE
+				$lsf_control_action  = 'killdone';
+				$action_level       = 'job';
+				$json_return_format = sorting_json_format($targetvalue);
+				$run_job            = 'true';
+				$run_grid           = 'true';
+				$cmd                = 'Kill Job(s) as DONE';
 			}
 		}
 
@@ -596,7 +605,7 @@ function gridalarms_thold_gridcontrol_exec($save) {
 			$advocate_key = session_auth();
 			$json_cluster_info = array (
 				'key'    => $advocate_key,
-				'action' => $host_level_action,
+				'action' => $lsf_control_action,
 				'target' => $json_return_format,
 			);
 

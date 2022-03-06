@@ -746,12 +746,14 @@ function dsls_debug($string) {
 
 /*  display_version - displays version information */
 function display_version() {
-	$version = read_config_option('license_version');
+	$version = read_config_option('grid_version');
 	print "RTM DSLS License Collector Utility, Version $version, " . COPYRIGHT_YEARS . "\n";
 }
 
 /* display_help - displays the usage of the function */
 function display_help () {
+	global $config;
+
 	display_version();
 
 	print "Usage: lic_dsls_capture.php -C service-id [--debug]\n\n";

@@ -772,9 +772,7 @@ function dailyStatsFilter() {
 							<option value='0'<?php if (get_request_var('clusterid') == '0') {?> selected<?php }?>>All</option>
 							<option value='-1'<?php if (get_request_var('clusterid') == '-1') {?> selected<?php }?>>N/A</option>
 							<?php
-							$clusters = db_fetch_assoc('SELECT clusterid, clustername
-								FROM grid_clusters
-								ORDER BY clustername');
+							$clusters = grid_get_clusterlist();
 
 							if (cacti_sizeof($clusters)) {
 								foreach ($clusters as $cluster) {
@@ -1277,12 +1275,12 @@ function dstat_display_time($value, $units = 'auto') {
 
 function build_dstat_display_array() {
 	$display_text = array();
-	$display_text['nosort'] = array(
+	$display_text['nosort1'] = array(
 			'display' => __('Actions', 'grid'),
 			'sort'    => 'ASC'
 	);
 	if (get_request_var('clusterid') != '-1') {
-		$display_text['clustername'] = array(
+		$display_text['nosort2'] = array(
 			'display' => __('Cluster Name', 'grid'),
 			'sort'    => 'ASC'
 		);

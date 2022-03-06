@@ -838,7 +838,7 @@ label {
 }
 
 .cactiLogo {
-	background: transparent url('./images/cacti_logo.svg') no-repeat 30px;
+	background: #efefef;
 	display: none;
 	cursor: pointer;
 	padding-bottom: 140px;

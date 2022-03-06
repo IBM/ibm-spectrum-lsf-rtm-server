@@ -141,7 +141,7 @@ function ss_grid_pool_stats_getvalue($clusterid, $index, $column) {
 	}
 
 	if (!empty($value)) {
-		return $value;
+		return trim($value);
 	}else{
 		return '0';
 	}

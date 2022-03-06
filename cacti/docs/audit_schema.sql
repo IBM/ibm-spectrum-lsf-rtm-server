@@ -1,8 +1,6 @@
 --
 -- $Id$
 --
-
---
 -- MySQL dump 10.14  Distrib 5.5.68-MariaDB, for Linux (x86_64)
 --
 -- Host: localhost    Database: cacti
@@ -37,7 +35,7 @@ CREATE TABLE `table_columns` (
   `table_default` varchar(50) DEFAULT NULL,
   `table_extra` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`table_name`,`table_sequence`,`table_field`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Holds Default Cacti Table Definitions';
+) ENGINE=InnoDB COMMENT='Holds Default Cacti Table Definitions';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -584,7 +582,7 @@ INSERT INTO `table_columns` VALUES ('disku_pollers_filesystems',4,'used','bigint
 INSERT INTO `table_columns` VALUES ('disku_pollers_filesystems',5,'available','bigint(20) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('disku_pollers_filesystems',6,'percentUsed','int(10) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('disku_pollers_filesystems',7,'mountPoint','varchar(128)','NO','PRI','','');
-INSERT INTO `table_columns` VALUES ('disku_pollers_filesystems',8,'present','tinyint(4)','NO','','1','');
+INSERT INTO `table_columns` VALUES ('disku_pollers_filesystems',8,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('disku_pollers_paths',1,'id','int(10) unsigned','NO','PRI',NULL,'auto_increment');
 INSERT INTO `table_columns` VALUES ('disku_pollers_paths',2,'poller_id','int(10) unsigned','NO','MUL','0','');
 INSERT INTO `table_columns` VALUES ('disku_pollers_paths',3,'name','varchar(40)','NO','','','');
@@ -797,7 +795,7 @@ INSERT INTO `table_columns` VALUES ('grid_applications',9,'avg_swap','double','N
 INSERT INTO `table_columns` VALUES ('grid_applications',10,'max_swap','double','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_applications',11,'total_cpu','bigint(20) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_applications',12,'last_updated','timestamp','NO','','CURRENT_TIMESTAMP','');
-INSERT INTO `table_columns` VALUES ('grid_applications',13,'present','tinyint(3) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_applications',13,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_apps',1,'app_id','int(10) unsigned','NO','PRI',NULL,'auto_increment');
 INSERT INTO `table_columns` VALUES ('grid_apps',2,'app_name','varchar(40)','NO','','','');
 INSERT INTO `table_columns` VALUES ('grid_apps',3,'matchResReq','varchar(45)','NO','','','');
@@ -951,11 +949,11 @@ INSERT INTO `table_columns` VALUES ('grid_blstat_distribution',7,'lsf_free','int
 INSERT INTO `table_columns` VALUES ('grid_blstat_distribution',8,'non_lsf_use','int(10) unsigned','NO','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_blstat_distribution',9,'non_lsf_deserve','int(10) unsigned','NO','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_blstat_distribution',10,'non_lsf_free','int(10) unsigned','NO','',NULL,'');
-INSERT INTO `table_columns` VALUES ('grid_blstat_distribution',11,'present','tinyint(3) unsigned','NO','MUL',NULL,'');
+INSERT INTO `table_columns` VALUES ('grid_blstat_distribution',11,'present','tinyint(3) unsigned','NO','MUL','1','');
 INSERT INTO `table_columns` VALUES ('grid_blstat_feature_map',1,'lsid','int(10) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_blstat_feature_map',2,'bld_feature','varchar(64)','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_blstat_feature_map',3,'lic_feature','varchar(64)','NO','PRI',NULL,'');
-INSERT INTO `table_columns` VALUES ('grid_blstat_feature_map',4,'present','tinyint(3) unsigned','NO','MUL',NULL,'');
+INSERT INTO `table_columns` VALUES ('grid_blstat_feature_map',4,'present','tinyint(3) unsigned','NO','MUL','1','');
 INSERT INTO `table_columns` VALUES ('grid_blstat_projects',1,'lsid','int(10) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_blstat_projects',2,'feature','varchar(64)','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_blstat_projects',3,'service_domain','varchar(64)','NO','PRI',NULL,'');
@@ -971,7 +969,7 @@ INSERT INTO `table_columns` VALUES ('grid_blstat_projects',12,'present','tinyint
 INSERT INTO `table_columns` VALUES ('grid_blstat_service_domains',1,'lsid','int(10) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_blstat_service_domains',2,'service_domain','varchar(64)','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_blstat_service_domains',3,'lic_id','int(10) unsigned','NO','PRI',NULL,'');
-INSERT INTO `table_columns` VALUES ('grid_blstat_service_domains',4,'present','tinyint(3) unsigned','NO','MUL',NULL,'');
+INSERT INTO `table_columns` VALUES ('grid_blstat_service_domains',4,'present','tinyint(3) unsigned','NO','MUL','1','');
 INSERT INTO `table_columns` VALUES ('grid_blstat_tasks',1,'lsid','int(10) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_blstat_tasks',2,'feature','varchar(64)','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_blstat_tasks',3,'project','varchar(64)','NO','',NULL,'');
@@ -988,7 +986,7 @@ INSERT INTO `table_columns` VALUES ('grid_blstat_tasks',13,'swap','int(10) unsig
 INSERT INTO `table_columns` VALUES ('grid_blstat_tasks',14,'cpu_idle','timestamp','NO','','0000-00-00 00:00:00','');
 INSERT INTO `table_columns` VALUES ('grid_blstat_tasks',15,'res_requirements','varchar(128)','NO','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_blstat_tasks',16,'command','varchar(256)','NO','',NULL,'');
-INSERT INTO `table_columns` VALUES ('grid_blstat_tasks',17,'present','tinyint(3) unsigned','NO','MUL',NULL,'');
+INSERT INTO `table_columns` VALUES ('grid_blstat_tasks',17,'present','tinyint(3) unsigned','NO','MUL','1','');
 INSERT INTO `table_columns` VALUES ('grid_blstat_users',1,'lsid','int(10) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_blstat_users',2,'jobid','int(10) unsigned','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_blstat_users',3,'indexid','int(10) unsigned','NO','PRI',NULL,'');
@@ -1001,7 +999,7 @@ INSERT INTO `table_columns` VALUES ('grid_blstat_users',9,'start_time','timestam
 INSERT INTO `table_columns` VALUES ('grid_blstat_users',10,'resource','varchar(45)','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_blstat_users',11,'rusage','int(10) unsigned','NO','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_blstat_users',12,'service_domain','varchar(64)','NO','',NULL,'');
-INSERT INTO `table_columns` VALUES ('grid_blstat_users',13,'present','tinyint(3) unsigned','NO','MUL',NULL,'');
+INSERT INTO `table_columns` VALUES ('grid_blstat_users',13,'present','tinyint(3) unsigned','NO','MUL','1','');
 INSERT INTO `table_columns` VALUES ('grid_clusters',1,'clusterid','int(10) unsigned','NO','PRI',NULL,'auto_increment');
 INSERT INTO `table_columns` VALUES ('grid_clusters',2,'poller_id','int(10) unsigned','NO','MUL','1','');
 INSERT INTO `table_columns` VALUES ('grid_clusters',3,'cacti_host','int(10) unsigned','NO','','0','');
@@ -1181,7 +1179,7 @@ INSERT INTO `table_columns` VALUES ('grid_clusters_perfmon_status',30,'num_group
 INSERT INTO `table_columns` VALUES ('grid_clusters_perfmon_status',31,'last_mbatchd_start','timestamp','NO','','0000-00-00 00:00:00','');
 INSERT INTO `table_columns` VALUES ('grid_clusters_perfmon_status',32,'active_mbd_pid','int(10) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_clusters_perfmon_status',33,'last_mbatchd_reconfig','timestamp','NO','','0000-00-00 00:00:00','');
-INSERT INTO `table_columns` VALUES ('grid_clusters_perfmon_status',34,'present','tinyint(3) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_clusters_perfmon_status',34,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_clusters_perfmon_summary',1,'clusterid','int(10) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_clusters_perfmon_summary',2,'last_jobid','int(10) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_clusters_perfmon_summary',3,'start_time','timestamp','NO','','0000-00-00 00:00:00','');
@@ -1193,18 +1191,18 @@ INSERT INTO `table_columns` VALUES ('grid_clusters_perfmon_summary',8,'pjob_runT
 INSERT INTO `table_columns` VALUES ('grid_clusters_perfmon_summary',9,'pjob_doneTime','double','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_clusters_perfmon_summary',10,'pjob_seenDoneTime','double','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_clusters_perfmon_summary',11,'pjob_startTime','double','NO','','0','');
-INSERT INTO `table_columns` VALUES ('grid_clusters_perfmon_summary',12,'present','tinyint(3) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_clusters_perfmon_summary',12,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_clusters_queue_reportdata',1,'clusterid','int(10) unsigned','NO','PRI','0','');
-INSERT INTO `table_columns` VALUES ('grid_clusters_queue_reportdata',2,'queue','varchar(60)','NO','PRI',NULL,'');
-INSERT INTO `table_columns` VALUES ('grid_clusters_queue_reportdata',3,'reportid','varchar(20)','NO','PRI',NULL,'');
-INSERT INTO `table_columns` VALUES ('grid_clusters_queue_reportdata',4,'name','varchar(20)','NO','PRI',NULL,'');
+INSERT INTO `table_columns` VALUES ('grid_clusters_queue_reportdata',2,'queue','varchar(60)','NO','PRI','','');
+INSERT INTO `table_columns` VALUES ('grid_clusters_queue_reportdata',3,'reportid','varchar(20)','NO','PRI','','');
+INSERT INTO `table_columns` VALUES ('grid_clusters_queue_reportdata',4,'name','varchar(20)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('grid_clusters_queue_reportdata',5,'value','double','NO','','0','');
-INSERT INTO `table_columns` VALUES ('grid_clusters_queue_reportdata',6,'present','tinyint(3) unsigned','NO','',NULL,'');
+INSERT INTO `table_columns` VALUES ('grid_clusters_queue_reportdata',6,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_clusters_reportdata',1,'clusterid','int(10) unsigned','NO','PRI','0','');
-INSERT INTO `table_columns` VALUES ('grid_clusters_reportdata',2,'reportid','varchar(20)','NO','PRI',NULL,'');
-INSERT INTO `table_columns` VALUES ('grid_clusters_reportdata',3,'name','varchar(20)','NO','PRI',NULL,'');
+INSERT INTO `table_columns` VALUES ('grid_clusters_reportdata',2,'reportid','varchar(20)','NO','PRI','','');
+INSERT INTO `table_columns` VALUES ('grid_clusters_reportdata',3,'name','varchar(20)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('grid_clusters_reportdata',4,'value','double','NO','','0','');
-INSERT INTO `table_columns` VALUES ('grid_clusters_reportdata',5,'present','tinyint(3) unsigned','NO','',NULL,'');
+INSERT INTO `table_columns` VALUES ('grid_clusters_reportdata',5,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_elim_instance_graphs',1,'grid_elim_template_instance_id','mediumint(8) unsigned','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_elim_instance_graphs',2,'local_graph_id','mediumint(8) unsigned','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_elim_template_instances',1,'id','mediumint(8) unsigned','NO','PRI',NULL,'auto_increment');
@@ -1330,7 +1328,7 @@ INSERT INTO `table_columns` VALUES ('grid_groups',11,'avg_swap','double','NO',''
 INSERT INTO `table_columns` VALUES ('grid_groups',12,'max_swap','double','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_groups',13,'total_cpu','bigint(20) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_groups',14,'last_updated','timestamp','NO','','CURRENT_TIMESTAMP','');
-INSERT INTO `table_columns` VALUES ('grid_groups',15,'present','tinyint(3) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_groups',15,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_guarantee_pool',1,'clusterid','int(10) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_guarantee_pool',2,'name','varchar(60)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('grid_guarantee_pool',3,'poolType','varchar(32)','NO','','','');
@@ -1352,11 +1350,11 @@ INSERT INTO `table_columns` VALUES ('grid_guarantee_pool',18,'pendSlots','int(10
 INSERT INTO `table_columns` VALUES ('grid_guarantee_pool',19,'memSlotUtil','int(10) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_guarantee_pool',20,'slotUtil','int(10) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_guarantee_pool',21,'cpuUtil','int(10) unsigned','NO','','0','');
-INSERT INTO `table_columns` VALUES ('grid_guarantee_pool',22,'memUsed','int(10) unsigned','NO','','0','');
-INSERT INTO `table_columns` VALUES ('grid_guarantee_pool',23,'memRequested','int(10) unsigned','NO','','0','');
-INSERT INTO `table_columns` VALUES ('grid_guarantee_pool',24,'memReserved','int(10) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_guarantee_pool',22,'memUsed','bigint(20) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_guarantee_pool',23,'memRequested','bigint(20) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_guarantee_pool',24,'memReserved','bigint(20) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_guarantee_pool',25,'last_updated','timestamp','NO','','CURRENT_TIMESTAMP','');
-INSERT INTO `table_columns` VALUES ('grid_guarantee_pool',26,'present','tinyint(3) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_guarantee_pool',26,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_guarantee_pool_distribution',1,'clusterid','int(10) unsigned','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_guarantee_pool_distribution',2,'name','varchar(60)','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_guarantee_pool_distribution',3,'consumer','varchar(60)','NO','PRI',NULL,'');
@@ -1370,21 +1368,21 @@ INSERT INTO `table_columns` VALUES ('grid_guarantee_pool_distribution',10,'runSl
 INSERT INTO `table_columns` VALUES ('grid_guarantee_pool_distribution',11,'pendJobs','int(10) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_guarantee_pool_distribution',12,'pendSlots','int(10) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_guarantee_pool_distribution',13,'last_updated','timestamp','NO','','CURRENT_TIMESTAMP','');
-INSERT INTO `table_columns` VALUES ('grid_guarantee_pool_distribution',14,'present','tinyint(3) unsigned','NO','',NULL,'');
+INSERT INTO `table_columns` VALUES ('grid_guarantee_pool_distribution',14,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_guarantee_pool_hosts',1,'clusterid','int(10) unsigned','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_guarantee_pool_hosts',2,'name','varchar(60)','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_guarantee_pool_hosts',3,'host','varchar(64)','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_guarantee_pool_hosts',4,'owner','varchar(40)','NO','','','');
-INSERT INTO `table_columns` VALUES ('grid_guarantee_pool_hosts',5,'present','tinyint(3) unsigned','NO','',NULL,'');
+INSERT INTO `table_columns` VALUES ('grid_guarantee_pool_hosts',5,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_guarantee_pool_loan_queues',1,'clusterid','int(10) unsigned','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_guarantee_pool_loan_queues',2,'name','varchar(60)','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_guarantee_pool_loan_queues',3,'queue','varchar(60)','NO','PRI',NULL,'');
-INSERT INTO `table_columns` VALUES ('grid_guarantee_pool_loan_queues',4,'present','tinyint(3) unsigned','NO','',NULL,'');
+INSERT INTO `table_columns` VALUES ('grid_guarantee_pool_loan_queues',4,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_heuristics',1,'clusterid','int(10) unsigned','NO','PRI',NULL,'');
-INSERT INTO `table_columns` VALUES ('grid_heuristics',2,'queue','varchar(60)','NO','PRI',NULL,'');
-INSERT INTO `table_columns` VALUES ('grid_heuristics',3,'custom','varchar(128)','NO','PRI','','');
-INSERT INTO `table_columns` VALUES ('grid_heuristics',4,'projectName','varchar(64)','NO','PRI',NULL,'');
-INSERT INTO `table_columns` VALUES ('grid_heuristics',5,'resReq','varchar(512)','NO','PRI',NULL,'');
+INSERT INTO `table_columns` VALUES ('grid_heuristics',2,'queue','varchar(60)','NO','PRI','','');
+INSERT INTO `table_columns` VALUES ('grid_heuristics',3,'custom','varchar(256)','NO','PRI','','');
+INSERT INTO `table_columns` VALUES ('grid_heuristics',4,'projectName','varchar(64)','NO','PRI','','');
+INSERT INTO `table_columns` VALUES ('grid_heuristics',5,'resReq','varchar(512)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('grid_heuristics',6,'reqCpus','int(10) unsigned','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_heuristics',7,'jobs','bigint(20) unsigned','NO','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_heuristics',8,'cores','int(10) unsigned','NO','',NULL,'');
@@ -1417,7 +1415,7 @@ INSERT INTO `table_columns` VALUES ('grid_heuristics',34,'jph_3std','float','NO'
 INSERT INTO `table_columns` VALUES ('grid_heuristics',35,'last_updated','timestamp','NO','','0000-00-00 00:00:00','');
 INSERT INTO `table_columns` VALUES ('grid_heuristics_percentiles',1,'clusterid','int(10) unsigned','NO','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_heuristics_percentiles',2,'queue','varchar(60)','NO','',NULL,'');
-INSERT INTO `table_columns` VALUES ('grid_heuristics_percentiles',3,'custom','varchar(40)','NO','','','');
+INSERT INTO `table_columns` VALUES ('grid_heuristics_percentiles',3,'custom','varchar(128)','NO','','','');
 INSERT INTO `table_columns` VALUES ('grid_heuristics_percentiles',4,'projectName','varchar(64)','NO','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_heuristics_percentiles',5,'resReq','varchar(512)','NO','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_heuristics_percentiles',6,'reqCpus','int(10) unsigned','NO','',NULL,'');
@@ -1427,11 +1425,11 @@ INSERT INTO `table_columns` VALUES ('grid_heuristics_percentiles',9,'mem_used','
 INSERT INTO `table_columns` VALUES ('grid_heuristics_percentiles',10,'pend_time','int(10) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_heuristics_percentiles',11,'partition','int(10) unsigned','NO','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_heuristics_user_history_today',1,'clusterid','int(10) unsigned','NO','PRI',NULL,'');
-INSERT INTO `table_columns` VALUES ('grid_heuristics_user_history_today',2,'queue','varchar(60)','NO','PRI',NULL,'');
+INSERT INTO `table_columns` VALUES ('grid_heuristics_user_history_today',2,'queue','varchar(60)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('grid_heuristics_user_history_today',3,'custom','varchar(128)','NO','PRI','','');
-INSERT INTO `table_columns` VALUES ('grid_heuristics_user_history_today',4,'projectName','varchar(64)','NO','PRI',NULL,'');
+INSERT INTO `table_columns` VALUES ('grid_heuristics_user_history_today',4,'projectName','varchar(64)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('grid_heuristics_user_history_today',5,'reqCpus','int(10) unsigned','NO','PRI','1','');
-INSERT INTO `table_columns` VALUES ('grid_heuristics_user_history_today',6,'user','varchar(40)','NO','PRI',NULL,'');
+INSERT INTO `table_columns` VALUES ('grid_heuristics_user_history_today',6,'user','varchar(40)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('grid_heuristics_user_history_today',7,'numPEND','int(10) unsigned','NO','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_heuristics_user_history_today',8,'numRUN','int(10) unsigned','NO','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_heuristics_user_history_today',9,'numSUSP','int(10) unsigned','NO','',NULL,'');
@@ -1455,11 +1453,11 @@ INSERT INTO `table_columns` VALUES ('grid_heuristics_user_history_yesterday',12,
 INSERT INTO `table_columns` VALUES ('grid_heuristics_user_history_yesterday',13,'tput5MIN','int(10) unsigned','NO','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_heuristics_user_history_yesterday',14,'last_updated','timestamp','NO','PRI','0000-00-00 00:00:00','');
 INSERT INTO `table_columns` VALUES ('grid_heuristics_user_stats',1,'clusterid','int(10) unsigned','NO','PRI',NULL,'');
-INSERT INTO `table_columns` VALUES ('grid_heuristics_user_stats',2,'queue','varchar(60)','NO','PRI',NULL,'');
+INSERT INTO `table_columns` VALUES ('grid_heuristics_user_stats',2,'queue','varchar(60)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('grid_heuristics_user_stats',3,'custom','varchar(128)','NO','PRI','','');
-INSERT INTO `table_columns` VALUES ('grid_heuristics_user_stats',4,'projectName','varchar(64)','NO','PRI',NULL,'');
+INSERT INTO `table_columns` VALUES ('grid_heuristics_user_stats',4,'projectName','varchar(64)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('grid_heuristics_user_stats',5,'reqCpus','int(10) unsigned','NO','PRI','1','');
-INSERT INTO `table_columns` VALUES ('grid_heuristics_user_stats',6,'user','varchar(40)','NO','PRI',NULL,'');
+INSERT INTO `table_columns` VALUES ('grid_heuristics_user_stats',6,'user','varchar(40)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('grid_heuristics_user_stats',7,'numPEND','int(10) unsigned','NO','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_heuristics_user_stats',8,'numRUN','int(10) unsigned','NO','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_heuristics_user_stats',9,'numSUSP','int(10) unsigned','NO','',NULL,'');
@@ -1495,11 +1493,11 @@ INSERT INTO `table_columns` VALUES ('grid_host_threshold',5,'loadSched','double'
 INSERT INTO `table_columns` VALUES ('grid_host_threshold',6,'loadStop','double','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_host_threshold',7,'busySched','int(11)','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_host_threshold',8,'busyStop','int(11)','NO','','0','');
-INSERT INTO `table_columns` VALUES ('grid_host_threshold',9,'present','int(11)','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_host_threshold',9,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_hostgroups',1,'clusterid','int(10) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_hostgroups',2,'groupName','varchar(64)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('grid_hostgroups',3,'host','varchar(64)','NO','PRI','','');
-INSERT INTO `table_columns` VALUES ('grid_hostgroups',4,'present','int(10) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_hostgroups',4,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_hostgroups_stats',1,'clusterid','int(10) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_hostgroups_stats',2,'groupName','varchar(64)','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_hostgroups_stats',3,'efficiency','double','NO','','0','');
@@ -1514,11 +1512,11 @@ INSERT INTO `table_columns` VALUES ('grid_hostgroups_stats',11,'numPEND','int(10
 INSERT INTO `table_columns` VALUES ('grid_hostgroups_stats',12,'memSlotUtil','double','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_hostgroups_stats',13,'slotUtil','double','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_hostgroups_stats',14,'cpuUtil','double','NO','','0','');
-INSERT INTO `table_columns` VALUES ('grid_hostgroups_stats',15,'memUsed','bigint(20)','NO','','0','');
-INSERT INTO `table_columns` VALUES ('grid_hostgroups_stats',16,'memRequested','bigint(20)','NO','','0','');
-INSERT INTO `table_columns` VALUES ('grid_hostgroups_stats',17,'memReserved','bigint(20)','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_hostgroups_stats',15,'memUsed','bigint(20) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_hostgroups_stats',16,'memRequested','bigint(20) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_hostgroups_stats',17,'memReserved','bigint(20) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_hostgroups_stats',18,'last_updated','timestamp','NO','','CURRENT_TIMESTAMP','');
-INSERT INTO `table_columns` VALUES ('grid_hostgroups_stats',19,'present','tinyint(3) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_hostgroups_stats',19,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_hostinfo',1,'host','varchar(64)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('grid_hostinfo',2,'clusterid','int(10) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_hostinfo',3,'hostType','varchar(20)','NO','MUL','','');
@@ -1546,7 +1544,7 @@ INSERT INTO `table_columns` VALUES ('grid_hostinfo',24,'gpu_shared_avg_mut','flo
 INSERT INTO `table_columns` VALUES ('grid_hostinfo',25,'gpu_shared_avg_ut','float','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_hostinfo',26,'first_seen','timestamp','NO','','0000-00-00 00:00:00','');
 INSERT INTO `table_columns` VALUES ('grid_hostinfo',27,'last_seen','timestamp','NO','MUL','0000-00-00 00:00:00','');
-INSERT INTO `table_columns` VALUES ('grid_hostinfo',28,'present','int(10) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_hostinfo',28,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_hostinfo_gpu',1,'host','varchar(64)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('grid_hostinfo_gpu',2,'clusterid','int(10) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_hostinfo_gpu',3,'gpu_id','int(10) unsigned','NO','PRI','0','');
@@ -1573,7 +1571,7 @@ INSERT INTO `table_columns` VALUES ('grid_hostresources',1,'host','varchar(64)',
 INSERT INTO `table_columns` VALUES ('grid_hostresources',2,'clusterid','int(10) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_hostresources',3,'rtype','tinyint(3) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_hostresources',4,'resource_name','varchar(50)','NO','PRI','','');
-INSERT INTO `table_columns` VALUES ('grid_hostresources',5,'present','tinyint(3) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_hostresources',5,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_hosts',1,'host','varchar(64)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('grid_hosts',2,'clusterid','int(10) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_hosts',3,'hStatus','int(10) unsigned','NO','','0','');
@@ -1596,7 +1594,7 @@ INSERT INTO `table_columns` VALUES ('grid_hosts',19,'ngpus','int(10) unsigned','
 INSERT INTO `table_columns` VALUES ('grid_hosts',20,'avail_shared_ngpus','int(10) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_hosts',21,'avail_excl_ngpus','int(10) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_hosts',22,'alloc_jsexcl_ngpus','int(10) unsigned','NO','','0','');
-INSERT INTO `table_columns` VALUES ('grid_hosts',23,'present','int(10) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_hosts',23,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_hosts',24,'exceptional','tinyint(1) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_hosts_alarm',1,'type_id','bigint(20)','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_hosts_alarm',2,'name','varchar(100)','NO','','','');
@@ -1606,7 +1604,7 @@ INSERT INTO `table_columns` VALUES ('grid_hosts_alarm',5,'type','int(11)','NO','
 INSERT INTO `table_columns` VALUES ('grid_hosts_alarm',6,'message','varchar(1024)','NO','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_hosts_alarm',7,'acknowledgement','char(3)','NO','','off','');
 INSERT INTO `table_columns` VALUES ('grid_hosts_alarm',8,'alert_time','timestamp','NO','','CURRENT_TIMESTAMP','');
-INSERT INTO `table_columns` VALUES ('grid_hosts_alarm',9,'present','int(11)','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_hosts_alarm',9,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_hosts_gpu',1,'host','varchar(64)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('grid_hosts_gpu',2,'clusterid','int(10) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_hosts_gpu',3,'gpu_id','int(10) unsigned','NO','PRI','0','');
@@ -1645,7 +1643,7 @@ INSERT INTO `table_columns` VALUES ('grid_hosts_resources',6,'availValue','varch
 INSERT INTO `table_columns` VALUES ('grid_hosts_resources',7,'totalValue','varchar(128)','NO','','','');
 INSERT INTO `table_columns` VALUES ('grid_hosts_resources',8,'reservedValue','varchar(128)','NO','','','');
 INSERT INTO `table_columns` VALUES ('grid_hosts_resources',9,'value','varchar(128)','NO','MUL','','');
-INSERT INTO `table_columns` VALUES ('grid_hosts_resources',10,'present','tinyint(3) unsigned','NO','',NULL,'');
+INSERT INTO `table_columns` VALUES ('grid_hosts_resources',10,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_hosts_resources',11,'last_updated','timestamp','NO','','CURRENT_TIMESTAMP','');
 INSERT INTO `table_columns` VALUES ('grid_job_daily_stats',1,'clusterid','int(10) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_job_daily_stats',2,'user','varchar(45)','NO','PRI','','');
@@ -1827,7 +1825,7 @@ INSERT INTO `table_columns` VALUES ('grid_jobs',111,'isLoaningGSLA','tinyint(3) 
 INSERT INTO `table_columns` VALUES ('grid_jobs',112,'last_updated','timestamp','NO','MUL','CURRENT_TIMESTAMP','on update CURRENT_TIMESTAMP');
 INSERT INTO `table_columns` VALUES ('grid_jobs_exec_hosts',1,'exec_host','varchar(64)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('grid_jobs_exec_hosts',2,'clusterid','int(10) unsigned','NO','PRI','0','');
-INSERT INTO `table_columns` VALUES ('grid_jobs_exec_hosts',3,'present','tinyint(3) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_jobs_exec_hosts',3,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_jobs_finished',1,'jobid','bigint(20) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_jobs_finished',2,'indexid','int(10) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_jobs_finished',3,'clusterid','int(10) unsigned','NO','PRI','0','');
@@ -1942,7 +1940,7 @@ INSERT INTO `table_columns` VALUES ('grid_jobs_finished',111,'isLoaningGSLA','ti
 INSERT INTO `table_columns` VALUES ('grid_jobs_finished',112,'last_updated','timestamp','NO','MUL','CURRENT_TIMESTAMP','on update CURRENT_TIMESTAMP');
 INSERT INTO `table_columns` VALUES ('grid_jobs_from_hosts',1,'from_host','varchar(64)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('grid_jobs_from_hosts',2,'clusterid','int(10) unsigned','NO','PRI','0','');
-INSERT INTO `table_columns` VALUES ('grid_jobs_from_hosts',3,'present','tinyint(3) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_jobs_from_hosts',3,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_jobs_gpu_rusage',1,'id','bigint(8) unsigned','NO','PRI',NULL,'auto_increment');
 INSERT INTO `table_columns` VALUES ('grid_jobs_gpu_rusage',2,'clusterid','int(10) unsigned','NO','MUL','0','');
 INSERT INTO `table_columns` VALUES ('grid_jobs_gpu_rusage',3,'jobid','bigint(20)','NO','','0','');
@@ -2057,7 +2055,7 @@ INSERT INTO `table_columns` VALUES ('grid_jobs_pendreasons',10,'ratio','float','
 INSERT INTO `table_columns` VALUES ('grid_jobs_pendreasons',11,'start_time','timestamp','NO','','0000-00-00 00:00:00','');
 INSERT INTO `table_columns` VALUES ('grid_jobs_pendreasons',12,'end_time','timestamp','NO','PRI','0000-00-00 00:00:00','');
 INSERT INTO `table_columns` VALUES ('grid_jobs_pendreasons',13,'last_updated','timestamp','NO','','CURRENT_TIMESTAMP','on update CURRENT_TIMESTAMP');
-INSERT INTO `table_columns` VALUES ('grid_jobs_pendreasons',14,'present','tinyint(3) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_jobs_pendreasons',14,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_jobs_pendreasons_finished',1,'clusterid','int(10) unsigned','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_jobs_pendreasons_finished',2,'jobid','bigint(20) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_jobs_pendreasons_finished',3,'indexid','int(10) unsigned','NO','PRI','0','');
@@ -2071,7 +2069,7 @@ INSERT INTO `table_columns` VALUES ('grid_jobs_pendreasons_finished',10,'ratio',
 INSERT INTO `table_columns` VALUES ('grid_jobs_pendreasons_finished',11,'start_time','timestamp','NO','','0000-00-00 00:00:00','');
 INSERT INTO `table_columns` VALUES ('grid_jobs_pendreasons_finished',12,'end_time','timestamp','NO','PRI','0000-00-00 00:00:00','');
 INSERT INTO `table_columns` VALUES ('grid_jobs_pendreasons_finished',13,'last_updated','timestamp','NO','','CURRENT_TIMESTAMP','on update CURRENT_TIMESTAMP');
-INSERT INTO `table_columns` VALUES ('grid_jobs_pendreasons_finished',14,'present','tinyint(3) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_jobs_pendreasons_finished',14,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_jobs_processes',1,'clusterid','int(10) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_jobs_processes',2,'jobid','bigint(20) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_jobs_processes',3,'indexid','int(10) unsigned','NO','PRI','0','');
@@ -2086,7 +2084,7 @@ INSERT INTO `table_columns` VALUES ('grid_jobs_processes',11,'first_seen','times
 INSERT INTO `table_columns` VALUES ('grid_jobs_processes',12,'last_seen','timestamp','NO','','CURRENT_TIMESTAMP','on update CURRENT_TIMESTAMP');
 INSERT INTO `table_columns` VALUES ('grid_jobs_queues',1,'queue','varchar(60)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('grid_jobs_queues',2,'clusterid','int(10) unsigned','NO','PRI','0','');
-INSERT INTO `table_columns` VALUES ('grid_jobs_queues',3,'present','tinyint(3) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_jobs_queues',3,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_jobs_reqhosts',1,'jobid','bigint(20) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_jobs_reqhosts',2,'indexid','int(10) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_jobs_reqhosts',3,'clusterid','int(10) unsigned','NO','PRI','0','');
@@ -2141,10 +2139,10 @@ INSERT INTO `table_columns` VALUES ('grid_jobs_sla_loaning_finished',7,'mem','do
 INSERT INTO `table_columns` VALUES ('grid_jobs_sla_loaning_finished',8,'last_updated','timestamp','NO','','CURRENT_TIMESTAMP','on update CURRENT_TIMESTAMP');
 INSERT INTO `table_columns` VALUES ('grid_jobs_stats',1,'stat','varchar(10)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('grid_jobs_stats',2,'clusterid','int(10) unsigned','NO','PRI','0','');
-INSERT INTO `table_columns` VALUES ('grid_jobs_stats',3,'present','tinyint(3) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_jobs_stats',3,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_jobs_users',1,'user','varchar(40)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('grid_jobs_users',2,'clusterid','int(10) unsigned','NO','PRI','0','');
-INSERT INTO `table_columns` VALUES ('grid_jobs_users',3,'present','tinyint(3) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_jobs_users',3,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_license_projects',1,'clusterid','int(10) unsigned','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_license_projects',2,'licenseProject','varchar(64)','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_license_projects',3,'numRUN','int(10) unsigned','NO','','0','');
@@ -2157,7 +2155,7 @@ INSERT INTO `table_columns` VALUES ('grid_license_projects',9,'avg_swap','double
 INSERT INTO `table_columns` VALUES ('grid_license_projects',10,'max_swap','double','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_license_projects',11,'total_cpu','bigint(20) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_license_projects',12,'last_updated','timestamp','NO','','CURRENT_TIMESTAMP','');
-INSERT INTO `table_columns` VALUES ('grid_license_projects',13,'present','tinyint(3) unsigned','NO','MUL','0','');
+INSERT INTO `table_columns` VALUES ('grid_license_projects',13,'present','tinyint(3) unsigned','NO','MUL','1','');
 INSERT INTO `table_columns` VALUES ('grid_load',1,'host','varchar(64)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('grid_load',2,'clusterid','int(11)','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_load',3,'status','varchar(20)','NO','MUL','','');
@@ -2175,7 +2173,7 @@ INSERT INTO `table_columns` VALUES ('grid_load',14,'it','float','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_load',15,'tmp','float','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_load',16,'swp','float','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_load',17,'mem','float','NO','','0','');
-INSERT INTO `table_columns` VALUES ('grid_load',18,'present','int(10) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_load',18,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_metadata',1,'OBJECT_TYPE','varchar(20)','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_metadata',2,'OBJECT_ID','varchar(111)','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_metadata',3,'CLUSTER_ID','int(10)','NO','PRI',NULL,'');
@@ -2226,15 +2224,16 @@ INSERT INTO `table_columns` VALUES ('grid_pendreasons_ignore',2,'issusp','tinyin
 INSERT INTO `table_columns` VALUES ('grid_pendreasons_ignore',3,'reason','int(10) unsigned','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_pendreasons_ignore',4,'subreason','varchar(40)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('grid_pendreasons_ignore',5,'last_updated','timestamp','NO','','CURRENT_TIMESTAMP','on update CURRENT_TIMESTAMP');
-INSERT INTO `table_columns` VALUES ('grid_pendreasons_ignore',6,'present','tinyint(3) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_pendreasons_ignore',6,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_pollers',1,'poller_id','int(10) unsigned','NO','PRI',NULL,'auto_increment');
 INSERT INTO `table_columns` VALUES ('grid_pollers',2,'poller_name','varchar(45)','NO','','','');
 INSERT INTO `table_columns` VALUES ('grid_pollers',3,'poller_lbindir','varchar(255)','NO','','','');
 INSERT INTO `table_columns` VALUES ('grid_pollers',4,'poller_licserver_threads','int(11)','NO','','5','');
 INSERT INTO `table_columns` VALUES ('grid_pollers',5,'poller_location','varchar(255)','NO','','','');
 INSERT INTO `table_columns` VALUES ('grid_pollers',6,'poller_support_info','varchar(255)','NO','','','');
-INSERT INTO `table_columns` VALUES ('grid_pollers',7,'lsf_version','int(10) unsigned','NO','','62','');
+INSERT INTO `table_columns` VALUES ('grid_pollers',7,'lsf_version','int(10) unsigned','NO','','1017','');
 INSERT INTO `table_columns` VALUES ('grid_pollers',8,'remote','varchar(20)','YES','',NULL,'');
+INSERT INTO `table_columns` VALUES ('grid_pollers',9,'poller_max_insert_packet_size','varchar(255)','YES','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_processes',1,'pid','int(10) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_processes',2,'taskname','varchar(20)','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_processes',3,'taskid','int(10) unsigned','NO','PRI','0','');
@@ -2253,8 +2252,8 @@ INSERT INTO `table_columns` VALUES ('grid_projects',11,'max_mem','double','NO','
 INSERT INTO `table_columns` VALUES ('grid_projects',12,'avg_swap','double','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_projects',13,'max_swap','double','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_projects',14,'total_cpu','bigint(20) unsigned','NO','','0','');
-INSERT INTO `table_columns` VALUES ('grid_projects',15,'last_updated','timestamp','NO','','CURRENT_TIMESTAMP','');
-INSERT INTO `table_columns` VALUES ('grid_projects',16,'present','tinyint(3) unsigned','NO','MUL','0','');
+INSERT INTO `table_columns` VALUES ('grid_projects',15,'last_updated','timestamp','NO','','CURRENT_TIMESTAMP','on update CURRENT_TIMESTAMP');
+INSERT INTO `table_columns` VALUES ('grid_projects',16,'present','tinyint(3) unsigned','NO','MUL','1','');
 INSERT INTO `table_columns` VALUES ('grid_queues',1,'queuename','varchar(60)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('grid_queues',2,'clusterid','int(11)','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_queues',3,'description','varchar(255)','YES','',NULL,'');
@@ -2271,7 +2270,7 @@ INSERT INTO `table_columns` VALUES ('grid_queues',13,'nojobs','int(10) unsigned'
 INSERT INTO `table_columns` VALUES ('grid_queues',14,'pendjobs','int(10) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_queues',15,'runjobs','int(10) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_queues',16,'suspjobs','int(10) unsigned','NO','','0','');
-INSERT INTO `table_columns` VALUES ('grid_queues',17,'present','tinyint(3) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_queues',17,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_queues',18,'avg_pend_time','int(10) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_queues',19,'max_pend_time','int(10) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_queues',20,'avg_psusp_time','int(10) unsigned','NO','','0','');
@@ -2359,7 +2358,7 @@ INSERT INTO `table_columns` VALUES ('grid_queues',101,'last_updated','timestamp'
 INSERT INTO `table_columns` VALUES ('grid_queues_hosts',1,'clusterid','int(10) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_queues_hosts',2,'queue','varchar(60)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('grid_queues_hosts',3,'host','varchar(64)','NO','PRI','','');
-INSERT INTO `table_columns` VALUES ('grid_queues_hosts',4,'present','tinyint(3) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_queues_hosts',4,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_queues_shares',1,'clusterid','int(10) unsigned','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_queues_shares',2,'queue','varchar(60)','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_queues_shares',3,'user_or_group','varchar(60)','NO','PRI','','');
@@ -2371,7 +2370,7 @@ INSERT INTO `table_columns` VALUES ('grid_queues_shares',8,'leaf_share','double'
 INSERT INTO `table_columns` VALUES ('grid_queues_shares',9,'started','int(10) unsigned','NO','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_queues_shares',10,'reserved','int(10) unsigned','NO','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_queues_shares',11,'cpu_time','double','NO','',NULL,'');
-INSERT INTO `table_columns` VALUES ('grid_queues_shares',12,'run_time','double','NO','',NULL,'');
+INSERT INTO `table_columns` VALUES ('grid_queues_shares',12,'run_time','bigint(20) unsigned','NO','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_queues_shares',13,'pend_jobs','int(10) unsigned','YES','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_queues_shares',14,'pend_slots','int(10) unsigned','YES','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_queues_shares',15,'run_jobs','int(10) unsigned','YES','',NULL,'');
@@ -2379,9 +2378,9 @@ INSERT INTO `table_columns` VALUES ('grid_queues_shares',16,'run_slots','int(10)
 INSERT INTO `table_columns` VALUES ('grid_queues_shares',17,'relative_share','double','YES','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_queues_shares',18,'slot_share','int(10) unsigned','YES','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_queues_shares',19,'last_updated','timestamp','NO','','CURRENT_TIMESTAMP','');
-INSERT INTO `table_columns` VALUES ('grid_queues_shares',20,'present','tinyint(3) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_queues_shares',20,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_queues_stats',1,'clusterid','int(10) unsigned','NO','PRI','0','');
-INSERT INTO `table_columns` VALUES ('grid_queues_stats',2,'queue','varchar(60)','NO','PRI',NULL,'');
+INSERT INTO `table_columns` VALUES ('grid_queues_stats',2,'queue','varchar(60)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('grid_queues_stats',3,'numRUN','int(10) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_queues_stats',4,'numPEND','int(10) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_queues_stats',5,'numJOBS','int(10) unsigned','NO','','0','');
@@ -2394,11 +2393,11 @@ INSERT INTO `table_columns` VALUES ('grid_queues_stats',11,'total_cpu','bigint(2
 INSERT INTO `table_columns` VALUES ('grid_queues_stats',12,'memSlotUtil','double','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_queues_stats',13,'slotUtil','double','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_queues_stats',14,'cpuUtil','double','NO','','0','');
-INSERT INTO `table_columns` VALUES ('grid_queues_stats',15,'memUsed','bigint(20)','NO','','0','');
-INSERT INTO `table_columns` VALUES ('grid_queues_stats',16,'memRequested','bigint(20)','NO','','0','');
-INSERT INTO `table_columns` VALUES ('grid_queues_stats',17,'memReserved','bigint(20)','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_queues_stats',15,'memUsed','bigint(20) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_queues_stats',16,'memRequested','bigint(20) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_queues_stats',17,'memReserved','bigint(20) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_queues_stats',18,'last_updated','timestamp','NO','','CURRENT_TIMESTAMP','');
-INSERT INTO `table_columns` VALUES ('grid_queues_stats',19,'present','tinyint(3) unsigned','NO','MUL','0','');
+INSERT INTO `table_columns` VALUES ('grid_queues_stats',19,'present','tinyint(3) unsigned','NO','MUL','1','');
 INSERT INTO `table_columns` VALUES ('grid_queues_thresholds',1,'clusterid','int(10) unsigned','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_queues_thresholds',2,'queue','varchar(60)','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_queues_thresholds',3,'loadSched','double','NO','',NULL,'');
@@ -2406,7 +2405,7 @@ INSERT INTO `table_columns` VALUES ('grid_queues_thresholds',4,'loadStop','doubl
 INSERT INTO `table_columns` VALUES ('grid_queues_users',1,'clusterid','int(10) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_queues_users',2,'queue','varchar(60)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('grid_queues_users',3,'user','varchar(45)','NO','PRI','','');
-INSERT INTO `table_columns` VALUES ('grid_queues_users',4,'present','tinyint(3) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_queues_users',4,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_queues_users_stats',1,'clusterid','int(10) unsigned','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_queues_users_stats',2,'queue','varchar(60)','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_queues_users_stats',3,'user_or_group','varchar(60)','NO','PRI',NULL,'');
@@ -2415,7 +2414,7 @@ INSERT INTO `table_columns` VALUES ('grid_queues_users_stats',5,'pendjobs','int(
 INSERT INTO `table_columns` VALUES ('grid_queues_users_stats',6,'runjobs','int(10) unsigned','NO','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_queues_users_stats',7,'suspjobs','int(10) unsigned','NO','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_queues_users_stats',8,'efficiency','double','NO','',NULL,'');
-INSERT INTO `table_columns` VALUES ('grid_queues_users_stats',9,'present','tinyint(3) unsigned','NO','',NULL,'');
+INSERT INTO `table_columns` VALUES ('grid_queues_users_stats',9,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_resources',1,'resource_name','varchar(20)','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_resources',2,'value','varchar(128)','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_resources',3,'clusterid','int(10) unsigned','NO','PRI',NULL,'');
@@ -2430,12 +2429,12 @@ INSERT INTO `table_columns` VALUES ('grid_service_class',7,'auto_attach','tinyin
 INSERT INTO `table_columns` VALUES ('grid_service_class',8,'ego_res_req','varchar(255)','NO','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_service_class',9,'max_host_idle_time','int(10) unsigned','NO','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_service_class',10,'throughput','double','NO','','0','');
-INSERT INTO `table_columns` VALUES ('grid_service_class',11,'present','tinyint(3) unsigned','NO','',NULL,'');
+INSERT INTO `table_columns` VALUES ('grid_service_class',11,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_service_class_access_control',1,'clusterid','int(10) unsigned','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_service_class_access_control',2,'name','varchar(60)','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_service_class_access_control',3,'acl_type','int(10) unsigned','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_service_class_access_control',4,'acl_member','varchar(60)','NO','PRI',NULL,'');
-INSERT INTO `table_columns` VALUES ('grid_service_class_access_control',5,'present','tinyint(3) unsigned','NO','',NULL,'');
+INSERT INTO `table_columns` VALUES ('grid_service_class_access_control',5,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_service_class_goals',1,'clusterid','int(10) unsigned','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_service_class_goals',2,'name','varchar(60)','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_service_class_goals',3,'goal_seq','int(10)','NO','PRI','0','');
@@ -2446,11 +2445,11 @@ INSERT INTO `table_columns` VALUES ('grid_service_class_goals',7,'min_config','i
 INSERT INTO `table_columns` VALUES ('grid_service_class_goals',8,'goal_config','int(10) unsigned','YES','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_service_class_goals',9,'actual','int(10) unsigned','YES','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_service_class_goals',10,'optimum','int(10) unsigned','YES','',NULL,'');
-INSERT INTO `table_columns` VALUES ('grid_service_class_goals',11,'present','tinyint(3) unsigned','NO','',NULL,'');
+INSERT INTO `table_columns` VALUES ('grid_service_class_goals',11,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_service_class_groups',1,'clusterid','int(10) unsigned','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_service_class_groups',2,'name','varchar(60)','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_service_class_groups',3,'user_or_group','varchar(60)','NO','PRI',NULL,'');
-INSERT INTO `table_columns` VALUES ('grid_service_class_groups',4,'present','tinyint(3) unsigned','NO','',NULL,'');
+INSERT INTO `table_columns` VALUES ('grid_service_class_groups',4,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_settings',1,'user_id','smallint(8) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_settings',2,'name','varchar(50)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('grid_settings',3,'value','varchar(1024)','NO','','','');
@@ -2515,7 +2514,7 @@ INSERT INTO `table_columns` VALUES ('grid_summary',54,'max_time','decimal(10,5)'
 INSERT INTO `table_columns` VALUES ('grid_summary',55,'cur_time','decimal(10,5)','YES','','0.00000','');
 INSERT INTO `table_columns` VALUES ('grid_summary',56,'avg_time','decimal(10,5)','YES','','0.00000','');
 INSERT INTO `table_columns` VALUES ('grid_summary',57,'availability','decimal(10,5)','YES','',NULL,'');
-INSERT INTO `table_columns` VALUES ('grid_summary',58,'present','int(10) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_summary',58,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_summary_timeinstate',1,'clusterid','int(10) unsigned','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_summary_timeinstate',2,'host','varchar(64)','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_summary_timeinstate',3,'unavail','bigint(20) unsigned','NO','',NULL,'');
@@ -2532,11 +2531,11 @@ INSERT INTO `table_columns` VALUES ('grid_table_partitions',1,'partition','varch
 INSERT INTO `table_columns` VALUES ('grid_table_partitions',2,'table_name','varchar(45)','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_table_partitions',3,'min_time','timestamp','NO','MUL','0000-00-00 00:00:00','');
 INSERT INTO `table_columns` VALUES ('grid_table_partitions',4,'max_time','timestamp','NO','MUL','0000-00-00 00:00:00','');
-INSERT INTO `table_columns` VALUES ('grid_user_group_members',1,'clusterid','varchar(20)','NO','PRI','','');
+INSERT INTO `table_columns` VALUES ('grid_user_group_members',1,'clusterid','int(10) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_user_group_members',2,'groupname','varchar(45)','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_user_group_members',3,'username','varchar(40)','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_user_group_members',4,'shares','int(10) unsigned','NO','','1','');
-INSERT INTO `table_columns` VALUES ('grid_user_group_members',5,'present','tinyint(1)','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_user_group_members',5,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_user_group_stats',1,'clusterid','int(10) unsigned','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_user_group_stats',2,'userGroup','varchar(40)','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_user_group_stats',3,'numRUN','int(10) unsigned','NO','','0','');
@@ -2549,10 +2548,10 @@ INSERT INTO `table_columns` VALUES ('grid_user_group_stats',9,'avg_swap','double
 INSERT INTO `table_columns` VALUES ('grid_user_group_stats',10,'max_swap','double','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_user_group_stats',11,'total_cpu','bigint(20) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_user_group_stats',12,'last_updated','timestamp','NO','','CURRENT_TIMESTAMP','');
-INSERT INTO `table_columns` VALUES ('grid_user_group_stats',13,'present','tinyint(3) unsigned','NO','MUL','0','');
+INSERT INTO `table_columns` VALUES ('grid_user_group_stats',13,'present','tinyint(3) unsigned','NO','MUL','1','');
 INSERT INTO `table_columns` VALUES ('grid_users_or_groups',1,'clusterid','int(10) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_users_or_groups',2,'user_or_group','varchar(60)','NO','PRI','','');
-INSERT INTO `table_columns` VALUES ('grid_users_or_groups',3,'type','char(1)','NO','','','');
+INSERT INTO `table_columns` VALUES ('grid_users_or_groups',3,'type','char(1)','NO','MUL','','');
 INSERT INTO `table_columns` VALUES ('grid_users_or_groups',4,'procJobLimit','double','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_users_or_groups',5,'maxJobs','int(10) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_users_or_groups',6,'numStartJobs','int(10) unsigned','NO','','0','');
@@ -2566,7 +2565,7 @@ INSERT INTO `table_columns` VALUES ('grid_users_or_groups',13,'maxPendJobs','int
 INSERT INTO `table_columns` VALUES ('grid_users_or_groups',14,'efficiency','double','NO','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_users_or_groups',15,'first_seen','timestamp','NO','','0000-00-00 00:00:00','');
 INSERT INTO `table_columns` VALUES ('grid_users_or_groups',16,'last_updated','timestamp','NO','','CURRENT_TIMESTAMP','on update CURRENT_TIMESTAMP');
-INSERT INTO `table_columns` VALUES ('grid_users_or_groups',17,'present','tinyint(3) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('grid_users_or_groups',17,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('gridalarms_alarm',1,'id','int(11)','NO','PRI',NULL,'auto_increment');
 INSERT INTO `table_columns` VALUES ('gridalarms_alarm',2,'template_id','int(10) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('gridalarms_alarm',3,'template_enabled','char(3)','YES','',NULL,'');
@@ -2841,7 +2840,7 @@ INSERT INTO `table_columns` VALUES ('host_snmp_cache',3,'field_name','varchar(50
 INSERT INTO `table_columns` VALUES ('host_snmp_cache',4,'field_value','varchar(512)','YES','MUL',NULL,'');
 INSERT INTO `table_columns` VALUES ('host_snmp_cache',5,'snmp_index','varchar(255)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('host_snmp_cache',6,'oid','text','NO','',NULL,'');
-INSERT INTO `table_columns` VALUES ('host_snmp_cache',7,'present','tinyint(4)','NO','MUL','1','');
+INSERT INTO `table_columns` VALUES ('host_snmp_cache',7,'present','tinyint(3) unsigned','NO','MUL','1','');
 INSERT INTO `table_columns` VALUES ('host_snmp_cache',8,'last_updated','timestamp','NO','MUL','CURRENT_TIMESTAMP','on update CURRENT_TIMESTAMP');
 INSERT INTO `table_columns` VALUES ('host_snmp_query',1,'host_id','mediumint(8) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('host_snmp_query',2,'snmp_query_id','mediumint(8) unsigned','NO','PRI','0','');
@@ -2940,7 +2939,7 @@ INSERT INTO `table_columns` VALUES ('lic_ldap_groups',2,'user','varchar(20)','NO
 INSERT INTO `table_columns` VALUES ('lic_ldap_groups',3,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('lic_ldap_to_flex_groups',1,'ldap_group','varchar(40)','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('lic_ldap_to_flex_groups',2,'flex_group','varchar(40)','NO','PRI',NULL,'');
-INSERT INTO `table_columns` VALUES ('lic_ldap_to_flex_groups',3,'present','tinyint(3) unsigned','YES','',NULL,'');
+INSERT INTO `table_columns` VALUES ('lic_ldap_to_flex_groups',3,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('lic_managers',1,'id','smallint(10) unsigned','NO','PRI',NULL,'auto_increment');
 INSERT INTO `table_columns` VALUES ('lic_managers',2,'hash','char(32)','NO','',NULL,'');
 INSERT INTO `table_columns` VALUES ('lic_managers',3,'name','varchar(20)','NO','',NULL,'');
@@ -2965,7 +2964,7 @@ INSERT INTO `table_columns` VALUES ('lic_servers',3,'status','varchar(20)','NO',
 INSERT INTO `table_columns` VALUES ('lic_servers',4,'type','varchar(50)','NO','','','');
 INSERT INTO `table_columns` VALUES ('lic_servers',5,'version','varchar(20)','NO','','','');
 INSERT INTO `table_columns` VALUES ('lic_servers',6,'errorno','int(10)','NO','','0','');
-INSERT INTO `table_columns` VALUES ('lic_servers',7,'present','tinyint(3) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('lic_servers',7,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('lic_services',1,'service_id','int(10) unsigned','NO','PRI',NULL,'auto_increment');
 INSERT INTO `table_columns` VALUES ('lic_services',2,'poller_interval','int(10) unsigned','NO','','300','');
 INSERT INTO `table_columns` VALUES ('lic_services',3,'poller_date','timestamp','NO','','0000-00-00 00:00:00','');
@@ -3008,7 +3007,7 @@ INSERT INTO `table_columns` VALUES ('lic_services_feature',4,'feature_number_to_
 INSERT INTO `table_columns` VALUES ('lic_services_feature',5,'total_reserved_token','int(10) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('lic_services_feature',6,'feature_expiration_date','timestamp','NO','PRI','0000-00-00 00:00:00','');
 INSERT INTO `table_columns` VALUES ('lic_services_feature',7,'vendor_daemon','varchar(45)','NO','PRI','','');
-INSERT INTO `table_columns` VALUES ('lic_services_feature',8,'present','tinyint(3) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('lic_services_feature',8,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('lic_services_feature_details',1,'service_id','int(10) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('lic_services_feature_details',2,'vendor_daemon','varchar(40)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('lic_services_feature_details',3,'feature_name','varchar(50)','NO','PRI','0','');
@@ -3023,7 +3022,7 @@ INSERT INTO `table_columns` VALUES ('lic_services_feature_details',11,'status','
 INSERT INTO `table_columns` VALUES ('lic_services_feature_details',12,'tokens_acquired','int(10) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('lic_services_feature_details',13,'tokens_acquired_date','timestamp','NO','PRI','0000-00-00 00:00:00','');
 INSERT INTO `table_columns` VALUES ('lic_services_feature_details',14,'last_updated','timestamp','NO','','CURRENT_TIMESTAMP','on update CURRENT_TIMESTAMP');
-INSERT INTO `table_columns` VALUES ('lic_services_feature_details',15,'present','tinyint(1)','NO','','1','');
+INSERT INTO `table_columns` VALUES ('lic_services_feature_details',15,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('lic_services_feature_history',1,'id','bigint(20)','NO','PRI',NULL,'auto_increment');
 INSERT INTO `table_columns` VALUES ('lic_services_feature_history',2,'service_id','int(10) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('lic_services_feature_history',3,'vendor_daemon','varchar(40)','NO','MUL','','');
@@ -3055,7 +3054,7 @@ INSERT INTO `table_columns` VALUES ('lic_services_feature_use',4,'feature_inuse_
 INSERT INTO `table_columns` VALUES ('lic_services_feature_use',5,'feature_queued','int(10) unsigned','NO','MUL','0','');
 INSERT INTO `table_columns` VALUES ('lic_services_feature_use',6,'feature_reserved','int(10) unsigned','NO','MUL','0','');
 INSERT INTO `table_columns` VALUES ('lic_services_feature_use',7,'vendor_daemon','varchar(45)','NO','MUL','TBD','');
-INSERT INTO `table_columns` VALUES ('lic_services_feature_use',8,'present','tinyint(1)','NO','','1','');
+INSERT INTO `table_columns` VALUES ('lic_services_feature_use',8,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('lic_services_feature_use',9,'vendor_status','varchar(10)','NO','','','');
 INSERT INTO `table_columns` VALUES ('lic_services_feature_use',10,'vendor_version','varchar(30)','NO','','','');
 INSERT INTO `table_columns` VALUES ('lic_services_feature_use',11,'status','varchar(29)','NO','','','');
@@ -3067,7 +3066,7 @@ INSERT INTO `table_columns` VALUES ('lic_services_options_feature',5,'linger','i
 INSERT INTO `table_columns` VALUES ('lic_services_options_feature',6,'max_borrow_hours','int(10) unsigned','YES','',NULL,'');
 INSERT INTO `table_columns` VALUES ('lic_services_options_feature',7,'max_overdraft','int(10) unsigned','YES','',NULL,'');
 INSERT INTO `table_columns` VALUES ('lic_services_options_feature',8,'timeout','int(10) unsigned','YES','',NULL,'');
-INSERT INTO `table_columns` VALUES ('lic_services_options_feature',9,'present','tinyint(3) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('lic_services_options_feature',9,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('lic_services_options_feature_type',1,'service_id','int(10) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('lic_services_options_feature_type',2,'feature','varchar(50)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('lic_services_options_feature_type',3,'keyword','varchar(60)','NO','PRI',NULL,'');
@@ -3075,7 +3074,7 @@ INSERT INTO `table_columns` VALUES ('lic_services_options_feature_type',4,'varia
 INSERT INTO `table_columns` VALUES ('lic_services_options_feature_type',5,'otype','varchar(20)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('lic_services_options_feature_type',6,'name','varchar(40)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('lic_services_options_feature_type',7,'notes','varchar(255)','YES','',NULL,'');
-INSERT INTO `table_columns` VALUES ('lic_services_options_feature_type',8,'present','tinyint(3) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('lic_services_options_feature_type',8,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('lic_services_options_global',1,'service_id','int(10) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('lic_services_options_global',2,'options_path','varchar(255)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('lic_services_options_global',3,'debug_path','varchar(255)','YES','',NULL,'');
@@ -3086,17 +3085,17 @@ INSERT INTO `table_columns` VALUES ('lic_services_options_global',7,'nolog_denie
 INSERT INTO `table_columns` VALUES ('lic_services_options_global',8,'nolog_queued','int(10) unsigned','YES','',NULL,'');
 INSERT INTO `table_columns` VALUES ('lic_services_options_global',9,'timeoutall','int(10) unsigned','YES','',NULL,'');
 INSERT INTO `table_columns` VALUES ('lic_services_options_global',10,'groupcaseinsens','int(10) unsigned','YES','',NULL,'');
-INSERT INTO `table_columns` VALUES ('lic_services_options_global',11,'present','tinyint(4)','YES','','1','');
+INSERT INTO `table_columns` VALUES ('lic_services_options_global',11,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('lic_services_options_host_groups',1,'service_id','int(10) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('lic_services_options_host_groups',2,'group','varchar(64)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('lic_services_options_host_groups',3,'host','varchar(64)','NO','PRI','','');
-INSERT INTO `table_columns` VALUES ('lic_services_options_host_groups',4,'present','tinyint(3) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('lic_services_options_host_groups',4,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('lic_services_options_incexcl_all',1,'service_id','int(10) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('lic_services_options_incexcl_all',2,'incexcl','varchar(12)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('lic_services_options_incexcl_all',3,'otype','varchar(20)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('lic_services_options_incexcl_all',4,'name','varchar(40)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('lic_services_options_incexcl_all',5,'notes','varchar(255)','YES','',NULL,'');
-INSERT INTO `table_columns` VALUES ('lic_services_options_incexcl_all',6,'present','tinyint(3) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('lic_services_options_incexcl_all',6,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('lic_services_options_max',1,'service_id','int(10) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('lic_services_options_max',2,'num_lic','int(10) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('lic_services_options_max',3,'feature','varchar(50)','NO','PRI','','');
@@ -3104,7 +3103,7 @@ INSERT INTO `table_columns` VALUES ('lic_services_options_max',4,'keyword','varc
 INSERT INTO `table_columns` VALUES ('lic_services_options_max',5,'otype','varchar(10)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('lic_services_options_max',6,'name','varchar(40)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('lic_services_options_max',7,'notes','varchar(255)','YES','',NULL,'');
-INSERT INTO `table_columns` VALUES ('lic_services_options_max',8,'present','tinyint(3) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('lic_services_options_max',8,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('lic_services_options_reserve',1,'service_id','int(10) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('lic_services_options_reserve',2,'num_lic','int(10) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('lic_services_options_reserve',3,'feature','varchar(50)','NO','PRI','','');
@@ -3112,11 +3111,11 @@ INSERT INTO `table_columns` VALUES ('lic_services_options_reserve',4,'keyword','
 INSERT INTO `table_columns` VALUES ('lic_services_options_reserve',5,'otype','varchar(10)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('lic_services_options_reserve',6,'name','varchar(40)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('lic_services_options_reserve',7,'notes','varchar(255)','YES','',NULL,'');
-INSERT INTO `table_columns` VALUES ('lic_services_options_reserve',8,'present','tinyint(3) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('lic_services_options_reserve',8,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('lic_services_options_user_groups',1,'service_id','int(10) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('lic_services_options_user_groups',2,'group','varchar(64)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('lic_services_options_user_groups',3,'user','varchar(40)','NO','PRI','','');
-INSERT INTO `table_columns` VALUES ('lic_services_options_user_groups',4,'present','tinyint(3) unsigned','NO','','0','');
+INSERT INTO `table_columns` VALUES ('lic_services_options_user_groups',4,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('lic_settings',1,'user_id','smallint(8) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('lic_settings',2,'name','varchar(50)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('lic_settings',3,'value','varchar(1024)','NO','','','');
@@ -3161,9 +3160,6 @@ INSERT INTO `table_columns` VALUES ('plugin_thold_daemon_processes',2,'pid','var
 INSERT INTO `table_columns` VALUES ('plugin_thold_daemon_processes',3,'start','double','NO','','0','');
 INSERT INTO `table_columns` VALUES ('plugin_thold_daemon_processes',4,'end','double','NO','','0','');
 INSERT INTO `table_columns` VALUES ('plugin_thold_daemon_processes',5,'processed_items','mediumint(8)','NO','','0','');
-INSERT INTO `table_columns` VALUES ('plugin_thold_device_template',1,'id','int(11) unsigned','NO','PRI',NULL,'auto_increment');
-INSERT INTO `table_columns` VALUES ('plugin_thold_device_template',2,'device_template_id','int(11) unsigned','NO','','0','');
-INSERT INTO `table_columns` VALUES ('plugin_thold_device_template',3,'thold_template_id','int(11) unsigned','NO','','0','');
 INSERT INTO `table_columns` VALUES ('plugin_thold_host_failed',1,'id','int(12) unsigned','NO','PRI',NULL,'auto_increment');
 INSERT INTO `table_columns` VALUES ('plugin_thold_host_failed',2,'poller_id','int(10) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('plugin_thold_host_failed',3,'host_id','int(12) unsigned','NO','',NULL,'');
@@ -3228,7 +3224,7 @@ INSERT INTO `table_columns` VALUES ('poller_item',1,'local_data_id','mediumint(8
 INSERT INTO `table_columns` VALUES ('poller_item',2,'poller_id','int(10) unsigned','NO','MUL','1','');
 INSERT INTO `table_columns` VALUES ('poller_item',3,'host_id','mediumint(8) unsigned','NO','MUL','0','');
 INSERT INTO `table_columns` VALUES ('poller_item',4,'action','tinyint(2) unsigned','NO','MUL','1','');
-INSERT INTO `table_columns` VALUES ('poller_item',5,'present','tinyint(4)','NO','MUL','1','');
+INSERT INTO `table_columns` VALUES ('poller_item',5,'present','tinyint(3) unsigned','NO','MUL','1','');
 INSERT INTO `table_columns` VALUES ('poller_item',6,'last_updated','timestamp','NO','','CURRENT_TIMESTAMP','on update CURRENT_TIMESTAMP');
 INSERT INTO `table_columns` VALUES ('poller_item',7,'hostname','varchar(100)','NO','','','');
 INSERT INTO `table_columns` VALUES ('poller_item',8,'snmp_community','varchar(100)','NO','','','');
@@ -3268,7 +3264,7 @@ INSERT INTO `table_columns` VALUES ('poller_output_realtime',5,'poller_id','varc
 INSERT INTO `table_columns` VALUES ('poller_reindex',1,'host_id','mediumint(8) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('poller_reindex',2,'data_query_id','mediumint(8) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('poller_reindex',3,'action','tinyint(3) unsigned','NO','','0','');
-INSERT INTO `table_columns` VALUES ('poller_reindex',4,'present','tinyint(4)','NO','MUL','1','');
+INSERT INTO `table_columns` VALUES ('poller_reindex',4,'present','tinyint(3) unsigned','NO','MUL','1','');
 INSERT INTO `table_columns` VALUES ('poller_reindex',5,'op','char(1)','NO','','','');
 INSERT INTO `table_columns` VALUES ('poller_reindex',6,'assert_value','varchar(100)','NO','','','');
 INSERT INTO `table_columns` VALUES ('poller_reindex',7,'arg1','varchar(255)','NO','PRI','','');
@@ -3332,24 +3328,12 @@ INSERT INTO `table_columns` VALUES ('reports_items',13,'align','tinyint(1) unsig
 INSERT INTO `table_columns` VALUES ('reports_items',14,'item_text','text','NO','',NULL,'');
 INSERT INTO `table_columns` VALUES ('reports_items',15,'font_size','smallint(2) unsigned','NO','','10','');
 INSERT INTO `table_columns` VALUES ('reports_items',16,'sequence','smallint(5) unsigned','NO','','0','');
-INSERT INTO `table_columns` VALUES ('rra',1,'id','mediumint(8) unsigned','NO','PRI',NULL,'auto_increment');
-INSERT INTO `table_columns` VALUES ('rra',2,'hash','varchar(32)','NO','','','');
-INSERT INTO `table_columns` VALUES ('rra',3,'name','varchar(100)','NO','','','');
-INSERT INTO `table_columns` VALUES ('rra',4,'x_files_factor','double','NO','','0.1','');
-INSERT INTO `table_columns` VALUES ('rra',5,'steps','mediumint(8)','YES','','1','');
-INSERT INTO `table_columns` VALUES ('rra',6,'rows','int(12)','NO','','600','');
-INSERT INTO `table_columns` VALUES ('rra',7,'timespan','int(12) unsigned','NO','','0','');
-INSERT INTO `table_columns` VALUES ('rra_cf',1,'rra_id','mediumint(8) unsigned','NO','PRI','0','');
-INSERT INTO `table_columns` VALUES ('rra_cf',2,'consolidation_function_id','smallint(5) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('sessions',1,'id','varchar(32)','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('sessions',2,'remote_addr','varchar(25)','NO','','','');
 INSERT INTO `table_columns` VALUES ('sessions',3,'access','int(10) unsigned','YES','',NULL,'');
 INSERT INTO `table_columns` VALUES ('sessions',4,'data','mediumblob','YES','',NULL,'');
 INSERT INTO `table_columns` VALUES ('settings',1,'name','varchar(50)','NO','PRI','','');
-INSERT INTO `table_columns` VALUES ('settings',2,'value','varchar(1024)','NO','','','');
-INSERT INTO `table_columns` VALUES ('settings_graphs',1,'user_id','smallint(8) unsigned','NO','PRI','0','');
-INSERT INTO `table_columns` VALUES ('settings_graphs',2,'name','varchar(50)','NO','PRI','','');
-INSERT INTO `table_columns` VALUES ('settings_graphs',3,'value','varchar(255)','NO','','','');
+INSERT INTO `table_columns` VALUES ('settings',2,'value','varchar(4096)','NO','','','');
 INSERT INTO `table_columns` VALUES ('settings_tree',1,'user_id','mediumint(8) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('settings_tree',2,'graph_tree_item_id','mediumint(8) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('settings_tree',3,'status','tinyint(1)','NO','','0','');
@@ -3452,7 +3436,7 @@ INSERT INTO `table_columns` VALUES ('syslog',1,'facility_id','int(10) unsigned',
 INSERT INTO `table_columns` VALUES ('syslog',2,'priority_id','int(10) unsigned','YES','MUL',NULL,'');
 INSERT INTO `table_columns` VALUES ('syslog',3,'program_id','int(10) unsigned','YES','MUL',NULL,'');
 INSERT INTO `table_columns` VALUES ('syslog',4,'host_id','int(10) unsigned','YES','MUL',NULL,'');
-INSERT INTO `table_columns` VALUES ('syslog',5,'logtime','timestamp','NO','MUL','0000-00-00 00:00:00','');
+INSERT INTO `table_columns` VALUES ('syslog',5,'logtime','datetime','NO','PRI','0000-00-00 00:00:00','');
 INSERT INTO `table_columns` VALUES ('syslog',6,'message','varchar(1024)','NO','','','');
 INSERT INTO `table_columns` VALUES ('syslog',7,'seq','bigint(20) unsigned','NO','PRI',NULL,'auto_increment');
 INSERT INTO `table_columns` VALUES ('syslog_alert',1,'id','int(10)','NO','PRI',NULL,'auto_increment');
@@ -3519,7 +3503,7 @@ INSERT INTO `table_columns` VALUES ('syslog_removed',1,'facility_id','int(10) un
 INSERT INTO `table_columns` VALUES ('syslog_removed',2,'priority_id','int(10) unsigned','YES','MUL',NULL,'');
 INSERT INTO `table_columns` VALUES ('syslog_removed',3,'program_id','int(10) unsigned','YES','MUL',NULL,'');
 INSERT INTO `table_columns` VALUES ('syslog_removed',4,'host_id','int(10) unsigned','YES','MUL',NULL,'');
-INSERT INTO `table_columns` VALUES ('syslog_removed',5,'logtime','timestamp','NO','MUL','0000-00-00 00:00:00','');
+INSERT INTO `table_columns` VALUES ('syslog_removed',5,'logtime','datetime','NO','PRI','0000-00-00 00:00:00','');
 INSERT INTO `table_columns` VALUES ('syslog_removed',6,'message','varchar(1024)','NO','','','');
 INSERT INTO `table_columns` VALUES ('syslog_removed',7,'seq','bigint(20) unsigned','NO','PRI',NULL,'auto_increment');
 INSERT INTO `table_columns` VALUES ('syslog_reports',1,'id','int(10)','NO','PRI',NULL,'auto_increment');
@@ -3844,7 +3828,7 @@ CREATE TABLE `table_indexes` (
   `idx_index_type` varchar(20) DEFAULT NULL,
   `idx_comment` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`idx_table_name`,`idx_key_name`,`idx_seq_in_index`,`idx_column_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Holds Default Cacti Index Definitions';
+) ENGINE=InnoDB COMMENT='Holds Default Cacti Index Definitions';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3871,12 +3855,12 @@ INSERT INTO `table_indexes` VALUES ('aggregate_graphs_items',0,'PRIMARY',2,'loca
 INSERT INTO `table_indexes` VALUES ('automation_devices',1,'hostname',1,'hostname','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('automation_devices',0,'ip',1,'ip','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('automation_devices',0,'PRIMARY',1,'id','A',0,NULL,NULL,'','BTREE','');
-INSERT INTO `table_indexes` VALUES ('automation_graph_rule_items',0,'PRIMARY',1,'id','A',6,NULL,NULL,'','BTREE','');
+INSERT INTO `table_indexes` VALUES ('automation_graph_rule_items',0,'PRIMARY',1,'id','A',2,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('automation_graph_rules',1,'name',1,'name','A',3,'171',NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('automation_graph_rules',0,'PRIMARY',1,'id','A',3,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('automation_ips',1,'pid',1,'pid',NULL,0,NULL,NULL,'YES','HASH','');
 INSERT INTO `table_indexes` VALUES ('automation_ips',0,'PRIMARY',1,'ip_address',NULL,0,NULL,NULL,'','HASH','');
-INSERT INTO `table_indexes` VALUES ('automation_match_rule_items',0,'PRIMARY',1,'id','A',8,NULL,NULL,'','BTREE','');
+INSERT INTO `table_indexes` VALUES ('automation_match_rule_items',0,'PRIMARY',1,'id','A',2,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('automation_networks',1,'poller_id',1,'poller_id','A',0,NULL,NULL,'YES','BTREE','');
 INSERT INTO `table_indexes` VALUES ('automation_networks',0,'PRIMARY',1,'id','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('automation_processes',0,'PRIMARY',1,'pid',NULL,NULL,NULL,NULL,'','HASH','');
@@ -3885,7 +3869,7 @@ INSERT INTO `table_indexes` VALUES ('automation_snmp',0,'PRIMARY',1,'id','A',1,N
 INSERT INTO `table_indexes` VALUES ('automation_snmp_items',0,'PRIMARY',1,'id','A',2,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('automation_snmp_items',0,'PRIMARY',2,'snmp_id','A',2,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('automation_templates',0,'PRIMARY',1,'id','A',2,NULL,NULL,'','BTREE','');
-INSERT INTO `table_indexes` VALUES ('automation_tree_rule_items',0,'PRIMARY',1,'id','A',4,NULL,NULL,'','BTREE','');
+INSERT INTO `table_indexes` VALUES ('automation_tree_rule_items',0,'PRIMARY',1,'id','A',2,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('automation_tree_rules',1,'name',1,'name','A',2,'171',NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('automation_tree_rules',0,'PRIMARY',1,'id','A',2,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('cdef',1,'hash',1,'hash','A',2,NULL,NULL,'','BTREE','');
@@ -3895,7 +3879,7 @@ INSERT INTO `table_indexes` VALUES ('cdef_items',1,'cdef_id_sequence',1,'cdef_id
 INSERT INTO `table_indexes` VALUES ('cdef_items',1,'cdef_id_sequence',2,'sequence','A',45,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('cdef_items',0,'PRIMARY',1,'id','A',45,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('color_template_items',0,'PRIMARY',1,'color_template_item_id','A',44,NULL,NULL,'','BTREE','');
-INSERT INTO `table_indexes` VALUES ('color_templates',0,'PRIMARY',1,'color_template_id','A',4,NULL,NULL,'','BTREE','');
+INSERT INTO `table_indexes` VALUES ('color_templates',0,'PRIMARY',1,'color_template_id','A',2,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('colors',0,'hex',1,'hex','A',514,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('colors',0,'PRIMARY',1,'id','A',514,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('data_debug',1,'datasource',1,'datasource','A',0,NULL,NULL,'','BTREE','');
@@ -4314,6 +4298,8 @@ INSERT INTO `table_indexes` VALUES ('grid_hostinfo',1,'clusterid_host',1,'cluste
 INSERT INTO `table_indexes` VALUES ('grid_hostinfo',1,'clusterid_host',2,'host','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('grid_hostinfo',1,'clusterid_is_server',1,'clusterid','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('grid_hostinfo',1,'clusterid_is_server',2,'isServer','A',0,NULL,NULL,'','BTREE','');
+INSERT INTO `table_indexes` VALUES ('grid_hostinfo',1,'clusterid_present',1,'clusterid','A',0,NULL,NULL,'','BTREE','');
+INSERT INTO `table_indexes` VALUES ('grid_hostinfo',1,'clusterid_present',2,'present','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('grid_hostinfo',1,'hostModel',1,'hostModel','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('grid_hostinfo',1,'hostType',1,'hostType','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('grid_hostinfo',1,'isServer',1,'isServer','A',0,NULL,NULL,'','BTREE','');
@@ -4425,6 +4411,9 @@ INSERT INTO `table_indexes` VALUES ('grid_jobs',1,'clusterid_end_logged',2,'job_
 INSERT INTO `table_indexes` VALUES ('grid_jobs',1,'clusterid_stat_end_logged',1,'clusterid','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('grid_jobs',1,'clusterid_stat_end_logged',2,'stat','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('grid_jobs',1,'clusterid_stat_end_logged',3,'job_end_logged','A',0,NULL,NULL,'','BTREE','');
+INSERT INTO `table_indexes` VALUES ('grid_jobs',1,'clusterid_stat_last_updated',1,'clusterid','A',0,NULL,NULL,'','BTREE','');
+INSERT INTO `table_indexes` VALUES ('grid_jobs',1,'clusterid_stat_last_updated',2,'stat','A',0,NULL,NULL,'','BTREE','');
+INSERT INTO `table_indexes` VALUES ('grid_jobs',1,'clusterid_stat_last_updated',3,'last_updated','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('grid_jobs',1,'clusterid_stat_start_time',1,'clusterid','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('grid_jobs',1,'clusterid_stat_start_time',2,'stat','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('grid_jobs',1,'clusterid_stat_start_time',3,'start_time','A',0,NULL,NULL,'','BTREE','');
@@ -4584,6 +4573,9 @@ INSERT INTO `table_indexes` VALUES ('grid_jobs_pendreason_maps',0,'PRIMARY',2,'r
 INSERT INTO `table_indexes` VALUES ('grid_jobs_pendreason_maps',0,'PRIMARY',3,'sub_reason_code','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('grid_jobs_pendreasons',1,'clusterid_end_time',1,'clusterid','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('grid_jobs_pendreasons',1,'clusterid_end_time',2,'end_time','A',0,NULL,NULL,'','BTREE','');
+INSERT INTO `table_indexes` VALUES ('grid_jobs_pendreasons',1,'clusterid_end_time_last_updated',1,'clusterid','A',0,NULL,NULL,'','BTREE','');
+INSERT INTO `table_indexes` VALUES ('grid_jobs_pendreasons',1,'clusterid_end_time_last_updated',2,'end_time','A',0,NULL,NULL,'','BTREE','');
+INSERT INTO `table_indexes` VALUES ('grid_jobs_pendreasons',1,'clusterid_end_time_last_updated',3,'last_updated','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('grid_jobs_pendreasons',0,'PRIMARY',1,'clusterid','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('grid_jobs_pendreasons',0,'PRIMARY',2,'jobid','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('grid_jobs_pendreasons',0,'PRIMARY',3,'indexid','A',0,NULL,NULL,'','BTREE','');
@@ -4692,6 +4684,8 @@ INSERT INTO `table_indexes` VALUES ('grid_queues_hosts',0,'PRIMARY',1,'clusterid
 INSERT INTO `table_indexes` VALUES ('grid_queues_hosts',0,'PRIMARY',2,'queue','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('grid_queues_hosts',0,'PRIMARY',3,'host','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('grid_queues_hosts',1,'queue',1,'queue','A',0,NULL,NULL,'','BTREE','');
+INSERT INTO `table_indexes` VALUES ('grid_queues_shares',1,'clusterid_user_or_group',1,'clusterid','A',0,NULL,NULL,'','BTREE','');
+INSERT INTO `table_indexes` VALUES ('grid_queues_shares',1,'clusterid_user_or_group',2,'user_or_group','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('grid_queues_shares',0,'PRIMARY',1,'clusterid','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('grid_queues_shares',0,'PRIMARY',2,'queue','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('grid_queues_shares',0,'PRIMARY',3,'user_or_group','A',0,NULL,NULL,'','BTREE','');
@@ -4758,6 +4752,7 @@ INSERT INTO `table_indexes` VALUES ('grid_user_group_stats',0,'PRIMARY',1,'clust
 INSERT INTO `table_indexes` VALUES ('grid_user_group_stats',0,'PRIMARY',2,'userGroup','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('grid_users_or_groups',0,'PRIMARY',1,'clusterid','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('grid_users_or_groups',0,'PRIMARY',2,'user_or_group','A',0,NULL,NULL,'','BTREE','');
+INSERT INTO `table_indexes` VALUES ('grid_users_or_groups',1,'type',1,'type','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('gridalarms_alarm',1,'alarm_enabled',1,'alarm_enabled','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('gridalarms_alarm',1,'clusterid',1,'clusterid','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('gridalarms_alarm',1,'expression_id',1,'expression_id','A',0,NULL,NULL,'','BTREE','');
@@ -5033,7 +5028,6 @@ INSERT INTO `table_indexes` VALUES ('plugin_thold_contacts',0,'user_id_type',2,'
 INSERT INTO `table_indexes` VALUES ('plugin_thold_daemon_data',1,'id',1,'id','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('plugin_thold_daemon_data',1,'id',2,'pid','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('plugin_thold_daemon_processes',0,'PRIMARY',1,'pid','A',0,NULL,NULL,'','BTREE','');
-INSERT INTO `table_indexes` VALUES ('plugin_thold_device_template',0,'PRIMARY',1,'id','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('plugin_thold_host_failed',0,'PRIMARY',1,'id','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('plugin_thold_host_template',0,'PRIMARY',1,'id','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('plugin_thold_log',1,'host_id',1,'host_id','A',0,NULL,NULL,'','BTREE','');
@@ -5104,13 +5098,8 @@ INSERT INTO `table_indexes` VALUES ('reports',1,'mailtime',1,'mailtime','A',0,NU
 INSERT INTO `table_indexes` VALUES ('reports',0,'PRIMARY',1,'id','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('reports_items',0,'PRIMARY',1,'id','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('reports_items',1,'report_id',1,'report_id','A',0,NULL,NULL,'','BTREE','');
-INSERT INTO `table_indexes` VALUES ('rra',0,'PRIMARY',1,'id','A',2,NULL,NULL,'','BTREE','');
-INSERT INTO `table_indexes` VALUES ('rra_cf',0,'PRIMARY',1,'rra_id','A',2,NULL,NULL,'','BTREE','');
-INSERT INTO `table_indexes` VALUES ('rra_cf',0,'PRIMARY',2,'consolidation_function_id','A',2,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('sessions',0,'PRIMARY',1,'id','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('settings',0,'PRIMARY',1,'name','A',303,NULL,NULL,'','BTREE','');
-INSERT INTO `table_indexes` VALUES ('settings_graphs',0,'PRIMARY',1,'user_id','A',0,NULL,NULL,'','BTREE','');
-INSERT INTO `table_indexes` VALUES ('settings_graphs',0,'PRIMARY',2,'name','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('settings_tree',0,'PRIMARY',1,'user_id','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('settings_tree',0,'PRIMARY',2,'graph_tree_item_id','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('settings_user',0,'PRIMARY',1,'user_id','A',2,NULL,NULL,'','BTREE','');
@@ -5173,6 +5162,7 @@ INSERT INTO `table_indexes` VALUES ('syslog',1,'facility_id',1,'facility_id','A'
 INSERT INTO `table_indexes` VALUES ('syslog',1,'host_id',1,'host_id','A',28,NULL,NULL,'YES','BTREE','');
 INSERT INTO `table_indexes` VALUES ('syslog',1,'logtime',1,'logtime','A',28,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('syslog',0,'PRIMARY',1,'seq','A',28,NULL,NULL,'','BTREE','');
+INSERT INTO `table_indexes` VALUES ('syslog',0,'PRIMARY',2,'logtime','A',28,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('syslog',1,'priority_id',1,'priority_id','A',28,NULL,NULL,'YES','BTREE','');
 INSERT INTO `table_indexes` VALUES ('syslog',1,'program_id',1,'program_id','A',28,NULL,NULL,'YES','BTREE','');
 INSERT INTO `table_indexes` VALUES ('syslog_alert',0,'PRIMARY',1,'id','A',0,NULL,NULL,'','BTREE','');
@@ -5194,7 +5184,6 @@ INSERT INTO `table_indexes` VALUES ('syslog_logs',1,'logtime',1,'logtime','A',0,
 INSERT INTO `table_indexes` VALUES ('syslog_logs',0,'PRIMARY',1,'seq','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('syslog_logs',1,'priority_id',1,'priority_id','A',0,NULL,NULL,'YES','BTREE','');
 INSERT INTO `table_indexes` VALUES ('syslog_logs',1,'program_id',1,'program_id','A',0,NULL,NULL,'YES','BTREE','');
-INSERT INTO `table_indexes` VALUES ('syslog_logs',1,'seq',1,'seq','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('syslog_priorities',1,'last_updated',1,'last_updated','A',9,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('syslog_priorities',0,'PRIMARY',1,'priority_id','A',9,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('syslog_programs',1,'host_id',1,'program_id','A',3,NULL,NULL,'','BTREE','');
@@ -5205,6 +5194,7 @@ INSERT INTO `table_indexes` VALUES ('syslog_removed',1,'facility_id',1,'facility
 INSERT INTO `table_indexes` VALUES ('syslog_removed',1,'host_id',1,'host_id','A',0,NULL,NULL,'YES','BTREE','');
 INSERT INTO `table_indexes` VALUES ('syslog_removed',1,'logtime',1,'logtime','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('syslog_removed',0,'PRIMARY',1,'seq','A',0,NULL,NULL,'','BTREE','');
+INSERT INTO `table_indexes` VALUES ('syslog_removed',0,'PRIMARY',2,'logtime','A',0,NULL,NULL,'','BTREE','');
 INSERT INTO `table_indexes` VALUES ('syslog_removed',1,'priority_id',1,'priority_id','A',0,NULL,NULL,'YES','BTREE','');
 INSERT INTO `table_indexes` VALUES ('syslog_removed',1,'program_id',1,'program_id','A',0,NULL,NULL,'YES','BTREE','');
 INSERT INTO `table_indexes` VALUES ('syslog_reports',0,'PRIMARY',1,'id','A',0,NULL,NULL,'','BTREE','');
@@ -5296,4 +5286,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-05-31 13:31:35
+-- Dump completed on 2022-03-02  1:46:58

@@ -3697,22 +3697,18 @@ function heuristics_filter() {
 						<select id='clusterid' onChange='filterChange()'>
 							<option value='-1'<?php if (get_request_var('clusterid') == '-1') print ' selected';?>><?php print __('All', 'heuristics');?></option>
 							<?php
-							if (isempty_request_var('user_iq')) {
-								$clusters = db_fetch_assoc('SELECT DISTINCT h.clusterid, clustername
-									FROM grid_heuristics_user_stats h, grid_clusters c
-									WHERE h.clusterid=c.clusterid
-									ORDER BY h.clusterid');
+							if(isempty_request_var('user_iq')) {
+								$clusterids = db_fetch_assoc_prepared('SELECT DISTINCT clusterid FROM grid_heuristics_user_stats');
 							} else {
-								$clusters = db_fetch_assoc_prepared('SELECT DISTINCT h.clusterid, clustername
-									FROM grid_heuristics_user_stats h, grid_clusters c
-									WHERE h.clusterid=c.clusterid
-									AND h.user=?
-									ORDER BY h.clusterid', array(get_request_var('user_iq')));
+								$clusterids = db_fetch_assoc_prepared('SELECT DISTINCT clusterid FROM grid_heuristics_user_stats WHERE user=?', array(get_request_var('user_iq')));
 							}
-
-							if (cacti_sizeof($clusters)) {
-								foreach($clusters as $c) {
-									print "<option value='" . $c['clusterid'] . "'"; if (get_filter_request_var('clusterid') == $c['clusterid']) { print ' selected'; } print '>' . html_escape($c['clustername']) . '</option>';
+							if (cacti_sizeof($clusterids)) {
+								$clusterids = array_rekey($clusterids, 'clusterid', 'clusterid');
+								$clusters = grid_get_clusterlist(false, $clusterids);
+								if (cacti_sizeof($clusters)) {
+									foreach($clusters as $c) {
+										print "<option value='" . $c['clusterid'] . "'"; if (get_filter_request_var('clusterid') == $c['clusterid']) { print ' selected'; } print '>' . html_escape($c['clustername']) . '</option>';
+									}
 								}
 							}
 							?>

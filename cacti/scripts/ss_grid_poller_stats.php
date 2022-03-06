@@ -118,7 +118,7 @@ function ss_grid_poller_stats($clusterid = 0) {
 		$mbdtime   = 0;
 		$mbdpptime = 0;
 		$pending   = 0;
-		$Suspended   = 0;
+		$suspended = 0;
 
 		if (sizeof($stat_array_pend)) {
 			foreach($stat_array_pend as $stat) {
@@ -141,7 +141,7 @@ function ss_grid_poller_stats($clusterid = 0) {
 					$pending   = $value;
 					break;
 				case 'Suspended':
-					$Suspended   = $value;
+					$suspended   = $value;
 					break;
 				}
 
@@ -152,7 +152,7 @@ function ss_grid_poller_stats($clusterid = 0) {
 				' Pend_MBDtime:'  . $mbdtime   .
 				' Pend_MBDppMax:' . $mbdpptime .
 				' Pending:'       . $pending   .
-				' Suspended:'     . $Suspended . ' ';
+				' Suspended:'     . $suspended . ' ';
 		} else {
 			$poller_stats .=  'Pend_Runtime:0 Pend_MBDtime:0 Pend_MBDppMax:0 Pending:0 Suspended:0 ';
 		}
@@ -195,5 +195,5 @@ function get_runtime($statsvalue) {
 			}
 		}
 	}
-	return 'Runtime:' . $runtime . ' ';
+	return 'Runtime:' . trim($runtime) . ' ';
 }

@@ -65,7 +65,7 @@ define('Q_ATTRIB_RMT_BATCH_LOCAL',          0x300000);
 define('Q_ATTRIB_RMT_BATCH_ONLY',           0x400000);
 define('Q_ATTRIB_RESOURCE_RESERVE',        0x1000000);
 define('Q_ATTRIB_FS_DISPATCH_ORDER_QUEUE', 0x2000000);
-define('Q_ATTRIB_BATCH',		           0x4000000);
+define('Q_ATTRIB_BATCH',                   0x4000000);
 define('Q_ATTRIB_ONLINE',                  0x8000000);
 define('Q_ATTRIB_INTERRUPTIBLE_BACKFILL', 0x10000000);
 define('Q_ATTRIB_APS',                    0x20000000);
@@ -134,7 +134,7 @@ $title = __('IBM Spectrum LSF RTM - Queue Management', 'grid');
 set_default_action();
 
 if (!isset_request_var('tab')) {
-    set_request_var('tab', 'general');
+	set_request_var('tab', 'general');
 }
 
 $grid_host_control_actions = array(
@@ -439,27 +439,27 @@ function fetch_rrd_data() {
 	switch($timespan) {
 		case('14400'):
 			$timespan_titile = '4 Hours';
-	        $rra_step = 300;  //daily 5minute rra
+			$rra_step = 300;  //daily 5minute rra
 			break;
 		case('28800'):
 			$timespan_titile = '8 Hours';
-	        $rra_step = 300;  //daily 5minute rra
+			$rra_step = 300;  //daily 5minute rra
 			break;
 		case('43200'):
 			$timespan_titile = '12 Hours';
-	        $rra_step = 300;  //daily 5minute rra
+			$rra_step = 300;  //daily 5minute rra
 			break;
 		case('86400'):
 			$timespan_titile = '1 Day';
-	        $rra_step = 300;  //daily 5minute rra
+			$rra_step = 300;  //daily 5minute rra
 			break;
 		case('259200'):
 			$timespan_titile = '3 Days';
-	        $rra_step = 1800;  //weekly 30 minutes rra
+			$rra_step = 1800;  //weekly 30 minutes rra
 			break;
 		case('604800'):
 			$timespan_titile = '1 Week';
-	        $rra_step = 1800;  //weekly 30 minutes rra
+			$rra_step = 1800;  //weekly 30 minutes rra
 			break;
 	}
 
@@ -553,7 +553,7 @@ function fetch_rrd_data() {
 
 	$fusion_theme = "theme='"  . get_selected_theme() . "'";
 
-    $chartXML = "<chart caption='" . get_graph_name($metric, $queue, $clusterid) ." (Last $timespan_titile)' " .
+	$chartXML = "<chart caption='" . get_graph_name($metric, $queue, $clusterid) ." (Last $timespan_titile)' " .
 		"showValues='0' legendPosition='RIGHT' labelDisplay='NONE' " .
 		"plotgradientcolor='' formatnumberscale='0' showplotborder='0'  " .
 		"palettecolors='#FD9927,#FECE2F,#9DCD3F,#CECD42,#009999,#64D3D1,#9400D3,#b3b3ff,#ff3300,#660033,#9E8655,#9FA4EE,#A150AA,#AAABA1,#6DC8FE,#562B29,#157419,#FFC3C0,#00BD27,#000000' canvaspadding='0' " .
@@ -960,7 +960,7 @@ function validate_tree_variables() {
 	$filters = array(
 		'clusterid' => array(
 			'filter' => FILTER_VALIDATE_INT,
-		    'default' => get_user_page_setting('grid_bqueues_fairshare', 'clusterid', read_grid_config_option('default_grid'))
+			'default' => get_user_page_setting('grid_bqueues_fairshare', 'clusterid', read_grid_config_option('default_grid'))
 			)
 	);
 	validate_store_request_vars($filters, 'sess_grid');
@@ -1162,8 +1162,8 @@ function form_action_queue() {
 				$json_output = json_decode($output);
 				$username_log = get_username($_SESSION['sess_user_id']);
 				foreach ($json_output->target as $target) {
-				    $action_message = get_request_var('message');
-				    cacti_log("Queue '{$target->name}', {$log_action} by '{$username_log}', comment: '{$action_message}'.", false, 'LSFCONTROL');
+					$action_message = get_request_var('message');
+					cacti_log("Queue '{$target->name}', {$log_action} by '{$username_log}', comment: '{$action_message}'.", false, 'LSFCONTROL');
 				}
 			}
 			else
@@ -1197,14 +1197,14 @@ function form_action_queue() {
 						$return_status = 'Failed. Status Code: '.$value['status_code'] ;
 					}
 					$message='Status:'.$return_status.' - Cluster ID:'.$value['clusterid'].' - '.$value['status_message'].'<br/>';
-				        $output_message=$output_message.$message;
+					$output_message=$output_message.$message;
 				}
 			}
 		}
-			if($count_fail>0)
-              			raise_message('mymessage', $output_message, MESSAGE_LEVEL_ERROR);
-            		else
-             			raise_message('mymessage', $output_message, MESSAGE_LEVEL_INFO);
+		if($count_fail>0)
+			raise_message('mymessage', $output_message, MESSAGE_LEVEL_ERROR);
+		else
+			raise_message('mymessage', $output_message, MESSAGE_LEVEL_INFO);
 		}
 		header('Location: grid_bqueues.php');
 		exit;
@@ -1523,12 +1523,12 @@ function build_queue_display_array() {
 			'dbname'  => 'show_queue_res_req',
 			'sort'    => 'ASC'
 		),
-		'send_to' => array(
+		'sndJobsTo' => array(
 			'display' => __('Send Jobs To', 'grid'),
 			'dbname'  => 'show_queue_send_to',
 			'sort'    => 'ASC'
 		),
-		'recv_from' => array(
+		'rcvJobsFrom' => array(
 			'display' => __('Receive Jobs From', 'grid'),
 			'dbname'  => 'show_queue_recv_from',
 			'sort'    => 'ASC'
@@ -1746,9 +1746,7 @@ function queuesFilter() {
 						<select id='clusterid'>
 							<option value='0'<?php if (get_request_var('clusterid') == '0') {?> selected<?php }?>><?php print __('All', 'grid');?></option>
 							<?php
-							$clusters = db_fetch_assoc('SELECT *
-								FROM grid_clusters
-								ORDER BY clustername');
+							$clusters = grid_get_clusterlist();
 
 							if (!empty($clusters)) {
 								foreach ($clusters as $cluster) {
@@ -4150,8 +4148,8 @@ function form_action_host() {
 				$json_output = json_decode($output);
 				$username_log = get_username($_SESSION['sess_user_id']);
 				foreach ($json_output->target as $target) {
-				    $action_message = get_request_var('message');
-				    cacti_log("Cluster '{$target->name}', {$log_action} by '{$username_log}', comment: '{$action_message}'.", false, 'LSFCONTROL');
+					$action_message = get_request_var('message');
+					cacti_log("Cluster '{$target->name}', {$log_action} by '{$username_log}', comment: '{$action_message}'.", false, 'LSFCONTROL');
 				}
 			} else {
 				raise_message(136);
@@ -4183,14 +4181,14 @@ function form_action_host() {
 						$return_status = 'Failed. Status Code: '.$value['status_code'];
 					}
 					$message='Status:' . $return_status . ' - Cluster Name:' . grid_get_clustername($value['clusterid']) . ' - '.$value['status_message'].'<br/>';
-				        $output_message=$output_message.$message;
+					$output_message=$output_message.$message;
 				}
 			}
 		}
-			if($count_fail>0)
-              			raise_message('mymessage', $output_message, MESSAGE_LEVEL_ERROR);
-            		else
-              			raise_message('mymessage', $output_message, MESSAGE_LEVEL_INFO);
+		if($count_fail>0)
+			raise_message('mymessage', $output_message, MESSAGE_LEVEL_ERROR);
+		else
+			raise_message('mymessage', $output_message, MESSAGE_LEVEL_INFO);
 		}
 		header('Location: grid_bqueues.php?action=viewqueue&tab=hosts');
 		exit;

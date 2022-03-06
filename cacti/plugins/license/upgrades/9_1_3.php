@@ -319,7 +319,7 @@ function upgrade_standard_to_9_1_3() {
 			FROM lic_flexlm_servers_options_feature");
 
 		execute_sql("drop old table lic_flexlm_servers_options_feature",
-			"DROP TABLE lic_flexlm_servers_options_feature");
+			"DROP TABLE IF EXISTS lic_flexlm_servers_options_feature");
 	}
 
 	execute_sql("drop",
@@ -348,7 +348,7 @@ function upgrade_standard_to_9_1_3() {
 			FROM lic_flexlm_servers_options_feature_type");
 
 		execute_sql("drop old table lic_flexlm_servers_options_feature_type",
-			"DROP TABLE lic_flexlm_servers_options_feature_type");
+			"DROP TABLE IF EXISTS lic_flexlm_servers_options_feature_type");
 	}
 
 	execute_sql("drop","DROP TABLE IF EXISTS `lic_services_options_incexcl_all`");
@@ -376,7 +376,7 @@ function upgrade_standard_to_9_1_3() {
 			FROM lic_flexlm_servers_options_incexcl_all");
 
 		execute_sql("drop old table lic_flexlm_servers_options_incexcl_all",
-			"DROP TABLE lic_flexlm_servers_options_incexcl_all");
+			"DROP TABLE IF EXISTS lic_flexlm_servers_options_incexcl_all");
 	}
 
 	execute_sql("drop",
@@ -407,7 +407,7 @@ function upgrade_standard_to_9_1_3() {
 			FROM lic_flexlm_servers_options_global");
 
 		execute_sql("drop old table lic_flexlm_servers_options_global",
-			"DROP TABLE lic_flexlm_servers_options_global");
+			"DROP TABLE IF EXISTS lic_flexlm_servers_options_global");
 	}
 
 	execute_sql("drop",
@@ -433,7 +433,7 @@ function upgrade_standard_to_9_1_3() {
 			FROM lic_flexlm_servers_options_host_groups");
 
 		execute_sql("drop old table lic_flexlm_servers_options_host_groups",
-			"DROP TABLE lic_flexlm_servers_options_host_groups");
+			"DROP TABLE IF EXISTS lic_flexlm_servers_options_host_groups");
 	}
 
 	execute_sql("drop",
@@ -464,7 +464,7 @@ function upgrade_standard_to_9_1_3() {
 			FROM lic_flexlm_servers_options_max");
 
 		execute_sql("drop old table lic_flexlm_servers_options_max",
-			"DROP TABLE lic_flexlm_servers_options_max");
+			"DROP TABLE IF EXISTS lic_flexlm_servers_options_max");
 	}
 
 	execute_sql("drop",
@@ -495,7 +495,7 @@ function upgrade_standard_to_9_1_3() {
 			FROM lic_flexlm_servers_options_reserve");
 
 		execute_sql("drop old table lic_flexlm_servers_options_reserve",
-			"DROP TABLE lic_flexlm_servers_options_reserve");
+			"DROP TABLE IF EXISTS lic_flexlm_servers_options_reserve");
 	}
 
 	execute_sql("drop",
@@ -521,7 +521,7 @@ function upgrade_standard_to_9_1_3() {
 			FROM lic_flexlm_servers_options_user_groups");
 
 		execute_sql("drop old table lic_flexlm_servers_options_user_groups",
-			"DROP TABLE lic_flexlm_servers_options_user_groups");
+			"DROP TABLE IF EXISTS lic_flexlm_servers_options_user_groups");
 	}
 
 	create_table("lic_ip_ranges",

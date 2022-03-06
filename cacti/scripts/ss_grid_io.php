@@ -64,5 +64,5 @@ function ss_grid_io($hostname = '', $clusterid = 0, $summary = 'no') {
 		'io:' . $job_stats['a_io'] . ' ' .
 		'pg:' . $job_stats['a_pg'];
 
-	return $result;
+	return trim($result);
 }

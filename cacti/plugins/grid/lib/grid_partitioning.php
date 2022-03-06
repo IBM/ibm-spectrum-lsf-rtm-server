@@ -126,18 +126,18 @@ function partition_create($table, $min_time_field, $max_time_field, $partition_v
 			if ($max_time_field != $min_time_field) {
 				/* obtain the minimum abarrant end time */
 				if ($min_time_field != "submit_time") {
-					$alt_min_time1 = db_fetch_cell("SELECT MIN($max_time_field)
+					$alt_min_time1 = db_fetch_cell_prepared("SELECT MIN($max_time_field)
 							FROM $new_table
-							WHERE ($min_time_field<='1971-02-01')
-							AND ($max_time_field>'1971-02-01')");
+							WHERE (?<='1971-02-01')
+							AND (?>'1971-02-01')", array($min_time_field, $max_time_field));
 
-					$alt_min_time2 = db_fetch_cell("SELECT MIN($min_time_field)
+					$alt_min_time2 = db_fetch_cell_prepared("SELECT MIN($min_time_field)
 							FROM $new_table
-							WHERE ($min_time_field>'1971-02-01')");
+							WHERE (?>'1971-02-01')", array($min_time_field));
 				} else {
-					$alt_min_time1 = db_fetch_cell("SELECT MIN($max_time_field)
+					$alt_min_time1 = db_fetch_cell_prepared("SELECT MIN($max_time_field)
 							FROM $new_table
-							WHERE $max_time_field>'1971-02-01'");
+							WHERE ?>'1971-02-01'", array($max_time_field));
 
 					$alt_min_time2 = db_fetch_cell("SELECT MIN($min_time_field)
 							FROM $new_table");
@@ -158,9 +158,9 @@ function partition_create($table, $min_time_field, $max_time_field, $partition_v
 				}
 			} else {
 				if ($min_time_field != "submit_time")  {
-					$min_time = db_fetch_cell("SELECT MIN($min_time_field)
+					$min_time = db_fetch_cell_prepared("SELECT MIN($min_time_field)
 							FROM $new_table
-							WHERE $min_time_field>'1971-02-01'");
+							WHERE ?>'1971-02-01'", array($min_time_field));
 				} else {
 					$min_time = db_fetch_cell("SELECT MIN($min_time_field)
 							FROM $new_table");
@@ -175,8 +175,7 @@ function partition_create($table, $min_time_field, $max_time_field, $partition_v
 				VALUES (?, ?, ?, ?)",
 				array($table, $partition, $min_time, $max_time));
 
-			set_config_option($table . '_partitioning_version', $partition);
-
+			db_execute_prepared('REPLACE INTO settings (name, value) values (?, ?)', array($table.'_partitioning_version', $partition));
 			$new_partition_tables[] =$new_table;
 		} else {
 			cacti_log("ERROR: Unable to Rename Temp Table to '" . $table . "'", true, "GRID");

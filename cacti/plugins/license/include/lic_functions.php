@@ -1826,12 +1826,11 @@ function lic_purge_event($start_time, $last_maint_start) {
 
 	/*delete old data from table lic_daily_stats_traffic*/
 	if (read_config_option('grid_partitioning_enable') == '') {
-		db_execute_prepared('DELETE FROM lic_daily_stats_traffic WHERE last_updated<?', array($retention_period));
+		db_execute_prepared('DELETE FROM lic_daily_stats_traffic WHERE last_updated < ?', array($retention_period));
 	} else {
 		$date = db_fetch_cell('SELECT MIN(min_time) FROM grid_table_partitions WHERE table_name = "lic_daily_stats"');
-		db_execute_prepared('DELETE FROM lic_daily_stats_traffic WHERE last_updated<?', array($date));
+		db_execute_prepared('DELETE FROM lic_daily_stats_traffic WHERE last_updated < ?', array($date));
 	}
-	//db_execute('DELETE FROM lic_denials WHERE end_time<"' . $retention_period . '"');
 
 	/*optimize table lic_daily_stats and lic_daily_stats_traffic after delete*/
 	if (grid_set_maintenance_mode('OPTIMIZE_LIC', true)) {

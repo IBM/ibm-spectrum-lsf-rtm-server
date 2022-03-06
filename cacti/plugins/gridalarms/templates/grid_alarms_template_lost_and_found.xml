@@ -140,7 +140,7 @@
 				<ds_type>1</ds_type>
 				<type>1</type>
 				<db_table></db_table>
-				<sql_query>SELECT gc.clustername, gj.* 
+				<sql_query>SELECT gc.clustername, gj.*
 FROM grid_jobs AS gj
 INNER JOIN grid_clusters AS gc
 ON gc.clusterid=gj.clusterid

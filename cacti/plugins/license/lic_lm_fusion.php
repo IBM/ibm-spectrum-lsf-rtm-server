@@ -1112,12 +1112,9 @@ function lic_lm_fusion_filter_table(){
 								$sql_params[] = get_request_var('service_id');
 							}
 
-							$sql_join_poller_type = "";
 							if(!isempty_request_var('poller_type')){
-								$sql_join_poller_type = " JOIN lic_services ON lic_services.service_id=ldst.service_id INNER JOIN lic_pollers ON lic_pollers.id=lic_services.poller_id WHERE lic_pollers.poller_type=? ";
 								$sql_params[] = get_request_var('poller_type');
 							}
-
 							$features = db_fetch_assoc_prepared("SELECT DISTINCT ldst.feature value,
 								IF(lafm.user_feature_name = '' OR lafm.user_feature_name IS NULL, ldst.feature, lafm.user_feature_name) AS feature_name
 								FROM (
@@ -1125,9 +1122,9 @@ function lic_lm_fusion_filter_table(){
 								  FROM lic_daily_stats_traffic AS ldst
 								  $sql_where
 								) AS ldst
-								LEFT JOIN lic_application_feature_map AS lafm ON ldst.feature=lafm.feature_name
-								$sql_join_poller_type
-								ORDER BY value", $sql_params);
+								LEFT JOIN lic_application_feature_map AS lafm ON ldst.feature=lafm.feature_name " .
+								(isempty_request_var('poller_type') ? '' : ' JOIN lic_services ON lic_services.service_id=ldst.service_id INNER JOIN lic_pollers ON lic_pollers.id=lic_services.poller_id WHERE lic_pollers.poller_type=? ') .
+								" ORDER BY value", $sql_params);
 
 							if (cacti_sizeof($features)){
 								foreach ($features as $feature){

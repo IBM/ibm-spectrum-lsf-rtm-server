@@ -55,5 +55,5 @@ function ss_lic_server_poller_stats($lic_server_id = 0) {
 		$poller_stat    = 'avail:0 runtime:0';
 	}
 
-	return $poller_stat;
+	return trim($poller_stat);
 }

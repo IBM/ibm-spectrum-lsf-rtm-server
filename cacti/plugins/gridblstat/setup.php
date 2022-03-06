@@ -18,7 +18,7 @@
  +-------------------------------------------------------------------------+
 */
 
-/* plugin_gridblstat_install - provides a generic Cacti 1.2.x installer routine to register all plugin
+/* plugin_gridblstat_install - provides a generic PIA 2.x installer routine to register all plugin
      hook functions.
    @returns - null */
 function plugin_gridblstat_install () {
@@ -161,7 +161,7 @@ function gridblstat_database_upgrade($old, $version) {
 			`free` int(10) unsigned NOT NULL,
 			`demand` int(10) unsigned NOT NULL,
 			`max_reclaim` int(10) unsigned NOT NULL default '0',
-			`present` tinyint(3) unsigned NOT NULL,
+			`present` tinyint(3) unsigned NOT NULL DEFAULT '1',
 			PRIMARY KEY  USING BTREE (`feature`,`service_domain`,`cluster`),
 			KEY `present` USING BTREE (`present`))
 			ENGINE=InnoDB
@@ -364,7 +364,7 @@ function gridblstat_setup_table_new () {
 		`fd_util` double DEFAULT '0',
 		`fd_target` double DEFAULT '0',
 		`last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		`present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+		`present` tinyint(3) unsigned NOT NULL DEFAULT '1' DEFAULT '1',
 		PRIMARY KEY (`lsid`,`feature`,`service_domain`)
 	) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='General License Scheduler Information';");
 
@@ -413,7 +413,7 @@ function gridblstat_setup_table_new () {
 		`scaled_acum` int(10) unsigned NOT NULL,
 		`avail` int(10) unsigned NOT NULL,
 		`last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		`present` tinyint(3) unsigned NOT NULL,
+		`present` tinyint(3) unsigned NOT NULL DEFAULT '1' DEFAULT '1',
 		PRIMARY KEY (`lsid`,`feature`,`project`,`cluster`),
 		KEY `present` (`present`) USING BTREE
 	) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='License Scheduler Use by Cluster';");
@@ -435,7 +435,7 @@ function gridblstat_setup_table_new () {
 		`demand` int(10) unsigned NOT NULL,
 		`max_reclaim` int(10) unsigned NOT NULL DEFAULT '0',
 		`last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		`present` tinyint(3) unsigned NOT NULL,
+		`present` tinyint(3) unsigned NOT NULL DEFAULT '1' DEFAULT '1',
 		PRIMARY KEY (`lsid`,`feature`,`service_domain`,`cluster`) USING BTREE,
 		KEY `present` (`present`) USING BTREE
 	) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='License Scheduler Cluster Details';");
@@ -444,7 +444,7 @@ function gridblstat_setup_table_new () {
 		`lsid` int(10) unsigned default '0',
 		`bld_feature` varchar(64) NOT NULL,
 		`lic_feature` varchar(64) NOT NULL,
-		`present` tinyint(3) unsigned NOT NULL,
+		`present` tinyint(3) unsigned NOT NULL DEFAULT '1',
 		PRIMARY KEY  USING BTREE (`lsid`, `bld_feature`,`lic_feature`),
 		KEY `lic_feature` USING BTREE (`lic_feature`),
 		KEY `present` USING BTREE (`present`))
@@ -462,7 +462,7 @@ function gridblstat_setup_table_new () {
 		`non_lsf_use` int(10) unsigned NOT NULL,
 		`non_lsf_deserve` int(10) unsigned NOT NULL,
 		`non_lsf_free` int(10) unsigned NOT NULL,
-		`present` tinyint(3) unsigned NOT NULL,
+		`present` tinyint(3) unsigned NOT NULL DEFAULT '1',
 		PRIMARY KEY  (`lsid`, `feature`,`service_domain`),
 		KEY `present` USING BTREE (`present`))
 		ENGINE=InnoDB DEFAULT CHARSET=latin1");
@@ -479,7 +479,7 @@ function gridblstat_setup_table_new () {
 		`free` int(10) unsigned NOT NULL,
 		`demand` int(10) unsigned NOT NULL,
 		`last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		`present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+		`present` tinyint(3) unsigned NOT NULL DEFAULT '1' DEFAULT '1',
 		PRIMARY KEY (`lsid`,`feature`,`service_domain`,`project`) USING BTREE,
 		KEY `present` (`present`) USING BTREE
 	) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='License Scheduler Project Details';");
@@ -497,7 +497,7 @@ function gridblstat_setup_table_new () {
 		`resource` varchar(45) NOT NULL,
 		`rusage` int(10) unsigned NOT NULL,
 		`service_domain` varchar(64) NOT NULL,
-		`present` tinyint(3) unsigned NOT NULL,
+		`present` tinyint(3) unsigned NOT NULL DEFAULT '1',
 		PRIMARY KEY  USING HASH (`lsid`, `jobid`,`indexid`,`cluster`,`resource`),
 		KEY `user` (`user`),
 		KEY `host` (`host`),
@@ -511,7 +511,7 @@ function gridblstat_setup_table_new () {
 		`lsid` int(10) unsigned default '0',
 		`service_domain` varchar(64) NOT NULL,
 		`lic_id` int(10) unsigned NOT NULL,
-		`present` tinyint(3) unsigned NOT NULL,
+		`present` tinyint(3) unsigned NOT NULL DEFAULT '1',
 		PRIMARY KEY  USING BTREE (`lsid`, `service_domain`,`lic_id`),
 		KEY `present` USING BTREE (`present`))
 		ENGINE=InnoDB
@@ -534,7 +534,7 @@ function gridblstat_setup_table_new () {
 		`cpu_idle` timestamp NOT NULL default '0000-00-00 00:00:00',
 		`res_requirements` varchar(128) NOT NULL,
 		`command` varchar(256) NOT NULL,
-		`present` tinyint(3) unsigned NOT NULL,
+		`present` tinyint(3) unsigned NOT NULL DEFAULT '1',
 		PRIMARY KEY  USING BTREE (`lsid`, `feature`,`host`,`user`,`tid`),
 		KEY `present` USING BTREE (`present`))
 		ENGINE=InnoDB
@@ -553,7 +553,7 @@ function gridblstat_setup_table_new () {
 		`disabled` char(2) default '',
 		`lsf_envdir` varchar(255) NOT NULL DEFAULT '',
 		`advanced_enabled` char(2) NOT NULL DEFAULT '',
-		`lsf_strict_checking` varchar(10) DEFAULT 'N',
+		`lsf_strict_checking` varchar(10) NOT NULL default 'N',
 		`poller_freq` int(10) unsigned NOT NULL,
 		`blstat_lastrun` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
 		`graph_freq` int(10) unsigned NOT NULL,

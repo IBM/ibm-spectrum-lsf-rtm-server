@@ -98,16 +98,17 @@ function add_columns_indexes($table, $column_arr=NULL, $index_arr=NULL) {
 
 		foreach($column_arr as $column => $syntax) {
 			if (in_array($column, $db_columns)) {
-				cacti_log("INFO: Add Column, Table -> $table, Column -> $column, Column already exists.", true, 'UPGRADE');
-			} else {
-				if($first_flag==true) {
-					$first_flag=false;
-					$add_sql .= $syntax;
+				if (strpos($syntax, "MODIFY COLUMN") !== false) {
+					$add_sql .= ($first_flag ? "" : ", ") . $syntax;
 					$will_add_columns .= $column;
+					$first_flag = false;
 				} else {
-					$add_sql .= "," .$syntax;
-					$will_add_columns .= "," .$column;
+					cacti_log("INFO: Add Column, Table -> $table, Column -> $column, Column already exists.", true, 'UPGRADE');
 				}
+			} else {
+				$add_sql .= ($first_flag ? "" : ", ") . $syntax;
+				$will_add_columns .= ($first_flag ? "" : ", ") . $column;
+				$first_flag=false;
 			}
 		}
 	}
@@ -171,58 +172,7 @@ function modify_column($table, $column, $syntax) {
 }
 
 function modify_columns($table, $column_arr) {
-	$status = DB_STATUS_SUCCESS;
-
-	$modify_sql="ALTER TABLE `$table` ";
-	$will_modify_columns="";
-	$first_flag=true;
-
-	if (cacti_sizeof($column_arr)) {
-		// get the db_columns
-		$db_columns = array();
-		$result = db_fetch_assoc("SHOW COLUMNS FROM $table");
-		if(cacti_sizeof($result)) {
-			foreach($result as $index => $arr) {
-				$db_columns[] = $arr["Field"];
-			}
-		} else {
-			cacti_log("ERROR: Add Column, Table -> $table, Table does not exist.", true, 'UPGRADE');
-			return DB_STATUS_ERROR;
-		}
-
-		foreach($column_arr as $column => $syntax) {
-			if (in_array($column, $db_columns)) {
-				if($first_flag==true) {
-					$first_flag=false;
-					$modify_sql .= $syntax;
-					$will_modify_columns .= $column;
-				} else {
-					$modify_sql .= "," .$syntax;
-					$will_modify_columns .= "," .$column;
-				}
-			} else {
-				cacti_log("ERROR: Modify Column, Table -> $table, Column -> $column, Column does not exist.", true, 'UPGRADE');
-			}
-		}
-	}
-
-	if ($first_flag == true) {
-		cacti_log("INFO: Table -> $table, Unchanged.", true, 'UPGRADE');
-		return DB_STATUS_SUCCESS;
-	}
-	$result = db_execute($modify_sql);
-	if ($result) {
-		if(!empty($will_modify_columns)) {
-			cacti_log("SUCCESS: Add Column, Table -> $table, Columns -> $will_modify_columns, Succeeded.", true, 'UPGRADE');
-		}
-		$status =  DB_STATUS_SUCCESS;
-	} else {
-		if(!empty($will_modify_columns)) {
-			cacti_log("ERROR: Add Column, Table -> $table, Columns -> $will_modify_columns, Failed.", true, 'UPGRADE');
-		}
-		$status =  DB_STATUS_ERROR;
-	}
-	return $status;
+	return add_columns_indexes($table,  $column_arr);
 }
 
 /**

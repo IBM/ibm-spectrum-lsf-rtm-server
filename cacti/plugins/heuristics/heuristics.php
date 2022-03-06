@@ -26,6 +26,7 @@ include('./include/auth.php');
 include_once($config['library_path'] . '/rtm_functions.php');
 include_once('./plugins/heuristics/functions.php');
 include_once('./plugins/heuristics/heuristics_webapi.php');
+include_once('./plugins/grid/include/grid_messages.php');
 include_once('./plugins/grid/lib/grid_partitioning.php');
 include_once('./plugins/grid/lib/grid_validate.php');
 include_once('./plugins/grid/lib/grid_functions.php');

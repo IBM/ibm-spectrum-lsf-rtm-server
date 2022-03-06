@@ -62,7 +62,7 @@ function ss_grid_gpu_getvalue($clusterid, $host, $index, $column) {
 				AND host='$host'");
 	}
 	if (!empty($value)) {
-		return $value;
+		return trim($value);
 	}else{
 		return "0";
 	}

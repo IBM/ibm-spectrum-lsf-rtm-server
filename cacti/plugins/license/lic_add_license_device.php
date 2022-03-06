@@ -141,8 +141,7 @@ function lic_add_host($licid, $force=false, $templates=false) {
 		return;
 	}
 
-	list($micro,$seconds) = preg_split('/ /', microtime());
-	$current_time	 = round($seconds + $micro); //getting the current time in unix timestamp
+	$current_time	 = time(); //getting the current time in unix timestamp
 	if (!$force) {
 		if (read_config_option('lic_add_device') == 'on') {
 			//check whether user has enable this option

@@ -147,7 +147,7 @@ function upgrade_to_9_1() {
 
 	create_table("grid_elim_templates_item_map", "CREATE TABLE grid_elim_templates_item_map (
   		local_graph_id mediumint(8) unsigned NOT NULL,
-  		graph_templates_item_id int(12) unsigned NOT NULL,
+  		graph_templates_item_id mediumint(8) unsigned NOT NULL,
   		grid_elim_template_id mediumint(8) unsigned NOT NULL,
   		grid_elim_templates_item_id mediumint(8) unsigned NOT NULL,
   		PRIMARY KEY  (local_graph_id,graph_templates_item_id)

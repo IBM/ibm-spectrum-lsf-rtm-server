@@ -22,11 +22,12 @@ $guest_account = true;
 
 chdir('../../');
 include('./include/auth.php');
+include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
+include_once($config['base_path'] . '/plugins/grid/include/grid_messages.php');
 include_once($config['base_path'] . '/plugins/grid/lib/grid_partitioning.php');
 include_once($config['base_path'] . '/plugins/grid/lib/grid_functions.php');
 include_once($config['base_path'] . '/plugins/grid/lib/grid_filter_functions.php');
 include_once($config['base_path'] . '/plugins/lichist/functions.php');
-include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
 include_once($config['base_path'] . '/lib/rtm_functions.php');
 
 $views = array(
@@ -294,7 +295,7 @@ function zenFilter() {
 						<select id='clusterid'>
 						<option value='0'<?php if (get_request_var('clusterid') == '0') {?> selected<?php }?>><?php print __('All', 'grid');?></option>
 						<?php
-						$clusters = db_fetch_assoc('SELECT * FROM grid_clusters ORDER BY clustername');
+						$clusters = grid_get_clusterlist();
 						if (cacti_sizeof($clusters)) {
 							foreach ($clusters as $cluster) {
 								print '<option value="' . $cluster['clusterid'] .'"'; if (get_request_var('clusterid') == $cluster['clusterid']) { print ' selected'; } print '>' . $cluster['clustername'] . '</option>';

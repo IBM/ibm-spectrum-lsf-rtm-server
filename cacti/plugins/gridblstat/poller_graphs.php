@@ -22,8 +22,7 @@
 include(dirname(__FILE__) . '/../../include/cli_check.php');
 
 /* take the start time to log performance data */
-list($micro,$seconds) = preg_split('/ /', microtime());
-$start = $seconds + $micro;
+$start = microtime(true);
 
 /* let this script run with lot's of memory */
 ini_set('memory_limit', '-1');
@@ -118,8 +117,7 @@ if ($force || ($runtime && detect_and_correct_running_processes(0, 'ADDGRIDBLSTA
 	remove_process_entry(0, 'ADDGRIDBLSTAT_' . $lsid);
 
 	/* take the end time to log performance data */
-	list($micro,$seconds) = preg_split("/ /", microtime());
-	$end = $seconds + $micro;
+	$end = microtime(true);
 
 	/* log the total automation time */
 	cacti_log("GRIDBLSTAT GRAPH AUTOMATION STATS: Time:" . round($end-$start,2), true, "SYSTEM");
@@ -158,8 +156,7 @@ function add_data_query($force, $templates, $reindex, $lsid) {
 	$monitor = "on";
 
 	/* getting the current time in unix timestamp */
-	list($micro,$seconds) = preg_split("/ /", microtime());
-	$current_time         = round($seconds + $micro);
+	$current_time = time();
 
 	if (!$force) {
 		$lastupdate_time = read_config_option("gridblstat_device_update");

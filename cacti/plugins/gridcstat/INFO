@@ -1,6 +1,6 @@
 [info]
 name = gridcstat
-version = 10.2.0.11
+version = 10.2.0.13
 longname = IBM Spectrum LSF RTM Cluster Statistics Plugin
 author = IBM Corporation
 email =

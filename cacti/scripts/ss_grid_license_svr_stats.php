@@ -67,7 +67,7 @@ function ss_grid_license_svr_stats_getvalue($server, $column) {
 		$arr = 0;
 	}
 
-	return $arr;
+	return trim($arr);
 }
 
 function ss_grid_license_svr_stats_getnames() {

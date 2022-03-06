@@ -135,8 +135,7 @@ function disku_add_fs_device($force=false, $templates=false){
 		cacti_log('WARNING: the Disk Filesystem Host template is not found.');
 		return;
 	}
-	list($micro,$seconds) = preg_split('/ /', microtime());
-	$current_time = round($seconds + $micro); //getting the current time in unix timestamp
+	$current_time = time(); //getting the current time in unix timestamp
 
 	if (!$force) {
 		if (read_config_option('disku_device_add') == 'on'){
@@ -281,8 +280,7 @@ function disku_add_device($host_id, $force=false, $templates=false){
 		cacti_log('WARNING: the Disk Monitoring Host template is not found.');
 		return;
 	}
-	list($micro,$seconds) = preg_split('/ /', microtime());
-	$current_time = round($seconds + $micro); //getting the current time in unix timestamp
+	$current_time = time(); //getting the current time in unix timestamp
 
 	if (!$force) {
 		if (read_config_option('disku_device_add') == 'on'){

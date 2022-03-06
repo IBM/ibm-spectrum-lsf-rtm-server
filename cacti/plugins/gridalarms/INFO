@@ -1,6 +1,6 @@
 [info]
 name = gridalarms
-version = 10.2.0.12
+version = 10.2.0.13
 longname = IBM Spectrum LSF RTM Alerting Plugin
 author = IBM Corporation
 email =

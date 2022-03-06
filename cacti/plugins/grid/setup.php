@@ -59,6 +59,8 @@ function plugin_grid_install() {
 	api_plugin_register_hook('grid', 'poller_top', 'grid_poller_top', 'setup.php');
 	api_plugin_register_hook('grid', 'poller_bottom', 'grid_poller_bottom', 'setup.php');
 
+	api_plugin_register_hook('grid', 'config_insert', 'grid_config', 'setup.php');
+
 	/* hooks to add dropdown to allow the assignment of a cluster resource */
 	api_plugin_register_hook('grid', 'device_action_array', 'grid_device_action_array', 'setup.php');
 	api_plugin_register_hook('grid', 'device_action_prepare', 'grid_device_action_prepare', 'setup.php');
@@ -209,10 +211,10 @@ function grid_device_filter_start() {
 	print "	<select id='clusterid' onChange='applyFilter()'>";
 	print "		<option value='-1'"; if (get_request_var('clusterid') == '-1') {print " selected";} print ">"; print __('Any'); print "</option>";
 	print "		<option value='0'"; if (get_request_var('clusterid') == '0') {print " selected";} print ">"; print __('None'); print "</option>";
-	$clusters = db_fetch_assoc('select clusterid as id,clustername as name from grid_clusters order by clustername');
+	$clusters = grid_get_clusterlist();
 	if (cacti_sizeof($clusters)) {
 		foreach ($clusters as $cluster) {
-			print "<option value='" . $cluster['id'] . "'"; if (get_request_var('clusterid') == $cluster['id']) { print ' selected'; } print '>' . html_escape($cluster['name']) . "</option>\n";
+			print "<option value='" . $cluster['clusterid'] . "'"; if (get_request_var('clusterid') == $cluster['clusterid']) { print ' selected'; } print '>' . html_escape($cluster['clustername']) . "</option>\n";
 		}
 	}
 	print "	</select>";
@@ -622,6 +624,22 @@ function grid_substitute_host_data($array) {
 	return $array;
 }
 
+function grid_config () {
+	global $config, $grid_refresh_interval, $minimum_user_refresh_intervals, $grid_license_info;
+
+	include_once($config['base_path'] . '/plugins/grid/lib/grid_functions.php');
+
+	$grid_license_info = array(
+		'contact'               => 'www.ibm.com',
+		'lsfpoller_expiry_days' => 30,
+		'lsfpoller_num_users'   => 0,
+		'lsfpoller_expiry_date' => '',
+		'licpoller_expiry_days' => 30,
+		'licpoller_num_users'   => 0,
+		'licpoller_expiry_date' => '',
+	);
+}
+
 function grid_poller_top () {
 	global $grid_poller_start;
 
@@ -763,8 +781,9 @@ function grid_config_form () {
 	global $config, $grid_max_job_runtimes, $fields_user_user_edit_host;
 	global $tabs_grid_lsf_config, $grid_lsf_config_cluster_edit, $grid_lsf_config_shared_edit, $grid_lsf_config_queues_edit;
 	global $grid_lsf_config_edit, $grid_lsf_config_hosts_edit, $grid_lsf_config_load;
-	global $export_types;
+	global $export_types, $lsf_versions;
 
+	include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
 	include_once($config['base_path'] . '/plugins/grid/include/grid_messages.php');
 
 	/* add grid as the default tab */
@@ -1333,11 +1352,7 @@ function grid_config_form () {
 			'friendly_name' => __('LSF Version', 'grid'),
 			'description' => __('Specify the LSF version for this grid.', 'grid'),
 			'value' => '|arg1:lsf_version|',
-			'array' => array(
-				'91'   => __('LSF 9.1', 'grid'),
-				'1010' => __('LSF 10.1', 'grid'),
-				'1017' => __('LSF 10.1.0.7', 'grid')
-			)
+			'array' => $lsf_versions
 		),
 		'spacer1' => array(
 			'method' => 'spacer',
@@ -6130,7 +6145,7 @@ function grid_config_arrays () {
 	global $grid_detail_data_retention, $grid_partition_time_range, $grid_summary_data_retention;
 	global $grid_builtin_resources, $grid_archive_frequencies, $grid_db_delete_size;
 	global $grid_efficiency_display_ranges, $grid_efficiency_sql_ranges;
-	global $messages, $grid_out_of_services;
+	global $grid_license_info, $messages, $grid_out_of_services;
 	global $grid_job_pend_reasons_per_chart, $grid_job_pend_reasons_sortby, $grid_job_pend_reasons_filter;
 	global $grid_jgroup_filter_levels, $grid_projectgroup_filter_levels, $no_http_header_files;
 	global $graph_color_alpha, $graph_item_types, $consolidation_functions;
@@ -6162,7 +6177,8 @@ function grid_config_arrays () {
 	$no_http_header_files[] = 'grid_add_devices.php';
 	$no_http_header_files[] = 'grid_add_graphs.php';
 	$no_http_header_files[] = 'grid_add_cluster.php';
-
+// Comment out the following line because RTM poller hs remove license control.
+/*
 	$messages[119] = array(
 		'message' => __('LSF Poller requires a valid license. Please contact product support.', 'grid'),
 		'type' => 'info');
@@ -6170,6 +6186,15 @@ function grid_config_arrays () {
 	$messages[120] = array(
 		'message' => __('LSF Poller and LIC Poller require a valid license. Please contact product support.', 'grid'),
 		'type' => 'info');
+
+	$messages[121] = array(
+		'message' => __('Your LIC Poller license is expiring in %s days. Please contact product support.', $grid_license_info['licpoller_expiry_days'], 'grid'),
+		'type' => 'info');
+
+	$messages[122] = array(
+		'message' => __('Your LSF Poller license is expiring in %s days. Please contact product support.', $grid_license_info['lsfpoller_expiry_days'], 'grid'),
+		'type' => 'info');
+*/
 
 	$messages[125] = array(
 		'message' => __('Restore Successful.', 'grid'),
@@ -7273,7 +7298,7 @@ function grid_elim_resolve_dependencies($param) {
 			WHERE hash = ?',
 			array($elim_data_input_hash));
 
-		if ((!empty($item)) && (!isset($param['dep_array']['data_input_method']{$item['data_input_id']}))) {
+		if ((!empty($item)) && (!isset($param['dep_array']['data_input_method'][$item['data_input_id']]))) {
 			$param['dep_array'] = resolve_dependencies('data_input_method', $item['data_input_id'], $param['dep_array']);
 		}
 
@@ -7291,7 +7316,7 @@ function grid_elim_resolve_dependencies($param) {
 
 		if (cacti_sizeof($graph_template_items)) {
 			foreach ($graph_template_items as $item) {
-				if (!isset($param['dep_array']['cdef']{$item['cdef_id']})) {
+				if (!isset($param['dep_array']['cdef'][$item['cdef_id']])) {
 					$param['dep_array'] = resolve_dependencies('cdef', $item['cdef_id'], $param['dep_array']);
 				}
 			}
@@ -7307,7 +7332,7 @@ function grid_elim_resolve_dependencies($param) {
 
 		if (cacti_sizeof($graph_template_items) > 0) {
 		foreach ($graph_template_items as $item) {
-			if (!isset($param['dep_array']['gprint_preset']{$item['gprint_id']})) {
+			if (!isset($param['dep_array']['gprint_preset'][$item['gprint_id']])) {
 				$param['dep_array'] = resolve_dependencies('gprint_preset', $item['gprint_id'], $param['dep_array']);
 			}
 		}
@@ -7410,7 +7435,7 @@ function grid_elim_xml_to_template($param) {
 	foreach ($struct_graph as $field_name => $field_array) {
 		/* make sure this field exists in the xml array first */
 		if (isset($xml_array['graph']['t_' . $field_name])) {
-			$save['t_' . $field_name] = $xml_array['graph']{'t_' . $field_name};
+			$save['t_' . $field_name] = $xml_array['graph']['t_' . $field_name];
 		}
 
 		/* make sure this field exists in the xml array first */
@@ -7479,7 +7504,7 @@ function grid_elim_xml_to_template($param) {
 			$graph_template_item_id = sql_save($save, 'grid_elim_templates_item');
 
 			//$hash_cache['graph_template_item']{$parsed_hash['hash']} = $graph_template_item_id;
-			$hash_cache['grid_elim_template_item']{$parsed_hash['hash']} = $graph_template_item_id;
+			$hash_cache['grid_elim_template_item'][$parsed_hash['hash']] = $graph_template_item_id;
 		}
 	}
 

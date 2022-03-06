@@ -45,7 +45,7 @@ function ss_grid_perfmon_ut($clusterid = 0, $metric = '') {
 			AND clusterid=$clusterid");
 
 	if (sizeof($values)) {
-		return 'current:' . $values['current'] . ' total:' . $values['total'];
+		return 'current:' . trim($values['current']) . ' total:' . trim($values['total']);
 	}else{
 		return 'current:0 total:0';
 	}

@@ -32,7 +32,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'max_swap', 'type' => 'double', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'total_cpu', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'last_updated', 'type' => 'timestamp', 'NULL' => false, 'default' => 'CURRENT_TIMESTAMP');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'clusterid`,`appName';
 	$data['type'] = 'InnoDB';
 	$data['charset'] = 'latin1';
@@ -214,8 +214,8 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'ip', 'type' => 'varchar(255)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'lim_port', 'type' => 'varchar(10)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'lsf_ego', 'type' => 'char(3)', 'NULL' => true, 'default' => 'N');
-	$data['columns'][] = array('name' => 'lsf_strict_checking', 'type' => 'varchar(10)', 'NULL' => true, 'default' => 'N');
-	$data['columns'][] = array('name' => 'lsf_krb_auth', 'type' => 'char(3)', 'NULL' => true, 'default' => '');
+	$data['columns'][] = array('name' => 'lsf_strict_checking', 'type' => 'varchar(10)', 'NULL' => false, 'default' => 'N');
+	$data['columns'][] = array('name' => 'lsf_krb_auth', 'type' => 'varchar(3)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'lsf_master_hostname', 'type' => 'varchar(255)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'username', 'type' => 'varchar(255)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'credential', 'type' => 'varchar(512)', 'NULL' => false, 'default' => '');
@@ -255,6 +255,8 @@ function grid_create_tables() {
 	api_plugin_db_add_column('grid', 'host', array('name' => 'clusterid', 'unsigned' => true, 'type' => "int(10)", 'NULL' => false, 'default' => '0', 'after' => 'host_template_id'));
 	api_plugin_db_add_column('grid', 'host', array('name' => 'monitor', 'type' => "char(3)", 'NULL' => false, 'default' => 'on', 'after' => 'disabled'));
 
+	db_add_index('host', 'INDEX', 'clusterid_host', array('clusterid', 'hostname'));
+
 	$data = array();
 	$data['columns'][] = array('name' => 'dashboard_item_id', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'auto_increment' => true);
 	$data['columns'][] = array('name' => 'clusterid', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);
@@ -270,31 +272,25 @@ function grid_create_tables() {
 	$data = array();
 	$data['columns'][] = array('name' => 'clusterid', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'metric', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'current', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'max', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'min', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'avg', 'unsigned' => true, 'type' => 'double', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'total', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => true, 'default' => '0');
+	$data['columns'][] = array('name' => 'current', 'type' => 'double', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'max', 'type' => 'double', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'min', 'type' => 'double', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'avg', 'type' => 'double', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'total', 'type' => 'double', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'clusterid`,`metric';
 	$data['type'] = 'InnoDB';
-	$data['charset'] = 'latin1';
 	$data['comment'] = 'Contains Perfmon Metrics';
-	api_plugin_db_table_create ('grid', 'grid_clusters_perfmon_mbatchd_metrics', $data);
+	api_plugin_db_table_create ('grid', 'grid_clusters_perfmon_metrics', $data);
 
 	$data = array();
-	$data['columns'][] = array('name' => 'clusterid', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'metric', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'current', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'max', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'min', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'avg', 'unsigned' => true, 'type' => 'double', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => true, 'default' => '0');
-	$data['primary'] = 'clusterid`,`metric';
+	$data['columns'][] = array('name' => 'type', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
+	$data['primary'] = 'metric';
+	$data['keys'][] = array('name' => 'type_metric', 'columns' => 'type`,`metric');
 	$data['type'] = 'InnoDB';
-	$data['charset'] = 'latin1';
-	$data['comment'] = 'Contains Perfmon Metrics';
-	api_plugin_db_table_create ('grid', 'grid_clusters_perfmon_scheduler_metrics', $data);
+	$data['comment'] = 'Define Perfmon Metrics type';
+	api_plugin_db_table_create ('grid', 'grid_clusters_perfmon_metrics_type', $data);
 
 	$data = array();
 	$data['columns'][] = array('name' => 'clusterid', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
@@ -330,7 +326,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'last_mbatchd_start', 'type' => 'timestamp', 'NULL' => false, 'default' => '0000-00-00 00:00:00');
 	$data['columns'][] = array('name' => 'active_mbd_pid', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'last_mbatchd_reconfig', 'type' => 'timestamp', 'NULL' => false, 'default' => '0000-00-00 00:00:00');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'clusterid';
 	$data['type'] = 'InnoDB';
 	$data['charset'] = 'latin1';
@@ -349,25 +345,12 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'pjob_doneTime', 'type' => 'double', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'pjob_seenDoneTime', 'type' => 'double', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'pjob_startTime', 'type' => 'double', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'clusterid';
 	$data['type'] = 'InnoDB';
 	$data['charset'] = 'latin1';
 	$data['comment'] = 'Contains Perfmon Sampling Information';
 	api_plugin_db_table_create ('grid', 'grid_clusters_perfmon_summary', $data);
-
-	$data = array();
-	$data['columns'][] = array('name' => 'clusterid', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'metric', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'used', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'free', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'total', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => true, 'default' => '0');
-	$data['primary'] = 'clusterid`,`metric';
-	$data['type'] = 'InnoDB';
-	$data['charset'] = 'latin1';
-	$data['comment'] = 'Contains Perfmon Metrics';
-	api_plugin_db_table_create ('grid', 'grid_clusters_perfmon_usage_metrics', $data);
 
 	$data = array();
 	$data['columns'][] = array('name' => 'grid_elim_template_instance_id', 'unsigned' => true, 'type' => 'mediumint(8)', 'NULL' => false);
@@ -545,6 +528,7 @@ function grid_create_tables() {
 	api_plugin_db_table_create ('grid', 'grid_elim_templates_item_map', $data);
 
 	$data = array();
+	$data['columns'][] = array('name' => 'graph_templates_item_id', 'unsigned' => true, 'type' => 'int(12)', 'NULL' => false);
 	$data['columns'][] = array('name' => 'grid_elim_templates_item_id', 'unsigned' => true, 'type' => 'int(12)', 'NULL' => false);
 	$data['primary'] = array('local_graph_id','graph_templates_item_id');
 	db_update_table('grid_elim_templates_item_map', $data);
@@ -564,7 +548,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'max_swap', 'type' => 'double', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'total_cpu', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'last_updated', 'type' => 'timestamp', 'NULL' => false, 'default' => 'CURRENT_TIMESTAMP');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'clusterid`,`groupName';
 	$data['type'] = 'InnoDB';
 	$data['charset'] = 'latin1';
@@ -585,7 +569,19 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'free', 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'guar_config', 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'guar_used', 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'runJobs', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'runSlots', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'pendJobs', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'pendSlots', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'memSlotUtil', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'slotUtil', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'cpuUtil', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'memUsed', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'memRequested', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'memReserved', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'last_updated', 'type' => 'timestamp', 'NULL' => false, 'default' => 'CURRENT_TIMESTAMP');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
+	$data['primary'] = array('clusterid','name');
 	$data['primary'] = 'clusterid`,`name';
 	$data['type'] = 'InnoDB';
 	$data['charset'] = 'latin1';
@@ -601,7 +597,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'guarantee_config', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);
 	$data['columns'][] = array('name' => 'guarantee_used', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);
 	$data['columns'][] = array('name' => 'total_used', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false);
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'clusterid`,`name`,`consumer';
 	$data['type'] = 'InnoDB';
 	$data['charset'] = 'latin1';
@@ -612,9 +608,12 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'clusterid', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);
 	$data['columns'][] = array('name' => 'name', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'host', 'type' => 'varchar(64)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false);
+	$data['columns'][] = array('name' => 'owner', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'clusterid`,`name`,`host';
 	$data['keys'][] = array('name' => 'host', 'columns' => 'host');
+	$data['keys'][] = array('name' => 'clusterid_host', 'columns' => 'clusterid`,`host');
+	$data['keys'][] = array('name' => 'clusterid_owner', 'columns' => 'clusterid`,`owner');
 	$data['type'] = 'InnoDB';
 	$data['charset'] = 'latin1';
 	$data['comment'] = 'Stores Normalized Host Membership for Guarantee Pool';
@@ -624,7 +623,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'clusterid', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);
 	$data['columns'][] = array('name' => 'name', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'queue', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false);
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'clusterid`,`name`,`queue';
 	$data['keys'][] = array('name' => ' queue', 'columns' => 'queue');
 	$data['type'] = 'InnoDB';
@@ -682,7 +681,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'clusterid', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'groupName', 'type' => 'varchar(64)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'host', 'type' => 'varchar(64)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'clusterid`,`groupName`,`host';
 	$data['keys'][] = array('name' => 'host', 'columns' => 'host');
 	$data['type'] = 'InnoDB';
@@ -700,8 +699,15 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'total_cpu', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'numRUN', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'numJOBS', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'numPEND', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'memSlotUtil', 'type' => 'double', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'slotUtil', 'type' => 'double', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'cpuUtil', 'type' => 'double', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'memUsed', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'memRequested', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'memReserved', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'last_updated', 'type' => 'timestamp', 'NULL' => false, 'default' => 'CURRENT_TIMESTAMP');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'clusterid`,`groupName';
 	$data['type'] = 'InnoDB';
 	$data['charset'] = 'latin1';
@@ -731,13 +737,14 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'nThreads', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'first_seen', 'type' => 'timestamp', 'NULL' => false, 'default' => '0000-00-00 00:00:00');
 	$data['columns'][] = array('name' => 'last_seen', 'type' => 'timestamp', 'NULL' => false, 'default' => '0000-00-00 00:00:00');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'host`,`clusterid';
 	$data['keys'][] = array('name' => 'isServer', 'columns' => 'isServer');
 	$data['keys'][] = array('name' => 'hostType', 'columns' => 'hostType');
 	$data['keys'][] = array('name' => 'hostModel', 'columns' => 'hostModel');
 	$data['keys'][] = array('name' => 'last_seen', 'columns' => 'last_seen');
 	$data['keys'][] = array('name' => 'clusterid_is_server', 'columns' => 'clusterid`,`isServer');
+	$data['keys'][] = array('name' => 'clusterid_host', 'columns' => 'clusterid`,`host');
 	$data['keys'][] = array('name' => 'licFeaturesNeeded', 'columns' => 'licFeaturesNeeded');
 	$data['type'] = 'InnoDB';
 	$data['charset'] = 'latin1';
@@ -757,7 +764,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'host', 'type' => 'varchar(64)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'clusterid', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'resource_name', 'type' => 'varchar(50)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'host`,`clusterid`,`resource_name';
 	$data['keys'][] = array('name' => 'clusterid', 'columns' => 'clusterid');
 	$data['keys'][] = array('name' => 'resource_name', 'columns' => 'resource_name');
@@ -784,7 +791,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'mig', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'attr', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'numRESERVE', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['columns'][] = array('name' => 'exceptional', 'unsigned' => true, 'type' => 'tinyint(1)', 'NULL' => false, 'default' => '0');
 	$data['primary'] = 'host`,`clusterid';
 	$data['keys'][] = array('name' => 'clusterid', 'columns' => 'clusterid');
@@ -803,7 +810,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'message', 'type' => 'varchar(1024)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'acknowledgement', 'type' => 'char(3)', 'NULL' => false, 'default' => 'off');
 	$data['columns'][] = array('name' => 'alert_time', 'type' => 'timestamp', 'NULL' => false, 'default' => 'CURRENT_TIMESTAMP');
-	$data['columns'][] = array('name' => 'present', 'type' => 'int(11)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'type`,`type_id`,`clusterid`,`hostname';
 	$data['keys'][] = array('name' => 'hostname', 'columns' => 'hostname');
 	$data['keys'][] = array('name' => 'clusterid', 'columns' => 'clusterid');
@@ -814,7 +821,7 @@ function grid_create_tables() {
 	$data = array();
 	$data['columns'][] = array('name' => 'type_id', 'type' => 'bigint(20)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'type', 'type' => 'int(11)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'present', 'type' => 'int(11)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = array('type','type_id','clusterid','hostname');
 	db_update_table('grid_hosts_alarm', $data);
 
@@ -845,7 +852,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'totalValue', 'type' => 'varchar(128)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'reservedValue', 'type' => 'varchar(128)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'value', 'type' => 'varchar(128)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false);
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['columns'][] = array('name' => 'last_updated', 'type' => 'timestamp', 'NULL' => false, 'default' => 'CURRENT_TIMESTAMP');
 	$data['primary'] = 'host`,`clusterid`,`resource_name`,`resType';
 	$data['keys'][] = array('name' => 'value', 'columns' => 'value');
@@ -864,7 +871,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'loadStop', 'type' => 'double', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'busySched', 'type' => 'int(11)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'busyStop', 'type' => 'int(11)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'present', 'type' => 'int(11)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'clusterid`,`hostname`,`resource_name';
 	$data['keys'][] = array('name' => 'id', 'columns' => 'id');
 	$data['keys'][] = array('name' => 'hostname', 'columns' => 'hostname');
@@ -877,7 +884,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'id', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false, 'auto_increment' => true);
 	$data['columns'][] = array('name' => 'busySched', 'type' => 'int(11)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'busyStop', 'type' => 'int(11)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'present', 'type' => 'int(11)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = array('clusterid','hostname','resource_name');
 	$data['type']  = 'InnoDB';
 	db_update_table('grid_host_threshold', $data);
@@ -927,7 +934,6 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'gpu_avg_mem', 'type' => 'double', 'NULL' => false, 'default' => '0', 'after' => 'max_memory');
 	$data['columns'][] = array('name' => 'gpu_max_mem', 'type' => 'double', 'NULL' => false, 'default' => '0', 'after' => 'gpu_avg_mem');
 	$data['primary'] = array('clusterid','user','stat','projectName','exec_host','from_host','queue','app','date_recorded');
-	$data['keys'][] = array('name' => 'app', 'columns' => array('app'));
 	db_update_table('grid_job_daily_stats', $data);
 
 	$data = array();
@@ -967,17 +973,16 @@ function grid_create_tables() {
 	$data['keys'][] = array('name' => 'app', 'columns' => 'app');
 	$data['type'] = 'MyISAM';
 	$data['charset'] = 'latin1';
-	$data['row_format'] = 'Dynamic';
 	api_plugin_db_table_create ('grid', 'grid_job_interval_stats', $data);
 
 	$data = array();
+	$data['columns'][] = array('name' => 'queue', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'app', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '', 'after' => 'queue');
 	$data['columns'][] = array('name' => 'gpu_wall_time', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0', 'after' => 'jobs_wall_time');
 	$data['columns'][] = array('name' => 'gpus_in_state', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0', 'after' => 'slots_in_state');
 	$data['columns'][] = array('name' => 'gpu_avg_mem', 'type' => 'double', 'NULL' => false, 'default' => '0', 'after' => 'max_memory');
 	$data['columns'][] = array('name' => 'gpu_max_mem', 'type' => 'double', 'NULL' => false, 'default' => '0', 'after' => 'gpu_avg_mem');
 	$data['primary'] = array('clusterid','user','stat','projectName','exec_host','from_host','queue','app','date_recorded');
-	$data['keys'][] = array('name' => 'app', 'columns' => array('app'));
 	db_update_table('grid_job_interval_stats', $data);
 
 	$data = array();
@@ -1136,11 +1141,13 @@ function grid_create_tables() {
 	$data['keys'][] = array('name' => 'clusterid_stat_end_logged', 'columns' => 'clusterid`,`stat`,`job_end_logged');
 	$data['keys'][] = array('name' => 'clusterid_stat_start_time', 'columns' => 'clusterid`,`stat`,`start_time');
 	$data['keys'][] = array('name' => 'last_updated', 'columns' => 'last_updated');
+	$data['keys'][] = array('name' => 'stat_last_updated', 'columns' => 'stat`,`last_updated');
 	$data['keys'][] = array('name' => 'licenseProject', 'columns' => 'licenseProject');
 	$data['keys'][] = array('name' => 'jobGroup', 'columns' => 'jobGroup');
 	$data['keys'][] = array('name' => 'sla', 'columns' => 'sla');
 	$data['keys'][] = array('name' => 'chargedSAAP', 'columns' => 'chargedSAAP');
 	$data['keys'][] = array('name' => 'exitInfo', 'columns' => 'exitInfo');
+	$data['keys'][] = array('name' => 'stat_last_updated', 'columns' => 'stat`,`last_updated');
 	$data['type'] = 'InnoDB';
 	$data['charset'] = 'latin1';
 	$data['row_format'] = 'Dynamic';
@@ -1169,7 +1176,7 @@ function grid_create_tables() {
 	$data = array();
 	$data['columns'][] = array('name' => 'exec_host', 'type' => 'varchar(64)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'clusterid', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'exec_host`,`clusterid';
 	$data['type'] = 'InnoDB';
 	$data['charset'] = 'latin1';
@@ -1296,6 +1303,7 @@ function grid_create_tables() {
 	$data['keys'][] = array('name' => 'queue_clusterid', 'columns' => 'queue`,`clusterid');
 	$data['keys'][] = array('name' => 'stat_clusterid', 'columns' => 'stat`,`clusterid');
 	$data['keys'][] = array('name' => 'user_clusterid', 'columns' => 'user`,`clusterid');
+	$data['keys'][] = array('name' => 'stat_last_updated', 'columns' => 'stat`,`last_updated');
 	$data['keys'][] = array('name' => 'from_host_clusterid', 'columns' => 'from_host`,`clusterid');
 	$data['keys'][] = array('name' => 'exec_host_clusterid', 'columns' => 'exec_host`,`clusterid');
 	$data['keys'][] = array('name' => 'cpu_used', 'columns' => 'cpu_used');
@@ -1304,7 +1312,6 @@ function grid_create_tables() {
 	$data['keys'][] = array('name' => 'num_cpus', 'columns' => 'num_cpus');
 	$data['keys'][] = array('name' => 'pend_time', 'columns' => 'pend_time');
 	$data['keys'][] = array('name' => 'run_time', 'columns' => 'run_time');
-	$data['keys'][] = array('name' => 'app', 'columns' => 'app');
 	$data['keys'][] = array('name' => 'stat_changes', 'columns' => 'stat_changes');
 	$data['keys'][] = array('name' => 'efficiency', 'columns' => 'efficiency');
 	$data['keys'][] = array('name' => 'userGroup', 'columns' => 'userGroup');
@@ -1314,6 +1321,8 @@ function grid_create_tables() {
 	$data['keys'][] = array('name' => 'licenseProject', 'columns' => 'licenseProject');
 	$data['keys'][] = array('name' => 'jobGroup', 'columns' => 'jobGroup');
 	$data['keys'][] = array('name' => 'sla', 'columns' => 'sla');
+	$data['keys'][] = array('name' => 'stat_last_updated', 'columns' => 'stat`,`last_updated');
+	$data['keys'][] = array('name' => 'clusterid_stat_last_updated', 'columns' => 'clusterid`,`stat`,`last_updated');
 	$data['type'] = 'InnoDB';
 	$data['charset'] = 'latin1';
 	$data['row_format'] = 'Dynamic';
@@ -1342,7 +1351,7 @@ function grid_create_tables() {
 	$data = array();
 	$data['columns'][] = array('name' => 'from_host', 'type' => 'varchar(64)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'clusterid', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'from_host`,`clusterid';
 	$data['type'] = 'InnoDB';
 	$data['charset'] = 'latin1';
@@ -1494,9 +1503,9 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'start_time', 'type' => 'timestamp', 'NULL' => false, 'default' => '0000-00-00 00:00:00');
 	$data['columns'][] = array('name' => 'end_time', 'type' => 'timestamp', 'NULL' => false, 'default' => '0000-00-00 00:00:00');
 	$data['columns'][] = array('name' => 'last_updated', 'type' => 'timestamp', 'NULL' => false, 'default' => 'CURRENT_TIMESTAMP', 'on_update' => 'CURRENT_TIMESTAMP');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'clusterid`,`jobid`,`indexid`,`submit_time`,`issusp`,`reason`,`subreason`,`type`,`end_time';
-	$data['keys'][] = array('name' => 'clusterid_end_time', 'columns' => 'clusterid`,`end_time');
+	$data['keys'][] = array('name' => 'clusterid_end_time_last_updated', 'columns' => 'clusterid`,`end_time`,`last_updated');
 	$data['type'] = 'InnoDB';
 	$data['charset'] = 'latin1';
 	api_plugin_db_table_create ('grid', 'grid_jobs_pendreasons', $data);
@@ -1515,7 +1524,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'start_time', 'type' => 'timestamp', 'NULL' => false, 'default' => '0000-00-00 00:00:00');
 	$data['columns'][] = array('name' => 'end_time', 'type' => 'timestamp', 'NULL' => false, 'default' => '0000-00-00 00:00:00');
 	$data['columns'][] = array('name' => 'last_updated', 'type' => 'timestamp', 'NULL' => false, 'default' => 'CURRENT_TIMESTAMP', 'on_update' => 'CURRENT_TIMESTAMP');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'clusterid`,`jobid`,`indexid`,`submit_time`,`issusp`,`reason`,`subreason`,`type`,`end_time';
 	$data['keys'][] = array('name' => 'clusterid_end_time', 'columns' => 'clusterid`,`end_time');
 	$data['type'] = 'InnoDB';
@@ -1545,7 +1554,7 @@ function grid_create_tables() {
 	$data = array();
 	$data['columns'][] = array('name' => 'queue', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'clusterid', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'queue`,`clusterid';
 	$data['type'] = 'InnoDB';
 	$data['charset'] = 'latin1';
@@ -1624,7 +1633,7 @@ function grid_create_tables() {
 	$data = array();
 	$data['columns'][] = array('name' => 'stat', 'type' => 'varchar(10)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'clusterid', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'stat`,`clusterid';
 	$data['type'] = 'InnoDB';
 	$data['charset'] = 'latin1';
@@ -1633,7 +1642,7 @@ function grid_create_tables() {
 	$data = array();
 	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'clusterid', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'user`,`clusterid';
 	$data['type'] = 'InnoDB';
 	$data['charset'] = 'latin1';
@@ -1652,7 +1661,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'max_swap', 'type' => 'double', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'total_cpu', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'last_updated', 'type' => 'timestamp', 'NULL' => false, 'default' => 'CURRENT_TIMESTAMP');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'clusterid`,`licenseProject';
 	$data['keys'][] = array('name' => 'present', 'columns' => 'present');
 	$data['type'] = 'InnoDB';
@@ -1678,7 +1687,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'tmp', 'type' => 'float', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'swp', 'type' => 'float', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'mem', 'type' => 'float', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'host`,`clusterid';
 	$data['keys'][] = array('name' => 'clusterid', 'columns' => 'clusterid');
 	$data['keys'][] = array('name' => 'status', 'columns' => 'status');
@@ -1718,7 +1727,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'reason', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);
 	$data['columns'][] = array('name' => 'subreason', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'last_updated', 'type' => 'timestamp', 'NULL' => false, 'default' => 'CURRENT_TIMESTAMP', 'on_update' => 'CURRENT_TIMESTAMP');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'user_id`,`issusp`,`reason`,`subreason';
 	$data['type'] = 'InnoDB';
 	$data['charset'] = 'latin1';
@@ -1731,8 +1740,9 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'poller_licserver_threads', 'type' => 'int(11)', 'NULL' => false, 'default' => '5');
 	$data['columns'][] = array('name' => 'poller_location', 'type' => 'varchar(255)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'poller_support_info', 'type' => 'varchar(255)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'lsf_version', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '62');
+	$data['columns'][] = array('name' => 'lsf_version', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '1017');
 	$data['columns'][] = array('name' => 'remote', 'type' => 'varchar(20)', 'NULL' => true, 'default' => '');
+	$data['columns'][] = array('name' => 'poller_max_insert_packet_size', 'type' => 'varchar(255)', 'NULL' => true, 'default' => '');
 	$data['primary'] = 'poller_id';
 	$data['type'] = 'InnoDB';
 	$data['charset'] = 'latin1';
@@ -1740,6 +1750,7 @@ function grid_create_tables() {
 
 	$data = array();
 	$data['columns'][] = array('name' => 'remote', 'type' => 'varchar(20)', 'NULL' => true, 'default' => '', 'after' => 'lsf_version');
+	$data['columns'][] = array('name' => 'poller_max_insert_packet_size', 'type' => 'varchar(255)', 'NULL' => true, 'default' => '', 'after' => 'remote');
 	$data['primary'] = array('poller_id');
 	db_update_table('grid_pollers', $data);
 
@@ -1770,7 +1781,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'max_swap', 'type' => 'double', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'total_cpu', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'last_updated', 'type' => 'timestamp', 'NULL' => false, 'default' => 'CURRENT_TIMESTAMP');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'clusterid`,`projectName';
 	$data['keys'][] = array('name' => 'present', 'columns' => 'present');
 	$data['type'] = 'InnoDB';
@@ -1898,7 +1909,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'rlimit_max_core', 'unsigned' => true, 'type' => 'float', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'rlimit_max_rss', 'unsigned' => true, 'type' => 'float', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'last_updated', 'type' => 'timestamp', 'NULL' => false, 'default' => 'CURRENT_TIMESTAMP', 'on_update' => 'CURRENT_TIMESTAMP');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = array('queuename','clusterid');
 	db_update_table('grid_queues', $data);
 
@@ -1906,7 +1917,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'clusterid', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'queue', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'host', 'type' => 'varchar(64)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'clusterid`,`queue`,`host';
 	$data['keys'][] = array('name' => 'host', 'columns' => 'host');
 	$data['keys'][] = array('name' => 'queue', 'columns' => 'queue');
@@ -1932,14 +1943,14 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'started', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);
 	$data['columns'][] = array('name' => 'reserved', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);
 	$data['columns'][] = array('name' => 'cpu_time', 'type' => 'double', 'NULL' => false);
-	$data['columns'][] = array('name' => 'run_time', 'type' => 'double', 'NULL' => false);
+	$data['columns'][] = array('name' => 'run_time', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false);
 	$data['columns'][] = array('name' => 'pend_jobs', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => true);
 	$data['columns'][] = array('name' => 'pend_slots', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => true);
 	$data['columns'][] = array('name' => 'run_jobs', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => true);
 	$data['columns'][] = array('name' => 'run_slots', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => true);
 	$data['columns'][] = array('name' => 'relative_share', 'type' => 'double', 'NULL' => true);
 	$data['columns'][] = array('name' => 'slot_share', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => true);
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'clusterid`,`queue`,`user_or_group`,`shareAcctPath';
 	$data['keys'][] = array('name' => 'user_or_group', 'columns' => 'user_or_group');
 	$data['type'] = 'InnoDB';
@@ -1948,6 +1959,7 @@ function grid_create_tables() {
 
 	$data = array();
 	$data['columns'][] = array('name' => 'queue', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'run_time', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false);
 	$data['primary'] = array('clusterid','queue','user_or_group','shareAcctPath');
 	db_update_table('grid_queues_shares', $data);
 
@@ -1963,8 +1975,14 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'avg_swap', 'type' => 'double', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'max_swap', 'type' => 'double', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'total_cpu', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'memSlotUtil', 'type' => 'double', 'NULL' => false, 'default' => '0',);
+	$data['columns'][] = array('name' => 'slotUtil', 'type' => 'double', 'NULL' => false, 'default' => '0',);
+	$data['columns'][] = array('name' => 'cpuUtil', 'type' => 'double', 'NULL' => false, 'default' => '0',);
+	$data['columns'][] = array('name' => 'memUsed', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false, 'default' => '0',);
+	$data['columns'][] = array('name' => 'memRequested', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false, 'default' => '0',);
+	$data['columns'][] = array('name' => 'memReserved', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false, 'default' => '0',);
 	$data['columns'][] = array('name' => 'last_updated', 'type' => 'timestamp', 'NULL' => false, 'default' => 'CURRENT_TIMESTAMP');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'clusterid`,`queue';
 	$data['keys'][] = array('name' => 'present', 'columns' => 'present');
 	$data['type'] = 'InnoDB';
@@ -1997,7 +2015,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'clusterid', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'queue', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(45)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'clusterid`,`queue`,`user';
 	$data['type'] = 'InnoDB';
 	$data['charset'] = 'latin1';
@@ -2018,7 +2036,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'runjobs', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);
 	$data['columns'][] = array('name' => 'suspjobs', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);
 	$data['columns'][] = array('name' => 'efficiency', 'type' => 'double', 'NULL' => false);
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false);
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'clusterid`,`queue`,`user_or_group';
 	$data['keys'][] = array('name' => 'clusterid_user_or_group', 'columns' => 'clusterid`,`user_or_group');
 	$data['type'] = 'InnoDB';
@@ -2053,7 +2071,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'ego_res_req', 'type' => 'varchar(255)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'max_host_idle_time', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);
 	$data['columns'][] = array('name' => 'throughput', 'type' => 'double', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false);
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'clusterid`,`name';
 	$data['type'] = 'InnoDB';
 	$data['charset'] = 'latin1';
@@ -2065,7 +2083,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'name', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'acl_type', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);
 	$data['columns'][] = array('name' => 'acl_member', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false);
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'clusterid`,`name`,`acl_type`,`acl_member';
 	$data['keys'][] = array('name' => 'acl_member', 'columns' => 'acl_member');
 	$data['type'] = 'InnoDB';
@@ -2084,7 +2102,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'goal_config', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => true);
 	$data['columns'][] = array('name' => 'actual', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => true);
 	$data['columns'][] = array('name' => 'optimum', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => true);
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false);
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'clusterid`,`name`,`goal_seq';
 	$data['type'] = 'InnoDB';
 	$data['charset'] = 'latin1';
@@ -2095,7 +2113,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'clusterid', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);
 	$data['columns'][] = array('name' => 'name', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'user_or_group', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false);
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'clusterid`,`name`,`user_or_group';
 	$data['type'] = 'InnoDB';
 	$data['charset'] = 'latin1';
@@ -2109,7 +2127,6 @@ function grid_create_tables() {
 	$data['primary'] = 'user_id`,`name';
 	$data['type'] = 'MyISAM';
 	$data['charset'] = 'utf8mb4';
-	$data['row_format'] = 'Dynamic';
 	api_plugin_db_table_create ('grid', 'grid_settings', $data);
 
 	api_plugin_db_add_column('grid', 'user_auth', array('name' => 'grid_settings', 'type' => 'char(2)', 'NULL' => false, 'default' => 'on', 'after' => 'graph_settings'));
@@ -2183,7 +2200,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'cur_time', 'type' => 'decimal(10,5)', 'NULL' => true, 'default' => '0.00000');
 	$data['columns'][] = array('name' => 'avg_time', 'type' => 'decimal(10,5)', 'NULL' => true, 'default' => '0.00000');
 	$data['columns'][] = array('name' => 'availability', 'type' => 'decimal(10,5)', 'NULL' => true);
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(10)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'clusterid`,`host';
 	$data['keys'][] = array('name' => 'load_status', 'columns' => 'load_status');
 	$data['keys'][] = array('name' => 'cacti_status', 'columns' => 'cacti_status');
@@ -2236,11 +2253,11 @@ function grid_create_tables() {
 	api_plugin_db_table_create ('grid', 'grid_table_partitions', $data);
 
 	$data = array();
-	$data['columns'][] = array('name' => 'clusterid', 'type' => 'varchar(20)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'clusterid', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'groupname', 'type' => 'varchar(45)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'username', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'shares', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '1');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'clusterid`,`groupname`,`username';
 	$data['keys'][] = array('name' => 'groupname', 'columns' => 'groupname');
 	$data['keys'][] = array('name' => 'username', 'columns' => 'username');
@@ -2261,7 +2278,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'max_swap', 'type' => 'double', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'total_cpu', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'last_updated', 'type' => 'timestamp', 'NULL' => false, 'default' => 'CURRENT_TIMESTAMP');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'clusterid`,`userGroup';
 	$data['keys'][] = array('name' => 'present', 'columns' => 'present');
 	$data['type'] = 'InnoDB';
@@ -2286,8 +2303,9 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'efficiency', 'type' => 'double', 'NULL' => false);
 	$data['columns'][] = array('name' => 'first_seen', 'type' => 'timestamp', 'NULL' => false, 'default' => '0000-00-00 00:00:00');
 	$data['columns'][] = array('name' => 'last_updated', 'type' => 'timestamp', 'NULL' => false, 'default' => 'CURRENT_TIMESTAMP', 'on_update' => 'CURRENT_TIMESTAMP');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'clusterid`,`user_or_group';
+	$data['keys'][] = array('name' => 'type', 'columns' => 'type');
 	$data['type'] = 'InnoDB';
 	$data['charset'] = 'latin1';
 	api_plugin_db_table_create ('grid', 'grid_users_or_groups', $data);

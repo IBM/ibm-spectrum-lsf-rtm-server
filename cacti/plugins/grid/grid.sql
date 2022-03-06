@@ -1,7 +1,6 @@
 --
 -- $Id$
 --
-
 --
 -- Table structure for table `grid_applications`
 --
@@ -20,7 +19,7 @@ CREATE TABLE `grid_applications` (
   `max_swap` double NOT NULL default '0',
   `total_cpu` bigint(20) unsigned NOT NULL default '0',
   `last_updated` timestamp NOT NULL default CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`clusterid`,`appName`)
 ) ENGINE=InnoDB;
 
@@ -204,7 +203,7 @@ CREATE TABLE `grid_clusters` (
   `ip` varchar(255) NOT NULL default '',
   `lim_port` varchar(10) NOT NULL default '',
   `lsf_ego` char(3) default 'N',
-  `lsf_strict_checking` varchar(10) default 'N',
+  `lsf_strict_checking` varchar(10) NOT NULL default 'N',
   `lsf_krb_auth` char(3) default '',
   `lsf_master_hostname` varchar(255) NOT NULL default '',
   `username` varchar(255) NOT NULL default '',
@@ -267,7 +266,7 @@ CREATE TABLE `grid_groups` (
   `max_swap` double NOT NULL default '0',
   `total_cpu` bigint(20) unsigned NOT NULL default '0',
   `last_updated` timestamp NOT NULL default CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`clusterid`,`groupName`(191))
 ) ENGINE=InnoDB;
 
@@ -280,7 +279,7 @@ CREATE TABLE `grid_hostgroups` (
   `clusterid` int(10) unsigned NOT NULL default '0',
   `groupName` varchar(64) NOT NULL default '',
   `host` varchar(64) NOT NULL default '',
-  `present` int(10) unsigned NOT NULL default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`clusterid`,`groupName`,`host`),
   KEY `host` (`host`)
 ) ENGINE=MEMORY;
@@ -302,7 +301,7 @@ CREATE TABLE `grid_hostgroups_stats` (
   `numRUN` int(10) unsigned NOT NULL default '0',
   `numJOBS` int(10) unsigned NOT NULL default '0',
   `last_updated` timestamp NOT NULL default CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`clusterid`,`groupName`)
 ) ENGINE=InnoDB COMMENT='Tracks Host Group Statistics';
 
@@ -332,7 +331,7 @@ CREATE TABLE `grid_hostinfo` (
   `cores` int(10) unsigned NOT NULL default '0',
   `first_seen` timestamp NOT NULL default '0000-00-00 00:00:00',
   `last_seen` timestamp NOT NULL default '0000-00-00 00:00:00',
-  `present` int(10) unsigned NOT NULL default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`host`,`clusterid`),
   KEY `isServer` (`isServer`),
   KEY `hostType` (`hostType`),
@@ -352,7 +351,7 @@ CREATE TABLE `grid_hostresources` (
   `host` varchar(64) NOT NULL default '',
   `clusterid` int(10) unsigned NOT NULL default '0',
   `resource_name` varchar(50) NOT NULL default '',
-  `present` tinyint(3) unsigned NOT NULL default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`host`,`clusterid`,`resource_name`),
   KEY `clusterid` (`clusterid`),
   KEY `resource_name` (`resource_name`)
@@ -382,7 +381,7 @@ CREATE TABLE `grid_hosts` (
   `mig` int(10) unsigned NOT NULL default '0',
   `attr` int(10) unsigned NOT NULL default '0',
   `numRESERVE` int(10) unsigned NOT NULL default '0',
-  `present` int(10) unsigned NOT NULL default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   `exceptional` tinyint(1) unsigned NOT NULL default '0',
   PRIMARY KEY  (`host`,`clusterid`),
   KEY `clusterid` (`clusterid`),
@@ -446,7 +445,7 @@ CREATE TABLE `grid_hosts_alarm`
 	`message` varchar(1024) NOT NULL,
 	`acknowledgement` char(3) NOT NULL default 'off',
 	`alert_time` timestamp NOT NULL default CURRENT_TIMESTAMP,
-	`present` int NOT NULL default '0',
+	`present` tinyint(3) unsigned NOT NULL default '1',
 	PRIMARY KEY  (`type`,`type_id`,`clusterid`,`hostname`),
 	KEY `hostname` (`hostname`),
 	KEY`clusterid`(`clusterid`)) ENGINE=MEMORY;
@@ -464,7 +463,7 @@ CREATE TABLE `grid_host_threshold`
 `loadStop` double NOT NULL default '0',
 `busySched` int NOT NULL default '0',
 `busyStop` int NOT NULL default '0',
-`present` int NOT NULL default '0',
+`present` tinyint(3) unsigned NOT NULL default '1',
 PRIMARY KEY (`clusterid`,`hostname`,`resource_name`),
 KEY`id`(`id`),
 KEY `hostname` (`hostname`),
@@ -513,7 +512,7 @@ CREATE TABLE `grid_job_interval_stats` (
   `clusterid` int(10) unsigned NOT NULL default '0',
   `user` varchar(45) NOT NULL default '',
   `stat` varchar(45) NOT NULL default '',
-  `queue` varchar(45) NOT NULL default '',
+  `queue` varchar(60) NOT NULL default '',
   `from_host` varchar(64) NOT NULL default '',
   `exec_host` varchar(64) NOT NULL default '',
   `projectName` varchar(60) NOT NULL default '',
@@ -691,6 +690,8 @@ CREATE TABLE `grid_jobs` (
   KEY `clusterid_end_logged` (`clusterid`,`job_end_logged`),
   KEY `clusterid_stat_end_logged` (`clusterid`,`stat`,`job_end_logged`),
   KEY `clusterid_stat_start_time` (`clusterid`,`stat`,`start_time`),
+  KEY `clusterid_stat_last_updated` (`clusterid`,`stat`,`last_updated`),
+  KEY `stat_last_updated` (`stat`, `last_updated`),
   KEY `last_updated` (`last_updated`),
   KEY `licenseProject` (`licenseProject`),
   KEY `jobGroup` (`jobGroup`(191)),
@@ -706,7 +707,7 @@ DROP TABLE IF EXISTS `grid_jobs_exec_hosts`;
 CREATE TABLE `grid_jobs_exec_hosts` (
   `exec_host` varchar(64) NOT NULL default '',
   `clusterid` int(10) unsigned NOT NULL default '0',
-  `present` tinyint(3) unsigned NOT NULL default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`exec_host`,`clusterid`)
 ) ENGINE=MEMORY;
 
@@ -717,25 +718,26 @@ CREATE TABLE `grid_jobs_exec_hosts` (
 DROP TABLE IF EXISTS `grid_jobs_finished`;
 CREATE TABLE `grid_jobs_finished` LIKE `grid_jobs`;
 ALTER TABLE `grid_jobs_finished` DROP INDEX `clusterid_end_logged`,
-		     DROP INDEX `clusterid_stat_end_logged`,
-         DROP INDEX `clusterid_stat_start_time`,
-         DROP INDEX `effectiveEligiblePendingTimeLimit`,
-         DROP INDEX `effectivePendingTimeLimit`,
-         DROP INDEX `effic_logged`,
-         DROP INDEX `flapping_logged`,
-         DROP INDEX `ineligiblePendingTime`,
-         DROP INDEX `job_end_logged`,
-         DROP INDEX `job_scan_logged`,
-         DROP INDEX `job_start_logged`,
-         DROP INDEX `nice`,
-         DROP INDEX `pid_alarm_logged`,
-         DROP INDEX `prev_stat`,
-         DROP INDEX `prov_time`,
-         DROP INDEX `psusp_time`,
-         DROP INDEX `ssusp_time`,
-         DROP INDEX `swap_used`,
-         DROP INDEX `unkwn_time`,
-         DROP INDEX `ususp_time`;
+  DROP INDEX `clusterid_stat_end_logged`,
+  DROP INDEX `clusterid_stat_start_time`,
+  DROP INDEX `clusterid_stat_last_updated`,
+  DROP INDEX `effectiveEligiblePendingTimeLimit`,
+  DROP INDEX `effectivePendingTimeLimit`,
+  DROP INDEX `effic_logged`,
+  DROP INDEX `flapping_logged`,
+  DROP INDEX `ineligiblePendingTime`,
+  DROP INDEX `job_end_logged`,
+  DROP INDEX `job_scan_logged`,
+  DROP INDEX `job_start_logged`,
+  DROP INDEX `nice`,
+  DROP INDEX `pid_alarm_logged`,
+  DROP INDEX `prev_stat`,
+  DROP INDEX `prov_time`,
+  DROP INDEX `psusp_time`,
+  DROP INDEX `ssusp_time`,
+  DROP INDEX `swap_used`,
+  DROP INDEX `unkwn_time`,
+  DROP INDEX `ususp_time`;
 
 --
 -- Table structure for table `grid_jobs_from_hosts`
@@ -745,7 +747,7 @@ DROP TABLE IF EXISTS `grid_jobs_from_hosts`;
 CREATE TABLE `grid_jobs_from_hosts` (
   `from_host` varchar(64) NOT NULL default '',
   `clusterid` int(10) unsigned NOT NULL default '0',
-  `present` tinyint(3) unsigned NOT NULL default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`from_host`,`clusterid`)
 ) ENGINE=MEMORY;
 
@@ -851,9 +853,9 @@ CREATE TABLE `grid_jobs_pendreasons` (
   `start_time` timestamp NOT NULL default '0000-00-00 00:00:00',
   `end_time` timestamp NOT NULL default '0000-00-00 00:00:00',
   `last_updated` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`clusterid`,`jobid`,`indexid`,`submit_time`,`issusp`,`reason`,`subreason`,`type`,`end_time`),
-  KEY `clusterid_end_time` (`clusterid`, `end_time`)
+  KEY `clusterid_end_time_last_updated` (`clusterid`,`end_time`,`last_updated`)
 ) ENGINE=InnoDB;
 
 --
@@ -875,7 +877,7 @@ CREATE TABLE `grid_jobs_pendreasons_finished` (
   `start_time` timestamp NOT NULL default '0000-00-00 00:00:00',
   `end_time` timestamp NOT NULL default '0000-00-00 00:00:00',
   `last_updated` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`clusterid`,`jobid`,`indexid`,`submit_time`,`issusp`,`reason`,`subreason`,`type`,`end_time`),
   KEY `clusterid_end_time` (`clusterid`, `end_time`)
 ) ENGINE=InnoDB;
@@ -911,7 +913,7 @@ DROP TABLE IF EXISTS `grid_jobs_queues`;
 CREATE TABLE `grid_jobs_queues` (
   `queue` varchar(30) NOT NULL default '',
   `clusterid` int(10) unsigned NOT NULL default '0',
-  `present` tinyint(3) unsigned NOT NULL default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`queue`,`clusterid`)
 ) ENGINE=MEMORY;
 
@@ -1024,7 +1026,7 @@ DROP TABLE IF EXISTS `grid_jobs_stats`;
 CREATE TABLE `grid_jobs_stats` (
   `stat` varchar(10) NOT NULL default '',
   `clusterid` int(10) unsigned NOT NULL default '0',
-  `present` tinyint(3) unsigned NOT NULL default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`stat`,`clusterid`)
 ) ENGINE=MEMORY;
 
@@ -1036,7 +1038,7 @@ DROP TABLE IF EXISTS `grid_jobs_users`;
 CREATE TABLE `grid_jobs_users` (
   `user` varchar(40) NOT NULL default '',
   `clusterid` int(10) unsigned NOT NULL default '0',
-  `present` tinyint(3) unsigned NOT NULL default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`user`,`clusterid`)
 ) ENGINE=MEMORY;
 
@@ -1058,7 +1060,7 @@ CREATE TABLE `grid_license_projects` (
   `max_swap` double NOT NULL default '0',
   `total_cpu` bigint(20) unsigned NOT NULL default '0',
   `last_updated` timestamp NOT NULL default CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`clusterid`,`licenseProject`),
   KEY `present` (`present`)
 ) ENGINE=InnoDB COMMENT='Tracks License Project Information';
@@ -1086,7 +1088,7 @@ CREATE TABLE `grid_load` (
   `tmp` float NOT NULL default '0',
   `swp` float NOT NULL default '0',
   `mem` float NOT NULL default '0',
-  `present` int(10) unsigned NOT NULL default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`host`,`clusterid`),
   KEY `clusterid` (`clusterid`),
   KEY `status` (`status`),
@@ -1135,7 +1137,7 @@ CREATE TABLE `grid_pendreasons_ignore` (
   `reason` int(10) unsigned NOT NULL,
   `subreason` varchar(40) NOT NULL default '',
   `last_updated` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`user_id`,`issusp`,`reason`,`subreason`)
 ) ENGINE=InnoDB;
 
@@ -1151,7 +1153,8 @@ CREATE TABLE `grid_pollers` (
   `poller_licserver_threads` int(11) NOT NULL default '5',
   `poller_location` varchar(255) NOT NULL default '',
   `poller_support_info` varchar(255) NOT NULL default '',
-  `lsf_version` int(10) unsigned NOT NULL default '62',
+  `lsf_version` int(10) unsigned NOT NULL default '1017',
+  `remote` varchar(20),
   `poller_max_insert_packet_size` varchar(255),
   PRIMARY KEY  (`poller_id`)
 ) ENGINE=InnoDB;
@@ -1187,7 +1190,7 @@ CREATE TABLE `grid_projects` (
   `max_swap` double NOT NULL default '0',
   `total_cpu` bigint(20) unsigned NOT NULL default '0',
   `last_updated` timestamp NOT NULL default CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`clusterid`,`projectName`),
   KEY `present` (`present`)
 ) ENGINE=InnoDB COMMENT='Tracks Project Information';
@@ -1214,7 +1217,7 @@ CREATE TABLE `grid_queues` (
   `pendjobs` int(10) unsigned NOT NULL default '0',
   `runjobs` int(10) unsigned NOT NULL default '0',
   `suspjobs` int(10) unsigned NOT NULL default '0',
-  `present` int(10) unsigned NOT NULL default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   `avg_pend_time` int(10) unsigned NOT NULL default '0',
   `max_pend_time` int(10) unsigned NOT NULL default '0',
   `avg_psusp_time` int(10) unsigned NOT NULL default '0',
@@ -1314,7 +1317,7 @@ CREATE TABLE `grid_queues_hosts` (
   `clusterid` int(10) unsigned NOT NULL default '0',
   `queue` varchar(45) NOT NULL default '',
   `host` varchar(64) NOT NULL default '',
-  `present` tinyint(3) unsigned NOT NULL default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`clusterid`,`queue`,`host`),
   KEY `host` (`host`),
   KEY `queue` (`queue`)
@@ -1335,8 +1338,8 @@ CREATE TABLE `grid_queues_shares` (
   `started` int(10) unsigned NOT NULL,
   `reserved` int(10) unsigned NOT NULL,
   `cpu_time` double NOT NULL,
-  `run_time` double NOT NULL,
-  `present` tinyint(3) unsigned NOT NULL default '0',
+  `run_time` bigint unsigned NOT NULL,
+  `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  USING HASH (`clusterid`,`queue`,`user_or_group`, `shareAcctPath`)
 ) ENGINE=MEMORY;
 
@@ -1358,7 +1361,7 @@ CREATE TABLE `grid_queues_stats` (
   `max_swap` double NOT NULL default '0',
   `total_cpu` bigint(20) unsigned NOT NULL default '0',
   `last_updated` timestamp NOT NULL default CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`clusterid`,`queue`),
   KEY `present` (`present`)
 ) ENGINE=InnoDB COMMENT='Tracks Queue Statistical Information';
@@ -1385,7 +1388,7 @@ CREATE TABLE `grid_queues_users` (
   `clusterid` int(10) unsigned NOT NULL default '0',
   `queue` varchar(45) NOT NULL default '',
   `user` varchar(45) NOT NULL default '',
-  `present` tinyint(3) unsigned NOT NULL default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`clusterid`,`queue`,`user`)
 ) ENGINE=MEMORY;
 
@@ -1511,7 +1514,7 @@ CREATE TABLE `grid_summary` (
   `cur_time` decimal(10,5) default '0.00000',
   `avg_time` decimal(10,5) default '0.00000',
   `availability` decimal(10,5) default NULL,
-  `present` int(10) unsigned NOT NULL default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`clusterid`,`host`),
   KEY `load_status` (`load_status`),
   KEY `cacti_status` (`cacti_status`),
@@ -1569,7 +1572,7 @@ CREATE TABLE `grid_user_group_members` (
   `groupname` varchar(45) NOT NULL default '0',
   `username` varchar(40) NOT NULL default '0',
   `shares` int(10) unsigned NOT NULL default '1',
-  `present` tinyint(1) NOT NULL default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`clusterid`,`groupname`,`username`),
   KEY `groupname` (`groupname`),
   KEY `username` (`username`)
@@ -1593,7 +1596,7 @@ CREATE TABLE `grid_user_group_stats` (
   `max_swap` double NOT NULL default '0',
   `total_cpu` bigint(20) unsigned NOT NULL default '0',
   `last_updated` timestamp NOT NULL default CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`clusterid`,`userGroup`),
   KEY `present` (`present`)
 ) ENGINE=InnoDB COMMENT='Tracks userGroup Stats';
@@ -1620,7 +1623,7 @@ CREATE TABLE `grid_users_or_groups` (
   `efficiency` double NOT NULL,
   `first_seen` timestamp NOT NULL default '0000-00-00 00:00:00',
   `last_updated` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`clusterid`,`user_or_group`),
   KEY `type` (`type`)
 ) ENGINE=InnoDB;
@@ -1751,7 +1754,7 @@ CREATE TABLE grid_elim_templates_item_map (
   local_graph_id mediumint(8) unsigned NOT NULL,
   graph_templates_item_id int(12) unsigned NOT NULL,
   grid_elim_template_id mediumint(8) unsigned NOT NULL,
-  grid_elim_templates_item_id mediumint(8) unsigned NOT NULL,
+  grid_elim_templates_item_id int(12) unsigned NOT NULL,
   PRIMARY KEY  (local_graph_id,graph_templates_item_id)
 ) ENGINE=InnoDB COMMENT='Stores the Map of ELIM grid_elim_templates_item to cacti graph_templates_item.';
 
@@ -1771,7 +1774,7 @@ CREATE TABLE  `grid_guarantee_pool` (
   `free` int(10)  NOT NULL default '0',
   `guar_config` int(10)  NOT NULL default '0',
   `guar_used` int(10)  NOT NULL default '0',
-  `present` tinyint(3) unsigned NOT NULL default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`clusterid`,`name`)
 ) ENGINE=MEMORY COMMENT='Stores Configuration of Guarantee Resource Pools';
 -- Types are: 1 = Slots, 2 == Hosts, 3 == Package, 4 == Resources
@@ -1877,7 +1880,7 @@ CREATE TABLE `grid_clusters_perfmon_mbatchd_metrics` (
   `min` int(10) unsigned NOT NULL default '0',
   `avg` double unsigned NOT NULL default '0',
   `total` bigint(20) unsigned NOT NULL default '0',
-  `present` tinyint(3) unsigned default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`clusterid`,`metric`)
 ) ENGINE=MEMORY COMMENT='Contains Perfmon Metrics';
 
@@ -1893,7 +1896,7 @@ CREATE TABLE `grid_clusters_perfmon_scheduler_metrics` (
   `max` int(10) unsigned NOT NULL default '0',
   `min` int(10) unsigned NOT NULL default '0',
   `avg` double unsigned NOT NULL default '0',
-  `present` tinyint(3) unsigned default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`clusterid`,`metric`)
 ) ENGINE=MEMORY COMMENT='Contains Perfmon Metrics';
 
@@ -1908,7 +1911,7 @@ CREATE TABLE `grid_clusters_perfmon_usage_metrics` (
   `used` bigint(20) unsigned NOT NULL default '0',
   `free` bigint(20) unsigned NOT NULL default '0',
   `total` bigint(20) unsigned NOT NULL default '0',
-  `present` tinyint(3) unsigned default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`clusterid`,`metric`)
 ) ENGINE=MEMORY COMMENT='Contains Perfmon Metrics';
 
@@ -1951,7 +1954,7 @@ CREATE TABLE `grid_clusters_perfmon_status` (
   `last_mbatchd_start` timestamp NOT NULL default '0000-00-00 00:00:00',
   `active_mbd_pid` int(10) unsigned NOT NULL default '0',
   `last_mbatchd_reconfig` timestamp NOT NULL default '0000-00-00 00:00:00',
-  `present` tinyint(3) unsigned NOT NULL default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`clusterid`)
 ) ENGINE=MEMORY COMMENT='Contains badmin showstatus information';
 
@@ -1972,6 +1975,6 @@ CREATE TABLE `grid_clusters_perfmon_summary` (
   `pjob_doneTime` double NOT NULL default '0',
   `pjob_seenDoneTime` double NOT NULL default '0',
   `pjob_startTime` double NOT NULL default '0',
-  `present` tinyint(3) unsigned NOT NULL default '0',
+  `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`clusterid`)
 ) ENGINE=MEMORY COMMENT='Contains Perfmon Sampling Information';

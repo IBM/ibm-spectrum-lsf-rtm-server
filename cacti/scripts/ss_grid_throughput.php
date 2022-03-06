@@ -86,7 +86,7 @@ function ss_grid_throughput_getvalue($clusterid, $measure, $measure_value) {
 		$arr = 'U';
 	}
 
-	return $arr;
+	return trim($arr);
 }
 
 function ss_grid_throughput_getnames($clusterid) {

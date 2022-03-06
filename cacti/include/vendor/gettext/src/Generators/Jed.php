@@ -48,7 +48,7 @@ class Jed extends Generator implements GeneratorInterface
             if ($translation->isDisabled()) {
                 continue;
             }
-            
+
             $key = ($translation->hasContext() ? $translation->getContext().$context_glue : '')
                 .$translation->getOriginal();
 

@@ -23,6 +23,7 @@ $guest_account = true;
 chdir('../../');
 include('./include/auth.php');
 include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
+include_once($config['base_path'] . '/plugins/grid/lib/grid_functions.php');
 
 $title = __('IBM Spectrum LSF RTM - Guaranteed Resource Pool', 'grid');
 
@@ -146,20 +147,18 @@ function guarPoolFilter() {
                             <option value='0' <?php if (get_request_var('clusterid') == '0') {?> selected<?php }?>>
                                 <?php print __('All', 'grid');?></option>
                             <?php
-						$clusters = db_fetch_assoc('SELECT *
-							FROM grid_clusters
-							WHERE clusterid IN (
-								SELECT DISTINCT clusterid
-								FROM grid_guarantee_pool
-							)
-							ORDER BY clustername');
+							$clusterids = db_fetch_assoc('SELECT DISTINCT clusterid FROM grid_guarantee_pool');
+							if (cacti_sizeof($clusterids)) {
+								$clusterids = array_rekey($clusterids, 'clusterid', 'clusterid');
+								$clusters = grid_get_clusterlist(false, $clusterids);
 
-						if (cacti_sizeof($clusters)) {
-							foreach ($clusters as $cluster) {
-								print '<option value="' . $cluster['clusterid'] .'"'; if (get_request_var('clusterid') == $cluster['clusterid']) { print ' selected'; } print '>' . $cluster['clustername'] . '</option>';
+								if (cacti_sizeof($clusters)) {
+									foreach ($clusters as $cluster) {
+										print '<option value="' . $cluster['clusterid'] .'"'; if (get_request_var('clusterid') == $cluster['clusterid']) { print ' selected'; } print '>' . $cluster['clustername'] . '</option>';
+									}
+								}
 							}
-						}
-						?>
+							?>
                         </select>
                     </td>
                     <td>
@@ -573,17 +572,15 @@ function guarSLAFilter($respools) {
                             <option value='0' <?php if (get_request_var('clusterid') == '0') {?> selected<?php }?>>
                                 <?php print __('All', 'grid');?></option>
                             <?php
-							$clusters = db_fetch_assoc("SELECT *
-								FROM grid_clusters
-								WHERE clusterid IN (
-									SELECT DISTINCT clusterid
-									FROM grid_service_class
-								)
-								ORDER BY clustername");
+							$clusterids = db_fetch_assoc('SELECT DISTINCT clusterid FROM grid_service_class');
+							if (cacti_sizeof($clusterids)) {
+								$clusterids = array_rekey($clusterids, 'clusterid', 'clusterid');
+								$clusters = grid_get_clusterlist(false, $clusterids);
 
-							if (cacti_sizeof($clusters)) {
-								foreach ($clusters as $cluster) {
-									print '<option value="' . $cluster['clusterid'] .'"'; if (get_request_var('clusterid') == $cluster['clusterid']) { print ' selected'; } print '>' . $cluster['clustername'] . '</option>';
+								if (cacti_sizeof($clusters)) {
+									foreach ($clusters as $cluster) {
+										print '<option value="' . $cluster['clusterid'] .'"'; if (get_request_var('clusterid') == $cluster['clusterid']) { print ' selected'; } print '>' . $cluster['clustername'] . '</option>';
+									}
 								}
 							}
 							?>

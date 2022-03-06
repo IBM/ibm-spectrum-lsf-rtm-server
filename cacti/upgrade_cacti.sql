@@ -2,6 +2,16 @@
 -- $Id$
 --
 
+--
+-- Upgrade RTM Database from 10.1 to 10.2 for cacti core settings
+--
+
+--
+-- Dumping data for table `colors`
+--
+
+LOCK TABLES `colors` WRITE;
+/*!40000 ALTER TABLE `colors` DISABLE KEYS */;
 UPDATE colors SET name ='White',read_only='On' where hex='FFFFFF';
 UPDATE colors SET name ='Red',read_only='On' where hex='FF0000';
 UPDATE colors SET name ='Magenta',read_only='On' where hex='FF00FF';
@@ -342,23 +352,65 @@ INSERT INTO `colors` VALUES ('default', 'Lavender Blue','E3E4FA','on');
 INSERT INTO `colors` VALUES ('default', 'Pearl','FDEEF4','on');
 INSERT INTO `colors` VALUES ('default', 'SeaShell','FFF5EE','on');
 INSERT INTO `colors` VALUES ('default', 'Milk White','FEFCFF','on');
+/*!40000 ALTER TABLE `colors` ENABLE KEYS */;
+UNLOCK TABLES;
 
+--
+-- Dumping data for table `automation_networks`
+--
+
+LOCK TABLES `automation_networks` WRITE;
+/*!40000 ALTER TABLE `automation_networks` DISABLE KEYS */;
 INSERT INTO `automation_networks` VALUES (1,1,0,'Test Network','192.168.1.0/24','','on','','','','',1,'on','on','',254,0,0,1,22,400,1,2,10,1200,'0000-00-00 00:00:00','0000-00-00 00:00:00',2,'4','','','','',0,'0000-00-00 00:00:00','','on');
-INSERT INTO `automation_snmp` VALUES (1,'Default Option Set');
-INSERT INTO `automation_snmp_items` VALUES (1,1,1,'2','public',161,1000,3,10,'admin','baseball','SHA','','AES','',''),(2,1,2,'2','private',161,1000,3,10,'admin','baseball','SHA','','AES','','');
-INSERT INTO `automation_templates` VALUES (1,3,2,'Linux','','',2),(2,1,2,'HP ETHERNET','','',1);
+/*!40000 ALTER TABLE `automation_networks` ENABLE KEYS */;
+UNLOCK TABLES;
 
+--
+-- Dumping data for table `automation_snmp`
+--
+
+LOCK TABLES `automation_snmp` WRITE;
+/*!40000 ALTER TABLE `automation_snmp` DISABLE KEYS */;
+INSERT INTO `automation_snmp` VALUES (1,'Default Option Set');
+/*!40000 ALTER TABLE `automation_snmp` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping data for table `automation_snmp_items`
+--
+
+LOCK TABLES `automation_snmp_items` WRITE;
+/*!40000 ALTER TABLE `automation_snmp_items` DISABLE KEYS */;
+INSERT INTO `automation_snmp_items` VALUES (1,1,1,'2','public',161,1000,3,10,'admin','baseball','SHA','','AES','',''),(2,1,2,'2','private',161,1000,3,10,'admin','baseball','SHA','','AES','','');
+/*!40000 ALTER TABLE `automation_snmp_items` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping data for table `automation_templates`
+--
+
+LOCK TABLES `automation_templates` WRITE;
+/*!40000 ALTER TABLE `automation_templates` DISABLE KEYS */;
+INSERT INTO `automation_templates` VALUES (1,3,2,'Linux','','',2),(2,1,2,'HP ETHERNET','','',1);
+/*!40000 ALTER TABLE `automation_templates` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Dumping data for table `automation_match_rule_items`
 --
 
+LOCK TABLES `automation_match_rule_items` WRITE;
+/*!40000 ALTER TABLE `automation_match_rule_items` DISABLE KEYS */;
 INSERT INTO `automation_match_rule_items` VALUES ('default',1,1,3,1,'h.snmp_sysDescr',2,'Windows');
+/*!40000 ALTER TABLE `automation_match_rule_items` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Dumping data for table `data_input_data`
 --
 
+LOCK TABLES `data_input_data` WRITE;
+/*!40000 ALTER TABLE `data_input_data` DISABLE KEYS */;
 INSERT INTO `data_input_data` VALUES (1,4,'','');
 INSERT INTO `data_input_data` VALUES (1,5,'','');
 INSERT INTO `data_input_data` VALUES (1,6,'','');
@@ -409,12 +461,15 @@ INSERT INTO `data_input_data` VALUES (3,25,'','');
 INSERT INTO `data_input_data` VALUES (3,26,'','');
 INSERT INTO `data_input_data` VALUES (3,27,'','');
 INSERT INTO `data_input_data` VALUES (3,30,'','');
-
+/*!40000 ALTER TABLE `data_input_data` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Dumping data for table `data_input_fields`
 --
 
+LOCK TABLES `data_input_fields` WRITE;
+/*!40000 ALTER TABLE `data_input_fields` DISABLE KEYS */;
 INSERT INTO `data_input_fields` VALUES (39,'c1f36ee60c3dc98945556d57f26e475b',2,'SNMP Port','snmp_port','in','',0,'snmp_port','','');
 INSERT INTO `data_input_fields` VALUES (40,'fc64b99742ec417cc424dbf8c7692d36',1,'SNMP Port','snmp_port','in','',0,'snmp_port','','');
 INSERT INTO `data_input_fields` VALUES (41,'20832ce12f099c8e54140793a091af90',1,'SNMP Authenticaion Protocol (v3)','snmp_auth_protocol','in','',0,'snmp_auth_protocol','','');
@@ -423,12 +478,15 @@ INSERT INTO `data_input_fields` VALUES (43,'feda162701240101bc74148415ef415a',1,
 INSERT INTO `data_input_fields` VALUES (44,'2cf7129ad3ff819a7a7ac189bee48ce8',2,'SNMP Authenticaion Protocol (v3)','snmp_auth_protocol','in','',0,'snmp_auth_protocol','','');
 INSERT INTO `data_input_fields` VALUES (45,'6b13ac0a0194e171d241d4b06f913158',2,'SNMP Privacy Passphrase (v3)','snmp_priv_passphrase','in','',0,'snmp_priv_passphrase','','');
 INSERT INTO `data_input_fields` VALUES (46,'3a33d4fc65b8329ab2ac46a36da26b72',2,'SNMP Privacy Protocol (v3)','snmp_priv_protocol','in','',0,'snmp_priv_protocol','','');
-
+/*!40000 ALTER TABLE `data_input_fields` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Dumping data for table `data_source_profiles_cf`
 --
 
+LOCK TABLES `data_source_profiles_cf` WRITE;
+/*!40000 ALTER TABLE `data_source_profiles_cf` DISABLE KEYS */;
 INSERT INTO `data_source_profiles_cf` VALUES (2,1);
 INSERT INTO `data_source_profiles_cf` VALUES (2,2);
 INSERT INTO `data_source_profiles_cf` VALUES (2,3);
@@ -437,11 +495,15 @@ INSERT INTO `data_source_profiles_cf` VALUES (3,1);
 INSERT INTO `data_source_profiles_cf` VALUES (3,2);
 INSERT INTO `data_source_profiles_cf` VALUES (3,3);
 INSERT INTO `data_source_profiles_cf` VALUES (3,4);
+/*!40000 ALTER TABLE `data_source_profiles_cf` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Dumping data for table `data_source_profiles_rra`
 --
 
+LOCK TABLES `data_source_profiles_rra` WRITE;
+/*!40000 ALTER TABLE `data_source_profiles_rra` DISABLE KEYS */;
 INSERT INTO `data_source_profiles_rra` VALUES ('default', 2,'Daily (30 Second Average)',1,1500,86400);
 INSERT INTO `data_source_profiles_rra` VALUES ('default', 2,'Weekly (15 Minute Average)',30,1346,604800);
 INSERT INTO `data_source_profiles_rra` VALUES ('default', 2,'Monthly (1 Hour Average)',120,1445,2618784);
@@ -450,29 +512,41 @@ INSERT INTO `data_source_profiles_rra` VALUES ('default', 3,'Daily (1 Minute Ave
 INSERT INTO `data_source_profiles_rra` VALUES ('default', 3,'Weekly (15 Minute Average)',15,1400,604800);
 INSERT INTO `data_source_profiles_rra` VALUES ('default', 3,'Monthly (1 Hour Average)',60,1465,2618784);
 INSERT INTO `data_source_profiles_rra` VALUES ('default', 3,'Yearly (4 Hour Average)',240,4380,31536000);
-
+/*!40000 ALTER TABLE `data_source_profiles_rra` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Dumping data for table `sites`
 --
 
+LOCK TABLES `sites` WRITE;
+/*!40000 ALTER TABLE `user_sitesauth_realm` DISABLE KEYS */;
 INSERT INTO `sites` VALUES (1,'Edge','','','','','','','',0.0000000000,0.0000000000,'','','');
 INSERT INTO `sites` VALUES (2,'Core','','','','','','','',0.0000000000,0.0000000000,'','','');
+/*!40000 ALTER TABLE `sites` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Dumping data for table `user_auth_realm`
 --
+
+LOCK TABLES `user_auth_realm` WRITE;
+/*!40000 ALTER TABLE `user_auth_realm` DISABLE KEYS */;
 INSERT INTO user_auth_realm VALUES (1043,1);
-
-
+/*!40000 ALTER TABLE `user_auth_realm` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Dumping data for table `data_source_profiles`
 --
 
+LOCK TABLES `data_source_profiles` WRITE;
+/*!40000 ALTER TABLE `data_source_profiles` DISABLE KEYS */;
 INSERT INTO `data_source_profiles` VALUES ('default', 'd62c52891f4f9688729a5bc9fad91b18','5 Minute Collection',300,600,0.5,'on');
 INSERT INTO `data_source_profiles` VALUES ('default', 'c0dd0e46b9ca268e7ed4162d329f9215','30 Second Collection',30,1200,0.5,'');
 INSERT INTO `data_source_profiles` VALUES ('default', '66d35da8f75c912ede3dbe901fedcae0','1 Minute Collection',60,600,0.5,'');
+/*!40000 ALTER TABLE `data_source_profiles` ENABLE KEYS */;
+UNLOCK TABLES;
 
 LOCK TABLES `automation_networks` WRITE;
 /*!40000 ALTER TABLE `automation_networks` DISABLE KEYS */;
@@ -482,7 +556,8 @@ UNLOCK TABLES;
 
 LOCK TABLES `settings` WRITE;
 /*!40000 ALTER TABLE `settings` DISABLE KEYS */;
-REPLACE INTO `settings` VALUES ('install_theme','spectrum'),
+REPLACE INTO `settings` VALUES 
+('install_theme','spectrum'),
 ('selected_theme','spectrum'),
 ('i18n_default_language','en-US'),
 ('availability_method','0'),
@@ -506,6 +581,10 @@ REPLACE INTO `settings` VALUES ('install_theme','spectrum'),
 ('secpass_unlocktime','1440');
 /*!40000 ALTER TABLE `settings` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Dumping data for table `settings_user`
+--
 
 LOCK TABLES `settings_user` WRITE, user_auth WRITE;
 /*!40000 ALTER TABLE `settings_user` DISABLE KEYS */;

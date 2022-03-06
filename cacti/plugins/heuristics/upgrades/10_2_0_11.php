@@ -26,12 +26,12 @@ function upgrade_to_10_2_0_11() {
 	include_once(dirname(__FILE__) . '/../../../lib/rtm_db_upgrade.php');
 	include_once(dirname(__FILE__) . '/../../../lib/import.php');
 
-	db_execute('DROP TABLE grid_heuristics_percentiles');
+	db_execute('DROP TABLE IF EXISTS grid_heuristics_percentiles');
 
 	db_execute("CREATE TABLE `grid_heuristics_percentiles` (
 		`clusterid` int(10) unsigned NOT NULL,
 		`queue` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL,
-		`custom` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+		`custom` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
 		`projectName` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
 		`resReq` varchar(512) COLLATE utf8mb4_unicode_ci NOT NULL,
 		`reqCpus` int(10) unsigned NOT NULL,
@@ -69,7 +69,7 @@ function upgrade_to_10_2_0_11() {
 			MODIFY COLUMN run_25thp int unsigned NOT NULL default "0",
 			MODIFY COLUMN run_75thp int unsigned NOT NULL default "0",
 			MODIFY COLUMN run_90thp int unsigned NOT NULL default "0",
-			ADD COLUMN custom VARCHAR(256) NOT NULL DEFAULT "" AFTER queue,
+			ADD COLUMN custom VARCHAR(128) NOT NULL DEFAULT "" AFTER queue,
 			ADD COLUMN mem_avg float NOT NULL default "0" AFTER run_90thp,
 			ADD COLUMN mem_max bigint unsigned NOT NULL default "0" AFTER mem_avg,
 			ADD COLUMN mem_min bigint unsigned NOT NULL default "0" AFTER mem_max,

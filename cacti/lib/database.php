@@ -867,6 +867,31 @@ function db_update_table($table, $data, $removecolumns = false, $log = true, $db
 		return db_table_create($table, $data, $log, $db_conn);
 	}
 
+	if (isset($data['charset'])) {
+		$charset = ' DEFAULT CHARSET = ' . $data['charset'];
+		db_execute("ALTER TABLE `$table` " . $charset, $log, $db_conn);
+	}
+
+	if (isset($data['collate'])) {
+		$charset = ' COLLATE = ' . $data['collate'];
+		db_execute("ALTER TABLE `$table` " . $charset, $log, $db_conn);
+	}
+
+	$info = db_fetch_row("SELECT ENGINE, TABLE_COMMENT
+		FROM information_schema.TABLES
+		WHERE TABLE_SCHEMA = SCHEMA()
+		AND TABLE_NAME = '$table'", $log, $db_conn);
+
+	if (isset($info['ENGINE']) && isset($data['type']) && strtolower($info['ENGINE']) != strtolower($data['type'])) {
+		if (!db_execute("ALTER TABLE `$table` ENGINE = " . $data['type'], $log, $db_conn)) {
+			return false;
+		}
+	}
+
+	if (isset($data['row_format']) && db_get_global_variable('innodb_file_format', $db_conn) == 'Barracuda') {
+		db_execute("ALTER TABLE `$table` ROW_FORMAT = " . $data['row_format'], $log, $db_conn);
+	}
+
 	$allcolumns = array();
 	foreach ($data['columns'] as $column) {
 		$allcolumns[] = $column['name'];
@@ -879,6 +904,8 @@ function db_update_table($table, $data, $removecolumns = false, $log = true, $db
 			// FIXME: Need to still check default value
 			$arr = db_fetch_row("SHOW columns FROM `$table` LIKE '" . $column['name'] . "'", $log, $db_conn);
 			if ($column['type'] != $arr['Type'] || (isset($column['NULL']) && ($column['NULL'] ? 'YES' : 'NO') != $arr['Null'])
+			    || (((!isset($column['unsigned']) || !$column['unsigned']) && isset($arr['unsigned']))
+			        || (isset($column['unsigned']) && $column['unsigned'] && !isset($arr['unsigned'])))
 			    || (isset($column['auto_increment']) && ($column['auto_increment'] ? 'auto_increment' : '') != $arr['Extra'])) {
 				$sql = 'ALTER TABLE `' . $table . '` CHANGE `' . $column['name'] . '` `' . $column['name'] . '`';
 				if (isset($column['type'])) {
@@ -935,19 +962,8 @@ function db_update_table($table, $data, $removecolumns = false, $log = true, $db
 		}
 	}
 
-	$info = db_fetch_row("SELECT ENGINE, TABLE_COMMENT
-		FROM information_schema.TABLES
-		WHERE TABLE_SCHEMA = SCHEMA()
-		AND TABLE_NAME = '$table'", $log, $db_conn);
-
 	if (isset($info['TABLE_COMMENT']) && isset($data['comment']) && str_replace("'", '', $info['TABLE_COMMENT']) != str_replace("'", '', $data['comment'])) {
 		if (!db_execute("ALTER TABLE `$table` COMMENT '" . str_replace("'", '', $data['comment']) . "'", $log, $db_conn)) {
-			return false;
-		}
-	}
-
-	if (isset($info['ENGINE']) && isset($data['type']) && strtolower($info['ENGINE']) != strtolower($data['type'])) {
-		if (!db_execute("ALTER TABLE `$table` ENGINE = " . $data['type'], $log, $db_conn)) {
 			return false;
 		}
 	}
@@ -1023,20 +1039,6 @@ function db_update_table($table, $data, $removecolumns = false, $log = true, $db
 				}
 			}
 		}
-	}
-
-	if (isset($data['row_format']) && db_get_global_variable('innodb_file_format', $db_conn) == 'Barracuda') {
-		db_execute("ALTER TABLE `$table` ROW_FORMAT = " . $data['row_format'], $log, $db_conn);
-	}
-
-	if (isset($data['charset'])) {
-		$charset .= ' DEFAULT CHARSET = ' . $data['charset'];
-		db_execute("ALTER TABLE `$table` " . $charset, $log, $db_conn);
-	}
-
-	if (isset($data['collate'])) {
-		$charset = ' COLLATE = ' . $data['collate'];
-		db_execute("ALTER TABLE `$table` " . $charset, $log, $db_conn);
 	}
 
 	return true;

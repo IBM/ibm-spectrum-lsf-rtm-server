@@ -28,8 +28,7 @@ include_once(dirname(__FILE__) . '/../grid/lib/grid_partitioning.php');
 
 
 /* take the start time to log performance data */
-list($micro,$seconds) = preg_split('/ /', microtime());
-$start = $seconds + $micro;
+$start = microtime(true);
 
 /* get the time the cacti poller started */
 $disku_poller_start = read_config_option('disku_poller_start');
@@ -134,8 +133,7 @@ if (detect_and_correct_running_processes(0, 'DISKUPOLLER', $poller_interval*3)) 
 
 if ($run_maint || $forcerun_maint) {
 	if (detect_and_correct_running_processes(0, 'DISKUMAINT', $poller_interval*3)) {
-		list($micro,$seconds) = preg_split('/ /', microtime());
-		$start = $seconds + $micro;
+		$start = microtime(true);
 		disku_history_rotation();
 		remove_process_entry(0, 'DISKUMAINT');
 		log_disku_statistics('maint');
@@ -217,8 +215,7 @@ function log_disku_statistics($type = "collect") {
 	global $start;
 
 	/* take time and log performance data */
-	list($micro,$seconds) = preg_split("/ /", microtime());
-	$end = $seconds + $micro;
+	$end = microtime(true);
 
 	if ($type == "interval") {
 		$users = db_fetch_cell("SELECT COUNT(*) FROM disku_users");

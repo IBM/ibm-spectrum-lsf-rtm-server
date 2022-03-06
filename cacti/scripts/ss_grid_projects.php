@@ -113,7 +113,7 @@ function ss_grid_projects_getvalue($clusterid, $index, $column) {
 	}
 
 	if (!empty($value)) {
-		return $value;
+		return trim($value);
 	} else {
 		return '0';
 	}

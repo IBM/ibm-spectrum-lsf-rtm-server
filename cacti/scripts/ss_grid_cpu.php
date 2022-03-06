@@ -89,5 +89,5 @@ function ss_grid_cpu($hostname = '', $clusterid = 0, $summary = 'no') {
 
 	$result = 'ut:' . $job_stats['a_ut'];
 
-	return $result;
+	return trim($result);
 }

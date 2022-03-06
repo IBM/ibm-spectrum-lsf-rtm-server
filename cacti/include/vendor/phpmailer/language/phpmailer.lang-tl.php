@@ -6,7 +6,7 @@
  *   @package PHPMailer
  *   @author Adriane Justine Tan <adrianetan12@gmail.com>
  */
- 
+
 $PHPMAILER_LANG['authenticate']         = 'SMTP Error: Hindi mapatotohanan.';
 $PHPMAILER_LANG['connect_host']         = 'SMTP Error: Hindi makakonekta sa SMTP host.';
 $PHPMAILER_LANG['data_not_accepted']    = 'SMTP Error: Ang datos ay hindi maaaring matatanggap.';

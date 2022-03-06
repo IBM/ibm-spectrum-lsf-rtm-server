@@ -227,6 +227,7 @@ function grid_get_poller_records() {
 
 function grid_poller_edit() {
 	global $fields_grid_poller_edit;
+	global $oob_lsf_versions, $lsf_versions;
 
 	/* ================= input validation ================= */
 	get_filter_request_var('poller_id');
@@ -243,30 +244,26 @@ function grid_poller_edit() {
 		//Edit a existing poller, for fresh installed RTM, just allow to show LSF 8 or above pollers; for upgraded RTM, show all pollers
 		$fields_grid_poller_edit1 = $fields_grid_poller_edit;
 
-		$lsf7_count = db_fetch_cell('SELECT count(*) FROM grid_pollers WHERE lsf_version like "70%"');
-
-		if ($lsf7_count == 0) {  //No LSF 7.x pollers - fresh installed RTM 10.1+
-			unset($fields_grid_poller_edit1['lsf_version']['array']['701']);
-			unset($fields_grid_poller_edit1['lsf_version']['array']['702']);
-			unset($fields_grid_poller_edit1['lsf_version']['array']['703']);
-			unset($fields_grid_poller_edit1['lsf_version']['array']['704']);
-			unset($fields_grid_poller_edit1['lsf_version']['array']['705']);
-			unset($fields_grid_poller_edit1['lsf_version']['array']['706']);
-		} else {  //having LSF 7.x pollers - upraded RTM 10.1+,
-			$fields_grid_poller_edit1 = $fields_grid_poller_edit;
+		$lsf_vers = db_fetch_assoc('SELECT DISTINCT lsf_version FROM grid_pollers');
+		if(cacti_sizeof($lsf_vers)) { //No LSF Pre-10.1 pollers - fresh installed RTM 10.2.0+
+			foreach($fields_grid_poller_edit1['lsf_version']['array'] as $verno => $vername) {
+				if(!in_array($verno, array_rekey($lsf_vers, 'lsf_version', 'lsf_version'))
+						&& !in_array($verno, $oob_lsf_versions)) {
+					unset($fields_grid_poller_edit1['lsf_version']['array'][$verno]);
+				}
+			}
 		}
 	} else {
 		$header_label = __('RTM Poller [new]', 'grid');
 
-		//Add a new poller, For new freshed RTM and upgraded RTM, just allow to show LSF 8 or above pollers
+		//Add a new poller, For new freshed RTM and upgraded RTM, just allow to show LSF 10.1 or above pollers
 		$fields_grid_poller_edit1 = $fields_grid_poller_edit;
 
-		unset($fields_grid_poller_edit1['lsf_version']['array']['701']);
-		unset($fields_grid_poller_edit1['lsf_version']['array']['702']);
-		unset($fields_grid_poller_edit1['lsf_version']['array']['703']);
-		unset($fields_grid_poller_edit1['lsf_version']['array']['704']);
-		unset($fields_grid_poller_edit1['lsf_version']['array']['705']);
-		unset($fields_grid_poller_edit1['lsf_version']['array']['706']);
+		foreach($fields_grid_poller_edit1['lsf_version']['array'] as $verno => $vername) {
+			if(!in_array($verno, $oob_lsf_versions)) {
+				unset($fields_grid_poller_edit1['lsf_version']['array'][$verno]);
+			}
+		}
 	}
 
 	form_start('grid_pollers.php');
@@ -293,7 +290,7 @@ function grid_poller_edit() {
 }
 
 function grid_pollers() {
-	global $grid_poller_actions, $config;
+	global $grid_poller_actions, $config, $fields_grid_poller_edit;
 
 	/* ================= input validation and session storage ================= */
 	$filters = array(
@@ -384,7 +381,7 @@ function grid_pollers() {
 			form_selectable_cell("<a class='linkEditMain' href='" . html_escape($config['url_path'] . 'plugins/grid/grid_pollers.php?action=edit&poller_id=' . $poller['poller_id']) . "'>" . html_escape($poller['poller_name']) . '</a>', $poller['poller_id']);
 			form_selectable_cell($poller['poller_id'], $poller['poller_id']);
 			form_selectable_cell($status, $poller['poller_id']);
-			form_selectable_cell($poller['lsf_version'], $poller['poller_id']);
+			form_selectable_cell(isset($fields_grid_poller_edit['lsf_version']['array'][$poller['lsf_version']]) ? str_replace("LSF ", " ", $fields_grid_poller_edit['lsf_version']['array'][$poller['lsf_version']]) : $poller['lsf_version'], $poller['poller_id']);
 			form_selectable_cell(html_escape($poller['poller_location']), $poller['poller_id']);
 			form_selectable_cell($date, $poller['poller_id']);
 			form_selectable_cell(html_escape($poller['poller_support_info']), $poller['poller_id']);

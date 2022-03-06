@@ -3,7 +3,7 @@
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2022 The Cacti Group                                 |
- | Copyright IBM Corp. 2006, 2022                                          |
+ | Copyright IBM Corp. 2017, 2022                                          |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -36,7 +36,7 @@ function set_config_option($config_name, $value) {
 function read_default_config_option($config_name) {
 	global $config, $settings;
 
-	if (isset($settings) && is_array($settings)) {
+	if (is_array($settings)) {
 		foreach ($settings as $tab_array) {
 			if (isset($tab_array[$config_name]) && isset($tab_array[$config_name]['default'])) {
 				return $tab_array[$config_name]['default'];
@@ -58,14 +58,26 @@ function read_default_config_option($config_name) {
 function read_config_option($config_name, $force = false) {
 	global $config;
 
-	$config_array = array();
+	if (isset($_SESSION['sess_config_array'])) {
+		$config_array = $_SESSION['sess_config_array'];
+	} elseif (isset($config['config_options_array'])) {
+		$config_array = $config['config_options_array'];
+	}
 
-	$db_setting = db_fetch_row_prepared('SELECT value FROM settings WHERE name = ?', array($config_name), false);
+	if ((!isset($config_array[$config_name])) || ($force)) {
+		$db_setting = db_fetch_row_prepared('SELECT value FROM settings WHERE name = ?', array($config_name), false);
 
-	if (isset($db_setting['value'])) {
-		$config_array[$config_name] = $db_setting['value'];
-	} else {
-		$config_array[$config_name] = '';
+		if (isset($db_setting['value'])) {
+			$config_array[$config_name] = $db_setting['value'];
+		} else {
+			$config_array[$config_name] = read_default_config_option($config_name);
+		}
+
+		if (isset($_SESSION)) {
+			$_SESSION['sess_config_array']  = $config_array;
+		} else {
+			$config['config_options_array'] = $config_array;
+		}
 	}
 
 	return $config_array[$config_name];
@@ -124,7 +136,7 @@ function exec_into_array($command_line) {
 /*	gethostbyaddr_wtimeout - This function provides a good method of performing
   a rapid lookup of a DNS entry for a host so long as you don't have to look far.
 */
-function get_dns_from_ip ($ip, $dns, $timeout = 1000) {
+function get_dns_from_ip($ip, $dns, $timeout = 1000) {
 	/* random transaction number (for routers etc to get the reply back) */
 	$data = rand(10, 99);
 
@@ -138,7 +150,7 @@ function get_dns_from_ip ($ip, $dns, $timeout = 1000) {
 	$octets = explode('.', $ip);
 
 	/* perform a quick error check */
-	if (cacti_count($octets) != 4) return 'ERROR';
+	if (count($octets) != 4) return 'ERROR';
 
 	/* needs a byte to indicate the length of each segment of the request */
 	for ($x=3; $x>=0; $x--) {
@@ -224,62 +236,18 @@ function get_dns_from_ip ($ip, $dns, $timeout = 1000) {
 	return strtoupper($ip);
 }
 
-function cacti_escapeshellcmd($string) {
-	global $config;
+/* exec_background - executes a program in the background so that php can continue
+     to execute code in the foreground
+   @arg $filename - the full pathname to the script to execute
+   @arg $args - any additional arguments that must be passed onto the executable */
+function exec_background($filename, $args = "") {
+	global $config, $debug;
 
-	if ($config['cacti_server_os'] == 'unix') {
-		return escapeshellcmd($string);
-	} else {
-		$replacements = "#&;`|*?<>^()[]{}$\\";
-
-		for ($i=0; $i < strlen($replacements); $i++) {
-			$string = str_replace($replacements[$i], ' ', $string);
-		}
-		return $string;
-	}
-}
-
-
-/**
- * mimics escapeshellarg, even for windows
- * @param $string 	- the string to be escaped
- * @param $quote 	- true: do NOT remove quotes from result; false: do remove quotes
- * @return			- the escaped [quoted|unquoted] string
- */
-function cacti_escapeshellarg($string, $quote = true) {
-	global $config;
-
-	if ($string == '') {
-		return $string;
-	}
-
-	/* we must use an apostrophe to escape community names under Unix in case the user uses
-	characters that the shell might interpret. the ucd-snmp binaries on Windows flip out when
-	you do this, but are perfectly happy with a quotation mark. */
-	if ($config['cacti_server_os'] == 'unix') {
-		$string = escapeshellarg($string);
-		if ($quote) {
-			return $string;
+	if (file_exists($filename)) {
+		if ($config["cacti_server_os"] == "win32") {
+			pclose(popen("start \"Cactiplus\" /I \"" . $filename . "\" " . $args, "r"));
 		} else {
-			# remove first and last char
-			return substr($string, 1, (strlen($string)-2));
-		}
-	} else {
-		/* escapeshellarg takes care of different quotation for both linux and windows,
-		 * but unfortunately, it blanks out percent signs
-		 * we want to keep them, e.g. for GPRINT format strings
-		 * so we need to create our own escapeshellarg
-		 * on windows, command injection requires to close any open quotation first
-		 * so we have to escape any quotation here */
-		if (substr_count($string, CACTI_ESCAPE_CHARACTER)) {
-			$string = str_replace(CACTI_ESCAPE_CHARACTER, "\\" . CACTI_ESCAPE_CHARACTER, $string);
-		}
-
-		/* ... before we add our own quotation */
-		if ($quote) {
-			return CACTI_ESCAPE_CHARACTER . $string . CACTI_ESCAPE_CHARACTER;
-		} else {
-			return $string;
+			exec($filename . " " . $args . " > /dev/null &");
 		}
 	}
 }
@@ -305,37 +273,4 @@ function get_debug_prefix() {
     $dateTime = $dateTime->format('Y-m-d H:i:s.u');
 
     return sprintf('<[ %s | %7d ]> -- ', $dateTime, getmypid());
-}
-
-/* exec_background - executes a program in the background so that php can continue
-     to execute code in the foreground
-   @arg $filename - the full pathname to the script to execute
-   @arg $args - any additional arguments that must be passed onto the executable
-   @arg $redirect_args - any additional arguments for file re-direction.  Otherwise output goes to /dev/null */
-   function exec_background($filename, $args = '', $redirect_args = '') {
-	global $config, $debug;
-
-	if (file_exists($filename)) {
-		if ($config['cacti_server_os'] == 'win32') {
-			if (!file_escaped($filename)) {
-				$filename = cacti_escapeshellcmd($filename);
-			}
-
-			if ($redirect_args == '') {
-				pclose(popen('start "Cactiplus" /I ' . $filename . ' ' . $args, 'r'));
-			} else {
-				pclose(popen('start "Cactiplus" /I ' . $filename . ' ' . $args . ' ' . $redirect_args, 'r'));
-			}
-		} elseif ($redirect_args == '') {
-			exec($filename . ' ' . $args . ' > /dev/null 2>&1 &');
-		} else {
-			exec($filename . ' ' . $args . ' ' . $redirect_args . ' &');
-		}
-	} elseif (file_exists_2gb($filename)) {
-		if ($redirect_args == '') {
-			exec($filename . ' ' . $args . ' > /dev/null 2>&1 &');
-		} else {
-			exec($filename . ' ' . $args . ' ' . $redirect_args . ' &');
-		}
-	}
 }

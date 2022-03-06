@@ -69,7 +69,7 @@ function ss_grid_benchmarks_getvalue($clusterid, $index, $column) {
 		($benchmarks[$index]['status'] == 15) ||
 		($benchmarks[$index]['status'] == 17) ||
 		($benchmarks[$index]['status'] == 16)) {
-		return $benchmarks[$index][$column];
+		return trim($benchmarks[$index][$column]);
 	}else{
 		return 'U';
 	}

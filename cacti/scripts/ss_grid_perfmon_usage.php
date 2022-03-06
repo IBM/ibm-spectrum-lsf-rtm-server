@@ -48,7 +48,7 @@ function ss_grid_perfmon_usage($clusterid = 0, $metric = '') {
 	}
 
 	if (sizeof($values)) {
-		return 'total:' . $values['total'] . ' used:' . $values['used'] . ' free:' . $values['free'];
+		return 'total:' . trim($values['total']) . ' used:' . trim($values['used']) . ' free:' . trim($values['free']);
 	}else{
 		return 'total:0 used:0 free:0';
 	}

@@ -73,7 +73,7 @@ function ss_lic_servers($lic_server_id, $featurename, $column) {
 	if ($arr == '') {
 		return 0;
 	} else {
-		return $arr;
+		return trim($arr);
 	}
 }
 

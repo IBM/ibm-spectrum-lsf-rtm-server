@@ -584,8 +584,7 @@ function gridalarms_check_alarm($alarm, $force = false) {
 	gridalarms_debug('NOTE:  - ----- Check Started -----');
 
 	/* log durations for reporting */
-	list($micro,$seconds) = preg_split('/ /', microtime());
-	$start_time = $seconds + $micro;
+	$start_time = microtime(true);
 
 	/* date for last_runtime calculation */
 	$start_date = date('Y-m-d H:i:s');
@@ -1153,8 +1152,7 @@ function gridalarms_check_alarm($alarm, $force = false) {
 	gridalarms_debug('NOTE:  - ----- Check Completed -----');
 
 	/* log durations for reporting */
-	list($micro,$seconds) = preg_split('/ /', microtime());
-	$end_time = $seconds + $micro;
+	$end_time = microtime(true);
 
 	db_execute_prepared('UPDATE gridalarms_alarm
 		SET last_duration = ?, last_runtime = ?

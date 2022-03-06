@@ -437,7 +437,7 @@ function manageHostsFilter() {
 						<select id='clusterid'>
 							<option value='0'<?php if (get_request_var('clusterid') == '0') {?> selected<?php }?>><?php print __('All');?></option>
 							<?php
-							$clusters = db_fetch_assoc('SELECT * FROM grid_clusters ORDER BY clustername');
+							$clusters = grid_get_clusterlist();
 
 							if (cacti_sizeof($clusters)) {
 								foreach ($clusters as $cluster) {

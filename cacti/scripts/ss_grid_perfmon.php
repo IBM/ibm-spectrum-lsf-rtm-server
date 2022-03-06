@@ -95,7 +95,7 @@ function ss_grid_perfmon($clusterid = 0, $metric = '') {
 			AND clusterid=$clusterid");
 
 	if (sizeof($values)) {
-		return 'current:' . $values['current'] . ' avg:' . $values['avg'];
+		return 'current:' . trim($values['current']) . ' avg:' . trim($values['avg']);
 	}else{
 		return 'current:0 avg:0';
 	}

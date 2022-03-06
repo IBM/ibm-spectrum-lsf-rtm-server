@@ -140,9 +140,9 @@ function upgrade_to_10_2_0_11() {
 		('MBD file descriptor usage',3),
 		('Slot utilization',4),
 		('Memory utilization',4);");
-	execute_sql("Drop old table grid_clusters_perfmon_mbatchd_metrics", "DROP TABLE grid_clusters_perfmon_mbatchd_metrics");
-	execute_sql("Drop old table grid_clusters_perfmon_scheduler_metrics", "DROP TABLE grid_clusters_perfmon_scheduler_metrics");
-	execute_sql("Drop old table grid_clusters_perfmon_usage_metrics", "DROP TABLE grid_clusters_perfmon_usage_metrics");
+	execute_sql("Drop old table grid_clusters_perfmon_mbatchd_metrics", "DROP TABLE IF EXISTS grid_clusters_perfmon_mbatchd_metrics");
+	execute_sql("Drop old table grid_clusters_perfmon_scheduler_metrics", "DROP TABLE IF EXISTS grid_clusters_perfmon_scheduler_metrics");
+	execute_sql("Drop old table grid_clusters_perfmon_usage_metrics", "DROP TABLE IF EXISTS grid_clusters_perfmon_usage_metrics");
 
 	//Fix 255131, graph template that is percentage based should has a fixed axis at 110.
 	$update_graph_templates = array(
@@ -227,14 +227,10 @@ function upgrade_to_10_2_0_11() {
 	$data['primary']   = array('clusterid','name');
 	db_update_table('grid_guarantee_pool', $data);
 
-	$column_arr= array(
-		'owner' => "ADD COLUMN `owner` varchar(40) NOT NULL default '' AFTER `host`"
-	);
-	$index_arr = array(
-		"clusterid_host" => "ADD INDEX `clusterid_host` (`clusterid`, `host`)",
-		"clusterid_owner" => "ADD INDEX `clusterid_owner` (`clusterid`, `owner`)"
-	);
-	add_columns_indexes("grid_guarantee_pool_hosts", $column_arr, $index_arr);
+	$data = array();
+	$data['columns'][] = array('name' => 'owner', 'type' => 'varchar(255)', 'NULL' => false, 'default' => '-', 'after' => 'host');
+	$data['primary']   = array('clusterid','name','host');
+	db_update_table('grid_guarantee_pool_hosts', $data);
 
 	$data = array();
 	$data['columns'][] = array('name' => 'lsf_strict_checking', 'type' => 'varchar(10)', 'NULL' => false, 'default' => 'N', 'after' => 'lsf_ego');
@@ -249,8 +245,7 @@ function upgrade_to_10_2_0_11() {
 
 	add_index("host", "clusterid_host", "ADD INDEX `clusterid_host` (`clusterid`, `hostname`);");
 
-
-	cacti_log('Importing RTM templates..', true, 'UPGRADE');
+	cacti_log('NOTE: Importing RTM templates for 10.2.0.11 ...', true, 'UPGRADE');
 	$grid_templates = array(
 		"1" => array (
 			'value' => 'GRID - Pool - Effective Utilization',

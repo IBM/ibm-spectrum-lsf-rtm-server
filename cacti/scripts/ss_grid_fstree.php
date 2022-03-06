@@ -109,7 +109,7 @@ function ss_grid_fstree_getvalue($clusterid, $index, $column) {
 	}
 
 	if (!empty($value)) {
-		return $value;
+		return trim($value);
 	} else {
 		return '0';
 	}

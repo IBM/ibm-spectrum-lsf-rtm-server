@@ -612,14 +612,15 @@ function displayHostGraphs($host_id, $quietMode = false) {
 	}
 
 	$graphs = db_fetch_assoc_prepared('SELECT
-			graph_templates_graph.local_graph_id AS id,
-			graph_templates_graph.title_cache AS name,
-			graph_templates.name AS template_name
-			FROM (graph_local, graph_templates_graph)
-			LEFT JOIN graph_templates ON (graph_local.graph_template_id = graph_templates.id)
-			WHERE graph_local.id = graph_templates_graph.local_graph_id
-			AND graph_local.host_id = ?
-			ORDER BY graph_templates_graph.local_graph_id', array($host_id));
+		graph_templates_graph.local_graph_id AS id,
+		graph_templates_graph.title_cache AS name,
+		graph_templates.name AS template_name
+		FROM (graph_local, graph_templates_graph)
+		LEFT JOIN graph_templates ON (graph_local.graph_template_id = graph_templates.id)
+		WHERE graph_local.id = graph_templates_graph.local_graph_id
+		AND graph_local.host_id = ?
+		ORDER BY graph_templates_graph.local_graph_id',
+		array($host_id));
 
 	if (cacti_sizeof($graphs)) {
 		foreach ($graphs as $graph) {
@@ -656,3 +657,4 @@ function displayUsers($quietMode = false) {
 		print PHP_EOL;
 	}
 }
+

@@ -24,8 +24,7 @@ include(dirname(__FILE__) . '/../../include/cli_check.php');
 global $cnn_id;
 
 /* take the start time to log performance data */
-list($micro,$seconds) = preg_split("/ /", microtime());
-$start = $seconds + $micro;
+$start = microtime(true);
 
 /* get the srm polling cycle */
 ini_set("max_execution_time", "0");
@@ -74,8 +73,7 @@ if (read_config_option('grid_collection_enabled') != 'on') {
 }
 
 /* record the start time */
-list($micro,$seconds) = preg_split("/ /", microtime());
-$start = $seconds + $micro;
+$start = microtime(true);
 
 /* we have two time counters.  The first determines the maintenance time
  * the second determines how far to look back depending on the number
@@ -171,8 +169,7 @@ if ($run_maint) {
 	$drecords = db_affected_rows();
 
 	/* record the end time */
-	list($micro,$seconds) = preg_split("/ /", microtime());
-	$maint = $seconds + $micro;
+	$maint = microtime(true);
 
 	$log_text = sprintf("Time:%01.4f Records:%s Purged:%s", ($maint-$start), $mrecords, $drecords);
 
@@ -213,8 +210,7 @@ if ($precords == 0) {
 }
 
 /* record the end time */
-list($micro,$seconds) = preg_split("/ /", microtime());
-$end = $seconds + $micro;
+$end = microtime(true);
 
 $log_text = sprintf("Time:%01.4f Records:%s", ($end-$start), $precords);
 cacti_log("STATS GRIDPEND: $log_text", false, "SYSTEM");

@@ -713,9 +713,9 @@ function license_config_settings(){
 		$settings['license'] = $temp;
 	}
 
-	$adv_option_settings = array (
+	$qcom_option_settings = array (
 		'license_header1' => array(
-			'friendly_name' => 'Advance License Service Options File Settings',
+			'friendly_name' => 'License Service Options File Settings',
 			'method' => 'spacer'
 		),
 		'lic_use_ssh_for_options' => array(
@@ -803,7 +803,7 @@ function license_config_settings(){
 	);
 
 	if (read_config_option('enable_option_in_file_collection') == 'on') {
-		$settings['license'] = array_merge($settings['license'], $adv_option_settings);
+		$settings['license'] = array_merge($settings['license'], $qcom_option_settings);
 	}
 
 	$tabs_lic = array(

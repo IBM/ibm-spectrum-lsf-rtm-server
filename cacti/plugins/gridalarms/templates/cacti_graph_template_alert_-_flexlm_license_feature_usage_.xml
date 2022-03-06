@@ -1,16 +1,20 @@
 <!-- $Id$ -->
 <cacti>
-	<hash_000021b6f7e8df0fe1f326542d0489ef761708>
+	<hash_000102b6f7e8df0fe1f326542d0489ef761708>
 		<name>Alert - LM License Feature Usage %</name>
 		<graph>
 			<t_title></t_title>
 			<title>|host_description| - Alert - LM License Feature Usage % - |input_feature|</title>
+			<t_vertical_label></t_vertical_label>
+			<vertical_label></vertical_label>
 			<t_image_format_id></t_image_format_id>
 			<image_format_id>1</image_format_id>
 			<t_height></t_height>
 			<height>120</height>
 			<t_width></t_width>
 			<width>500</width>
+			<t_base_value></t_base_value>
+			<base_value>1024</base_value>
 			<t_slope_mode></t_slope_mode>
 			<slope_mode>on</slope_mode>
 			<t_auto_scale></t_auto_scale>
@@ -23,95 +27,122 @@
 			<scale_log_units></scale_log_units>
 			<t_auto_scale_rigid></t_auto_scale_rigid>
 			<auto_scale_rigid></auto_scale_rigid>
-			<t_auto_padding></t_auto_padding>
-			<auto_padding>on</auto_padding>
-			<t_export></t_export>
-			<export>on</export>
 			<t_upper_limit></t_upper_limit>
 			<upper_limit>100</upper_limit>
 			<t_lower_limit></t_lower_limit>
 			<lower_limit>0</lower_limit>
-			<t_base_value></t_base_value>
-			<base_value>1024</base_value>
 			<t_unit_value></t_unit_value>
 			<unit_value></unit_value>
 			<t_unit_exponent_value></t_unit_exponent_value>
 			<unit_exponent_value></unit_exponent_value>
-			<t_vertical_label></t_vertical_label>
-			<vertical_label></vertical_label>
+			<t_unit_length></t_unit_length>
+			<unit_length></unit_length>
+			<t_no_gridfit></t_no_gridfit>
+			<no_gridfit></no_gridfit>
+			<t_alt_y_grid></t_alt_y_grid>
+			<alt_y_grid></alt_y_grid>
+			<t_right_axis></t_right_axis>
+			<right_axis></right_axis>
+			<t_right_axis_label></t_right_axis_label>
+			<right_axis_label></right_axis_label>
+			<t_right_axis_format></t_right_axis_format>
+			<right_axis_format></right_axis_format>
+			<t_right_axis_formatter></t_right_axis_formatter>
+			<right_axis_formatter></right_axis_formatter>
+			<t_left_axis_formatter></t_left_axis_formatter>
+			<left_axis_formatter></left_axis_formatter>
+			<t_auto_padding></t_auto_padding>
+			<auto_padding>on</auto_padding>
+			<t_dynamic_labels></t_dynamic_labels>
+			<dynamic_labels></dynamic_labels>
+			<t_force_rules_legend></t_force_rules_legend>
+			<force_rules_legend></force_rules_legend>
+			<t_tab_width></t_tab_width>
+			<tab_width>30</tab_width>
+			<t_legend_position></t_legend_position>
+			<legend_position></legend_position>
+			<t_legend_direction></t_legend_direction>
+			<legend_direction></legend_direction>
 		</graph>
 		<items>
-			<hash_100021485416e7cdc944ef774cbedcf62706b9>
-				<task_item_id>hash_080021244d6abfa622e1b3247cf288cdbd7980</task_item_id>
+			<hash_100102485416e7cdc944ef774cbedcf62706b9>
+				<graph_type_id>7</graph_type_id>
+				<task_item_id>hash_080102244d6abfa622e1b3247cf288cdbd7980</task_item_id>
 				<color_id>7EE600</color_id>
 				<alpha>FF</alpha>
-				<graph_type_id>7</graph_type_id>
 				<consolidation_function_id>1</consolidation_function_id>
 				<cdef_id>0</cdef_id>
+				<vdef_id>0</vdef_id>
+				<shift></shift>
 				<value></value>
-				<gprint_id>hash_0600214e72328b57f5f2bb08a83a477b6cd10c</gprint_id>
+				<gprint_id>hash_0601024e72328b57f5f2bb08a83a477b6cd10c</gprint_id>
+				<textalign></textalign>
 				<text_format>License usage percent</text_format>
 				<hard_return></hard_return>
+				<line_width>0.00</line_width>
+				<dashes></dashes>
+				<dash_offset></dash_offset>
 				<sequence>1</sequence>
-			</hash_100021485416e7cdc944ef774cbedcf62706b9>
+			</hash_100102485416e7cdc944ef774cbedcf62706b9>
 		</items>
 		<inputs>
-			<hash_090021243babe126ed30dfad5c239d2badf1c1>
+			<hash_090102243babe126ed30dfad5c239d2badf1c1>
 				<name>Data Source [usage]</name>
 				<description></description>
 				<column_name>task_item_id</column_name>
-				<items>hash_000021485416e7cdc944ef774cbedcf62706b9</items>
-			</hash_090021243babe126ed30dfad5c239d2badf1c1>
+				<items>hash_000102485416e7cdc944ef774cbedcf62706b9</items>
+			</hash_090102243babe126ed30dfad5c239d2badf1c1>
 		</inputs>
-	</hash_000021b6f7e8df0fe1f326542d0489ef761708>
-	<hash_0100212773a868ffa8360cfbd7e06771c7d672>
+	</hash_000102b6f7e8df0fe1f326542d0489ef761708>
+	<hash_0101022773a868ffa8360cfbd7e06771c7d672>
 		<name>Alert - LM License Feature Usage %</name>
 		<ds>
 			<t_name></t_name>
 			<name>|host_description| - Alert - LM License Feature Usage % - |input_feature|</name>
-			<data_input_id>hash_0300219fbb886a8e1a94f5aa39c3cdccabda77</data_input_id>
-			<t_rra_id></t_rra_id>
+			<data_source_path></data_source_path>
+			<data_input_id>hash_0301029fbb886a8e1a94f5aa39c3cdccabda77</data_input_id>
+			<t_data_source_profile_id></t_data_source_profile_id>
+			<data_source_profile_id>hash_200102d62c52891f4f9688729a5bc9fad91b18</data_source_profile_id>
 			<t_rrd_step></t_rrd_step>
 			<rrd_step>300</rrd_step>
 			<t_active></t_active>
 			<active>on</active>
-			<rra_items>hash_150021c21df5178e5c955013591239eb0afd46|hash_1500210d9c0af8b8acdc7807943937b3208e29|hash_1500216fc2d038fb42950138b0ce3e9874cc60|hash_150021e36f3adb9f152adfa5dc50fd2b23337e</rra_items>
 		</ds>
 		<items>
-			<hash_080021244d6abfa622e1b3247cf288cdbd7980>
+			<hash_080102244d6abfa622e1b3247cf288cdbd7980>
 				<t_data_source_name></t_data_source_name>
 				<data_source_name>usage</data_source_name>
 				<t_rrd_minimum></t_rrd_minimum>
 				<rrd_minimum>0</rrd_minimum>
 				<t_rrd_maximum></t_rrd_maximum>
-				<rrd_maximum>0</rrd_maximum>
+				<rrd_maximum>U</rrd_maximum>
 				<t_data_source_type_id></t_data_source_type_id>
 				<data_source_type_id>1</data_source_type_id>
 				<t_rrd_heartbeat></t_rrd_heartbeat>
 				<rrd_heartbeat>600</rrd_heartbeat>
 				<t_data_input_field_id></t_data_input_field_id>
-				<data_input_field_id>hash_07002139605987a254a1f6c4f919c0d4300c27</data_input_field_id>
-			</hash_080021244d6abfa622e1b3247cf288cdbd7980>
+				<data_input_field_id>hash_07010239605987a254a1f6c4f919c0d4300c27</data_input_field_id>
+			</hash_080102244d6abfa622e1b3247cf288cdbd7980>
 		</items>
 		<data>
 			<item_000>
-				<data_input_field_id>hash_070021b0be095d49912796576a076c53c5448b</data_input_field_id>
+				<data_input_field_id>hash_070102b0be095d49912796576a076c53c5448b</data_input_field_id>
 				<t_value></t_value>
 				<value></value>
 			</item_000>
 			<item_001>
-				<data_input_field_id>hash_070021fc77c2cd0217750a5c225b671b5f79d5</data_input_field_id>
+				<data_input_field_id>hash_070102fc77c2cd0217750a5c225b671b5f79d5</data_input_field_id>
 				<t_value>on</t_value>
 				<value></value>
 			</item_001>
 		</data>
-	</hash_0100212773a868ffa8360cfbd7e06771c7d672>
-	<hash_0300219fbb886a8e1a94f5aa39c3cdccabda77>
+	</hash_0101022773a868ffa8360cfbd7e06771c7d672>
+	<hash_0301029fbb886a8e1a94f5aa39c3cdccabda77>
 		<name>Alert - License Usage %</name>
 		<type_id>5</type_id>
-		<input_string>&lt;path_cacti&gt;/scripts/ss_alert_lic_flexlm_usage.php ss_alert_lic_flexlm_usage &lt;lic_server_id&gt; &lt;feature&gt;</input_string>
+		<input_string>PHBhdGhfY2FjdGk+L3NjcmlwdHMvc3NfYWxlcnRfbGljX2ZsZXhsbV91c2FnZS5waHAgc3NfYWxlcnRfbGljX2ZsZXhsbV91c2FnZSA8bGljX3NlcnZlcl9pZD4gPGZlYXR1cmU+</input_string>
 		<fields>
-			<hash_070021b0be095d49912796576a076c53c5448b>
+			<hash_070102b0be095d49912796576a076c53c5448b>
 				<name>License Server ID</name>
 				<update_rra></update_rra>
 				<regexp_match></regexp_match>
@@ -119,8 +150,8 @@
 				<type_code>lic_server_id</type_code>
 				<input_output>in</input_output>
 				<data_name>lic_server_id</data_name>
-			</hash_070021b0be095d49912796576a076c53c5448b>
-			<hash_070021fc77c2cd0217750a5c225b671b5f79d5>
+			</hash_070102b0be095d49912796576a076c53c5448b>
+			<hash_070102fc77c2cd0217750a5c225b671b5f79d5>
 				<name>License Feature Name</name>
 				<update_rra></update_rra>
 				<regexp_match></regexp_match>
@@ -128,8 +159,8 @@
 				<type_code></type_code>
 				<input_output>in</input_output>
 				<data_name>feature</data_name>
-			</hash_070021fc77c2cd0217750a5c225b671b5f79d5>
-			<hash_07002139605987a254a1f6c4f919c0d4300c27>
+			</hash_070102fc77c2cd0217750a5c225b671b5f79d5>
+			<hash_07010239605987a254a1f6c4f919c0d4300c27>
 				<name>Usage percentage</name>
 				<update_rra>on</update_rra>
 				<regexp_match></regexp_match>
@@ -137,8 +168,8 @@
 				<type_code></type_code>
 				<input_output>out</input_output>
 				<data_name>usage</data_name>
-			</hash_07002139605987a254a1f6c4f919c0d4300c27>
-			<hash_0700212a223969746c21c78ddf9f75b00ad389>
+			</hash_07010239605987a254a1f6c4f919c0d4300c27>
+			<hash_0701022a223969746c21c78ddf9f75b00ad389>
 				<name>License In Use</name>
 				<update_rra>on</update_rra>
 				<regexp_match></regexp_match>
@@ -146,8 +177,8 @@
 				<type_code></type_code>
 				<input_output>out</input_output>
 				<data_name>inuse</data_name>
-			</hash_0700212a223969746c21c78ddf9f75b00ad389>
-			<hash_070021da2cf420e220e8c86f6baf5d0b2a6913>
+			</hash_0701022a223969746c21c78ddf9f75b00ad389>
+			<hash_070102da2cf420e220e8c86f6baf5d0b2a6913>
 				<name>Total Licenses</name>
 				<update_rra>on</update_rra>
 				<regexp_match></regexp_match>
@@ -155,8 +186,8 @@
 				<type_code></type_code>
 				<input_output>out</input_output>
 				<data_name>max</data_name>
-			</hash_070021da2cf420e220e8c86f6baf5d0b2a6913>
-			<hash_070021566c052775f9323e868d0b8ddfbf3edc>
+			</hash_070102da2cf420e220e8c86f6baf5d0b2a6913>
+			<hash_070102566c052775f9323e868d0b8ddfbf3edc>
 				<name>Queued Licenses</name>
 				<update_rra>on</update_rra>
 				<regexp_match></regexp_match>
@@ -164,8 +195,8 @@
 				<type_code></type_code>
 				<input_output>out</input_output>
 				<data_name>queued</data_name>
-			</hash_070021566c052775f9323e868d0b8ddfbf3edc>
-			<hash_07002105f6883b5d2926432af7b38435a4bbdb>
+			</hash_070102566c052775f9323e868d0b8ddfbf3edc>
+			<hash_07010205f6883b5d2926432af7b38435a4bbdb>
 				<name>Reserved Licenses</name>
 				<update_rra>on</update_rra>
 				<regexp_match></regexp_match>
@@ -173,43 +204,45 @@
 				<type_code></type_code>
 				<input_output>out</input_output>
 				<data_name>reserved</data_name>
-			</hash_07002105f6883b5d2926432af7b38435a4bbdb>
+			</hash_07010205f6883b5d2926432af7b38435a4bbdb>
 		</fields>
-	</hash_0300219fbb886a8e1a94f5aa39c3cdccabda77>
-	<hash_150021c21df5178e5c955013591239eb0afd46>
-		<name>Daily (5 Minute Average)</name>
+	</hash_0301029fbb886a8e1a94f5aa39c3cdccabda77>
+	<hash_200102d62c52891f4f9688729a5bc9fad91b18>
+		<name>5 Minute Collection</name>
+		<step>300</step>
+		<heartbeat>600</heartbeat>
 		<x_files_factor>0.5</x_files_factor>
-		<steps>1</steps>
-		<rows>600</rows>
-		<timespan>86400</timespan>
+		<default>on</default>
 		<cf_items>1|2|3|4</cf_items>
-	</hash_150021c21df5178e5c955013591239eb0afd46>
-	<hash_1500210d9c0af8b8acdc7807943937b3208e29>
-		<name>Weekly (30 Minute Average)</name>
-		<x_files_factor>0.5</x_files_factor>
-		<steps>6</steps>
-		<rows>700</rows>
-		<timespan>604800</timespan>
-		<cf_items>1|2|3|4</cf_items>
-	</hash_1500210d9c0af8b8acdc7807943937b3208e29>
-	<hash_1500216fc2d038fb42950138b0ce3e9874cc60>
-		<name>Monthly (2 Hour Average)</name>
-		<x_files_factor>0.5</x_files_factor>
-		<steps>24</steps>
-		<rows>775</rows>
-		<timespan>2678400</timespan>
-		<cf_items>1|2|3|4</cf_items>
-	</hash_1500216fc2d038fb42950138b0ce3e9874cc60>
-	<hash_150021e36f3adb9f152adfa5dc50fd2b23337e>
-		<name>Yearly (1 Day Average)</name>
-		<x_files_factor>0.5</x_files_factor>
-		<steps>288</steps>
-		<rows>797</rows>
-		<timespan>33053184</timespan>
-		<cf_items>1|2|3|4</cf_items>
-	</hash_150021e36f3adb9f152adfa5dc50fd2b23337e>
-	<hash_0600214e72328b57f5f2bb08a83a477b6cd10c>
+		<items>
+			<item_000>
+				<name>Daily (5 Minute Average)</name>
+				<steps>1</steps>
+				<rows>600</rows>
+				<timespan>86400</timespan>
+			</item_000>
+			<item_001>
+				<name>Weekly (30 Minute Average)</name>
+				<steps>6</steps>
+				<rows>700</rows>
+				<timespan>604800</timespan>
+			</item_001>
+			<item_002>
+				<name>Monthly (2 Hour Average)</name>
+				<steps>24</steps>
+				<rows>775</rows>
+				<timespan>2618784</timespan>
+			</item_002>
+			<item_003>
+				<name>Yearly (1 Day Average)</name>
+				<steps>288</steps>
+				<rows>797</rows>
+				<timespan>31536000</timespan>
+			</item_003>
+		</items>
+	</hash_200102d62c52891f4f9688729a5bc9fad91b18>
+	<hash_0601024e72328b57f5f2bb08a83a477b6cd10c>
 		<name>Percent</name>
 		<gprint_text>%8.1lf %%</gprint_text>
-	</hash_0600214e72328b57f5f2bb08a83a477b6cd10c>
+	</hash_0601024e72328b57f5f2bb08a83a477b6cd10c>
 </cacti>

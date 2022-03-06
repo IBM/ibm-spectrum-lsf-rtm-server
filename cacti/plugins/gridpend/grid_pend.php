@@ -23,6 +23,7 @@ $guest_account = true;
 chdir('../../');
 include('./include/auth.php');
 include('./plugins/grid/lib/grid_partitioning.php');
+include_once('./plugins/grid/lib/grid_functions.php');
 include_once('./plugins/RTM/include/fusioncharts/fusioncharts.php');
 include_once($config['library_path'] . '/rtm_functions.php');
 
@@ -579,12 +580,9 @@ function gridpend_filter_table() {
 							<select id='clusterid'>
 								<option value='-1'<?php if (get_request_var('clusterid') == '-1') {?> selected<?php }?>><?php print __('N/A', 'gridpend');?></option>
 								<?php
-								$clusters = gridpend_getnames('clusterid', 0, get_request_var('timespan'));
-								if (cacti_sizeof($clusters)) {
-									$clusters = db_fetch_assoc('SELECT clusterid, clustername
-										FROM grid_clusters
-										WHERE clusterid IN (' . implode(',',$clusters) . ')');
-
+								$clusterids = gridpend_getnames('clusterid', 0, get_request_var('timespan'));
+								if (cacti_sizeof($clusterids)) {
+									$clusters = grid_get_clusterlist(false, $clusterids);
 									if (cacti_sizeof($clusters)) {
 										foreach ($clusters as $cluster) {
 											print '<option value="' . $cluster['clusterid'] .'"'; if (get_request_var('clusterid') == $cluster['clusterid']) { print ' selected'; } print '>' . html_escape($cluster['clustername']) . '</option>';

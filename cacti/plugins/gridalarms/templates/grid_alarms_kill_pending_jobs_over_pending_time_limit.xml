@@ -132,13 +132,13 @@
 				<ds_type>1</ds_type>
 				<type>1</type>
 				<db_table></db_table>
-				<sql_query>SELECT gj.clusterid, gc.clustername, jobid, indexid, submit_time, stat, user, 
-effectivePendingTimeLimit, pend_time 
-FROM grid_jobs AS gj, grid_clusters AS gc 
-WHERE gj.clusterid = gc.clusterid 
-AND stat in (&#039;PEND&#039;,&#039;USUSP&#039;, &#039;PSUSP&#039;, &#039;SSUSP&#039;) 
-AND effectivePendingTimeLimit &gt;0 
-AND pend_time &gt; effectivePendingTimeLimit 
+				<sql_query>SELECT gj.clusterid, gc.clustername, jobid, indexid, submit_time, stat, user,
+effectivePendingTimeLimit, pend_time
+FROM grid_jobs AS gj, grid_clusters AS gc
+WHERE gj.clusterid = gc.clusterid
+AND stat in (&#039;PEND&#039;,&#039;USUSP&#039;, &#039;PSUSP&#039;, &#039;SSUSP&#039;)
+AND effectivePendingTimeLimit &gt;0
+AND pend_time &gt; effectivePendingTimeLimit
 
 </sql_query>
 				<script_thold></script_thold>

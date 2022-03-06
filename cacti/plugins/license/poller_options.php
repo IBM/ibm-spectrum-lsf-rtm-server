@@ -25,16 +25,14 @@ include_once($config["library_path"] . '/rtm_functions.php');
 include_once(dirname(__FILE__) . '/include/lic_functions.php');
 
 /* take the start time to log performance data */
-list($micro,$seconds) = preg_split('/ /', microtime());
-$start = $seconds + $micro;
+$start = microtime(true);
 
 /* get the lic polling cycle */
 ini_set('max_execution_time', '0');
 ini_set('memory_limit', '-1');
 
 /* get the start time*/
-list($micro,$seconds) = preg_split("/ /", microtime());
-$current_date_time = round($seconds + $micro);
+$current_date_time = time();
 
 /** process callling arguments*/
 $parms = $_SERVER['argv'];
@@ -129,8 +127,7 @@ if ($runme || $forcerun) {
 	if (detect_and_correct_running_processes(0, 'LICFLEXOPTIONS', 3600)){
 		lic_debug('About to enter interval stats updating process');
 
-		list($micro,$seconds) = preg_split('/ /', microtime());
-		$start = $seconds + $micro;
+		$start = microtime(true);
 
 		db_execute("UPDATE lic_ldap_to_flex_groups SET present=0");
 
@@ -768,8 +765,7 @@ function log_lic_statistics($lic_id=0, $from_gui=false) {
 	global $start;
 
 	/* take time and log performance data */
-	list($micro,$seconds) = preg_split("/ /", microtime());
-	$end = $seconds + $micro;
+	$end = microtime(true);
 
 	$cacti_stats = sprintf("Time:%01.4f", round($end-$start,4));
 

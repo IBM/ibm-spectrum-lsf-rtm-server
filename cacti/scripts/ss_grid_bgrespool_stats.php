@@ -84,7 +84,7 @@ function ss_grid_bgrespool_stats_getvalue($clusterid, $name, $column) {
 		$arr = 0;
 	}
 
-	return $arr;
+	return trim($arr);
 }
 
 function ss_grid_bgrespool_stats_getnames($clusterid) {

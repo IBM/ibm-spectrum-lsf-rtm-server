@@ -69,5 +69,5 @@ function ss_grid_amem($hostname = '', $clusterid = 0, $summary = 'no') {
 		'mem:'      . $job_stats['a_mem'] . ' ' .
 		'swp:'      . $job_stats['a_swp'];
 
-	return $result;
+	return trim($result);
 }

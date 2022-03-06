@@ -145,7 +145,7 @@ function ss_grid_licenses_getvalue($hostname, $featurename, $column) {
 	if ($arr == '') {
 		return 0;
 	} else {
-		return $arr;
+		return trim($arr);
 	}
 }
 

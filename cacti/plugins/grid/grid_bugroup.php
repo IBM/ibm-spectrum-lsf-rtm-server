@@ -256,7 +256,7 @@ function userGroupFilter() {
 						<select id='clusterid'>
 							<option value='0'<?php if (get_request_var('clusterid') == '0') {?> selected<?php }?>><?php print __('All', 'grid');?></option>
 							<?php
-							$clusters = db_fetch_assoc('SELECT * FROM grid_clusters ORDER BY clustername');
+							$clusters = grid_get_clusterlist();
 							if (cacti_sizeof($clusters)) {
 								foreach ($clusters as $cluster) {
 									print '<option value="' . $cluster['clusterid'] .'"'; if (get_request_var('clusterid') == $cluster['clusterid']) { print ' selected'; } print '>' . $cluster['clustername'] . '</option>';
@@ -530,7 +530,7 @@ function grid_view_ugroups() {
 					array($cacti_host, $group));
 
 				if (cacti_sizeof($local_graph_ids)) {
-					$graph_select = 'action=preview&page=1&reset=1&graph_template_id=-1&rfilter=&style=selective&host_id=-1&graph_add=';
+					$graph_select = '&graph_add=';
 
 					foreach($local_graph_ids as $graph) {
 						$graph_select .= $graph['id'] . '%2C';
@@ -551,7 +551,7 @@ function grid_view_ugroups() {
 				<a class='pic' href='<?php print html_escape($config['url_path'] . 'plugins/grid/grid_bjobs.php?action=viewlist&reset=1&clusterid=' . $ugroup['clusterid'] . '&usergroup=' . $group . '&status=ACTIVE&page=1');?>'><img src='<?php print $config['url_path'];?>plugins/grid/images/view_jobs.gif' alt='' title='<?php print __esc('View Active Jobs', 'grid');?>'></a>
 
 				<?php if (isset($graph_select)) {?>
-				<a class='pic' href='<?php print html_escape($config['url_path'] . 'graph_view.php?' . $graph_select);?>'><img src='<?php print $config['url_path'];?>plugins/grid/images/view_graphs.gif' alt='' title='<?php print __esc('View User Group Graphs', 'grid');?>'></a>
+				<a class='pic' href='<?php print html_escape($config['url_path'] . 'graph_view.php?action=preview&page=1&graph_template_id=-1&rfilter=&style=selective&host_id=-1&' . $graph_select);?>'><img src='<?php print $config['url_path'];?>plugins/grid/images/view_graphs.gif' alt='' title='<?php print __esc('View User Group Graphs', 'grid');?>'></a>
 				<?php }?>
 			</td>
 			<?php

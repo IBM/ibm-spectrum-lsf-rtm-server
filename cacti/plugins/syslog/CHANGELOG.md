@@ -1,5 +1,9 @@
 ## ChangeLog
 
+--- 3.2 ---
+
+* issue#159: Sync 'syslog' schema cross Traditional/Partitioned mode to avoid audit issue
+
 --- 3.1 ---
 
 * issue#140: The indicator is not removed upon completion when export syslog

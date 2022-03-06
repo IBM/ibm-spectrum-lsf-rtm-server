@@ -1,5 +1,16 @@
 Cacti CHANGELOG
 
+1.2.20
+-issue#4435: Unable to Save Graph Settings from the Graphs pages
+-issue#4482: Graph Automation slowed by in-efficient index selection when creating Graphs
+-issue#4589: db_update_table should ALTER table engine/row_format/charset before ADD/ALTER column/index
+
+1.2.19
+-issue#4421: db_update_table function can not alter table from signed to unsigned
+-issue#4435: Unable to Save Graph Settings from the Graphs pages
+-issue#4437: Graph Template Cache is nullified too often when Graph Automation is running
+-issue#4438: When Adding a Data Query to a Device, no Progress Spinner is shown
+
 1.2.18
 -security#4276: Lack of escaping on parameter graph_nolegend can lead to XSS exposure in graph_realtime.php
 -security#4282: Session IDs are not always recreated when logging out under PHP 5
@@ -12,7 +23,7 @@ Cacti CHANGELOG
 -issue#3392: Allow plugins to customize device listing page
 -issue#3879: Allow Graph/Data Source with custom fields to prompt during manual creation
 -issue#3969: SNMPv3 Password field does not correctly limit to size of database field
--issue#3976: Font colors are being overridden leading to display issues by ddb4github
+-issue#3976: Font colors are being overridden leading to display issues
 -issue#3977: Database upgrade may fail when using upgrade_database.php
 -issue#3978: Input Validation was not handled correctly when displaying graph trees
 -issue#3981: Missing API include leads to runtime errors in Automation
@@ -25,6 +36,7 @@ Cacti CHANGELOG
 -issue#4043: Boost can become unresponsive when large number of archive tables exist
 -issue#4079: When checking current timestamps, make audit replace mysql function usage with preferred CURRENT_TIMESTAMP variable
 -issue#4100: When viewing User Admins, a division by zero error can sometimes be seen
+-issue#4130: On large systens, Graph creation can become unresponsive due to large number of data sources
 -issue#4251: Caching of Graph Titles can be incorrect
 -feature#3513: Add hooks for plugins to show customize graph source and customize template url
 
@@ -103,7 +115,7 @@ Cacti CHANGELOG
 -issue#3881: Correct issue when file is unreadable reporting no file was specified
 -issue#3883: Orphaned Plugins have no option to be removed
 -issue#3884: Update MySQL recommendations for Character Set and Colation
--issue#3888: Correct sorting of IP addresses to be numeric not alpha by JamesTilt
+-issue#3888: Correct sorting of IP addresses to be numeric not alpha
 -issue#3890: Saving a device should not always repopulate the poller cache
 -feature: Update FontAwesome to Version 5.14
 
@@ -120,7 +132,7 @@ Cacti CHANGELOG
 
 1.2.13
 -security#3544: jQuery XSS vulnerabilities require vendor package update (CVE-2020-11022 / CVE-2020-11023)
--security#3549: Lack of escaping on some pages can lead to XSS exposure
+-security#3549: Lack of escaping on some pages can lead to XSS exposure (CVE-2020-23226)
 -security#3582: Update PHPMailer to 6.1.6 (CVE-2020-13625)
 -security#3622: SQL Injection vulnerability due to input validation failure when editing colors (CVE-2020-14295)
 -security#3628: Lack of escaping on template import can lead to XSS exposure
@@ -493,7 +505,7 @@ Cacti CHANGELOG
 -issue#2877: When attempting to send report, undefined function 'get_tinespan' messages appear
 -issue#2878: Function get_magic_quotes_gpc() is now deprecated in PHP 7.4
 -issue#2879: Switching from authPriv to authNoPriv produces error when saving
--issue#2884: Replication continues to occur when poller has been disabled by sysres-dev
+-issue#2884: Replication continues to occur when poller has been disabled
 -issue#2891: Script server script ss_fping.php generates error when not called by script server
 -issue#2901: Poller overrun warning message is badly worded
 -issue#2902: Mailer incorrectly reports it is sending to noone
@@ -524,13 +536,13 @@ Cacti CHANGELOG
 -issue#2723: When replicating to remote pollers, Undefined Variable errors may be seen
 -issue#2724: When graphing HRULE items, 'Only Variables should be passed by reference' error may be seen
 -issue#2725: When viewing logs in utilities, filenames should be limited the same as clog
--issue#2726: During Automation logging, include the Rule ID that triggers the creation of an item by xmacan
+-issue#2726: During Automation logging, include the Rule ID that triggers the creation of an item
 -issue#2732: When using basic authentication, automatically strip any @domain information
 -issue#2734: Allow non-english labels to be used on Graph Templates
 -issue#2727: When using Polling Hosts Template, warnings can be issued when CMD.PHP is the poller
 -issue#2733: When processing SNMP data, space delimited hex strings do not always convert into MAC addresses
 -issue#2735: Mouse cursor should show as default pointer if column is not sortable
--issue#2736: When using MySQL 8 or above, 'function' is considered a reserved word unless quoted by xmacan
+-issue#2736: When using MySQL 8 or above, 'function' is considered a reserved word unless quoted
 -issue#2741: Various errors can occur due to undefined or incorrect variable names
 -issue#2742: Various errors can occur due to undefined or incorrect variable names
 -issue#2743: Attempts to close a tooltip when no tooltip has been set may cause errors
@@ -569,9 +581,9 @@ Cacti CHANGELOG
 -issue#2818: Automation can sometimes incorrectly add duplicate devices with the same sysname
 -issue#2820: When path is blank, is_resource_writable() will generate 'Uninitialized string offset: -1'
 -issue#2821: When the desired locale can not be located, a number format issue may occur
--feature#2728: Update phpseclib to 2.0.17 by DavidLiedke
--feature#2809: Update c3.js & d3.js by DavidLiedke
--feature#2730: Update jstree.js to 3.3.8 by DavidLiedke
+-feature#2728: Update phpseclib to 2.0.17
+-feature#2809: Update c3.js & d3.js
+-feature#2730: Update jstree.js to 3.3.8
 -feature#2754: Allow Devices, Graphs and Data Sources to be searched by ID
 -feature#2765: When editing a tree, allow cascading selection of available graphics
 -feature#2805: Merged plugins are not always upgraded correctly
@@ -600,7 +612,7 @@ Cacti CHANGELOG
 -issue#2629: When upgrading, ldap library is not loaded properly due to incorrect paths
 -issue#2632: Automated Networks are not being properly replicated to additional pollers
 -issue#2635: When running automation scans, database connection should be forced to central database
--issue#2638: Support disabling PHP SNMP extension by mhoran
+-issue#2638: Support disabling PHP SNMP extension
 -issue#2645: Some URLs are incorrectly calculated
 -issue#2649: Automation not creating graphs when there are custom items
 -issue#2650: Several undefined variables are generating warnings
@@ -625,7 +637,7 @@ Cacti CHANGELOG
 -feature#2538: Allow users to change default method of removing data sources when deleting graphs
 -feature#2539: Allow users to set the default graph lock status
 -feature#2540: Allow users to enable/disable graph tree history
--feature#2646: Allow application of automation rules on CLI by rb83
+-feature#2646: Allow application of automation rules on CLI
 -feature#2654: New hook to notify plugins of user profile changes ('auth_profile_update_data')
 -feature#2664: Add option to purge spikekill backups
 -feature#2701: Provide option to continue graphing objects that loose their index
@@ -671,10 +683,10 @@ Cacti CHANGELOG
 -issue#2513: When a plugin INFO file is malformed or missing elements, plugin_load_info_file() should fill missing elements with defaults
 -issue#2519: When editing a data query, graph template picker shows poor performance
 -issue#2518: Unexpected errors when filtering Data Sources with invalid 'rows' value
--issue#2522: When upgrading from pre-1.0.0, colors were not upgraded properly by Givo29
+-issue#2522: When upgrading from pre-1.0.0, colors were not upgraded properly
 -issue#2525: Tree branches that includes sites which have valid devices do not appear on Graph Tree
 -issue#2527: When importing a package, if Cacti version is below the version which that exported, a clear message should be shown
--issue#2531: When updating color template items, the table name used is incorrect by Givo29
+-issue#2531: When updating color template items, the table name used is incorrect
 -issue#2532: Ensure Graph ListView table is displayed in line with Management -> Graphs
 -issue#2535: Ensure Graph ListView uses same UI logic as Graph Management -> Graphs
 -issue#2537: Incorrect title showing when changes are made to Tree

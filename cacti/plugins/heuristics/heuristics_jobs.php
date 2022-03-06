@@ -23,6 +23,7 @@ $guest_account = true;
 chdir('../../');
 include('./include/auth.php');
 include_once('./plugins/grid/include/grid_constants.php');
+include_once('./plugins/grid/include/grid_messages.php');
 include_once('./plugins/grid/lib/grid_functions.php');
 include_once('./plugins/grid/lib/grid_validate.php');
 include_once('./plugins/grid/lib/grid_filter_functions.php');
@@ -44,7 +45,8 @@ $grid_job_control_actions = array(
 	6 => __('Resume Job', 'heuristics'),
 	7 => __('Terminate Job', 'heuristics'),
 	8 => __('Force Kill', 'heuristics'),
-	9 => __('Signal Kill', 'heuristics')
+	9 => __('Signal Kill', 'heuristics'),
+	10=> __('Kill as DONE', 'heuristics')
 );
 
 
@@ -418,29 +420,18 @@ function jobsDetailedFilter() {
 						<select id='clusterid' onChange='<?php print $filterChange;?>'>
 							<option value='0'<?php if (get_request_var('clusterid') == '0') {?> selected<?php }?>><?php print __('All', 'heuristics');?></option>
 							<?php
-							if (get_request_var('job_user') == '-1') {
-								$clusters = db_fetch_assoc('SELECT gc.clusterid, gc.clustername
-									FROM grid_clusters AS gc
-									INNER JOIN (
-										SELECT DISTINCT clusterid
-										FROM grid_jobs
-									) AS gj
-									ON gj.clusterid=gc.clusterid
-									ORDER BY clustername');
+							if(isempty_request_var('job_user') || get_request_var('job_user') == '-1') {
+								$clusterids = db_fetch_assoc('SELECT DISTINCT clusterid FROM grid_jobs');
 							} else {
-								$clusters = db_fetch_assoc_prepared('SELECT gc.clusterid, gc.clustername
-									FROM grid_clusters AS gc
-									INNER JOIN (
-										SELECT DISTINCT clusterid
-										FROM grid_jobs WHERE user=?
-									) AS gj
-									ON gj.clusterid=gc.clusterid
-									ORDER BY clustername', array(get_request_var('job_user')));
+								$clusterids = db_fetch_assoc_prepared('SELECT DISTINCT clusterid FROM grid_jobs WHERE user=?', array(get_request_var('job_user')));
 							}
-
-							if (cacti_sizeof($clusters) > 0) {
-								foreach ($clusters as $cluster) {
-									print '<option value="' . $cluster['clusterid'] .'"'; if (get_request_var('clusterid') == $cluster['clusterid']) { print ' selected'; } print '>' . $cluster['clustername'] . '</option>';
+							if (cacti_sizeof($clusterids)) {
+								$clusterids = array_rekey($clusterids, 'clusterid', 'clusterid');
+								$clusters = grid_get_clusterlist(false, $clusterids);
+								if (cacti_sizeof($clusters) > 0) {
+									foreach ($clusters as $cluster) {
+										print '<option value="' . $cluster['clusterid'] .'"'; if (get_request_var('clusterid') == $cluster['clusterid']) { print ' selected'; } print '>' . $cluster['clustername'] . '</option>';
+									}
 								}
 							}
 							?>

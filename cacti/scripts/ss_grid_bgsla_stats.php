@@ -94,7 +94,7 @@ function ss_grid_bsla_stats_getvalue($clusterid, $bgslaname, $column) {
 		$arr = 0;
 	}
 
-	return $arr;
+	return trim($arr);
 }
 
 function ss_grid_bsla_stats_getnames($clusterid) {

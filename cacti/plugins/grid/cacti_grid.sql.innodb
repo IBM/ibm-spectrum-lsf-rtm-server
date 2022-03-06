@@ -1,8 +1,6 @@
 --
 -- $Id$
 --
-
---
 -- MySQL dump 10.14  Distrib 5.5.64-MariaDB, for Linux (x86_64)
 --
 -- Host: localhost    Database: cacti
@@ -184,8 +182,8 @@ CREATE TABLE `grid_clusters` (
   `ip` varchar(255) NOT NULL default '',
   `lim_port` varchar(10) NOT NULL default '',
   `lsf_ego` char(3) default 'N',
-  `lsf_strict_checking` varchar(10) default 'N',
-  `lsf_krb_auth` char(3) default '',
+  `lsf_strict_checking` varchar(10) NOT NULL default 'N',
+  `lsf_krb_auth` varchar(3) NOT NULL default '',
   `lsf_master_hostname` varchar(255) NOT NULL default '',
   `username` varchar(255) NOT NULL default '',
   `credential` varchar(512) NOT NULL default '',
@@ -333,6 +331,7 @@ CREATE TABLE `grid_hostinfo` (
   KEY `hostType` (`hostType`),
   KEY `hostModel` (`hostModel`),
   KEY `last_seen` (`last_seen`),
+  KEY `clusterid_host` (`clusterid`, `host`),
   KEY `clusterid_is_server` (`clusterid`,`isServer`),
   KEY `licFeaturesNeeded` (`licFeaturesNeeded`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -573,7 +572,7 @@ CREATE TABLE `grid_job_interval_stats` (
   `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
   `user` varchar(45) NOT NULL DEFAULT '',
   `stat` varchar(45) NOT NULL DEFAULT '',
-  `queue` varchar(45) NOT NULL DEFAULT '',
+  `queue` varchar(60) NOT NULL DEFAULT '',
   `app` varchar(40) NOT NULL DEFAULT '',
   `from_host` varchar(64) NOT NULL DEFAULT '',
   `exec_host` varchar(64) NOT NULL DEFAULT '',
@@ -640,7 +639,7 @@ CREATE TABLE `grid_jobs` (
   `postExecCmd` varchar(255) NOT NULL default '',
   `app` varchar(40) NOT NULL default '',
   `execUsername` varchar(40) NOT NULL default '',
-  `mailUser` varchar(40) default NULL,
+  `mailUser` varchar(512) default NULL,
   `jobname` varchar(128) default NULL,
   `jobPriority` int(10) unsigned NOT NULL default '0',
   `jobPid` int(10) unsigned NOT NULL default '0',
@@ -767,7 +766,9 @@ CREATE TABLE `grid_jobs` (
   KEY `clusterid_end_logged` (`clusterid`,`job_end_logged`),
   KEY `clusterid_stat_end_logged` (`clusterid`,`stat`,`job_end_logged`),
   KEY `clusterid_stat_start_time` (`clusterid`,`stat`,`start_time`),
+  KEY `clusterid_stat_last_updated` (`clusterid`,`stat`,`last_updated`),
   KEY `last_updated` (`last_updated`),
+  KEY `stat_last_updated` (`stat`, `last_updated`),
   KEY `licenseProject` (`licenseProject`),
   KEY `jobGroup` (`jobGroup`),
   KEY `sla` (`sla`),
@@ -793,26 +794,33 @@ CREATE TABLE `grid_jobs_exec_hosts` (
 
 DROP TABLE IF EXISTS `grid_jobs_finished`;
 CREATE TABLE `grid_jobs_finished` LIKE `grid_jobs`;
-ALTER TABLE `grid_jobs_finished` DROP INDEX `clusterid_end_logged`,
-		     DROP INDEX `clusterid_stat_end_logged`,
-         DROP INDEX `clusterid_stat_start_time`,
-         DROP INDEX `effectiveEligiblePendingTimeLimit`,
-         DROP INDEX `effectivePendingTimeLimit`,
-         DROP INDEX `effic_logged`,
-         DROP INDEX `flapping_logged`,
-         DROP INDEX `ineligiblePendingTime`,
-         DROP INDEX `job_end_logged`,
-         DROP INDEX `job_scan_logged`,
-         DROP INDEX `job_start_logged`,
-         DROP INDEX `nice`,
-         DROP INDEX `pid_alarm_logged`,
-         DROP INDEX `prev_stat`,
-         DROP INDEX `prov_time`,
-         DROP INDEX `psusp_time`,
-         DROP INDEX `ssusp_time`,
-         DROP INDEX `swap_used`,
-         DROP INDEX `unkwn_time`,
-         DROP INDEX `ususp_time`;
+ALTER TABLE `grid_jobs_finished` ADD INDEX `stat_clusterid` (`stat`,`clusterid`),
+  DROP INDEX `clusterid_end_logged`,
+  DROP INDEX `clusterid_stat_end_logged`,
+  DROP INDEX `clusterid_stat_start_time`,
+  DROP INDEX `clusterid_stat_last_updated`,
+  DROP INDEX `effectiveEligiblePendingTimeLimit`,
+  DROP INDEX `effectivePendingTimeLimit`,
+  DROP INDEX `stat_clusterid_exitInfo`,
+  DROP INDEX `effic_logged`,
+  DROP INDEX `flapping_logged`,
+  DROP INDEX `ineligiblePendingTime`,
+  DROP INDEX `job_end_logged`,
+  DROP INDEX `job_scan_logged`,
+  DROP INDEX `job_start_logged`,
+  DROP INDEX `stat_last_updated`,
+  DROP INDEX `nice`,
+  DROP INDEX `app`,
+  DROP INDEX `chargedSAAP`,
+  DROP INDEX `exitInfo`,
+  DROP INDEX `pid_alarm_logged`,
+  DROP INDEX `prev_stat`,
+  DROP INDEX `prov_time`,
+  DROP INDEX `psusp_time`,
+  DROP INDEX `ssusp_time`,
+  DROP INDEX `swap_used`,
+  DROP INDEX `unkwn_time`,
+  DROP INDEX `ususp_time`;
 
 --
 -- Table structure for table `grid_jobs_from_hosts`
@@ -923,7 +931,7 @@ CREATE TABLE `grid_jobs_pendreasons` (
   `last_updated` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`clusterid`,`jobid`,`indexid`,`submit_time`,`issusp`,`reason`,`subreason`,`type`,`end_time`),
-  KEY `clusterid_end_time` (`clusterid`, `end_time`)
+  KEY `clusterid_end_time_last_updated` (`clusterid`,`end_time`,`last_updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -932,6 +940,8 @@ CREATE TABLE `grid_jobs_pendreasons` (
 
 DROP TABLE IF EXISTS `grid_jobs_pendreasons_finished`;
 CREATE TABLE `grid_jobs_pendreasons_finished` LIKE `grid_jobs_pendreasons`;
+ALTER TABLE `grid_jobs_pendreasons_finished` ADD INDEX `clusterid_end_time` (`clusterid`, `end_time`),
+  DROP INDEX `clusterid_end_time_last_updated`;
 
 --
 -- Table structure for table `grid_jobs_processes`
@@ -1247,8 +1257,9 @@ CREATE TABLE `grid_pollers` (
   `poller_licserver_threads` int(11) NOT NULL default '5',
   `poller_location` varchar(255) NOT NULL default '',
   `poller_support_info` varchar(255) NOT NULL default '',
-  `lsf_version` int(10) unsigned NOT NULL default '62',
+  `lsf_version` int(10) unsigned NOT NULL default '1017',
   `remote` varchar(20),
+  `poller_max_insert_packet_size` varchar(255),
   PRIMARY KEY  (`poller_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -1258,10 +1269,12 @@ CREATE TABLE `grid_pollers` (
 
 /*!40000 ALTER TABLE `grid_pollers` DISABLE KEYS */;
 LOCK TABLES `grid_pollers` WRITE;
-INSERT INTO `grid_pollers` VALUES
-(8,'Poller for LSF 9.1','/opt/IBM/rtm/lsf91/bin/',5,'','',91,''),
-(9,'Poller for LSF 10.1','/opt/IBM/rtm/lsf101/bin/',5,'','',1010,''),
-(10,'Poller for LSF 10.1.0.7','/opt/IBM/rtm/lsf1017/bin/',5,'','',1017,'');
+INSERT INTO `grid_pollers` (`poller_id`, `poller_name`, `poller_lbindir`, `lsf_version`) VALUES
+(8,'Poller for LSF 9.1','/opt/IBM/rtm/lsf91/bin/',91),
+(8,'Poller for LSF 9.1','/opt/IBM/rtm/lsf91/bin/',91),
+(9,'Poller for LSF 10.1','/opt/IBM/rtm/lsf101/bin/',1010),
+(10,'Poller for LSF 10.1.0.7','/opt/IBM/rtm/lsf1017/bin/',1017),
+(11,'Poller for LSF 10.1.0.12','/opt/IBM/rtm/lsf10.1.0.12/bin/',10010012);
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `grid_pollers` ENABLE KEYS */;
 
@@ -1410,7 +1423,7 @@ CREATE TABLE `grid_queues` (
   `rlimit_max_stack` float unsigned NOT NULL default '0',
   `rlimit_max_core` float unsigned NOT NULL default '0',
   `rlimit_max_rss` float unsigned NOT NULL default '0',
-  `last_updated` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  `last_updated` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   PRIMARY KEY  (`queuename`,`clusterid`),
   KEY `status` (`status`),
   KEY `reason` (`reason`),
@@ -1450,7 +1463,7 @@ CREATE TABLE `grid_queues_shares` (
   `started` int(10) unsigned NOT NULL,
   `reserved` int(10) unsigned NOT NULL,
   `cpu_time` double NOT NULL,
-  `run_time` double NOT NULL,
+  `run_time` bigint(20) unsigned NOT NULL,
   `pend_jobs` int(10) unsigned DEFAULT NULL,
   `pend_slots` int(10) unsigned DEFAULT NULL,
   `run_jobs` int(10) unsigned DEFAULT NULL,
@@ -1461,7 +1474,7 @@ CREATE TABLE `grid_queues_shares` (
   `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY (`clusterid`,`queue`,`user_or_group`, `shareAcctPath`) USING HASH,
   KEY `user_or_group` (`user_or_group`),
-  KEY `present` (`present`)
+  KEY `clusterid_user_or_group` (`clusterid`,`user_or_group`)
 ) ENGINE=InnoDB ROW_FORMAT=DYNAMIC DEFAULT CHARSET=latin1;
 
 --
@@ -1695,7 +1708,7 @@ CREATE TABLE `grid_table_partitions` (
 
 DROP TABLE IF EXISTS `grid_user_group_members`;
 CREATE TABLE `grid_user_group_members` (
-  `clusterid` varchar(20) NOT NULL default '',
+  `clusterid` int(10) unsigned NOT NULL default '0',
   `groupname` varchar(45) NOT NULL default '0',
   `username` varchar(40) NOT NULL default '0',
   `shares` int(10) unsigned NOT NULL default '1',
@@ -1810,7 +1823,7 @@ CREATE TABLE `grid_elim_templates_item_map` (
   local_graph_id mediumint(8) unsigned NOT NULL,
   graph_templates_item_id int(12) unsigned NOT NULL,
   grid_elim_template_id mediumint(8) unsigned NOT NULL,
-  grid_elim_templates_item_id int(8) unsigned NOT NULL,
+  grid_elim_templates_item_id int(12) unsigned NOT NULL,
   PRIMARY KEY  (local_graph_id,graph_templates_item_id)
 ) ENGINE=InnoDB COMMENT='Stores the Map of ELIM grid_elim_templates_item to cacti graph_templates_item.' DEFAULT CHARSET=latin1;
 

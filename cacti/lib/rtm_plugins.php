@@ -51,7 +51,7 @@ function rtm_autocomplete_ajax($page_name, $autocomplete_filter_id, $sql_where =
 
 	if ($term != '') {
 		$lic_performance_search = read_config_option('lic_performance_search');
-		
+
 		switch($autocomplete_filter_id) {
 		case 'lic_host':
 			if ($page_name == 'lic_dailystats.php') {

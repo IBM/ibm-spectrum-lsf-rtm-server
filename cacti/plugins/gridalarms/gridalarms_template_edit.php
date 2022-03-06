@@ -2521,7 +2521,7 @@ function edit_general_actions() {
 			plugin_thold_contacts.type, user_auth.full_name
 			FROM plugin_thold_contacts, user_auth
 			WHERE user_auth.id=plugin_thold_contacts.user_id
-			AND plugin_thold_contacts.data != ''
+			AND plugin_thold_contacts.data!=''
 			AND user_auth.full_name != ''
 			$selected_users_where
 			ORDER BY user_auth.full_name ASC, plugin_thold_contacts.type ASC", $sql_params);

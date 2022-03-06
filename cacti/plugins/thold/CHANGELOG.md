@@ -1,5 +1,15 @@
 ## ChangeLog
 
+--- develop ---
+
+* issue#540: Change table name from 'plugin_thold_device_template' to 'plugin_thold_host_template' for Pre-1.0 upgrade
+
+--- 1.6.0 ---
+
+* issue#533: thold_data table missed two indexes for fresh installation
+
+* issue#534: CLI template importing output escaped template name
+
 --- 1.5.3 ---
 
 * issue#463: php error - undefined index dnotes

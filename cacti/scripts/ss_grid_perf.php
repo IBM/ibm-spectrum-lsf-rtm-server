@@ -38,7 +38,7 @@ function ss_grid_perf($clusterid = 0) {
 
 	$result =
 		'lim:' . $stats['lsf_lim_response'] . ' ' .
-		'lsb:' . $stats['lsf_lsb_response']  . "\n";
+		'lsb:' . $stats['lsf_lsb_response'];
 
-	return $result;
+	return trim($result);
 }

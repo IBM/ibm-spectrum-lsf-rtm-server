@@ -118,7 +118,7 @@ function grid_display_proc_status() {
 						<select id='clusterid'>
 							<option value='0'<?php if (get_filter_request_var('clusterid') == '0') {?> selected<?php }?>><?php print __('All', 'grid');?></option>
 							<?php
-							$clusters = db_fetch_assoc('SELECT * from grid_clusters ORDER BY clustername');
+							$clusters = grid_get_clusterlist();
 							if (cacti_sizeof($clusters)) {
 								foreach ($clusters as $cluster) {
 									print '<option value="' . $cluster['clusterid'] .'"'; if (get_filter_request_var('clusterid') == $cluster['clusterid']) { print ' selected'; } print '>' . $cluster['clustername'] . '</option>';

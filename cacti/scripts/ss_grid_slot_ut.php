@@ -113,5 +113,5 @@ function ss_grid_slot_ut($host = '', $clusterid = 0) {
 		if(!empty($ut['slotUtil']))    $slotUtil    = $ut['slotUtil'];
 		if(!empty($ut['cpuUtil']))     $cpuUtil     = $ut['cpuUtil'];
 	}
-	return 'memSlotUtil:' . $memSlotUtil . ' slotUtil:' . $slotUtil . ' cpuUtil:' . $cpuUtil;
+	return trim('memSlotUtil:' . $memSlotUtil . ' slotUtil:' . $slotUtil . ' cpuUtil:' . $cpuUtil);
 }

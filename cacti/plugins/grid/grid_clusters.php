@@ -294,8 +294,7 @@ function form_save() {
 		case '91':
 		case '1010':
 		case '1017':
-			$lsf_serverdir = $rtm['lsf'.$row['lsf_version']]['LSF_SERVERDIR'];
-
+		case '10010012':
 			if (isset_request_var('save_component_cluster') && isempty_request_var('add_dq_y')) {
 				if (!isset_request_var('perfmon_run')) {
 					set_request_var('perfmon_run', '');
@@ -615,8 +614,9 @@ function api_grid_cluster_save($clusterid, $poller_id, $clustername, $lsf_envdir
 
 			if ($found) {
 				$save['lsf_envdir']		= form_input_validate($lsf_envpath, 'lsf_envdir', '', false, 3);
-				if (grid_lsf_get_conf_variables($lsf_envpath, 'LSF_MASTER_LIST')) {
-					$save['lsf_master_hostname']	= trim(grid_lsf_get_conf_variables($lsf_envpath, 'LSF_MASTER_LIST'));
+				$mgmt_list = grid_get_lsf_conf_variable_value($lsf_envpath, array('LSF_MASTER_LIST', 'LSF_SERVER_HOSTS'));
+				if (!empty($mgmt_list)) {
+					$save['lsf_master_hostname'] = trim($mgmt_list);
 					$cluster_lim_hostname = $save['lsf_master_hostname'];
 				} else {
 					raise_message(141);
@@ -625,30 +625,24 @@ function api_grid_cluster_save($clusterid, $poller_id, $clustername, $lsf_envdir
 				}
 
 				/* if version is less than 700 this means it is a 6.x cluster.. dont need to get EGO parameters */
-				if ($lsf_version < 700 && $lsf_version[0]<7 ) {
-					$save['lsf_ego']     = 'N';
-					$lsf_ego             = 'N';
-					$lsf_strict_checking = 'N';
+				if (grid_get_lsf_conf_variable_value($lsf_envpath, 'LSF_STRICT_CHECKING')) {
+					$save['lsf_strict_checking'] = grid_get_lsf_conf_variable_value($lsf_envpath, 'LSF_STRICT_CHECKING');
+					$lsf_strict_checking         = $save['lsf_strict_checking'];
 				} else {
-					if (grid_lsf_get_conf_variables($lsf_envpath, 'LSF_STRICT_CHECKING')) {
-						$save['lsf_strict_checking'] = grid_lsf_get_conf_variables($lsf_envpath, 'LSF_STRICT_CHECKING');
-						$lsf_strict_checking         = $save['lsf_strict_checking'];
-					} else {
-						$save['lsf_strict_checking'] = 'N';
-						$lsf_strict_checking         = $save['lsf_strict_checking'];
-					}
-					if (grid_lsf_get_conf_variables($lsf_envpath, 'LSF_ENABLE_EGO')) {
-						$save['lsf_ego'] = grid_lsf_get_conf_variables($lsf_envpath, 'LSF_ENABLE_EGO');
-						$lsf_ego         = $save['lsf_ego'];
-					} else {
-						raise_message(141);
-						$_SESSION['sess_error_fields']['lsf_envdir'] = 'lsf_envdir';
-						$_SESSION['sess_field_values']['lsf_envdir'] = 'lsf_envdir';
-					}
+					$save['lsf_strict_checking'] = 'N';
+					$lsf_strict_checking         = $save['lsf_strict_checking'];
+				}
+				if (grid_get_lsf_conf_variable_value($lsf_envpath, 'LSF_ENABLE_EGO')) {
+					$save['lsf_ego'] = grid_get_lsf_conf_variable_value($lsf_envpath, 'LSF_ENABLE_EGO');
+					$lsf_ego         = $save['lsf_ego'];
+				} else {
+					raise_message(141);
+					$_SESSION['sess_error_fields']['lsf_envdir'] = 'lsf_envdir';
+					$_SESSION['sess_field_values']['lsf_envdir'] = 'lsf_envdir';
 				}
 
-				if (grid_lsf_get_conf_variables($lsf_envpath, 'LSF_LIM_PORT')) {
-					$save['lim_port'] = grid_lsf_get_conf_variables($lsf_envpath, 'LSF_LIM_PORT');
+				if (grid_get_lsf_conf_variable_value($lsf_envpath, 'LSF_LIM_PORT')) {
+					$save['lim_port'] = grid_get_lsf_conf_variable_value($lsf_envpath, 'LSF_LIM_PORT');
 					$cluster_lim_port = $save['lim_port'];
 				} else {
 					raise_message(141);
@@ -688,7 +682,7 @@ function api_grid_cluster_save($clusterid, $poller_id, $clustername, $lsf_envdir
 		if ($advanced_enabled =='') {
 			$lsf_confdir = getlsfconf($save['lsf_master'], $save['lim_port'], $save['lsf_ego'], $save['poller_id']);
 		} else {
-			$lsf_confdir = grid_lsf_get_conf_variables($lsf_envpath, 'LSF_CONFDIR');
+			$lsf_confdir = grid_get_lsf_conf_variable_value($lsf_envpath, 'LSF_CONFDIR');
 		}
 
 		if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
@@ -749,6 +743,7 @@ function api_grid_cluster_save($clusterid, $poller_id, $clustername, $lsf_envdir
 						case '91':
 						case '1010':
 						case '1017':
+						case '10010012':
 							$lsf_envdir = $rtm['lsf'.$lsf_version]['LSF_ENVDIR'].$clusterid;
 							$LSF_EGO_ENVDIR = $lsf_envdir;
 							curl_setopt($ch, CURLOPT_URL, 'https://127.0.0.1:'.$advocate_port.'/hostSettings/lsfHosts');
@@ -791,58 +786,52 @@ function api_grid_cluster_save($clusterid, $poller_id, $clustername, $lsf_envdir
 				curl_close($ch);
 
 				if ($advanced_enabled == '') {
-					$path_rtm_top=grid_get_path_rtm_top();
-					$lsf_filename = "$path_rtm_top/rtm/etc/".$clusterid."/lsf.conf";
-					$ego_filename = "$path_rtm_top/rtm/etc/".$clusterid."/ego.conf";
+					if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+						// if (getenv('PROCESSOR_ARCHITECTURE') == 'x86') {
+						if (file_exists('C:/Program Files (x86)/Platform Computing/RTM')) {
+							$lsf_filename = "C:\\Program Files (x86)\\Platform Computing\\RTM\\etc\\" . $clusterid . "\\lsf.conf";
+							$ego_filename = "C:\\Program Files (x86)\\Platform Computing\\RTM\\etc\\" . $clusterid . "\\ego.conf";
+						} else {
+							$lsf_filename = "C:\\Program Files\\Platform Computing\\RTM\\etc\\" . $clusterid . "\\lsf.conf";
+							$ego_filename = "C:\\Program Files\\Platform Computing\\RTM\\etc\\" . $clusterid . "\\ego.conf";
+						}
+					} else {
+						$path_rtm_top=grid_get_path_rtm_top();
+						$lsf_filename = "$path_rtm_top/rtm/etc/".$clusterid."/lsf.conf";
+						$ego_filename = "$path_rtm_top/rtm/etc/".$clusterid."/ego.conf";
+					}
 				} else {
-					$lsf_filename = $lsf_envpath . "/lsf.conf";
-					$ego_filename = $lsf_envpath . "/ego.conf";
+					if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+						$lsf_filename = $lsf_envpath . "\\lsf.conf";
+						$ego_filename = $lsf_envpath . "\\ego.conf";
+					} else {
+						$lsf_filename = $lsf_envpath . "/lsf.conf";
+						$ego_filename = $lsf_envpath . "/ego.conf";
+					}
 				}
 
-
-				if ($lsf_version == 91|| $lsf_version == 1010 || $lsf_version == 1017) {
-					/* we should not delete a cluster if we are simply editing the page */
-					if (!(file_exists($lsf_filename)) && !(file_exists($ego_filename))) {
-						if ($save['clusterid'] != '') {
-							db_execute_prepared('DELETE FROM grid_clusters WHERE clusterid = ?', array($clusterid));
-						}
-
-						// #136 message raised above, comment this line to avoid displaying 2 message lines
-						//raise_message(131);
-
-					} else {
-						if ($advanced_enabled != '') {
-							raise_message(128);
-						} else {
-							// Save the lsf_envdir
-							$save['clusterid']  = $clusterid;
-							$save['lsf_envdir'] = $lsf_envdir;
-
-							sql_save($save, 'grid_clusters', 'clusterid');
-
-							raise_message(128);
-						}
+				/* we should not delete a cluster if we are simply editing the page */
+				if (!(file_exists($lsf_filename)) && !(file_exists($ego_filename))) {
+					if ($save['clusterid'] != '') {
+						db_execute_prepared('DELETE FROM grid_clusters WHERE clusterid = ?', array($clusterid));
 					}
-			 	} else {
-					if (!(file_exists($lsf_filename))) {
-						if ($save['clusterid'] != '') {
-							db_execute_prepared('DELETE FROM grid_clusters WHERE clusterid = ?', array($clusterid));
-						}
 
-						// #136 message raised above, comment this line to avoid displaying 2 message lines
-						//raise_message(132);
+					// #136 message raised above, comment this line to avoid displaying 2 message lines
+					//raise_message(131);
+
+				} else {
+					if ($advanced_enabled != '') {
+						raise_message(128);
 					} else {
-						if ($advanced_enabled != '') {
-							raise_message(128);
-						} else {
-							// Save the lsf_envdir
-							$save['clusterid'] = $clusterid;
-							$save['lsf_envdir'] = $lsf_envdir;
-							sql_save($save, 'grid_clusters', 'clusterid');
-							raise_message(128);
-						}
+						// Save the lsf_envdir
+						$save['clusterid']  = $clusterid;
+						$save['lsf_envdir'] = $lsf_envdir;
+
+						sql_save($save, 'grid_clusters', 'clusterid');
+
+						raise_message(128);
 					}
-			  	}
+				}
 			} else {
 				raise_message(2);
 			}
@@ -1137,13 +1126,13 @@ function grid_cluster_edit() {
 	} else {
 		$header_label = "[new]";
 
-		//For new freshed RTM and upgraded RTM, when adding a new cluster, just allow to show LSF 8 or above pollers
+		//For new freshed RTM and upgraded RTM, when adding a new cluster, just allow to show LSF 10 or above pollers
 		$fields_grid_cluster_edit1 = $fields_grid_cluster_edit;
-		$fields_grid_cluster_edit1['cluster_config']['poller_id']['sql'] = "SELECT poller_id AS id, poller_name AS name FROM grid_pollers WHERE lsf_version NOT LIKE '70%' ORDER BY lsf_version ASC";
+		$fields_grid_cluster_edit1['cluster_config']['poller_id']['sql'] = "SELECT poller_id AS id, poller_name AS name FROM grid_pollers WHERE lsf_version IN (91, 1010, 1017, 10010012) ORDER BY lsf_version ASC";
 
 	}
 
-	$fields_grid_cluster_edit1['cluster_config']['poller_id']['default'] = db_fetch_cell('SELECT poller_id FROM grid_pollers WHERE lsf_version=1010 ORDER BY poller_id LIMIT 1');
+	$fields_grid_cluster_edit1['cluster_config']['poller_id']['default'] = db_fetch_cell('SELECT poller_id FROM grid_pollers WHERE lsf_version=10010012 ORDER BY poller_id LIMIT 1');
 	if(isset($cluster['lsf_admins'])){
 		$fields_grid_cluster_edit1['cluster_control']['username']['default'] = get_defaul_lsfadmin($cluster['lsf_admins']);
 	}
@@ -1322,26 +1311,4 @@ function grid_clusters() {
 	draw_actions_dropdown($grid_cluster_actions);
 
 	form_end();
-}
-
-function grid_lsf_get_conf_variables($lsf_envdir, $arg) {
-	$lines = file($lsf_envdir.'/lsf.conf');
-
-	foreach ($lines as $line_num => $line) {
-		if (strpos($line, $arg)===0) {
-			$value = explode('=', $line);
-			return trim($value[1], "\"\n");
-		}
-	}
-
-	if ($arg == 'LSF_MASTER_LIST') {  // cant find LSF_MASTER_LIST, so we will look for LSF_SERVER_HOSTS line
-		foreach($lines as $line_num => $line) {
-			if (strpos($line, 'LSF_SERVER_HOSTS')===0) {
-				$value = explode('=', $line);
-				return trim($value[1], "\"\n");
-			}
-		}
-	}
-
-	return '';
 }

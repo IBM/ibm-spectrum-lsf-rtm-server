@@ -46,7 +46,7 @@ function upgrade_to_10_2_0_1() {
 		api_plugin_enable_hooks('grid');
 	}
 
-	cacti_log('NOTE: Importing RTM templates for 10.1.0.2 ...', true, 'UPGRADE');
+	cacti_log('NOTE: Importing RTM templates for 10.2.0.1 ...', true, 'UPGRADE');
 
 	$grid_templates = array(
 		"1" => array (

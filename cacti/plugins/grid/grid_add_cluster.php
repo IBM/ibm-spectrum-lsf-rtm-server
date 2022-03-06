@@ -752,10 +752,11 @@ if (cacti_sizeof($parms)) {
 			$method = 2;
 		}
 
-		if (!preg_match("/(91|1010|1017)/", $cluster_lsfver)) {
-			$jobfreqmajor = $value;
+		if (!preg_match("/^(91|1010|1017|10010012|9.1|10.1|10.1.0.7|10.1.0.12)$/", $cluster_lsfver)) {
 			echo "FATAL: The LSF Version is invalid '$cluster_lsfver'\n";
 			exit -1;
+		} else if(isset($rtmvermap[$parms[0]])){
+			$cluster_lsfver = $rtmvermap[$cluster_lsfver];
 		}
 
 		/* validate the disable state */
@@ -848,9 +849,9 @@ if (cacti_sizeof($parms)) {
 			}
 
 			if ($method == 1 || $method == 3) {
-				$save['lsf_master_hostname'] = grid_lsf_read_conf($cluster_lsf_envdir, 'LSF_MASTER_LIST');
-				$save['lsf_ego']	         = grid_lsf_read_conf($cluster_lsf_envdir, 'LSF_ENABLE_EGO');
-				$save['lim_port']	         = grid_lsf_read_conf($cluster_lsf_envdir, 'LSF_LIM_PORT');
+				$save['lsf_master_hostname'] = grid_get_lsf_conf_variable_value($cluster_lsf_envdir, array('LSF_MASTER_LIST', 'LSF_SERVER_HOSTS'));
+				$save['lsf_ego']	         = grid_get_lsf_conf_variable_value($cluster_lsf_envdir, 'LSF_ENABLE_EGO');
+				$save['lim_port']	         = grid_get_lsf_conf_variable_value($cluster_lsf_envdir, 'LSF_LIM_PORT');
 			} else {
 				$save['lsf_master_hostname'] = $cluster_masters;
 				$save['lim_port']            = $cluster_lim_port;
@@ -1513,32 +1514,8 @@ function grid_check_lsf_envdir($lsf_envdir){
 	return false;
 }
 
-function grid_lsf_read_conf($lsf_envdir, $arg){
-
-	$lines = file($lsf_envdir.'/lsf.conf');
-
-	foreach ($lines as $line_num => $line){
-		if (strstr($line, $arg)){
-			$value = explode('=', $line);
-			return trim($value[1], "\"\n");
-		}
-	}
-
-	if ($arg == 'LSF_MASTER_LIST'){  // cant find LSF_MASTER_LIST, so we will look for LSF_SERVER_HOSTS line
-		foreach($lines as $line_num => $line){
-			if (strstr($line, 'LSF_SERVER_HOSTS')){
-				$value = explode('=', $line);
-				return trim($value[1], "\"\n");
-			}
-		}
-	}
-	return '';
-}
-
 function grid_lsf_generate_conf($clusterid, $pollerid, $lsfmaster, $lsf_lim_port, $lsf_ego='N', $lsf_strict_checking='N', $lsf_krb_auth = ''){
 	global $config, $rtm;
-
-	include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
 
 	$out = 0;
 
@@ -1557,6 +1534,7 @@ function grid_lsf_generate_conf($clusterid, $pollerid, $lsfmaster, $lsf_lim_port
 		case '91':
 		case '1010':
 		case '1017':
+		case '10010012':
 			curl_setopt($ch, CURLOPT_POSTFIELDS, "ACTION=save&LSF_GET_CONF=lim&LSF_CONFDIR=".$lsf_envdir."&LSF_LIM_PORT=".$lsf_lim_port."&LSF_SERVER_HOSTS=".$lsfmaster."&LSF_VERSION=".$rtm["lsf".$lsf_version]["VERSION"]."&LSF_EGO_ENVDIR=".$lsf_envdir."&LSF_ENABLE_EGO=".$lsf_ego."&LSF_LOGDIR=".$lsf_envdir."&LSF_STRICT_CHECKING=".$lsf_strict_checking."&LSF_LOG_MASK=LOG_WARNING".($lsf_krb_auth != 'on' ? '' : '&LSB_KRB_LIB_PATH=/usr/lib64%20/usr/lib/x86_64-linux-gnu')."&LSF_GETCONF_MAX=1");
 			break;
 	}
@@ -1581,9 +1559,6 @@ function grid_lsf_generate_conf($clusterid, $pollerid, $lsfmaster, $lsf_lim_port
 function grid_get_lsf_conf_from_lim($save) {
 	global $config, $rtm;
 
-	include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
-	include_once($config['base_path'] . '/plugins/grid/lib/grid_functions.php');
-
 	$lsf_confdir = getlsfconf($save["lsf_master"], $save["lim_port"], $save["lsf_ego"], $save["poller_id"]);
 
 	return $lsf_confdir;
@@ -1591,9 +1566,6 @@ function grid_get_lsf_conf_from_lim($save) {
 
 function grid_ego_generate_conf($clusterid, $pollerid, $lsf_ego) {
 	global $config, $rtm;
-
-	include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
-	include_once($config['base_path'] . '/plugins/grid/lib/grid_functions.php');
 
 	/* ego is not enabled, dont generate conf */
 	if($lsf_ego == 'N') {
@@ -1649,11 +1621,11 @@ function display_help() {
 	echo "   grid_add_cluster.php --type=0 --pollerid=n --cluster-name=clustername --cluster-env=path [--krb5-auth=Y]\n";
 	echo "     [cluster options]\n\n";
 	echo "   Method 2 - Takes all LSF Configuration information from command line and creates a Server Config\n\n";
-	echo "   grid_add_cluster.php --type=0 --cluster-name=clustername --masters='master hosts' --lsf-version=1017\n";
+	echo "   grid_add_cluster.php --type=0 --cluster-name=clustername --masters='master hosts' --lsf-version=10.1.0.7\n";
 	echo "      --lim-port=7869\n";
 	echo "     [cluster options]\n\n";
 	echo "   Method 3 - Reads LSF Configuration from file and maintains that file pointer in the database\n\n";
-	echo "   grid_add_cluster.php --type=0 --cluster-name=clustername --lsf-version=1017 --cluster-env=path [--krb5-auth=Y]\n";
+	echo "   grid_add_cluster.php --type=0 --cluster-name=clustername --lsf-version=10.1.0.7 --cluster-env=path [--krb5-auth=Y]\n";
 	echo "     [cluster options]\n\n";
 	echo "Adding Cluster Hosts and Cluster Data Queries:\n";
 	echo "   grid_add_cluster.php --type=1 --clusterid=[ID] --template=[ID] [--disable]\n";
@@ -1667,7 +1639,7 @@ function display_help() {
 	echo "    --cluster-env  The LSF_ENVDIR for this cluster\n";
 	echo "    --masters      HOSTLIST, A list of hosts, separated by a space that are the LSF Master Cantidates\n";
 	//echo "    --master-ips   IPLIST, A list of IP Addresses, separated by a space that correspond to the LSF Master Cantidates\n";
-	echo "    --lsf-version  1017, 91|1010|1017 The version of the LSF Cluster\n";
+	echo "    --lsf-version  10.1.0.7, 9.1|10.1|10.1.0.7|10.1.0.12 The version of the LSF Cluster\n";
 	echo "    --lim-port     7869, The LSF Clusters LIM Port\n";
 	//echo "    --lsf-ego      N, Y|N|0|1|Yes|No, The LSF EGO Status (for LSF 701 and above)\n";
 	echo "    --strict-chk   N, Y|N|0|1|Yes|No|Enhanced, The Status of LSF strict checking of communications (for LSF 701 and above)\n";

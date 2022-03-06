@@ -52,8 +52,7 @@ function sig_handler($signo) {
 }
 
 /* take the start time to log performance data */
-list($micro,$seconds) = preg_split("/ /", microtime());
-$start = $seconds + $micro;
+$start = microtime(true);
 
 /* get the srm polling cycle */
 ini_set('max_execution_time', '0');
@@ -180,8 +179,7 @@ function gridblstat_check_blstat($log = false, $collector) {
 	global $errors, $config, $force, $cnn_id, $lsid;
 
 	/* record the start time */
-	list($micro,$seconds) = preg_split("/ /", microtime());
-	$start_time           = $seconds + $micro;
+	$start_time           = microtime(true);
 
 	$db_start_time        = db_fetch_cell("SELECT NOW()");
 
@@ -1104,8 +1102,7 @@ function gridblstat_check_blstat($log = false, $collector) {
 	db_execute_prepared("UPDATE grid_blstat_collectors SET blstat_lastrun=NOW() WHERE lsid=?", array($lsid));
 
 	/* record the end time */
-	list($micro,$seconds) = preg_split("/ /", microtime());
-	$end_time             = $seconds + $micro;
+	$end_time = microtime(true);
 
 	db_execute_prepared("REPLACE INTO settings (name,value) VALUES (?, ?)", array("gridblstat_lastrun_$lsid", time()));
 

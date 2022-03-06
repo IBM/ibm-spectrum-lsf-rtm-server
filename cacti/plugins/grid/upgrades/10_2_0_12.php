@@ -76,7 +76,7 @@ function upgrade_to_10_2_0_12() {
 	$data['primary']   = array('clusterid','name');
 	db_update_table('grid_guarantee_pool', $data);
 
-	cacti_log('Importing RTM templates..', true, 'UPGRADE');
+	cacti_log('NOTE: Importing RTM templates for 10.2.0.12 ...', true, 'UPGRADE');
 	$grid_templates = array(
 		"1" => array (
 			'value' => 'GRID - Queue - Pending/Running Slots',

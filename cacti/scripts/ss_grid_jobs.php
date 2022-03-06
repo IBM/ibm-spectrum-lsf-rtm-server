@@ -79,5 +79,5 @@ function ss_grid_jobs($hostname = '', $clusterid = 0, $summary='no') {
 		'usr_susp_jobs:' . (!empty($job_stats['t_numUSUSP']) ? $job_stats['t_numUSUSP'] : 0) . ' ' .
 		'res_jobs:'      . (!empty($job_stats['t_numRESERVE']) ? $job_stats['t_numRESERVE'] : 0);
 
-	return $result;
+	return trim($result);
 }

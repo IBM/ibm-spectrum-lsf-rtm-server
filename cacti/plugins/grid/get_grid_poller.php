@@ -29,7 +29,7 @@ array_shift($parms);
 
 // lsf_version
 if (empty($parms)) {
-    echo 'LSF version not provided: 91 1010 1017' . "\n";
+    echo 'LSF version not provided: 9.1 10.1 10.1.0.7 10.1.0.12' . "\n";
     exit(1);
 }
 
@@ -46,14 +46,17 @@ foreach($parms as $parameter) {
     }
 }
 
-
-if ($parms[0] != 91 && $parms[0] != 1010 && $parms[0] != 1017) {
-    echo 'LSF version invalid: 91 1010 1017' . "\n";
+if (!preg_match("/^(91|1010|1017|10010012|9.1|10.1|10.1.0.7|10.1.0.12)$/", $parms[0])) {
+    echo 'LSF version invalid: 9.1 10.1 10.1.0.7 10.1.0.12' . "\n";
     exit(1);
 }
 
-$lsf_version = $parms[0];
-$poller_lbindir = realpath($rtm["lsf" . $lsf_version]["LSF_SERVERDIR"]) . "/";
+if(isset($rtmvermap[$parms[0]])){
+    $lsf_version = $rtmvermap[$parms[0]];
+} else {
+    $lsf_version = $parms[0];
+}
+$poller_lbindir = realpath($rtm["lsf" . $lsf_version]["RTM_POLLERBINDIR"]) . "/";
 $poller_desc = $rtm["lsf" . $lsf_version]["DESC"];
 
 $poller_id_dirs = db_fetch_assoc_prepared("select poller_id, poller_lbindir from grid_pollers where lsf_version=?", array($lsf_version));

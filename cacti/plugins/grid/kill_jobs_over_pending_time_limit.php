@@ -36,7 +36,7 @@ $alert_id = getenv('GALERT_ID');
 $alert_items_column = getenv('GALERT_ITEMS_COLUMN');
 
 //Get all breached items detail
-//For example, "1,lsf101_ga,17,0,2016-01-20 16:48:06,PEND,300,430258|1,lsf101_ga,22,0,2016-01-25 15:37:19,PEND,240,2505"
+//For example, "1,lsf101_xili,17,0,2016-01-20 16:48:06,PEND,300,430258|1,lsf101_xili,22,0,2016-01-25 15:37:19,PEND,240,2505"
 $alert_items_list = getenv('GALERT_ITEMS_LIST');
 
 force_kill_jobs();

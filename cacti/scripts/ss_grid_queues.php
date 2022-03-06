@@ -71,7 +71,7 @@ function ss_grid_queues_getvalue($clusterid, $queuename, $column) {
 		$arr = 0;
 	}
 
-	return $arr;
+	return trim($arr);
 }
 
 function ss_grid_queues_getnames($clusterid) {

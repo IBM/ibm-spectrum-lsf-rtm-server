@@ -146,7 +146,7 @@ function upgrade_to_1_5() {
 		DROP PRIMARY KEY,
 		ADD PRIMARY KEY  USING HASH(`poller_id`, `feature_name`, `portatserver_id`, `vendor_daemon`);");
 
-	execute_sql("Remove Old Feature Use Details Table", "DROP TABLE `grid_license_servers_feature_details`;");
+	execute_sql("Remove Old Feature Use Details Table", "DROP TABLE IF EXISTS `grid_license_servers_feature_details`;");
 
 	execute_sql("Create New Feature Use Details Table", "CREATE TABLE `grid_license_servers_feature_details` (
 		`poller_id` int(10) unsigned NOT NULL default '0',
@@ -173,7 +173,7 @@ function upgrade_to_1_5() {
 		KEY `hostname` (`hostname`)
 		) ENGINE=MEMORY");
 
-	execute_sql("Remove Old Feature Expirations Table", "DROP TABLE `grid_license_servers_feature_expirations`");
+	execute_sql("Remove Old Feature Expirations Table", "DROP TABLE IF EXISTS `grid_license_servers_feature_expirations`");
 
 	execute_sql("Create New Feature Expirations Table", "CREATE TABLE `grid_license_servers_feature_expirations` (
 		`poller_id` int(10) unsigned NOT NULL default '0',

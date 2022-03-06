@@ -40,7 +40,7 @@ function ss_grid_efficiency($clusterid = 0) {
 		array($clusterid));
 
 	if ($running_jobs > 0) {
-		return $efficiency;
+		return trim($efficiency);
 	} else {
 		return '0';
 	}

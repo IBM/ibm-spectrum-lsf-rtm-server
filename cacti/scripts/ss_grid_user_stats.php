@@ -162,7 +162,7 @@ function ss_grid_user_stats_getvalue($clusterid, $index, $column) {
 	}
 
 	if ($value != '') {
-		return $value;
+		return trim($value);
 	} else {
 		return '0';
 	}

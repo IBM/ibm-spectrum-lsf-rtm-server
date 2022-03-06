@@ -349,17 +349,16 @@ function syslog_create_partitioned_syslog_table($engine = 'InnoDB', $days = 30) 
 		priority_id int(10) unsigned default NULL,
 		program_id int(10) unsigned default NULL,
 		host_id int(10) unsigned default NULL,
-		logtime DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+		logtime TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 		message " . ($mysqlVersion > 5 ? "varchar(1024)":"text") . " NOT NULL default '',
 		seq bigint unsigned NOT NULL auto_increment,
 		PRIMARY KEY(seq, logtime),
-		INDEX (seq),
 		INDEX logtime (logtime),
 		INDEX program_id (program_id),
 		INDEX host_id (host_id),
 		INDEX priority_id (priority_id),
 		INDEX facility_id (facility_id)) ENGINE=$engine
-		PARTITION BY RANGE (TO_DAYS(logtime))\n";
+		PARTITION BY RANGE (UNIX_TIMESTAMP(logtime))\n";
 
 	$now = time();
 
@@ -368,7 +367,7 @@ function syslog_create_partitioned_syslog_table($engine = 'InnoDB', $days = 30) 
 		$timestamp = $now - ($i * 86400);
 		$date     = date('Y-m-d', $timestamp);
 		$format   = date('Ymd', $timestamp - 86400);
-		$parts .= ($parts != '' ? ",\n":"(") . " PARTITION d" . $format . " VALUES LESS THAN (TO_DAYS('" . $date . "'))";
+		$parts .= ($parts != '' ? ",\n":"(") . " PARTITION d" . $format . " VALUES LESS THAN (UNIX_TIMESTAMP('$date  00:00:00'))";
 	}
 	$parts .= ",\nPARTITION dMaxValue VALUES LESS THAN MAXVALUE);";
 
@@ -413,10 +412,10 @@ function syslog_setup_table_new($options) {
 			priority_id int(10) unsigned default NULL,
 			program_id int(10) unsigned default NULL,
 			host_id int(10) unsigned default NULL,
-			logtime TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+			logtime DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
 			message varchar(1024) NOT NULL default '',
 			seq bigint unsigned NOT NULL auto_increment,
-			PRIMARY KEY (seq),
+			PRIMARY KEY (seq, logtime),
 			INDEX logtime (logtime),
 			INDEX program_id (program_id),
 			INDEX host_id (host_id),
@@ -575,7 +574,6 @@ function syslog_setup_table_new($options) {
 		INDEX `program_id` (`program_id`),
 		INDEX `alert_id` (`alert_id`),
 		INDEX `host` (`host`),
-		INDEX `seq` (`seq`),
 		INDEX `logtime` (`logtime`),
 		INDEX `priority_id` (`priority_id`),
 		INDEX `facility_id` (`facility_id`))
@@ -591,7 +589,6 @@ function syslog_setup_table_new($options) {
 		`records` int(10) UNSIGNED NOT NULL,
 		PRIMARY KEY (`id`),
 		UNIQUE KEY `unique_pk` (`host_id`, `facility_id`, `priority_id`, `program_id`, `insert_time`),
-		INDEX `host_id`(`host_id`),
 		INDEX `facility_id`(`facility_id`),
 		INDEX `priority_id`(`priority_id`),
 		INDEX `program_id` (`program_id`),

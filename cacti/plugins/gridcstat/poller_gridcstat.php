@@ -22,8 +22,7 @@
 include(dirname(__FILE__) . '/../../include/cli_check.php');
 
 /* take the start time to log performance data */
-list($micro,$seconds) = preg_split("/ /", microtime());
-$start = $seconds + $micro;
+$start = microtime(true);
 
 /* get the srm polling cycle */
 ini_set("max_execution_time", "0");

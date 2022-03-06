@@ -65,7 +65,6 @@ if ($begin_jobs_interval_stat_rows > 100000) {
 	db_execute('CREATE TEMPORARY TABLE `gus` LIKE `grid_job_interval_stats`');
 	db_execute('INSERT INTO `gus` SELECT * FROM `grid_job_interval_stats` WHERE date_recorded>NOW()-INTERVAL 1 hour');
 	db_execute('TRUNCATE TABLE `grid_job_interval_stats`');
-	db_execute('OPTIMIZE TABLE grid_job_interval_stats');
 	db_execute('INSERT INTO `grid_job_interval_stats` SELECT * FROM `gus`');
 	db_execute('DROP TABLE IF EXISTS `gus`');
 } else {

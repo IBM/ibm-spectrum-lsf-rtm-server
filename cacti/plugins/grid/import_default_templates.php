@@ -38,15 +38,15 @@ $debug = FALSE;
 foreach($parms as $parameter) {
 	@list($arg, $value) = @explode('=', $parameter);
 	switch ($arg) {
-    case "-d":
+	case "-d":
 		$debug = true;
 		break;
-    case "-v":
-    case "-V":
-    case "--version":
-        display_version();
-        exit;
-    case '-xmls':
+	case "-v":
+	case "-V":
+	case "--version":
+		display_version();
+		exit;
+	case '-xmls':
 		$xml_files = @explode(',', $value);
 		foreach($xml_files as $xml_file){
 			$XML_file=trim($xml_file);
@@ -55,7 +55,7 @@ foreach($parms as $parameter) {
 				$results = rtm_do_import($config['base_path'] . "/plugins/grid/templates/$XML_file");
 			}
 		}
-        exit;
+		exit;
 	}
 }
 
@@ -78,94 +78,114 @@ $grid_templates = array(
 		'value' => 'GRID - Projects - All - Graphs',
 		'name' => 'cacti_data_query_grid_-_projects_-_all_-_graphs.xml'
 	),
-    "5" => array (
-        'value' => 'GRID - Host Group Stats',
-        'name' => 'cacti_data_query_grid_-_host_group_stats.xml'
+	"5" => array (
+		'value' => 'GRID - Host Group Stats',
+		'name' => 'cacti_data_query_grid_-_host_group_stats.xml'
 	),
 	'6' => array (
 		'value' => 'GRID - Cluster Pending by Pending Reason',
 		'name' => 'cacti_graph_template_grid_-_cluster_pending_by_pending_reason.xml'
 	),
-    "7" => array (
-        'value' => 'GRID - LSF Host Info Requests',
-        'name' => 'cacti_graph_template_grid_-_lsf_host_info_requests.xml'
-    ),
-    "8" => array (
-        'value' => 'GRID - LSF Host Match Criteria',
-        'name' => 'cacti_graph_template_grid_-_lsf_host_match_criteria.xml'
-    ),
-    "9" => array (
-        'value' => 'GRID - LSF Job Buckets',
-        'name' => 'cacti_graph_template_grid_-_lsf_job_buckets.xml'
-    ),
-    "10" => array (
-        'value' => 'GRID - LSF Job Info Requests',
-        'name' => 'cacti_graph_template_grid_-_lsf_job_info_requests.xml'
-    ),
-    "11" => array (
-        'value' => 'GRID - LSF Job Scheduling Interval',
-        'name' => 'cacti_graph_template_grid_-_lsf_job_scheduling_interval.xml'
-    ),
-    "12" => array (
-        'value' => 'GRID - LSF Jobs Completed',
-        'name' => 'cacti_graph_template_grid_-_lsf_jobs_completed.xml'
-    ),
-    "13" => array (
-        'value' => 'GRID - LSF Jobs Dispatched',
-        'name' => 'cacti_graph_template_grid_-_lsf_jobs_dispatched.xml'
-    ),
-    "14" => array (
-        'value' => 'GRID - LSF Jobs Submitted',
-        'name' => 'cacti_graph_template_grid_-_lsf_jobs_submitted.xml'
-    ),
-    "15" => array (
-        'value' => 'GRID - LSF Job Submit Requests',
-        'name' => 'cacti_graph_template_grid_-_lsf_job_submit_requests.xml'
-    ),
-    "16" => array (
-        'value' => 'GRID - LSF MBatchD Requests',
-        'name' => 'cacti_graph_template_grid_-_lsf_mbatchd_requests.xml'
-    ),
-    "17" => array (
-        'value' => 'GRID - LSF MBD File Descriptor Usage',
-        'name' => 'cacti_graph_template_grid_-_lsf_mbd_file_descriptor_usage.xml'
-    ),
-    "18" => array (
-        'value' => 'GRID - LSF Queue Info Requests',
-        'name' => 'cacti_graph_template_grid_-_lsf_queue_info_requests.xml'
-    ),
-    "19" => array (
-        'value' => 'GRID - Cluster Effective Utilization',
-        'name' => 'cacti_graph_template_grid_-_cluster_effective_utilization.xml'
-    ),
-    "20" => array (
-        'value' => 'GRID - Cluster/Host Effective UT',
-        'name' => 'cacti_graph_template_grid_-_clusterhost_effective_ut.xml'
-    ),
+	"7" => array (
+		'value' => 'GRID - LSF Host Info Requests',
+		'name' => 'cacti_graph_template_grid_-_lsf_host_info_requests.xml'
+	),
+	"8" => array (
+		'value' => 'GRID - LSF Host Match Criteria',
+		'name' => 'cacti_graph_template_grid_-_lsf_host_match_criteria.xml'
+	),
+	"9" => array (
+		'value' => 'GRID - LSF Job Buckets',
+		'name' => 'cacti_graph_template_grid_-_lsf_job_buckets.xml'
+	),
+	"10" => array (
+		'value' => 'GRID - LSF Job Info Requests',
+		'name' => 'cacti_graph_template_grid_-_lsf_job_info_requests.xml'
+	),
+	"11" => array (
+		'value' => 'GRID - LSF Job Scheduling Interval',
+		'name' => 'cacti_graph_template_grid_-_lsf_job_scheduling_interval.xml'
+	),
+	"12" => array (
+		'value' => 'GRID - LSF Jobs Completed',
+		'name' => 'cacti_graph_template_grid_-_lsf_jobs_completed.xml'
+	),
+	"13" => array (
+		'value' => 'GRID - LSF Jobs Dispatched',
+		'name' => 'cacti_graph_template_grid_-_lsf_jobs_dispatched.xml'
+	),
+	"14" => array (
+		'value' => 'GRID - LSF Jobs Submitted',
+		'name' => 'cacti_graph_template_grid_-_lsf_jobs_submitted.xml'
+	),
+	"15" => array (
+		'value' => 'GRID - LSF Job Submit Requests',
+		'name' => 'cacti_graph_template_grid_-_lsf_job_submit_requests.xml'
+	),
+	"16" => array (
+		'value' => 'GRID - LSF MBatchD Requests',
+		'name' => 'cacti_graph_template_grid_-_lsf_mbatchd_requests.xml'
+	),
+	"17" => array (
+		'value' => 'GRID - LSF MBD File Descriptor Usage',
+		'name' => 'cacti_graph_template_grid_-_lsf_mbd_file_descriptor_usage.xml'
+	),
+	"18" => array (
+		'value' => 'GRID - LSF Queue Info Requests',
+		'name' => 'cacti_graph_template_grid_-_lsf_queue_info_requests.xml'
+	),
+	"19" => array (
+		'value' => 'GRID - Cluster Effective Utilization',
+		'name' => 'cacti_graph_template_grid_-_cluster_effective_utilization.xml'
+	),
+	"20" => array (
+		'value' => 'GRID - Cluster/Host Effective UT',
+		'name' => 'cacti_graph_template_grid_-_clusterhost_effective_ut.xml'
+	),
 	'21' => array (
-		'value' => 'ELIM - gpfs_bandwidth',
+		'value' => 'ELIM - GPFS Bandwidth',
 		'name' => 'cacti_elim_template_gpfs_bandwidth.xml'
 	),
 	'22' => array (
-		'value' => 'ELIM - gpfs_file_operations',
+		'value' => 'ELIM - GPFS File Operations',
 		'name' => 'cacti_elim_template_gpfs_file_operations.xml'
 	),
-    '23' => array (
-        'value' => '2 GPUs Memory Utilization',
-        'name' => 'cacti_elim_template_2_gpus_memory_usage.xml'
-    ),
-    '24' => array (
-        'value' => '4 GPUs Utilization',
-        'name' => 'cacti_elim_template_4_gpus_utilization.xml'
-    ),
-    '25' => array (
-        'value' => 'Shared GPU Memory Utilization',
-        'name' => 'cacti_elim_template_shared_gpu_memory_utilization.xml'
-    ),
-    '26' => array (
-        'value' => 'Shared GPU Utilization',
-        'name' => 'cacti_elim_template_shared_gpu_utilization.xml'
-    )
+	'23' => array (
+		'value' => 'ELIM - 2 GPUs Memory Utilization',
+		'name' => 'cacti_elim_template_2_gpus_memory_usage.xml'
+	),
+	'24' => array (
+		'value' => 'ELIM - 4 GPUs Utilization',
+		'name' => 'cacti_elim_template_4_gpus_utilization.xml'
+	),
+	'25' => array (
+		'value' => 'ELIM - Shared GPU Memory Utilization',
+		'name' => 'cacti_elim_template_shared_gpu_memory_utilization.xml'
+	),
+	'26' => array (
+		'value' => 'ELIM - Shared GPU Utilization',
+		'name' => 'cacti_elim_template_shared_gpu_utilization.xml'
+	),
+	'27' => array (
+		'value' => 'GRID - Pool - Effective Utilization',
+		'name' => 'cacti_data_query_grid_-_pool_-_effective_utilization.xml'
+	),
+	'28' => array (
+		'value' => 'GRID - LSF Jobs Reordered',
+		'name' => 'cacti_graph_template_grid_-_lsf_jobs_reordered.xml'
+	),
+	'29' => array (
+		'value' => 'GRID - LSF Memory Utilization',
+		'name' => 'cacti_graph_template_grid_-_lsf_memory_utilization.xml'
+	),
+	'30' => array (
+		'value' => 'GRID - LSF Slot Utilization',
+		'name' => 'cacti_graph_template_grid_-_lsf_slot_utilization.xml'
+	),
+	'31' => array (
+		'value' => 'GRID - Host GPU Status',
+		'name' => 'cacti_data_query_grid_-_host_gpu_status.xml'
+	)
 );
 //Data Query include a extra graph: GRID - Host Group - Effective Utilization
 
@@ -177,7 +197,7 @@ foreach($grid_templates as $grid_template){
 echo "Grid Templates importing complete.\n";
 
 function display_version() {
-    include_once(dirname(__FILE__) . '/setup.php');
+	include_once(dirname(__FILE__) . '/setup.php');
 
 	print 'IBM Spectrum LSF RTM Import Template Utility ' . get_grid_version() . "\n";
 	print rtm_copyright();

@@ -1358,7 +1358,7 @@ function grid_build_legend($color) {
 			break;
 		case 'alarm_blink':
 		case 'alarm_blink_small':
-			$name   = __('Active Alert', 'grid');
+   			$name   = __('Active Alert', 'grid');
 			$class  = 'hostDbAlert';
 			$icon   = 'fas fa-play unack';
 			break;
@@ -1648,7 +1648,7 @@ function summaryFilter() {
 						<select id='clusterid'>
 							<option value='0'<?php if (get_request_var('clusterid') == '0') {?> selected<?php }?>><?php print __('All', 'grid');?></option>
 							<?php
-							$clusters = db_fetch_assoc('SELECT * FROM grid_clusters ORDER BY clustername');
+							$clusters = grid_get_clusterlist();
 							if (cacti_sizeof($clusters)) {
 								foreach ($clusters as $cluster) {
 									print '<option value="' . $cluster['clusterid'] .'"'; if (get_request_var('clusterid') == $cluster['clusterid']) { print ' selected'; } print '>' . $cluster['clustername'] . '</option>';
@@ -1696,7 +1696,7 @@ function summaryFilter() {
 							<input type='button' style='display:none' id='mute' value='<?php print __esc('Mute', 'grid');?>' title='<?php print __esc('Mute Alert Sound Acknowledging Host Down Conditions and Host Alerts. New Host Alerts and Down Conditions will Unmute.', 'grid');?>' onClick='muteFilter()'>
 							<input type='button' style='display:' id='unmute' value='<?php print __esc('Unmute', 'grid');?>' title='<?php print __esc('Unmute Sounds', 'grid');?>' onClick='unmuteFilter()'>
 					<?php } else {?>
-							<input type='button' style='display:' id='mute' value='<?php print __esc('Mute', 'grid');?>' title='<?php print __esc('Mute Alert Sound Acknowledging Host Down Conditions and Host Alerts. New Host Alerts and Down Conditions will Unmute.', 'grid');?>' onClick='muteFilter()'>
+							 <input type='button' style='display:' id='mute' value='<?php print __esc('Mute', 'grid');?>' title='<?php print __esc('Mute Alert Sound Acknowledging Host Down Conditions and Host Alerts. New Host Alerts and Down Conditions will Unmute.', 'grid');?>' onClick='muteFilter()'>
 							<input type='button' style='display:none' id='unmute' value='<?php print __esc('Unmute', 'grid');?>' title='<?php print __esc('Unmute Sounds', 'grid');?>' onClick='unmuteFilter()'>
 						<?php }?>
 					</td>
@@ -2160,7 +2160,7 @@ function summary_alarm_log() {
 	<?php
 
 	$display_text = array(
-		'type'        => array('display' => __('Alert Type', 'grid'), 'align' => 'left', 'sort' => 'ASC'),
+		'type'	      => array('display' => __('Alert Type', 'grid'), 'align' => 'left', 'sort' => 'ASC'),
 		'name'        => array('display' => __('Name', 'grid'), 'align' => 'left', 'sort' => 'ASC'),
 		'hostname'    => array('display' => __('Host', 'grid'), 'align' => 'left', 'sort' => 'ASC'),
 		'clusterid'   => array('display' => __('Cluster', 'grid'), 'align' => 'right', 'sort' => 'ASC'),
@@ -2233,9 +2233,7 @@ function summary_alarm_filter() {
 						<select id='clusterid'>
 							<option value='0'<?php if (get_request_var('clusterid') == '0') {?> selected <?php }?>><?php print __('All', 'grid');?></option>
 							<?php
-							$clusters = db_fetch_assoc('SELECT clusterid, clustername
-								FROM grid_clusters
-								ORDER BY clustername');
+							$clusters = grid_get_clusterlist();
 
 							if (cacti_sizeof($clusters)) {
 								foreach ($clusters as $cluster) {
@@ -2958,7 +2956,8 @@ function summary_host() {
 				})
 				.fail(function(data) {
 					getPresentHTTPError(data);
-				});
+				}
+			);
 		});
 	}
 
@@ -3652,7 +3651,7 @@ function grid_hostalarm_check_audible() {
 	$cluster = get_filter_request_var('clusterid');
 
 	/* now, let's check for a change in host status */
-	if (get_request_var('clusterid') == 0) {
+	 if (get_request_var('clusterid') == 0) {
 		$sql_where = "WHERE ((monitor='on' AND disabled='') OR (monitor IS NULL or monitor =''))
 			AND ga.hostname!='lost_and_found'
 			AND ga.present=1";

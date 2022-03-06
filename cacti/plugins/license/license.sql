@@ -1,8 +1,6 @@
 --
 -- $Id$
 --
-
---
 -- MySQL dump 10.14  Distrib 5.5.56-MariaDB, for Linux (x86_64)
 --
 -- Host: localhost    Database: cacti
@@ -248,7 +246,7 @@ CREATE TABLE `lic_servers` (
   `type` varchar(50) NOT NULL DEFAULT '',
   `version` varchar(20) NOT NULL DEFAULT '',
   `errorno` int(10) NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`service_id`,`name`),
   KEY `name` (`name`)
 ) ENGINE=MEMORY DEFAULT CHARSET=latin1;
@@ -312,7 +310,7 @@ CREATE TABLE `lic_services_feature` (
   `total_reserved_token` int(10) unsigned NOT NULL DEFAULT '0',
   `feature_expiration_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `vendor_daemon` varchar(45) NOT NULL DEFAULT '',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`service_id`,`feature_name`,`feature_version`,`vendor_daemon`,`feature_expiration_date`) USING HASH,
   KEY `feature_name` (`feature_name`),
   KEY `feature_version` (`feature_version`),
@@ -386,7 +384,7 @@ CREATE TABLE `lic_services_options_feature` (
   `max_borrow_hours` int(10) unsigned DEFAULT NULL,
   `max_overdraft` int(10) unsigned DEFAULT NULL,
   `timeout` int(10) unsigned DEFAULT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`service_id`,`feature`,`keyword`)
 ) ENGINE=MyISAM COMMENT='Includes Feature Options' DEFAULT CHARSET=latin1;
 
@@ -403,7 +401,7 @@ CREATE TABLE `lic_services_options_feature_type` (
   `otype` varchar(20) NOT NULL DEFAULT '',
   `name` varchar(40) NOT NULL DEFAULT '',
   `notes` varchar(255) DEFAULT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`service_id`,`feature`,`variable`,`otype`,`name`,`keyword`)
 ) ENGINE=MyISAM COMMENT='Per Feature/Type Options' DEFAULT CHARSET=latin1;
 
@@ -418,7 +416,7 @@ CREATE TABLE `lic_services_options_incexcl_all` (
   `otype` varchar(20) NOT NULL DEFAULT '',
   `name` varchar(40) NOT NULL DEFAULT '',
   `notes` varchar(255) DEFAULT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`service_id`,`incexcl`,`otype`,`name`),
   KEY `incexcl` (`incexcl`),
   KEY `otype` (`otype`),
@@ -454,7 +452,7 @@ CREATE TABLE `lic_services_options_host_groups` (
   `service_id` int(10) unsigned NOT NULL DEFAULT '0',
   `group` varchar(64) NOT NULL DEFAULT '',
   `host` varchar(64) NOT NULL DEFAULT '',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`service_id`,`group`,`host`),
   KEY `group` (`group`),
   KEY `host` (`host`)
@@ -473,7 +471,7 @@ CREATE TABLE `lic_services_options_max` (
   `otype` varchar(10) NOT NULL DEFAULT '',
   `name` varchar(40) NOT NULL DEFAULT '',
   `notes` varchar(255) DEFAULT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`service_id`,`feature`,`otype`,`name`,`keyword`),
   KEY `feature` (`feature`),
   KEY `name` (`name`),
@@ -493,7 +491,7 @@ CREATE TABLE `lic_services_options_reserve` (
   `otype` varchar(10) NOT NULL DEFAULT '',
   `name` varchar(40) NOT NULL DEFAULT '',
   `notes` varchar(255) DEFAULT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`service_id`,`feature`,`otype`,`name`,`keyword`),
   KEY `feature` (`feature`),
   KEY `name` (`name`),
@@ -509,7 +507,7 @@ CREATE TABLE `lic_services_options_user_groups` (
   `service_id` int(10) unsigned NOT NULL DEFAULT '0',
   `group` varchar(64) NOT NULL DEFAULT '',
   `user` varchar(40) NOT NULL DEFAULT '',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`service_id`,`group`,`user`),
   KEY `group` (`group`),
   KEY `user` (`user`)
@@ -538,7 +536,7 @@ DROP TABLE IF EXISTS `lic_ldap_to_flex_groups`;
 CREATE TABLE `lic_ldap_to_flex_groups` (
   `ldap_group` varchar(40) NOT NULL,
   `flex_group` varchar(40) NOT NULL,
-  `present` tinyint(3) unsigned DEFAULT NULL,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`ldap_group`,`flex_group`)
 ) ENGINE=MyISAM COMMENT='A Mapping Table of LDAP Groups to FLEXlm Group' DEFAULT CHARSET=latin1;
 

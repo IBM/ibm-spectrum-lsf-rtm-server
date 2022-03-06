@@ -124,7 +124,7 @@ function ss_lic_users_features($lic_server_id, $featurename, $column) {
 	if ($arr == '') {
 		return 0;
 	} else {
-		return $arr;
+		return trim($arr);
 	}
 }
 

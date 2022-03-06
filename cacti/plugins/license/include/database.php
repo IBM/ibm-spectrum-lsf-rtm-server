@@ -150,7 +150,7 @@ function license_setup_database() {
 	$data['columns'][] = array('name' => 'status', 'type' => 'varchar(20)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'type', 'type' => 'varchar(50)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'version', 'type' => 'varchar(20)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'service_id`,`name';
 	$data['keys'][] = array('name' => 'service_id', 'columns' => 'service_id');
 	$data['keys'][] = array('name' => 'name', 'columns' => 'name');
@@ -213,7 +213,7 @@ function license_setup_database() {
 	$data['columns'][] = array('name' => 'total_reserved_token', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'feature_expiration_date', 'type' => 'timestamp', 'NULL' => false, 'default' => '0000-00-00 00:00:00');
 	$data['columns'][] = array('name' => 'vendor_daemon', 'type' => 'varchar(45)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'poller_id`,`service_id`,`feature_name`,`feature_version`,`vendor_daemon`,`feature_expiration_date';
 	$data['keys'][] = array('name' => 'poller_id', 'columns' => 'poller_id');
 	$data['keys'][] = array('name' => 'service_id', 'columns' => 'service_id');
@@ -240,7 +240,7 @@ function license_setup_database() {
 	$data['columns'][] = array('name' => 'tokens_acquired', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'tokens_acquired_date', 'type' => 'timestamp', 'NULL' => false, 'default' => '0000-00-00 00:00:00');
 	$data['columns'][] = array('name' => 'last_updated', 'type' => 'timestamp', 'NULL' => false, 'default' => 'CURRENT_TIMESTAMP', 'on_update' => 'CURRENT_TIMESTAMP');
-	$data['columns'][] = array('name' => 'present', 'type' => 'tinyint(1)', 'NULL' => false, 'default' => '1');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'service_id`,`vendor_daemon`,`feature_name`,`username`,`groupname`,`hostname`,`chkoutid`,`restype`,`status`,`tokens_acquired_date';
 	$data['keys'][] = array('name' => 'idx_service_id', 'columns' => 'service_id');
 	$data['keys'][] = array('name' => 'idx_poller_id', 'columns' => 'poller_id');
@@ -262,7 +262,7 @@ function license_setup_database() {
 	$data['columns'][] = array('name' => 'feature_queued', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'feature_reserved', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'vendor_daemon', 'type' => 'varchar(45)', 'NULL' => false, 'default' => 'TBD');
-	$data['columns'][] = array('name' => 'present', 'type' => 'tinyint(1)', 'NULL' => false, 'default' => '1');
+	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['columns'][] = array('name' => 'vendor_status', 'type' => 'varchar(10)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'vendor_version', 'type' => 'varchar(30)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'status', 'type' => 'varchar(29)', 'NULL' => false, 'default' => '');

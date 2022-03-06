@@ -399,13 +399,9 @@ function lic_filter() {
 							<option value='-1'<?php if (get_request_var('service') == '-1') {?> selected<?php }?>>Roll-Up</option>
 							<?php
 							$services = db_fetch_assoc_prepared('SELECT service_id AS id, server_name
-								FROM lic_services ls
-								INNER JOIN lic_pollers lp
-								ON ls.poller_id=lp.id
-								WHERE ls.disabled = ""
-								AND lp.poller_type=?
-								ORDER BY ls.server_name',
-								array(get_request_var('poller_type')));
+								FROM lic_services ls JOIN lic_pollers lp ON ls.poller_id=lp.id
+								WHERE ls.disabled="" AND lp.poller_type=?
+								ORDER BY ls.server_name', array(get_request_var('poller_type')));
 
 							if (cacti_sizeof($services)) {
 								foreach ($services as $s) {

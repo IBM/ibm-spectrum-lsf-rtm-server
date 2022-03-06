@@ -33,8 +33,7 @@ $parms = $_SERVER['argv'];
 array_shift($parms);
 
 /* take the start time to log performance data */
-list($micro,$seconds) = preg_split('/ /', microtime());
-$start = $seconds + $micro;
+$start = microtime(true);
 
 $debug      = FALSE;
 $force      = FALSE;
@@ -102,8 +101,7 @@ if (detect_and_correct_running_processes(0, 'LICHIST', $poller_interval*3) || $f
 	remove_process_entry(0, 'LICHIST');
 
 	// Record end time for statistics and log statistics
-	list($micro,$seconds) = preg_split('/ /', microtime());
-	$end = $seconds + $micro;
+	$end = microtime(true);
 
 	if (!$custom) {
 		cacti_log('LICHIST STATS: Total Time: ' . round($end - $start,2) . ', Total Jobs: ' . $job_count . ', History Events: ' . $hist_count, false, 'SYSTEM');
@@ -195,6 +193,7 @@ function get_finished_jobs($start_date, $end_date) {
 	 	$finished_jobs = db_fetch_assoc_prepared("SELECT jobid, indexid, clusterid,
 			submit_time, start_time, end_time, exec_host, user FROM grid_jobs_finished
 			WHERE end_time BETWEEN ? AND ?", array($date1, $date2));
+
 	}
 
 	return $finished_jobs;

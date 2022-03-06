@@ -24,8 +24,9 @@ chdir('../../');
 include('./include/auth.php');
 include_once($config['library_path'] . '/rtm_plugins.php');
 include_once($config['library_path'] . '/rtm_functions.php');
-include_once($config['base_path'] . '/plugins/grid/lib/grid_functions.php');
 include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
+include_once($config['base_path'] . '/plugins/grid/include/grid_messages.php');
+include_once($config['base_path'] . '/plugins/grid/lib/grid_functions.php');
 include_once($config['base_path'] . '/plugins/grid/lib/grid_filter_functions.php');
 include_once($config['base_path'] . '/plugins/grid/lib/grid_partitioning.php');
 include_once($config['base_path'] . '/plugins/grid/lib/grid_validate.php');
@@ -43,7 +44,8 @@ $grid_job_control_actions = array(
 	6 => __('Resume Job', 'grid'),
 	7 => __('Terminate Job', 'grid'),
 	8 => __('Force Kill', 'grid'),
-	9 => __('Signal Kill', 'grid')
+	9 => __('Signal Kill', 'grid'),
+	10=> __('Kill as DONE', 'grid')
 );
 
 $grid_job_control_actions = api_plugin_hook_function('job_actions', $grid_job_control_actions);
@@ -594,7 +596,7 @@ function jobsFilter() {
 						<select id='clusterid'>
 							<option value='0'<?php if (get_request_var('clusterid') == '0') {?> selected<?php }?>>All</option>
 							<?php
-							$clusters = db_fetch_assoc('SELECT * FROM grid_clusters ORDER BY clustername');
+							$clusters = grid_get_clusterlist();
 							if (!empty($clusters) > 0) {
 								foreach ($clusters as $cluster) {
 									print '<option value="' . $cluster['clusterid'] .'"'; if (get_request_var('clusterid') == $cluster['clusterid']) { print ' selected'; } print '>' . html_escape($cluster['clustername']) . '</option>';

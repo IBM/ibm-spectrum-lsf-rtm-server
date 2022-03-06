@@ -86,14 +86,14 @@ $oneLanguage = Gettext\Languages\Language::getById('en_US');
 The main properties of the `Gettext\Languages\Language` instances are:
 - `id`: the normalized language ID (for instance `en_US`)
 - `name`: the language name (for instance `American English` for `en_US`)
-- `supersededBy`: the code of a language that supersedes this language code (for instance, `jw` is superseded by `jv` to represent the Javanese language) 
+- `supersededBy`: the code of a language that supersedes this language code (for instance, `jw` is superseded by `jv` to represent the Javanese language)
 - `script`: the script name (for instance, for `zh_Hans` - `Simplified Chinese` - the script is `Simplified Han`)
 - `territory`: the name of the territory (for instance `United States` for `en_US`)
 - `baseLanguage`: the name of the base language  (for instance `English` for `en_US`)
-- `formula`: the [gettext formula](http://www.gnu.org/savannah-checkouts/gnu/gettext/manual/html_node/Plural-forms.html) to distinguish between different plural rules. For instance `n != 1` 
+- `formula`: the [gettext formula](http://www.gnu.org/savannah-checkouts/gnu/gettext/manual/html_node/Plural-forms.html) to distinguish between different plural rules. For instance `n != 1`
 - `categories`: the plural cases applicable for this language. It's an array of `Gettext\Languages\Category` instances. Each instance has these properties:
   - `id`: can be (in this order) one of `zero`, `one`, `two`, `few`, `many` or `other`. The `other` case is always present.
-  - `examples`: a representation of some values for which this plural case is valid (examples are simple numbers like `1` or complex ranges like `0, 2~16, 100, 1000, 10000, 100000, 1000000, …`)  
+  - `examples`: a representation of some values for which this plural case is valid (examples are simple numbers like `1` or complex ranges like `0, 2~16, 100, 1000, 10000, 100000, 1000000, …`)
 
 ## Is this data correct?
 

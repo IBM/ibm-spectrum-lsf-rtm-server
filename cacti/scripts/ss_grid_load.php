@@ -66,7 +66,7 @@ function ss_grid_load($hostname = '', $clusterid = 0, $summary = 'no') {
 		'r1m:'  . ss_grid_load_value($job_stats['t_r1m'])  . ' ' .
 		'r15m:' . ss_grid_load_value($job_stats['t_r15m']);
 
-	return $result;
+	return trim($result);
 }
 
 function ss_grid_load_value($value) {

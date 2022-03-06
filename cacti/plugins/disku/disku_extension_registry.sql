@@ -1,8 +1,6 @@
 --
 -- $Id$
 --
-
---
 -- MySQL dump 10.13  Distrib 5.1.66, for redhat-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: cacti

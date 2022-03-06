@@ -88,9 +88,9 @@
 				<type>1</type>
 				<db_table></db_table>
 				<sql_query>SELECT poller_id, hostname, mountPoint, percentUsed, present
-FROM disku_pollers_filesystems 
-JOIN disku_pollers on disku_pollers.id=disku_pollers_filesystems.poller_id 
-WHERE present=1 AND percentUsed &gt; |input_percent| AND hostname LIKE &#039;|input_hostname|&#039; 
+FROM disku_pollers_filesystems
+JOIN disku_pollers on disku_pollers.id=disku_pollers_filesystems.poller_id
+WHERE present=1 AND percentUsed &gt; |input_percent| AND hostname LIKE &#039;|input_hostname|&#039;
 </sql_query>
 				<script_thold></script_thold>
 				<script_data></script_data>

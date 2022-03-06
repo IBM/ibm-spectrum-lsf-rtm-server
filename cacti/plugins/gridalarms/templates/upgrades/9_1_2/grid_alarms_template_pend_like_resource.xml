@@ -149,8 +149,8 @@ ON gj.clusterid=gjp.clusterid
 AND gj.jobid=gjp.jobid
 AND gj.indexid=gjp.indexid
 AND gj.submit_time=gjp.submit_time
-INNER JOIN grid_jobs_pendreason_maps AS gjpm 
-ON gjp.issusp=gjpm.issusp AND gjp.reason=gjpm.reason_code AND gjp.subreason=gjpm.sub_reason_code 
+INNER JOIN grid_jobs_pendreason_maps AS gjpm
+ON gjp.issusp=gjpm.issusp AND gjp.reason=gjpm.reason_code AND gjp.subreason=gjpm.sub_reason_code
 WHERE gjpm.reason LIKE &#039;%(|input_resource|)%&#039;
 AND gjp.end_time=&#039;0000-00-00&#039;
 AND gjp.start_time&lt; SUBDATE(NOW(),INTERVAL |input_days| day)</sql_query>

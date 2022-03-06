@@ -51,7 +51,7 @@ function themeReady() {
 	if (!!!brandName) {
 		var brandName='IBM Spectrum';
 		var brandNameBold='IBM <b>Spectrum</b>';
-		var productName='LSF RTM 10.2.0.12';
+		var productName='LSF RTM 10.2.0.13';
 		var copyRight='© Copyright International Business Machines Corp. 1992, 2022. US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp. Portions Copyright © 2004, 2022 The Cacti Group, Inc.';
 	}
 
@@ -100,7 +100,7 @@ function themeReady() {
 
 		$('<div class="dropdownMenu">'
 			+'<ul id="submenu-user-help" class="submenuoptions right" style="display:none;">'
-				+'<li><a href="https://www.ibm.com/support/knowledgecenter/SSZT2D_10.2.0" target="_blank" rel="noopener"><span>RTM Help</span></a></li>'
+				+'<li><a href="https://www.ibm.com/support/knowledgecenter/SSZT2D_10.2.0" target="_blank" rel="noopener noreferrer"><span>RTM Help</span></a></li>'
 				+'<li><hr class="menu"></li>'
 				+'<li><a href="'+urlPath+'about.php"><span>'+aboutCacti+'</span></a></li>'
 			+'</ul>'

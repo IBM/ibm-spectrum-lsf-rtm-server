@@ -67,5 +67,5 @@ function ss_grid_effectiveut($clusterid = 0) {
 		$effectiveUT = 0;
 	}
 
-	return $effectiveUT;
+	return trim($effectiveUT);
 }

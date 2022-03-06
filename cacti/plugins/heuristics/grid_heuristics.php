@@ -22,6 +22,7 @@ $guest_account = true;
 
 chdir('../../');
 include('./include/auth.php');
+include_once('./plugins/grid/lib/grid_functions.php');
 
 $title = __('IBM Spectrum LSF RTM - Grid Heuristics Detail View', 'heuristics');
 
@@ -742,10 +743,7 @@ function heuristicsFilter() {
 						<select id='clusterid'>
 							<option value='0'<?php if (get_request_var('clusterid') == '0') {?> selected<?php }?>><?php print __('All', 'heuristics');?></option>
 							<?php
-							$clusters = db_fetch_assoc('SELECT *
-								FROM grid_clusters
-								WHERE disabled=""
-								ORDER BY clustername');
+							$clusters = grid_get_clusterlist(true);
 
 							if (cacti_sizeof($clusters)) {
 								foreach ($clusters as $cluster) {

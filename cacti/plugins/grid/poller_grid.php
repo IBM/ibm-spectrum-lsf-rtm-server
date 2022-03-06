@@ -259,7 +259,7 @@ if ((read_config_option('grid_system_collection_enabled') == 'on') &&
 
 				$day_of_week = date('w');
 				$day_of_month = date('d');
-				if (read_config_option('grid_optimization_weekday') == 'n') {
+				if (read_config_option('grid_optimization_schedule') == 'n') {
 					perform_grid_db_maint($current_time, false);
 				} else if ((($day_of_week = read_config_option('grid_optimization_weekday')) &&
 					(read_config_option('grid_optimization_schedule') == 'w')) ||

@@ -510,6 +510,33 @@ function grid_get_user_hosts($clusterid, $userid) {
 	return $format_hosts;
 }
 
+/**
+ * Get cluster id/name list. ClusterName column is zone name if zone type is 'submission' or 'execution'.
+ *
+ * @return array DB fetch result, include cluster id/name per row
+ */
+function grid_get_clusterlist($enable_only = false, $clusterids = array()) {
+	if (cacti_sizeof($clusterids)) {
+		$cluster_where = ' clusterid IN (' . implode(',', $clusterids) . ')';
+	} else {
+		$cluster_where = '';
+	}
+	if ($enable_only) {
+		$cluster_where .= (!empty($cluster_where) ? ' AND ' : '') . " disabled=''";
+	}
+	if(!empty($cluster_where)){
+		$cluster_where = 'WHERE ' . $cluster_where;
+	}
+	$clusters = db_fetch_assoc_prepared("SELECT clusterid, clustername FROM grid_clusters $cluster_where ORDER BY clustername");
+	return $clusters;
+}
+
+/**
+ * Get clustername by id, Cluster id/name map is stored in session cache grid_clusternames that is updated per 10 mins or adding new cluster.
+ *
+ * @param int $clusterid
+ * @return string clustername
+ */
 function grid_get_clustername($clusterid) {
 	if (!isset($_SESSION['grid_clusternames'])) {
 		$_SESSION['grid_clusternames'] = array_rekey(
@@ -602,9 +629,6 @@ function grid_get_cluster_collect_status($cluster) {
 	$queue        = db_fetch_cell_prepared("SELECT value FROM settings WHERE name=?", array("grid_update_time_bqueues_" . $cluster['clusterid']));
 	$queue_result = grid_get_cluster_runtime_status($queue, $now, $cluster['max_nonjob_runtime']);
 
-	$jobs         = db_fetch_cell_prepared("SELECT value FROM settings WHERE name=?", array("grid_update_time_bjobs_" . $cluster['clusterid'] . "_Major"));
-	$jobs_result  = grid_get_cluster_runtime_status($jobs, $now, $cluster['max_job_runtime']);
-
 	$jobs               = db_fetch_cell_prepared("SELECT value FROM settings WHERE name=?", array("grid_update_time_bjobs_" . $cluster['clusterid'] . "_Minor"));
 	$jobs_minor_result  = grid_get_cluster_runtime_status($jobs, $now, $cluster['max_job_runtime']);
 
@@ -614,7 +638,7 @@ function grid_get_cluster_collect_status($cluster) {
 	$system_maint       = read_config_option('grid_system_collection_enabled', true);
 	$admin_disable      = read_config_option('grid_collection_enabled', true);
 
-	//print "cluster->" . $cluster["clustername"] . ", load->" . $load_result . ", bhosts->" . $bhosts_result . ", bqueue->" . $queue_result . ", jobs_major->" . $jobs_result . ", jobs_minor->" . $jobs_minor_result;
+	//print "cluster->" . $cluster["clustername"] . ", load->" . $load_result . ", bhosts->" . $bhosts_result . ", bqueue->" . $queue_result . ", jobs_major->" . $jobs_major_result . ", jobs_minor->" . $jobs_minor_result;
 
 	if (empty($system_maint)) {
 		return 'Maintenance';
@@ -684,19 +708,19 @@ function grid_show_efficiency_state($state, $cluster_status, $clusterid) {
 	if (read_config_option('grid_efficiency_enabled') == 'on') {
 		if ($cluster_status == 'Up') {
 			if ($state == CLUSTER_OK) {
-				form_selectable_cell_visible('Ok', 'show_cluster_efic_status', $clusterid, 'right deviceUp');
+				form_selectable_cell_visible('Ok', 'show_cluster_efic_status', $clusterid, 'left deviceUp');
 			} elseif ($state == CLUSTER_RECOVERING) {
-				form_selectable_cell_visible('Recovering', 'show_cluster_efic_status', $clusterid, 'right deviceRecovering');
+				form_selectable_cell_visible('Recovering', 'show_cluster_efic_status', $clusterid, 'left deviceRecovering');
 			} elseif ($state == CLUSTER_WARNING) {
-				form_selectable_cell_visible('Warn', 'show_cluster_efic_status', $clusterid, 'right deviceWarning');
+				form_selectable_cell_visible('Warn', 'show_cluster_efic_status', $clusterid, 'left deviceWarning');
 			} else {
-				form_selectable_cell_visible('Alarm', 'show_cluster_efic_status', $clusterid, 'right deviceDown');
+				form_selectable_cell_visible('Alarm', 'show_cluster_efic_status', $clusterid, 'left deviceDown');
 			}
 		} else {
-			form_selectable_cell_visible('Unk', 'show_cluster_efic_status', $clusterid, 'right deviceUnknown');
+			form_selectable_cell_visible('Unk', 'show_cluster_efic_status', $clusterid, 'left deviceUnknown');
 		}
 	} else {
-		form_selectable_cell_visible('N/A', 'show_cluster_efic_status', $clusterid, 'right deviceDisabled');
+		form_selectable_cell_visible('N/A', 'show_cluster_efic_status', $clusterid, 'left deviceDisabled');
 	}
 }
 
@@ -2158,8 +2182,7 @@ function perform_grid_db_maint($start_time, $optimize = false) {
 	set_config_option('grid_db_maint_process_status', '0');
 
 	/* take time and log performance data */
-	list($micro,$seconds) = preg_split("/ /", microtime());
-	$end_time = $seconds + $micro;
+	$end_time = microtime(true);
 	/*Quick temp fix for RTC#227730 */
 	if(!isset($jobs_rows_deleted))  $jobs_rows_deleted  = 0;
 	if(!isset($interval_purged))    $interval_purged    = 0;
@@ -2619,7 +2642,6 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 										$backup = false;
 									}
 									/* don't backup job pending history tables regardless */
-									/* don't backup boost archive tables regardless */
 									if (preg_match('/^grid_jobs_pendhist_hourly_/', $table['Tables_in_' . $database_default])) {
 										if ($backup_method == 'q') {
 											$backup = false;
@@ -2640,7 +2662,6 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 							} else {
 								$mysqldmp = 'mysqldump';
 							}
-
 							$is_cluster = db_fetch_row("SHOW VARIABLES LIKE 'log_bin'");
 							if (cacti_sizeof($is_cluster) && $is_cluster['Value'] == 'ON'){
 								$is_cluster = true;
@@ -2711,8 +2732,8 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 							rmdirr($tmp_backup_dir);
 							//Delete parent dir file if tmp dir using as $tmp_backup_dir ."_". time() ."/cacti_backup" format
 							if (preg_match('/cacti_backup_+\d*/', $tmp_backup_dir)){
-								$parent_backup_dir = dirname($tmp_backup_dir);
-								rmdirr($parent_backup_dir);
+							    $parent_backup_dir = dirname($tmp_backup_dir);
+							    rmdirr($parent_backup_dir);
 							}
 							if ($config['cacti_server_os'] == 'win32') {
 								if (!substr_count($result, 'Everything is Ok')) {
@@ -2774,7 +2795,7 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 function start_polling() {
 	global $config;
 
-	include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
+include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
 
 	/* enable polling */
 	grid_end_maintenance_mode('BACKUP');
@@ -2788,7 +2809,7 @@ function grid_restore_cacti_db($tgz_file) {
 	global $rtm;
 
 	include_once($config['base_path'] . '/lib/utility.php');
-	include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
+include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
 
 	if ($tgz_file['error'] > 0) {
 		raise_message(126);
@@ -2815,18 +2836,20 @@ function grid_restore_cacti_db($tgz_file) {
 			$rmdir=$pathinfo['dirname'] . '/' . $backupdir;
 			if (is_dir($pathinfo['dirname'] . '/' . $backupdir)) {
 				$result= rmdirr($pathinfo['dirname'] . '/' . $backupdir);
-					if (!$result) {
-						$old_backupdir = $backupdir;
-						$backupdir =  $backupdir . '_' . time() .'/cacti_backup';
-						if (mkdir($pathinfo['dirname'] .'/'. $backupdir,0755, true)) {
-							cacti_log('WARNING: Can not remove the existed directory ' . $old_backupdir . ' failed and change the directory to ' .$pathinfo['dirname'] .'/'. $backupdir);
-							$rmdir = $pathinfo['dirname'] . '/' . dirname($backupdir);
-						} else {
-							cacti_log('FATAL: Remove the existed directory ' . $old_backupdir . ' failed and can nott change the directory to ' .$pathinfo['dirname'] .'/'. $backupdir);
-							start_polling();
-							return;
-						}
+						if (!$result) {
+							$old_backupdir = $backupdir;
+							$backupdir =  $backupdir . '_' . time() .'/cacti_backup';
+					if (mkdir($pathinfo['dirname'] .'/'. $backupdir,0755, true)) {
+						 cacti_log('WARNING: Can not remove the existed directory ' . $old_backupdir . ' failed and change the directory to ' .$pathinfo['dirname'] .'/'. $backupdir);
+						$rmdir = $pathinfo['dirname'] . '/' . dirname($backupdir);
 					} else {
+								cacti_log('FATAL: Remove the existed directory ' . $old_backupdir . ' failed and can nott change the directory to ' .$pathinfo['dirname'] .'/'. $backupdir);
+						start_polling();
+						return;
+
+					}
+							} else {
+
 					 cacti_log('WARNING: Remove the existed directory ' . $old_backupdir . ' successfully');
 				}
 
@@ -6562,6 +6585,12 @@ function find_pidalarm_jobs() {
 	}
 }
 
+/**
+ * Get SQL IN expression for enabled cluster Ids. Field name is 'clusterid' by default.
+ *
+ * @param string $field Field name
+ * @return SQL IN expression
+ */
 function get_cluster_list($field = "clusterid") {
 	$clusters = array_rekey(db_fetch_assoc("SELECT clusterid FROM grid_clusters WHERE disabled=''"), "clusterid", "clusterid");
 
@@ -7698,9 +7727,9 @@ function curve_fitting_rusage_records_host($rusage_records = array()) {
 
 	if (!sizeof($prev)) {
 		$pt = db_fetch_row_prepared("select * from grid_table_partitions where table_name = 'grid_jobs_host_rusage'
-				  and min_time <=?
-				  and max_time >=?
-				  order by max_time asc limit 1", array($first_record['submit_time'], $first_record['update_time']));
+		          and min_time <=?
+		          and max_time >=?
+		          order by max_time asc limit 1", array($first_record['submit_time'], $first_record['update_time']));
 		if (sizeof($pt)) {
 			$tablename = 'grid_jobs_host_rusage_v' . $pt['partition'];
 			$select_list=build_partition_select_list($tablename, "grid_jobs_host_rusage");
@@ -7741,16 +7770,16 @@ function curve_fitting_rusage_records_host($rusage_records = array()) {
 			$new_processes = $prev['processes'] + ($i - $prev_update_time) * $slope_processes ;
 
 			$new_point = array("clusterid" => $cur['clusterid'],
-							   "jobid"=> $cur['jobid'],
-							   "indexid"=> $cur['indexid'],
-							   "submit_time"=> $cur['submit_time'],
-							   "update_time"=> date("Y-n-d H:i:s",$i),
-							   "host" => $cur['host'],
-							   "utime" => round($new_utime),
-							   "stime" => round($new_stime),
-							   "mem" => round($new_mem),
-							   "swap" => round($new_swap),
-							   "processes" => round($new_processes));
+			                   "jobid"=> $cur['jobid'],
+			                   "indexid"=> $cur['indexid'],
+			                   "submit_time"=> $cur['submit_time'],
+			                   "update_time"=> date("Y-n-d H:i:s",$i),
+			                   "host" => $cur['host'],
+			                   "utime" => round($new_utime),
+			                   "stime" => round($new_stime),
+			                   "mem" => round($new_mem),
+			                   "swap" => round($new_swap),
+			                   "processes" => round($new_processes));
 			$new_rusage_records[] = $new_point;
 		}
 		$new_rusage_records[] = $cur;
@@ -7777,9 +7806,9 @@ function curve_fitting_rusage_records_gpu($rusage_records = array()) {
 
 	if (!sizeof($prev)) {
 		$pt = db_fetch_row_prepared("select * from grid_table_partitions where table_name = 'grid_jobs_gpu_rusage'
-				  and min_time <=?
-				  and max_time >=?
-				  order by max_time asc limit 1", array($first_record['submit_time'], $first_record['update_time']));
+		          and min_time <=?
+		          and max_time >=?
+		          order by max_time asc limit 1", array($first_record['submit_time'], $first_record['update_time']));
 		if (sizeof($pt)) {
 			$tablename = 'grid_jobs_gpu_rusage_v' . $pt['partition'];
 			$select_list=build_partition_select_list($tablename, "grid_jobs_gpu_rusage");
@@ -7817,15 +7846,15 @@ function curve_fitting_rusage_records_gpu($rusage_records = array()) {
 			$new_gmem = $prev['gpu_mused_max'] + ($i - $prev_update_time) * $slope_gmem;
 
 			$new_point = array("clusterid" => $cur['clusterid'],
-							   "jobid"=> $cur['jobid'],
-							   "indexid"=> $cur['indexid'],
-							   "submit_time"=> $cur['submit_time'],
-							   "update_time"=> date("Y-n-d H:i:s",$i),
-							   "host" => $cur['host'],
-							   "gpu_id" => $cur['gpu_id'],
-							   "sm_ut_avg" => round($new_gut),
-							   "mem_ut_avg" => round($new_gmut),
-							   "gpu_mused_max" => round($new_gmem));
+			                   "jobid"=> $cur['jobid'],
+			                   "indexid"=> $cur['indexid'],
+			                   "submit_time"=> $cur['submit_time'],
+			                   "update_time"=> date("Y-n-d H:i:s",$i),
+			                   "host" => $cur['host'],
+			                   "gpu_id" => $cur['gpu_id'],
+			                   "sm_ut_avg" => round($new_gut),
+			                   "mem_ut_avg" => round($new_gmut),
+			                   "gpu_mused_max" => round($new_gmem));
 			$new_rusage_records[] = $new_point;
 		}
 		$new_rusage_records[] = $cur;
@@ -8026,9 +8055,9 @@ function update_job_rrds_gpu($table_name, $cache_directory, $file_base, $cluster
 			$last_record=null;
 			foreach ($update_records as $record) {
 				if (!empty($last_record) && strtotime($last_record['update_time']) == strtotime($record['update_time'])) {
-					continue;
+				    continue;
 				} else {
-					$last_record = $record;
+				    $last_record = $record;
 				}
 
 				$update .=  strtotime($record["update_time"]) . ":" .
@@ -8335,18 +8364,18 @@ function get_rusage_records_gpu_per_job($clusterid, $jobid, $indexid, $submit_ti
 	$where_update_time  = "AND update_time = ";
 
 	if ($isrun && read_config_option("grid_partitioning_enable") == "") {
-		$query_update_time = "SELECT $update_time_field FROM grid_jobs_gpu_rusage
+        $query_update_time = "SELECT $update_time_field FROM grid_jobs_gpu_rusage
 								WHERE (clusterid = ? AND jobid = ? AND indexid = ? AND submit_time = ? AND update_time >= ?)";
-		$update_time = db_fetch_cell_prepared($query_update_time, array($clusterid, $jobid, $indexid, $submit_time, $mod_time));
+        $update_time = db_fetch_cell_prepared($query_update_time, array($clusterid, $jobid, $indexid, $submit_time, $mod_time));
 
-		if(strlen($update_time)){
-			$where_update_time .= '?';
-			$query = "SELECT host, gpu_id, exec_time, energy, sm_ut_avg, mem_ut_avg, gpu_mused_max FROM grid_jobs_gpu_rusage
-				WHERE (clusterid = ? AND jobid = ? AND indexid = ? AND submit_time = ? $where_update_time) ORDER BY host, gpu_id";
+        if(strlen($update_time)){
+            $where_update_time .= '?';
+            $query = "SELECT host, gpu_id, exec_time, energy, sm_ut_avg, mem_ut_avg, gpu_mused_max FROM grid_jobs_gpu_rusage
+                WHERE (clusterid = ? AND jobid = ? AND indexid = ? AND submit_time = ? $where_update_time) ORDER BY host, gpu_id";
 
-			$param_arr = array($clusterid, $jobid, $indexid, $submit_time, $update_time);
+            $param_arr = array($clusterid, $jobid, $indexid, $submit_time, $update_time);
 
-			return db_fetch_assoc_prepared($query, $param_arr);
+            return db_fetch_assoc_prepared($query, $param_arr);
 		}
 	}else{
 		$query  = "";
@@ -9939,9 +9968,10 @@ function get_defaul_lsfadmin($lsfadmins){
 function sorting_json_format($selected_items_whole, $args_lists='', $action_level='', $password='', $user='') {
 	global $config, $rtm;
 
-include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
+	include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
 
-	$lsf1017_first_location = array();
+	//Since LSF 10.1.0.10(With LSF 10.1.0.7 Poller),  RTM use new LSF API, so we bulk operating the batch hosts
+	$bulkctrl_first_location = array();
 	for ($i=0;$i<count($selected_items_whole);$i++) {
 		$explode_selected_items = explode(':',$selected_items_whole[$i]);
 		if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
@@ -10044,9 +10074,10 @@ include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
 				'RTM_POLLER_BINDIR' => $RTM_POLLER_BINDIR
 			);
 		} elseif ($action_level == 'host') {
-			if($lsf_version_str == 'lsf1017') {
+			//Support bulk host operation since LSF 10.1.0.10
+			if (lsf_version_not_lower_than($lsf_version,'1017')) {
 				$clusterid = $explode_selected_items[1];
-				if(!isset($lsf1017_first_location[$clusterid])) {
+				if(!isset($bulkctrl_first_location[$clusterid])) {
 					$json_cluster[] = array(
 						'clusterid'         => $clusterid,
 						'name'              => $explode_selected_items[0],
@@ -10056,9 +10087,9 @@ include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
 						'LSF_ENVDIR'        => $LSF_ENVDIR,
 						'RTM_POLLER_BINDIR' => $RTM_POLLER_BINDIR
 					);
-					$lsf1017_first_location[$clusterid] = sizeof($json_cluster) - 1;
+					$bulkctrl_first_location[$clusterid] = sizeof($json_cluster) - 1;
 				} else {
-					$json_cluster[$lsf1017_first_location[$clusterid]]['name'] .= "|" . $explode_selected_items[0];
+					$json_cluster[$bulkctrl_first_location[$clusterid]]['name'] .= "|" . $explode_selected_items[0];
 					continue;
 				}
 			} else {
@@ -10100,25 +10131,18 @@ include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
 }
 
 function getlsfconf($master_host, $master_port, $enable_ego, $pollerid) {
+	global $rtm;
+
 	$action_level = 'getlsfconf';
 	$action = 'getconf';
 
 	$pollerinfo = db_fetch_row_prepared('SELECT poller_lbindir, lsf_version FROM grid_pollers WHERE poller_id=?', array($pollerid));
 	$lsf_version_str = 'lsf' . $pollerinfo['lsf_version'];
 
-	switch ($lsf_version_str) {
-		case 'lsf91':
-			$LSF_SERVERDIR = LSF_SERVERDIR91;
-			break;
-		case 'lsf1010':
-			$LSF_SERVERDIR = LSF_SERVERDIR1010;
-			break;
-		case 'lsf1017':
-			$LSF_SERVERDIR = LSF_SERVERDIR1017;
-			break;
-		default:
-			$LSF_SERVERDIR='.';
-			break;
+	if(in_array($lsf_version_str, $rtm)) {
+		$LSF_SERVERDIR = $rtm[$lsf_version_str]['LSF_SERVERDIR'];
+	} else {
+		$LSF_SERVERDIR='.';
 	}
 
 	$request = array();
@@ -12301,104 +12325,20 @@ function create_pending_filter_sqlwhere_ignore() {
  * @return string message base on exceptMask or exitInfo
  */
 function getExceptionStatus($exceptMask, $exitInfo) {
+	global $grid_job_term_messages, $grid_job_exception_messages;
+
 	$exception_msg = "";
-	if ($exceptMask & J_EXCEPT_OVERRUN) {
-		$exception_msg .= SPACE . OVERRUN;
+	foreach ($grid_job_exception_messages as $expkey => $expmsg) {
+		if ($exceptMask & $expkey) {
+			$exception_msg .= SPACE . $expmsg;
+		}
 	}
-	if ($exceptMask & J_EXCEPT_UNDERUN) {
-		$exception_msg .= SPACE . UNDERRUN;
-	}
-	if ($exceptMask & J_EXCEPT_IDLE) {
-		$exception_msg .= SPACE . IDLE;
-	}
-	if ($exceptMask & J_EXCEPT_RUNTIME_EST_EXCEEDED) {
-		$exception_msg .= SPACE . RUNTIME_EST_EXCEEDED;
-	}
-	switch($exitInfo) {
-		case TERM_PREEMPT:
-			$exception_msg .= "TERM_PREEMPT: " . MSG_TERM_PREEMPT;
-			break;
-		case TERM_LOAD:
-			$exception_msg .= "TERM_LOAD: " . MSG_TERM_LOAD;
-			break;
-		case TERM_WINDOW:
-			$exception_msg .= "TERM_WINDOW: " . MSG_TERM_WINDOW;
-			break;
-		case TERM_RUNLIMIT:
-			$exception_msg .= "TERM_RUNLIMIT: " . MSG_TERM_RUNLIMIT;
-			break;
-		case TERM_DEADLINE:
-			$exception_msg .= "TERM_DEADLINE: " . MSG_TERM_DEADLINE;
-			break;
-		case TERM_PROCESSLIMIT:
-			$exception_msg .= "TERM_PROCESSLIMIT: " . MSG_TERM_PROCESSLIMIT;
-			break;
-		case TERM_FORCE_OWNER:
-			$exception_msg .= "TERM_FORCE_OWNER: " . MSG_TERM_FORCE_OWNER;
-			break;
-		case TERM_FORCE_ADMIN:
-			$exception_msg .= "TERM_FORCE_ADMIN: " . MSG_TERM_FORCE_ADMIN;
-			break;
-		case TERM_REQUEUE_OWNER:
-			$exception_msg .= "TERM_REQUEUE_OWNER: " . MSG_TERM_REQUEUE_OWNER;
-			break;
-		case TERM_REQUEUE_ADMIN:
-			$exception_msg .= "TERM_REQUEUE_ADMIN: " . MSG_TERM_REQUEUE_ADMIN;
-			break;
-		case TERM_CPULIMIT:
-			$exception_msg .= "TERM_CPULIMIT: " . MSG_TERM_CPULIMIT;
-			break;
-		case TERM_CHKPNT:
-			$exception_msg .= "TERM_CHKPNT: " . MSG_TERM_CHKPNT;
-			break;
-		case TERM_OWNER:
-			$exception_msg .= "TERM_OWNER: " . MSG_TERM_OWNER;
-			break;
-		case TERM_ADMIN:
-			$exception_msg .= "TERM_ADMIN: " . MSG_TERM_ADMIN;
-			break;
-		case TERM_MEMLIMIT:
-			$exception_msg .= "TERM_MEMLIMIT: " . MSG_TERM_MEMLIMIT;
-			break;
-		case TERM_EXTERNAL_SIGNAL:
-			$exception_msg .= "TERM_EXTERNAL_SIGNAL: " . MSG_TERM_EXTERNAL_SIGNAL;
-			break;
-		case TERM_RMS:
-			$exception_msg .= "TERM_RMS: " . MSG_TERM_RMS;
-			break;
-		case TERM_ZOMBIE:
-			$exception_msg .= "TERM_ZOMBIE: " . MSG_TERM_ZOMBIE;
-			break;
-		case TERM_SWAP:
-			$exception_msg .= "TERM_SWAP: " . MSG_TERM_SWAP;
-			break;
-		case TERM_THREADLIMIT:
-			$exception_msg .= "TERM_THREADLIMIT: " . MSG_TERM_THREADLIMIT;
-			break;
-		case TERM_SLURM:
-			$exception_msg .= "TERM_SLURM: " . MSG_TERM_SLURM;
-			break;
-		case TERM_CWD_NOTEXIST:
-			$exception_msg .= "TERM_CWD_NOTEXIST: " . MSG_TERM_CWD_NOTEXIST;
-			break;
-		case TERM_CTRL_PID:
-			$exception_msg .= "TERM_CTRL_PID: " . MSG_TERM_CTRL_PID;
-			break;
-		case TERM_MC_RECALL:
-			$exception_msg .= "TERM_MC_RECALL: " . MSG_TERM_MC_RECALL;
-			break;
-		case TERM_RC_RECLAIM:
-			$exception_msg .= "TERM_RC_RECLAIM: " . MSG_TERM_RC_RECLAIM;
-			break;
-		case TERM_CSM_ALLOC:
-			$exception_msg .= "TERM_CSM_ALLOC: " . MSG_TERM_CSM_ALLOC;
-			break;
-		case TERM_KUBE:
-			$exception_msg .= "TERM_KUBE: " . MSG_TERM_KUBE;
-			break;
-		case TERM_UNKNOWN:
-			//$exception_msg .= "TERM_UNKNOWN: " . MSG_TERM_UNKNOWN;
-			break;
+
+	/* RTC#85157: Term unknown is also known ad 'DONE'. We should never display TERM_UNKNOWN */
+	if(!isset($grid_job_term_messages[$exitInfo])) {
+		$exception_msg .= $grid_job_term_messages[TERM_UNKNOWN];
+	} else if($exitInfo != TERM_UNKNOWN) {
+		$exception_msg .= $grid_job_term_messages[$exitInfo];
 	}
 	return $exception_msg;
 }
@@ -12414,18 +12354,18 @@ function rebuild_queue_distrib_table() {
 	$records = array();
 
 	if (cacti_sizeof($queues)) {
-	foreach ($queues as $queue) {
-		$hosts = db_fetch_assoc_prepared("SELECT host
-			FROM grid_queues_hosts
-			WHERE clusterid=?
-			AND queue=?", array($queue["clusterid"], $queue["queuename"]));
+		foreach ($queues as $queue) {
+			$hosts = db_fetch_assoc_prepared("SELECT host
+				FROM grid_queues_hosts
+				WHERE clusterid=?
+				AND queue=?", array($queue["clusterid"], $queue["queuename"]));
 
-		if (cacti_sizeof($hosts)) {
-		foreach ($hosts as $host) {
-			$records[$queue["clusterid"] . "|" . strtolower($host["host"])][$queue["queuename"]] = 1;
+			if (cacti_sizeof($hosts)) {
+			foreach ($hosts as $host) {
+				$records[$queue["clusterid"] . "|" . strtolower($host["host"])][$queue["queuename"]] = 1;
+			}
+			}
 		}
-		}
-	}
 	}
 
 	$csql       = "";
@@ -12646,13 +12586,13 @@ function get_grid_job_x_rusage_total_rows($jobid, $indexid, $clusterid, $submit_
 	}
 
 	if (read_config_option("grid_partitioning_enable") == "") {
-			$sql_query = "SELECT $tbl_field
-				FROM $tbl_name
-				WHERE jobid=" . $jobid . "
-					AND indexid=" . $indexid . "
-					AND submit_time='" . date("Y-m-d H:i:s", $submit_time) . "'
-					AND clusterid=" . $clusterid;
-			return db_fetch_cell($sql_query);
+        	$sql_query = "SELECT $tbl_field
+        		FROM $tbl_name
+        		WHERE jobid=" . $jobid . "
+        			AND indexid=" . $indexid . "
+        			AND submit_time='" . date("Y-m-d H:i:s", $submit_time) . "'
+        			AND clusterid=" . $clusterid;
+        	return db_fetch_cell($sql_query);
 	}else{
 		$query  = "";
 		$tables = partition_get_partitions_for_query($tbl_name, $submit_time, date("Y-m-d H:i:s"));
@@ -12664,15 +12604,15 @@ function get_grid_job_x_rusage_total_rows($jobid, $indexid, $clusterid, $submit_
 				}
 
 				$query .= " SELECT $tbl_field as jobCnt
-						FROM $table
-						WHERE (jobid=" . $jobid . "
-						AND indexid=" . $indexid . "
-						AND submit_time='" . date("Y-m-d H:i:s", $submit_time) . "'
-						AND clusterid=" . $clusterid . "
+        				FROM $table
+        				WHERE (jobid=" . $jobid . "
+        				AND indexid=" . $indexid . "
+        				AND submit_time='" . date("Y-m-d H:i:s", $submit_time) . "'
+        				AND clusterid=" . $clusterid . "
 					)";
 			}
-				$sql_query = "SELECT SUM(jobCnt) FROM ($query) as temptbl";
-				return db_fetch_cell($sql_query);
+        		$sql_query = "SELECT SUM(jobCnt) FROM ($query) as temptbl";
+        		return db_fetch_cell($sql_query);
 		}else{
 			return 0;
 		}
@@ -12765,21 +12705,21 @@ function get_grid_job_hosts_rraarchive($job, $row_limit, $pageno, &$total_rows){
 function get_grid_job_gpus($row_limit){
 	$sql_params = array();
 	if (read_config_option("grid_partitioning_enable") == "") {
-			$sql_query = "SELECT host, gpu_id"
-				. " FROM grid_jobs_gpu_rusage"
-				. " WHERE jobid=" . $_REQUEST["jobid"]
-				. " AND indexid=" . $_REQUEST["indexid"]
-				. " AND submit_time='" . date("Y-m-d H:i:s", $_REQUEST["submit_time"]) . "'"
-				. " AND clusterid=" . $_REQUEST["clusterid"]
-				. " GROUP BY host, gpu_id";
+        	$sql_query = "SELECT host, gpu_id"
+	        	. " FROM grid_jobs_gpu_rusage"
+        		. " WHERE jobid=" . $_REQUEST["jobid"]
+        		. " AND indexid=" . $_REQUEST["indexid"]
+        		. " AND submit_time='" . date("Y-m-d H:i:s", $_REQUEST["submit_time"]) . "'"
+        		. " AND clusterid=" . $_REQUEST["clusterid"]
+        		. " GROUP BY host, gpu_id";
 		$sql_params[] = $_REQUEST['jobid'];
 		$sql_params[] = $_REQUEST['indexid'];
 		$sql_params[] = date("Y-m-d H:i:s", $_REQUEST['submit_time']);
 		$sql_params[] = $_REQUEST['clusterid'];
 
-			$sql_query .= " LIMIT " . ($row_limit*($_REQUEST["page"]-1)) . "," . $row_limit;
-			$job_gpus = db_fetch_assoc_prepared($sql_query, $sql_params);
-			return $job_gpus;
+        	$sql_query .= " LIMIT " . ($row_limit*($_REQUEST["page"]-1)) . "," . $row_limit;
+        	$job_gpus = db_fetch_assoc_prepared($sql_query, $sql_params);
+        	return $job_gpus;
 	}else{
 		$query  = "";
 		$tables = partition_get_partitions_for_query("grid_jobs_gpu_rusage", $_REQUEST["submit_time"], date("Y-m-d H:i:s"));
@@ -12791,19 +12731,19 @@ function get_grid_job_gpus($row_limit){
 				}
 
 				$query .= "SELECT host, gpu_id"
-						. " FROM $table"
-						. " WHERE (jobid=?"
-						. " AND indexid=?"
-						. " AND submit_time=?"
-						. " AND clusterid=?)";
+        				. " FROM $table"
+        				. " WHERE (jobid=?"
+        				. " AND indexid=?"
+        				. " AND submit_time=?"
+        				. " AND clusterid=?)";
 				$sql_params[] = $_REQUEST['jobid'];
 				$sql_params[] = $_REQUEST['indexid'];
 				$sql_params[] = date("Y-m-d H:i:s", $_REQUEST['submit_time']);
 				$sql_params[] = $_REQUEST['clusterid'];
 			}
-			$sql_query = " $query GROUP BY host, gpu_id LIMIT " . ($row_limit*($_REQUEST["page"]-1)) . "," . $row_limit;
-			$job_gpus = db_fetch_assoc_prepared($sql_query, $sql_params);
-			return $job_gpus;
+        	$sql_query = " $query GROUP BY host, gpu_id LIMIT " . ($row_limit*($_REQUEST["page"]-1)) . "," . $row_limit;
+        	$job_gpus = db_fetch_assoc_prepared($sql_query, $sql_params);
+        	return $job_gpus;
 		}else{
 			return null;
 		}
@@ -15694,7 +15634,10 @@ function bjobs_form_action($job_page) {
 				case '9':
 					$job_action = 'sigkill';
 					break;
-			}
+				case '10':
+					$job_action = 'killdone';
+					break;
+				}
 
 			$advocate_key = session_auth();
 
@@ -15751,14 +15694,14 @@ function bjobs_form_action($job_page) {
 								$return_status = 'Failed. Status Code: '.$value['status_code'] ;
 							}
 							$message='Status:'.$return_status.' - Cluster ID:'.$value['clusterid'].' - '.$value['status_message'].'<br/>';
-							$output_message=$output_message.$message;
+                                                        $output_message=$output_message.$message;
 						}
 					}
 				}
 				if($count_fail>0)
-			  	raise_message('mymessage', $output_message, MESSAGE_LEVEL_ERROR);
-				else
-			  	raise_message('mymessage', $output_message, MESSAGE_LEVEL_INFO);
+              				raise_message('mymessage', $output_message, MESSAGE_LEVEL_ERROR);
+            			else
+              				raise_message('mymessage', $output_message, MESSAGE_LEVEL_INFO);
 			}
 		}
 		header('Location: ' . $job_page);
@@ -15822,6 +15765,9 @@ function bjobs_form_action($job_page) {
 		case '9':	/* sigkill*/
 			$question = __('Are you sure you want to kill the following job(s) with a signal', 'grid') . '</p>';
 			break;
+		case '10':	/* killdone */
+			$question = __('Are you sure you want to kill the following job(s) as DONE', 'grid') . '</p>';
+			break;
 	}
 
 	$i = 0;
@@ -15833,6 +15779,7 @@ function bjobs_form_action($job_page) {
 			case '6':
 			case '7':
 			case '8':
+			case '10':
 				print " <tr>
 					<td class='textArea'>
 					<p>$question</p>
@@ -16226,10 +16173,10 @@ function graphViewFilter($job_page = 'grid_bjobs.php') {
 			var graph_end       = <?php print grid_get_current_graph_end($timespan);?>;
 			var timeOffset      = <?php print date('Z');?>;
 			var pageAction      = 'viewjob&tab=hostgraph';
-					pageAction     += '&clusterid=' + $('#clusterid').val();
-					pageAction     += '&jobid=' + $('#jobid').val();
-					pageAction     += '&indexid=' + $('#indexid').val();
-					pageAction     += '&submit_time=' + $('#submit_time').val();
+			pageAction += '&clusterid=' + $('#clusterid').val();
+			pageAction += '&jobid=' + $('#jobid').val();
+			pageAction += '&indexid=' + $('#indexid').val();
+			pageAction += '&submit_time=' + $('#submit_time').val();
 			var graphPage       = '<?php print $job_page;?>';
 			var date1Open       = false;
 			var date2Open       = false;
@@ -16403,7 +16350,7 @@ function jobGraphFilter($job, $job_page) {
 							if ($job['stat'] != 'PEND') {
 								$grid_host_rusage_collection = db_fetch_cell("SELECT value FROM settings WHERE name='grid_host_rusage_collection' and value='on'");
 								$grid_gpu_rusage_collection = db_fetch_cell("SELECT value FROM settings WHERE name='grid_GPU_rusage_collection' and value='on'");
-								if(!empty($grid_host_rusage_collection) || !empty($grid_gpu_rusage_collection)){
+        						if(!empty($grid_host_rusage_collection) || !empty($grid_gpu_rusage_collection)){
 									$lsf_version = db_fetch_cell_prepared("SELECT grid_pollers.lsf_version
 										FROM grid_pollers JOIN grid_clusters ON grid_clusters.poller_id=grid_pollers.poller_id
 										WHERE grid_clusters.clusterid=?", array($job['clusterid']));
@@ -17258,7 +17205,7 @@ function build_view_summary_display_array() {
 			'display' => __('Effic Status'),
 			'tip' => __('Cluster efficiency status including OK, Recovering, Warn, Alarm, and N/A.'),
 			'dbname'  => 'show_cluster_efic_status',
-			'align' => 'right'
+			'align' => 'left'
 		),
 		array(
 			'display' => __('Effic %'),
@@ -17412,7 +17359,7 @@ function show_view_summary($if_add_action='') {
 
 			form_selectable_cell($cluster_status[1] != '' ? $cluster_status[1] . ' / ' . $cluster_status[2] : ($cluster_status[2] == __('N/A', 'grid') ? $cluster_status[2] : __('Unk', 'grid')), $cluster['clusterid']);
 
-			form_selectable_cell($cluster_status[3], $cluster['clusterid']);
+			form_selectable_cell($cluster_status[3], $cluster['clusterid'], '', 'center');
 
 			//collect status
 			if ($cluster['disabled'] == 'on') {
@@ -19320,6 +19267,7 @@ function simple_strip_host_domain ($host) {
  *  |          91 |
  *  |        1010 |
  *  |        1017 |
+ *  |    10010012 |
  *  +-------------+
  *  If the first bit of $cluster_lsf_version < 6, the version is higher than 91, So extend it to 4 bits,
  *  others we extend it to 3 bits.  for example,
@@ -20153,9 +20101,9 @@ function grid_graph_area(&$graph_array, $graph_start, $graph_end, $columns = 0) 
 
 /* html_graph_thumbnail_area - draws an area the contains thumbnail sized graphs
    @arg $graph_array - the array to contains graph information. for each graph in the
-					   array, the following two keys must exist
-					   $arr[0]["local_graph_id"] // graph id
-					   $arr[0]["title_cache"] // graph title
+                       array, the following two keys must exist
+                       $arr[0]["local_graph_id"] // graph id
+                       $arr[0]["title_cache"] // graph title
    @arg $graph_start - start time for graph
    @arg $graph_end - end time for graph
    @arg $columns - the number of columns to present */
@@ -20259,4 +20207,41 @@ function grid_graph_thumbnail_area(&$graph_array, $graph_start, $graph_end, $col
 			print "</tr>\n";
 		}
 	}
+}
+
+function grid_get_var_value_from_line($line, $arg) {
+	if (strpos($line, $arg) === 0) {
+		$value = explode('=', $line);
+		return trim($value[1], "\"\n");
+	}
+	return '';
+}
+
+/**
+ * Get LSF configuration value for one or more equivalent configuration name from lsf.conf.
+ *
+ * @param string $lsf_envdir LSF enviroment directory
+ * @param [type] $arg array/string of LSF configuration name
+ * @return string LSF configuration value
+ */
+function grid_get_lsf_conf_variable_value($lsf_envdir, $arg) {
+	$lines = file($lsf_envdir.'/lsf.conf');
+
+	foreach ($lines as $line_num => $line) {
+		if(is_array($arg)) {
+			foreach ($arg as $key) {
+				$value = grid_get_var_value_from_line($line, $key);
+				if(!empty($value)) {
+					return $value;
+				}
+			}
+		} else {
+			$value = grid_get_var_value_from_line($line, $arg);
+			if(!empty($value)) {
+				return $value;
+			}
+		}
+	}
+
+	return '';
 }

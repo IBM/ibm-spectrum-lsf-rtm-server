@@ -257,7 +257,7 @@ function thold_upgrade_database($force = false) {
 
 		$e = strtolower(db_fetch_cell("SELECT `value` FROM settings WHERE `name` = 'thold_from_email'"));
 		if ($e == 'cacti@cactiusers.org') {
-			db_execute("UPDATE settings SET `value`='RTM-Admin@localhost' WHERE `name`='thold_from_email'");
+			db_execute("UPDATE settings SET `value`='Cacti@cacti.net' WHERE `name`='thold_from_email'");
 		}
 	}
 
@@ -758,7 +758,7 @@ function thold_upgrade_database($force = false) {
 		$data['primary'] = 'id';
 		$data['type'] = 'InnoDB';
 		$data['comment'] = 'Table of Device Template Threshold Templates';
-		api_plugin_db_table_create('thold', 'plugin_thold_device_template', $data);
+		api_plugin_db_table_create('thold', 'plugin_thold_host_template', $data);
 
 		api_plugin_register_hook('thold', 'device_template_edit', 'thold_device_template_edit', 'setup.php', '1');
 		api_plugin_register_hook('thold', 'device_template_top', 'thold_device_template_top', 'setup.php', '1');
@@ -1495,6 +1495,8 @@ function thold_setup_database() {
 	$data['keys'][] = array('name' => 'template_enabled', 'columns' => 'template_enabled');
 	$data['keys'][] = array('name' => 'tcheck', 'columns' => 'tcheck');
 	$data['keys'][] = array('name' => 'thold_daemon_pid', 'columns' => 'thold_daemon_pid');
+	$data['keys'][] = array('name' => 'data_template_id', 'columns' => 'data_template_id');
+	$data['keys'][] = array('name' => 'graph_template_id', 'columns' => 'graph_template_id');
 	$data['type'] = 'InnoDB';
 	$data['comment'] = 'Threshold data';
 	api_plugin_db_table_create('thold', 'thold_data', $data);

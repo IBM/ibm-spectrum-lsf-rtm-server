@@ -21,59 +21,62 @@
 function heuristics_setup_table_new() {
 	$data = array();
 	$data['columns'][] = array('name' => 'clusterid', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);
-	$data['columns'][] = array('name' => 'queue', 'type' => 'varchar(60)', 'NULL' => false);
-	$data['columns'][] = array('name' => 'projectName', 'type' => 'varchar(64)', 'NULL' => false);
-	$data['columns'][] = array('name' => 'resReq', 'type' => 'varchar(512)', 'NULL' => false);
+	$data['columns'][] = array('name' => 'queue', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'custom', 'type' => 'varchar(256)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'projectName', 'type' => 'varchar(64)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'resReq', 'type' => 'varchar(512)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'reqCpus', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);
 	$data['columns'][] = array('name' => 'jobs', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false);
 	$data['columns'][] = array('name' => 'cores', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);
-	$data['columns'][] = array('name' => 'run_avg', 'type' => 'float', 'NULL' => false);
-	$data['columns'][] = array('name' => 'run_max', 'unsigned' => true, 'type' => 'int', 'NULL' => false);
-	$data['columns'][] = array('name' => 'run_min', 'unsigned' => true, 'type' => 'int', 'NULL' => false);
-	$data['columns'][] = array('name' => 'run_stddev', 'type' => 'float', 'NULL' => false);
-	$data['columns'][] = array('name' => 'run_median', 'unsigned' => true, 'type' => 'int', 'NULL' => true);
-	$data['columns'][] = array('name' => 'run_25thp', 'unsigned' => true, 'type' => 'int', 'NULL' => true);
-	$data['columns'][] = array('name' => 'run_75thp', 'unsigned' => true, 'type' => 'int', 'NULL' => true);
-	$data['columns'][] = array('name' => 'run_90thp', 'unsigned' => true, 'type' => 'int', 'NULL' => true);
-	$data['columns'][] = array('name' => 'mem_avg', 'type' => 'float', 'NULL' => false);
-	$data['columns'][] = array('name' => 'mem_max', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false);
-	$data['columns'][] = array('name' => 'mem_min', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false);
-	$data['columns'][] = array('name' => 'mem_stddev', 'type' => 'float', 'NULL' => false);
-	$data['columns'][] = array('name' => 'mem_median', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => true);
-	$data['columns'][] = array('name' => 'mem_25thp', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => true);
-	$data['columns'][] = array('name' => 'mem_75thp', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => true);
-	$data['columns'][] = array('name' => 'mem_90thp', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => true);
-	$data['columns'][] = array('name' => 'pend_avg', 'type' => 'float', 'NULL' => false);
-	$data['columns'][] = array('name' => 'pend_max', 'unsigned' => true, 'type' => 'int', 'NULL' => false);
-	$data['columns'][] = array('name' => 'pend_min', 'unsigned' => true, 'type' => 'int', 'NULL' => false);
-	$data['columns'][] = array('name' => 'pend_stddev', 'type' => 'float', 'NULL' => false);
-	$data['columns'][] = array('name' => 'pend_median', 'unsigned' => true, 'type' => 'int', 'NULL' => true);
-	$data['columns'][] = array('name' => 'pend_25thp', 'unsigned' => true, 'type' => 'int', 'NULL' => true);
-	$data['columns'][] = array('name' => 'pend_75thp', 'unsigned' => true, 'type' => 'int', 'NULL' => true);
-	$data['columns'][] = array('name' => 'pend_90thp', 'unsigned' => true, 'type' => 'int', 'NULL' => true);
+	$data['columns'][] = array('name' => 'run_avg', 'type' => 'float', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'run_max', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'run_min', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'run_stddev', 'type' => 'float', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'run_median', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'run_25thp', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'run_75thp', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'run_90thp', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'mem_avg', 'type' => 'float', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'mem_max', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'mem_min', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'mem_stddev', 'type' => 'float', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'mem_median', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'mem_25thp', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'mem_75thp', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'mem_90thp', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'pend_avg', 'type' => 'float', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'pend_max', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'pend_min', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'pend_stddev', 'type' => 'float', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'pend_median', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'pend_25thp', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'pend_75thp', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'pend_90thp', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'jph_avg', 'type' => 'float', 'NULL' => false);
 	$data['columns'][] = array('name' => 'jph_3std', 'type' => 'float', 'NULL' => false);
 	$data['columns'][] = array('name' => 'last_updated', 'type' => 'timestamp', 'NULL' => false, 'default' => '0000-00-00 00:00:00');
-	$data['primary'] = 'clusterid`,`queue`,`custom`,`projectName`,`resReq`(191),`reqCpus';
+	$data['primary'] = 'clusterid`,`queue`,`custom`,`projectName`,`resReq`,`reqCpus';
 	$data['type'] = 'InnoDB';
+	$data['charset'] = 'latin1';
+	$data['row_format'] = 'Dynamic';
 	$data['comment'] = 'Captures throughput history both recent and long term';
 	api_plugin_db_table_create('heuristics', 'grid_heuristics', $data);
 
-	db_execute("CREATE TABLE `grid_heuristics_percentiles` (
-		`clusterid` int(10) unsigned NOT NULL,
-		`queue` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL,
-		`custom` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-		`projectName` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
-		`resReq` varchar(512) COLLATE utf8mb4_unicode_ci NOT NULL,
-		`reqCpus` int(10) unsigned NOT NULL,
-		`run_time` int(10) unsigned NOT NULL,
-		`max_memory` bigint(20) unsigned NOT NULL DEFAULT '0',
-		`mem_used` bigint(20) unsigned NOT NULL DEFAULT '0',
-		`pend_time` int(10) unsigned NOT NULL DEFAULT '0',
-		`partition` int(10) unsigned NOT NULL)
-		ENGINE=MyISAM
-		ROW_FORMAT=DYNAMIC
-		COMMENT='Table used for percentile calculations'");
+	$data = array();
+	$data['columns'][] = array('name' => 'clusterid', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);
+	$data['columns'][] = array('name' => 'queue', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'custom', 'type' => 'varchar(128)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'projectName', 'type' => 'varchar(64)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'resReq', 'type' => 'varchar(512)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'reqCpus', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);
+	$data['columns'][] = array('name' => 'run_time', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);
+	$data['columns'][] = array('name' => 'max_memory', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'mem_used', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'pend_time', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'partition', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);
+	$data['type'] = 'MyISAM';
+	$data['comment'] = 'Table used for percentile calculations';
+	api_plugin_db_table_create ('grid', 'grid_heuristics_percentiles', $data);
 
 	$data = array();
 	$data['columns'][] = array('name' => 'clusterid', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);

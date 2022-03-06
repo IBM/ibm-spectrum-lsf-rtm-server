@@ -494,14 +494,9 @@ function edit() {
 			'friendly_name' => __('License Scheduler Batch Daemon (bld) Service Information', 'gridblstat'),
 		),
 		'ls_version' => array(
-			'method' => 'drop_array',
+			'method' => 'hidden',
 			'friendly_name' => __('License Scheduler Version', 'gridblstat'),
-			'value' => '|arg1:ls_version|',
-			'array' => array(
-				'91'  => __('Version 9.x', 'gridblstat'),
-				'101' => __('Version 10.x', 'gridblstat'),
-			),
-			'default' => '91'
+			'value' => '101'
 		),
 		'ls_hosts' => array(
 			'method' => 'textbox',
@@ -789,7 +784,7 @@ function collectors() {
 		'region'         => array('display' => __('Region Name', 'gridblstat'),     'sort' => 'ASC'),
 		'disabled'       => array('display' => __('Status', 'gridblstat'),          'sort' => 'ASC'),
 		'lsid'           => array('display' => __('ID', 'gridblstat'),              'sort' => 'ASC'),
-		'ls_version'     => array('display' => __('LS Version', 'gridblstat'),      'sort' => 'ASC'),
+//		'ls_version'     => array('display' => __('LS Version', 'gridblstat'),      'sort' => 'ASC'),
 		'poller_freq'    => array('display' => __('Poller Freq', 'gridblstat'),     'sort' => 'ASC'),
 		'graph_freq'     => array('display' => __('Graph Freq', 'gridblstat'),      'sort' => 'ASC'),
 		'blstat_lastrun' => array('display' => __('Poller Last Run', 'gridblstat'), 'sort' => 'DESC'),
@@ -835,7 +830,7 @@ function collectors() {
 			form_selectable_cell(filter_value($item['region'], get_request_var('filter')), $id);
 			form_selectable_cell($item['disabled'] == '' ? '<font class="deviceUp">' . __('Enabled', 'gridblstat') . '</font>':'<font class="deviceDown">' . __('Disabled', 'gridblstat') . '</font>', $id);
 			form_selectable_cell($id, $id);
-			form_selectable_cell($item['ls_version'], $id);
+//			form_selectable_cell($item['ls_version'], $id);
 			form_selectable_cell($item['poller_freq'] . ' Seconds', $id);
 			form_selectable_cell(($item['graph_freq'] == 0 ? __('Disabled', 'gridblstat'):__('%d Hours', round($item['graph_freq']/3600,2), 'gridblstat')), $id);
 			form_selectable_cell($lastrun, $id);

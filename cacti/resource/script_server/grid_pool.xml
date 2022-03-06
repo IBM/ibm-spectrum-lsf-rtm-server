@@ -58,5 +58,35 @@
             <direction>output</direction>
             <query_name>memSelected</query_name>
         </gridMemSelected>
+        <gridHostsTotal>
+            <name>Total Hosts in Pool</name>
+            <direction>output</direction>
+            <query_name>hostsTotal</query_name>
+        </gridHostsTotal>
+        <gridHostsBusy>
+            <name>Total Hosts in Busy</name>
+            <direction>output</direction>
+            <query_name>hostsBusy</query_name>
+        </gridHostsBusy>
+        <gridHostsIdle>
+            <name>Total Hosts in Idle</name>
+            <direction>output</direction>
+            <query_name>hostsIdle</query_name>
+        </gridHostsIdle>
+        <gridHostsShared>
+            <name>Total Hosts in Shared</name>
+            <direction>output</direction>
+            <query_name>hostsShared</query_name>
+        </gridHostsShared>
+        <gridHostsDedicated>
+            <name>Total Hosts in Dedicated</name>
+            <direction>output</direction>
+            <query_name>hostsDedicated</query_name>
+        </gridHostsDedicated>
+        <gridHostsBelowTarget>
+            <name>Total Hosts in Below Target</name>
+            <direction>output</direction>
+            <query_name>hostsBelowTarget</query_name>
+        </gridHostsBelowTarget>
     </fields>
 </interface>
