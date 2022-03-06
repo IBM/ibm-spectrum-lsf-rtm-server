@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -58,8 +58,6 @@ function plugin_grid_install() {
 
 	api_plugin_register_hook('grid', 'poller_top', 'grid_poller_top', 'setup.php');
 	api_plugin_register_hook('grid', 'poller_bottom', 'grid_poller_bottom', 'setup.php');
-
-	api_plugin_register_hook('grid', 'config_insert', 'grid_config', 'setup.php');
 
 	/* hooks to add dropdown to allow the assignment of a cluster resource */
 	api_plugin_register_hook('grid', 'device_action_array', 'grid_device_action_array', 'setup.php');
@@ -622,22 +620,6 @@ function grid_substitute_host_data($array) {
 	$array['string'] = $string;
 
 	return $array;
-}
-
-function grid_config () {
-	global $config, $grid_refresh_interval, $minimum_user_refresh_intervals, $grid_license_info;
-
-	include_once($config['base_path'] . '/plugins/grid/lib/grid_functions.php');
-
-	$grid_license_info = array(
-		'contact'               => 'www.ibm.com',
-		'lsfpoller_expiry_days' => 30,
-		'lsfpoller_num_users'   => 0,
-		'lsfpoller_expiry_date' => '',
-		'licpoller_expiry_days' => 30,
-		'licpoller_num_users'   => 0,
-		'licpoller_expiry_date' => '',
-	);
 }
 
 function grid_poller_top () {
@@ -1391,6 +1373,17 @@ function grid_config_form () {
 			'description' => __('Please enter relevant contact information for the Poller.', 'grid'),
 			'value' => '|arg1:poller_support_info|',
 			'max_length' => '255'
+		),
+		'spacer3' => array(
+			'method' => 'spacer',
+			'friendly_name' => __('Job Collection Settings', 'grid')
+		),
+		'poller_max_insert_packet_size' => array(
+			'friendly_name' => __('Max Insert SQL string length', 'grid'),
+			'description' => __('The maximum length of one INSERT SQL string for job or any generated/intermediate string. Increase this option is benefit for job Poller performance if there is network latency between Poller host and database server. The default is the global setting of \'Max Insert SQL string length\', upper limit to 16MB. ', 'grid'),
+			'method' => 'textbox',
+			'value' => '|arg1:poller_max_insert_packet_size|',
+			'max_length' => '20'
 		),
 		'poller_id' => array(
 			'method' => 'hidden_zero',
@@ -3411,8 +3404,9 @@ function grid_config_settings () {
 			'friendly_name' => __('Host Group Pending Job Calculation Method', 'grid'),
 			'description' => __('There are two ways to calculate host group pending jobs.  Host/Host groups associated with the job - calculates pending jobs for the specified host/host group by the bsub -m command.  Host groups associated with Queues - calculates pending jobs for a host group by virtue of their queue association.  Note: This method of calculating pending jobs can introduce performance problems in very large clusters. Therefore, before implementing, contact support to evaluate your specific case.', 'grid'),
 			'method' => 'drop_array',
-			'default' => 'hostmap',
+			'default' => 'disable',
 			'array' => array(
+				'disable' => __('Disable', 'grid'),
 				'hostmap' => __('Host/Host groups associated with the job', 'grid'),
 				'queuemap' => __('Host groups associated with queues', 'grid')
 			)
@@ -6136,7 +6130,7 @@ function grid_config_arrays () {
 	global $grid_detail_data_retention, $grid_partition_time_range, $grid_summary_data_retention;
 	global $grid_builtin_resources, $grid_archive_frequencies, $grid_db_delete_size;
 	global $grid_efficiency_display_ranges, $grid_efficiency_sql_ranges;
-	global $grid_license_info, $messages, $grid_out_of_services;
+	global $messages, $grid_out_of_services;
 	global $grid_job_pend_reasons_per_chart, $grid_job_pend_reasons_sortby, $grid_job_pend_reasons_filter;
 	global $grid_jgroup_filter_levels, $grid_projectgroup_filter_levels, $no_http_header_files;
 	global $graph_color_alpha, $graph_item_types, $consolidation_functions;
@@ -6149,7 +6143,7 @@ function grid_config_arrays () {
 	include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
 	include_once($config['base_path'] . '/plugins/grid/lib/grid_validate.php');
 
-	set_config_option('grid_copyright_year', '2006-2021');
+	set_config_option('grid_copyright_year', '2006-2022');
 
 	$elim_data_input_hash = '01cde0749ae68fd14b20fc2710d0d2ee';
 	/* hook define in global_arrays.php for import/export */
@@ -6175,14 +6169,6 @@ function grid_config_arrays () {
 
 	$messages[120] = array(
 		'message' => __('LSF Poller and LIC Poller require a valid license. Please contact product support.', 'grid'),
-		'type' => 'info');
-
-	$messages[121] = array(
-		'message' => __('Your LIC Poller license is expiring in %s days. Please contact product support.', $grid_license_info['licpoller_expiry_days'], 'grid'),
-		'type' => 'info');
-
-	$messages[122] = array(
-		'message' => __('Your LSF Poller license is expiring in %s days. Please contact product support.', $grid_license_info['lsfpoller_expiry_days'], 'grid'),
 		'type' => 'info');
 
 	$messages[125] = array(

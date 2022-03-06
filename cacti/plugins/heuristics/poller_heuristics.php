@@ -3,7 +3,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -560,6 +560,10 @@ function create_heuristics_sub_query($field_list, $sql_where = '') {
 			foreach($tables as $table) {
 				// Fix the table name
 				$table = str_replace('grid_jobs_finished', 'grid_heuristics_percentiles', $table);
+				
+				if (!db_table_exists($table)) {
+					db_execute("CREATE TABLE IF NOT EXISTS $table LIKE grid_heuristics_percentiles");
+				}
 
 				if (strlen($query)) {
 					$query .= ' UNION ALL ';
@@ -1134,4 +1138,3 @@ function grid_reportdata_update() {
 	cacti_log('GRIDREPORT STATS: Time:' . round($tput_time, 2) . ' tput1hour:' . $count_tput1hour, true, 'SYSTEM');
 	cacti_log('GRIDREPORT STATS: Time:' . round($tput_time, 2) . ' tput24hour:' . $count_tput24hour, true, 'SYSTEM');
 }
-

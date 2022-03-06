@@ -2,8 +2,8 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2021 The Cacti Group                                 |
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright (C) 2004-2022 The Cacti Group                                 |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -71,6 +71,9 @@ function db_connect_real($device, $user, $pass, $db_name, $db_type = 'mysql', $p
 					$flags[PDO::MYSQL_ATTR_SSL_KEY]  = $db_ssl_key;
 					$flags[PDO::MYSQL_ATTR_SSL_CERT] = $db_ssl_cert;
 					$flags[PDO::MYSQL_ATTR_SSL_CA]   = $db_ssl_ca;
+				} elseif (file_exists($db_ssl_key) && file_exists($db_ssl_cert)) {
+					$flags[PDO::MYSQL_ATTR_SSL_KEY]  = $db_ssl_key;
+					$flags[PDO::MYSQL_ATTR_SSL_CERT] = $db_ssl_cert;
 				}
 			}
 		}
@@ -218,7 +221,9 @@ function db_execute_prepared($sql, $params = array(), $log = true, $db_conn = fa
 
 	/* check for a connection being passed, if not use legacy behavior */
 	if (!is_object($db_conn)) {
-		$db_conn = $database_sessions["$database_hostname:$database_port:$database_default"];
+		if (isset($database_sessions["$database_hostname:$database_port:$database_default"])) {
+			$db_conn = $database_sessions["$database_hostname:$database_port:$database_default"];
+		}
 
 		if (!is_object($db_conn)) {
 			$database_last_error = 'DB ' . $execute_name . ' -- No connection found';
@@ -316,7 +321,6 @@ function db_execute_prepared($sql, $params = array(), $log = true, $db_conn = fa
 				if ($en == 1213 || $en == 1205) {
 					$errors++;
 					if ($errors > 30) {
-						cacti_log("ERROR: Too many Lock/Deadlock errors occurred! SQL:'" . clean_up_lines($sql) . "'", true, 'DBCALL', POLLER_VERBOSITY_DEBUG);
 						$database_last_error = "Too many Lock/Deadlock errors occurred!";
 					} else {
 						usleep(200000);
@@ -328,16 +332,8 @@ function db_execute_prepared($sql, $params = array(), $log = true, $db_conn = fa
 						$sql = substr($sql, 0, 1024) . '...';
 					}
 
-					cacti_log('ERROR: A DB ' . $execute_name . ' Too Large!, Error: ' . $en . ', SQL: \'' . clean_up_lines($sql) . '\'', false, 'DBCALL', POLLER_VERBOSITY_DEBUG);
-					cacti_log('ERROR: A DB ' . $execute_name . ' Too Large!, Error: ' . $errorinfo[2], false, 'DBCALL', POLLER_VERBOSITY_DEBUG);
-					cacti_debug_backtrace('SQL', false, true, 0, 1);
-
 					$database_last_error = 'DB ' . $execute_name . ' Too Large!, Error ' . $en . ': ' . $errorinfo[2];
 				} else {
-					cacti_log('ERROR: A DB ' . $execute_name . ' Failed!, Error: ' . $en . ', SQL: \'' . clean_up_lines($sql) . '\'', false, 'DBCALL', POLLER_VERBOSITY_DEBUG);
-					cacti_log('ERROR: A DB ' . $execute_name . ' Failed!, Error: ' . $errorinfo[2], false);
-					cacti_debug_backtrace('SQL', false, true, 0, 1);
-
 					$database_last_error = 'DB ' . $execute_name . ' Failed!, Error ' . $en . ': ' . (isset($errorinfo[2]) ? $errorinfo[2] : '<no error>');
 				}
 			}
@@ -631,7 +627,7 @@ function db_rollback_transaction($db_conn = false) {
 /* array_to_sql_or - loops through a single dimentional array and converts each
      item to a string that can be used in the OR portion of an sql query in the
      following form:
-		column=item1 OR column=item2 OR column=item2 ...
+        column=item1 OR column=item2 OR column=item2 ...
    @param $array - the array to convert
    @param $sql_column - the column to set each item in the array equal to
    @returns - a string that can be placed in a SQL OR statement */
@@ -661,8 +657,6 @@ function db_replace($table_name, $array_items, $keyCols, $db_conn = false) {
 	if (!is_object($db_conn)) {
 		$db_conn = $database_sessions["$database_hostname:$database_port:$database_default"];
 	}
-
-	cacti_log("DEVEL: SQL Replace on table '$table_name': '" . serialize($array_items) . "'", false, 'DBCALL', POLLER_VERBOSITY_DEVDBG);
 
 	_db_replace($db_conn, $table_name, $array_items, $keyCols);
 
@@ -717,10 +711,6 @@ function _db_replace($db_conn, $table, $fieldArray, $keyCols) {
 	$sql .= ") VALUES ($sql2)" . ($sql3 != '' ? " ON DUPLICATE KEY UPDATE $sql3" : '');
 
 	$return_code = db_execute($sql, true, $db_conn);
-
-	if (!$return_code) {
-		cacti_log("ERROR: SQL Save Failed for Table '$table'.  SQL:'" . clean_up_lines($sql) . "'", false, 'DBCALL');
-	}
 
 	return db_fetch_insert_id($db_conn);
 }
@@ -802,13 +792,13 @@ function db_check_password_length() {
 	$len = db_get_column_length('user_auth', 'password');
 
 	if ($len === false) {
-		die(__('Failed to determine password field length, cannot continue as may corrupt password'));
+		die(__('Failed to determine password field length, can not continue as may corrupt password'));
 	} else if ($len < 80) {
 		/* Ensure that the password length is increased before we start updating it */
 		db_execute("ALTER TABLE user_auth MODIFY COLUMN password varchar(256) NOT NULL default ''");
 		$len = db_get_column_length('user_auth','password');
 		if ($len < 80) {
-			die(__('Failed to alter password field length, cannot continue as may corrupt password'));
+			die(__('Failed to alter password field length, can not continue as may corrupt password'));
 		}
 	}
 }

@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -273,7 +273,7 @@ function form_save() {
 	}
 
 	if (isset_request_var('clusterid') && get_request_var('clusterid') > 0) {
-		$sql_where = ' AND clusterid = ?';
+		$sql_where = ' AND clusterid != ?';
 		$sql_params[] = get_request_var('clusterid');
 	} else {
 		$sql_where = '';

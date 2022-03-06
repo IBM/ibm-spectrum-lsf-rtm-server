@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -1358,7 +1358,7 @@ function grid_build_legend($color) {
 			break;
 		case 'alarm_blink':
 		case 'alarm_blink_small':
-   			$name   = __('Active Alert', 'grid');
+			$name   = __('Active Alert', 'grid');
 			$class  = 'hostDbAlert';
 			$icon   = 'fas fa-play unack';
 			break;
@@ -1696,7 +1696,7 @@ function summaryFilter() {
 							<input type='button' style='display:none' id='mute' value='<?php print __esc('Mute', 'grid');?>' title='<?php print __esc('Mute Alert Sound Acknowledging Host Down Conditions and Host Alerts. New Host Alerts and Down Conditions will Unmute.', 'grid');?>' onClick='muteFilter()'>
 							<input type='button' style='display:' id='unmute' value='<?php print __esc('Unmute', 'grid');?>' title='<?php print __esc('Unmute Sounds', 'grid');?>' onClick='unmuteFilter()'>
 					<?php } else {?>
-							 <input type='button' style='display:' id='mute' value='<?php print __esc('Mute', 'grid');?>' title='<?php print __esc('Mute Alert Sound Acknowledging Host Down Conditions and Host Alerts. New Host Alerts and Down Conditions will Unmute.', 'grid');?>' onClick='muteFilter()'>
+							<input type='button' style='display:' id='mute' value='<?php print __esc('Mute', 'grid');?>' title='<?php print __esc('Mute Alert Sound Acknowledging Host Down Conditions and Host Alerts. New Host Alerts and Down Conditions will Unmute.', 'grid');?>' onClick='muteFilter()'>
 							<input type='button' style='display:none' id='unmute' value='<?php print __esc('Unmute', 'grid');?>' title='<?php print __esc('Unmute Sounds', 'grid');?>' onClick='unmuteFilter()'>
 						<?php }?>
 					</td>
@@ -2160,7 +2160,7 @@ function summary_alarm_log() {
 	<?php
 
 	$display_text = array(
-		'type'	      => array('display' => __('Alert Type', 'grid'), 'align' => 'left', 'sort' => 'ASC'),
+		'type'        => array('display' => __('Alert Type', 'grid'), 'align' => 'left', 'sort' => 'ASC'),
 		'name'        => array('display' => __('Name', 'grid'), 'align' => 'left', 'sort' => 'ASC'),
 		'hostname'    => array('display' => __('Host', 'grid'), 'align' => 'left', 'sort' => 'ASC'),
 		'clusterid'   => array('display' => __('Cluster', 'grid'), 'align' => 'right', 'sort' => 'ASC'),
@@ -2864,9 +2864,10 @@ function summary_host() {
 			$('.shost').show();
 		}
 
-		$.get(strURL, function() {
-			$('#message').html('').show().html('<?php print __('Filter Settings Saved', 'grid');?>').delay(2000).fadeOut(1000);
-			Pace.stop();
+		Pace.track(function() {
+			$.get(strURL, function() {
+				$('#message').html('').show().html('<?php print __('Filter Settings Saved', 'grid');?>').delay(2000).fadeOut(1000);
+			});
 		});
 	}
 
@@ -2917,58 +2918,58 @@ function summary_host() {
 
 		$('#status').show();
 		$.ajaxQ.abortAll();
-		$.get(strURL)
-			.done(function(data) {
-				if(data.substring(0,14) == "summary_error:"){
-					var data_Message = "<span class=\"deviceDown\">" + data.substring(14) + "<\/span>";
-					sessionMessage = {"level":3,"message":data_Message}; //3:MESSAGE_LEVEL_ERROR
-					displayMessages();
-					data = '';
-				}
-				checkForLogout(data);
+		Pace.track(function() {
+			$.get(strURL)
+				.done(function(data) {
+					if(data.substring(0,14) == "summary_error:"){
+						var data_Message = "<span class=\"deviceDown\">" + data.substring(14) + "<\/span>";
+						sessionMessage = {"level":3,"message":data_Message}; //3:MESSAGE_LEVEL_ERROR
+						displayMessages();
+						data = '';
+					}
+					checkForLogout(data);
 
-				$('#hostdiv').html(data);
-				$('#status').hide();
+					$('#hostdiv').html(data);
+					$('#status').hide();
 
-				initializeHostIcons();
+					initializeHostIcons();
 
-				timer3 = setTimeout(function() { applyFilter() }, $('#refresh').val()*1000);
+					timer3 = setTimeout(function() { applyFilter() }, $('#refresh').val()*1000);
 
-				mute = $('#mute').css('display');
-				if ($('#alert_mute').val() == 'true' && mute != 'inline' && mute != '') {
-					$('#mute').css('display','none');
-					$('#unmute').css('display','');
-				} else {
-					$('#mute').css('display','');
-					$('#unmute').css('display','none');
-				}
+					mute = $('#mute').css('display');
+					if ($('#alert_mute').val() == 'true' && mute != 'inline' && mute != '') {
+						$('#mute').css('display','none');
+						$('#unmute').css('display','');
+					} else {
+						$('#mute').css('display','');
+						$('#unmute').css('display','none');
+					}
 
-				if (typeof $('#reason').val() != 'undefined') {
-					$('#newreason').remove();
-					$('#resource_str').parent().after("<td colspan='4' width='1000px' style='padding-left:10px;' id='newreason'><?php print __('Last Alert', 'grid');?> " + $('#reason').val() + '</td>');
-				}
+					if (typeof $('#reason').val() != 'undefined') {
+						$('#newreason').remove();
+						$('#resource_str').parent().after("<td colspan='4' width='1000px' style='padding-left:10px;' id='newreason'><?php print __('Last Alert', 'grid');?> " + $('#reason').val() + '</td>');
+					}
 
-				$('#ack').val(2);
+					$('#ack').val(2);
 
-				updateLegend();
+					updateLegend();
 
-				Pace.stop();
-
-				return false;
-			})
-			.fail(function(data) {
-				getPresentHTTPError(data);
-			}
-		);
+					return false;
+				})
+				.fail(function(data) {
+					getPresentHTTPError(data);
+				});
+		});
 	}
 
 	function updateLegend() {
 		strURL = urlPath + 'plugins/grid/grid_summary.php?action=ajaxlegendall&size=' + $('#size').val();
 
-		$.get(strURL, function(data) {
-			$('#legenddiv').html(data);
-			initLegend();
-			Pace.stop();
+		Pace.track(function() {
+			$.get(strURL, function(data) {
+				$('#legenddiv').html(data);
+				initLegend();
+			});
 		});
 	}
 
@@ -3037,34 +3038,34 @@ function summary_host() {
 		lstatus_value=$('#lstatus').val();
 		bstatus_value=$('#bstatus').val();
 		strURL = strURL + '&lstatus=' + lstatus_value + '&bstatus=' + bstatus_value ;
-		$.get(strURL,function(data) {
-			var data_array=data.split('<br/>');
-			$('#hgroup').html(data_array[0]);
-			$('#type').html(data_array[1]);
-			$('#model').html(data_array[2]);
-			$('#lstatus').html(data_array[3]);
-			$('#bstatus').html(data_array[4]);
-			$('#resource_str').attr('title',data_array[5]);
-			$('#hgroup').val(hostgroup_value);
+		Pace.track(function() {
+			$.get(strURL,function(data) {
+				var data_array=data.split('<br/>');
+				$('#hgroup').html(data_array[0]);
+				$('#type').html(data_array[1]);
+				$('#model').html(data_array[2]);
+				$('#lstatus').html(data_array[3]);
+				$('#bstatus').html(data_array[4]);
+				$('#resource_str').attr('title',data_array[5]);
+				$('#hgroup').val(hostgroup_value);
 
-			if ( $('#hgroup').val() == null) {
-				$('#hgroup').val( $('#hgroup option:first').val() );
-			}
+				if ( $('#hgroup').val() == null) {
+					$('#hgroup').val( $('#hgroup option:first').val() );
+				}
 
-			$('#type').val(type_value);
+				$('#type').val(type_value);
 
-			if ( $('#type').val() == null) {
-				$('#type').val( $('#type option:first').val() );
-			}
+				if ( $('#type').val() == null) {
+					$('#type').val( $('#type option:first').val() );
+				}
 
-			$('#model').val(model_value);
+				$('#model').val(model_value);
 
-			if ( $('#model').val() == null) {
-				$('#model').val( $('#model option:first').val() );
-			}
-
-			Pace.stop();
-		}, 'html');
+				if ( $('#model').val() == null) {
+					$('#model').val( $('#model option:first').val() );
+				}
+			}, 'html');
+		});
 	}
 
 	function setResourceStr() {
@@ -3093,23 +3094,25 @@ function summary_host() {
 	}
 
 	function muteFilter() {
-		$.get(urlPath + 'plugins/grid/grid_summary.php?action=audiocontrol&muteme=true&clusterid='+$('#clusterid').val(), function(data) {
-			$('#mute').css('display','none');
-			$('#unmute').css('display','');
-			$('#ack').val('-1');
-			summaryFilterChange(document.form_grid);
-			applyFilter();
-			Pace.stop();
+		Pace.track(function() {
+			$.get(urlPath + 'plugins/grid/grid_summary.php?action=audiocontrol&muteme=true&clusterid='+$('#clusterid').val(), function(data) {
+				$('#mute').css('display','none');
+				$('#unmute').css('display','');
+				$('#ack').val('-1');
+				summaryFilterChange(document.form_grid);
+				applyFilter();
+			});
 		});
 	}
 
 	function unmuteFilter() {
-		$.get(urlPath + 'plugins/grid/grid_summary.php?action=audiocontrol&muteme=false&clusterid='+$('#clusterid').val(), function(data) {
-			$('#mute').css('display','');
-			$('#unmute').css('display','none');
-			summaryFilterChange(document.form_grid);
-			applyFilter();
-			Pace.stop();
+		Pace.track(function() {
+			$.get(urlPath + 'plugins/grid/grid_summary.php?action=audiocontrol&muteme=false&clusterid='+$('#clusterid').val(), function(data) {
+				$('#mute').css('display','');
+				$('#unmute').css('display','none');
+				summaryFilterChange(document.form_grid);
+				applyFilter();
+			});
 		});
 	}
 
@@ -3226,21 +3229,22 @@ function summary_host() {
 
 		}
 
-		$.get(script, function(data) {
-			$('#hddialog').html(data);
-			$('#summary_tabs').tabs({
-				event: 'mouseover'
-			});
+		Pace.track(function() {
+			$.get(script, function(data) {
+				$('#hddialog').html(data);
+				$('#summary_tabs').tabs({
+					event: 'mouseover'
+				});
 
-			$('#hddialog').dialog('option', 'position', {
-				my: 'left',
-				at: 'right',
-				of: event,
-				offset: '15 15'
-			});
+				$('#hddialog').dialog('option', 'position', {
+					my: 'left',
+					at: 'right',
+					of: event,
+					offset: '15 15'
+				});
 
-			$('#hddialog').dialog('open');
-			Pace.stop();
+				$('#hddialog').dialog('open');
+			});
 		});
 
 		return false;
@@ -3648,7 +3652,7 @@ function grid_hostalarm_check_audible() {
 	$cluster = get_filter_request_var('clusterid');
 
 	/* now, let's check for a change in host status */
-	 if (get_request_var('clusterid') == 0) {
+	if (get_request_var('clusterid') == 0) {
 		$sql_where = "WHERE ((monitor='on' AND disabled='') OR (monitor IS NULL or monitor =''))
 			AND ga.hostname!='lost_and_found'
 			AND ga.present=1";

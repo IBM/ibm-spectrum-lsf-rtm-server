@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -66,7 +66,7 @@ function detect_and_correct_running_processes($pollerid, $taskname, $max_runtime
 			return TRUE;
 		}else if ($taskname != "GRIDARCHIVE") {
 			if (checkPID($row["pid"])){
-				cacti_log("NOTE: TASK:$taskname, TASKID:$pollerid, Another Task is already runnining.  Exiting!");
+				cacti_log("NOTE: TASK:$taskname, TASKID:$pollerid, Another Task is already running.  Exiting!", false, 'CMDPHP', POLLER_VERBOSITY_MEDIUM);
 				return FALSE;
 			}
 			else{
@@ -544,7 +544,7 @@ function import_binding_data_queries_templates($rtm_templates, $data_queries) {
 
 function rtm_copyright($output = false){
 	if(!defined('RTM_COPYRIGHT_YEAR')){
-		define('RTM_COPYRIGHT_YEAR', '2006-2021');
+		define('RTM_COPYRIGHT_YEAR', '2006-2022');
 	}
 
 	$rtm_copyright = html_entity_decode('&#169;',ENT_NOQUOTES,'UTF-8') . ' Copyright International Business Machines Corp, ' . RTM_COPYRIGHT_YEAR . ".\n\n";

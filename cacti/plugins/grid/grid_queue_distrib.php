@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -47,7 +47,7 @@ if (isset_request_var('export')) {
 				$sql_where = 'clusterid = ' . get_request_var('clusterid');
 			}
 
-			rtm_autocomplete_ajax('grid_queue_distrib.php', 'hgroup', $sql_where);
+			rtm_autocomplete_ajax('grid_queue_distrib.php', 'hgroup', $sql_where, array('-1' => __('All', 'grid'), '-2' => __('HG: Roll-Up', 'grid')));
 			break;
 		default:
 			grid_view_bhosts();
@@ -1099,4 +1099,3 @@ function grid_view_bhosts() {
 
 	bottom_footer();
 }
-

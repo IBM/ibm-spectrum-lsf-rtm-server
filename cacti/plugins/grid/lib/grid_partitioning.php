@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -118,73 +118,68 @@ function partition_create($table, $min_time_field, $max_time_field, $partition_v
 	partition_adjust_structure($table);
 
 	if ($success) {
-		$success = db_execute("RENAME TABLE " . $table . " TO " . $new_table);
+		$success = db_execute("RENAME TABLE $table TO $new_table, $ttbl TO $table");
 
 		if ($success) {
-			$success = db_execute("RENAME TABLE " . $ttbl . " TO " . $table);
+			cacti_log("NOTE: New partition successfully created for '" . $table . "'", true, "GRID");
 
-			if ($success) {
-				cacti_log("NOTE: New partition successfully created for '" . $table . "'", true, "GRID");
+			if ($max_time_field != $min_time_field) {
+				/* obtain the minimum abarrant end time */
+				if ($min_time_field != "submit_time") {
+					$alt_min_time1 = db_fetch_cell("SELECT MIN($max_time_field)
+							FROM $new_table
+							WHERE ($min_time_field<='1971-02-01')
+							AND ($max_time_field>'1971-02-01')");
 
-				if ($max_time_field != $min_time_field) {
-					/* obtain the minimum abarrant end time */
-					if ($min_time_field != "submit_time") {
-						$alt_min_time1 = db_fetch_cell_prepared("SELECT MIN($max_time_field)
-								FROM $new_table
-								WHERE (?<='1971-02-01')
-								AND (?>'1971-02-01')", array($min_time_field, $max_time_field));
-
-						$alt_min_time2 = db_fetch_cell_prepared("SELECT MIN($min_time_field)
-								FROM $new_table
-								WHERE (?>'1971-02-01')", array($min_time_field));
-					} else {
-						$alt_min_time1 = db_fetch_cell_prepared("SELECT MIN($max_time_field)
-								FROM $new_table
-								WHERE ?>'1971-02-01'", array($max_time_field));
-
-						$alt_min_time2 = db_fetch_cell("SELECT MIN($min_time_field)
-								FROM $new_table");
-					}
-
-					$max_time = db_fetch_cell("SELECT MAX($max_time_field)
-						FROM $new_table");
-
-					if ((strtotime($alt_min_time1) < strtotime($alt_min_time2)) &&
-						(strtotime($alt_min_time1) > 87000) && ($alt_min_time1 != "")) {
-						$min_time = $alt_min_time1;
-					} else {
-						$min_time = $alt_min_time2;
-					}
-
-					if (strtotime($min_time) < 87000) {
-						cacti_log("ERROR: Min Time Field is 0 for '$new_table'", true, "GRID");
-					}
+					$alt_min_time2 = db_fetch_cell("SELECT MIN($min_time_field)
+							FROM $new_table
+							WHERE ($min_time_field>'1971-02-01')");
 				} else {
-					if ($min_time_field != "submit_time")  {
-						$min_time = db_fetch_cell_prepared("SELECT MIN($min_time_field)
-								FROM $new_table
-								WHERE ?>'1971-02-01'", array($min_time_field));
-					} else {
-						$min_time = db_fetch_cell("SELECT MIN($min_time_field)
-								FROM $new_table");
-					}
-					$max_time = db_fetch_cell("SELECT MAX($max_time_field)
-						FROM $new_table");
+					$alt_min_time1 = db_fetch_cell("SELECT MIN($max_time_field)
+							FROM $new_table
+							WHERE $max_time_field>'1971-02-01'");
+
+					$alt_min_time2 = db_fetch_cell("SELECT MIN($min_time_field)
+							FROM $new_table");
 				}
 
-				/* record statistics in the partitions table */
-				db_execute_prepared("INSERT INTO grid_table_partitions
-					(table_name, `partition`, min_time, max_time)
-					VALUES (?, ?, ?, ?)",
-					array($table, $partition, $min_time, $max_time));
+				$max_time = db_fetch_cell("SELECT MAX($max_time_field)
+					FROM $new_table");
 
-				db_execute_prepared('REPLACE INTO settings (name, value) values (?, ?)', array($table.'_partitioning_version', $partition));
-				$new_partition_tables[] =$new_table;
+				if ((strtotime($alt_min_time1) < strtotime($alt_min_time2)) &&
+					(strtotime($alt_min_time1) > 87000) && ($alt_min_time1 != "")) {
+					$min_time = $alt_min_time1;
+				} else {
+					$min_time = $alt_min_time2;
+				}
+
+				if (strtotime($min_time) < 87000) {
+					cacti_log("ERROR: Min Time Field is 0 for '$new_table'", true, "GRID");
+				}
 			} else {
-				cacti_log("ERROR: Unable to Rename Temp Table to '" . $table . "'", true, "GRID");
+				if ($min_time_field != "submit_time")  {
+					$min_time = db_fetch_cell("SELECT MIN($min_time_field)
+							FROM $new_table
+							WHERE $min_time_field>'1971-02-01'");
+				} else {
+					$min_time = db_fetch_cell("SELECT MIN($min_time_field)
+							FROM $new_table");
+				}
+				$max_time = db_fetch_cell("SELECT MAX($max_time_field)
+					FROM $new_table");
 			}
+
+			/* record statistics in the partitions table */
+			db_execute_prepared("INSERT INTO grid_table_partitions
+				(table_name, `partition`, min_time, max_time)
+				VALUES (?, ?, ?, ?)",
+				array($table, $partition, $min_time, $max_time));
+
+			set_config_option($table . '_partitioning_version', $partition);
+
+			$new_partition_tables[] =$new_table;
 		} else {
-			cacti_log("ERROR: Unable to Rename '" . $table . "' to New Partition!", true, "GRID");
+			cacti_log("ERROR: Unable to Rename Temp Table to '" . $table . "'", true, "GRID");
 		}
 	} else {
 		cacti_log("ERROR: Unable to Create New Main Table '" . $ttbl . "'!", true, "GRID");
@@ -365,4 +360,3 @@ function partition_prune_partitions($table, $retention = '') {
 		grid_debug("No Partitions to Delete for '$table'");
 	}
 }
-

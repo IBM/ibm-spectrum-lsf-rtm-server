@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -668,11 +668,11 @@ function grid_view_get_bhosts_records(&$sql_where, $apply_limits = true, $rows, 
 			ON gc.clusterid=gh.clusterid
 			INNER JOIN grid_hostinfo AS ghi
 			ON gc.clusterid=ghi.clusterid
-			AND gh.host=ghi.host
-			LEFT JOIN grid_queues_hosts AS gqh
+			AND gh.host=ghi.host".(get_request_var('queue') != '-1'?
+			" LEFT JOIN grid_queues_hosts AS gqh
 			ON gc.clusterid=gqh.clusterid
-			AND gh.host = gqh.host
-			INNER JOIN grid_load AS gl
+			AND gh.host = gqh.host ":" ")
+			."INNER JOIN grid_load AS gl
 			ON gc.clusterid = gl.clusterid
 			AND gh.host = gl.host
 			INNER JOIN grid_hosts_resources AS ghr
@@ -1056,11 +1056,11 @@ function grid_view_bhosts() {
 		ON gc.clusterid = gh.clusterid
 		INNER JOIN grid_hostinfo AS ghi
 		ON gh.clusterid = ghi.clusterid
-		AND gh.host = ghi.host
-		LEFT JOIN grid_queues_hosts AS gqh
-		ON gc.clusterid = gqh.clusterid
-		AND gh.host = gqh.host
-		INNER JOIN grid_load as gl
+		AND gh.host = ghi.host".(get_request_var('queue') != '-1'?
+		" LEFT JOIN grid_queues_hosts AS gqh
+		ON gc.clusterid=gqh.clusterid
+		AND gh.host = gqh.host ":" ")
+		."INNER JOIN grid_load as gl
 		ON gh.clusterid = gl.clusterid
 		AND gh.host = gl.host
 		INNER JOIN grid_hosts_resources AS ghr
@@ -1355,4 +1355,3 @@ function grid_view_bhosts() {
 
 	bottom_footer();
 }
-

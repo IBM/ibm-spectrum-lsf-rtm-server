@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -28,13 +28,5 @@ function upgrade_to_8_3() {
 	add_index("graph_templates_item", "graph_template_task_item_id", "ALTER TABLE `graph_templates_item` ADD INDEX `graph_template_task_item_id`(`graph_template_id`,`task_item_id`);");
 	execute_sql("Change grid_jobs_rusage to InnoDB", "ALTER TABLE `grid_jobs_rusage` ENGINE=InnoDB");
 	execute_sql("Change lic_flexlm_servers_feature_details to InnoDB", "ALTER TABLE `lic_flexlm_servers_feature_details` ENGINE=InnoDB");
-	db_execute("REPLACE INTO settings SET name='licpoller_expire_days', value='30'");
-	db_execute("REPLACE INTO settings SET name='licpoller_expiry_date', value=''");
-	db_execute("REPLACE INTO settings SET name='licpoller_num_users', value='100'");
-
-	db_execute("REPLACE INTO settings SET name='lsfpoller_expire_days', value='30'");
-	db_execute("REPLACE INTO settings SET name='lsfpoller_expiry_date', value=''");
-	db_execute("REPLACE INTO settings SET name='lsfpoller_num_users', value='100'");
-	db_execute("REPLACE INTO settings SET name='lsfpoller_license_mode', value='flexlm'");
 	execute_sql("Add user auth realm for Nectar Reports Admin", "REPLACE INTO `user_auth_realm` VALUES (114,1);");
 }

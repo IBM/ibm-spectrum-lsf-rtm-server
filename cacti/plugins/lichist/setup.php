@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -72,7 +72,7 @@ function lichist_check_dependencies() {
 }
 
 function lichist_setup_table_new () {
-	db_execute("CREATE TABLE IF NOT EXISTS `lic_services_feature_history` (
+	db_execute("CREATE TABLE IF NOT EXISTS `lic_services_feature_history_template` (
  		 `id` bigint NOT NULL AUTO_INCREMENT,
   		`service_id` int(10) unsigned NOT NULL DEFAULT '0',
   		`vendor_daemon` varchar(40) NOT NULL DEFAULT '',
@@ -96,6 +96,11 @@ function lichist_setup_table_new () {
   		KEY `idx_hostname` (`hostname`),
   		KEY `idx_status` (`status`))
 		ENGINE=InnoDB");
+
+	if (!db_table_exists('lic_services_feature_history')) {
+		db_execute('CREATE TABLE lic_services_feature_history LIKE lic_services_feature_history_template;');
+		db_execute('ALTER TABLE lic_services_feature_history ENGINE=InnoDB');
+	}
 
 	db_execute("CREATE TABLE IF NOT EXISTS `lic_services_feature_history_mapping` (
 		`id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,

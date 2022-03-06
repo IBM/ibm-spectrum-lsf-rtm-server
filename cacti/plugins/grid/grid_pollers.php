@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -62,7 +62,7 @@ function form_save() {
 		$poller_id = api_grid_poller_save(get_request_var('poller_id'),
 			get_nfilter_request_var('poller_name'), get_nfilter_request_var('lsf_version'),
 			get_nfilter_request_var('poller_lbindir'), get_nfilter_request_var('poller_location'),
-			get_nfilter_request_var('poller_support_info'), get_nfilter_request_var('remote'));
+			get_nfilter_request_var('poller_support_info'), get_nfilter_request_var('remote'), get_nfilter_request_var('poller_max_insert_packet_size'));
 
 		if (is_error_message()) {
 			header('Location: grid_pollers.php?header=false&action=edit&poller_id=' . (empty($poller_id) ? get_request_var('poller_id') : $poller_id));
@@ -157,7 +157,7 @@ function form_actions() {
 	bottom_footer();
 }
 
-function api_grid_poller_save($poller_id, $poller_name, $lsf_version, $poller_lbindir, $poller_location, $poller_support_info, $remote) {
+function api_grid_poller_save($poller_id, $poller_name, $lsf_version, $poller_lbindir, $poller_location, $poller_support_info, $remote, $poller_max_insert_packet_size) {
 	if ($poller_id) {
 		$save['poller_id'] = $poller_id;
 	} else {
@@ -170,6 +170,7 @@ function api_grid_poller_save($poller_id, $poller_name, $lsf_version, $poller_lb
 	$save['poller_location']     = form_input_validate($poller_location,     get_nfilter_request_var('poller_location'),     '', true,  3);
 	$save['poller_support_info'] = form_input_validate($poller_support_info, get_nfilter_request_var('poller_support_info'), '', true,  3);
 	$save['remote']              = $remote;
+	$save['poller_max_insert_packet_size']     = form_input_validate($poller_max_insert_packet_size,     get_nfilter_request_var('poller_max_insert_packet_size'),     '', true,  3);
 
 	if ($save['poller_name'] == '') {
 		$_SESSION['sess_error_fields']['poller_name'] = 'poller_name';

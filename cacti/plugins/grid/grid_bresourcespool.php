@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -1011,13 +1011,13 @@ $(function() {
 			'align' => 'left',
 			'sort' => 'DESC'
 		),
-		'alloc' => array(
-			'display' => __('Share', 'grid'),
+		'acl_members' => array(
+			'display' => __('ACL Members', 'grid'),
 			'align' => 'left',
 			'sort' => 'DESC'
 		),
-		'acl_members' => array(
-			'display' => __('ACL Members', 'grid'),
+		'alloc' => array(
+			'display' => __('Share', 'grid'),
 			'align' => 'right',
 			'sort' => 'DESC'
 		),
@@ -1132,8 +1132,8 @@ $(function() {
 			form_selectable_cell(filter_value($bgsla['name'], get_request_var('filter')), $i);
 			form_selectable_cell($poolstats[0], $i);
 			form_selectable_cell($bgsla['auto_attach'] ? __('Yes', 'grid') : __('No', 'grid'), $i);
-			form_selectable_cell($bgsla['alloc'] . ($bgsla['alloc_type'] & GUAR_CONSUMER_SHARE_TYPE_PERCENT ? '%':''), $i, '', 'right');
 			form_selectable_cell($bgsla['queue'], $i, '', '', $bgsla['acl_members']);
+			form_selectable_cell(number_format_i18n($bgsla['alloc']) . ($bgsla['alloc_type'] & GUAR_CONSUMER_SHARE_TYPE_PERCENT ? '%':''), $i, '', 'right');
 			form_selectable_cell(number_format_i18n($bgsla['guarantee_config']), $i, '', 'right');
 			form_selectable_cell(number_format_i18n($bgsla['guarantee_used']), $i, '', 'right');
 			form_selectable_cell(number_format_i18n($bgsla['total_used']), $i, '', 'right');

@@ -1,6 +1,7 @@
 --
 -- $Id$
 --
+
 --
 -- Table structure for table `grid_applications`
 --
@@ -1901,6 +1902,7 @@ CREATE TABLE `grid_queues_shares` (
   `slot_share` int(10) unsigned DEFAULT NULL,
   `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`clusterid`,`queue`,`user_or_group`,`shareAcctPath`(191)) USING HASH,
+  KEY `clusterid_user_or_group` (`clusterid`,`user_or_group`),
   KEY `user_or_group` (`user_or_group`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -2253,5 +2255,6 @@ CREATE TABLE `grid_users_or_groups` (
   `first_seen` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`clusterid`,`user_or_group`)
+  PRIMARY KEY (`clusterid`,`user_or_group`),
+  KEY `type` (`type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

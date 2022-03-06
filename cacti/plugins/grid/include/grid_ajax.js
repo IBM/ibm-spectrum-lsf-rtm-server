@@ -1,4 +1,5 @@
 // $Id$
+
 var gl_form_id = "";
 
 /*

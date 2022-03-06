@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -133,16 +133,30 @@ function form_actions() {
 		if (preg_match('/^chk_([^.]+)$/', $var, $matches)) {
 			$id = explode('|', $matches[1]);
 
-			$service_id = $id[0];
-			$feature    = $id[1];
+			if (sizeof($id) == 2) {
+				$service_id = $id[0];
+				$feature    = $id[1];
 
-			$info = db_fetch_row_prepared("SELECT feature_name, user_feature_name, application
-				FROM lic_application_feature_map AS lafm
-				WHERE service_id=?
-				AND feature_name=?", array($service_id, $feature));
+				$info = db_fetch_row_prepared("SELECT feature_name, user_feature_name, application
+					FROM lic_application_feature_map AS lafm
+					WHERE service_id=?
+					AND feature_name=?", array($service_id, $feature));
 
-			$feature_array[]  = $matches[1];
-			$feature_map_array[] = $info;
+				$feature_array[]     = $matches[1];
+				$feature_map_array[] = $info;
+			} else {
+				$service_id      = -1;
+				$feature         = $id[0];
+				$feature_array[] = $matches[1];
+
+				$info = db_fetch_row_prepared("SELECT DISTINCT feature_name, user_feature_name, application
+					FROM lic_application_feature_map AS lafm
+					WHERE feature_name = ?
+					LIMIT 1",
+					array($feature));
+
+				$feature_map_array[] = $info;
+			}
 		}
 	}
 
@@ -217,8 +231,13 @@ function api_update_feature($id) {
 
 	$id = explode('|', $id);
 
-	$service_id = $id[0];
-	$feature    = $id[1];
+	if (sizeof($id == 2)) {
+		$service_id = $id[0];
+		$feature    = $id[1];
+	} else {
+		$service_id = -1;
+		$feature    = $id[0];
+	}
 
 	$up_params = array();
 
@@ -238,13 +257,25 @@ function api_update_feature($id) {
 
 	$set_clause .= ', last_updated=NOW() ';
 
-	$up_params[] = $service_id;
+	if ($service_id > 0) {
+		$up_params[] = $service_id;
+	}
 	$up_params[] = $feature;
 
-	db_execute_prepared('UPDATE lic_application_feature_map '
-		 . $set_clause .
-		 ' WHERE service_id = ? AND feature_name = ? ' , $up_params
-	);
+	if ($service_id > 0) {
+		db_execute_prepared("UPDATE lic_application_feature_map
+			$set_clause
+			WHERE service_id = ?
+			AND feature_name = ?",
+			$up_params
+		);
+	} else {
+		db_execute_prepared("UPDATE lic_application_feature_map
+			$set_clause
+			WHERE feature_name = ?",
+			$up_params
+		);
+	}
 }
 
 /* ---------------------
@@ -365,11 +396,16 @@ function lic_filter() {
 					<td width='1'>
 						<select id='service' onChange='applyFilter()'>
 							<option value='0'<?php if (get_request_var('service') == '0') {?> selected<?php }?>>All</option>
+							<option value='-1'<?php if (get_request_var('service') == '-1') {?> selected<?php }?>>Roll-Up</option>
 							<?php
 							$services = db_fetch_assoc_prepared('SELECT service_id AS id, server_name
-								FROM lic_services ls JOIN lic_pollers lp ON ls.poller_id=lp.id
-								WHERE ls.disabled="" AND lp.poller_type=?
-								ORDER BY ls.server_name', array(get_request_var('poller_type')));
+								FROM lic_services ls
+								INNER JOIN lic_pollers lp
+								ON ls.poller_id=lp.id
+								WHERE ls.disabled = ""
+								AND lp.poller_type=?
+								ORDER BY ls.server_name',
+								array(get_request_var('poller_type')));
 
 							if (cacti_sizeof($services)) {
 								foreach ($services as $s) {
@@ -519,20 +555,44 @@ function lic_feature_map_records(&$sql_where, $apply_limits, $row_limit, &$sql_p
 		$sql_limit .= ' LIMIT ' . ($row_limit*(get_request_var('page')-1)) . ',' . $row_limit;
     }
 
-    $sql_query = "SELECT CONCAT(lafm.service_id, '|', lafm.feature_name) AS id,
-		lafm.*, ls.server_name, lsfu.feature_max_licenses, lsfu.feature_inuse_licenses,
-		(lsfu.feature_inuse_licenses / lsfu.feature_max_licenses) * 100 AS utilization
-		FROM lic_application_feature_map AS lafm
-		INNER JOIN lic_services_feature_use AS lsfu
-		ON lafm.service_id=lsfu.service_id
-		AND lafm.feature_name=lsfu.feature_name
-		INNER JOIN lic_services AS ls
-		ON ls.service_id=lafm.service_id
-		INNER JOIN lic_pollers AS lp
-		ON ls.poller_id=lp.id
-		$sql_where
-		$sql_order
-		$sql_limit";
+	if (get_request_var('service') >= 0) {
+	    $sql_query = "SELECT CONCAT(lafm.service_id, '|', lafm.feature_name) AS id, '1' AS services,
+			lafm.service_id, lafm.feature_name, lafm.user_feature_name, lafm.application,
+			lafm.manager_hint, lafm.critical, lafm.user_id, lafm.last_updated,
+			ls.server_name, lsfu.feature_max_licenses, lsfu.feature_inuse_licenses,
+			(lsfu.feature_inuse_licenses / lsfu.feature_max_licenses) * 100 AS utilization
+			FROM lic_application_feature_map AS lafm
+			INNER JOIN lic_services_feature_use AS lsfu
+			ON lafm.service_id=lsfu.service_id
+			AND lafm.feature_name=lsfu.feature_name
+			INNER JOIN lic_services AS ls
+			ON ls.service_id=lafm.service_id
+			INNER JOIN lic_pollers AS lp
+			ON ls.poller_id=lp.id
+			$sql_where
+			$sql_order
+			$sql_limit";
+	} else {
+	    $sql_query = "SELECT lafm.feature_name AS id, COUNT(*) AS services,
+			lafm.service_id, lafm.feature_name, lafm.user_feature_name, lafm.application,
+            lafm.manager_hint, lafm.critical, lafm.user_id, MAX(lafm.last_updated) AS last_updated,
+			ls.server_name,
+			SUM(lsfu.feature_max_licenses) AS feature_max_licenses,
+			SUM(lsfu.feature_inuse_licenses) AS feature_inuse_licenses,
+			(SUM(lsfu.feature_inuse_licenses)/SUM(lsfu.feature_max_licenses)) * 100 AS utilization
+			FROM lic_application_feature_map AS lafm
+			INNER JOIN lic_services_feature_use AS lsfu
+			ON lafm.service_id=lsfu.service_id
+			AND lafm.feature_name=lsfu.feature_name
+			INNER JOIN lic_services AS ls
+			ON ls.service_id=lafm.service_id
+			INNER JOIN lic_pollers AS lp
+			ON ls.poller_id=lp.id
+			$sql_where
+			GROUP BY lafm.feature_name
+			$sql_order
+			$sql_limit";
+	}
 
 	//print $sql_query;
 
@@ -622,16 +682,29 @@ function lic_feature_maps() {
 	</script>
 	<?php
 
-	$rows_query_string = "SELECT COUNT(*)
-		FROM lic_application_feature_map AS lafm
-		INNER JOIN lic_services_feature_use AS lsfu
-		ON lafm.service_id=lsfu.service_id
-		AND lafm.feature_name=lsfu.feature_name
-		INNER JOIN lic_services AS ls
-		ON ls.service_id=lafm.service_id
-		INNER JOIN lic_pollers AS lp
-		ON ls.poller_id=lp.id
-		$sql_where";
+	if (get_request_var('service') >= 0) {
+		$rows_query_string = "SELECT COUNT(*)
+			FROM lic_application_feature_map AS lafm
+			INNER JOIN lic_services_feature_use AS lsfu
+			ON lafm.service_id=lsfu.service_id
+			AND lafm.feature_name=lsfu.feature_name
+			INNER JOIN lic_services AS ls
+			ON ls.service_id=lafm.service_id
+			INNER JOIN lic_pollers AS lp
+			ON ls.poller_id=lp.id
+			$sql_where";
+	} else {
+		$rows_query_string = "SELECT COUNT(DISTINCT lafm.feature_name)
+			FROM lic_application_feature_map AS lafm
+			INNER JOIN lic_services_feature_use AS lsfu
+			ON lafm.service_id=lsfu.service_id
+			AND lafm.feature_name=lsfu.feature_name
+			INNER JOIN lic_services AS ls
+			ON ls.service_id=lafm.service_id
+			INNER JOIN lic_pollers AS lp
+			ON ls.poller_id=lp.id
+			$sql_where";
+	}
 
 	$total_rows = db_fetch_cell_prepared($rows_query_string, $sql_params);
 
@@ -644,6 +717,7 @@ function lic_feature_maps() {
 		'utilization'            => array('display' => __('Utilization', 'license'), 'align' => 'right', 'sort' => 'ASC'),
 		'feature_max_licenses'   => array('display' => __('Max', 'license'), 'align' => 'right', 'sort' => 'ASC'),
 		'feature_inuse_licenses' => array('display' => __('InUse', 'license'), 'align' => 'right', 'sort' => 'ASC'),
+		'services'               => array('display' => __('Services', 'license'),'align'   => 'right','sort'    => 'DESC'),
 		'user_id'                => array('display' => __('Modified By', 'license'), 'align' => 'right', 'sort' => 'ASC'),
 		'last_updated'           => array('display' => __('Modification Date', 'license'), 'align' => 'right', 'sort' => 'DESC')
 	);
@@ -661,15 +735,28 @@ function lic_feature_maps() {
 	if (cacti_sizeof($feature_maps)) {
 		foreach ($feature_maps as $fm) {
 			form_alternate_row('line' . $fm['id'], true);
-			$url = html_escape($config['url_path'] . 'plugins/license/lic_feature_maps.php?action=edit&id=' . $fm['id']) ;
-			form_selectable_cell(filter_value($fm['feature_name'], get_request_var('filter'), $url), $fm['id']);
+
+			if (get_request_var('service') >= 0) {
+				$url = html_escape($config['url_path'] . 'plugins/license/lic_feature_maps.php?action=edit&id=' . $fm['id']) ;
+				form_selectable_cell(filter_value($fm['feature_name'], get_request_var('filter'), $url), $fm['id']);
+			} else {
+				form_selectable_cell(filter_value($fm['feature_name'], get_request_var('filter')), $fm['id'], '', 'bold');
+			}
+
 			form_selectable_cell(filter_value($fm['user_feature_name'], get_request_var('filter')), $fm['id']);
 			form_selectable_cell(filter_value($fm['application'], get_request_var('filter')), $fm['id']);
-			form_selectable_cell($fm['server_name'], $fm['id']);
+
+			if (get_request_var('service') >= 0) {
+				form_selectable_cell($fm['server_name'], $fm['id']);
+			} else {
+				form_selectable_cell(__('N/A', 'license'), $fm['id']);
+			}
+
 			form_selectable_cell($fm['critical'] > 0 ? 'Yes':'No', $fm['id']);
 			form_selectable_cell(number_format($fm['utilization'], 1) . ' %', $fm['id'], '', 'text-align:right');
 			form_selectable_cell(number_format($fm['feature_max_licenses']), $fm['id'], '', 'text-align:right');
 			form_selectable_cell(number_format($fm['feature_inuse_licenses']), $fm['id'], '', 'text-align:right');
+			form_selectable_cell(number_format($fm['services']), $fm['id'], '', 'right');
 			form_selectable_cell(html_escape(get_username($fm['user_id'])), $fm['id'], '', 'text-align:right');
 			form_selectable_cell($fm['last_updated'], $fm['id'], '', 'text-align:right');
 			form_checkbox_cell($fm['feature_name'], $fm['id']);

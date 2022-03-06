@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -642,13 +642,17 @@ function lic_lm_get_fusion_sql($type, $label) {
 
 		if (read_config_option('grid_partitioning_enable') == '') {
 			$table_query = 'lic_daily_stats';
+			$table_query_ud = "lic_daily_stats WHERE utilization!=0 $sql_where";
+			$table_query_td = "lic_daily_stats WHERE utilization!=0 $sql_where";
 		}
 		else {
 			$table_query = make_partition_query('lic_daily_stats', $earlier, $current, "WHERE utilization!=0 $sql_where");
+			$table_query_ud = make_partition_query('lic_daily_stats', $earlier, $current, "WHERE utilization!=0 $sql_where", "", "DISTINCT(interval_end) AS interval_end");
+			$table_query_td = make_partition_query('lic_daily_stats', $earlier, $current, "WHERE utilization!=0 $sql_where", "", "MIN(interval_end) AS interval_end");
 		}
 
-		$used_days = cacti_sizeof(db_fetch_assoc("SELECT DISTINCT interval_end FROM $table_query WHERE utilization!=0 $sql_where"));
-		$total_days = db_fetch_cell("SELECT CEILING((UNIX_TIMESTAMP('$current') - UNIX_TIMESTAMP(MIN(interval_end))) / 86400) FROM $table_query WHERE utilization!=0 $sql_where");
+		$used_days = cacti_sizeof(db_fetch_assoc("SELECT DISTINCT interval_end FROM $table_query_ud"));
+		$total_days = db_fetch_cell("SELECT CEILING((UNIX_TIMESTAMP('$current') - UNIX_TIMESTAMP(MIN(interval_end))) / 86400) FROM $table_query_td");
 
 		if(!isset($total_days) || empty($total_days) || $total_days=='') {
 
@@ -1108,16 +1112,21 @@ function lic_lm_fusion_filter_table(){
 								$sql_params[] = get_request_var('service_id');
 							}
 
+							$sql_join_poller_type = "";
 							if(!isempty_request_var('poller_type')){
-								$sql_where .= (strlen($sql_where) ? ' AND':' WHERE') . " lic_pollers.poller_type=?";
+								$sql_join_poller_type = " JOIN lic_services ON lic_services.service_id=ldst.service_id INNER JOIN lic_pollers ON lic_pollers.id=lic_services.poller_id WHERE lic_pollers.poller_type=? ";
 								$sql_params[] = get_request_var('poller_type');
 							}
+
 							$features = db_fetch_assoc_prepared("SELECT DISTINCT ldst.feature value,
 								IF(lafm.user_feature_name = '' OR lafm.user_feature_name IS NULL, ldst.feature, lafm.user_feature_name) AS feature_name
-								FROM lic_daily_stats_traffic AS ldst
-								LEFT JOIN lic_application_feature_map AS lafm ON ldst.feature=lafm.feature_name " .
-								(isempty_request_var('poller_type') ? '' : ' JOIN lic_services ON lic_services.service_id=ldst.service_id INNER JOIN lic_pollers ON lic_pollers.id=lic_services.poller_id ') ."
-								$sql_where
+								FROM (
+								  SELECT DISTINCT feature ".(isempty_request_var('poller_type') ? "" : " , service_id")."
+								  FROM lic_daily_stats_traffic AS ldst
+								  $sql_where
+								) AS ldst
+								LEFT JOIN lic_application_feature_map AS lafm ON ldst.feature=lafm.feature_name
+								$sql_join_poller_type
 								ORDER BY value", $sql_params);
 
 							if (cacti_sizeof($features)){
@@ -1317,4 +1326,3 @@ function lic_build_display_array() {
     $display_text += array('utilization' => array('display' => __('Average Utilization', 'license'), 'align' => 'right'));
     return $display_text;
 }
-

@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -360,6 +360,10 @@ function get_flex_feature($bld_feature) {
 }
 
 function get_graph_params($lsid, $type, $feature, $pc) {
+	global $config;
+
+	include_once($config['base_path'] . '/lib/rrd.php');
+
 	$like_feature = str_replace('_', '\_', $feature);
 	$license_hosts = array_rekey(
 		db_fetch_assoc('SELECT h.id
@@ -398,9 +402,9 @@ function get_graph_params($lsid, $type, $feature, $pc) {
 		$flex_paths = get_flex_paths_path(get_flex_feature($feature), $service_domains);
 
 		if (cacti_sizeof($flex_paths)) {
-			foreach($flex_paths as $k => $p) {
+			foreach($flex_paths as $local_data_id => $p) {
 				/* update the rrdfile if performing a fetch */
-				api_plugin_hook_function('rrdtool_function_fetch_cache_check', $k);
+				rrdtool_function_fetch($local_data_id, -7200, 0);
 			}
 		}
 
@@ -424,18 +428,18 @@ function get_graph_params($lsid, $type, $feature, $pc) {
 		$bld_paths = array_rekey(get_blstat_rrdpaths($fdq, $local_data_ids, 'others'), 'local_data_id', 'rrd_path');
 
 		if (cacti_sizeof($bld_paths)) {
-			foreach($bld_paths as $k => $p) {
+			foreach($bld_paths as $local_data_id => $p) {
 				/* update the rrdfile if performing a fetch */
-				api_plugin_hook_function('rrdtool_function_fetch_cache_check', $k);
+				rrdtool_function_fetch($local_data_id, -7200, 0);
 			}
 		}
 
 		$total_paths = array_rekey(get_blstat_rrdpaths($fdq, $local_data_ids, 'total'), 'local_data_id', 'rrd_path');
 
 		if (cacti_sizeof($total_paths)) {
-			foreach($total_paths as $k => $p) {
+			foreach($total_paths as $local_data_id => $p) {
 				/* update the rrdfile if performing a fetch */
-				api_plugin_hook_function('rrdtool_function_fetch_cache_check', $k);
+				rrdtool_function_fetch($local_data_id, -7200, 0);
 			}
 		}
 
@@ -450,9 +454,9 @@ function get_graph_params($lsid, $type, $feature, $pc) {
 		$over_paths = array_rekey(get_blstat_rrdpaths($odq, $local_data_ids, 'over'), 'local_data_id', 'rrd_path');
 
 		if (cacti_sizeof($over_paths)) {
-			foreach($over_paths as $k => $p) {
+			foreach($over_paths as $local_data_id => $p) {
 				/* update the rrdfile if performing a fetch */
-				api_plugin_hook_function('rrdtool_function_fetch_cache_check', $k);
+				rrdtool_function_fetch($local_data_id, -7200, 0);
 			}
 		}
 
@@ -517,7 +521,7 @@ function get_graph_params($lsid, $type, $feature, $pc) {
 				$nproj[$local_data_id] = $projects[$local_data_ids[$local_data_id]];
 
 				/* update the rrdfile if performing a fetch */
-				api_plugin_hook_function('rrdtool_function_fetch_cache_check', $local_data_id);
+				rrdtool_function_fetch($local_data_id, -7200, 0);
 			}
 		}
 		natsort($nproj);
@@ -535,7 +539,7 @@ function get_graph_params($lsid, $type, $feature, $pc) {
 		if (cacti_sizeof($flex_paths)) {
 			foreach($flex_paths as $local_data_id => $value) {
 				/* update the rrdfile if performing a fetch */
-				api_plugin_hook_function('rrdtool_function_fetch_cache_check', $local_data_id);
+				rrdtool_function_fetch($local_data_id, -7200, 0);
 			}
 		}
 
@@ -605,7 +609,7 @@ function get_graph_params($lsid, $type, $feature, $pc) {
 				$nproj[$local_data_id] = $projects[$local_data_ids[$local_data_id]];
 
 				/* update the rrdfile if performing a fetch */
-				api_plugin_hook_function('rrdtool_function_fetch_cache_check', $local_data_id);
+				rrdtool_function_fetch($local_data_id, -7200, 0);
 			}
 		}
 		natsort($nproj);
@@ -684,7 +688,7 @@ function get_graph_params($lsid, $type, $feature, $pc) {
 				$nclust[$local_data_id] = $clusters[$local_data_ids[$local_data_id]];
 
 				/* update the rrdfile if performing a fetch */
-				api_plugin_hook_function('rrdtool_function_fetch_cache_check', $local_data_id);
+				rrdtool_function_fetch($local_data_id, -7200, 0);
 			}
 		}
 		natsort($nclust);
@@ -702,7 +706,7 @@ function get_graph_params($lsid, $type, $feature, $pc) {
 		if (cacti_sizeof($flex_paths)) {
 			foreach($flex_paths as $local_data_id => $value) {
 				/* update the rrdfile if performing a fetch */
-				api_plugin_hook_function('rrdtool_function_fetch_cache_check', $local_data_id);
+				rrdtool_function_fetch($local_data_id, -7200, 0);
 			}
 		}
 
@@ -778,7 +782,7 @@ function get_graph_params($lsid, $type, $feature, $pc) {
 				$nclust[$local_data_id] = $clusters[$local_data_ids[$local_data_id]];
 
 				/* update the rrdfile if performing a fetch */
-				api_plugin_hook_function('rrdtool_function_fetch_cache_check', $local_data_id);
+				rrdtool_function_fetch($local_data_id, -7200, 0);
 			}
 		}
 

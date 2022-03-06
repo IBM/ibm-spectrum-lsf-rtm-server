@@ -1,4 +1,5 @@
 // $Id$
+
 function applySkinRTM() {
 	var job_user_open = false;
 	var userTimer;

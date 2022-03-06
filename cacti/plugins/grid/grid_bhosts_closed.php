@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -1592,6 +1592,18 @@ function grid_view_bhosts() {
 			'dbname'  => 'host_cluster',
 			'sort'    => 'ASC'
 		),
+		'hostType'    => array(
+			'display' => __('Type', 'grid'),
+			'tip'     => __('Auto-detected or user defined Type of the host as defined in lsf.cluster file.', 'grid'),
+			'sort'    => 'ASC',
+			'dbname'  => 'host_type'
+		),
+		'hostModel'   => array(
+			'display' => __('Model', 'grid'),
+			'tip'     => __('Auto-detected or user defined Model of the host as defined in lsf.cluster file.', 'grid'),
+			'sort'    => 'ASC',
+			'dbname'  => 'host_model'
+		),
 		'lockid_count' => array(
 			'display' => __('Current LockId Count', 'grid'),
 			'sort'    => 'ASC'
@@ -1709,6 +1721,8 @@ function grid_view_bhosts() {
 
 			form_selectable_cell_metadata('simple', 'host', $bhosts['clusterid'], $bhosts['host'], '', '', html_escape($bhosts['host']), true, $url);
 			form_selectable_cell_visible($bhosts['clustername'], 'host_cluster');
+			form_selectable_cell_visible(filter_value($bhosts['hostType'], get_request_var('filter')), 'host_type');
+			form_selectable_cell_visible(filter_value($bhosts['hostModel'], get_request_var('filter')), 'host_model');
 
 			$url = html_escape($config['url_path'] . 'plugins/grid/grid_bhosts_closed.php' .
 				'?header=false&tab=closure_event' .

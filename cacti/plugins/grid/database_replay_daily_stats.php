@@ -3,7 +3,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -231,11 +231,8 @@ function replay_daily_stats_partition($scan_start_time, $scan_end_time) {
 	$scan_cur_time  = strtotime($scan_start_date);
 	$scan_begin_time  = strtotime($scan_start_date);
 
-	if (!cacti_sizeof(db_fetch_assoc("SHOW TABLES LIKE 'grid_job_daily_stats_replay'"))) {
-		db_execute('CREATE TABLE grid_job_daily_stats_replay LIKE grid_job_daily_stats');
-	} else {
-		db_execute('TRUNCATE TABLE grid_job_daily_stats_replay');
-	}
+	db_execute('DROP TABLE IF EXISTS grid_job_daily_stats_replay');
+	db_execute('CREATE TABLE grid_job_daily_stats_replay LIKE grid_job_daily_stats');
 
 	while ($scan_cur_time < $scan_end_time) {
 		$sql_start_date = date('Y-m-d H:i:s', $scan_begin_time + ($days * 86400));

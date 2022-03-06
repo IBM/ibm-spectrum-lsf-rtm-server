@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -91,12 +91,14 @@ function ss_grid_fstree_getvalue($clusterid, $index, $column) {
 				$shareAcctPath = $parts[1];
 				$acctpaths = explode('/',$shareAcctPath);
 				$group = end($acctpaths);
+				$shareAcctPathNew = implode(array_slice($acctpaths, 0, count($acctpaths) - 1), '/');
 
 				$value = db_fetch_cell("SELECT $column
 					FROM grid_queues_shares
 					WHERE clusterid=$clusterid
 					AND queue='$queue'
-					AND user_or_group='$group'");
+					AND user_or_group='$group'
+					AND shareAcctPath='$shareAcctPathNew'");
 			}
 
 			break;

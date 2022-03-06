@@ -1,8 +1,6 @@
 --
 -- $Id$
 --
---
---
 CREATE TABLE  `grid_job_daily_user_stats` (
   `clusterid` int(10) unsigned NOT NULL default '0',
   `user` varchar(45) NOT NULL default '',

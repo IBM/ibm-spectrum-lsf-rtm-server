@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -124,8 +124,14 @@ function form_save() {
 			exit(0);
 		}
 
-		$server_portatserver = get_request_var('server_portatserver');
-		$service_id          = get_request_var('service_id');
+		$server_portatserver 	= get_request_var('server_portatserver');
+		$service_id          	= get_request_var('service_id');
+		$server_subisv		 	= get_request_var('server_subisv');
+		if (empty($server_subisv)) {
+			$server_subisv_filter = " ";
+		} else {
+			$server_subisv_filter	= " AND (server_subisv='' OR server_subisv=?) ";
+		}
 
 		if (substr_count($server_portatserver, ':')) {
 			$pass = explode(':', $server_portatserver);
@@ -133,13 +139,19 @@ function form_save() {
 			if (cacti_sizeof($pass)) {
 				foreach($pass as $pas) {
 					$portatsvc = trim($pas);
-					$pas_likes = array('%' . $portatsvc, '%' . $portatsvc . ';%', '%' . $portatsvc . ':%', '%' . $portatsvc . ',%');
+					if (empty($server_subisv)) {
+						$pas_likes = array('%' . $portatsvc, '%' . $portatsvc . ';%', '%' . $portatsvc . ':%', '%' . $portatsvc . ',%', $service_id);
+					} else {
+						$pas_likes = array('%' . $portatsvc, '%' . $portatsvc . ';%', '%' . $portatsvc . ':%', '%' . $portatsvc . ',%', $server_subisv, $service_id);
+					}
 					$pas_man = db_fetch_cell_prepared("SELECT service_id
 						FROM lic_services
-						WHERE server_portatserver LIKE ?
+						WHERE (server_portatserver LIKE ?
 							OR server_portatserver LIKE ?
 							OR server_portatserver LIKE ?
-							OR server_portatserver LIKE ?", $pas_likes);
+							OR server_portatserver LIKE ?)
+							" . $server_subisv_filter . "
+							AND service_id != ?", $pas_likes);
 
 					if (!empty($pas_man) && $pas_man != $service_id) {
 						raise_message(210);
@@ -154,13 +166,19 @@ function form_save() {
 			}
 		} else {
 			$portatsvc = trim($server_portatserver);
-			$pas_likes = array('%' . $portatsvc, '%' . $portatsvc . ';%', '%' . $portatsvc . ':%', '%' . $portatsvc . ',%');
+			if (empty($server_subisv)) {
+				$pas_likes = array('%' . $portatsvc, '%' . $portatsvc . ';%', '%' . $portatsvc . ':%', '%' . $portatsvc . ',%', $service_id);
+			} else {
+				$pas_likes = array('%' . $portatsvc, '%' . $portatsvc . ';%', '%' . $portatsvc . ':%', '%' . $portatsvc . ',%', $server_subisv, $service_id);
+			}
 			$pas_man = db_fetch_cell_prepared("SELECT service_id
 				FROM lic_services
-				WHERE server_portatserver LIKE ?
+				WHERE (server_portatserver LIKE ?
 					OR server_portatserver LIKE ?
 					OR server_portatserver LIKE ?
-					OR server_portatserver LIKE ?", $pas_likes);
+					OR server_portatserver LIKE ?)
+					" . $server_subisv_filter . "
+					AND service_id != ?", $pas_likes);
 
 			if (!empty($pas_man) && $pas_man != $service_id) {
 				raise_message(208);

@@ -1,7 +1,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2021 The Cacti Group                                 |
+ | Copyright (C) 2004-2022 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -3041,18 +3041,18 @@ function closeDateFilters() {
 }
 
 function saveGraphFilter(section) {
-	var href = graphPage+'?action=save'+
-		'&columns='+$('#columns').val()+
-		'&graphs='+$('#graphs').val()+
-		'&graph_template_id='+$('#graph_template_id').val()+
-		'&predefined_timespan='+$('#predefined_timespan').val()+
-		'&predefined_timeshift='+$('#predefined_timeshift').val()+
-		'&thumbnails='+$('#thumbnails').is(':checked');
-
 	closeDateFilters();
 
-	$.get(href+'&header=false&section='+section)
-		.done(function(data) {
+	$.post(graphPage+'?action=save', {
+			section: section,
+			columns: $('#columns').val(),
+			graphs: $('#graphs').val(),
+			graph_template_id: $('#graph_template_id').val(),
+			predefined_timespan: $('#predefined_timespan').val(),
+			predefined_timeshift: $('#predefined_timeshift').val(),
+			thumbnails: $('#thumbnails').is(':checked'),
+			__csrf_magic: csrfMagicToken
+			}).done(function(data) {
 			checkForLogout(data);
 
 			$('#text').show().text(filterSettingsSaved).fadeOut(2000, function() {
@@ -4342,5 +4342,3 @@ function checkSNMPPassphraseConfirm(type) {
 		}
 	}
 }
-
-

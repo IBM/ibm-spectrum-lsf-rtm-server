@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -162,7 +162,6 @@ function form_save() {
 			$lsid = sql_save($save, 'grid_blstat_collectors', 'lsid');
 
 			if ($lsid) {
-				raise_message(1);
 				if (empty($save['advanced_enabled'])) {
 					$ls_envdir_realpath  = realpath($config['base_path'] . '/../rtm/etc/ls' . $lsid);
 					if($ls_envdir_realpath == false) {
@@ -179,20 +178,21 @@ function form_save() {
 					$contents .= "ADMIN = " . $save["ls_admin"] . "\n";
 					$contents .= "End Parameters\n";
 					if(!file_put_contents("$ls_envdir_realpath/lsf.licensescheduler", $contents)) {
-						raise_message(2);
+						raise_message(2,  __("Error when writing to $ls_envdir_realpath/lsf.licensescheduler", "gridblstat"), MESSAGE_LEVEL_ERROR);
 					} else {
 						$fp = fopen("$ls_envdir_realpath/lsf.conf", "w" );
 
 						if($fp == FALSE) {
-							raise_message(2);
+							raise_message(2,  __("Cannot open file $ls_envdir_realpath/lsf.conf", "gridblstat"), MESSAGE_LEVEL_ERROR);
 						} else {
 							if ($save['lsf_strict_checking'] == 'Y' || $save['lsf_strict_checking'] == 'ENHANCED') {
 								if(fwrite($fp,"LSF_STRICT_CHECKING=".$save['lsf_strict_checking']." \n") == FALSE) {
-									raise_message(2);
+									raise_message(2,  __("You don't have WRITE permission to $ls_envdir_realpath/lsf.conf", "gridblstat"), MESSAGE_LEVEL_ERROR);
 								}
 							}
 
 							fclose($fp);
+							raise_message(1);
 						}
 
 						if (!file_exists("$ls_envdir_realpath/ego.conf")) {
@@ -204,6 +204,8 @@ function form_save() {
 							SET lsf_envdir=?
 							WHERE lsid=?", array($ls_envdir_realpath, $lsid));
 					}
+				} else {
+					raise_message(1);
 				}
 			} else {
 				raise_message(2);

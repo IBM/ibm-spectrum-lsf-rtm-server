@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -400,12 +400,14 @@ function grid_view_hosts() {
 		'hostType'    => array(
 			'display' => __('Type', 'grid'),
 			'tip'     => __('Auto-detected or user defined Type of the host as defined in lsf.cluster file.', 'grid'),
-			'sort'    => 'ASC'
+			'sort'    => 'ASC',
+			'dbname'  => 'host_type'
 		),
 		'hostModel'   => array(
 			'display' => __('Model', 'grid'),
 			'tip'     => __('Auto-detected or user defined Model of the host as defined in lsf.cluster file.', 'grid'),
-			'sort'    => 'ASC'
+			'sort'    => 'ASC',
+			'dbname'  => 'host_model'
 		),
 		'cpuFactor'   => array(
 			'display' => __('CPU Factor', 'grid'),
@@ -471,6 +473,8 @@ function grid_view_hosts() {
 		)
 	);
 
+	$display_text = form_process_visible_display_text($display_text);
+
 	/* generate page list */
 	$nav = html_nav_bar('grid_lshosts.php?filter=' . get_request_var('filter'), MAX_DISPLAY_PAGES, get_request_var('page'), $rows, $total_rows, cacti_sizeof($display_text), __('Hosts', 'grid'), 'page', 'main');
 
@@ -519,9 +523,8 @@ function grid_view_hosts() {
 
 			form_selectable_cell_metadata('simple', 'host', $host['clusterid'], $host['host'], '', '', html_escape($host['host']), true, $url);
 			form_selectable_cell($host['clustername'], $i);
-
-			form_selectable_cell(filter_value($host['hostType'], get_request_var('filter')), $i, '', '');
-			form_selectable_cell(filter_value($host['hostModel'], get_request_var('filter')), $i, '', '');
+			form_selectable_cell_visible(filter_value($host['hostType'], get_request_var('filter')), 'host_type');
+			form_selectable_cell_visible(filter_value($host['hostModel'], get_request_var('filter')), 'host_model');
 			form_selectable_cell(number_format_i18n($host['cpuFactor'],1), $i, '', 'right');
 			form_selectable_cell($host['maxCpus'], $i, '', 'right');
 			form_selectable_cell(display_memory($host['maxMem']), $i, '', 'right');

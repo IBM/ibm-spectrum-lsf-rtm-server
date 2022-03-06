@@ -3,7 +3,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -151,7 +151,10 @@ if ($runme || $forcerun) {
 }
 
 function lic_process_options($cur_time, $lic_id = 0) {
-	global $if_collect_option;
+	global $if_collect_option, $debug;
+
+	$use_ssh = read_config_option('lic_use_ssh_for_options');
+
 	if ($lic_id > 0) {
 		$options = db_fetch_assoc_prepared("SELECT service_id, server_name, server_portatserver, options_path
 			FROM lic_services
@@ -186,12 +189,14 @@ function lic_process_options($cur_time, $lic_id = 0) {
 					$valid_options_file = false;
 					continue;
 				}
-			} else { // for remote optioins file via ssh
+			} elseif ($use_ssh) { // for remote options file via ssh
 				if ( !cacti_sizeof(get_options_file_ssh($options_file,$lmgrd['server_portatserver'])) ) {
 					cacti_log("ERROR: '" .$lmgrd["server_name"] ."' - Option File: $options_file doesn't exist!");
 					$valid_options_file = false;
 					continue;
 				}
+			} else {
+				cacti_log(sprintf('WARNING: Options File:\'%s\' for Service:\'%s\' does not exist locally and ssh is not enabled', $options_file, $lmgrd['server_portatserver']), false, 'LICENSE');
 			}
 		}
 		if (!$valid_options_file) continue;
@@ -233,7 +238,7 @@ function lic_process_options($cur_time, $lic_id = 0) {
 			if (file_exists($options_file) && is_readable($options_file)) {
 				$option_file_contents = file($options_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 				$i++;
-			} else {
+			} elseif ($use_ssh) {
 				$option_file_contents = get_options_file_ssh($options_file,$lmgrd['server_portatserver']);
 				$i++;
 			}
@@ -251,7 +256,7 @@ function lic_process_options($cur_time, $lic_id = 0) {
 					lic_debug("Processing Options Input File '$infile', Number $j");
 					$infile_contents = file($infile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 					$j++;
-				}else{
+				} elseif ($use_ssh) {
 					//lic_debug("Falling back to ssh to get license input options path '" . $infile . "'");
 					// Need to fallback to ssh
 					$infile_contents = array();

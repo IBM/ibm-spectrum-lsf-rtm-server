@@ -1,29 +1,13 @@
 --
 -- $Id$
 --
---
--- MySQL dump 10.10
---
--- Host: localhost    Database: cacti
--- ------------------------------------------------------
--- Server version	5.0.22
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
 -- Initial Cacti data for fresh installation to cover Cacti Install Wizard result.
 --
 
 LOCK TABLES `cdef` WRITE;
+/*!40000 ALTER TABLE `cdef` DISABLE KEYS */;
 INSERT INTO `cdef` VALUES
 (16,'f978a272c42c71721183d044ebd5c691',0,'Multiply by 100'),
 (17,'07d573a5b60c6b1acb4bd98805c8aed9',0,'Divide by 1024'),
@@ -34,9 +18,9 @@ INSERT INTO `cdef` VALUES
 (22,'d3e53d41bf0253d948e5acbf53d1824e',0,'Make KBytes GigaBytes'),
 (23,'2edaef75ae74a4919e6774fdcc51231d',0,'Net-SNMP - IO Wait'),
 (24,'146ce3dc0abdf3fda6c77b489c71c374',0,'Turn Seconds into Days');
-/*!40000 ALTER TABLE `cdef` DISABLE KEYS */;
 /*!40000 ALTER TABLE `cdef` ENABLE KEYS */;
 UNLOCK TABLES;
+
 LOCK TABLES `cdef_items` WRITE;
 /*!40000 ALTER TABLE `cdef_items` DISABLE KEYS */;
 INSERT INTO `cdef_items` VALUES
@@ -83,6 +67,7 @@ UNLOCK TABLES;
 
 
 LOCK TABLES `data_template` WRITE;
+/*!40000 ALTER TABLE `data_template` DISABLE KEYS */;
 INSERT INTO `data_template` VALUES
 (1,'9b8c92d3c32703900ff7dd653bfc9cd8','Unix - Processes'),
 (2,'9e72511e127de200733eb502eb818e1d','Unix - Load Average'),
@@ -90,11 +75,11 @@ INSERT INTO `data_template` VALUES
 (4,'dc33aa9a8e71fb7c61ec0e7a6da074aa','Linux - Memory - Free'),
 (5,'41f55087d067142d702dd3c73c98f020','Linux - Memory - Free Swap'),
 (6,'e4ac6919d4f6f21ec5b281a1d6ac4d4e','Unix - Hard Drive Space');
-/*!40000 ALTER TABLE `data_template` DISABLE KEYS */;
 /*!40000 ALTER TABLE `data_template` ENABLE KEYS */;
 UNLOCK TABLES;
 
 LOCK TABLES `data_template_data` WRITE;
+/*!40000 ALTER TABLE `data_template_data` DISABLE KEYS */;
 INSERT INTO `data_template_data` VALUES
 (1,0,0,1,7,'','|host_description| - Processes','',NULL,'','on','',300,'',1),
 (2,0,0,2,4,'','|host_description| - Load Average','',NULL,'','on','',300,'',1),
@@ -102,11 +87,11 @@ INSERT INTO `data_template_data` VALUES
 (4,0,0,4,6,'','|host_description| - Memory - Free','',NULL,'','on','',300,'',1),
 (5,0,0,5,6,'','|host_description| - Memory - Free Swap','',NULL,'','on','',300,'',1),
 (6,0,0,6,11,'on','|host_description| - Hard Drive Space','',NULL,'','on','',300,'',1);
-/*!40000 ALTER TABLE `data_template_data` DISABLE KEYS */;
 /*!40000 ALTER TABLE `data_template_data` ENABLE KEYS */;
 UNLOCK TABLES;
 
 LOCK TABLES `data_template_rrd` WRITE;
+/*!40000 ALTER TABLE `data_template_rrd` DISABLE KEYS */;
 INSERT INTO `data_template_rrd` VALUES
 (1,'f1ba3a5b17b95825021241398bb0f277',0,0,1,'','1000','','0','',600,'',1,'','proc','',24),
 (2,'8175ca431c8fe50efff5a1d3ae51b55d',0,0,2,'','500','','0','',600,'',1,'','load_1min','',17),
@@ -117,12 +102,12 @@ INSERT INTO `data_template_rrd` VALUES
 (7,'7fea6acc9b1a19484b4cb4cef2b6c5da',0,0,5,'','0','','0','',600,'',1,'','mem_swap','',23),
 (8,'4c82df790325d789d304e6ee5cd4ab7d',0,0,6,'','0','','0','',600,'',1,'','hdd_free','',0),
 (9,'07175541991def89bd02d28a215f6fcc',0,0,6,'','0','','0','',600,'',1,'','hdd_used','',0);
-/*!40000 ALTER TABLE `data_template_rrd` DISABLE KEYS */;
 /*!40000 ALTER TABLE `data_template_rrd` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
 LOCK TABLES `graph_template_input` WRITE;
+/*!40000 ALTER TABLE `graph_template_input` DISABLE KEYS */;
 INSERT INTO `graph_template_input` VALUES
 (1,'592cedd465877bc61ab549df688b0b2a',1,'Processes Data Source','','task_item_id'),
 (2,'1d51dbabb200fcea5c4b157129a75410',1,'Legend Color','','color_id'),
@@ -135,11 +120,11 @@ INSERT INTO `graph_template_input` VALUES
 (9,'5e62dbea1db699f1bda04c5863e7864d',4,'Swap Data Source','','task_item_id'),
 (10,'940beb0f0344e37f4c6cdfc17d2060bc',5,'Available Disk Space Data Source','','task_item_id'),
 (11,'7b0674dd447a9badf0d11bec688028a8',5,'Used Disk Space Data Source','','task_item_id');
-/*!40000 ALTER TABLE `graph_template_input` DISABLE KEYS */;
 /*!40000 ALTER TABLE `graph_template_input` ENABLE KEYS */;
 UNLOCK TABLES;
 
 LOCK TABLES `graph_template_input_defs` WRITE;
+/*!40000 ALTER TABLE `graph_template_input_defs` DISABLE KEYS */;
 INSERT INTO `graph_template_input_defs` VALUES
 (1,1),
 (1,2),
@@ -173,19 +158,17 @@ INSERT INTO `graph_template_input_defs` VALUES
 (11,25),
 (11,26),
 (11,27);
-
-/*!40000 ALTER TABLE `graph_template_input_defs` DISABLE KEYS */;
 /*!40000 ALTER TABLE `graph_template_input_defs` ENABLE KEYS */;
 UNLOCK TABLES;
 
 LOCK TABLES `graph_templates` WRITE;
+/*!40000 ALTER TABLE `graph_templates` DISABLE KEYS */;
 INSERT INTO `graph_templates` VALUES
 (1,'9fe8b4da353689d376b99b2ea526cc6b','Unix - Processes',''),
 (2,'fe5edd777a76d48fc48c11aded5211ef','Unix - Load Average',''),
 (3,'63610139d44d52b195cc375636653ebd','Unix - Logged in Users',''),
 (4,'6992ed4df4b44f3d5595386b8298f0ec','Linux - Memory Usage',''),
 (5,'8e7c8a511652fe4a8e65c69f3d34779d','Unix - Available Disk Space','');
-/*!40000 ALTER TABLE `graph_templates` DISABLE KEYS */;
 /*!40000 ALTER TABLE `graph_templates` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -197,17 +180,18 @@ INSERT INTO `graph_templates_gprint` VALUES
 UNLOCK TABLES;
 
 LOCK TABLES `graph_templates_graph` WRITE;
+/*!40000 ALTER TABLE `graph_templates_graph` DISABLE KEYS */;
 INSERT INTO `graph_templates_graph` VALUES
 (1,0,0,1,'',1,'','|host_description| - Processes','','',120,'',500,'','100','','0','','processes','','on','','on','',2,'','','','','','','','on','',1000,'','','','','','','',NULL,'',NULL,'',NULL,'',NULL,'',NULL,'',NULL,'',NULL,'',NULL,'','30','',NULL,'',NULL,'',NULL,'',NULL),
 (2,0,0,2,'',1,'','|host_description| - Load Average','','',120,'',500,'','100','','0','','processes in the run queue','','on','','on','',2,'','','','','','on','','on','',1000,'','','','','','','',NULL,'',NULL,'',NULL,'',NULL,'',NULL,'',NULL,'',NULL,'',NULL,'','30','',NULL,'',NULL,'',NULL,'',NULL),
 (3,0,0,3,'',1,'','|host_description| - Logged in Users','','',120,'',500,'','100','','0','','users','','on','','on','',2,'','','','','','on','','on','',1000,'','','','','','','',NULL,'',NULL,'',NULL,'',NULL,'',NULL,'',NULL,'',NULL,'',NULL,'','30','',NULL,'',NULL,'',NULL,'',NULL),
 (4,0,0,4,'',1,'','|host_description| - Memory Usage','','',120,'',500,'','100','','0','','bytes','','on','','on','',2,'','','','','','on','','on','',1000,'','','','','','','',NULL,'',NULL,'',NULL,'',NULL,'',NULL,'',NULL,'',NULL,'',NULL,'','30','',NULL,'',NULL,'',NULL,'',NULL),
 (5,0,0,5,'',1,'on','|host_description| - Available Disk Space','','',120,'',500,'','100','','0','','bytes','','on','','on','',2,'','','','','','on','','on','',1024,'','','','','','','',NULL,'',NULL,'',NULL,'',NULL,'',NULL,'',NULL,'',NULL,'',NULL,'','30','',NULL,'',NULL,'',NULL,'',NULL);
-/*!40000 ALTER TABLE `graph_templates_graph` DISABLE KEYS */;
 /*!40000 ALTER TABLE `graph_templates_graph` ENABLE KEYS */;
 UNLOCK TABLES;
 
 LOCK TABLES `graph_templates_item` WRITE;
+/*!40000 ALTER TABLE `graph_templates_item` DISABLE KEYS */;
 INSERT INTO `graph_templates_item` VALUES
 (1,'ba00ecd28b9774348322ff70a96f2826',0,0,1,1,48,'FF',7,0.00,NULL,NULL,0,0,NULL,1,NULL,'Running Processes','','',2,1),
 (2,'8d76de808efd73c51e9a9cbd70579512',0,0,1,1,0,'FF',9,0.00,NULL,NULL,0,0,NULL,4,NULL,'Current:','','',3,2),
@@ -244,62 +228,63 @@ INSERT INTO `graph_templates_item` VALUES
 (33,'fb831fefcf602bc31d9d24e8e456c2e6',0,0,5,0,0,'FF',9,0.00,NULL,NULL,15,0,NULL,4,NULL,'Current:','','',2,10),
 (34,'5a958d56785a606c08200ef8dbf8deef',0,0,5,0,0,'FF',9,0.00,NULL,NULL,15,0,NULL,1,NULL,'Average:','','',2,11),
 (35,'5ce67a658cec37f526dc84ac9e08d6e7',0,0,5,0,0,'FF',9,0.00,NULL,NULL,15,0,NULL,3,NULL,'Maximum:','','on',2,12);
-/*!40000 ALTER TABLE `graph_templates_item` DISABLE KEYS */;
 /*!40000 ALTER TABLE `graph_templates_item` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
 LOCK TABLES `host` WRITE;
+/*!40000 ALTER TABLE `host` DISABLE KEYS */;
 INSERT INTO `host` (`id`, `poller_id`, `site_id`, `host_template_id`, `description`, `hostname`, `location`, `notes`, `external_id`, `snmp_community`, `snmp_version`, `snmp_username`, `snmp_password`, `snmp_auth_protocol`, `snmp_priv_passphrase`, `snmp_priv_protocol`, `snmp_context`, `snmp_engine_id`, `snmp_port`, `snmp_timeout`, `snmp_sysDescr`, `snmp_sysObjectID`, `snmp_sysUpTimeInstance`, `snmp_sysContact`, `snmp_sysName`, `snmp_sysLocation`, `availability_method`, `ping_method`, `ping_port`, `ping_timeout`, `ping_retries`, `max_oids`, `device_threads`, `deleted`, `disabled`, `status`, `status_event_count`, `status_fail_date`, `status_rec_date`, `status_last_error`, `min_time`, `max_time`, `cur_time`, `avg_time`, `polling_time`, `total_polls`, `failed_polls`, `availability`, `last_updated`) VALUES
 (1,1,0,1,'Local Linux Machine','localhost',NULL,'',NULL,'',0,'','','','','','','',161,500,'','',0,'','','',0,2,0,400,1,10,1,'','',3,0,'0000-00-00 00:00:00','0000-00-00 00:00:00','',0.00000,0.00000,0.00000,0.00000,0,588,0,100.00000,current_timestamp);
-/*!40000 ALTER TABLE `host` DISABLE KEYS */;
 /*!40000 ALTER TABLE `host` ENABLE KEYS */;
 UNLOCK TABLES;
 
 LOCK TABLES `host_graph` WRITE;
+/*!40000 ALTER TABLE `host_graph` DISABLE KEYS */;
 INSERT INTO `host_graph` VALUES
 (1,1),
 (1,2),
 (1,3),
 (1,4);
-/*!40000 ALTER TABLE `host_graph` DISABLE KEYS */;
 /*!40000 ALTER TABLE `host_graph` ENABLE KEYS */;
 UNLOCK TABLES;
 
 LOCK TABLES `host_snmp_query` WRITE;
+/*!40000 ALTER TABLE `host_snmp_query` DISABLE KEYS */;
 INSERT INTO `host_snmp_query` VALUES
 (1,1,'dskDevice','|query_dskDevice|',1);
-/*!40000 ALTER TABLE `host_snmp_query` DISABLE KEYS */;
 /*!40000 ALTER TABLE `host_snmp_query` ENABLE KEYS */;
 UNLOCK TABLES;
 
 LOCK TABLES `host_template` WRITE;
+/*!40000 ALTER TABLE `host_template` DISABLE KEYS */;
 INSERT INTO `host_template` VALUES
 (1,'2d3e47f416738c2d22c87c40218cc55e','Local Linux Machine');
-/*!40000 ALTER TABLE `host_template` DISABLE KEYS */;
 /*!40000 ALTER TABLE `host_template` ENABLE KEYS */;
 UNLOCK TABLES;
 
 LOCK TABLES `host_template_graph` WRITE;
+/*!40000 ALTER TABLE `host_template_graph` DISABLE KEYS */;
 INSERT INTO `host_template_graph` VALUES
 (1,1),
 (1,2),
 (1,3),
 (1,4);
-/*!40000 ALTER TABLE `host_template_graph` DISABLE KEYS */;
 /*!40000 ALTER TABLE `host_template_graph` ENABLE KEYS */;
 UNLOCK TABLES;
 
 LOCK TABLES `host_template_snmp_query` WRITE;
+/*!40000 ALTER TABLE `host_template_snmp_query` DISABLE KEYS */;
 INSERT INTO `host_template_snmp_query` VALUES
 (1,1);
-/*!40000 ALTER TABLE `host_template_snmp_query` DISABLE KEYS */;
 /*!40000 ALTER TABLE `host_template_snmp_query` ENABLE KEYS */;
 UNLOCK TABLES;
 
 LOCK TABLES `settings` WRITE;
 /*!40000 ALTER TABLE `settings` DISABLE KEYS */;
 REPLACE INTO `settings` VALUES ('admin_user','1'),
+('add_summary_device', 'on'),
+('advocate_port', '8089'),
 ('auth_cache_enabled','on'),
 ('autocomplete_enabled','1'),
 ('autocomplete_rows','30'),
@@ -310,10 +295,11 @@ REPLACE INTO `settings` VALUES ('admin_user','1'),
 ('automation_tree_enabled','on'),
 ('availability_method','0'),
 ('axis_size','7'),
-('base_url',concat('http://', @@hostname, '/cacti/')),
+('base_url',CONCAT('http://', @@hostname, '/cacti/')),
 ('boost_parallel','1'),
+('boost_png_cache_directory', '/opt/IBM/cacti/cache/boost/'),
 ('boost_png_cache_enable',''),
-('boost_poller_mem_limit','1024'),
+('boost_poller_mem_limit','2048'),
 ('boost_redirect',''),
 ('boost_rrd_update_enable',''),
 ('boost_rrd_update_interval','60'),
@@ -324,11 +310,11 @@ REPLACE INTO `settings` VALUES ('admin_user','1'),
 ('boost_rrd_update_system_enable',''),
 ('concurrent_processes','1'),
 ('cron_interval','300'),
-('default_datechar','0'),
 ('default_date_format','4'),
-('default_graphs_new_dropdown','-2'),
+('default_datechar','0'),
 ('default_graph_height','150'),
 ('default_graph_width','500'),
+('default_graphs_new_dropdown','-2'),
 ('default_has',''),
 ('default_image_format','1'),
 ('default_poller','1'),
@@ -336,24 +322,52 @@ REPLACE INTO `settings` VALUES ('admin_user','1'),
 ('default_template','1'),
 ('deletion_verification','on'),
 ('device_threads','1'),
+('disku_device_add', 'on'),
+('disku_level1', 'meta_col4'),
+('disku_level2', 'meta_col5'),
+('disku_level3', 'meta_col6'),
 ('drag_and_drop','on'),
 ('dsstats_daily_interval','60'),
 ('dsstats_enable',''),
 ('dsstats_hourly_duration','60'),
 ('dsstats_major_update_time','12:00am'),
-('dsstats_poller_mem_limit','1024'),
+('dsstats_poller_mem_limit','2048'),
 ('enable_snmp_agent',''),
 ('font_method','1'),
 ('force_https',''),
 ('graph_auth_method','1'),
 ('graph_watermark','Generated by IBM® Spectrum LSF RTM'),
 ('grds_creation_method','0'),
+('grid_archive_rrd_files', 'off'),
+('grid_archive_rrd_location', '/opt/IBM/cacti/rraarchive'),
+('grid_backup_enable', 'on'),
+('grid_backup_generations', '4'),
+('grid_backup_path', '/opt/IBM/cacti/backup'),
+('grid_backup_restore_host_file', ''),
+('grid_backup_schedule', 'd'),
+('grid_backup_weekday', '0'),
+('grid_cache_dir', '/opt/IBM/cacti/gridcache'),
+('grid_collection_enabled', 'on'),
+('grid_db_version', '10.2.0.0'),
+('grid_host_autopurge', '1'),
+('grid_os', 'on'),
+('grid_short_hostname', 'on'),
+('grid_system_collection_enabled', 'on'),
+('grid_thold_resdown_status', '1'),
+('grid_version', '10.2.0.0'),
+('grid_xport_rows', '1000'),
+('gridalarms_db_version', '10.2.0.0'),
+('gridpend_db_version', '10.2.0.0'),
 ('guest_user','0'),
+('help_loc_online_kc','https://www.ibm.com/support/knowledgecenter/SSZT2D_10.2.0'),
 ('hide_console',''),
 ('hide_form_description',''),
 ('i18n_auto_detection','1'),
 ('i18n_default_language','en-US'),
 ('i18n_language_support','1'),
+('install_complete',UNIX_TIMESTAMP(NOW(6))),
+('install_started',UNIX_TIMESTAMP(NOW(6))),
+('install_theme','spectrum'),
 ('ldap_encryption','0'),
 ('ldap_group_member_type','1'),
 ('ldap_group_require',''),
@@ -363,9 +377,10 @@ REPLACE INTO `settings` VALUES ('admin_user','1'),
 ('ldap_referrals','0'),
 ('ldap_version','3'),
 ('legend_size','8'),
-('logrotate_enabled','on'),
-('logrotate_frequency','1'),
-('logrotate_retain','7'),
+('lic_add_device', 'on'),
+('lic_data_retention', '2weeks'),
+('lic_db_maint_time', '12:00am'),
+('license_db_version', '10.2.0.0'),
 ('log_destination','1'),
 ('log_perror','on'),
 ('log_pstats',''),
@@ -373,18 +388,23 @@ REPLACE INTO `settings` VALUES ('admin_user','1'),
 ('log_refresh_interval','60'),
 ('log_validation',''),
 ('log_verbosity','2'),
+('logrotate_enabled','on'),
+('logrotate_frequency','1'),
+('logrotate_retain','7'),
 ('max_data_query_field_length','40'),
 ('max_display_rows','1000'),
 ('max_get_size','10'),
 ('max_threads','1'),
 ('max_title_length','110'),
 ('notify_admin',''),
+('ntp_server', 'pool.ntp.org'),
 ('num_rows_log','500'),
 ('num_rows_table','30'),
 ('oid_increasing_check_disable',''),
 ('path_cactilog','/opt/IBM/cacti/log/cacti.log'),
 ('path_php_binary','/usr/bin/php'),
 ('path_rrdtool','/usr/bin/rrdtool'),
+('path_rrdtool_default_font', ''),
 ('path_snmpbulkwalk','/usr/bin/snmpbulkwalk'),
 ('path_snmpget','/usr/bin/snmpget'),
 ('path_snmpgetnext','/usr/bin/snmpgetnext'),
@@ -416,13 +436,13 @@ REPLACE INTO `settings` VALUES ('admin_user','1'),
 ('reports_default_image_format','1'),
 ('reports_log_verbosity','2'),
 ('reports_max_attach','10485760'),
+('rrd_archive','/opt/IBM/cacti/rra/archive/'),
+('rrd_autoclean',''),
+('rrd_autoclean_method','1'),
 ('rrdp_fingerprint',''),
 ('rrdp_fingerprint_backup',''),
 ('rrdp_port','40301'),
 ('rrdp_port_backup','40301'),
-('rrd_archive','/opt/IBM/cacti/rra/archive/'),
-('rrd_autoclean',''),
-('rrd_autoclean_method','1'),
 ('rsa_fingerprint','ed:aa:54:f1:e7:9b:dc:26:bf:d2:2f:41:66:04:48:a8'),
 ('rsa_private_key','-----BEGIN RSA PRIVATE KEY----- MIIEowIBAAKCAQEAyJ/bm7JVJ1wYaFAS2o7/vc7/PZgjB1tHoNc69buSSQfW6Fkz +rYY8mEmgiTB3sdgGWwQdvYf+ypCZZaxqhM9izLaixZg9qceYbfJ1yWpXihOtHRv 1Q9kCtHP0g6p2XDAn6Itjo8EWMS+obkeujjcz5VlAgC7ast0SzhyP2F2OVlYmnT9 SzVPd0djn02K3i3jUBgE39s9wdvSq8caKctqKKHr/ZV2v/OWGelsd7BxXitgheQ/ njMNOvfF30/mZ9jmBMoyemD8tCvQb42uEnx+HWpw5lgIzO6yDaFEUUIMwarENwMB EWqmcpK1YeiQuBgHmSt7uJ8xsCAoy+RtctH0awIDAQABAoIBABO9701N6iU6Ych6 ALDzG2VhJiq4etHxgIXqSAoAUC/RjqtEg+Hq41+OgcySs2Upt2IpCSG7rH/5s5jt kEQNKqQ0995x8E61OT8iZ8E9GoKCcuQ9BPgxUIXkCZBBEyOrfbj3q4X4utPFYIDn h4eJqujeaZcd3VNv+9yfDFcCTzDrVe7ZGG50u4HGaFl76hjLaPdlsITXsSGoRU1W x4nHXGjwI5ua3GYkQSo0vxPGLXmZgNcz/1Ax1Jv6jm5uVkKppSUCxeVysfxP7lhQ xcZ7jUDdUrAv9LQd5Fuef+Wlb5LyF90zI0WwXvXKlmJkVFMZueBq6iai0e/pjMsm rsQteGkCgYEA/nh3DITqSr4sw5x2zaUlLlTHwEe/ypEhugd2aT+E4AQgy3J9QsfE vpfTeS5YszilK5ecO5VLpfcmcWX7XCxr+8VR/Y245X0wKYlEEJqLid8+YhBGBW/s cCvpDHLDO8hUQgZNv/ByBfsUjZYyMGoVK4I59qnuYkvlR7BJwnJJjAcCgYEAydSL NTBQk86pkM/Roo7+3y+vs11ja4PfzyPlKMZvGf1DTHUVlTmJVjMiPrA5kFidLF47 DelW/zB6qDuxAR80jeOJZhle37goSLDkRHW0jBBXBuBx9n+4ID0lNANHye7AlYK4 VPvUcBxKBwwcXd2/p7mL/ouTX2E7w6pK6/13g30CgYEA6wF9kEY/yX8QACbDYO+f AsaxItYgPYcCyraRmGlc4TVuw/Sb0cyD2jCE0GkI6ZrqjvOZCT27ey5ghmFUXa94 mi+EpND5bJbMn89w2JShQVa2WgIFaIgQpxcmRqTFwLQlfEQuEZCQ/Qz/0jJfb27I 1kGSHkaZLJZCzI310GmTmokCgYB4gZkkhtZ1ih0gQ5UtdCelZrmHZKkp1rFY4lu+ /svzPo5iJj5evN3NQ/aca2fTUbV2ekTUR5AUCgQSUqGaw+EDHuo4tck51qDm1gdV ANpuDouHpZcl0JhFV3zRE2xXm2ANZOFejIYI8jsY/hgpy27VXCnEL94sQsgGSbU2 Nj6XmQKBgHXNlP7d5KcvaID8WRYGJfTNWKK3JQN0I5FwhyYRThQauXRln1EdMAqx FDEXzbgPMyk+aFyzi5vAmxqwUi+s6hzjEkMqtz5c8JQ79DkgSkkP54m/Xn3/Yzfn W7ENk7JwQYr7mGbDXk6Fj+YPKDO1NTVeFrCfZaaX56qR+UBvGOy6 -----END RSA PRIVATE KEY-----'),
 ('rsa_public_key','-----BEGIN PUBLIC KEY----- MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyJ/bm7JVJ1wYaFAS2o7/ vc7/PZgjB1tHoNc69buSSQfW6Fkz+rYY8mEmgiTB3sdgGWwQdvYf+ypCZZaxqhM9 izLaixZg9qceYbfJ1yWpXihOtHRv1Q9kCtHP0g6p2XDAn6Itjo8EWMS+obkeujjc z5VlAgC7ast0SzhyP2F2OVlYmnT9SzVPd0djn02K3i3jUBgE39s9wdvSq8caKctq KKHr/ZV2v/OWGelsd7BxXitgheQ/njMNOvfF30/mZ9jmBMoyemD8tCvQb42uEnx+ HWpw5lgIzO6yDaFEUUIMwarENwMBEWqmcpK1YeiQuBgHmSt7uJ8xsCAoy+RtctH0 awIDAQAB -----END PUBLIC KEY-----'),
@@ -437,6 +457,7 @@ REPLACE INTO `settings` VALUES ('admin_user','1'),
 ('secpass_reqnum','on'),
 ('secpass_reqspec','on'),
 ('secpass_unlocktime','1440'),
+('selected_theme','spectrum'),
 ('selective_debug',''),
 ('selective_device_debug',''),
 ('selective_plugin_debug',''),
@@ -463,16 +484,17 @@ REPLACE INTO `settings` VALUES ('admin_user','1'),
 ('spikekill_percent','1000'),
 ('spine_log_level','0'),
 ('storage_location','0'),
+('timezone', 'America/New_York'),
 ('title_size','10'),
 ('unit_size','7'),
-('user_template','0'),
-('help_loc_online_kc','https://www.ibm.com/support/knowledgecenter/SSZT2D_10.2.0');
+('user_template','0');
 /*!40000 ALTER TABLE `settings` ENABLE KEYS */;
 UNLOCK TABLES;
 
 LOCK TABLES `settings_user` WRITE;
 /*!40000 ALTER TABLE `settings_user` DISABLE KEYS */;
-INSERT INTO `settings_user` VALUES (1,'selected_theme','spectrum'),
+INSERT INTO `settings_user` VALUES 
+(1,'selected_theme','spectrum'),
 (1,'user_language','en-US');
 /*!40000 ALTER TABLE `settings_user` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -508,7 +530,7 @@ UNLOCK TABLES;
 LOCK TABLES `version` WRITE;
 /*!40000 ALTER TABLE `version` DISABLE KEYS */;
 TRUNCATE TABLE version;
-REPLACE INTO version VALUES ('1.2.14');
+REPLACE INTO version VALUES ('1.2.15');
 /*!40000 ALTER TABLE `version` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -518,54 +540,8 @@ TRUNCATE TABLE automation_networks;
 /*!40000 ALTER TABLE `automation_networks` ENABLE KEYS */;
 UNLOCK TABLES;
 
---
--- Initial RTM specified settings for fresh installation
---
 -- password: 'admin' in md5, no change password
 update user_auth set password='21232f297a57a5a743894a0e4a801fc3', must_change_password='on' where id=1;
-
--- settings to use cactid and not cmd.php
-INSERT INTO `settings` VALUES ('path_rrdtool_default_font', ''),
-('grid_collection_enabled', 'on'),
-('grid_system_collection_enabled', 'on'),
-('grid_host_autopurge', '1'),
-('grid_license_poller_interval', '300'),
-('grid_license_poller_threads', '5'),
-('grid_license_poller_failure_count', '2'),
-('grid_license_poller_recovery_count', '2'),
-('grid_backup_enable', 'on'),
-('grid_backup_schedule', 'd'),
-('grid_backup_weekday', '0'),
-('grid_backup_generations', '4'),
-('grid_backup_path', '/opt/IBM/cacti/backup'),
-('grid_backup_restore_host_file', ''),
-('timezone', 'America/New_York'),
-('ntp_server', 'pool.ntp.org'),
-('grid_cache_dir', '/opt/IBM/cacti/gridcache'),
-('advocate_port', '8089'),
-('grid_archive_rrd_files', 'off'),
-('add_summary_device', 'on'),
-('grid_archive_rrd_location', '/opt/IBM/cacti/rraarchive'),
-('lic_add_device', 'on'),
-('lic_data_retention', '2weeks'),
-('lic_db_maint_time', '12:00am'),
-('grid_os', 'on'),
-('disku_device_add', 'on'),
-('disku_level1', 'meta_col4'),
-('disku_level2', 'meta_col5'),
-('disku_level3', 'meta_col6'),
-('grid_short_hostname', 'on'),
-('grid_version', '10.2.0.0'),
-('grid_db_version', '10.2.0.0'),
-('gridalarms_db_version', '10.2.0.0'),
-('license_db_version', '10.2.0.0'),
-('gridpend_db_version', '10.2.0.0');
-
-REPLACE INTO `settings` (name, value) VALUES ('install_theme','spectrum'),
-('selected_theme','spectrum');
-
-INSERT IGNORE INTO `settings` (name, value) VALUES ('grid_xport_rows', '1000'),
-('grid_thold_resdown_status', '1');
 
 -- Prevent snmp WARNING messages for localhost
 UPDATE host SET availability_method=0, snmp_version=0,status=3 WHERE hostname='localhost';

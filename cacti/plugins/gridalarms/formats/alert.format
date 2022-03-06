@@ -104,7 +104,7 @@ td.tableSubHeaderColumn {
 		<td><REPORT></td>
 	</tr>
 	<tr class='header_row'>
-		<td class='footer'>&copy; Copyright International Business Machines Corp, 2005-2019.</td>
+		<td class='footer'>&copy; Copyright International Business Machines Corp, 2005-2022.</td>
 	</tr>
 </table>
 </body>

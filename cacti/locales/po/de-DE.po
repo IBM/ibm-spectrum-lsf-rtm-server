@@ -1,5 +1,5 @@
 # German translation for Cacti.
-# Copyright (C) 2004-2021 The Cacti Group
+# Copyright (C) 2004-2022 The Cacti Group
 # This file is distributed under the same license as the Cacti package.
 #
 # # Default translations:
@@ -21659,8 +21659,8 @@ msgstr "VDEFs"
 #~ msgid "ERROR: Failed to add this data query for device (%s: %s) data query (%s: %s) reindex method (%s: %s)"
 #~ msgstr "FEHLER: Datenabfrage konnte nicht hinzugefügt werden für Zielsystem: (%s: %s) Datenabfrage (%s: %s) mit Reindizieroption (%s: %s)"
 
-#~ msgid "Copyright (C) 2004-2021 The Cacti Group"
-#~ msgstr "Copyright (C) 2004-2021 The Cacti Group"
+#~ msgid "Copyright (C) 2004-2022 The Cacti Group"
+#~ msgstr "Copyright (C) 2004-2022 The Cacti Group"
 
 #~ msgid "A simple command line utility to add a data query to an existing device in Cacti"
 #~ msgstr "Ein einfaches Kommandozeilen-Programm um eine Datenabfrage zu einem bestehenden Endgerät in Cacti hinzuzufügen"

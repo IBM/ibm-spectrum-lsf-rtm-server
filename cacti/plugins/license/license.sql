@@ -1,6 +1,8 @@
 --
 -- $Id$
 --
+
+--
 -- MySQL dump 10.14  Distrib 5.5.56-MariaDB, for Linux (x86_64)
 --
 -- Host: localhost    Database: cacti

@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -1563,7 +1563,8 @@ function grid_view_get_users_records(&$sql_where, $apply_limits = true, $rows, &
 			$sql_order";
 	} else {
 		$clusters = get_region_clusters(get_request_var('region'));
-		if (cacti_sizeof($clusters)) {
+		$ls_count = get_ls_count();
+		if (cacti_sizeof($clusters) && $ls_count > 1) {
 			$clwhere = 'AND gj.clusterid IN(' . implode(',', $clusters) . ')';
 		} else {
 			$clwhere = '';
@@ -1603,8 +1604,8 @@ function grid_view_get_users_records(&$sql_where, $apply_limits = true, $rows, &
 					FROM grid_jobs AS gj
 					INNER JOIN grid_clusters AS gc
 					ON gj.clusterid=gc.clusterid
-					WHERE (pendReasons LIKE 'Job\'s requirements for reserving resource (%) not satisfied;%'  $sql_reason)
-					OR (pendReasons LIKE 'Resource (%) reserved for SLA guarantees, or not enough resources available%'  $sql_reason)
+					WHERE ((pendReasons LIKE '%Job\'s requirements for reserving resource (%) not satisfied;%'  $sql_reason)
+					OR (pendReasons LIKE '%Resource (%) reserved for SLA guarantees, or not enough resources available%'  $sql_reason))
 					AND gj.stat IN ('PEND','SSUSP','PSUSP','USUSP')
 					$clwhere
 					) AS a ) AS bu
@@ -3452,7 +3453,7 @@ function grid_view_zen() {
 					form_selectable_cell(number_format_i18n($c['free']), $i, '', 'right');
 
 					form_selectable_cell(filter_value(number_format_i18n($c['demand']), '', 'grid_lsdashboard.php?action=users&tab=users&cluster=' . $c['cluster'] . '&filter=&user=&host=&sd=-3&resource=' . $details['feature'] . '&project=&rows=-1'), $i, '', 'right');
-					form_selectable_cell(number_format_i18n($c['buffer']), $i, '', '');
+					form_selectable_cell(number_format_i18n($c['buffer']), $i, '', 'right');
 					form_end_row();
 
 					$psd = $c["service_domain"];
@@ -3768,8 +3769,9 @@ function grid_view_zen() {
 
 			if (get_request_var('region') != '') {
 				$clusters = get_region_clusters(get_request_var('region'));
+				$ls_count = get_ls_count();
 
-				if (cacti_sizeof($clusters)) {
+				if (cacti_sizeof($clusters) && ls_count > 1) {
 					$clwhere = 'AND gj.clusterid IN(' . implode(',', $clusters) . ')';
 				} else {
 					$clwhere = '';
@@ -3793,16 +3795,16 @@ function grid_view_zen() {
 						FROM grid_jobs AS gj
 						INNER JOIN grid_clusters AS gc
 						ON gj.clusterid=gc.clusterid
-						WHERE gj.pendReasons LIKE 'Job\'s requirements for reserving resource (".$parts[0].") not satisfied%'
-						OR gj.pendReasons LIKE 'Resource (".$parts[0].") reserved for SLA guarantees, or not enough resources available%'
+						WHERE (gj.pendReasons LIKE '%Job\'s requirements for reserving resource (".$parts[0].") not satisfied%'
+						OR gj.pendReasons LIKE '%Resource (".$parts[0].") reserved for SLA guarantees, or not enough resources available%')
 						$clwhere
 						AND gj.stat IN ('PEND','SSUSP','PSUSP','USUSP')
 					) AS bu
 					INNER JOIN (
 						SELECT user, COUNT(num_cpus) AS maxtokens, gj.stat, gj.pendReasons
 						FROM grid_jobs AS gj
-						WHERE  gj.pendReasons LIKE 'Job\'s requirements for reserving resource (".$parts[0].") not satisfied%'
-						OR gj.pendReasons LIKE 'Resource (".$parts[0].") reserved for SLA guarantees, or not enough resources available%'
+						WHERE (gj.pendReasons LIKE '%Job\'s requirements for reserving resource (".$parts[0].") not satisfied%'
+						OR gj.pendReasons LIKE '%Resource (".$parts[0].") reserved for SLA guarantees, or not enough resources available%')
 						$clwhere
 						AND gj.stat IN ('PEND','SSUSP','PSUSP','USUSP') GROUP BY user
 					) AS bmu
@@ -5682,6 +5684,12 @@ function get_region_clusters($region) {
 	}
 
 	return $clusters;
+}
+
+function get_ls_count() {
+	$count = db_fetch_assoc('SELECT count(lsid)
+			FROM grid_blstat_collectors');
+	return $count;
 }
 
 function grid_blstat_ajax_save() {

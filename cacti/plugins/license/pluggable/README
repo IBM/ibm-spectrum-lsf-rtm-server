@@ -1,14 +1,11 @@
-/*******************************************************************************
-
+    ****************************************************************************
     Author ......... IBM Corporation
     Home Site ...... http://www.ibm.com
     Program ........ License Pluggable Parser Example
     Version ........ 10.2.0.11
     Purpose ........ Collect and Parse LicenseManager Admin/Client CLI Output.
                      Then output JSON format for RTM licjsonpoller loading.
-
-*******************************************************************************/
-
+    ****************************************************************************
 
 ----[ Purpose
 

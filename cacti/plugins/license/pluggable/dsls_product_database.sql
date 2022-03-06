@@ -1,6 +1,7 @@
 --
 -- $Id$
 --
+
 --
 -- Table structure for table `lic_dsls_feature_map`
 --

@@ -1,6 +1,8 @@
 --
 -- $Id$
 --
+
+--
 -- MySQL dump 10.14  Distrib 5.5.68-MariaDB, for Linux (x86_64)
 --
 -- Host: localhost    Database: cacti
@@ -26,16 +28,16 @@ DROP TABLE IF EXISTS `table_columns`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `table_columns` (
-  `table_name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `table_name` varchar(50) NOT NULL,
   `table_sequence` int(10) unsigned NOT NULL,
-  `table_field` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `table_type` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `table_null` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `table_key` varchar(4) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `table_default` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `table_extra` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `table_field` varchar(50) NOT NULL,
+  `table_type` varchar(50) DEFAULT NULL,
+  `table_null` varchar(10) DEFAULT NULL,
+  `table_key` varchar(4) DEFAULT NULL,
+  `table_default` varchar(50) DEFAULT NULL,
+  `table_extra` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`table_name`,`table_sequence`,`table_field`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Holds Default Cacti Table Definitions';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Holds Default Cacti Table Definitions';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3829,20 +3831,20 @@ DROP TABLE IF EXISTS `table_indexes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `table_indexes` (
-  `idx_table_name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `idx_table_name` varchar(50) NOT NULL,
   `idx_non_unique` int(10) unsigned DEFAULT NULL,
-  `idx_key_name` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `idx_key_name` varchar(128) NOT NULL,
   `idx_seq_in_index` int(10) unsigned NOT NULL,
-  `idx_column_name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `idx_collation` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `idx_column_name` varchar(50) NOT NULL,
+  `idx_collation` varchar(10) DEFAULT NULL,
   `idx_cardinality` int(10) unsigned DEFAULT NULL,
-  `idx_sub_part` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `idx_packed` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `idx_null` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `idx_index_type` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `idx_comment` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `idx_sub_part` varchar(50) DEFAULT NULL,
+  `idx_packed` varchar(128) DEFAULT NULL,
+  `idx_null` varchar(10) DEFAULT NULL,
+  `idx_index_type` varchar(20) DEFAULT NULL,
+  `idx_comment` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`idx_table_name`,`idx_key_name`,`idx_seq_in_index`,`idx_column_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Holds Default Cacti Index Definitions';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Holds Default Cacti Index Definitions';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

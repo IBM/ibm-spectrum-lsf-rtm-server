@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -408,7 +408,17 @@ function heuristics_login_navigate($login_opt) {
 function heuristics_busers_icon($user) {
 	global $config;
 
-	print "<a href='" .  html_escape($config['url_path'] . "plugins/heuristics/heuristics.php?reset=true&user_iq=$user") . "'><img src='" . $config['url_path'] . "plugins/heuristics/images/jobiq.png' alt='' title='" . __esc('View User Dashboard', 'heuristics') . "'></a>";
+	if (is_array($user)) {
+		$clusterid = $user['clusterid'];
+		$user = $user['user_or_group'];
+	} else {
+		$clusterid = -1;
+		$user = '';
+	}
+
+	print "<a href='" .  html_escape($config['url_path'] . "plugins/heuristics/heuristics.php?reset=true&user_iq=$user&clusterid=$clusterid") . "'>
+		<img src='" . $config['url_path'] . "plugins/heuristics/images/jobiq.png' alt='' title='" . __esc('View User Dashboard', 'heuristics') . "'>
+	</a>";
 
 	return $user;
 }

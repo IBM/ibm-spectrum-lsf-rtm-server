@@ -1,12 +1,10 @@
-/*******************************************************************************
-
+    ***********************************************************************
     Author ......... IBM Corporation
     Home Site ...... http://www.ibm.com
-    Program ........ LSF Job License Checkout History Viewer
+    Program ........ IBM Spectrum LSF Job License Checkout History Viewer
     Version ........ 10.2.0.12
     Purpose ........ Viewer for LSF Job License Checkout History
-
-*******************************************************************************/
+    ***********************************************************************
 
 
 ----[ Purpose
@@ -23,12 +21,11 @@
 
 ----[ Installation
 
-    Simply place in the plugins directory and install like any other Cacti 1.2.x
-    plugin.
+    Simply place in the plugins directory and install like any other Cacti plugin.
 
 ----[ Additional Help?
 
-    If you need additional help, please contact platform support.
+    If you need additional help, please contact IBM support.
 
 ----[ Possible Bugs?
 

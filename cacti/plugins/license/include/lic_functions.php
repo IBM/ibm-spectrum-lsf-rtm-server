@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -18,14 +18,18 @@
  +-------------------------------------------------------------------------+
 */
 
-function make_partition_query($table_name, $start, $end, $sql_where, $join_map = '') {
+function make_partition_query($table_name, $start, $end, $sql_where, $join_map = '', $columns = '') {
 	global $config;
 
 	include_once($config['base_path'] . '/plugins/grid/lib/grid_partitioning.php');
 
 	$tables       = partition_get_partitions_for_query($table_name, $start, $end);
 	$query        = '';
-	$query_prefix = 'SELECT * FROM ';
+	if ($columns == '') {
+		$query_prefix = 'SELECT * FROM ';
+	} else {
+		$query_prefix = 'SELECT ' . $columns . ' FROM ';
+	}
 
 	$i = 0;
 	if (cacti_sizeof($tables)) {
@@ -45,7 +49,11 @@ function make_partition_query($table_name, $start, $end, $sql_where, $join_map =
 	$query = trim($query);
 
 	if ($query == '') {
-		return $table_name;
+		if ($columns == '') {
+			return $table_name;
+		} else {
+			return $table_name . ' ' . $sql_where;
+		}
 	}
 
 	return  $query. ") AS $table_name";
@@ -1817,7 +1825,12 @@ function lic_purge_event($start_time, $last_maint_start) {
 	}
 
 	/*delete old data from table lic_daily_stats_traffic*/
-	db_execute_prepared('DELETE FROM lic_daily_stats_traffic WHERE last_updated<?', array($retention_period));
+	if (read_config_option('grid_partitioning_enable') == '') {
+		db_execute_prepared('DELETE FROM lic_daily_stats_traffic WHERE last_updated<?', array($retention_period));
+	} else {
+		$date = db_fetch_cell('SELECT MIN(min_time) FROM grid_table_partitions WHERE table_name = "lic_daily_stats"');
+		db_execute_prepared('DELETE FROM lic_daily_stats_traffic WHERE last_updated<?', array($date));
+	}
 	//db_execute('DELETE FROM lic_denials WHERE end_time<"' . $retention_period . '"');
 
 	/*optimize table lic_daily_stats and lic_daily_stats_traffic after delete*/

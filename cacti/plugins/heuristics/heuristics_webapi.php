@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -476,7 +476,7 @@ function heuristics_dashboard_ajax() {
 			event.stopPropagation();
 		});
 
-		filterChange();
+		filterChange(true, false);
 
 		$('#form_cluster').submit(function(event) {
 			event.preventDefault();
@@ -558,8 +558,9 @@ function heuristics_dashboard_ajax() {
 		});
 	}
 
-	function filterChange(refresh) {
+	function filterChange(refresh, refreshProjectQueueCharts) {
 		if (typeof refresh == 'undefined') refresh = true;
+		if (typeof refreshProjectQueueCharts == 'undefined') refreshProjectQueueCharts = true;
 
 		$('#views').multiselect('close');
 		$('#charts').multiselect('close');
@@ -580,7 +581,7 @@ function heuristics_dashboard_ajax() {
 		$('#charts').multiselect("close");
 
 		if (refresh) {
-			initializeViewsAndCharts();
+			initializeViewsAndCharts(refreshProjectQueueCharts);
 		} else {
 			$.ajaxQ.abortAll();
 			$.get(strURL, function() {
@@ -1121,9 +1122,13 @@ function heuristics_dashboard_ajax() {
 		initializeAllViews();
 	}
 
-	function initializeViewsAndCharts() {
-		initializeGeneralCharts();
+	function initializeViewsAndCharts(refreshProjectQueueCharts) {
+		if (typeof refreshProjectQueueCharts == 'undefined') refreshProjectQueueCharts = false;
 
+		initializeGeneralCharts();
+		if (refreshProjectQueueCharts) {
+			initializeProjectQueueCharts();
+		}
 		initializeAllViews();
 	}
 
@@ -1192,6 +1197,15 @@ function show_page_filter() {
 		"<a class='pic' id='curr_user_iq' href='" . $config['url_path'] . "plugins/heuristics/heuristics_jobs.php?reset=true&job_user=" . get_request_var('user_iq') . "'>" . __('Current Users Jobs', 'heuristics') . "</a>, " .
 		"<a class='pic' href='" . $config['url_path'] . "plugins/heuristics/heuristics_jobs.php?reset=true&job_user=-1'>" . __('All User Jobs', 'heuristics') . "</a> ] " .
 		"<span id='message' style='position:absolute;right:20px;top:5px;line-height:20px;'></span>", '100%', '', '3', 'center', '');
+	?>
+	<script type='text/javascript'>
+	$(function() {
+		$('#curr_user_grid').click(function() {
+			event.stopPropagation();
+		});
+	});
+	</script>
+	<?php
 
 	heuristics_filter();
 
@@ -1205,7 +1219,7 @@ function show_charts() {
 		html_start_box(__('Charts', 'heuristics'), '100%', true, '3', 'center', '');
 
 		print "<tr><td><table class='cactiTable'><tr><td>
-			<div id='ctabs' class='tabs'>
+			<div id='ctabs' class='ui-tabs'>
 				<ul>
 					<li><a id='general' href='#graphs'>" . __('General', 'heuristics') . "</a></li>
 					<li><a id='queueg' href='#pqgraphs'>" . __('Project/Queue', 'heuristics') . "</a></li>
@@ -1506,6 +1520,7 @@ function show_license_checkouts($export=false, &$header, &$stats, &$others) {
 	heuristics_build_header($header, __('Max Tokens', 'heuristics'),    'max_tokens',         'DESC', 'right', __esc('Total Tokens for this Feature', 'heuristics'));
 	heuristics_build_header($header, __('Free Tokens', 'heuristics'),   'free_tokens',        'ASC',  'right', __esc('Free Tokens for this Feature', 'heuristics'));
 	heuristics_build_header($header, __('My Tokens', 'heuristics'),     'tokens',             'DESC', 'right', __esc('Total Tokens in use by this User', 'heuristics'));
+	heuristics_build_header($header, __('My Queued', 'heuristics'),     'queued_tokens',      'DESC', 'right', __esc('Total Tokens in Queued state by this User', 'heuristics'));
 	heuristics_build_header($header, __('Checkout Time', 'heuristics'), 'total_time',         'DESC', 'right', __esc('Total Token Time', 'heuristics'));
 	heuristics_build_header($header, __('Max Time', 'heuristics'),      'max_time',           'DESC', 'right', __esc('Maximum Token Time', 'heuristics'));
 	heuristics_build_header($header, __('Avg Time', 'heuristics'),      'avg_time',           'DESC', 'right', __esc('Average Token Time', 'heuristics'));
@@ -1524,10 +1539,11 @@ function show_license_checkouts($export=false, &$header, &$stats, &$others) {
 	if ($stats == 'fetch') {
 		$sql = "SELECT ls.server_name, ls.server_vendor, ls.server_licensetype, lsfd.feature_name,
 			lsfu.feature_max_licenses AS max_tokens, lsfu.feature_max_licenses-lsfu.feature_inuse_licenses AS free_tokens,
-			SUM(tokens_acquired) AS tokens,
-			SUM(UNIX_TIMESTAMP()-UNIX_TIMESTAMP(lsfd.tokens_acquired_date)) AS total_time,
-			MAX(UNIX_TIMESTAMP()-UNIX_TIMESTAMP(lsfd.tokens_acquired_date)) AS max_time,
-			AVG(UNIX_TIMESTAMP()-UNIX_TIMESTAMP(lsfd.tokens_acquired_date)) AS avg_time
+			SUM(CASE WHEN lsfd.status='start' THEN tokens_acquired ELSE 0 END) AS tokens,
+			SUM(CASE WHEN lsfd.status='queued' THEN tokens_acquired ELSE 0 END) AS queued_tokens,
+			SUM(CASE WHEN lsfd.status='start' THEN UNIX_TIMESTAMP()-UNIX_TIMESTAMP(lsfd.tokens_acquired_date) ELSE 0 END) AS total_time,
+			MAX(CASE WHEN lsfd.status='start' THEN UNIX_TIMESTAMP()-UNIX_TIMESTAMP(lsfd.tokens_acquired_date) ELSE 0 END) AS max_time,
+			AVG(CASE WHEN lsfd.status='start' THEN UNIX_TIMESTAMP()-UNIX_TIMESTAMP(lsfd.tokens_acquired_date) ELSE 0 END) AS avg_time
 			FROM lic_services AS ls
 			INNER JOIN lic_services_feature_details AS lsfd
 			ON ls.service_id=lsfd.service_id
@@ -1565,6 +1581,7 @@ function show_license_checkouts($export=false, &$header, &$stats, &$others) {
 			<td class='right'><?php print number_format_i18n($row['max_tokens']);?></td>
 			<td class='right'><?php print number_format_i18n($row['free_tokens']);?></td>
 			<td class='right'><?php print number_format_i18n($row['tokens']);?></td>
+			<td class='right'><?php print number_format_i18n($row['queued_tokens']);?></td>
 			<td class='right'><?php print display_job_time($row['total_time']);?></td>
 			<td class='right'><?php print display_job_time($row['max_time']);?></td>
 			<td class='right'><?php print display_job_time($row['avg_time']);?></td>
@@ -1906,8 +1923,8 @@ function show_exit_stats($export=false, &$header, &$stats, &$others) {
 
 	heuristics_build_header($header, __('Queue', 'heuristics'),   'queue',       'ASC',  'left',  __esc('Your Jobs Run Queue', 'heuristics'));
 	heuristics_build_header($header, __('Project', 'heuristics'), 'projectName', 'DESC', 'left',  __esc('Your Jobs Run Project', 'heuristics'));
-	heuristics_build_header($header, __('Jobs', 'heuristics'),    'jobs',        'DESC', 'right', __esc('The total number of exited Jobs', 'heuristics'));
 	heuristics_build_header($header, __('Reason', 'heuristics'),  '',            '',     'left',  __esc('The Reason that these Jobs Exited', 'heuristics'));
+	heuristics_build_header($header, __('Jobs', 'heuristics'),    'jobs',        'DESC', 'right', __esc('The total number of exited Jobs', 'heuristics'));
 
 	if($export == true) {
 		return;
@@ -1932,9 +1949,9 @@ function show_exit_stats($export=false, &$header, &$stats, &$others) {
 
 			form_selectable_cluster($heuristics_num_clusters, $row['clustername']);
 			form_selectable_cell($row['queue'], $i);
-			form_selectable_cell($row['projectName'], $i);
-			form_selectable_cell(filter_value(number_format_i18n($row['jobs']), '', $url), $i, '', 'right');
+			form_selectable_cell(heuristics_trim_project($row['projectName']), $i);
 			form_selectable_cell(heuristics_get_exit_code($row['exitStatus']) . getExceptionStatus($row['exceptMask'], $row['exitInfo']), $i);
+			form_selectable_cell(filter_value(number_format_i18n($row['jobs']), '', $url), $i, '', 'right');
 
 			form_end_row();
 
@@ -2692,7 +2709,7 @@ function show_queue_stats($export=false, &$header, &$data, &$others) {
 			$sql_params[] = get_request_var('clusterid');
 		}
 
-		$sql = "SELECT CONCAT(gc.clustername,'|',queue,'|',projectName) AS cq,
+		$sql = "SELECT CONCAT(gc.clustername,'|',queue) AS cq,
 			SUM(numPEND) AS numPEND,
 			SUM(numRUN) AS numRUN,
 			SUM(numSUSP) AS numSUSP,
@@ -2703,7 +2720,7 @@ function show_queue_stats($export=false, &$header, &$data, &$others) {
 			ON gc.clusterid = gj.clusterid
 			WHERE user != ?
 			$sql_where
-			GROUP BY clustername, queue, projectName";
+			GROUP BY clustername, queue";
 
 		//print $sql;
 
@@ -2792,7 +2809,7 @@ function show_queue_stats($export=false, &$header, &$data, &$others) {
 			$run_url  = $jobs_url . '&status=RUNNING';
 			$susp_url = $jobs_url . '&status=SUSP';
 
-			$cq = $row['clustername'] . '|' . $row['queue'] . '|' . $row['projectName'];
+			$cq = $row['clustername'] . '|' . $row['queue'];
 
 			form_selectable_cluster($heuristics_num_clusters, $row['clustername']);
 			form_selectable_cell(filter_value_heur($row['queue'], '', '#', __esc('Show Queue Based Charts', 'heuristics'), 'pic offpage', $queueClick), $i);
@@ -3729,7 +3746,7 @@ function heuristics_filter() {
 					</td>
 					<td>
 						<span>
-							<input type='button' id='go' class='ui-button ui-corner-all ui-widget' value='<?php print __esc('Go', 'heuristics');?>' title='<?php print __esc('Refresh all Views and Charts', 'heuristics');?>' onClick='filterChange()'>
+							<input type='button' id='go' class='ui-button ui-corner-all ui-widget' value='<?php print __esc('Go', 'heuristics');?>' title='<?php print __esc('Refresh all Views and Charts', 'heuristics');?>' onClick='filterChange(true, false)'>
 							<input type='button' id='clear' class='ui-button ui-corner-all ui-widget' title='<?php print __esc('Revert to My Last Saved Settings', 'heuristics');?>' value='<?php print __esc('Clear', 'heuristics');?>' onClick='filterClear()'>
 							<input type='button' id='save' class='ui-button ui-corner-all ui-widget' title='<?php print __esc('Save all Filter Settings', 'heuristics');?>' value='<?php print __esc('Save', 'heuristics');?>' onClick='filterSave()'>
 						</span>

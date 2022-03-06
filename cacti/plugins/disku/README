@@ -1,12 +1,10 @@
-/*******************************************************************************
-
-    Author ......... IBM Corporation
-    Home Site ...... http://www.ibm.com
-    Program ........ RTM Disk Monitoring Plugin
-    Version ........ 10.2.0.12
-    Purpose ........ Scan Disks for Utilization
-
-*******************************************************************************/
+      *******************************************************
+      Author ......... IBM Corporation
+      Home Site ...... http://www.ibm.com
+      Program ........ IBM Spectrum LSF RTM Disk Monitoring
+      Version ........ 10.2
+      Purpose ........ Scan Disks for Utilization
+      *******************************************************
 
 
 ----[ Purpose

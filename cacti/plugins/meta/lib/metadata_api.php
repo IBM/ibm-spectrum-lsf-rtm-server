@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -84,7 +84,9 @@ function meta_page_bottom() {
 			});
 
 			$('.meta-detailed, .meta-simple').on('mouseout', function(event){
-				clearTimeout(timer2);
+				if (typeof timer2 !== 'undefined') {
+					clearTimeout(timer2);
+				}
 				metashown = 0;
 				timer1=setTimeout(function() {
 					closeDialog();
@@ -92,7 +94,9 @@ function meta_page_bottom() {
 			});
 
 			$('.meta-detailed, .meta-simple').on('click', function(event){
-				clearTimeout(timer2);
+				if (typeof timer2 !== 'undefined') {
+					clearTimeout(timer2);
+				}
 				metashown = 0;
 				timer1=setTimeout(function() {
 					closeDialog();

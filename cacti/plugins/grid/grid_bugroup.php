@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -30,9 +30,9 @@ grid_view_ugroups();
 
 function grid_get_ugroup_records($userGroup, &$sql_where, $method, $apply_limits = true, $rows, &$sql_params) {
 	if ($method == 'jobmap') {
-		$sql_where = '';
+		$sql_where = "WHERE ugs.userGroup = $userGroup";
 	} else {
-		$sql_where = 'WHERE (uog.type="G" OR uog.type IS NULL)';
+		$sql_where = "WHERE (uog.type='G' OR uog.type IS NULL) AND ugs.userGroup = $userGroup";
 	}
 
 	$sql_group_by = '';
@@ -530,7 +530,7 @@ function grid_view_ugroups() {
 					array($cacti_host, $group));
 
 				if (cacti_sizeof($local_graph_ids)) {
-					$graph_select = '&graph_add=';
+					$graph_select = 'action=preview&page=1&reset=1&graph_template_id=-1&rfilter=&style=selective&host_id=-1&graph_add=';
 
 					foreach($local_graph_ids as $graph) {
 						$graph_select .= $graph['id'] . '%2C';
@@ -546,12 +546,12 @@ function grid_view_ugroups() {
 			?>
 			<td class='nowrap'>
 				<?php if ($method != 'jobmap') { ?>
-				<a class='pic' href='<?php print html_escape($config['url_path'] . 'plugins/grid/grid_busers.php?reset=1&group=' . $group . '&clusterid=' . $ugroup['clusterid']);?>'><img src='<?php print $config['url_path'];?>plugins/grid/images/view_users.gif' alt='' title='<?php print __esc('View Users', 'grid');?>'></a>
+				<a class='pic' href='<?php print html_escape($config['url_path'] . 'plugins/grid/grid_busers.php?reset=1&usergroup=' . $group . '&clusterid=' . $ugroup['clusterid']);?>'><img src='<?php print $config['url_path'];?>plugins/grid/images/view_users.gif' alt='' title='<?php print __esc('View Users', 'grid');?>'></a>
 				<?php } ?>
 				<a class='pic' href='<?php print html_escape($config['url_path'] . 'plugins/grid/grid_bjobs.php?action=viewlist&reset=1&clusterid=' . $ugroup['clusterid'] . '&usergroup=' . $group . '&status=ACTIVE&page=1');?>'><img src='<?php print $config['url_path'];?>plugins/grid/images/view_jobs.gif' alt='' title='<?php print __esc('View Active Jobs', 'grid');?>'></a>
 
 				<?php if (isset($graph_select)) {?>
-				<a class='pic' href='<?php print html_escape($config['url_path'] . 'graph_view.php?action=preview&page=1&graph_template_id=-1&rfilter=&style=selective&host_id=-1&' . $graph_select);?>'><img src='<?php print $config['url_path'];?>plugins/grid/images/view_graphs.gif' alt='' title='<?php print __esc('View User Group Graphs', 'grid');?>'></a>
+				<a class='pic' href='<?php print html_escape($config['url_path'] . 'graph_view.php?' . $graph_select);?>'><img src='<?php print $config['url_path'];?>plugins/grid/images/view_graphs.gif' alt='' title='<?php print __esc('View User Group Graphs', 'grid');?>'></a>
 				<?php }?>
 			</td>
 			<?php
@@ -620,4 +620,3 @@ function grid_view_ugroups() {
 
 	bottom_footer();
 }
-

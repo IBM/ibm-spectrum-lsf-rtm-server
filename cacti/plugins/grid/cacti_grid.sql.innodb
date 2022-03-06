@@ -1,6 +1,8 @@
 --
 -- $Id$
 --
+
+--
 -- MySQL dump 10.14  Distrib 5.5.64-MariaDB, for Linux (x86_64)
 --
 -- Host: localhost    Database: cacti
@@ -1458,7 +1460,8 @@ CREATE TABLE `grid_queues_shares` (
   `last_updated` timestamp NOT NULL default CURRENT_TIMESTAMP,
   `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY (`clusterid`,`queue`,`user_or_group`, `shareAcctPath`) USING HASH,
-  KEY `user_or_group` (`user_or_group`)
+  KEY `user_or_group` (`user_or_group`),
+  KEY `present` (`present`)
 ) ENGINE=InnoDB ROW_FORMAT=DYNAMIC DEFAULT CHARSET=latin1;
 
 --

@@ -3,7 +3,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -78,7 +78,13 @@ benchmark_debug('Starting Poller Porcess');
 /* take the start time to log performance data */
 $start = microtime(true);
 
-$results   = db_fetch_assoc('SELECT benchmark_id, clusterid FROM grid_clusters_benchmarks WHERE enabled=1');
+/* don't poll benchmarks from disabled clusters */
+$results = db_fetch_assoc('SELECT gb.benchmark_id, gb.benchmark_name, gb.clusterid
+	FROM grid_clusters_benchmarks AS gb
+	INNER JOIN grid_clusters AS gc
+	ON gb.clusterid = gc.clusterid
+	WHERE gb.enabled = 1
+	AND gc.disabled = ""');
 
 // Determine if we need to perform graph automation
 $total_rows   = cacti_sizeof($results);
@@ -442,4 +448,3 @@ function display_help () {
 	echo "-v -V --version  - Display this help message\n";
 	echo "-h --help        - display this help message\n";
 }
-

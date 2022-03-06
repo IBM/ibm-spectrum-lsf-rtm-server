@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -247,7 +247,8 @@ function license_config_arrays() {
 		'120' => '2 Minutes',
 		'180' => '3 Minutes',
 		'240' => '4 Minutes',
-		'300' => '5 Minutes');
+		'300' => '5 Minutes',
+		'600' => '10 Minutes');
 
 	$lic_minor_refresh_interval = array(
 		'15'  => '15 Seconds',
@@ -716,6 +717,12 @@ function license_config_settings(){
 		'license_header1' => array(
 			'friendly_name' => 'Advance License Service Options File Settings',
 			'method' => 'spacer'
+		),
+		'lic_use_ssh_for_options' => array(
+			'friendly_name' => 'Attempt ssh when Options file is not local',
+			'description' => 'If this option is checked, then RTM will attempt to ssh to the license server to gather the options files if they are not on the local system.  This would require the RTM service account to have transparent ssh access to those servers.  If this is not the case, then you should not check this option.',
+			'default' => '',
+			'method' => 'checkbox'
 		),
 		'lic_ip_domain' => array(
 			'friendly_name' => 'Host Resolution Domain Name',
@@ -1241,4 +1248,3 @@ function license_substitute_host_data($array) {
 	$array['string'] = $string;
 	return $array;
 }
-

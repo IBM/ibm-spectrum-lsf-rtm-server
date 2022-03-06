@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -2508,19 +2508,21 @@ function edit_general_actions() {
 	$send_notification_array = array();
 	$users_custom_list = "<table><tr><td><select id='not_selected_users' size='10' MULTIPLE>";
 
-	$not_users = db_fetch_assoc_prepared("SELECT plugin_thold_contacts.id, plugin_thold_contacts.data,
+	$not_users = db_fetch_assoc_prepared("SELECT DISTINCT plugin_thold_contacts.id, plugin_thold_contacts.data,
 		plugin_thold_contacts.type, user_auth.full_name
 		FROM plugin_thold_contacts, user_auth
 		WHERE user_auth.id=plugin_thold_contacts.user_id
-		AND plugin_thold_contacts.data!='' $not_selected_users_where
+		AND plugin_thold_contacts.data != ''
+		AND user_auth.full_name != '' $not_selected_users_where
 		ORDER BY user_auth.full_name ASC, plugin_thold_contacts.type ASC", $sql_params);
 
 	if ($selected_users_where != '') {
-		$users = db_fetch_assoc_prepared("SELECT plugin_thold_contacts.id, plugin_thold_contacts.data,
+		$users = db_fetch_assoc_prepared("SELECT DISTINCT plugin_thold_contacts.id, plugin_thold_contacts.data,
 			plugin_thold_contacts.type, user_auth.full_name
 			FROM plugin_thold_contacts, user_auth
 			WHERE user_auth.id=plugin_thold_contacts.user_id
-			AND plugin_thold_contacts.data!=''
+			AND plugin_thold_contacts.data != ''
+			AND user_auth.full_name != ''
 			$selected_users_where
 			ORDER BY user_auth.full_name ASC, plugin_thold_contacts.type ASC", $sql_params);
 	} else {

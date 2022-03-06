@@ -1,7 +1,4 @@
 --
--- $Id$
---
---
 -- Table structure for table `grid_clusters`
 --
 
@@ -63,8 +60,8 @@ CREATE TABLE `grid_clusters` (
   `ip` varchar(255) NOT NULL DEFAULT '',
   `lim_port` varchar(10) NOT NULL DEFAULT '',
   `lsf_ego` char(3) DEFAULT 'N',
-  `lsf_strict_checking` varchar(10) default 'N',
-  `lsf_krb_auth` char(3) default '',
+  `lsf_strict_checking` varchar(10) NOT NULL DEFAULT 'N',
+  `lsf_krb_auth` varchar(3) NOT NULL DEFAULT '',
   `lsf_master_hostname` varchar(255) NOT NULL DEFAULT '',
   `username` varchar(255) NOT NULL DEFAULT '',
   `credential` varchar(512) NOT NULL DEFAULT '',
@@ -86,7 +83,7 @@ CREATE TABLE `grid_clusters` (
   `grididle_jobcommands` varchar(255) NOT NULL DEFAULT '',
   `grididle_exclude_queues` varchar(255) NOT NULL DEFAULT '',
   `perfmon_run` char(3) DEFAULT '',
-  `perfmon_interval` int(10) unsigned DEFAULT '0',
+  `perfmon_interval` int unsigned DEFAULT '0',
   `exec_host_res_req` varchar(512) NOT NULL DEFAULT '',
   PRIMARY KEY (`clusterid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -100,7 +97,7 @@ CREATE TABLE `grid_hostgroups` (
   `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
   `groupName` varchar(64) NOT NULL DEFAULT '',
   `host` varchar(64) NOT NULL DEFAULT '',
-  `present` int(10) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`groupName`,`host`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -121,6 +118,7 @@ CREATE TABLE `grid_hostinfo` (
   `maxTmp` varchar(20) DEFAULT NULL,
   `nDisks` varchar(10) NOT NULL DEFAULT '0',
   `resources` varchar(255) NOT NULL DEFAULT '',
+  `excl_resources` varchar(255) NOT NULL DEFAULT '',
   `windows` varchar(255) NOT NULL DEFAULT '0',
   `isServer` char(1) NOT NULL DEFAULT '',
   `licensed` char(1) NOT NULL DEFAULT '',
@@ -130,9 +128,13 @@ CREATE TABLE `grid_hostinfo` (
   `nProcs` int(10) unsigned NOT NULL DEFAULT '0',
   `cores` int(10) unsigned NOT NULL DEFAULT '0',
   `nThreads` int(10) unsigned NOT NULL DEFAULT '0',
+  `ngpus` int(10) unsigned NOT NULL DEFAULT '0',
+  `gMaxFactor` float NOT NULL DEFAULT '0',
+  `gpu_shared_avg_mut` float NOT NULL DEFAULT '0',
+  `gpu_shared_avg_ut` float NOT NULL DEFAULT '0',
   `first_seen` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `last_seen` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `present` int(10) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`host`,`clusterid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -144,8 +146,9 @@ DROP TABLE IF EXISTS `grid_hostresources`;
 CREATE TABLE `grid_hostresources` (
   `host` varchar(64) NOT NULL DEFAULT '',
   `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `rtype` TINYINT unsigned NOT NULL DEFAULT '0', 
   `resource_name` varchar(50) NOT NULL DEFAULT '',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`host`,`clusterid`,`resource_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -173,9 +176,41 @@ CREATE TABLE `grid_hosts` (
   `mig` int(10) unsigned NOT NULL DEFAULT '0',
   `attr` int(10) unsigned NOT NULL DEFAULT '0',
   `numRESERVE` int(10) unsigned NOT NULL DEFAULT '0',
-  `present` int(10) unsigned NOT NULL DEFAULT '0',
+  `ngpus` int(10) unsigned NOT NULL DEFAULT '0',
+  `avail_shared_ngpus` int(10) unsigned NOT NULL DEFAULT '0',
+  `avail_excl_ngpus` int(10) unsigned NOT NULL DEFAULT '0',
+  `alloc_jsexcl_ngpus` int(10) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   `exceptional` tinyint(1) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`host`,`clusterid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Table structure for table `grid_hosts_gpu`
+--
+
+DROP TABLE IF EXISTS `grid_hosts_gpu`;
+CREATE TABLE `grid_hosts_gpu` (
+  `host` varchar(64) NOT NULL DEFAULT '',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `gpu_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `gpu_model` varchar(40) NOT NULL DEFAULT '',
+  `gpu_mode` int(10) unsigned NOT NULL DEFAULT '0',
+  `pstatus` int(10) unsigned NOT NULL DEFAULT '0',
+  `status` varchar(20) DEFAULT NULL,
+  `gpu_error` varchar(255) NOT NULL DEFAULT '',
+  `prev_status` varchar(20) NOT NULL DEFAULT '',
+  `time_in_state` int(10) unsigned NOT NULL DEFAULT '0',
+  `mem_used` int(10) unsigned NOT NULL DEFAULT '0',
+  `mem_rsv` int(10) unsigned NOT NULL DEFAULT '0',
+  `numJobs` int(10) unsigned NOT NULL DEFAULT '0',
+  `numRun` int(10) unsigned NOT NULL DEFAULT '0',
+  `numSUSP` int(10) unsigned NOT NULL DEFAULT '0',
+  `numRSV` int(10) unsigned NOT NULL DEFAULT '0',
+  `socketid` int(10) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`host`,`clusterid`, `gpu_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -212,9 +247,9 @@ CREATE TABLE `grid_hosts_resources` (
   `totalValue` varchar(128) NOT NULL DEFAULT '',
   `reservedValue` varchar(128) NOT NULL DEFAULT '',
   `value` varchar(128) NOT NULL DEFAULT '',
-  `present` tinyint(3) unsigned NOT NULL,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`host`,`clusterid`,`resource_name`,`resType`) USING HASH
+  PRIMARY KEY USING HASH (`host`,`clusterid`,`resource_name`,`resType`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -282,7 +317,7 @@ CREATE TABLE `grid_jobs_finished` (
   `postExecCmd` varchar(255) NOT NULL DEFAULT '',
   `app` varchar(40) NOT NULL DEFAULT '',
   `execUsername` varchar(40) NOT NULL DEFAULT '',
-  `mailUser` varchar(40) DEFAULT NULL,
+  `mailUser` varchar(512) DEFAULT NULL,
   `jobname` varchar(128) DEFAULT NULL,
   `jobPriority` int(10) unsigned NOT NULL DEFAULT '0',
   `jobPid` int(10) unsigned NOT NULL DEFAULT '0',
@@ -364,6 +399,7 @@ CREATE TABLE `grid_jobs_finished` (
   `pendState` int(10) NOT NULL DEFAULT '-1',
   `effectivePendingTimeLimit` int(10) unsigned NOT NULL DEFAULT '0',
   `effectiveEligiblePendingTimeLimit` int(10) unsigned NOT NULL DEFAULT '0',
+  `isLoaningGSLA` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`clusterid`,`jobid`,`indexid`,`submit_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -381,6 +417,7 @@ CREATE TABLE `grid_jobs_jobhosts_finished` (
   `submit_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `processes` int(11) NOT NULL DEFAULT '0',
   `ngpus` mediumint(8) NOT NULL DEFAULT '0',
+  `isborrowed` tinyint(3) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`clusterid`,`jobid`,`indexid`,`submit_time`,`exec_host`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -410,8 +447,9 @@ CREATE TABLE `grid_pollers` (
   `poller_licserver_threads` int(11) NOT NULL DEFAULT '5',
   `poller_location` varchar(255) NOT NULL DEFAULT '',
   `poller_support_info` varchar(255) NOT NULL DEFAULT '',
-  `lsf_version` int(10) unsigned NOT NULL DEFAULT '62',
+  `lsf_version` int(10) unsigned NOT NULL DEFAULT '100101',
   `remote` varchar(20) DEFAULT NULL,
+  `poller_max_insert_packet_size` varchar(255),
   PRIMARY KEY (`poller_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -425,5 +463,5 @@ CREATE TABLE `grid_resources` (
   `value` varchar(128) NOT NULL,
   `clusterid` int(10) unsigned NOT NULL,
   `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
-  PRIMARY KEY (`resource_name`,`value`,`clusterid`) USING HASH
+  PRIMARY KEY USING HASH (`resource_name`,`value`,`clusterid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

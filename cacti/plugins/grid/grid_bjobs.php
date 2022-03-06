@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -138,9 +138,31 @@ if ($tz_is_changed) {
 }
 
 function grid_validate_job_request_variables() {
+	global $job_id, $index_id;
+
 	/* ================= input validation ================= */
-	input_validate_input_regex_jobid_indexid(get_filter_request_var('jobid'));
+	input_validate_input_regex_jobid_indexid(get_request_var('jobid'));
 	/* ==================================================== */
+
+	if (isset_request_var('jobid')) {
+		if (substr_count(get_request_var('jobid'), '[')) {
+			$job_array = explode('[', str_replace(']', '', get_request_var('jobid')));
+			$job_id    = $job_array[0];
+			$index_id  = $job_array[1];
+		} elseif (strlen(get_request_var('jobid'))) {
+			$job_id    = get_request_var('jobid');
+			$index_id  = '';
+		} else {
+			$job_id   = '';
+			$index_id = '';
+		}
+	} else {
+		$job_id   = '';
+		$index_id = '';
+	}
+
+	set_request_var('jobid', $job_id);
+	set_request_var('indexid', $index_id);
 
     /* ================= input validation and session storage ================= */
     $filters = array(
@@ -306,7 +328,7 @@ function grid_validate_job_request_variables() {
 			),
 		'indexid' => array(
 			'filter' => FILTER_VALIDATE_INT,
-			'default' => '-1'
+			'default' => ''
 			)
 	);
 
@@ -470,6 +492,10 @@ function grid_view_get_jobs_records(&$total_rows, $table_name, $authfull = false
 	$rowsquery2 = '';
 
 	$sql_order = ' ' . get_order_string();
+	//Remove the wasted_memory from where clause, if it is NOT the job export column
+	if (strpos($sql_order, "wasted_memory") && read_grid_config_option('export_wasted_memory') != 'on') {
+		$sql_order = "";
+	}
 
 	get_jobs_query('grid_jobs', false, $jobs_query, $rowsquery1, $resreq_query);
 	if ($authfull && preg_match('/(-1|FINISHED|DONE|EXIT|ALL)/', get_request_var('status'))) {
@@ -730,7 +756,7 @@ function jobsFilter() {
 						<?php print __('JobID', 'grid');?>
 					</td>
 					<td>
-						<input type='text' id='jobid' size='10' value='<?php print get_request_var('jobid');?>'>
+						<input type='text' id='jobid' size='10' value='<?php print get_request_var('jobid').(!isempty_request_var('indexid')?"[".get_request_var('indexid')."]":"");?>'>
 					</td>
 					<?php if (get_request_var('status') == 'PEND') { ?>
 					<td id='pend_td' colspan='2' class='nowrap'>
@@ -1032,24 +1058,6 @@ function grid_view_jobs() {
 	global $grid_job_control_actions;
 
 	$display_array = build_job_display_array();
-
-	/* clean up date1 string */
-	if (isset_request_var('jobid')) {
-		if (substr_count(get_request_var('jobid'), '[')) {
-			$job_array = explode('[', str_replace(']', '', get_request_var('jobid')));
-			$job_id    = $job_array[0];
-			$index_id  = $job_array[1];
-		} elseif (strlen(get_request_var('jobid'))) {
-			$job_id    = get_request_var('jobid');
-			$index_id  = '';
-		}
-	} else {
-		$job_id   = '';
-		$index_id = '';
-	}
-
-	set_request_var('jobid', $job_id);
-	set_request_var('indexid', $index_id);
 
 	/* set m_page variable */
 	$sql_where  = '';

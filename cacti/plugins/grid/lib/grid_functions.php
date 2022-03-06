@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -1044,7 +1044,7 @@ function display_pg($value, $round = 2) {
 		if ($value > 1024) {
 			include_once($config["library_path"] . '/rtm_functions.php');
 
-			return display_byte_by_unit($value, $round);
+			return display_byte_by_unit($value, $round, '');
 		} else {
 			return add_dec($value, $round);
 		}
@@ -1686,7 +1686,8 @@ function perform_grid_db_maint($start_time, $optimize = false) {
 				`end_time` timestamp NOT NULL default '0000-00-00 00:00:00',
 				`last_updated` timestamp NOT NULL default '0000-00-00 00:00:00',
 				PRIMARY KEY  (`clusterid`,`jobid`,`indexid`,`submit_time`),
-				KEY `alt_primary` (`clusterid`,`jobid`,`indexid`,`submit_time`)) ENGINE=InnoDB;");
+				KEY `alt_primary` (`clusterid`,`jobid`,`indexid`,`submit_time`))
+				ENGINE=InnoDB DEFAULT CHARSET=latin1;");
 
 			db_execute("CREATE TEMPORARY TABLE `gus` (
 				`jobid` bigint(20) unsigned NOT NULL default '0',
@@ -1696,7 +1697,8 @@ function perform_grid_db_maint($start_time, $optimize = false) {
 				`end_time` timestamp NOT NULL default '0000-00-00 00:00:00',
 				`last_updated` timestamp NOT NULL default '0000-00-00 00:00:00',
 				PRIMARY KEY  (`clusterid`,`jobid`,`indexid`,`submit_time`),
-				KEY `alt_primary` (`clusterid`,`jobid`,`indexid`,`submit_time`)) ENGINE=InnoDB;");
+				KEY `alt_primary` (`clusterid`,`jobid`,`indexid`,`submit_time`))
+				ENGINE=InnoDB DEFAULT CHARSET=latin1;");
 
 			/* add jobs to be deleted into the temporary table */
 			grid_debug('Placing job records whose full details are to be purged into temporary table for future use.');
@@ -2126,14 +2128,16 @@ function perform_grid_db_maint($start_time, $optimize = false) {
 
 		/* remove old data query graphs */
 		grid_debug('Removing Stale Pending Reasons');
-		db_execute('DELETE gjp
-			FROM grid_jobs_pendreasons AS gjp
-			LEFT JOIN grid_jobs as gj
-			ON gjp.clusterid=gj.clusterid
-			AND gjp.jobid=gj.jobid
-			AND gjp.indexid=gj.indexid
-			AND gjp.submit_time=gj.submit_time
-			WHERE gj.jobid IS NULL');
+		if (detect_and_correct_running_processes(0, 'REMOVING_STALE_PENDING_REASONS', read_config_option('grid_db_maint_max_time'))) {
+			db_execute('DELETE gjp
+				FROM grid_jobs_pendreasons AS gjp
+				LEFT JOIN grid_jobs as gj
+				ON gjp.clusterid=gj.clusterid
+				AND gjp.jobid=gj.jobid
+				AND gjp.indexid=gj.indexid
+				AND gjp.submit_time=gj.submit_time
+				WHERE gj.jobid IS NULL');
+		}
 
 		/* remove old data query graphs */
 		grid_debug('Removing Aged Cluster Graphs');
@@ -2611,10 +2615,11 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 										$backup = false;
 									}
 									/* don't backup boost archive tables regardless */
-									if (preg_match('/^poller_output_boost_arch_/', $table['Tables_in_' . $database_default])) {
+									if (preg_match('/^poller_output_boost_/', $table['Tables_in_' . $database_default])) {
 										$backup = false;
 									}
 									/* don't backup job pending history tables regardless */
+									/* don't backup boost archive tables regardless */
 									if (preg_match('/^grid_jobs_pendhist_hourly_/', $table['Tables_in_' . $database_default])) {
 										if ($backup_method == 'q') {
 											$backup = false;
@@ -2635,6 +2640,7 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 							} else {
 								$mysqldmp = 'mysqldump';
 							}
+
 							$is_cluster = db_fetch_row("SHOW VARIABLES LIKE 'log_bin'");
 							if (cacti_sizeof($is_cluster) && $is_cluster['Value'] == 'ON'){
 								$is_cluster = true;
@@ -2705,8 +2711,8 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 							rmdirr($tmp_backup_dir);
 							//Delete parent dir file if tmp dir using as $tmp_backup_dir ."_". time() ."/cacti_backup" format
 							if (preg_match('/cacti_backup_+\d*/', $tmp_backup_dir)){
-							    $parent_backup_dir = dirname($tmp_backup_dir);
-							    rmdirr($parent_backup_dir);
+								$parent_backup_dir = dirname($tmp_backup_dir);
+								rmdirr($parent_backup_dir);
 							}
 							if ($config['cacti_server_os'] == 'win32') {
 								if (!substr_count($result, 'Everything is Ok')) {
@@ -2768,7 +2774,7 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 function start_polling() {
 	global $config;
 
-include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
+	include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
 
 	/* enable polling */
 	grid_end_maintenance_mode('BACKUP');
@@ -2782,7 +2788,7 @@ function grid_restore_cacti_db($tgz_file) {
 	global $rtm;
 
 	include_once($config['base_path'] . '/lib/utility.php');
-include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
+	include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
 
 	if ($tgz_file['error'] > 0) {
 		raise_message(126);
@@ -2809,20 +2815,18 @@ include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
 			$rmdir=$pathinfo['dirname'] . '/' . $backupdir;
 			if (is_dir($pathinfo['dirname'] . '/' . $backupdir)) {
 				$result= rmdirr($pathinfo['dirname'] . '/' . $backupdir);
-						if (!$result) {
-							$old_backupdir = $backupdir;
-							$backupdir =  $backupdir . '_' . time() .'/cacti_backup';
-					if (mkdir($pathinfo['dirname'] .'/'. $backupdir,0755, true)) {
-						 cacti_log('WARNING: Can not remove the existed directory ' . $old_backupdir . ' failed and change the directory to ' .$pathinfo['dirname'] .'/'. $backupdir);
-						$rmdir = $pathinfo['dirname'] . '/' . dirname($backupdir);
+					if (!$result) {
+						$old_backupdir = $backupdir;
+						$backupdir =  $backupdir . '_' . time() .'/cacti_backup';
+						if (mkdir($pathinfo['dirname'] .'/'. $backupdir,0755, true)) {
+							cacti_log('WARNING: Can not remove the existed directory ' . $old_backupdir . ' failed and change the directory to ' .$pathinfo['dirname'] .'/'. $backupdir);
+							$rmdir = $pathinfo['dirname'] . '/' . dirname($backupdir);
+						} else {
+							cacti_log('FATAL: Remove the existed directory ' . $old_backupdir . ' failed and can nott change the directory to ' .$pathinfo['dirname'] .'/'. $backupdir);
+							start_polling();
+							return;
+						}
 					} else {
-								cacti_log('FATAL: Remove the existed directory ' . $old_backupdir . ' failed and can nott change the directory to ' .$pathinfo['dirname'] .'/'. $backupdir);
-						start_polling();
-						return;
-
-					}
-							} else {
-
 					 cacti_log('WARNING: Remove the existed directory ' . $old_backupdir . ' successfully');
 				}
 
@@ -3612,7 +3616,7 @@ function update_fairshare_tree_information() {
 		`pend_slots` int(10) unsigned NOT NULL default '0',
 		PRIMARY KEY  (`clusterid`,`queue`,`shareAcctPath`, `user`),
 		KEY `clusterid_queue_user` (`clusterid`, `queue`, `user`))
-		ENGINE=MEMORY;");
+		ENGINE=MEMORY DEFAULT CHARSET=latin1;");
 
 	db_execute("INSERT IGNORE INTO $temp_table
 		SELECT clusterid, queue, REPLACE(chargedSAAP, CONCAT('/', user), '') AS shareAcctPath, user,
@@ -3638,7 +3642,7 @@ function update_fairshare_tree_information() {
 			`pend_slots` int(10) unsigned NOT NULL default '0',
 			PRIMARY KEY  (`clusterid`,`queue`,`usergroup`, `user`),
 			KEY `clusterid_queue_user_jobmap` (`clusterid`, `queue`, `user`))
-			ENGINE=MEMORY;");
+			ENGINE=MEMORY DEFAULT CHARSET=latin1;");
 
 		db_execute("INSERT IGNORE INTO temp_grid_jobs_jobmap
 			SELECT clusterid, queue, usergroup, user,
@@ -3706,7 +3710,7 @@ function update_fairshare_tree_information() {
 
 	$grid_queue_shares = db_fetch_assoc("SELECT gqs.clusterid, queue, gqs.user_or_group, shareAcctPath,
 		gqs.run_jobs, gqs.run_slots, gqs.pend_jobs, gqs.pend_slots, type
-		FROM grid_queues_shares AS gqs
+		FROM grid_queues_shares AS gqs FORCE INDEX (clusterid_user_or_group)
 		INNER JOIN grid_users_or_groups AS gug
 		ON gqs.clusterid = gug.clusterid
 		AND gqs.user_or_group= gug.user_or_group
@@ -3857,20 +3861,27 @@ function delete_jobtype_records_by_loop($temp_table, $reference_table, $delete_s
 		$start  = 0;
 		// Delete with limit
 		while($start <= $total_rows) {
-			db_execute("DELETE rt
+			$deleteref_table = "grid_jobs_removalloop_" . time();
+
+			db_execute_prepared("CREATE TEMPORARY TABLE IF NOT EXISTS $deleteref_table LIKE $temp_table");
+
+			db_execute_prepared("INSERT IGNORE INTO $deleteref_table
+				SELECT clusterid, jobid, indexid, submit_time
+				FROM $temp_table
+				ORDER BY jobid
+				LIMIT $start, $delete_size");
+
+			db_execute_prepared("DELETE rt
 				FROM $reference_table AS rt
-				INNER JOIN (
-					SELECT clusterid, jobid, indexid, submit_time
-					FROM $temp_table
-					ORDER BY jobid
-					LIMIT $start, $delete_size
-				) AS tt
+				INNER JOIN $deleteref_table AS tt
 				ON rt.clusterid = tt.clusterid
 				AND rt.jobid = tt.jobid
 				AND rt.indexid = tt.indexid
 				AND rt.submit_time = tt.submit_time");
 			$deleted += db_affected_rows();
 			$start += $delete_size;
+
+			db_execute("DROP TABLE IF EXISTS $deleteref_table");
 		}
 		// Just in case.  Likely not required
 		db_execute("DELETE rt
@@ -3937,8 +3948,9 @@ function delete_records_from_jobs_table($start_time, $start) {
 		`jobid` int(10) unsigned NOT NULL,
 		`indexid` int(10) unsigned NOT NULL,
 		`submit_time` timestamp NOT NULL default '0000-00-00 00:00:00',
-		PRIMARY KEY  (`clusterid`,`jobid`,`indexid`, `submit_time`))
-		ENGINE=InnoDB");
+		PRIMARY KEY  (`clusterid`,`jobid`,`indexid`, `submit_time`),
+		KEY `jobid` (`jobid`))
+		ENGINE=InnoDB DEFAULT CHARSET=latin1");
 
 	/* add non-array jobs first */
 	db_execute_prepared("INSERT IGNORE INTO $temp_table
@@ -4020,13 +4032,23 @@ function delete_records_from_jobs_table($start_time, $start) {
 
 		delete_records_base_temp_table($temp_table, $delete_size);
 
-		$count_sql = "SELECT count(*) FROM grid_jobs
-			WHERE last_updated<'$last_update_check_str'
-			AND stat NOT IN ('DONE', 'EXIT', 'ZOMBI')";
-		$delete_sql = "DELETE FROM grid_jobs
-			WHERE last_updated<'$last_update_check_str'
-			AND stat NOT IN ('DONE', 'EXIT', 'ZOMBI') LIMIT $delete_size";
-		$num_found = delete_records_by_loop($count_sql, $delete_sql);
+		$num_found = db_fetch_cell_prepared("SELECT COUNT(clusterid)
+			FROM grid_jobs
+			WHERE last_updated < ?
+			AND stat NOT IN ('DONE', 'EXIT', 'ZOMBI')",
+			array($last_update_check_str));
+
+		if ($num_found > 0) {
+			$count_sql = "SELECT count(*) FROM grid_jobs
+				WHERE last_updated<'$last_update_check_str'
+				AND stat NOT IN ('DONE', 'EXIT', 'ZOMBI')";
+
+			$delete_sql = "DELETE FROM grid_jobs
+				WHERE last_updated<'$last_update_check_str'
+				AND stat NOT IN ('DONE', 'EXIT', 'ZOMBI') LIMIT $delete_size";
+
+			$num_found = delete_records_by_loop($count_sql, $delete_sql);
+		}
 
 		grid_debug("NOTE: GRIDMOVE Removed '$num_found' Orphan Jobs ");
 	}
@@ -7038,6 +7060,11 @@ function update_queues() {
 
 function update_hostgroups_stats() {
 	grid_debug("Updating Host Group Stats - Begin");
+	$job_pend_hostgroup = read_config_option('grid_job_pend_hostgroup');
+	if ($job_pend_hostgroup == 'disable') {
+		grid_debug("Updating Host Group Stats - Disabled - Complete");
+		return;
+	}
 
 	/* limit the clusters */
 	$clsql = get_cluster_list('ghg.clusterid');
@@ -7052,7 +7079,6 @@ function update_hostgroups_stats() {
 		last_updated=VALUES(last_updated), present=VALUES(present)";
 
 	// numPEND for Host Group Statistics
-	$job_pend_hostgroup = read_config_option('grid_job_pend_hostgroup');
 	if ($job_pend_hostgroup == 'queuemap'){
 		$records = db_fetch_assoc("SELECT rset.clusterid, rset.groupName, SUM(num_cpus) AS numPEND,
 			NOW() AS last_updated, '1' as present
@@ -7672,9 +7698,9 @@ function curve_fitting_rusage_records_host($rusage_records = array()) {
 
 	if (!sizeof($prev)) {
 		$pt = db_fetch_row_prepared("select * from grid_table_partitions where table_name = 'grid_jobs_host_rusage'
-		          and min_time <=?
-		          and max_time >=?
-		          order by max_time asc limit 1", array($first_record['submit_time'], $first_record['update_time']));
+				  and min_time <=?
+				  and max_time >=?
+				  order by max_time asc limit 1", array($first_record['submit_time'], $first_record['update_time']));
 		if (sizeof($pt)) {
 			$tablename = 'grid_jobs_host_rusage_v' . $pt['partition'];
 			$select_list=build_partition_select_list($tablename, "grid_jobs_host_rusage");
@@ -7715,16 +7741,16 @@ function curve_fitting_rusage_records_host($rusage_records = array()) {
 			$new_processes = $prev['processes'] + ($i - $prev_update_time) * $slope_processes ;
 
 			$new_point = array("clusterid" => $cur['clusterid'],
-			                   "jobid"=> $cur['jobid'],
-			                   "indexid"=> $cur['indexid'],
-			                   "submit_time"=> $cur['submit_time'],
-			                   "update_time"=> date("Y-n-d H:i:s",$i),
-			                   "host" => $cur['host'],
-			                   "utime" => round($new_utime),
-			                   "stime" => round($new_stime),
-			                   "mem" => round($new_mem),
-			                   "swap" => round($new_swap),
-			                   "processes" => round($new_processes));
+							   "jobid"=> $cur['jobid'],
+							   "indexid"=> $cur['indexid'],
+							   "submit_time"=> $cur['submit_time'],
+							   "update_time"=> date("Y-n-d H:i:s",$i),
+							   "host" => $cur['host'],
+							   "utime" => round($new_utime),
+							   "stime" => round($new_stime),
+							   "mem" => round($new_mem),
+							   "swap" => round($new_swap),
+							   "processes" => round($new_processes));
 			$new_rusage_records[] = $new_point;
 		}
 		$new_rusage_records[] = $cur;
@@ -7751,9 +7777,9 @@ function curve_fitting_rusage_records_gpu($rusage_records = array()) {
 
 	if (!sizeof($prev)) {
 		$pt = db_fetch_row_prepared("select * from grid_table_partitions where table_name = 'grid_jobs_gpu_rusage'
-		          and min_time <=?
-		          and max_time >=?
-		          order by max_time asc limit 1", array($first_record['submit_time'], $first_record['update_time']));
+				  and min_time <=?
+				  and max_time >=?
+				  order by max_time asc limit 1", array($first_record['submit_time'], $first_record['update_time']));
 		if (sizeof($pt)) {
 			$tablename = 'grid_jobs_gpu_rusage_v' . $pt['partition'];
 			$select_list=build_partition_select_list($tablename, "grid_jobs_gpu_rusage");
@@ -7791,15 +7817,15 @@ function curve_fitting_rusage_records_gpu($rusage_records = array()) {
 			$new_gmem = $prev['gpu_mused_max'] + ($i - $prev_update_time) * $slope_gmem;
 
 			$new_point = array("clusterid" => $cur['clusterid'],
-			                   "jobid"=> $cur['jobid'],
-			                   "indexid"=> $cur['indexid'],
-			                   "submit_time"=> $cur['submit_time'],
-			                   "update_time"=> date("Y-n-d H:i:s",$i),
-			                   "host" => $cur['host'],
-			                   "gpu_id" => $cur['gpu_id'],
-			                   "sm_ut_avg" => round($new_gut),
-			                   "mem_ut_avg" => round($new_gmut),
-			                   "gpu_mused_max" => round($new_gmem));
+							   "jobid"=> $cur['jobid'],
+							   "indexid"=> $cur['indexid'],
+							   "submit_time"=> $cur['submit_time'],
+							   "update_time"=> date("Y-n-d H:i:s",$i),
+							   "host" => $cur['host'],
+							   "gpu_id" => $cur['gpu_id'],
+							   "sm_ut_avg" => round($new_gut),
+							   "mem_ut_avg" => round($new_gmut),
+							   "gpu_mused_max" => round($new_gmem));
 			$new_rusage_records[] = $new_point;
 		}
 		$new_rusage_records[] = $cur;
@@ -8000,9 +8026,9 @@ function update_job_rrds_gpu($table_name, $cache_directory, $file_base, $cluster
 			$last_record=null;
 			foreach ($update_records as $record) {
 				if (!empty($last_record) && strtotime($last_record['update_time']) == strtotime($record['update_time'])) {
-				    continue;
+					continue;
 				} else {
-				    $last_record = $record;
+					$last_record = $record;
 				}
 
 				$update .=  strtotime($record["update_time"]) . ":" .
@@ -8309,18 +8335,18 @@ function get_rusage_records_gpu_per_job($clusterid, $jobid, $indexid, $submit_ti
 	$where_update_time  = "AND update_time = ";
 
 	if ($isrun && read_config_option("grid_partitioning_enable") == "") {
-        $query_update_time = "SELECT $update_time_field FROM grid_jobs_gpu_rusage
+		$query_update_time = "SELECT $update_time_field FROM grid_jobs_gpu_rusage
 								WHERE (clusterid = ? AND jobid = ? AND indexid = ? AND submit_time = ? AND update_time >= ?)";
-        $update_time = db_fetch_cell_prepared($query_update_time, array($clusterid, $jobid, $indexid, $submit_time, $mod_time));
+		$update_time = db_fetch_cell_prepared($query_update_time, array($clusterid, $jobid, $indexid, $submit_time, $mod_time));
 
-        if(strlen($update_time)){
-            $where_update_time .= '?';
-            $query = "SELECT host, gpu_id, exec_time, energy, sm_ut_avg, mem_ut_avg, gpu_mused_max FROM grid_jobs_gpu_rusage
-                WHERE (clusterid = ? AND jobid = ? AND indexid = ? AND submit_time = ? $where_update_time) ORDER BY host, gpu_id";
+		if(strlen($update_time)){
+			$where_update_time .= '?';
+			$query = "SELECT host, gpu_id, exec_time, energy, sm_ut_avg, mem_ut_avg, gpu_mused_max FROM grid_jobs_gpu_rusage
+				WHERE (clusterid = ? AND jobid = ? AND indexid = ? AND submit_time = ? $where_update_time) ORDER BY host, gpu_id";
 
-            $param_arr = array($clusterid, $jobid, $indexid, $submit_time, $update_time);
+			$param_arr = array($clusterid, $jobid, $indexid, $submit_time, $update_time);
 
-            return db_fetch_assoc_prepared($query, $param_arr);
+			return db_fetch_assoc_prepared($query, $param_arr);
 		}
 	}else{
 		$query  = "";
@@ -12620,13 +12646,13 @@ function get_grid_job_x_rusage_total_rows($jobid, $indexid, $clusterid, $submit_
 	}
 
 	if (read_config_option("grid_partitioning_enable") == "") {
-        	$sql_query = "SELECT $tbl_field
-        		FROM $tbl_name
-        		WHERE jobid=" . $jobid . "
-        			AND indexid=" . $indexid . "
-        			AND submit_time='" . date("Y-m-d H:i:s", $submit_time) . "'
-        			AND clusterid=" . $clusterid;
-        	return db_fetch_cell($sql_query);
+			$sql_query = "SELECT $tbl_field
+				FROM $tbl_name
+				WHERE jobid=" . $jobid . "
+					AND indexid=" . $indexid . "
+					AND submit_time='" . date("Y-m-d H:i:s", $submit_time) . "'
+					AND clusterid=" . $clusterid;
+			return db_fetch_cell($sql_query);
 	}else{
 		$query  = "";
 		$tables = partition_get_partitions_for_query($tbl_name, $submit_time, date("Y-m-d H:i:s"));
@@ -12638,15 +12664,15 @@ function get_grid_job_x_rusage_total_rows($jobid, $indexid, $clusterid, $submit_
 				}
 
 				$query .= " SELECT $tbl_field as jobCnt
-        				FROM $table
-        				WHERE (jobid=" . $jobid . "
-        				AND indexid=" . $indexid . "
-        				AND submit_time='" . date("Y-m-d H:i:s", $submit_time) . "'
-        				AND clusterid=" . $clusterid . "
+						FROM $table
+						WHERE (jobid=" . $jobid . "
+						AND indexid=" . $indexid . "
+						AND submit_time='" . date("Y-m-d H:i:s", $submit_time) . "'
+						AND clusterid=" . $clusterid . "
 					)";
 			}
-        		$sql_query = "SELECT SUM(jobCnt) FROM ($query) as temptbl";
-        		return db_fetch_cell($sql_query);
+				$sql_query = "SELECT SUM(jobCnt) FROM ($query) as temptbl";
+				return db_fetch_cell($sql_query);
 		}else{
 			return 0;
 		}
@@ -12739,21 +12765,21 @@ function get_grid_job_hosts_rraarchive($job, $row_limit, $pageno, &$total_rows){
 function get_grid_job_gpus($row_limit){
 	$sql_params = array();
 	if (read_config_option("grid_partitioning_enable") == "") {
-        	$sql_query = "SELECT host, gpu_id"
-	        	. " FROM grid_jobs_gpu_rusage"
-        		. " WHERE jobid=" . $_REQUEST["jobid"]
-        		. " AND indexid=" . $_REQUEST["indexid"]
-        		. " AND submit_time='" . date("Y-m-d H:i:s", $_REQUEST["submit_time"]) . "'"
-        		. " AND clusterid=" . $_REQUEST["clusterid"]
-        		. " GROUP BY host, gpu_id";
+			$sql_query = "SELECT host, gpu_id"
+				. " FROM grid_jobs_gpu_rusage"
+				. " WHERE jobid=" . $_REQUEST["jobid"]
+				. " AND indexid=" . $_REQUEST["indexid"]
+				. " AND submit_time='" . date("Y-m-d H:i:s", $_REQUEST["submit_time"]) . "'"
+				. " AND clusterid=" . $_REQUEST["clusterid"]
+				. " GROUP BY host, gpu_id";
 		$sql_params[] = $_REQUEST['jobid'];
 		$sql_params[] = $_REQUEST['indexid'];
 		$sql_params[] = date("Y-m-d H:i:s", $_REQUEST['submit_time']);
 		$sql_params[] = $_REQUEST['clusterid'];
 
-        	$sql_query .= " LIMIT " . ($row_limit*($_REQUEST["page"]-1)) . "," . $row_limit;
-        	$job_gpus = db_fetch_assoc_prepared($sql_query, $sql_params);
-        	return $job_gpus;
+			$sql_query .= " LIMIT " . ($row_limit*($_REQUEST["page"]-1)) . "," . $row_limit;
+			$job_gpus = db_fetch_assoc_prepared($sql_query, $sql_params);
+			return $job_gpus;
 	}else{
 		$query  = "";
 		$tables = partition_get_partitions_for_query("grid_jobs_gpu_rusage", $_REQUEST["submit_time"], date("Y-m-d H:i:s"));
@@ -12765,19 +12791,19 @@ function get_grid_job_gpus($row_limit){
 				}
 
 				$query .= "SELECT host, gpu_id"
-        				. " FROM $table"
-        				. " WHERE (jobid=?"
-        				. " AND indexid=?"
-        				. " AND submit_time=?"
-        				. " AND clusterid=?)";
+						. " FROM $table"
+						. " WHERE (jobid=?"
+						. " AND indexid=?"
+						. " AND submit_time=?"
+						. " AND clusterid=?)";
 				$sql_params[] = $_REQUEST['jobid'];
 				$sql_params[] = $_REQUEST['indexid'];
 				$sql_params[] = date("Y-m-d H:i:s", $_REQUEST['submit_time']);
 				$sql_params[] = $_REQUEST['clusterid'];
 			}
-        	$sql_query = " $query GROUP BY host, gpu_id LIMIT " . ($row_limit*($_REQUEST["page"]-1)) . "," . $row_limit;
-        	$job_gpus = db_fetch_assoc_prepared($sql_query, $sql_params);
-        	return $job_gpus;
+			$sql_query = " $query GROUP BY host, gpu_id LIMIT " . ($row_limit*($_REQUEST["page"]-1)) . "," . $row_limit;
+			$job_gpus = db_fetch_assoc_prepared($sql_query, $sql_params);
+			return $job_gpus;
 		}else{
 			return null;
 		}
@@ -15476,7 +15502,8 @@ function grid_jobs_build_export_row($job, &$queue_nice_levels) {
 		else {
 			$wasted_mem = $job["mem_reserved"] - $job["max_memory"];
 			if ($wasted_mem >= 0 ) {
-				$xport_row .= $wasted_mem . '","';
+				$negative_wasted_mem = -1 * $wasted_mem;
+				$xport_row .= $negative_wasted_mem . '","';
 			}
 			else {
 				$xport_row .= "0" . '","';
@@ -15724,14 +15751,14 @@ function bjobs_form_action($job_page) {
 								$return_status = 'Failed. Status Code: '.$value['status_code'] ;
 							}
 							$message='Status:'.$return_status.' - Cluster ID:'.$value['clusterid'].' - '.$value['status_message'].'<br/>';
-                                                        $output_message=$output_message.$message;
+							$output_message=$output_message.$message;
 						}
 					}
 				}
 				if($count_fail>0)
-              				raise_message('mymessage', $output_message, MESSAGE_LEVEL_ERROR);
-            			else
-              				raise_message('mymessage', $output_message, MESSAGE_LEVEL_INFO);
+			  	raise_message('mymessage', $output_message, MESSAGE_LEVEL_ERROR);
+				else
+			  	raise_message('mymessage', $output_message, MESSAGE_LEVEL_INFO);
 			}
 		}
 		header('Location: ' . $job_page);
@@ -16199,10 +16226,10 @@ function graphViewFilter($job_page = 'grid_bjobs.php') {
 			var graph_end       = <?php print grid_get_current_graph_end($timespan);?>;
 			var timeOffset      = <?php print date('Z');?>;
 			var pageAction      = 'viewjob&tab=hostgraph';
-			pageAction += '&clusterid=' + $('#clusterid').val();
-			pageAction += '&jobid=' + $('#jobid').val();
-			pageAction += '&indexid=' + $('#indexid').val();
-			pageAction += '&submit_time=' + $('#submit_time').val();
+					pageAction     += '&clusterid=' + $('#clusterid').val();
+					pageAction     += '&jobid=' + $('#jobid').val();
+					pageAction     += '&indexid=' + $('#indexid').val();
+					pageAction     += '&submit_time=' + $('#submit_time').val();
 			var graphPage       = '<?php print $job_page;?>';
 			var date1Open       = false;
 			var date2Open       = false;
@@ -16376,7 +16403,7 @@ function jobGraphFilter($job, $job_page) {
 							if ($job['stat'] != 'PEND') {
 								$grid_host_rusage_collection = db_fetch_cell("SELECT value FROM settings WHERE name='grid_host_rusage_collection' and value='on'");
 								$grid_gpu_rusage_collection = db_fetch_cell("SELECT value FROM settings WHERE name='grid_GPU_rusage_collection' and value='on'");
-        						if(!empty($grid_host_rusage_collection) || !empty($grid_gpu_rusage_collection)){
+								if(!empty($grid_host_rusage_collection) || !empty($grid_gpu_rusage_collection)){
 									$lsf_version = db_fetch_cell_prepared("SELECT grid_pollers.lsf_version
 										FROM grid_pollers JOIN grid_clusters ON grid_clusters.poller_id=grid_pollers.poller_id
 										WHERE grid_clusters.clusterid=?", array($job['clusterid']));
@@ -17617,7 +17644,7 @@ function get_graphs_from_hash($clusterid, $hash) {
 				$graph_select .= $graph["id"] . "%2C";
 			}
 
-			$graph_select = "<a class='hyper' href='" . htmlspecialchars($graph_select) . "'><img src='" . $config['url_path'] . "plugins/grid/images/view_graphs.gif' border='0' alt='' align='absmiddle'></a>\n";
+			$graph_select = "<a class='pic hyper' href='" . htmlspecialchars($graph_select) . "'><img src='" . $config['url_path'] . "plugins/grid/images/view_graphs.gif' border='0' alt='' align='absmiddle'></a>\n";
 		}
 	}
 
@@ -17779,8 +17806,10 @@ function show_view_status() {
 			//host slots
 			if (isset($host_slots[$cluster['clusterid']])) {
 				$value = number_format_i18n($host_slots[$cluster['clusterid']]);
+				$max_slots = $host_slots[$cluster['clusterid']];
 			} else {
 				$value = __('N/A', 'grid');
+				$max_slots = 0;
 			}
 			form_selectable_cell(($found ? $value : __('N/A', 'grid')), $cluster['clusterid'], '', 'right');
 
@@ -17826,7 +17855,7 @@ function show_view_status() {
 			$totals['total_hosts']   += ($found ? $cluster['total_hosts'] : 0);
 			$totals['total_cpus']    += ($found ? $cluster['total_cpus'] : 0);
 			$totals['total_clients'] += ($found ? $cluster['total_clients'] : 0);
-			$totals['max_slots']     += (is_numeric($value)? $value : 0);
+			$totals['max_slots']     += $max_slots;
 			$totals['pend_jobs']     += ($found ? $job_details[$j]['pendJobs'] : 0);
 			$totals['run_jobs']      += ($found ? $job_details[$j]['runJobs'] : 0);
 			$totals['susp_jobs']     += ($found ? $job_details[$j]['suspJobs'] : 0);
@@ -18010,6 +18039,7 @@ function show_view_master() {
 					'?action=preview' .
 					'&graph_template_id=-1' .
 					'&rfilter=' .
+					'&reset=true' .
 					'&host_id=' . $host_id .
 					'&ajax_host_query=' . $load['host']) . '">
 					<img src="' . $config['url_path'] . 'plugins/grid/images/view_graphs.gif" alt="" title="' . __esc('View Host Graphs', 'grid') . '"></a>';
@@ -19848,7 +19878,7 @@ function display_job_results($jobs_page, $table_name, $job_results, $rows, $tota
 			form_selectable_cell_visible(display_job_memory(jc($job,'mem_reserved'),2), 'show_reserve_memory', $row_id, 'right');
 
 			if ($job['stat'] != 'PEND') {
-				form_selectable_cell_visible(display_job_memory(jc($job,'wasted_memory'),2), 'show_wasted_memory', $row_id, 'right');
+				form_selectable_cell_visible("-" . display_job_memory(jc($job,'wasted_memory'),2), 'show_wasted_memory', $row_id, 'right');
 			} else {
 				form_selectable_cell_visible('-', 'show_wasted_memory', $row_id, 'right');
 			}
@@ -20123,9 +20153,9 @@ function grid_graph_area(&$graph_array, $graph_start, $graph_end, $columns = 0) 
 
 /* html_graph_thumbnail_area - draws an area the contains thumbnail sized graphs
    @arg $graph_array - the array to contains graph information. for each graph in the
-                       array, the following two keys must exist
-                       $arr[0]["local_graph_id"] // graph id
-                       $arr[0]["title_cache"] // graph title
+					   array, the following two keys must exist
+					   $arr[0]["local_graph_id"] // graph id
+					   $arr[0]["title_cache"] // graph title
    @arg $graph_start - start time for graph
    @arg $graph_end - end time for graph
    @arg $columns - the number of columns to present */

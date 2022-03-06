@@ -3,7 +3,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -104,6 +104,13 @@ $current_time = time();
 
 if ((read_config_option('grid_system_collection_enabled') == 'on') &&
 	(read_config_option('grid_collection_enabled') == 'on')) {
+
+	// catch the unlikely event that the grid_jobs_finished is missing
+	if (!db_table_exists('grid_jobs_finished')) {
+		db_execute('CREATE TABLE grid_jobs_finished LIKE grid_jobs;');
+		db_execute('ALTER TABLE grid_jobs_finished ENGINE=InnoDB');
+	}
+
 	if (!$forcerun_maint || $forcerun) {
 		if (detect_and_correct_running_processes(0, 'GRIDPOLLER', $poller_interval*3)) {
 
@@ -240,6 +247,8 @@ if ((read_config_option('grid_system_collection_enabled') == 'on') &&
 		/* allow to run for 20 hours */
 		if (detect_and_correct_running_processes(0, 'GRIDMAINTENANCE', 72000)) {
 			if ($run_maint || $forcerun_maint) {
+				set_config_option('grid_prev_db_maint_time', date('Y-m-d G:i:s', $current_time));
+
 				/* do background idle job detection after job cleanup */
 				$command_string = read_config_option('path_php_binary');
 				$extra_args = '-q ' . cacti_escapeshellarg($config['base_path'] . '/plugins/grid/poller_grid_host_close_move.php');
@@ -262,8 +271,6 @@ if ((read_config_option('grid_system_collection_enabled') == 'on') &&
 				} else {
 					perform_grid_db_maint($current_time, false);
 				}
-
-				set_config_option('grid_prev_db_maint_time', date('Y-m-d G:i:s', $current_time));
 
 				log_grid_statistics('maint');
 
@@ -345,4 +352,3 @@ function log_grid_statistics($type = 'collect') {
 		cacti_log('GRID MAINT STATS: ' . $cacti_stats, true, 'SYSTEM');
 	}
 }
-

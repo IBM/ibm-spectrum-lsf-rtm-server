@@ -1,6 +1,7 @@
 --
 -- $Id$
 --
+
 --
 -- Table structure for table `grid_applications`
 --
@@ -338,7 +339,8 @@ CREATE TABLE `grid_hostinfo` (
   KEY `hostModel` (`hostModel`),
   KEY `last_seen` (`last_seen`),
   KEY `clusterid_is_server` (`clusterid`,`isServer`),
-  KEY `licFeaturesNeeded` (`licFeaturesNeeded`)
+  KEY `licFeaturesNeeded` (`licFeaturesNeeded`),
+  KEY `clusterid_present` (`clusterid`,`present`)
 ) ENGINE=InnoDB;
 
 --
@@ -1150,6 +1152,7 @@ CREATE TABLE `grid_pollers` (
   `poller_location` varchar(255) NOT NULL default '',
   `poller_support_info` varchar(255) NOT NULL default '',
   `lsf_version` int(10) unsigned NOT NULL default '62',
+  `poller_max_insert_packet_size` varchar(255),
   PRIMARY KEY  (`poller_id`)
 ) ENGINE=InnoDB;
 
@@ -1562,7 +1565,7 @@ CREATE TABLE `grid_table_partitions` (
 
 DROP TABLE IF EXISTS `grid_user_group_members`;
 CREATE TABLE `grid_user_group_members` (
-  `clusterid` varchar(20) NOT NULL default '',
+  `clusterid` int(10) unsigned NOT NULL default '0',
   `groupname` varchar(45) NOT NULL default '0',
   `username` varchar(40) NOT NULL default '0',
   `shares` int(10) unsigned NOT NULL default '1',
@@ -1618,7 +1621,8 @@ CREATE TABLE `grid_users_or_groups` (
   `first_seen` timestamp NOT NULL default '0000-00-00 00:00:00',
   `last_updated` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   `present` tinyint(3) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`clusterid`,`user_or_group`)
+  PRIMARY KEY  (`clusterid`,`user_or_group`),
+  KEY `type` (`type`)
 ) ENGINE=InnoDB;
 
 --
@@ -1971,5 +1975,3 @@ CREATE TABLE `grid_clusters_perfmon_summary` (
   `present` tinyint(3) unsigned NOT NULL default '0',
   PRIMARY KEY  (`clusterid`)
 ) ENGINE=MEMORY COMMENT='Contains Perfmon Sampling Information';
-
-

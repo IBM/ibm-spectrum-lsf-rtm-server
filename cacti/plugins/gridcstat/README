@@ -1,12 +1,10 @@
-/*******************************************************************************
-
+    *********************************************************
     Author ......... IBM Corporation
     Home Site ...... http://www.ibm.com
-    Program ........ RTM Cluster Statistics
+    Program ........ IBM Spectrum LSF RTM Cluster Statistics
     Version ........ 10.2.0.11
     Purpose ........ View Cluster Statistics from RTM
-
-*******************************************************************************/
+    *********************************************************
 
 
 ----[ Purpose

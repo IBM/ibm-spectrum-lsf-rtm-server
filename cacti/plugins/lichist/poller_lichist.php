@@ -3,7 +3,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -86,6 +86,12 @@ $poller_interval = read_config_option('poller_interval');
 
 if (detect_and_correct_running_processes(0, 'LICHIST', $poller_interval*3) || $force) {
 	global $custom;
+
+	// catch the unlikely event that the lic_services_feature_history is missing
+	if (!db_table_exists('lic_services_feature_history')) {
+		db_execute('CREATE TABLE lic_services_feature_history LIKE lic_services_feature_history_template;');
+		db_execute('ALTER TABLE lic_services_feature_history ENGINE=InnoDB');
+	}
 
 	// Process Finished Jobs
 	list($job_count, $hist_count) = process_jobs($start_date, $end_date);
@@ -189,7 +195,6 @@ function get_finished_jobs($start_date, $end_date) {
 	 	$finished_jobs = db_fetch_assoc_prepared("SELECT jobid, indexid, clusterid,
 			submit_time, start_time, end_time, exec_host, user FROM grid_jobs_finished
 			WHERE end_time BETWEEN ? AND ?", array($date1, $date2));
-
 	}
 
 	return $finished_jobs;

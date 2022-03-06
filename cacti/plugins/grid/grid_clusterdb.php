@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -740,11 +740,13 @@ function grid_clusters() {
 
 		$('#status').show();
 
-		$.get(strURL_views, function(data){
-			$('#div_views').html(data);
-			applySkin();
-			$(".cactiSwitchConstraintWrapper").hide();
-			$('#status').hide();
+		Pace.track(function() {
+			$.get(strURL_views, function(data){
+				$('#div_views').html(data);
+				applySkin();
+				$(".cactiSwitchConstraintWrapper").hide();
+				$('#status').hide();
+			});
 		});
 
 		// get graphs url
@@ -794,14 +796,18 @@ function grid_clusters() {
 				}
 
 				var myChart = new FusionCharts(chart_name, fc_id, fw, 300);
-				myChart.setXMLUrl(strURL_graphs1);
-				myChart.render(div_id);
 
+				Pace.track(function() {
+					myChart.setXMLUrl(strURL_graphs1);
+					myChart.render(div_id);
+				});
 			};
 			$('#status_graphs').html('');
 		} else {
 			//if no graph is selected, need to set REQUEST variables limstat, batchstat, gridstat, memavastat and their corresponding session varialbes to false
-			$.get('?action=ajaxrefresh_div_graph_uncheckall' + strURL_graphs);
+			Pace.ignore(function() {
+				$.get('?action=ajaxrefresh_div_graph_uncheckall' + strURL_graphs);
+			});
 		}
 		timer3=setTimeout(function() { applyClusterdbFilterChange() }, $('#refresh').val()*1000);
 	}

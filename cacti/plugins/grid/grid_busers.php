@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -674,7 +674,7 @@ function grid_view_users() {
 					<?php if (isset($graph_select)) {?>
 					<a class='pic' href='<?php print html_escape($config['url_path'] . 'graph_view.php?' . $graph_select);?>'><img src='<?php print $config['url_path'];?>plugins/grid/images/view_graphs.gif' alt='' title='<?php print __esc('View User Graphs', 'grid');?>'></a>
 					<?php }?>
-					<?php api_plugin_hook_function('grid_busers_icon', $user['user_or_group']); ?>
+					<?php api_plugin_hook_function('grid_busers_icon', $user); ?>
 				</td>
 				<?php
 				$user_url   =  $config['url_path'] . 'plugins/grid/grid_bjobs.php' .

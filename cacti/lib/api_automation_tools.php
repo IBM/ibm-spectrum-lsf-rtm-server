@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2021 The Cacti Group                                 |
+ | Copyright (C) 2004-2022 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -125,21 +125,30 @@ function getInputFields($templateId) {
 	$tmpArray = db_fetch_assoc_prepared("SELECT DISTINCT dif.data_name AS `name`, dif.name AS `description`,
 		did.value AS `default`, dtd.data_template_id, dif.id AS `data_input_field_id`
 		FROM data_input_fields AS dif
-		INNER JOIN data_input_data AS did
+		INNER JOIN (
+			SELECT data_input_field_id, data_template_data_id, value
+			FROM data_input_data
+			WHERE t_value = 'on'
+		) AS did
 		ON did.data_input_field_id = dif.id
-		INNER JOIN data_template_data AS dtd
+		INNER JOIN (
+			SELECT id, data_input_id, data_template_id
+			FROM data_template_data FORCE INDEX (local_data_id)
+			WHERE local_data_id = 0
+		) AS dtd
 		ON did.data_template_data_id = dtd.id
 		AND dtd.data_input_id = dif.data_input_id
-		INNER JOIN data_template_rrd AS dtr
+		INNER JOIN (
+			SELECT data_template_id, id
+			FROM data_template_rrd
+			WHERE local_data_id = 0 AND hash != ''
+		) AS dtr
 		ON dtr.data_template_id = dtd.data_template_id
 		INNER JOIN graph_templates_item AS gti
 		ON dtr.id = gti.task_item_id
 		INNER JOIN graph_templates AS gt
 		ON gt.id = gti.graph_template_id
 		WHERE gt.id = ?
-		AND dtr.local_data_id = 0
-		AND dtd.local_data_id = 0
-		AND did.t_value = 'on'
 		AND dif.input_output IN ('in', 'inout')",
 		array($templateId));
 
@@ -647,4 +656,3 @@ function displayUsers($quietMode = false) {
 		print PHP_EOL;
 	}
 }
-

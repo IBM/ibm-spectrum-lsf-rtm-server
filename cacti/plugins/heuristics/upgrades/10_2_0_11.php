@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -69,7 +69,7 @@ function upgrade_to_10_2_0_11() {
 			MODIFY COLUMN run_25thp int unsigned NOT NULL default "0",
 			MODIFY COLUMN run_75thp int unsigned NOT NULL default "0",
 			MODIFY COLUMN run_90thp int unsigned NOT NULL default "0",
-			ADD COLUMN custom VARCHAR(128) NOT NULL DEFAULT "" AFTER queue,
+			ADD COLUMN custom VARCHAR(256) NOT NULL DEFAULT "" AFTER queue,
 			ADD COLUMN mem_avg float NOT NULL default "0" AFTER run_90thp,
 			ADD COLUMN mem_max bigint unsigned NOT NULL default "0" AFTER mem_avg,
 			ADD COLUMN mem_min bigint unsigned NOT NULL default "0" AFTER mem_max,

@@ -2,8 +2,8 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2021 The Cacti Group                                 |
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright (C) 2004-2022 The Cacti Group                                 |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -22,14 +22,19 @@
 */
 
 /* Default database settings*/
-$database_type = 'mysql';
-$database_default = 'cacti';
+$database_type     = 'mysql';
+$database_default  = 'cacti';
 $database_hostname = 'localhost';
-$database_username = 'cactiuser';
-$database_password = 'cactiuser';
-$database_port = '3306';
-$database_ssl = false;
+$database_username = 'cacti';
+$database_password = 'admin';
+$database_port     = '3306';
+$database_retries  = 2;
+$database_ssl      = false;
+$database_ssl_key  = '';
+$database_ssl_cert = '';
+$database_ssl_ca   = '';
 
+$config = array();
 
 /* Include configuration */
 if (file_exists(dirname(__FILE__) . '/config.php')) {
@@ -38,18 +43,21 @@ if (file_exists(dirname(__FILE__) . '/config.php')) {
 	}
 	include(dirname(__FILE__) . '/config.php');
 } else {
-	die('config.php file not detected.');
+	die('include/config.php file not detected.');
 }
 
-define('COPYRIGHT_YEARS', '2006-2021');
+define('COPYRIGHT_YEARS', '2006-2022');
 
 include_once(dirname(__FILE__) . '/../lib/database.php');
 include_once(dirname(__FILE__) . '/../lib/functions.php');
 include_once(dirname(__FILE__) . '/../lib/xml.php');
 
-if (!db_connect_real($database_hostname, $database_username, $database_password, $database_default, $database_type, $database_port, $database_ssl)) {
-	print 'FATAL: Connection to Cacti database failed.' . "\n\n";
-	print 'Please ensure the database is running and your credentials in config.php are valid.' . "\n";
+if (!db_connect_real($database_hostname, $database_username, $database_password, $database_default, $database_type, $database_port, $database_retries, $database_ssl, $database_ssl_key, $database_ssl_cert, $database_ssl_ca)) {
+    print 'FATAL: Connection to Cacti database failed. Please ensure: ' . PHP_EOL;
+    print PHP_EOL . '  - ' . 'the PHP MySQL module is installed and enabled.';
+    print PHP_EOL . '  - ' . 'the database is running.';
+    print PHP_EOL . '  - ' . 'the credentials in config.php are valid.';
+    print PHP_EOL;
 	exit;
 }
 

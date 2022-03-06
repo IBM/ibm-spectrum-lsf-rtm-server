@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -50,20 +50,34 @@ function rtm_autocomplete_ajax($page_name, $autocomplete_filter_id, $sql_where =
 	$term = get_filter_request_var('term', FILTER_CALLBACK, array('options' => 'sanitize_search_string'));
 
 	if ($term != '') {
+		$lic_performance_search = read_config_option('lic_performance_search');
+		
 		switch($autocomplete_filter_id) {
 		case 'lic_host':
 			if ($page_name == 'lic_dailystats.php') {
-				$sql_where .= ($sql_where != '' ? ' AND ' : '') . "ldst.host LIKE '%$term%'";
+				if ($lic_performance_search) {
+					$sql_where .= ($sql_where != '' ? ' AND ' : '') . "ldst.host LIKE '$term%'";
+				} else {
+					$sql_where .= ($sql_where != '' ? ' AND ' : '') . "ldst.host LIKE '%$term%'";
+				}
 			}
 			break;
 		case 'lic_user':
 			if ($page_name == 'lic_dailystats.php') {
-				$sql_where .= ($sql_where != '' ? ' AND ' : '') . "ldst.user LIKE '%$term%'";
+				if ($lic_performance_search) {
+					$sql_where .= ($sql_where != '' ? ' AND ' : '') . "ldst.user LIKE '$term%'";
+				} else {
+					$sql_where .= ($sql_where != '' ? ' AND ' : '') . "ldst.user LIKE '%$term%'";
+				}
 			}
 			break;
 		case 'lic_feature':
 			if ($page_name == 'lic_dailystats.php') {
-				$sql_where .= ($sql_where != '' ? ' AND ' : '') . "(lsfu.feature_name LIKE '%$term%' OR lafm.user_feature_name LIKE '%$term%'";
+				if ($lic_performance_search) {
+					$sql_where .= ($sql_where != '' ? ' AND ' : '') . "(lsfu.feature_name LIKE '$term%' OR lafm.user_feature_name LIKE '$term%')";
+				} else {
+					$sql_where .= ($sql_where != '' ? ' AND ' : '') . "(lsfu.feature_name LIKE '%$term%' OR lafm.user_feature_name LIKE '%$term%')";
+				}
 			}
 			break;
 		case 'job_user':

@@ -1,6 +1,7 @@
 --
 -- $Id$
 --
+
 --
 -- MySQL dump 10.14  Distrib 5.5.68-MariaDB, for Linux (x86_64)
 --
@@ -262,7 +263,7 @@ CREATE TABLE `automation_graph_rule_items` (
   `operator` smallint(3) unsigned NOT NULL DEFAULT '0',
   `pattern` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 COMMENT='Automation Graph Rule Items';
+) ENGINE=InnoDB COMMENT='Automation Graph Rule Items';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -290,7 +291,7 @@ CREATE TABLE `automation_graph_rules` (
   `enabled` char(2) DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `name` (`name`(171))
-) ENGINE=InnoDB AUTO_INCREMENT=4 COMMENT='Automation Graph Rules';
+) ENGINE=InnoDB COMMENT='Automation Graph Rules';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -339,7 +340,7 @@ CREATE TABLE `automation_match_rule_items` (
   `operator` smallint(3) unsigned NOT NULL DEFAULT '0',
   `pattern` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 COMMENT='Automation Match Rule Items';
+) ENGINE=InnoDB COMMENT='Automation Match Rule Items';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -434,7 +435,7 @@ CREATE TABLE `automation_snmp` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 COMMENT='Group of SNMP Option Sets';
+) ENGINE=InnoDB COMMENT='Group of SNMP Option Sets';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -472,7 +473,7 @@ CREATE TABLE `automation_snmp_items` (
   `snmp_context` varchar(64) DEFAULT '',
   `snmp_engine_id` varchar(64) DEFAULT '',
   PRIMARY KEY (`id`,`snmp_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 COMMENT='Set of SNMP Options';
+) ENGINE=InnoDB COMMENT='Set of SNMP Options';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -501,7 +502,7 @@ CREATE TABLE `automation_templates` (
   `sysOid` varchar(60) DEFAULT '',
   `sequence` int(10) unsigned DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 COMMENT='Templates of SNMP Sys variables used for automation';
+) ENGINE=InnoDB COMMENT='Templates of SNMP Sys variables used for automation';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -531,7 +532,7 @@ CREATE TABLE `automation_tree_rule_items` (
   `search_pattern` varchar(255) NOT NULL DEFAULT '',
   `replace_pattern` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 COMMENT='Automation Tree Rule Items';
+) ENGINE=InnoDB COMMENT='Automation Tree Rule Items';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -561,7 +562,7 @@ CREATE TABLE `automation_tree_rules` (
   `enabled` char(2) DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `name` (`name`(171))
-) ENGINE=InnoDB AUTO_INCREMENT=3 COMMENT='Automation Tree Rules';
+) ENGINE=InnoDB COMMENT='Automation Tree Rules';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -589,7 +590,7 @@ CREATE TABLE `cdef` (
   PRIMARY KEY (`id`),
   KEY `hash` (`hash`),
   KEY `name` (`name`(171))
-) ENGINE=InnoDB AUTO_INCREMENT=25;
+) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -618,7 +619,7 @@ CREATE TABLE `cdef_items` (
   `value` varchar(150) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `cdef_id_sequence` (`cdef_id`,`sequence`)
-) ENGINE=InnoDB AUTO_INCREMENT=53;
+) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -644,7 +645,7 @@ CREATE TABLE `color_template_items` (
   `color_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `sequence` mediumint(8) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`color_template_item_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=45 COMMENT='Color Items for Color Templates';
+) ENGINE=InnoDB COMMENT='Color Items for Color Templates';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -668,7 +669,7 @@ CREATE TABLE `color_templates` (
   `color_template_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`color_template_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 COMMENT='Color Templates';
+) ENGINE=InnoDB COMMENT='Color Templates';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -695,7 +696,7 @@ CREATE TABLE `colors` (
   `read_only` char(2) DEFAULT '',
   PRIMARY KEY (`id`),
   UNIQUE KEY `hex` (`hex`)
-) ENGINE=InnoDB AUTO_INCREMENT=453;
+) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -746,7 +747,7 @@ CREATE TABLE `data_input` (
   `type_id` tinyint(2) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `name_type_id` (`name`(171),`type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=68;
+) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -810,7 +811,7 @@ CREATE TABLE `data_input_fields` (
   KEY `data_input_id` (`data_input_id`),
   KEY `input_output` (`input_output`),
   KEY `type_code_data_input_id` (`type_code`,`data_input_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=352;
+) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -842,7 +843,7 @@ CREATE TABLE `data_local` (
   KEY `snmp_index` (`snmp_index`),
   KEY `data_template_id` (`data_template_id`),
   KEY `snmp_query_id` (`snmp_query_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -872,7 +873,7 @@ CREATE TABLE `data_source_profiles` (
   `default` char(2) DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `name` (`name`(171))
-) ENGINE=InnoDB AUTO_INCREMENT=4 COMMENT='Stores Data Source Profiles';
+) ENGINE=InnoDB COMMENT='Stores Data Source Profiles';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -926,7 +927,7 @@ CREATE TABLE `data_source_profiles_rra` (
   `timespan` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `data_source_profile_id` (`data_source_profile_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 COMMENT='Stores RRA Definitions for Data Source Profiles';
+) ENGINE=InnoDB COMMENT='Stores RRA Definitions for Data Source Profiles';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1106,7 +1107,7 @@ CREATE TABLE `data_template` (
   `name` varchar(150) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=220;
+) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1147,7 +1148,7 @@ CREATE TABLE `data_template_data` (
   KEY `data_template_id` (`data_template_id`),
   KEY `data_input_id` (`data_input_id`),
   KEY `name_cache` (`name_cache`(191))
-) ENGINE=InnoDB AUTO_INCREMENT=229;
+) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1190,7 +1191,7 @@ CREATE TABLE `data_template_rrd` (
   KEY `local_data_id` (`local_data_id`),
   KEY `data_template_id` (`data_template_id`),
   KEY `local_data_template_rrd_id` (`local_data_template_rrd_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=517;
+) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1303,7 +1304,7 @@ CREATE TABLE `disku_extension_registry` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `ext_contraint` (`extension`),
   KEY `ext` (`extension`)
-) ENGINE=MyISAM AUTO_INCREMENT=1545 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1567,7 +1568,7 @@ CREATE TABLE `disku_pollers` (
   `avg_time` double DEFAULT '0',
   `total_polls` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COMMENT='Defines collection frequencies for this poller';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Defines collection frequencies for this poller';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1585,7 +1586,7 @@ CREATE TABLE `disku_pollers_filesystems` (
   `available` bigint(20) unsigned NOT NULL DEFAULT '0',
   `percentUsed` int(10) unsigned NOT NULL DEFAULT '0',
   `mountPoint` varchar(128) NOT NULL DEFAULT '',
-  `present` tinyint(4) NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`poller_id`,`mountPoint`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Holds all known files systems per poller';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1767,7 +1768,7 @@ CREATE TABLE `graph_local` (
   KEY `snmp_query_id` (`snmp_query_id`),
   KEY `snmp_query_graph_id` (`snmp_query_graph_id`),
   KEY `snmp_index` (`snmp_index`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 ROW_FORMAT=DYNAMIC COMMENT='Creates a relationship for each item in a custom graph.';
+) ENGINE=InnoDB ROW_FORMAT=DYNAMIC COMMENT='Creates a relationship for each item in a custom graph.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1795,7 +1796,7 @@ CREATE TABLE `graph_template_input` (
   `description` text,
   `column_name` varchar(50) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=536 COMMENT='Stores the names for graph item input groups.';
+) ENGINE=InnoDB COMMENT='Stores the names for graph item input groups.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1848,7 +1849,7 @@ CREATE TABLE `graph_templates` (
   PRIMARY KEY (`id`),
   KEY `multiple_name` (`multiple`,`name`(171)),
   KEY `name` (`name`(171))
-) ENGINE=InnoDB AUTO_INCREMENT=226 COMMENT='Contains each graph template name.';
+) ENGINE=InnoDB COMMENT='Contains each graph template name.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1875,7 +1876,7 @@ CREATE TABLE `graph_templates_gprint` (
   `gprint_text` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=6;
+) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1967,7 +1968,7 @@ CREATE TABLE `graph_templates_graph` (
   KEY `local_graph_id` (`local_graph_id`),
   KEY `graph_template_id` (`graph_template_id`),
   KEY `title_cache` (`title_cache`(191))
-) ENGINE=InnoDB AUTO_INCREMENT=234 COMMENT='Stores the actual graph data.';
+) ENGINE=InnoDB COMMENT='Stores the actual graph data.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2015,7 +2016,7 @@ CREATE TABLE `graph_templates_item` (
   KEY `local_graph_id_sequence` (`local_graph_id`,`sequence`),
   KEY `task_item_id` (`task_item_id`),
   KEY `lgi_gti` (`local_graph_id`,`graph_template_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1888 COMMENT='Stores the actual graph item data.';
+) ENGINE=InnoDB COMMENT='Stores the actual graph item data.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2049,7 +2050,7 @@ CREATE TABLE `graph_tree` (
   PRIMARY KEY (`id`),
   KEY `sequence` (`sequence`),
   KEY `name` (`name`(171))
-) ENGINE=InnoDB AUTO_INCREMENT=2;
+) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2088,7 +2089,7 @@ CREATE TABLE `graph_tree_items` (
   KEY `site_id` (`site_id`),
   KEY `local_graph_id` (`local_graph_id`),
   KEY `parent_position` (`parent`,`position`)
-) ENGINE=InnoDB AUTO_INCREMENT=2;
+) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2121,7 +2122,7 @@ CREATE TABLE `grid_applications` (
   `max_swap` double NOT NULL DEFAULT '0',
   `total_cpu` bigint(20) unsigned NOT NULL DEFAULT '0',
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`appName`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2411,7 +2412,7 @@ CREATE TABLE `grid_blstat_distribution` (
   `non_lsf_use` int(10) unsigned NOT NULL,
   `non_lsf_deserve` int(10) unsigned NOT NULL,
   `non_lsf_free` int(10) unsigned NOT NULL,
-  `present` tinyint(3) unsigned NOT NULL,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`lsid`,`feature`,`service_domain`),
   KEY `present` (`present`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -2428,7 +2429,7 @@ CREATE TABLE `grid_blstat_feature_map` (
   `lsid` int(10) unsigned NOT NULL DEFAULT '0',
   `bld_feature` varchar(64) NOT NULL,
   `lic_feature` varchar(64) NOT NULL,
-  `present` tinyint(3) unsigned NOT NULL,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`lsid`,`bld_feature`,`lic_feature`) USING BTREE,
   KEY `lic_feature` (`lic_feature`) USING BTREE,
   KEY `present` (`present`) USING BTREE
@@ -2471,7 +2472,7 @@ CREATE TABLE `grid_blstat_service_domains` (
   `lsid` int(10) unsigned NOT NULL DEFAULT '0',
   `service_domain` varchar(64) NOT NULL,
   `lic_id` int(10) unsigned NOT NULL,
-  `present` tinyint(3) unsigned NOT NULL,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`lsid`,`service_domain`,`lic_id`) USING BTREE,
   KEY `present` (`present`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Maintains the mapping between BLD Service Domains and License Services';
@@ -2501,7 +2502,7 @@ CREATE TABLE `grid_blstat_tasks` (
   `cpu_idle` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `res_requirements` varchar(128) NOT NULL,
   `command` varchar(256) NOT NULL,
-  `present` tinyint(3) unsigned NOT NULL,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`lsid`,`feature`,`host`,`user`,`tid`) USING BTREE,
   KEY `present` (`present`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='License Scheduler Task Details';
@@ -2527,7 +2528,7 @@ CREATE TABLE `grid_blstat_users` (
   `resource` varchar(45) NOT NULL,
   `rusage` int(10) unsigned NOT NULL,
   `service_domain` varchar(64) NOT NULL,
-  `present` tinyint(3) unsigned NOT NULL,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`lsid`,`jobid`,`indexid`,`cluster`,`resource`) USING HASH,
   KEY `user` (`user`),
   KEY `host` (`host`),
@@ -2808,7 +2809,7 @@ CREATE TABLE `grid_clusters_perfmon_status` (
   `last_mbatchd_start` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `active_mbd_pid` int(10) unsigned NOT NULL DEFAULT '0',
   `last_mbatchd_reconfig` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Contains badmin showstatus information';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2832,7 +2833,7 @@ CREATE TABLE `grid_clusters_perfmon_summary` (
   `pjob_doneTime` double NOT NULL DEFAULT '0',
   `pjob_seenDoneTime` double NOT NULL DEFAULT '0',
   `pjob_startTime` double NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Contains Perfmon Sampling Information';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2850,7 +2851,7 @@ CREATE TABLE `grid_clusters_queue_reportdata` (
   `reportid` varchar(20) NOT NULL,
   `name` varchar(20) NOT NULL,
   `value` double NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`queue`,`reportid`,`name`)
 ) ENGINE=MEMORY DEFAULT CHARSET=utf8 COMMENT='queue level reporting results table';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2867,7 +2868,7 @@ CREATE TABLE `grid_clusters_reportdata` (
   `reportid` varchar(20) NOT NULL,
   `name` varchar(20) NOT NULL,
   `value` double NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`reportid`,`name`)
 ) ENGINE=MEMORY DEFAULT CHARSET=utf8 COMMENT='cluster level reporting results table';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2919,7 +2920,7 @@ CREATE TABLE `grid_elim_templates` (
   `name` char(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `name` (`name`(191))
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1 COMMENT='Contains each ELIM graph template name.';
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Contains each ELIM graph template name.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3011,7 +3012,7 @@ CREATE TABLE `grid_elim_templates_graph` (
   KEY `local_graph_id` (`local_graph_id`),
   KEY `graph_template_id` (`graph_template_id`),
   KEY `title_cache` (`title_cache`(191))
-) ENGINE=InnoDB AUTO_INCREMENT=7 COMMENT='Stores the actual graph data.';
+) ENGINE=InnoDB COMMENT='Stores the actual graph data.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3077,7 +3078,7 @@ CREATE TABLE `grid_elim_templates_item` (
   KEY `local_graph_id_sequence` (`local_graph_id`,`sequence`),
   KEY `task_item_id` (`task_item_id`),
   KEY `lgi_gti` (`local_graph_id`,`graph_template_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=57 COMMENT='Stores the actual graph item data.';
+) ENGINE=InnoDB COMMENT='Stores the actual graph item data.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3128,7 +3129,7 @@ CREATE TABLE `grid_groups` (
   `max_swap` double NOT NULL DEFAULT '0',
   `total_cpu` bigint(20) unsigned NOT NULL DEFAULT '0',
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`groupName`(191))
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -3166,7 +3167,7 @@ CREATE TABLE `grid_guarantee_pool` (
   `memRequested` int(10) unsigned NOT NULL DEFAULT '0',
   `memReserved` int(10) unsigned NOT NULL DEFAULT '0',
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Stores Configuration of Guarantee Resource Pools';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -3192,7 +3193,7 @@ CREATE TABLE `grid_guarantee_pool_distribution` (
   `pendJobs` int(10) unsigned NOT NULL DEFAULT '0',
   `pendSlots` int(10) unsigned NOT NULL DEFAULT '0',
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`name`,`consumer`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Stores Distribution Consumer Information for Guarantee Pool';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -3209,7 +3210,7 @@ CREATE TABLE `grid_guarantee_pool_hosts` (
   `name` varchar(60) NOT NULL,
   `host` varchar(64) NOT NULL,
   `owner` varchar(40) NOT NULL DEFAULT '',
-  `present` tinyint(3) unsigned NOT NULL,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`name`,`host`),
   KEY `host` (`host`),
   KEY `clusterid_host` (`clusterid`,`host`),
@@ -3228,7 +3229,7 @@ CREATE TABLE `grid_guarantee_pool_loan_queues` (
   `clusterid` int(10) unsigned NOT NULL,
   `name` varchar(60) NOT NULL,
   `queue` varchar(60) NOT NULL,
-  `present` tinyint(3) unsigned NOT NULL,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`name`,`queue`),
   KEY ` queue` (`queue`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Stores Loan Policies for Guarantee Pool';
@@ -3467,7 +3468,7 @@ CREATE TABLE `grid_host_threshold` (
   `loadStop` double NOT NULL DEFAULT '0',
   `busySched` int(11) NOT NULL DEFAULT '0',
   `busyStop` int(11) NOT NULL DEFAULT '0',
-  `present` int(11) NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`hostname`,`resource_name`),
   KEY `id` (`id`),
   KEY `hostname` (`hostname`),
@@ -3486,7 +3487,7 @@ CREATE TABLE `grid_hostgroups` (
   `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
   `groupName` varchar(64) NOT NULL DEFAULT '',
   `host` varchar(64) NOT NULL DEFAULT '',
-  `present` int(10) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`groupName`,`host`),
   KEY `host` (`host`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -3518,7 +3519,7 @@ CREATE TABLE `grid_hostgroups_stats` (
   `memRequested` bigint(20) NOT NULL DEFAULT '0',
   `memReserved` bigint(20) NOT NULL DEFAULT '0',
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`groupName`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tracks Host Group Statistics';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -3558,7 +3559,7 @@ CREATE TABLE `grid_hostinfo` (
   `gpu_shared_avg_ut` float NOT NULL DEFAULT '0',
   `first_seen` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `last_seen` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `present` int(10) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`host`,`clusterid`),
   KEY `isServer` (`isServer`),
   KEY `hostType` (`hostType`),
@@ -3617,7 +3618,7 @@ CREATE TABLE `grid_hostresources` (
   `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
   `rtype` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `resource_name` varchar(50) NOT NULL DEFAULT '',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`host`,`clusterid`,`resource_name`),
   KEY `clusterid` (`clusterid`),
   KEY `resource_name` (`resource_name`)
@@ -3654,7 +3655,7 @@ CREATE TABLE `grid_hosts` (
   `avail_shared_ngpus` int(10) unsigned NOT NULL DEFAULT '0',
   `avail_excl_ngpus` int(10) unsigned NOT NULL DEFAULT '0',
   `alloc_jsexcl_ngpus` int(10) unsigned NOT NULL DEFAULT '0',
-  `present` int(10) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   `exceptional` tinyint(1) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`host`,`clusterid`),
   KEY `clusterid` (`clusterid`),
@@ -3679,7 +3680,7 @@ CREATE TABLE `grid_hosts_alarm` (
   `message` varchar(1024) NOT NULL,
   `acknowledgement` char(3) NOT NULL DEFAULT 'off',
   `alert_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `present` int(11) NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`type`,`type_id`,`clusterid`,`hostname`),
   KEY `hostname` (`hostname`),
   KEY `clusterid` (`clusterid`)
@@ -3758,7 +3759,7 @@ CREATE TABLE `grid_hosts_resources` (
   `totalValue` varchar(128) NOT NULL DEFAULT '',
   `reservedValue` varchar(128) NOT NULL DEFAULT '',
   `value` varchar(128) NOT NULL DEFAULT '',
-  `present` tinyint(3) unsigned NOT NULL,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`host`,`clusterid`,`resource_name`,`resType`) USING HASH,
   KEY `value` (`value`),
@@ -4092,7 +4093,7 @@ DROP TABLE IF EXISTS `grid_jobs_exec_hosts`;
 CREATE TABLE `grid_jobs_exec_hosts` (
   `exec_host` varchar(64) NOT NULL DEFAULT '',
   `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`exec_host`,`clusterid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -4256,7 +4257,7 @@ DROP TABLE IF EXISTS `grid_jobs_from_hosts`;
 CREATE TABLE `grid_jobs_from_hosts` (
   `from_host` varchar(64) NOT NULL DEFAULT '',
   `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`from_host`,`clusterid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -4527,7 +4528,7 @@ CREATE TABLE `grid_jobs_pendreasons` (
   `start_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `end_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`jobid`,`indexid`,`submit_time`,`issusp`,`reason`,`subreason`,`type`,`end_time`),
   KEY `clusterid_end_time` (`clusterid`,`end_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -4554,7 +4555,7 @@ CREATE TABLE `grid_jobs_pendreasons_finished` (
   `start_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `end_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`jobid`,`indexid`,`submit_time`,`issusp`,`reason`,`subreason`,`type`,`end_time`),
   KEY `clusterid_end_time` (`clusterid`,`end_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -4596,7 +4597,7 @@ DROP TABLE IF EXISTS `grid_jobs_queues`;
 CREATE TABLE `grid_jobs_queues` (
   `queue` varchar(60) NOT NULL DEFAULT '',
   `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`queue`,`clusterid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -4739,7 +4740,7 @@ DROP TABLE IF EXISTS `grid_jobs_stats`;
 CREATE TABLE `grid_jobs_stats` (
   `stat` varchar(10) NOT NULL DEFAULT '',
   `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`stat`,`clusterid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -4754,7 +4755,7 @@ DROP TABLE IF EXISTS `grid_jobs_users`;
 CREATE TABLE `grid_jobs_users` (
   `user` varchar(40) NOT NULL DEFAULT '',
   `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`user`,`clusterid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -4779,7 +4780,7 @@ CREATE TABLE `grid_license_projects` (
   `max_swap` double NOT NULL DEFAULT '0',
   `total_cpu` bigint(20) unsigned NOT NULL DEFAULT '0',
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`licenseProject`),
   KEY `present` (`present`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tracks License Project Information';
@@ -4810,7 +4811,7 @@ CREATE TABLE `grid_load` (
   `tmp` float NOT NULL DEFAULT '0',
   `swp` float NOT NULL DEFAULT '0',
   `mem` float NOT NULL DEFAULT '0',
-  `present` int(10) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`host`,`clusterid`),
   KEY `clusterid` (`clusterid`),
   KEY `status` (`status`),
@@ -4934,7 +4935,7 @@ CREATE TABLE `grid_pendreasons_ignore` (
   `reason` int(10) unsigned NOT NULL,
   `subreason` varchar(40) NOT NULL DEFAULT '',
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`user_id`,`issusp`,`reason`,`subreason`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -4956,7 +4957,7 @@ CREATE TABLE `grid_pollers` (
   `lsf_version` int(10) unsigned NOT NULL DEFAULT '62',
   `remote` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`poller_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5008,7 +5009,7 @@ CREATE TABLE `grid_projects` (
   `max_swap` double NOT NULL DEFAULT '0',
   `total_cpu` bigint(20) unsigned NOT NULL DEFAULT '0',
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`projectName`),
   KEY `present` (`present`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tracks Project Information';
@@ -5038,7 +5039,7 @@ CREATE TABLE `grid_queues` (
   `pendjobs` int(10) unsigned NOT NULL DEFAULT '0',
   `runjobs` int(10) unsigned NOT NULL DEFAULT '0',
   `suspjobs` int(10) unsigned NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   `avg_pend_time` int(10) unsigned NOT NULL DEFAULT '0',
   `max_pend_time` int(10) unsigned NOT NULL DEFAULT '0',
   `avg_psusp_time` int(10) unsigned NOT NULL DEFAULT '0',
@@ -5142,7 +5143,7 @@ CREATE TABLE `grid_queues_hosts` (
   `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
   `queue` varchar(60) NOT NULL DEFAULT '',
   `host` varchar(64) NOT NULL DEFAULT '',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`queue`,`host`),
   KEY `host` (`host`),
   KEY `queue` (`queue`)
@@ -5176,7 +5177,7 @@ CREATE TABLE `grid_queues_shares` (
   `relative_share` double DEFAULT NULL,
   `slot_share` int(10) unsigned DEFAULT NULL,
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`queue`,`user_or_group`,`shareAcctPath`(191)) USING HASH,
   KEY `user_or_group` (`user_or_group`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -5208,7 +5209,7 @@ CREATE TABLE `grid_queues_stats` (
   `memRequested` bigint(20) NOT NULL DEFAULT '0',
   `memReserved` bigint(20) NOT NULL DEFAULT '0',
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`queue`),
   KEY `present` (`present`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tracks Queue Statistical Information';
@@ -5241,7 +5242,7 @@ CREATE TABLE `grid_queues_users` (
   `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
   `queue` varchar(60) NOT NULL DEFAULT '',
   `user` varchar(45) NOT NULL DEFAULT '',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`queue`,`user`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -5262,7 +5263,7 @@ CREATE TABLE `grid_queues_users_stats` (
   `runjobs` int(10) unsigned NOT NULL,
   `suspjobs` int(10) unsigned NOT NULL,
   `efficiency` double NOT NULL,
-  `present` tinyint(3) unsigned NOT NULL,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`queue`,`user_or_group`),
   KEY `clusterid_user_or_group` (`clusterid`,`user_or_group`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -5303,7 +5304,7 @@ CREATE TABLE `grid_service_class` (
   `ego_res_req` varchar(255) NOT NULL,
   `max_host_idle_time` int(10) unsigned NOT NULL,
   `throughput` double NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Stores Service Class Definitions';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -5320,7 +5321,7 @@ CREATE TABLE `grid_service_class_access_control` (
   `name` varchar(60) NOT NULL,
   `acl_type` int(10) unsigned NOT NULL,
   `acl_member` varchar(60) NOT NULL,
-  `present` tinyint(3) unsigned NOT NULL,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`name`,`acl_type`,`acl_member`),
   KEY `acl_member` (`acl_member`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Stores Access Control Information for Service Class';
@@ -5344,7 +5345,7 @@ CREATE TABLE `grid_service_class_goals` (
   `goal_config` int(10) unsigned DEFAULT NULL,
   `actual` int(10) unsigned DEFAULT NULL,
   `optimum` int(10) unsigned DEFAULT NULL,
-  `present` tinyint(3) unsigned NOT NULL,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`name`,`goal_seq`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Stores Service Class Goals';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -5360,7 +5361,7 @@ CREATE TABLE `grid_service_class_groups` (
   `clusterid` int(10) unsigned NOT NULL,
   `name` varchar(60) NOT NULL,
   `user_or_group` varchar(60) NOT NULL,
-  `present` tinyint(3) unsigned NOT NULL,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`name`,`user_or_group`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='User or User Groups Permitted to Use Service Class';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -5462,7 +5463,7 @@ CREATE TABLE `grid_summary` (
   `cur_time` decimal(10,5) DEFAULT '0.00000',
   `avg_time` decimal(10,5) DEFAULT '0.00000',
   `availability` decimal(10,5) DEFAULT NULL,
-  `present` int(10) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`host`),
   KEY `load_status` (`load_status`),
   KEY `cacti_status` (`cacti_status`),
@@ -5529,7 +5530,7 @@ CREATE TABLE `grid_user_group_members` (
   `groupname` varchar(45) NOT NULL DEFAULT '0',
   `username` varchar(40) NOT NULL DEFAULT '0',
   `shares` int(10) unsigned NOT NULL DEFAULT '1',
-  `present` tinyint(1) NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`groupname`,`username`),
   KEY `groupname` (`groupname`),
   KEY `username` (`username`)
@@ -5556,7 +5557,7 @@ CREATE TABLE `grid_user_group_stats` (
   `max_swap` double NOT NULL DEFAULT '0',
   `total_cpu` bigint(20) unsigned NOT NULL DEFAULT '0',
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`userGroup`),
   KEY `present` (`present`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tracks userGroup Stats';
@@ -5586,7 +5587,7 @@ CREATE TABLE `grid_users_or_groups` (
   `efficiency` double NOT NULL,
   `first_seen` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`user_or_group`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -5915,7 +5916,7 @@ CREATE TABLE `gridalarms_template` (
   KEY `notify_alert` (`notify_alert`),
   KEY `expression_id` (`expression_id`),
   KEY `tcheck` (`tcheck`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 COMMENT='Stores Alert Template definitions similar to Thold';
+) ENGINE=InnoDB COMMENT='Stores Alert Template definitions similar to Thold';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5964,7 +5965,7 @@ CREATE TABLE `gridalarms_template_expression` (
   `script_data_type` int(10) unsigned DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `hash` (`hash`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 COMMENT='Stores Alert Template Expressions';
+) ENGINE=InnoDB COMMENT='Stores Alert Template Expressions';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5994,7 +5995,7 @@ CREATE TABLE `gridalarms_template_expression_input` (
   PRIMARY KEY (`id`),
   KEY `exp_id_name` (`expression_id`,`name`),
   KEY `hash` (`hash`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 COMMENT='Stores Alert Template Custom Data Inputs and Defaults';
+) ENGINE=InnoDB COMMENT='Stores Alert Template Custom Data Inputs and Defaults';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -6045,7 +6046,7 @@ CREATE TABLE `gridalarms_template_layout` (
   `sortdirection` int(1) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `hash` (`hash`)
-) ENGINE=InnoDB AUTO_INCREMENT=62;
+) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -6166,7 +6167,7 @@ CREATE TABLE `host` (
   KEY `hostname` (`hostname`),
   KEY `poller_id_last_updated` (`poller_id`,`last_updated`),
   KEY `clusterid_host` (`clusterid`,`hostname`)
-) ENGINE=InnoDB AUTO_INCREMENT=4;
+) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -6217,7 +6218,7 @@ CREATE TABLE `host_snmp_cache` (
   `field_value` varchar(512) DEFAULT NULL,
   `snmp_index` varchar(255) NOT NULL DEFAULT '',
   `oid` text NOT NULL,
-  `present` tinyint(4) NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`host_id`,`snmp_query_id`,`field_name`,`snmp_index`),
   KEY `host_id` (`host_id`,`field_name`),
@@ -6271,7 +6272,7 @@ CREATE TABLE `host_template` (
   `name` varchar(100) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=18;
+) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -6582,7 +6583,7 @@ DROP TABLE IF EXISTS `lic_ldap_to_flex_groups`;
 CREATE TABLE `lic_ldap_to_flex_groups` (
   `ldap_group` varchar(40) NOT NULL,
   `flex_group` varchar(40) NOT NULL,
-  `present` tinyint(3) unsigned DEFAULT NULL,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`ldap_group`,`flex_group`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='A Mapping Table of LDAP Groups to FLEXlm Group';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -6607,7 +6608,7 @@ CREATE TABLE `lic_managers` (
   `failover_hosts` tinyint(3) unsigned DEFAULT '1',
   `disabled` tinyint(3) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -6636,7 +6637,7 @@ CREATE TABLE `lic_pollers` (
   `poller_exechost` varchar(64) NOT NULL DEFAULT '',
   `poller_type` smallint(3) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -6663,7 +6664,7 @@ CREATE TABLE `lic_servers` (
   `type` varchar(50) NOT NULL DEFAULT '',
   `version` varchar(20) NOT NULL DEFAULT '',
   `errorno` int(10) NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`service_id`,`name`),
   KEY `name` (`name`)
 ) ENGINE=MEMORY DEFAULT CHARSET=latin1;
@@ -6733,7 +6734,7 @@ CREATE TABLE `lic_services_feature` (
   `total_reserved_token` int(10) unsigned NOT NULL DEFAULT '0',
   `feature_expiration_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `vendor_daemon` varchar(45) NOT NULL DEFAULT '',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`service_id`,`feature_name`,`feature_version`,`vendor_daemon`,`feature_expiration_date`) USING HASH,
   KEY `feature_name` (`feature_name`),
   KEY `feature_version` (`feature_version`),
@@ -6763,7 +6764,7 @@ CREATE TABLE `lic_services_feature_details` (
   `tokens_acquired` int(10) unsigned NOT NULL DEFAULT '0',
   `tokens_acquired_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `present` tinyint(1) NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`service_id`,`vendor_daemon`,`feature_name`,`username`,`groupname`,`hostname`,`chkoutid`,`restype`,`status`,`tokens_acquired_date`),
   KEY `idx_vendor_daemon` (`vendor_daemon`),
   KEY `idx_feature_name` (`feature_name`),
@@ -6843,7 +6844,7 @@ CREATE TABLE `lic_services_feature_use` (
   `feature_queued` int(10) unsigned NOT NULL DEFAULT '0',
   `feature_reserved` int(10) unsigned NOT NULL DEFAULT '0',
   `vendor_daemon` varchar(45) NOT NULL DEFAULT 'TBD',
-  `present` tinyint(1) NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   `vendor_status` varchar(10) NOT NULL DEFAULT '',
   `vendor_version` varchar(30) NOT NULL DEFAULT '',
   `status` varchar(29) NOT NULL DEFAULT '',
@@ -6871,7 +6872,7 @@ CREATE TABLE `lic_services_options_feature` (
   `max_borrow_hours` int(10) unsigned DEFAULT NULL,
   `max_overdraft` int(10) unsigned DEFAULT NULL,
   `timeout` int(10) unsigned DEFAULT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`service_id`,`feature`,`keyword`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Includes Feature Options';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -6891,7 +6892,7 @@ CREATE TABLE `lic_services_options_feature_type` (
   `otype` varchar(20) NOT NULL DEFAULT '',
   `name` varchar(40) NOT NULL DEFAULT '',
   `notes` varchar(255) DEFAULT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`service_id`,`feature`,`variable`,`otype`,`name`,`keyword`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Per Feature/Type Options';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -6914,7 +6915,7 @@ CREATE TABLE `lic_services_options_global` (
   `nolog_queued` int(10) unsigned DEFAULT NULL,
   `timeoutall` int(10) unsigned DEFAULT NULL,
   `groupcaseinsens` int(10) unsigned DEFAULT NULL,
-  `present` tinyint(4) DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`service_id`,`options_path`(191))
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Contains Per Options File Global Settings';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -6930,7 +6931,7 @@ CREATE TABLE `lic_services_options_host_groups` (
   `service_id` int(10) unsigned NOT NULL DEFAULT '0',
   `group` varchar(64) NOT NULL DEFAULT '',
   `host` varchar(64) NOT NULL DEFAULT '',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`service_id`,`group`,`host`),
   KEY `group` (`group`),
   KEY `host` (`host`)
@@ -6950,7 +6951,7 @@ CREATE TABLE `lic_services_options_incexcl_all` (
   `otype` varchar(20) NOT NULL DEFAULT '',
   `name` varchar(40) NOT NULL DEFAULT '',
   `notes` varchar(255) DEFAULT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`service_id`,`incexcl`,`otype`,`name`),
   KEY `incexcl` (`incexcl`),
   KEY `otype` (`otype`),
@@ -6973,7 +6974,7 @@ CREATE TABLE `lic_services_options_max` (
   `otype` varchar(10) NOT NULL DEFAULT '',
   `name` varchar(40) NOT NULL DEFAULT '',
   `notes` varchar(255) DEFAULT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`service_id`,`feature`,`otype`,`name`,`keyword`),
   KEY `feature` (`feature`),
   KEY `name` (`name`),
@@ -6996,7 +6997,7 @@ CREATE TABLE `lic_services_options_reserve` (
   `otype` varchar(10) NOT NULL DEFAULT '',
   `name` varchar(40) NOT NULL DEFAULT '',
   `notes` varchar(255) DEFAULT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`service_id`,`feature`,`otype`,`name`,`keyword`),
   KEY `feature` (`feature`),
   KEY `name` (`name`),
@@ -7015,7 +7016,7 @@ CREATE TABLE `lic_services_options_user_groups` (
   `service_id` int(10) unsigned NOT NULL DEFAULT '0',
   `group` varchar(64) NOT NULL DEFAULT '',
   `user` varchar(40) NOT NULL DEFAULT '',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`service_id`,`group`,`user`),
   KEY `group` (`group`),
   KEY `user` (`user`)
@@ -7068,7 +7069,7 @@ CREATE TABLE `plugin_config` (
   PRIMARY KEY (`id`),
   KEY `status` (`status`),
   KEY `directory` (`directory`)
-) ENGINE=InnoDB AUTO_INCREMENT=16;
+) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -7097,7 +7098,7 @@ CREATE TABLE `plugin_db_changes` (
   PRIMARY KEY (`id`),
   KEY `plugin` (`plugin`),
   KEY `method` (`method`)
-) ENGINE=InnoDB AUTO_INCREMENT=66;
+) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -7127,7 +7128,7 @@ CREATE TABLE `plugin_hooks` (
   PRIMARY KEY (`id`),
   KEY `hook` (`hook`),
   KEY `status` (`status`)
-) ENGINE=InnoDB AUTO_INCREMENT=238;
+) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -7170,7 +7171,7 @@ CREATE TABLE `plugin_realms` (
   `display` varchar(64) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `plugin` (`plugin`)
-) ENGINE=InnoDB AUTO_INCREMENT=41;
+) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -7381,7 +7382,7 @@ CREATE TABLE `poller` (
   PRIMARY KEY (`id`),
   KEY `name` (`name`),
   KEY `disabled` (`disabled`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 COMMENT='Pollers for Cacti';
+) ENGINE=InnoDB COMMENT='Pollers for Cacti';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -7450,7 +7451,7 @@ CREATE TABLE `poller_item` (
   `poller_id` int(10) unsigned NOT NULL DEFAULT '1',
   `host_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `action` tinyint(2) unsigned NOT NULL DEFAULT '1',
-  `present` tinyint(4) NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `hostname` varchar(100) NOT NULL DEFAULT '',
   `snmp_community` varchar(100) NOT NULL DEFAULT '',
@@ -7569,7 +7570,7 @@ CREATE TABLE `poller_reindex` (
   `host_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `data_query_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `action` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `present` tinyint(4) NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   `op` char(1) NOT NULL DEFAULT '',
   `assert_value` varchar(100) NOT NULL DEFAULT '',
   `arg1` varchar(255) NOT NULL DEFAULT '',
@@ -7613,7 +7614,7 @@ CREATE TABLE `poller_time` (
   `end_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`),
   KEY `poller_id_end_time` (`poller_id`,`end_time`)
-) ENGINE=InnoDB AUTO_INCREMENT=7;
+) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -7636,7 +7637,7 @@ CREATE TABLE `processes` (
   KEY `tasktype` (`tasktype`),
   KEY `pid` (`pid`),
   KEY `id` (`id`)
-) ENGINE=MEMORY AUTO_INCREMENT=7 COMMENT='Stores Process Status for Cacti Background Processes';
+) ENGINE=MEMORY COMMENT='Stores Process Status for Cacti Background Processes';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -7741,7 +7742,7 @@ CREATE TABLE `settings` (
 
 LOCK TABLES `settings` WRITE;
 /*!40000 ALTER TABLE `settings` DISABLE KEYS */;
-INSERT INTO `settings` VALUES ('add_summary_device','on'),('admin_user','1'),('advocate_port','8089'),('ajax_filter_enabled',''),('app_key','b0739ea48582a23a0dd2b784b81c4d383a523be6'),('auth_cache_enabled','on'),('auth_method','1'),('autocomplete_enabled','1'),('autocomplete_rows','30'),('automation_email',''),('automation_fromemail',''),('automation_fromname',''),('automation_graphs_enabled','on'),('automation_tree_enabled','on'),('availability_method','2'),('axis_size','7'),('base_url','http://localhost/cacti/'),('benchmark_total_benchmarks','0'),('boost_parallel','1'),('boost_png_cache_enable',''),('boost_poller_mem_limit','2048'),('boost_redirect',''),('boost_rrd_update_enable',''),('boost_rrd_update_interval','60'),('boost_rrd_update_max_records','1000000'),('boost_rrd_update_max_records_per_select','50000'),('boost_rrd_update_max_runtime','1200'),('boost_rrd_update_string_length','2000'),('boost_rrd_update_system_enable',''),('concurrent_processes','1'),('cron_interval','300'),('date','2021-02-26 11:40:02'),('default_date_format','4'),('default_datechar','1'),('default_graph_height','150'),('default_graph_width','500'),('default_graphs_new_dropdown','-2'),('default_has',''),('default_image_format','1'),('default_poller','1'),('default_site','1'),('default_template','1'),('deletion_verification','on'),('device_threads','1'),('disku_bypass_directories','.snapshot'),('disku_db_version','10.2'),('disku_device_add','on'),('disku_level1','meta_col4'),('disku_level2','meta_col5'),('disku_level3','meta_col6'),('disku_part_version','10.2'),('disku_version','10.2.0.12'),('drag_and_drop','on'),('dsstats_daily_interval','60'),('dsstats_enable',''),('dsstats_hourly_duration','60'),('dsstats_major_update_time','12:00am'),('dsstats_poller_mem_limit','1024'),('enable_snmp_agent','on'),('font_method','1'),('force_https',''),('graph_auth_method','1'),('graph_watermark','Generated by IBM® Spectrum LSF RTM'),('grds_creation_method','0'),('grid_archive_rrd_files','off'),('grid_archive_rrd_location','/opt/IBM/cacti/rraarchive'),('grid_backup_enable','on'),('grid_backup_generations','4'),('grid_backup_partitions','1'),('grid_backup_path','/opt/IBM/cacti/backup'),('grid_backup_restore_host_file',''),('grid_backup_schedule','d'),('grid_backup_weekday','0'),('grid_cache_dir','/opt/IBM/cacti/gridcache'),('grid_collection_enabled','on'),('grid_copyright_year','2006-2020'),('grid_db_version','10.2.0.0'),('grid_host_autopurge','1'),('grid_job_stats_fromhost_enabled',''),('grid_job_stats_project_enabled',''),('grid_license_poller_failure_count','2'),('grid_license_poller_interval','300'),('grid_license_poller_recovery_count','2'),('grid_license_poller_threads','5'),('grid_license_project_tracking',''),('grid_os','OFF'),('grid_part_version','10.2.0.12'),('grid_partitioning_enable','on'),('grid_partitions_upgrade_status','done'),('grid_pendreason_full_collection',''),('grid_short_hostname','on'),('grid_system_collection_enabled','on'),('grid_thold_resdown_status','1'),('grid_utime_stime_zero_collection',''),('grid_version','10.2.0.12'),('grid_xport_rows','1000'),('gridalarms_db_version','10.2.0.0'),('gridalarms_part_version','10.2'),('gridalarms_version','10.2.0.12'),('gridblstat_db_version','10.2'),('gridblstat_part_version','10.2'),('gridblstat_version','10.2.0.12'),('gridlicense_db_version','10.2.0.0'),('gridpend_db_version','10.2.0.0'),('gridpend_last_start','1614335405'),('gridpend_poller_mem_limit','2048'),('guest_user','0'),('help_loc_online_kc','https://www.ibm.com/support/knowledgecenter/SSZT2D_10.2.0'),('heuristics_custom_column_previous','none'),('heuristics_db_version','10.2'),('heuristics_part_version','10.2'),('heuristics_version','10.2.0.12'),('hide_console',''),('hide_form_description',''),('i18n_auto_detection','1'),('i18n_default_language','en-US'),('i18n_language_support','1'),('install_complete','1614338740'),('install_started','1614338740'),('install_theme','spectrum'),('ldap_encryption','0'),('ldap_group_member_type','1'),('ldap_group_require',''),('ldap_mode','0'),('ldap_port','389'),('ldap_port_ssl','636'),('ldap_referrals','0'),('ldap_version','3'),('legend_size','8'),('lic_add_device','on'),('lic_add_features_graph',''),('lic_data_retention','2weeks'),('lic_db_maint_time','12:00am'),('lic_db_upgrade','0'),('license_db_version','10.2'),('license_part_version','10.2'),('license_version','10.2.0.12'),('lichist_partition_last_run','56'),('log_destination','1'),('log_perror','on'),('log_pstats',''),('log_pwarn',''),('log_refresh_interval','60'),('log_validation',''),('log_verbosity','2'),('logrotate_enabled','on'),('logrotate_frequency','1'),('logrotate_retain','7'),('max_data_query_field_length','40'),('max_display_rows','1000'),('max_get_size','10'),('max_threads','1'),('max_title_length','110'),('notify_admin',''),('ntp_server','pool.ntp.org'),('num_rows_log','500'),('num_rows_table','30'),('oid_increasing_check_disable',''),('path_cactilog','/opt/IBM/cacti/log/cacti.log'),('path_php_binary','/usr/bin/php'),('path_rrdtool','/usr/bin/rrdtool'),('path_rrdtool_default_font',''),('path_snmpbulkwalk','/usr/bin/snmpbulkwalk'),('path_snmpget','/usr/bin/snmpget'),('path_snmpgetnext','/usr/bin/snmpgetnext'),('path_snmptrap','/usr/bin/snmptrap'),('path_snmpwalk','/usr/bin/snmpwalk'),('path_stderrlog','/opt/IBM/cacti/log/cacti_stderr.log'),('path_stderrrlog','/opt/IBM/cacti/log/cacti_stderr.log'),('path_webroot','/opt/IBM/cacti'),('php_servers','1'),('ping_failure_count','2'),('ping_method','2'),('ping_port','23'),('ping_recovery_count','3'),('ping_retries','1'),('ping_timeout','400'),('poller_debug',''),('poller_enabled','on'),('poller_interval','300'),('poller_replicate_data_input_crc','b80955d765ea534df3ebf1c9bb9dd82827ce8365'),('poller_replicate_data_input_fields_crc','fe530da5df3478812a2a80990f34fe3a6278dc16'),('poller_replicate_data_source_cache_crc_1','937bbfd78da8d6a774e55e8fb1470a8c7539a2bb'),('poller_replicate_device_cache_crc_1','fe8045eaadd2a67580997d57206cdf0a1be32b35'),('poller_replicate_snmp_query_crc','1e81a778db36d851726d0f46abc50f69a45bb3c1'),('poller_sync_interval','7200'),('poller_type','1'),('process_leveling','on'),('realtime_cache_path','/opt/IBM/cacti/cache/realtime/'),('realtime_enabled','on'),('realtime_gwindow','60'),('realtime_interval','10'),('reindex_method','1'),('remote_agent_timeout','5'),('reports_allow_ln',''),('reports_default_image_format','1'),('reports_log_verbosity','2'),('reports_max_attach','10485760'),('rrd_archive','/opt/IBM/cacti/rra/archive/'),('rrd_autoclean',''),('rrd_autoclean_method','1'),('rrdp_fingerprint',''),('rrdp_fingerprint_backup',''),('rrdp_port','40301'),('rrdp_port_backup','40301'),('rsa_fingerprint','ed:aa:54:f1:e7:9b:dc:26:bf:d2:2f:41:66:04:48:a8'),('rsa_private_key','-----BEGIN RSA PRIVATE KEY----- MIIEowIBAAKCAQEAyJ/bm7JVJ1wYaFAS2o7/vc7/PZgjB1tHoNc69buSSQfW6Fkz +rYY8mEmgiTB3sdgGWwQdvYf+ypCZZaxqhM9izLaixZg9qceYbfJ1yWpXihOtHRv 1Q9kCtHP0g6p2XDAn6Itjo8EWMS+obkeujjcz5VlAgC7ast0SzhyP2F2OVlYmnT9 SzVPd0djn02K3i3jUBgE39s9wdvSq8caKctqKKHr/ZV2v/OWGelsd7BxXitgheQ/ njMNOvfF30/mZ9jmBMoyemD8tCvQb42uEnx+HWpw5lgIzO6yDaFEUUIMwarENwMB EWqmcpK1YeiQuBgHmSt7uJ8xsCAoy+RtctH0awIDAQABAoIBABO9701N6iU6Ych6 ALDzG2VhJiq4etHxgIXqSAoAUC/RjqtEg+Hq41+OgcySs2Upt2IpCSG7rH/5s5jt kEQNKqQ0995x8E61OT8iZ8E9GoKCcuQ9BPgxUIXkCZBBEyOrfbj3q4X4utPFYIDn h4eJqujeaZcd3VNv+9yfDFcCTzDrVe7ZGG50u4HGaFl76hjLaPdlsITXsSGoRU1W x4nHXGjwI5ua3GYkQSo0vxPGLXmZgNcz/1Ax1Jv6jm5uVkKppSUCxeVysfxP7lhQ xcZ7jUDdUrAv9LQd5Fuef+Wlb5LyF90zI0WwXvXKlmJkVFMZueBq6iai0e/pjMsm rsQteGkCgYEA/nh3DITqSr4sw5x2zaUlLlTHwEe/ypEhugd2aT+E4AQgy3J9QsfE vpfTeS5YszilK5ecO5VLpfcmcWX7XCxr+8VR/Y245X0wKYlEEJqLid8+YhBGBW/s cCvpDHLDO8hUQgZNv/ByBfsUjZYyMGoVK4I59qnuYkvlR7BJwnJJjAcCgYEAydSL NTBQk86pkM/Roo7+3y+vs11ja4PfzyPlKMZvGf1DTHUVlTmJVjMiPrA5kFidLF47 DelW/zB6qDuxAR80j'),('rsa_public_key','-----BEGIN PUBLIC KEY----- MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyJ/bm7JVJ1wYaFAS2o7/ vc7/PZgjB1tHoNc69buSSQfW6Fkz+rYY8mEmgiTB3sdgGWwQdvYf+ypCZZaxqhM9 izLaixZg9qceYbfJ1yWpXihOtHRv1Q9kCtHP0g6p2XDAn6Itjo8EWMS+obkeujjc z5VlAgC7ast0SzhyP2F2OVlYmnT9SzVPd0djn02K3i3jUBgE39s9wdvSq8caKctq KKHr/ZV2v/OWGelsd7BxXitgheQ/njMNOvfF30/mZ9jmBMoyemD8tCvQb42uEnx+ HWpw5lgIzO6yDaFEUUIMwarENwMBEWqmcpK1YeiQuBgHmSt7uJ8xsCAoy+RtctH0 awIDAQAB -----END PUBLIC KEY-----'),('script_timeout','25'),('secpass_expireaccount','0'),('secpass_expirepass','0'),('secpass_forceold',''),('secpass_history','0'),('secpass_lockfailed','5'),('secpass_minlen','8'),('secpass_reqmixcase','on'),('secpass_reqnum','on'),('secpass_reqspec','on'),('secpass_unlocktime','1440'),('selected_theme','spectrum'),('selective_debug',''),('selective_device_debug',''),('selective_plugin_debug',''),('settings_dns_primary',''),('settings_dns_secondary',''),('settings_dns_timeout','500'),('settings_how','PHP Mail() ??'),('settings_ping_mail','0'),('settings_sendmail_path','/usr/sbin/sendmail'),('settings_smtp_host','localhost'),('settings_smtp_port','25'),('settings_smtp_secure','none'),('settings_smtp_timeout','10'),('settings_wordwrap','120'),('snmp_auth_protocol','MD5'),('snmp_bulk_walk_size','10'),('snmp_community','public'),('snmp_context',''),('snmp_engine_id',''),('snmp_password',''),('snmp_port','161'),('snmp_priv_passphrase',''),('snmp_priv_protocol','DES'),('snmp_retries','3'),('snmp_security_level','authPriv'),('snmp_timeout','500'),('snmp_username',''),('snmp_version','2'),('spikekill_avgnan','last'),('spikekill_backupdir','/opt/IBM/cacti/cache/spikekill/'),('spikekill_basetime','12:00am'),('spikekill_batch','0'),('spikekill_deviations','10'),('spikekill_method','2'),('spikekill_number','5'),('spikekill_outliers','5'),('spikekill_percent','1000'),('spine_log_level','0'),('stats_disku_interval','Time:34.5872 Groups:61 Users:478'),('stats_grid','Time:0.7024 Grids:0 GridHosts:0 '),('stats_gridalarms_alarm','Time:0.0013 Alerts:0'),('stats_heuristics_5min','Time:0.0335'),('stats_lic_interval','Time:0.5740'),('stats_poller','Time:1.2341 Method:cmd.php Processes:1 Threads:0 Hosts:3 HostsPerProcess:3 DataSources:5 RRDsProcessed:5'),('stats_recache_1','Poller:1 RecacheTime:0.0 DevicesRecached:0'),('stats_thold','Time:0.0061 Tholds:0 TotalDevices:3 DownDevices:0 NewDownDevices:0'),('storage_location','0'),('syslog_alert_retention','30'),('syslog_domains',''),('syslog_enabled','on'),('syslog_html','on'),('syslog_maxrecords','100'),('syslog_refresh','300'),('syslog_retention','30'),('syslog_statistics',''),('syslog_stats','time:0.14 deletes:0 incoming:18 removes:0 xfers:0 alerts:0 alarms:0 reports:0'),('syslog_validate_hostname',''),('thold_empty_if_speed_default','10000'),('thold_enable_per_thold_body','on'),('thold_enable_scripts','on'),('thold_log_storage','31'),('timezone','America/New_York'),('title_size','10'),('unit_size','7'),('user_template','0');
+INSERT INTO `settings` VALUES ('add_summary_device','on'),('admin_user','1'),('advocate_port','8089'),('ajax_filter_enabled',''),('app_key','b0739ea48582a23a0dd2b784b81c4d383a523be6'),('auth_cache_enabled','on'),('auth_method','1'),('autocomplete_enabled','1'),('autocomplete_rows','30'),('automation_email',''),('automation_fromemail',''),('automation_fromname',''),('automation_graphs_enabled','on'),('automation_tree_enabled','on'),('availability_method','2'),('axis_size','7'),('base_url','http://localhost/cacti/'),('benchmark_total_benchmarks','0'),('boost_parallel','1'),('boost_png_cache_enable',''),('boost_poller_mem_limit','2048'),('boost_redirect',''),('boost_rrd_update_enable',''),('boost_rrd_update_interval','60'),('boost_rrd_update_max_records','1000000'),('boost_rrd_update_max_records_per_select','50000'),('boost_rrd_update_max_runtime','1200'),('boost_rrd_update_string_length','2000'),('boost_rrd_update_system_enable',''),('concurrent_processes','1'),('cron_interval','300'),('date','2021-02-26 11:40:02'),('default_date_format','4'),('default_datechar','1'),('default_graph_height','150'),('default_graph_width','500'),('default_graphs_new_dropdown','-2'),('default_has',''),('default_image_format','1'),('default_poller','1'),('default_site','1'),('default_template','1'),('deletion_verification','on'),('device_threads','1'),('disku_bypass_directories','.snapshot'),('disku_db_version','10.2'),('disku_device_add','on'),('disku_level1','meta_col4'),('disku_level2','meta_col5'),('disku_level3','meta_col6'),('disku_part_version','10.2'),('disku_version','10.2.0.12'),('drag_and_drop','on'),('dsstats_daily_interval','60'),('dsstats_enable',''),('dsstats_hourly_duration','60'),('dsstats_major_update_time','12:00am'),('dsstats_poller_mem_limit','1024'),('enable_snmp_agent','on'),('font_method','1'),('force_https',''),('graph_auth_method','1'),('graph_watermark','Generated by IBM® Spectrum LSF RTM'),('grds_creation_method','0'),('grid_archive_rrd_files','off'),('grid_archive_rrd_location','/opt/IBM/cacti/rraarchive'),('grid_backup_enable','on'),('grid_backup_generations','4'),('grid_backup_partitions','1'),('grid_backup_path','/opt/IBM/cacti/backup'),('grid_backup_restore_host_file',''),('grid_backup_schedule','d'),('grid_backup_weekday','0'),('grid_cache_dir','/opt/IBM/cacti/gridcache'),('grid_collection_enabled','on'),('grid_copyright_year','2006-2022'),('grid_db_version','10.2.0.0'),('grid_host_autopurge','1'),('grid_job_stats_fromhost_enabled',''),('grid_job_stats_project_enabled',''),('grid_license_project_tracking',''),('grid_os','OFF'),('grid_part_version','10.2.0.12'),('grid_partitioning_enable','on'),('grid_partitions_upgrade_status','done'),('grid_pendreason_full_collection',''),('grid_short_hostname','on'),('grid_system_collection_enabled','on'),('grid_thold_resdown_status','1'),('grid_utime_stime_zero_collection',''),('grid_version','10.2.0.12'),('grid_xport_rows','1000'),('gridalarms_db_version','10.2.0.0'),('gridalarms_part_version','10.2'),('gridalarms_version','10.2.0.12'),('gridblstat_db_version','10.2'),('gridblstat_part_version','10.2'),('gridblstat_version','10.2.0.12'),('gridlicense_db_version','10.2.0.0'),('gridpend_db_version','10.2.0.0'),('gridpend_last_start','1614335405'),('gridpend_poller_mem_limit','2048'),('guest_user','0'),('help_loc_online_kc','https://www.ibm.com/support/knowledgecenter/SSZT2D_10.2.0'),('heuristics_custom_column_previous','none'),('heuristics_db_version','10.2'),('heuristics_part_version','10.2'),('heuristics_version','10.2.0.12'),('hide_console',''),('hide_form_description',''),('i18n_auto_detection','1'),('i18n_default_language','en-US'),('i18n_language_support','1'),('install_complete','1614338740'),('install_started','1614338740'),('install_theme','spectrum'),('ldap_encryption','0'),('ldap_group_member_type','1'),('ldap_group_require',''),('ldap_mode','0'),('ldap_port','389'),('ldap_port_ssl','636'),('ldap_referrals','0'),('ldap_version','3'),('legend_size','8'),('lic_add_device','on'),('lic_add_features_graph',''),('lic_data_retention','2weeks'),('lic_db_maint_time','12:00am'),('lic_db_upgrade','0'),('license_db_version','10.2'),('license_part_version','10.2'),('license_version','10.2.0.12'),('log_destination','1'),('log_perror','on'),('log_pstats',''),('log_pwarn',''),('log_refresh_interval','60'),('log_validation',''),('log_verbosity','2'),('logrotate_enabled','on'),('logrotate_frequency','1'),('logrotate_retain','7'),('max_data_query_field_length','40'),('max_display_rows','1000'),('max_get_size','10'),('max_threads','1'),('max_title_length','110'),('notify_admin',''),('ntp_server','pool.ntp.org'),('num_rows_log','500'),('num_rows_table','30'),('oid_increasing_check_disable',''),('path_cactilog','/opt/IBM/cacti/log/cacti.log'),('path_php_binary','/usr/bin/php'),('path_rrdtool','/usr/bin/rrdtool'),('path_rrdtool_default_font',''),('path_snmpbulkwalk','/usr/bin/snmpbulkwalk'),('path_snmpget','/usr/bin/snmpget'),('path_snmpgetnext','/usr/bin/snmpgetnext'),('path_snmptrap','/usr/bin/snmptrap'),('path_snmpwalk','/usr/bin/snmpwalk'),('path_stderrlog','/opt/IBM/cacti/log/cacti_stderr.log'),('path_stderrrlog','/opt/IBM/cacti/log/cacti_stderr.log'),('path_webroot','/opt/IBM/cacti'),('php_servers','1'),('ping_failure_count','2'),('ping_method','2'),('ping_port','23'),('ping_recovery_count','3'),('ping_retries','1'),('ping_timeout','400'),('poller_debug',''),('poller_enabled','on'),('poller_interval','300'),('poller_replicate_data_input_crc','b80955d765ea534df3ebf1c9bb9dd82827ce8365'),('poller_replicate_data_input_fields_crc','fe530da5df3478812a2a80990f34fe3a6278dc16'),('poller_replicate_data_source_cache_crc_1','937bbfd78da8d6a774e55e8fb1470a8c7539a2bb'),('poller_replicate_device_cache_crc_1','fe8045eaadd2a67580997d57206cdf0a1be32b35'),('poller_replicate_snmp_query_crc','1e81a778db36d851726d0f46abc50f69a45bb3c1'),('poller_sync_interval','7200'),('poller_type','1'),('process_leveling','on'),('realtime_cache_path','/opt/IBM/cacti/cache/realtime/'),('realtime_enabled','on'),('realtime_gwindow','60'),('realtime_interval','10'),('reindex_method','1'),('remote_agent_timeout','5'),('reports_allow_ln',''),('reports_default_image_format','1'),('reports_log_verbosity','2'),('reports_max_attach','10485760'),('rrd_archive','/opt/IBM/cacti/rra/archive/'),('rrd_autoclean',''),('rrd_autoclean_method','1'),('rrdp_fingerprint',''),('rrdp_fingerprint_backup',''),('rrdp_port','40301'),('rrdp_port_backup','40301'),('rsa_fingerprint','ed:aa:54:f1:e7:9b:dc:26:bf:d2:2f:41:66:04:48:a8'),('rsa_private_key','-----BEGIN RSA PRIVATE KEY----- MIIEowIBAAKCAQEAyJ/bm7JVJ1wYaFAS2o7/vc7/PZgjB1tHoNc69buSSQfW6Fkz +rYY8mEmgiTB3sdgGWwQdvYf+ypCZZaxqhM9izLaixZg9qceYbfJ1yWpXihOtHRv 1Q9kCtHP0g6p2XDAn6Itjo8EWMS+obkeujjcz5VlAgC7ast0SzhyP2F2OVlYmnT9 SzVPd0djn02K3i3jUBgE39s9wdvSq8caKctqKKHr/ZV2v/OWGelsd7BxXitgheQ/ njMNOvfF30/mZ9jmBMoyemD8tCvQb42uEnx+HWpw5lgIzO6yDaFEUUIMwarENwMB EWqmcpK1YeiQuBgHmSt7uJ8xsCAoy+RtctH0awIDAQABAoIBABO9701N6iU6Ych6 ALDzG2VhJiq4etHxgIXqSAoAUC/RjqtEg+Hq41+OgcySs2Upt2IpCSG7rH/5s5jt kEQNKqQ0995x8E61OT8iZ8E9GoKCcuQ9BPgxUIXkCZBBEyOrfbj3q4X4utPFYIDn h4eJqujeaZcd3VNv+9yfDFcCTzDrVe7ZGG50u4HGaFl76hjLaPdlsITXsSGoRU1W x4nHXGjwI5ua3GYkQSo0vxPGLXmZgNcz/1Ax1Jv6jm5uVkKppSUCxeVysfxP7lhQ xcZ7jUDdUrAv9LQd5Fuef+Wlb5LyF90zI0WwXvXKlmJkVFMZueBq6iai0e/pjMsm rsQteGkCgYEA/nh3DITqSr4sw5x2zaUlLlTHwEe/ypEhugd2aT+E4AQgy3J9QsfE vpfTeS5YszilK5ecO5VLpfcmcWX7XCxr+8VR/Y245X0wKYlEEJqLid8+YhBGBW/s cCvpDHLDO8hUQgZNv/ByBfsUjZYyMGoVK4I59qnuYkvlR7BJwnJJjAcCgYEAydSL NTBQk86pkM/Roo7+3y+vs11ja4PfzyPlKMZvGf1DTHUVlTmJVjMiPrA5kFidLF47 DelW/zB6qDuxAR80j'),('rsa_public_key','-----BEGIN PUBLIC KEY----- MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyJ/bm7JVJ1wYaFAS2o7/ vc7/PZgjB1tHoNc69buSSQfW6Fkz+rYY8mEmgiTB3sdgGWwQdvYf+ypCZZaxqhM9 izLaixZg9qceYbfJ1yWpXihOtHRv1Q9kCtHP0g6p2XDAn6Itjo8EWMS+obkeujjc z5VlAgC7ast0SzhyP2F2OVlYmnT9SzVPd0djn02K3i3jUBgE39s9wdvSq8caKctq KKHr/ZV2v/OWGelsd7BxXitgheQ/njMNOvfF30/mZ9jmBMoyemD8tCvQb42uEnx+ HWpw5lgIzO6yDaFEUUIMwarENwMBEWqmcpK1YeiQuBgHmSt7uJ8xsCAoy+RtctH0 awIDAQAB -----END PUBLIC KEY-----'),('script_timeout','25'),('secpass_expireaccount','0'),('secpass_expirepass','0'),('secpass_forceold',''),('secpass_history','0'),('secpass_lockfailed','5'),('secpass_minlen','8'),('secpass_reqmixcase','on'),('secpass_reqnum','on'),('secpass_reqspec','on'),('secpass_unlocktime','1440'),('selected_theme','spectrum'),('selective_debug',''),('selective_device_debug',''),('selective_plugin_debug',''),('settings_dns_primary',''),('settings_dns_secondary',''),('settings_dns_timeout','500'),('settings_how','PHP Mail() ??'),('settings_ping_mail','0'),('settings_sendmail_path','/usr/sbin/sendmail'),('settings_smtp_host','localhost'),('settings_smtp_port','25'),('settings_smtp_secure','none'),('settings_smtp_timeout','10'),('settings_wordwrap','120'),('snmp_auth_protocol','MD5'),('snmp_bulk_walk_size','10'),('snmp_community','public'),('snmp_context',''),('snmp_engine_id',''),('snmp_password',''),('snmp_port','161'),('snmp_priv_passphrase',''),('snmp_priv_protocol','DES'),('snmp_retries','3'),('snmp_security_level','authPriv'),('snmp_timeout','500'),('snmp_username',''),('snmp_version','2'),('spikekill_avgnan','last'),('spikekill_backupdir','/opt/IBM/cacti/cache/spikekill/'),('spikekill_basetime','12:00am'),('spikekill_batch','0'),('spikekill_deviations','10'),('spikekill_method','2'),('spikekill_number','5'),('spikekill_outliers','5'),('spikekill_percent','1000'),('spine_log_level','0'),('storage_location','0'),('syslog_alert_retention','30'),('syslog_domains',''),('syslog_enabled','on'),('syslog_html','on'),('syslog_maxrecords','100'),('syslog_refresh','300'),('syslog_retention','30'),('syslog_statistics',''),('syslog_validate_hostname',''),('thold_empty_if_speed_default','10000'),('thold_enable_per_thold_body','on'),('thold_enable_scripts','on'),('thold_log_storage','31'),('timezone','America/New_York'),('title_size','10'),('unit_size','7'),('user_template','0');
 /*!40000 ALTER TABLE `settings` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -7829,7 +7830,7 @@ CREATE TABLE `sites` (
   KEY `postal_code` (`postal_code`),
   KEY `country` (`country`),
   KEY `alternate_id` (`alternate_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 COMMENT='Contains information about customer sites';
+) ENGINE=InnoDB COMMENT='Contains information about customer sites';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -7859,7 +7860,7 @@ CREATE TABLE `snmp_query` (
   `data_input_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=44;
+) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -7888,7 +7889,7 @@ CREATE TABLE `snmp_query_graph` (
   PRIMARY KEY (`id`),
   KEY `graph_template_id_name` (`graph_template_id`,`name`),
   KEY `snmp_query_id_name` (`snmp_query_id`,`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=133;
+) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -7947,7 +7948,7 @@ CREATE TABLE `snmp_query_graph_rrd_sv` (
   PRIMARY KEY (`id`),
   KEY `snmp_query_graph_id` (`snmp_query_graph_id`),
   KEY `data_template_id` (`data_template_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=67;
+) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -7976,7 +7977,7 @@ CREATE TABLE `snmp_query_graph_sv` (
   `text` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `snmp_query_graph_id` (`snmp_query_graph_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=41;
+) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -8135,7 +8136,7 @@ CREATE TABLE `snmpagent_mibs` (
   `name` varchar(50) NOT NULL DEFAULT '',
   `file` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 COMMENT='Registered MIB files';
+) ENGINE=InnoDB COMMENT='Registered MIB files';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -8192,7 +8193,7 @@ CREATE TABLE `syslog` (
   KEY `host_id` (`host_id`),
   KEY `priority_id` (`priority_id`),
   KEY `facility_id` (`facility_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19
+) ENGINE=InnoDB;
 /*!50100 PARTITION BY RANGE (TO_DAYS(logtime))
 (PARTITION d20210126 VALUES LESS THAN (738182) ENGINE = InnoDB,
  PARTITION d20210127 VALUES LESS THAN (738183) ENGINE = InnoDB,
@@ -8299,16 +8300,6 @@ CREATE TABLE `syslog_host_facilities` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `syslog_host_facilities`
---
-
-LOCK TABLES `syslog_host_facilities` WRITE;
-/*!40000 ALTER TABLE `syslog_host_facilities` DISABLE KEYS */;
-INSERT INTO `syslog_host_facilities` VALUES (1,3,'2021-02-26 11:40:05'),(1,5,'2021-02-26 11:40:05'),(1,9,'2021-02-26 11:40:05');
-/*!40000 ALTER TABLE `syslog_host_facilities` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `syslog_hosts`
 --
 
@@ -8322,7 +8313,7 @@ CREATE TABLE `syslog_hosts` (
   PRIMARY KEY (`host`),
   KEY `host_id` (`host_id`),
   KEY `last_updated` (`last_updated`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 COMMENT='Contains all hosts currently in the syslog table';
+) ENGINE=InnoDB COMMENT='Contains all hosts currently in the syslog table';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -8344,7 +8335,7 @@ CREATE TABLE `syslog_incoming` (
   PRIMARY KEY (`seq`),
   KEY `program` (`program`),
   KEY `status` (`status`)
-) ENGINE=InnoDB AUTO_INCREMENT=26;
+) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -8418,7 +8409,7 @@ CREATE TABLE `syslog_programs` (
   PRIMARY KEY (`program`),
   KEY `host_id` (`program_id`),
   KEY `last_updated` (`last_updated`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 COMMENT='Contains all programs currently in the syslog table';
+) ENGINE=InnoDB COMMENT='Contains all programs currently in the syslog table';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -8475,7 +8466,7 @@ CREATE TABLE `syslog_removed` (
   KEY `host_id` (`host_id`),
   KEY `priority_id` (`priority_id`),
   KEY `facility_id` (`facility_id`)
-) ENGINE=InnoDB
+) ENGINE=InnoDB;
 /*!50100 PARTITION BY RANGE (TO_DAYS(logtime))
 (PARTITION d20210126 VALUES LESS THAN (738182) ENGINE = InnoDB,
  PARTITION d20210127 VALUES LESS THAN (738183) ENGINE = InnoDB,
@@ -8759,7 +8750,7 @@ CREATE TABLE `thold_template` (
   KEY `id` (`id`),
   KEY `data_source_id` (`data_source_id`),
   KEY `data_template_id` (`data_template_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 COMMENT='Table of Thresholds defaults for graphs';
+) ENGINE=InnoDB COMMENT='Table of Thresholds defaults for graphs';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -8810,7 +8801,7 @@ CREATE TABLE `user_auth` (
   KEY `username` (`username`),
   KEY `realm` (`realm`),
   KEY `enabled` (`enabled`)
-) ENGINE=InnoDB AUTO_INCREMENT=4;
+) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -8841,7 +8832,7 @@ CREATE TABLE `user_auth_cache` (
   KEY `hostname` (`hostname`),
   KEY `user_id` (`user_id`),
   KEY `last_update` (`last_update`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 COMMENT='Caches Remember Me Details';
+) ENGINE=InnoDB COMMENT='Caches Remember Me Details';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -9037,7 +9028,7 @@ CREATE TABLE `vdef` (
   PRIMARY KEY (`id`),
   KEY `hash` (`hash`),
   KEY `name` (`name`(171))
-) ENGINE=InnoDB AUTO_INCREMENT=8 COMMENT='vdef';
+) ENGINE=InnoDB COMMENT='vdef';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -9066,7 +9057,7 @@ CREATE TABLE `vdef_items` (
   `value` varchar(150) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `vdef_id_sequence` (`vdef_id`,`sequence`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 COMMENT='vdef items';
+) ENGINE=InnoDB COMMENT='vdef items';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

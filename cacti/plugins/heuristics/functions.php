@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -80,12 +80,10 @@ function update_user_statistics($user = '', $timeout = 30) {
 			$sql_where1
 			LIMIT 1", $sql_params);
 
-		$now = date('Y-m-d H:i:s');
-
 		$custom = read_config_option('heuristics_custom_column');
 
 		$group_by_custom = true;
-		if ($custom != 'none') {
+		if ($custom != 'none' && $custom != 'chargedSAAP') {
 			$custom .= ',';
 		} else {
 			$custom = '"",';
@@ -107,7 +105,7 @@ function update_user_statistics($user = '', $timeout = 30) {
 				SUM(CASE WHEN stat='EXIT' THEN num_cpus ELSE 0 END) AS numEXIT,
 				SUM(CASE WHEN stat IN ('DONE','EXIT') THEN num_cpus ELSE 0 END) AS tputHOUR,
 				SUM(CASE WHEN stat IN ('DONE','EXIT') AND end_time>=FROM_UNIXTIME(UNIX_TIMESTAMP()-300) THEN num_cpus ELSE 0 END) AS tput5MIN,
-				'$now' AS last_updated
+				NOW() AS last_updated
 				FROM grid_jobs
 				WHERE end_time = '0000-00-00'
 				$sql_where2
@@ -127,4 +125,3 @@ function update_user_statistics($user = '', $timeout = 30) {
 
 	return $last_updated;
 }
-

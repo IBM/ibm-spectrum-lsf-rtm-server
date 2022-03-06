@@ -3,7 +3,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2021                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -746,14 +746,12 @@ function dsls_debug($string) {
 
 /*  display_version - displays version information */
 function display_version() {
-	$version = read_config_option('grid_version');
+	$version = read_config_option('license_version');
 	print "RTM DSLS License Collector Utility, Version $version, " . COPYRIGHT_YEARS . "\n";
 }
 
 /* display_help - displays the usage of the function */
 function display_help () {
-	global $config;
-
 	display_version();
 
 	print "Usage: lic_dsls_capture.php -C service-id [--debug]\n\n";
