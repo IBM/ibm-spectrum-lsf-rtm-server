@@ -637,7 +637,7 @@ CREATE TABLE `grid_jobs` (
   `job_start_logged` tinyint(3) unsigned NOT NULL default '0',
   `job_end_logged` tinyint(3) unsigned NOT NULL default '0',
   `job_scan_logged` tinyint(3) unsigned NOT NULL default '0',
-  `userGroup` varchar(40) NOT NULL,
+  `userGroup` varchar(256) NOT NULL,
   `jobDescription` varchar(512) default '',
   `combinedResreq` varchar(512) default '',
   `effectiveResreq` varchar(512) default '',
@@ -1585,7 +1585,7 @@ CREATE TABLE `grid_user_group_members` (
 DROP TABLE IF EXISTS `grid_user_group_stats`;
 CREATE TABLE `grid_user_group_stats` (
   `clusterid` int(10) unsigned NOT NULL,
-  `userGroup` varchar(40) NOT NULL,
+  `userGroup` varchar(256) NOT NULL,
   `numRUN` int(10) unsigned NOT NULL default '0',
   `numPEND` int(10) unsigned NOT NULL default '0',
   `numJOBS` int(10) unsigned NOT NULL default '0',

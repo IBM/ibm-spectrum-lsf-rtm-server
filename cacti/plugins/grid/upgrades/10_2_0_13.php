@@ -80,6 +80,10 @@ function upgrade_to_10_2_0_13() {
 	db_execute("UPDATE data_input_data did JOIN data_input_fields dif ON dif.id=did.data_input_field_id SET did.t_value='on' WHERE dif.hash IN ('6027a919c7c7731fbe095b6f53ab127b','cbbe5c1ddfb264a6e5d509ce1c78c95f','e6deda7be0f391399c5130e7c4a48b28','d39556ecad6166701bfb0e28c5a11108','3b7caa46eb809fc238de6ef18b6e10d5','74af2e42dc12956c4817c2ef5d9983f9','172b4b0eacee4948c6479f587b62e512','30fb5d5bcf3d66bb5abe88596f357c26','31112c85ae4ff821d3b288336288818c') AND did.t_value='';");
 
 	db_execute("ALTER TABLE grid_queues_shares MODIFY COLUMN run_time bigint unsigned NOT NULL;");
+	
+	db_execute("ALTER TABLE grid_jobs MODIFY COLUMN userGroup varchar(256) NOT NULL;");
+	db_execute("ALTER TABLE grid_jobs_finished MODIFY COLUMN userGroup varchar(256) NOT NULL;");
+	db_execute("ALTER TABLE grid_user_group_stats MODIFY COLUMN userGroup varchar(256) NOT NULL;");
 	//update version for other plugins that file touched, and no much DB change
 	db_execute("UPDATE plugin_config SET version='10.2.0.13' WHERE directory IN ('benchmark', 'gridcstat', 'gridpend', 'lichist', 'RTM')");
 }
