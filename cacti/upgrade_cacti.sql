@@ -556,7 +556,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `settings` WRITE;
 /*!40000 ALTER TABLE `settings` DISABLE KEYS */;
-REPLACE INTO `settings` VALUES 
+REPLACE INTO `settings` VALUES
 ('install_theme','spectrum'),
 ('selected_theme','spectrum'),
 ('i18n_default_language','en-US'),

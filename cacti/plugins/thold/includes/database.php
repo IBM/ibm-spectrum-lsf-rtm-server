@@ -257,7 +257,7 @@ function thold_upgrade_database($force = false) {
 
 		$e = strtolower(db_fetch_cell("SELECT `value` FROM settings WHERE `name` = 'thold_from_email'"));
 		if ($e == 'cacti@cactiusers.org') {
-			db_execute("UPDATE settings SET `value`='Cacti@cacti.net' WHERE `name`='thold_from_email'");
+			db_execute("UPDATE settings SET `value`='RTM-Admin@localhost' WHERE `name`='thold_from_email'");
 		}
 	}
 

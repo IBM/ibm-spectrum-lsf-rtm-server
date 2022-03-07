@@ -491,7 +491,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `settings_user` WRITE;
 /*!40000 ALTER TABLE `settings_user` DISABLE KEYS */;
-INSERT INTO `settings_user` VALUES 
+INSERT INTO `settings_user` VALUES
 (1,'selected_theme','spectrum'),
 (1,'user_language','en-US');
 /*!40000 ALTER TABLE `settings_user` ENABLE KEYS */;

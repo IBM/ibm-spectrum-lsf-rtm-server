@@ -3513,13 +3513,13 @@ function mailer($from, $to, $cc, $bcc, $replyto, $subject, $body, $body_text = '
 
 	if (empty($from['email'])) {
 		if (isset($_SERVER['HOSTNAME'])) {
-			$from['email'] = 'Cacti@' . $_SERVER['HOSTNAME'];
+			$from['email'] = 'RTM-Admin@' . $_SERVER['HOSTNAME'];
 		} else {
-			$from['email'] = 'Cacti@cacti.net';
+			$from['email'] = 'RTM-Admin@localhost';
 		}
 
 		if (empty($from['name'])) {
-			$from['name'] = 'Cacti';
+			$from['name'] = 'RTM Admin';
 		}
 	}
 

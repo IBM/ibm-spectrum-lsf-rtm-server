@@ -273,12 +273,12 @@ if (read_config_option('syslog_html') == 'on') {
 
 $from_email = read_config_option('settings_from_email');
 if ($from_email == '') {
-	$from_email = 'Cacti@cacti.net';
+	$from_email = 'RTM-Admin@localhost';
 }
 
 $from_name  = read_config_option('settings_from_name');
 if ($from_name == '') {
-	$from_name = 'Cacti Reporting';
+	$from_name = 'RTM Reporting';
 }
 
 $from = array($from_email, $from_name);
