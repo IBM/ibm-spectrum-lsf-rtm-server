@@ -54,7 +54,7 @@ function grid_view_get_hgroup_records(&$sql_where, $apply_limits = true, $rows, 
 
 	/* host group sql where */
 	if (get_request_var('hgroup') != '-1') {
-		$sql_where = ($sql_where != '' ? ' AND ':'WHERE ') . 'ghg.groupName=?';
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . 'ghg.groupName=?';
 		$sql_params[] = get_request_var('hgroup');
 	}
 
