@@ -106,7 +106,7 @@ if (cacti_sizeof($tables)) {
 	foreach($tables as $table) {
 		db_execute('TRUNCATE TABLE `rdups`');
 
-		if ($table['partition'] > 0) {
+		if ($table['partition'] >= 0) {
 			$ctable    = $table['table_name'] . '_v' . $table['partition'];
 			$partition = $table['partition'];
 		} else {
@@ -195,4 +195,3 @@ function display_help() {
 	print '--query          - Check RTM Jobs partitions for duplicate records' . PHP_EOL;
 	print '--exec           - Remove duplicate jobs records in RTM Job partitions' . PHP_EOL;
 }
-
