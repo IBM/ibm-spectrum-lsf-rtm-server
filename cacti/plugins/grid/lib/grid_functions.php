@@ -734,7 +734,11 @@ function grid_get_group_jobname($job) {
 			$split_pos = ($max_display_length-2) - strlen($job['indexid']);
 		}
 
-		$jobname = substr($job['jobname'],0,$split_pos) . '[' . $job['indexid'] . ']';
+		if (!empty($split_pos) && $split_pos >= 0) {
+			$jobname = substr($job['jobname'],0,$split_pos) . '[' . $job['indexid'] . ']';
+		} else {
+			$jobname = '*' . substr($job['jobname'],-6) . '[' . $job['indexid'] . ']';
+		}
 	} else {
 		$jobname = substr($job['jobname'],0,$max_display_length);
 	}
