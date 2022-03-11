@@ -755,7 +755,7 @@ if (cacti_sizeof($parms)) {
 		if (!preg_match("/^(91|1010|1017|10010012|9.1|10.1|10.1.0.7|10.1.0.12)$/", $cluster_lsfver)) {
 			echo "FATAL: The LSF Version is invalid '$cluster_lsfver'\n";
 			exit -1;
-		} else if(isset($rtmvermap[$parms[0]])){
+		} else if(isset($rtmvermap[$cluster_lsfver])){
 			$cluster_lsfver = $rtmvermap[$cluster_lsfver];
 		}
 
@@ -837,7 +837,7 @@ if (cacti_sizeof($parms)) {
 				if ($cluster_poller > 0) {
 					$save['poller_id']   = $cluster_poller;
 				} else {
-					echo "FATAL: Can not find the LSF Version for the Clsuter\n";
+					echo "FATAL: Can not find the LSF Version for the Cluster\n";
 					return 1;
 				}
 			}
@@ -1575,8 +1575,8 @@ function grid_ego_generate_conf($clusterid, $pollerid, $lsf_ego) {
 	$pollerinfo = db_fetch_row_prepared("SELECT poller_lbindir, lsf_version FROM grid_pollers WHERE poller_id=?", array($pollerid));
 	$lsf_envdir = db_fetch_cell_prepared("SELECT lsf_envdir FROM grid_clusters WHERE clusterid=?", array($clusterid));
 
-	/* ego is only valid in 7.x clusters */
-	if($pollerinfo["lsf_version"] < 700) {
+	/* ego is valid since 7.x clusters, and disabled by default since 10.1 cluster */
+	if($pollerinfo["lsf_version"] < 700 || $pollerinfo["lsf_version"] > 1010) {
 
 		return -1;
 	}
