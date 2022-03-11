@@ -579,13 +579,19 @@ $snmp_versions = array(0 =>
 $snmp_auth_protocols = array(
 	'[None]' => __('[None]'),
 	'MD5'    => __('MD5'),
-	'SHA'    => __('SHA')
+	'SHA'    => __('SHA'),
+	'SHA224' => __('SHA-224'),
+	'SHA256' => __('SHA-256'),
+	'SHA392' => __('SHA-392'),
+	'SHA512' => __('SHA-512'),
 );
 
 $snmp_priv_protocols = array(
 	'[None]' => __('[None]'),
 	'DES'    => __('DES'),
-	'AES128' => __('AES')
+	'AES128' => __('AES-128'),
+	'AES192' => __('AES-192'),
+	'AES256' => __('AES-256')
 );
 
 $banned_snmp_strings = array(
@@ -739,7 +745,7 @@ $poller_sync_intervals = array(
 );
 
 $device_threads = array(
-	1 => __('1 Thread (default)'),
+	1 => __('1 Thread'),
 	2 => __('%d Threads', 2),
 	3 => __('%d Threads', 3),
 	4 => __('%d Threads', 4),

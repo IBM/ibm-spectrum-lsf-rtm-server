@@ -50,6 +50,8 @@ function filter_value($value, $filter, $href = '') {
 	}
 
 	$value =  htmlspecialchars($value, ENT_QUOTES, $charset, false);
+	// Grave Accent character can lead to xss
+	$value = str_replace('`', '&#96;', $value);
 
 	if ($filter != '') {
 		$value = preg_replace('#(' . $filter . ')#i', "<span class='filteredValue'>\\1</span>", $value);
@@ -3220,7 +3222,7 @@ function cacti_escapeshellarg($string, $quote = true) {
 }
 
 /**
- * error_no_deprecated, show php all error message
+ * error_no_deprecated, show php all error message 
  * but suppress deprecated warnings
  *
  * @deprecated

@@ -1,18 +1,26 @@
 Cacti CHANGELOG
 
 1.2.20
+-security:   Resolve issues with SQL injections in user_admin and user_group_admin.  Thanks @enesdex (CVE-2021-23225)
+-security:   Resolve issues with XSS issues in color_template.  Thanks @M0rphling
 -issue#4435: Unable to Save Graph Settings from the Graphs pages
+-issue#4458: MIB Cache column check causes poller crash under PHP 8.x
+-issue#4479: As a repair tool, the rebuild poller cache scripts lacks critical options to reduce runtimes
 -issue#4482: Graph Automation slowed by in-efficient index selection when creating Graphs
+-issue#4512: The Cacti API can not remove a Graph that has no Data Sources
+-issue#4528: Default Setting "Device Threads" is ignored in device creation form
 -issue#4589: db_update_table should ALTER table engine/row_format/charset before ADD/ALTER column/index
 
 1.2.19
+-security#4356: Potential fix for grave/backtick XSS usage (#4356)
+-issue#3787: Add SHA256 and AES256 for snmp polling
 -issue#4421: db_update_table function can not alter table from signed to unsigned
 -issue#4435: Unable to Save Graph Settings from the Graphs pages
 -issue#4437: Graph Template Cache is nullified too often when Graph Automation is running
 -issue#4438: When Adding a Data Query to a Device, no Progress Spinner is shown
 
 1.2.18
--security#4276: Lack of escaping on parameter graph_nolegend can lead to XSS exposure in graph_realtime.php
+-security#4276: Real time graphs can expose XSS issue
 -security#4282: Session IDs are not always recreated when logging out under PHP 5
 -issue#4259: Data Template caching does not update and causes errors
 
@@ -38,21 +46,24 @@ Cacti CHANGELOG
 -issue#4100: When viewing User Admins, a division by zero error can sometimes be seen
 -issue#4130: On large systens, Graph creation can become unresponsive due to large number of data sources
 -issue#4251: Caching of Graph Titles can be incorrect
+-issue#4092: On large systems, Primary ID usage on heavily used tables will overflow due to default MySQL variable size
+-issue#4134: MIB Caching does not always work as expected
 -feature#3513: Add hooks for plugins to show customize graph source and customize template url
+-feature#4012: Allow CSRF security key to be refreshed at command line
 
 1.2.16
 -issue#3898: Realtime graph pop up counter bug
 -issue#3903: Undefined variable errors may occur when creating a new datasource
 -issue#3912: When an export is complete, sometimes the progress bar remains
 -issue#3917: When using API to rename a tree node, backtrace may be incorrectly shown
--issue#3919: Log Administration show empty during page navigation if search field value length is 4
+-issue#3919: When searching, valid pages can sometimes be shown as empty
 -issue#3924: Graph Templates filter is not updated after new graph created
 -issue#3929: Improve wording of concurrent process and thread settings
 -issue#3930: Location filter should remove blank entries
 -issue#3933: When changing permissions of the current user, they don't take effect immediately
 -issue#3942: When repairing database, audit_database.php does not add missing columns
--issue#3948: Required MariaDB/MySQL connection count is confusing
--issue#3949: Log Administration can not view Cacti error log
+-issue#3948: Spine 1.2.15 - Spine Encountered An Unhandled Exception Signal Number: '6' [11, Resource temporarily unavailable] (Spine thread)
+-issue#3949: Log page should not be empty if no log info exists
 -issue#3953: During upgrade, there are times when realms can be duplicated leading to SQL errors
 -issue#3960: Improve warning you get when attempting to view a log file you don't have access to
 -issue#3963: When creating plugin tables, collation is not set properly

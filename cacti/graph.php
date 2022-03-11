@@ -254,13 +254,13 @@ case 'view':
 				});
 		});
 		$('a[id$="_csv"]').each(function() {
-	   		$(this).off('click').on('click', function(event) {
-		   		event.preventDefault();
+			$(this).off('click').on('click', function(event) {
+				event.preventDefault();
 				event.stopPropagation();
 				document.location = $(this).attr('href');
 				Pace.stop();
 			});
- 	   });
+		});
 	}
 
 	$(function() {
@@ -348,7 +348,7 @@ case 'zoom':
 	$graph_height = $graph['height'];
 	$graph_width  = $graph['width'];
 
-	if (read_user_setting('custom_fonts') == 'on' & read_user_setting('title_size') != '') {
+	if (read_user_setting('custom_fonts') == 'on' && read_user_setting('title_size') != '') {
 		$title_font_size = read_user_setting('title_size');
 	} elseif (read_config_option('title_size') != '') {
 		$title_font_size = read_config_option('title_size');
