@@ -16,7 +16,7 @@
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
-*/
+ */
 
 class MibCache{
 	private $active_mib            = '';
@@ -337,7 +337,7 @@ class MibCache{
 		if ($oid_entry !== false) {
 			/* get list of columns for this mib table */
 			$columns = $this->cache__tables_columns[$this->active_mib][$this->active_table];
-			if ($columns & cacti_sizeof($columns)>0) {
+			if ($columns && cacti_sizeof($columns) > 0) {
 				foreach($columns as $column_params) {
 					$column_params['oid'] .= '.' . $this->active_table_entry;
 					db_execute_prepared('DELETE FROM `snmpagent_cache` WHERE `oid` = ?', array($column_params['oid']));
@@ -352,7 +352,7 @@ class MibCache{
 		$oid_entry = $this->exists();
 		if ($oid_entry !== false) {
 			$columns = $this->cache__tables_columns[$this->active_mib][$this->active_table];
-			if ($columns & cacti_sizeof($columns)>0) {
+			if (cacti_sizeof($columns)>0) {
 				$sql = array();
 
 				foreach($columns as $column_params) {

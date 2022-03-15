@@ -1,3 +1,7 @@
+--
+-- $Id$
+--
+
 -- MySQL dump 10.14  Distrib 5.5.68-MariaDB, for Linux (x86_64)
 --
 -- Host: localhost    Database: cacti
@@ -125,7 +129,7 @@ CREATE TABLE `aggregate_graph_templates_item` (
   `aggregate_template_id` int(10) unsigned NOT NULL,
   `graph_templates_item_id` int(10) unsigned NOT NULL,
   `sequence` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `color_template` int(11) NOT NULL,
+  `color_template` int(10) NOT NULL,
   `t_graph_type_id` char(2) DEFAULT '',
   `graph_type_id` tinyint(3) NOT NULL DEFAULT '0',
   `t_cdef_id` char(2) DEFAULT '',
@@ -178,7 +182,7 @@ CREATE TABLE `aggregate_graphs_graph_item` (
   `aggregate_graph_id` int(10) unsigned NOT NULL,
   `graph_templates_item_id` int(10) unsigned NOT NULL,
   `sequence` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `color_template` int(11) unsigned NOT NULL,
+  `color_template` int(10) unsigned NOT NULL,
   `t_graph_type_id` char(2) DEFAULT '',
   `graph_type_id` tinyint(3) NOT NULL DEFAULT '0',
   `t_cdef_id` char(2) DEFAULT '',
@@ -235,7 +239,7 @@ CREATE TABLE `automation_devices` (
   `snmp` tinyint(4) NOT NULL DEFAULT '0',
   `known` tinyint(4) NOT NULL DEFAULT '0',
   `up` tinyint(4) NOT NULL DEFAULT '0',
-  `time` int(11) NOT NULL DEFAULT '0',
+  `time` int(10) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `ip` (`ip`),
   KEY `hostname` (`hostname`)
@@ -459,7 +463,7 @@ CREATE TABLE `automation_snmp_items` (
   `snmp_port` mediumint(5) unsigned NOT NULL DEFAULT '161',
   `snmp_timeout` int(10) unsigned NOT NULL DEFAULT '500',
   `snmp_retries` tinyint(11) unsigned NOT NULL DEFAULT '3',
-  `max_oids` int(12) unsigned DEFAULT '10',
+  `max_oids` int(10) unsigned DEFAULT '10',
   `snmp_username` varchar(50) DEFAULT NULL,
   `snmp_password` varchar(50) DEFAULT NULL,
   `snmp_auth_protocol` char(6) DEFAULT '',
@@ -635,7 +639,7 @@ DROP TABLE IF EXISTS `color_template_items`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `color_template_items` (
-  `color_template_item_id` int(12) unsigned NOT NULL AUTO_INCREMENT,
+  `color_template_item_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `color_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `color_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `sequence` mediumint(8) unsigned NOT NULL DEFAULT '0',
@@ -712,11 +716,11 @@ DROP TABLE IF EXISTS `data_debug`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `data_debug` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `started` int(11) NOT NULL DEFAULT '0',
-  `done` int(11) NOT NULL DEFAULT '0',
-  `user` int(11) NOT NULL DEFAULT '0',
-  `datasource` int(11) NOT NULL DEFAULT '0',
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `started` int(10) NOT NULL DEFAULT '0',
+  `done` int(10) NOT NULL DEFAULT '0',
+  `user` int(10) NOT NULL DEFAULT '0',
+  `datasource` int(10) NOT NULL DEFAULT '0',
   `info` text NOT NULL,
   `issue` text,
   PRIMARY KEY (`id`),
@@ -764,7 +768,7 @@ DROP TABLE IF EXISTS `data_input_data`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `data_input_data` (
   `data_input_field_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `data_template_data_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `data_template_data_id` int(10) unsigned NOT NULL DEFAULT '0',
   `t_value` char(2) DEFAULT NULL,
   `value` text,
   PRIMARY KEY (`data_input_field_id`,`data_template_data_id`),
@@ -827,7 +831,7 @@ DROP TABLE IF EXISTS `data_local`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `data_local` (
-  `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `data_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `host_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `snmp_query_id` mediumint(8) NOT NULL DEFAULT '0',
@@ -945,7 +949,7 @@ DROP TABLE IF EXISTS `data_source_purge_action`;
 CREATE TABLE `data_source_purge_action` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(128) NOT NULL DEFAULT '',
-  `local_data_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `local_data_id` int(10) unsigned NOT NULL DEFAULT '0',
   `action` tinyint(2) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
@@ -962,7 +966,7 @@ DROP TABLE IF EXISTS `data_source_purge_temp`;
 CREATE TABLE `data_source_purge_temp` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name_cache` varchar(255) NOT NULL DEFAULT '',
-  `local_data_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `local_data_id` int(10) unsigned NOT NULL DEFAULT '0',
   `name` varchar(128) NOT NULL DEFAULT '',
   `size` int(10) unsigned NOT NULL DEFAULT '0',
   `last_mod` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -984,7 +988,7 @@ DROP TABLE IF EXISTS `data_source_stats_daily`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `data_source_stats_daily` (
-  `local_data_id` mediumint(8) unsigned NOT NULL,
+  `local_data_id` int(10) unsigned NOT NULL,
   `rrd_name` varchar(19) NOT NULL,
   `average` double DEFAULT NULL,
   `peak` double DEFAULT NULL,
@@ -1000,7 +1004,7 @@ DROP TABLE IF EXISTS `data_source_stats_hourly`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `data_source_stats_hourly` (
-  `local_data_id` mediumint(8) unsigned NOT NULL,
+  `local_data_id` int(10) unsigned NOT NULL,
   `rrd_name` varchar(19) NOT NULL,
   `average` double DEFAULT NULL,
   `peak` double DEFAULT NULL,
@@ -1016,7 +1020,7 @@ DROP TABLE IF EXISTS `data_source_stats_hourly_cache`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `data_source_stats_hourly_cache` (
-  `local_data_id` mediumint(8) unsigned NOT NULL,
+  `local_data_id` int(10) unsigned NOT NULL,
   `rrd_name` varchar(19) NOT NULL,
   `time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `value` double DEFAULT NULL,
@@ -1033,7 +1037,7 @@ DROP TABLE IF EXISTS `data_source_stats_hourly_last`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `data_source_stats_hourly_last` (
-  `local_data_id` mediumint(8) unsigned NOT NULL,
+  `local_data_id` int(10) unsigned NOT NULL,
   `rrd_name` varchar(19) NOT NULL,
   `value` double DEFAULT NULL,
   `calculated` double DEFAULT NULL,
@@ -1049,7 +1053,7 @@ DROP TABLE IF EXISTS `data_source_stats_monthly`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `data_source_stats_monthly` (
-  `local_data_id` mediumint(8) unsigned NOT NULL,
+  `local_data_id` int(10) unsigned NOT NULL,
   `rrd_name` varchar(19) NOT NULL,
   `average` double DEFAULT NULL,
   `peak` double DEFAULT NULL,
@@ -1065,7 +1069,7 @@ DROP TABLE IF EXISTS `data_source_stats_weekly`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `data_source_stats_weekly` (
-  `local_data_id` mediumint(8) unsigned NOT NULL,
+  `local_data_id` int(10) unsigned NOT NULL,
   `rrd_name` varchar(19) NOT NULL,
   `average` double DEFAULT NULL,
   `peak` double DEFAULT NULL,
@@ -1081,7 +1085,7 @@ DROP TABLE IF EXISTS `data_source_stats_yearly`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `data_source_stats_yearly` (
-  `local_data_id` mediumint(8) unsigned NOT NULL,
+  `local_data_id` int(10) unsigned NOT NULL,
   `rrd_name` varchar(19) NOT NULL,
   `average` double DEFAULT NULL,
   `peak` double DEFAULT NULL,
@@ -1123,9 +1127,9 @@ DROP TABLE IF EXISTS `data_template_data`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `data_template_data` (
-  `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `local_data_template_data_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `local_data_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `local_data_template_data_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `local_data_id` int(10) unsigned NOT NULL DEFAULT '0',
   `data_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `data_input_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `t_name` char(2) DEFAULT NULL,
@@ -1164,10 +1168,10 @@ DROP TABLE IF EXISTS `data_template_rrd`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `data_template_rrd` (
-  `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `hash` varchar(32) NOT NULL DEFAULT '',
-  `local_data_template_rrd_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `local_data_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `local_data_template_rrd_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `local_data_id` int(10) unsigned NOT NULL DEFAULT '0',
   `data_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `t_rrd_maximum` char(2) DEFAULT NULL,
   `rrd_maximum` varchar(20) NOT NULL DEFAULT '0',
@@ -1629,7 +1633,7 @@ CREATE TABLE `disku_pollers_threads` (
   `path_id` int(10) unsigned NOT NULL DEFAULT '0',
   `pid` int(10) unsigned NOT NULL DEFAULT '0',
   `status` varchar(20) DEFAULT '',
-  `depth` int(11) NOT NULL DEFAULT '0',
+  `depth` int(10) NOT NULL DEFAULT '0',
   `dir` varchar(255) NOT NULL DEFAULT '',
   `start_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
@@ -1731,8 +1735,8 @@ DROP TABLE IF EXISTS `external_links`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `external_links` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `sortorder` int(11) NOT NULL DEFAULT '0',
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `sortorder` int(10) NOT NULL DEFAULT '0',
   `enabled` char(2) DEFAULT 'on',
   `contentfile` varchar(255) NOT NULL DEFAULT '',
   `title` varchar(20) NOT NULL DEFAULT '',
@@ -1751,7 +1755,7 @@ DROP TABLE IF EXISTS `graph_local`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `graph_local` (
-  `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `graph_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `host_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `snmp_query_id` mediumint(8) NOT NULL DEFAULT '0',
@@ -1813,7 +1817,7 @@ DROP TABLE IF EXISTS `graph_template_input_defs`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `graph_template_input_defs` (
   `graph_template_input_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `graph_template_item_id` int(12) unsigned NOT NULL DEFAULT '0',
+  `graph_template_item_id` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`graph_template_input_id`,`graph_template_item_id`),
   KEY `graph_template_input_id` (`graph_template_input_id`)
 ) ENGINE=InnoDB COMMENT='Stores the relationship for what graph items are associated';
@@ -1892,9 +1896,9 @@ DROP TABLE IF EXISTS `graph_templates_graph`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `graph_templates_graph` (
-  `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `local_graph_template_graph_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `local_graph_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `local_graph_template_graph_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `local_graph_id` int(10) unsigned NOT NULL DEFAULT '0',
   `graph_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `t_image_format_id` char(2) DEFAULT '',
   `image_format_id` tinyint(1) NOT NULL DEFAULT '0',
@@ -1984,12 +1988,12 @@ DROP TABLE IF EXISTS `graph_templates_item`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `graph_templates_item` (
-  `id` int(12) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `hash` varchar(32) NOT NULL DEFAULT '',
-  `local_graph_template_item_id` int(12) unsigned NOT NULL DEFAULT '0',
-  `local_graph_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `local_graph_template_item_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `local_graph_id` int(10) unsigned NOT NULL DEFAULT '0',
   `graph_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `task_item_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `task_item_id` int(10) unsigned NOT NULL DEFAULT '0',
   `color_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `alpha` char(2) DEFAULT 'FF',
   `graph_type_id` tinyint(3) NOT NULL DEFAULT '0',
@@ -2070,7 +2074,7 @@ CREATE TABLE `graph_tree_items` (
   `parent` bigint(20) unsigned DEFAULT NULL,
   `position` int(10) unsigned DEFAULT NULL,
   `graph_tree_id` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `local_graph_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `local_graph_id` int(10) unsigned NOT NULL DEFAULT '0',
   `title` varchar(255) DEFAULT NULL,
   `host_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `site_id` int(10) unsigned DEFAULT '0',
@@ -2148,7 +2152,7 @@ DROP TABLE IF EXISTS `grid_apps_error_codes`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_apps_error_codes` (
   `app_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `exit_code` int(11) NOT NULL DEFAULT '0',
+  `exit_code` int(10) NOT NULL DEFAULT '0',
   `reason` varchar(50) NOT NULL DEFAULT '',
   `description` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`app_id`,`exit_code`)
@@ -2877,7 +2881,7 @@ DROP TABLE IF EXISTS `grid_elim_instance_graphs`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_elim_instance_graphs` (
   `grid_elim_template_instance_id` mediumint(8) unsigned NOT NULL,
-  `local_graph_id` mediumint(8) unsigned NOT NULL,
+  `local_graph_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`grid_elim_template_instance_id`,`local_graph_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Stores the Map of ELIM template instance to the cacti graph local.';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2938,7 +2942,7 @@ DROP TABLE IF EXISTS `grid_elim_templates_graph`;
 CREATE TABLE `grid_elim_templates_graph` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `local_graph_template_graph_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `local_graph_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `local_graph_id` int(10) unsigned NOT NULL DEFAULT '0',
   `graph_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `t_image_format_id` char(2) DEFAULT '',
   `image_format_id` tinyint(1) NOT NULL DEFAULT '0',
@@ -3028,7 +3032,7 @@ DROP TABLE IF EXISTS `grid_elim_templates_graph_map`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_elim_templates_graph_map` (
-  `local_graph_id` mediumint(8) unsigned NOT NULL,
+  `local_graph_id` int(10) unsigned NOT NULL,
   `graph_templates_graph_id` mediumint(8) unsigned NOT NULL,
   `grid_elim_template_id` mediumint(8) unsigned NOT NULL,
   `grid_elim_templates_graph_id` mediumint(8) unsigned NOT NULL,
@@ -3044,10 +3048,10 @@ DROP TABLE IF EXISTS `grid_elim_templates_item`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_elim_templates_item` (
-  `id` int(12) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `hash` varchar(32) NOT NULL DEFAULT '',
-  `local_graph_template_item_id` int(12) unsigned NOT NULL DEFAULT '0',
-  `local_graph_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `local_graph_template_item_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `local_graph_id` int(10) unsigned NOT NULL DEFAULT '0',
   `graph_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `task_item_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `color_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
@@ -3094,10 +3098,10 @@ DROP TABLE IF EXISTS `grid_elim_templates_item_map`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_elim_templates_item_map` (
-  `local_graph_id` mediumint(8) unsigned NOT NULL,
-  `graph_templates_item_id` int(12) unsigned NOT NULL,
+  `local_graph_id` int(10) unsigned NOT NULL,
+  `graph_templates_item_id` int(10) unsigned NOT NULL,
   `grid_elim_template_id` mediumint(8) unsigned NOT NULL,
-  `grid_elim_templates_item_id` int(12) unsigned NOT NULL,
+  `grid_elim_templates_item_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`local_graph_id`,`graph_templates_item_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Stores the Map of ELIM grid_elim_templates_item to cacti graph_templates_item.';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -3461,8 +3465,8 @@ CREATE TABLE `grid_host_threshold` (
   `resource_name` varchar(20) NOT NULL DEFAULT '',
   `loadSched` double NOT NULL DEFAULT '0',
   `loadStop` double NOT NULL DEFAULT '0',
-  `busySched` int(11) NOT NULL DEFAULT '0',
-  `busyStop` int(11) NOT NULL DEFAULT '0',
+  `busySched` int(10) NOT NULL DEFAULT '0',
+  `busyStop` int(10) NOT NULL DEFAULT '0',
   `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`hostname`,`resource_name`),
   KEY `id` (`id`),
@@ -3639,7 +3643,7 @@ CREATE TABLE `grid_hosts` (
   `cpuFactor` float NOT NULL DEFAULT '0',
   `windows` varchar(255) DEFAULT NULL,
   `userJobLimit` varchar(20) DEFAULT NULL,
-  `maxJobs` int(11) NOT NULL DEFAULT '0',
+  `maxJobs` int(10) NOT NULL DEFAULT '0',
   `numJobs` int(10) unsigned NOT NULL DEFAULT '0',
   `numRun` int(10) unsigned NOT NULL DEFAULT '0',
   `numSSUSP` int(10) unsigned NOT NULL DEFAULT '0',
@@ -3672,7 +3676,7 @@ CREATE TABLE `grid_hosts_alarm` (
   `name` varchar(100) NOT NULL DEFAULT '',
   `hostname` varchar(64) NOT NULL DEFAULT '',
   `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `type` int(11) NOT NULL DEFAULT '0',
+  `type` int(10) NOT NULL DEFAULT '0',
   `message` varchar(1024) NOT NULL,
   `acknowledgement` char(3) NOT NULL DEFAULT 'off',
   `alert_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -3946,7 +3950,7 @@ CREATE TABLE `grid_jobs` (
   `jobname` varchar(128) DEFAULT NULL,
   `jobPriority` int(10) unsigned NOT NULL DEFAULT '0',
   `jobPid` int(10) unsigned NOT NULL DEFAULT '0',
-  `userPriority` int(11) DEFAULT '0',
+  `userPriority` int(10) DEFAULT '0',
   `projectName` varchar(60) NOT NULL DEFAULT '',
   `parentGroup` varchar(128) NOT NULL DEFAULT '',
   `sla` varchar(60) NOT NULL DEFAULT '',
@@ -4135,7 +4139,7 @@ CREATE TABLE `grid_jobs_finished` (
   `jobname` varchar(128) DEFAULT NULL,
   `jobPriority` int(10) unsigned NOT NULL DEFAULT '0',
   `jobPid` int(10) unsigned NOT NULL DEFAULT '0',
-  `userPriority` int(11) DEFAULT '0',
+  `userPriority` int(10) DEFAULT '0',
   `projectName` varchar(60) NOT NULL DEFAULT '',
   `parentGroup` varchar(128) NOT NULL DEFAULT '',
   `sla` varchar(60) NOT NULL DEFAULT '',
@@ -4308,7 +4312,7 @@ CREATE TABLE `grid_jobs_host_rusage` (
   `stime` float NOT NULL DEFAULT '0',
   `mem` float NOT NULL DEFAULT '0',
   `swap` float NOT NULL DEFAULT '0',
-  `processes` int(11) NOT NULL DEFAULT '0' COMMENT 'job host level allocated slot',
+  `processes` int(10) NOT NULL DEFAULT '0' COMMENT 'job host level allocated slot',
   PRIMARY KEY (`clusterid`,`jobid`,`indexid`,`submit_time`,`host`,`update_time`),
   KEY `update_time` (`update_time`),
   KEY `submit_time` (`submit_time`)
@@ -4348,7 +4352,7 @@ CREATE TABLE `grid_jobs_jobhosts` (
   `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
   `exec_host` varchar(64) NOT NULL DEFAULT '',
   `submit_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `processes` int(11) NOT NULL DEFAULT '0',
+  `processes` int(10) NOT NULL DEFAULT '0',
   `ngpus` mediumint(8) NOT NULL DEFAULT '0',
   `isborrowed` tinyint(3) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`clusterid`,`jobid`,`indexid`,`submit_time`,`exec_host`),
@@ -4369,7 +4373,7 @@ CREATE TABLE `grid_jobs_jobhosts_finished` (
   `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
   `exec_host` varchar(64) NOT NULL DEFAULT '',
   `submit_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `processes` int(11) NOT NULL DEFAULT '0',
+  `processes` int(10) NOT NULL DEFAULT '0',
   `ngpus` mediumint(8) NOT NULL DEFAULT '0',
   `isborrowed` tinyint(3) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`clusterid`,`jobid`,`indexid`,`submit_time`,`exec_host`),
@@ -4793,7 +4797,7 @@ DROP TABLE IF EXISTS `grid_load`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_load` (
   `host` varchar(64) NOT NULL DEFAULT '',
-  `clusterid` int(11) NOT NULL DEFAULT '0',
+  `clusterid` int(10) NOT NULL DEFAULT '0',
   `status` varchar(20) NOT NULL DEFAULT '',
   `prev_status` varchar(20) NOT NULL DEFAULT '',
   `time_in_state` int(10) unsigned NOT NULL DEFAULT '0',
@@ -4949,7 +4953,7 @@ CREATE TABLE `grid_pollers` (
   `poller_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `poller_name` varchar(45) NOT NULL DEFAULT '',
   `poller_lbindir` varchar(255) NOT NULL DEFAULT '',
-  `poller_licserver_threads` int(11) NOT NULL DEFAULT '5',
+  `poller_licserver_threads` int(10) NOT NULL DEFAULT '5',
   `poller_location` varchar(255) NOT NULL DEFAULT '',
   `poller_support_info` varchar(255) NOT NULL DEFAULT '',
   `lsf_version` int(10) unsigned NOT NULL DEFAULT '62',
@@ -5023,7 +5027,7 @@ DROP TABLE IF EXISTS `grid_queues`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_queues` (
   `queuename` varchar(60) NOT NULL DEFAULT '',
-  `clusterid` int(11) NOT NULL DEFAULT '0',
+  `clusterid` int(10) NOT NULL DEFAULT '0',
   `description` varchar(255) DEFAULT NULL,
   `priority` int(10) unsigned NOT NULL DEFAULT '0',
   `nice` int(10) unsigned NOT NULL DEFAULT '0',
@@ -5065,14 +5069,14 @@ CREATE TABLE `grid_queues` (
   `avg_swap` double NOT NULL DEFAULT '0',
   `max_swap` double NOT NULL DEFAULT '0',
   `total_cpu` double NOT NULL DEFAULT '0',
-  `dedicatedSlots` int(11) NOT NULL DEFAULT '0',
-  `sharedSlots` int(11) NOT NULL DEFAULT '0',
-  `openDedicatedSlots` int(11) NOT NULL DEFAULT '0',
-  `openSharedSlots` int(11) NOT NULL DEFAULT '0',
+  `dedicatedSlots` int(10) NOT NULL DEFAULT '0',
+  `sharedSlots` int(10) NOT NULL DEFAULT '0',
+  `openDedicatedSlots` int(10) NOT NULL DEFAULT '0',
+  `openSharedSlots` int(10) NOT NULL DEFAULT '0',
   `windows` varchar(255) NOT NULL,
   `windowsD` varchar(255) NOT NULL,
   `hostSpec` varchar(64) NOT NULL,
-  `qAttrib` int(11) NOT NULL DEFAULT '0',
+  `qAttrib` int(10) NOT NULL DEFAULT '0',
   `qStatus` int(10) unsigned NOT NULL,
   `userShares` varchar(255) NOT NULL,
   `defaultHostSpec` varchar(64) NOT NULL,
@@ -5095,15 +5099,15 @@ CREATE TABLE `grid_queues` (
   `maxRschedTime` int(10) unsigned NOT NULL,
   `maxJobRequeue` int(10) unsigned NOT NULL,
   `chkpntDir` varchar(255) NOT NULL,
-  `chkpntPeriod` int(11) NOT NULL DEFAULT '0',
-  `imptJobBklg` int(11) NOT NULL DEFAULT '0',
+  `chkpntPeriod` int(10) NOT NULL DEFAULT '0',
+  `imptJobBklg` int(10) NOT NULL DEFAULT '0',
   `chunkJobSize` int(10) unsigned NOT NULL,
-  `minProcLimit` int(11) NOT NULL DEFAULT '0',
-  `defProcLimit` int(11) NOT NULL DEFAULT '0',
+  `minProcLimit` int(10) NOT NULL DEFAULT '0',
+  `defProcLimit` int(10) NOT NULL DEFAULT '0',
   `fairshareQueues` varchar(255) NOT NULL,
   `defExtSched` varchar(255) NOT NULL,
   `mandExtSched` varchar(255) NOT NULL,
-  `slotShare` int(11) NOT NULL DEFAULT '0',
+  `slotShare` int(10) NOT NULL DEFAULT '0',
   `slotPool` varchar(255) NOT NULL,
   `underRCond` int(10) unsigned NOT NULL,
   `overRCond` int(10) unsigned NOT NULL,
@@ -5111,7 +5115,7 @@ CREATE TABLE `grid_queues` (
   `underRJobs` int(10) unsigned NOT NULL,
   `overRJobs` int(10) unsigned NOT NULL,
   `idleJobs` int(10) unsigned NOT NULL,
-  `warningTimePeriod` int(11) NOT NULL DEFAULT '0',
+  `warningTimePeriod` int(10) NOT NULL DEFAULT '0',
   `warningAction` varchar(255) NOT NULL,
   `qCtrlMsg` varchar(255) NOT NULL,
   `rlimit_max_cpu` int(10) unsigned NOT NULL DEFAULT '0',
@@ -5601,13 +5605,13 @@ DROP TABLE IF EXISTS `gridalarms_alarm`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `gridalarms_alarm` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(10) NOT NULL AUTO_INCREMENT,
   `template_id` int(10) unsigned NOT NULL DEFAULT '0',
   `template_enabled` char(3) DEFAULT NULL,
   `name` varchar(100) NOT NULL,
   `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
   `type` int(1) NOT NULL DEFAULT '0',
-  `expression_id` int(11) NOT NULL DEFAULT '0',
+  `expression_id` int(10) NOT NULL DEFAULT '0',
   `aggregation` int(1) NOT NULL DEFAULT '0',
   `metric` varchar(100) NOT NULL,
   `base_time_display` varchar(20) NOT NULL DEFAULT '12:00am',
@@ -5619,13 +5623,13 @@ CREATE TABLE `gridalarms_alarm` (
   `alarm_hi` varchar(100) DEFAULT NULL,
   `alarm_low` varchar(100) DEFAULT NULL,
   `alarm_fail_trigger` int(10) unsigned DEFAULT NULL,
-  `alarm_fail_count` int(11) NOT NULL DEFAULT '0',
+  `alarm_fail_count` int(10) NOT NULL DEFAULT '0',
   `alarm_alert` int(1) NOT NULL DEFAULT '0',
   `alarm_enabled` enum('on','off') NOT NULL DEFAULT 'on',
   `time_hi` varchar(100) NOT NULL,
   `time_low` varchar(100) NOT NULL,
-  `time_fail_trigger` int(12) NOT NULL DEFAULT '1',
-  `time_fail_length` int(12) NOT NULL DEFAULT '1',
+  `time_fail_trigger` int(10) NOT NULL DEFAULT '1',
+  `time_fail_length` int(10) NOT NULL DEFAULT '1',
   `warning_pct` varchar(5) NOT NULL,
   `trigger_cmd_high` varchar(255) NOT NULL,
   `trigger_cmd_low` varchar(255) NOT NULL,
@@ -5665,8 +5669,8 @@ DROP TABLE IF EXISTS `gridalarms_alarm_contacts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `gridalarms_alarm_contacts` (
-  `alarm_id` int(12) NOT NULL,
-  `contact_id` int(12) NOT NULL,
+  `alarm_id` int(10) NOT NULL,
+  `contact_id` int(10) NOT NULL,
   KEY `alarm_id` (`alarm_id`),
   KEY `contact_id` (`contact_id`)
 ) ENGINE=InnoDB COMMENT='Stores Alert contacts similar to Thold';
@@ -5873,12 +5877,12 @@ DROP TABLE IF EXISTS `gridalarms_template`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `gridalarms_template` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(10) NOT NULL AUTO_INCREMENT,
   `hash` varchar(32) DEFAULT NULL,
   `name` varchar(100) NOT NULL,
   `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
   `type` int(1) NOT NULL DEFAULT '0',
-  `expression_id` int(11) NOT NULL DEFAULT '0',
+  `expression_id` int(10) NOT NULL DEFAULT '0',
   `aggregation` int(1) NOT NULL DEFAULT '0',
   `metric` varchar(100) NOT NULL,
   `base_time_display` varchar(20) NOT NULL DEFAULT '12:00am',
@@ -5890,8 +5894,8 @@ CREATE TABLE `gridalarms_template` (
   `alarm_fail_trigger` int(10) unsigned DEFAULT NULL,
   `time_hi` varchar(100) NOT NULL,
   `time_low` varchar(100) NOT NULL,
-  `time_fail_trigger` int(12) NOT NULL DEFAULT '1',
-  `time_fail_length` int(12) NOT NULL DEFAULT '1',
+  `time_fail_trigger` int(10) NOT NULL DEFAULT '1',
+  `time_fail_length` int(10) NOT NULL DEFAULT '1',
   `warning_pct` varchar(5) NOT NULL,
   `trigger_cmd_high` varchar(255) NOT NULL,
   `trigger_cmd_low` varchar(255) NOT NULL,
@@ -5938,8 +5942,8 @@ DROP TABLE IF EXISTS `gridalarms_template_contacts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `gridalarms_template_contacts` (
-  `alarm_id` int(12) NOT NULL,
-  `contact_id` int(12) NOT NULL,
+  `alarm_id` int(10) NOT NULL,
+  `contact_id` int(10) NOT NULL,
   KEY `alarm_id` (`alarm_id`),
   KEY `contact_id` (`contact_id`)
 ) ENGINE=InnoDB COMMENT='Stores Alert Template Contacts similar to Thold';
@@ -6133,10 +6137,10 @@ CREATE TABLE `host` (
   `snmp_sysLocation` varchar(300) NOT NULL DEFAULT '',
   `availability_method` smallint(5) unsigned NOT NULL DEFAULT '1',
   `ping_method` smallint(5) unsigned DEFAULT '0',
-  `ping_port` int(12) unsigned DEFAULT '0',
-  `ping_timeout` int(12) unsigned DEFAULT '500',
-  `ping_retries` int(12) unsigned DEFAULT '2',
-  `max_oids` int(12) unsigned DEFAULT '10',
+  `ping_port` int(10) unsigned DEFAULT '0',
+  `ping_timeout` int(10) unsigned DEFAULT '500',
+  `ping_retries` int(10) unsigned DEFAULT '2',
+  `max_oids` int(10) unsigned DEFAULT '10',
   `device_threads` tinyint(2) unsigned NOT NULL DEFAULT '1',
   `deleted` char(2) DEFAULT '',
   `disabled` char(2) DEFAULT NULL,
@@ -6154,8 +6158,8 @@ CREATE TABLE `host` (
   `cur_time` decimal(10,5) DEFAULT '0.00000',
   `avg_time` decimal(10,5) DEFAULT '0.00000',
   `polling_time` double DEFAULT '0',
-  `total_polls` int(12) unsigned DEFAULT '0',
-  `failed_polls` int(12) unsigned DEFAULT '0',
+  `total_polls` int(10) unsigned DEFAULT '0',
+  `failed_polls` int(10) unsigned DEFAULT '0',
   `availability` decimal(8,5) NOT NULL DEFAULT '100.00000',
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -6496,12 +6500,12 @@ DROP TABLE IF EXISTS `lic_flexlm_log`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lic_flexlm_log` (
-  `id` int(12) unsigned NOT NULL AUTO_INCREMENT,
-  `portatserver` int(12) NOT NULL,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `portatserver` int(10) NOT NULL,
   `vendor_daemon` varchar(100) NOT NULL,
   `feature` varchar(50) NOT NULL,
   `action` varchar(50) NOT NULL,
-  `no_of_license_out_in` int(12) NOT NULL DEFAULT '1',
+  `no_of_license_out_in` int(10) NOT NULL DEFAULT '1',
   `user` varchar(200) NOT NULL,
   `host` varchar(200) NOT NULL,
   `reasons` text NOT NULL,
@@ -6531,7 +6535,7 @@ CREATE TABLE `lic_interval_stats` (
   `duration` int(10) unsigned NOT NULL DEFAULT '0',
   `interval_end` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `date_recorded` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `event_id` int(12) unsigned NOT NULL DEFAULT '0',
+  `event_id` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`seq`),
   KEY `feature` (`feature`),
   KEY `interval_end` (`interval_end`),
@@ -6683,7 +6687,7 @@ CREATE TABLE `lic_services` (
   `poller_interval` int(10) unsigned NOT NULL DEFAULT '300',
   `poller_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `poller_id` int(10) unsigned NOT NULL,
-  `poller_trigger` int(11) NOT NULL DEFAULT '0',
+  `poller_trigger` int(10) NOT NULL DEFAULT '0',
   `server_portatserver` varchar(512) NOT NULL DEFAULT '',
   `server_timezone` varchar(64) NOT NULL,
   `server_name` varchar(256) NOT NULL DEFAULT '',
@@ -7150,7 +7154,7 @@ DROP TABLE IF EXISTS `plugin_notification_lists`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `plugin_notification_lists` (
-  `id` int(12) NOT NULL AUTO_INCREMENT,
+  `id` int(10) NOT NULL AUTO_INCREMENT,
   `name` varchar(128) NOT NULL,
   `description` varchar(512) NOT NULL,
   `emails` varchar(512) NOT NULL,
@@ -7193,8 +7197,8 @@ DROP TABLE IF EXISTS `plugin_thold_contacts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `plugin_thold_contacts` (
-  `id` int(12) NOT NULL AUTO_INCREMENT,
-  `user_id` int(12) NOT NULL,
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) NOT NULL,
   `type` varchar(32) NOT NULL DEFAULT '',
   `data` text NOT NULL,
   PRIMARY KEY (`id`),
@@ -7212,7 +7216,7 @@ DROP TABLE IF EXISTS `plugin_thold_daemon_data`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `plugin_thold_daemon_data` (
-  `id` int(11) NOT NULL,
+  `id` int(10) NOT NULL,
   `poller_id` int(10) unsigned NOT NULL DEFAULT '1',
   `pid` varchar(25) NOT NULL DEFAULT '',
   `rrd_reindexed` varchar(600) NOT NULL DEFAULT '',
@@ -7246,9 +7250,9 @@ DROP TABLE IF EXISTS `plugin_thold_host_failed`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `plugin_thold_host_failed` (
-  `id` int(12) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `poller_id` int(10) unsigned NOT NULL DEFAULT '1',
-  `host_id` int(12) unsigned NOT NULL,
+  `host_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB COMMENT='Table of Devices in a Down State';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -7261,9 +7265,9 @@ DROP TABLE IF EXISTS `plugin_thold_host_template`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `plugin_thold_host_template` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `host_template_id` int(11) unsigned NOT NULL DEFAULT '0',
-  `thold_template_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `host_template_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `thold_template_id` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB COMMENT='Table of Device Template Threshold Templates';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -7276,7 +7280,7 @@ DROP TABLE IF EXISTS `plugin_thold_log`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `plugin_thold_log` (
-  `id` int(12) NOT NULL AUTO_INCREMENT,
+  `id` int(10) NOT NULL AUTO_INCREMENT,
   `time` int(24) NOT NULL,
   `host_id` int(10) NOT NULL,
   `local_graph_id` int(10) NOT NULL,
@@ -7304,8 +7308,8 @@ DROP TABLE IF EXISTS `plugin_thold_template_contact`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `plugin_thold_template_contact` (
-  `template_id` int(12) NOT NULL,
-  `contact_id` int(12) NOT NULL,
+  `template_id` int(10) NOT NULL,
+  `contact_id` int(10) NOT NULL,
   KEY `template_id` (`template_id`),
   KEY `contact_id` (`contact_id`)
 ) ENGINE=InnoDB COMMENT='Table of Tholds Template Contacts';
@@ -7319,8 +7323,8 @@ DROP TABLE IF EXISTS `plugin_thold_threshold_contact`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `plugin_thold_threshold_contact` (
-  `thold_id` int(12) NOT NULL,
-  `contact_id` int(12) NOT NULL,
+  `thold_id` int(10) NOT NULL,
+  `contact_id` int(10) NOT NULL,
   KEY `thold_id` (`thold_id`),
   KEY `contact_id` (`contact_id`)
 ) ENGINE=InnoDB COMMENT='Table of Tholds Threshold Contacts';
@@ -7433,7 +7437,7 @@ DROP TABLE IF EXISTS `poller_item`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `poller_item` (
-  `local_data_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `local_data_id` int(10) unsigned NOT NULL DEFAULT '0',
   `poller_id` int(10) unsigned NOT NULL DEFAULT '1',
   `host_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `action` tinyint(2) unsigned NOT NULL DEFAULT '1',
@@ -7488,7 +7492,7 @@ DROP TABLE IF EXISTS `poller_output`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `poller_output` (
-  `local_data_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `local_data_id` int(10) unsigned NOT NULL DEFAULT '0',
   `rrd_name` varchar(19) NOT NULL DEFAULT '',
   `time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `output` varchar(512) NOT NULL DEFAULT '',
@@ -7504,7 +7508,7 @@ DROP TABLE IF EXISTS `poller_output_boost`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `poller_output_boost` (
-  `local_data_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `local_data_id` int(10) unsigned NOT NULL DEFAULT '0',
   `rrd_name` varchar(19) NOT NULL DEFAULT '',
   `time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `output` varchar(512) NOT NULL,
@@ -7534,7 +7538,7 @@ DROP TABLE IF EXISTS `poller_output_realtime`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `poller_output_realtime` (
-  `local_data_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `local_data_id` int(10) unsigned NOT NULL DEFAULT '0',
   `rrd_name` varchar(19) NOT NULL DEFAULT '',
   `time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `output` text NOT NULL,
@@ -7594,7 +7598,7 @@ DROP TABLE IF EXISTS `poller_time`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `poller_time` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `pid` int(11) unsigned NOT NULL DEFAULT '0',
+  `pid` int(10) unsigned NOT NULL DEFAULT '0',
   `poller_id` int(10) unsigned NOT NULL DEFAULT '1',
   `start_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `end_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -7616,7 +7620,7 @@ CREATE TABLE `processes` (
   `tasktype` varchar(20) NOT NULL DEFAULT '',
   `taskname` varchar(40) NOT NULL DEFAULT '',
   `taskid` int(10) unsigned NOT NULL DEFAULT '0',
-  `timeout` int(11) DEFAULT '300',
+  `timeout` int(10) DEFAULT '300',
   `started` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `last_update` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`pid`,`tasktype`,`taskname`,`taskid`),
@@ -7644,7 +7648,7 @@ CREATE TABLE `reports` (
   `graph_linked` char(2) NOT NULL DEFAULT '',
   `intrvl` smallint(2) unsigned NOT NULL DEFAULT '0',
   `count` smallint(2) unsigned NOT NULL DEFAULT '0',
-  `offset` int(12) unsigned NOT NULL DEFAULT '0',
+  `offset` int(10) unsigned NOT NULL DEFAULT '0',
   `mailtime` bigint(20) unsigned NOT NULL DEFAULT '0',
   `subject` varchar(64) NOT NULL DEFAULT '',
   `from_name` varchar(40) NOT NULL,
@@ -7741,7 +7745,7 @@ DROP TABLE IF EXISTS `settings_tree`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `settings_tree` (
   `user_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `graph_tree_item_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `graph_tree_item_id` int(10) unsigned NOT NULL DEFAULT '0',
   `status` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`user_id`,`graph_tree_item_id`)
 ) ENGINE=InnoDB;
@@ -7898,7 +7902,7 @@ DROP TABLE IF EXISTS `snmp_query_graph_rrd`;
 CREATE TABLE `snmp_query_graph_rrd` (
   `snmp_query_graph_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `data_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `data_template_rrd_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `data_template_rrd_id` int(10) unsigned NOT NULL DEFAULT '0',
   `snmp_field_name` varchar(50) NOT NULL DEFAULT '0',
   PRIMARY KEY (`snmp_query_graph_id`,`data_template_id`,`data_template_rrd_id`),
   KEY `data_template_rrd_id` (`data_template_rrd_id`),
@@ -8143,7 +8147,7 @@ DROP TABLE IF EXISTS `snmpagent_notifications_log`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `snmpagent_notifications_log` (
-  `id` int(12) NOT NULL AUTO_INCREMENT,
+  `id` int(10) NOT NULL AUTO_INCREMENT,
   `time` int(24) NOT NULL,
   `severity` tinyint(1) NOT NULL,
   `manager_id` int(8) NOT NULL,
@@ -8544,32 +8548,32 @@ DROP TABLE IF EXISTS `thold_data`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `thold_data` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(10) NOT NULL AUTO_INCREMENT,
   `name` varchar(150) DEFAULT '',
   `name_cache` varchar(100) DEFAULT '',
-  `local_data_id` int(11) NOT NULL DEFAULT '0',
-  `data_template_rrd_id` int(11) NOT NULL DEFAULT '0',
-  `local_graph_id` int(11) NOT NULL DEFAULT '0',
-  `graph_template_id` int(11) NOT NULL DEFAULT '0',
-  `data_template_id` int(11) NOT NULL DEFAULT '0',
+  `local_data_id` int(10) NOT NULL DEFAULT '0',
+  `data_template_rrd_id` int(10) NOT NULL DEFAULT '0',
+  `local_graph_id` int(10) NOT NULL DEFAULT '0',
+  `graph_template_id` int(10) NOT NULL DEFAULT '0',
+  `data_template_id` int(10) NOT NULL DEFAULT '0',
   `data_template_hash` varchar(32) NOT NULL DEFAULT '',
   `data_source_name` varchar(100) NOT NULL DEFAULT '',
   `thold_hi` varchar(100) DEFAULT '',
   `thold_low` varchar(100) DEFAULT '',
   `thold_fail_trigger` int(10) unsigned DEFAULT NULL,
-  `thold_fail_count` int(11) NOT NULL DEFAULT '0',
+  `thold_fail_count` int(10) NOT NULL DEFAULT '0',
   `time_hi` varchar(100) DEFAULT '',
   `time_low` varchar(100) DEFAULT '',
-  `time_fail_trigger` int(12) NOT NULL DEFAULT '1',
-  `time_fail_length` int(12) NOT NULL DEFAULT '1',
+  `time_fail_trigger` int(10) NOT NULL DEFAULT '1',
+  `time_fail_length` int(10) NOT NULL DEFAULT '1',
   `thold_warning_hi` varchar(100) DEFAULT '',
   `thold_warning_low` varchar(100) DEFAULT '',
   `thold_warning_fail_trigger` int(10) unsigned DEFAULT NULL,
-  `thold_warning_fail_count` int(11) NOT NULL DEFAULT '0',
+  `thold_warning_fail_count` int(10) NOT NULL DEFAULT '0',
   `time_warning_hi` varchar(100) DEFAULT '',
   `time_warning_low` varchar(100) DEFAULT '',
-  `time_warning_fail_trigger` int(12) NOT NULL DEFAULT '1',
-  `time_warning_fail_length` int(12) NOT NULL DEFAULT '1',
+  `time_warning_fail_trigger` int(10) NOT NULL DEFAULT '1',
+  `time_warning_fail_length` int(10) NOT NULL DEFAULT '1',
   `thold_alert` int(1) NOT NULL DEFAULT '0',
   `prev_thold_alert` int(1) NOT NULL DEFAULT '0',
   `thold_enabled` enum('on','off') NOT NULL DEFAULT 'on',
@@ -8578,7 +8582,7 @@ CREATE TABLE `thold_data` (
   `bl_pct_down` varchar(100) DEFAULT '',
   `bl_pct_up` varchar(100) DEFAULT '',
   `bl_fail_trigger` int(10) unsigned DEFAULT NULL,
-  `bl_fail_count` int(11) unsigned DEFAULT NULL,
+  `bl_fail_count` int(10) unsigned DEFAULT NULL,
   `bl_alert` int(2) NOT NULL DEFAULT '0',
   `bl_thold_valid` int(10) unsigned NOT NULL DEFAULT '0',
   `lastread` varchar(100) DEFAULT '',
@@ -8598,19 +8602,19 @@ CREATE TABLE `thold_data` (
   `syslog_priority` int(2) NOT NULL DEFAULT '3',
   `syslog_facility` int(2) DEFAULT NULL,
   `syslog_enabled` char(3) NOT NULL DEFAULT '',
-  `data_type` int(12) NOT NULL DEFAULT '0',
+  `data_type` int(10) NOT NULL DEFAULT '0',
   `show_units` char(3) NOT NULL DEFAULT '',
-  `cdef` int(11) NOT NULL DEFAULT '0',
+  `cdef` int(10) NOT NULL DEFAULT '0',
   `percent_ds` varchar(64) NOT NULL DEFAULT '',
   `expression` varchar(512) NOT NULL DEFAULT '',
   `upper_ds` varchar(64) NOT NULL DEFAULT '',
-  `thold_template_id` int(11) NOT NULL DEFAULT '0',
+  `thold_template_id` int(10) NOT NULL DEFAULT '0',
   `template_enabled` char(3) NOT NULL DEFAULT '',
   `tcheck` int(1) NOT NULL DEFAULT '0',
   `exempt` char(3) NOT NULL DEFAULT '',
   `acknowledgment` char(3) NOT NULL DEFAULT '',
-  `thold_hrule_alert` int(11) unsigned DEFAULT NULL,
-  `thold_hrule_warning` int(11) unsigned DEFAULT NULL,
+  `thold_hrule_alert` int(10) unsigned DEFAULT NULL,
+  `thold_hrule_warning` int(10) unsigned DEFAULT NULL,
   `restored_alert` char(3) NOT NULL DEFAULT '',
   `reset_ack` char(3) NOT NULL DEFAULT '',
   `persist_ack` char(3) NOT NULL DEFAULT '',
@@ -8655,7 +8659,7 @@ DROP TABLE IF EXISTS `thold_template`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `thold_template` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(10) NOT NULL AUTO_INCREMENT,
   `hash` varchar(32) NOT NULL DEFAULT '',
   `name` varchar(100) NOT NULL DEFAULT '',
   `suggested_name` varchar(255) NOT NULL DEFAULT '',
@@ -8670,23 +8674,23 @@ CREATE TABLE `thold_template` (
   `thold_fail_trigger` int(10) unsigned DEFAULT NULL,
   `time_hi` varchar(100) DEFAULT '',
   `time_low` varchar(100) DEFAULT '',
-  `time_fail_trigger` int(12) NOT NULL DEFAULT '1',
-  `time_fail_length` int(12) NOT NULL DEFAULT '1',
+  `time_fail_trigger` int(10) NOT NULL DEFAULT '1',
+  `time_fail_length` int(10) NOT NULL DEFAULT '1',
   `thold_warning_hi` varchar(100) DEFAULT '',
   `thold_warning_low` varchar(100) DEFAULT '',
   `thold_warning_fail_trigger` int(10) unsigned DEFAULT NULL,
-  `thold_warning_fail_count` int(11) NOT NULL DEFAULT '0',
+  `thold_warning_fail_count` int(10) NOT NULL DEFAULT '0',
   `time_warning_hi` varchar(100) DEFAULT '',
   `time_warning_low` varchar(100) DEFAULT '',
-  `time_warning_fail_trigger` int(12) NOT NULL DEFAULT '1',
-  `time_warning_fail_length` int(12) NOT NULL DEFAULT '1',
+  `time_warning_fail_trigger` int(10) NOT NULL DEFAULT '1',
+  `time_warning_fail_length` int(10) NOT NULL DEFAULT '1',
   `thold_enabled` enum('on','off') NOT NULL DEFAULT 'on',
   `thold_type` int(3) NOT NULL DEFAULT '0',
   `bl_ref_time_range` int(10) unsigned DEFAULT NULL,
   `bl_pct_down` varchar(100) DEFAULT '',
   `bl_pct_up` varchar(100) DEFAULT '',
   `bl_fail_trigger` int(10) unsigned DEFAULT NULL,
-  `bl_fail_count` int(11) unsigned DEFAULT NULL,
+  `bl_fail_count` int(10) unsigned DEFAULT NULL,
   `bl_alert` int(2) NOT NULL DEFAULT '0',
   `repeat_alert` int(10) DEFAULT NULL,
   `notify_extra` varchar(512) DEFAULT '',
@@ -8697,15 +8701,15 @@ CREATE TABLE `thold_template` (
   `snmp_event_category` varchar(255) DEFAULT '',
   `snmp_event_severity` tinyint(1) NOT NULL DEFAULT '3',
   `snmp_event_warning_severity` tinyint(1) NOT NULL DEFAULT '2',
-  `data_type` int(12) NOT NULL DEFAULT '0',
+  `data_type` int(10) NOT NULL DEFAULT '0',
   `show_units` char(3) NOT NULL DEFAULT '',
-  `cdef` int(11) NOT NULL DEFAULT '0',
+  `cdef` int(10) NOT NULL DEFAULT '0',
   `percent_ds` varchar(64) NOT NULL DEFAULT '',
   `expression` varchar(512) NOT NULL DEFAULT '',
   `upper_ds` varchar(64) NOT NULL DEFAULT '',
   `exempt` char(3) NOT NULL DEFAULT '',
-  `thold_hrule_alert` int(11) unsigned DEFAULT NULL,
-  `thold_hrule_warning` int(11) unsigned DEFAULT NULL,
+  `thold_hrule_alert` int(10) unsigned DEFAULT NULL,
+  `thold_hrule_warning` int(10) unsigned DEFAULT NULL,
   `restored_alert` char(3) NOT NULL DEFAULT '',
   `reset_ack` char(3) NOT NULL DEFAULT '',
   `persist_ack` char(3) NOT NULL DEFAULT '',
@@ -8772,13 +8776,13 @@ CREATE TABLE `user_auth` (
   `policy_hosts` tinyint(1) unsigned NOT NULL DEFAULT '1',
   `policy_graph_templates` tinyint(1) unsigned NOT NULL DEFAULT '1',
   `enabled` char(2) NOT NULL DEFAULT 'on',
-  `lastchange` int(12) NOT NULL DEFAULT '-1',
-  `lastlogin` int(12) NOT NULL DEFAULT '-1',
+  `lastchange` int(10) NOT NULL DEFAULT '-1',
+  `lastlogin` int(10) NOT NULL DEFAULT '-1',
   `password_history` varchar(4096) NOT NULL DEFAULT '-1',
   `locked` varchar(3) NOT NULL DEFAULT '',
   `failed_attempts` int(5) NOT NULL DEFAULT '0',
-  `lastfail` int(12) NOT NULL DEFAULT '0',
-  `reset_perms` int(12) unsigned NOT NULL DEFAULT '0',
+  `lastfail` int(10) NOT NULL DEFAULT '0',
+  `reset_perms` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `username` (`username`),
   KEY `realm` (`realm`),

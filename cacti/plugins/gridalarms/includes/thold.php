@@ -722,16 +722,11 @@ function gridalarms_thold_replacement_text($data) {
 }
 
 function gridalarms_thold_graph_actions_url($data) {
-	global $config;
+	global $config, $thold_oob_templates;
 
 	if (isset($data['thold_data'])) {
 		$thold_data = $data['thold_data'];
-
-		if ($thold_data['data_template_hash'] != '67b772b2d1defae33f8692baa62a6f19' && $thold_data['data_template_hash'] != 'e49fd2725f7dfbe45b735909b52e1d92' &&
-			$thold_data['data_template_hash'] != 'e58d2e27dad0c478728ca9e169116ad6' && $thold_data['data_template_hash'] != 'cc1d6b0b5f819e3bb0b1b376ecb66eec' &&
-			$thold_data['data_template_hash'] != 'a7f8d97d39528145a583b6a6bce5e74c' && $thold_data['data_template_hash'] != 'c0b234c49ce038e15746a94cc773f4f2' &&
-			$thold_data['data_template_hash'] != '00e0a29c573070c49315c8380e076a54' && $thold_data['data_template_hash'] != '34da44a9980034334421e03610626d0a' &&
-			$thold_data['data_template_hash'] != '7cfb2f60b2f9616a34cf62e396c97566') {
+		if (!array_key_exists($thold_data['data_template_hash'], $thold_oob_templates)){
 			//Only show breach item icon with out-of-box templates
 			return $data;
 		}
