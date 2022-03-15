@@ -169,7 +169,11 @@ function remove_duplicates($ptable, $partition) {
 
 	// Delete duplicate from the older reference tables
 	foreach($tables as $table) {
-		$jtable = $table . '_' . $partition;
+		if ($partition >= 0) {
+			$jtable = $table . '_v' . $partition;
+		} else {
+			$jtable = $table;
+		}
 		db_execute('DELETE p
 			FROM ' . $jtable . ' AS p
 			INNER JOIN `rdups` AS c
