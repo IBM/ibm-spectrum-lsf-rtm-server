@@ -1,23 +1,21 @@
 #!/usr/bin/php -q
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | (C) Copyright International Business Machines Corp, 2006-2020.          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
- | This program is free software; you can redistribute it and/or           |
- | modify it under the terms of the GNU General Public License             |
- | as published by the Free Software Foundation; either version 2          |
- | of the License, or (at your option) any later version.                  |
+ | Licensed under the Apache License, Version 2.0 (the "License");         |
+ | you may not use this file except in compliance with the License.        |
+ | You may obtain a copy of the License at                                 |
  |                                                                         |
- | This program is distributed in the hope that it will be useful,         |
- | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
- | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
- | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the International     |
- | Business Machines Corp.                                                 |
- +-------------------------------------------------------------------------+
- | - IBM Corporation - http://www.ibm.com/                                 |
+ | http://www.apache.org/licenses/LICENSE-2.0                              |
+ |                                                                         |
+ | Unless required by applicable law or agreed to in writing, software     |
+ | distributed under the License is distributed on an "AS IS" BASIS,       |
+ | WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.|
+ | See the License for the specific language governing permissions and     |
+ | limitations under the License.                                          |
  +-------------------------------------------------------------------------+
 */
 
@@ -67,8 +65,6 @@ foreach($parms as $parameter) {
 	}
 }
 
-print date("Y-m-d h:i:sa ") . "\n";
-
 if (read_config_option('grid_partitioning_enable') !== 'on') {
 	print 'FATAL: Record Partitioning is not enabled in RTM.  Exiting!' . PHP_EOL;
 	exit(1);
@@ -86,9 +82,9 @@ if ($exec) {
 	print 'NOTE: Checking and removing duplicate job records.' . PHP_EOL;
 }
 
-$tables = db_fetch_assoc('SELECT table_name, partition 
-	FROM grid_table_partitions 
-	WHERE table_name="grid_jobs_finished" 
+$tables = db_fetch_assoc('SELECT table_name, partition
+	FROM grid_table_partitions
+	WHERE table_name="grid_jobs_finished"
 	ORDER BY max_time ASC');
 
 $tables[] = array('table_name' => 'grid_jobs_finished', 'partition' => -1);
@@ -123,7 +119,7 @@ if (cacti_sizeof($tables)) {
 			continue;
 		}
 
-		db_execute('INSERT INTO `rdups` (clusterid, jobid, indexid, submit_time) 
+		db_execute('INSERT INTO `rdups` (clusterid, jobid, indexid, submit_time)
 			SELECT p.clusterid, p.jobid, p.indexid, p.submit_time
 			FROM ' . $ctable . ' AS c
 			INNER JOIN ' . $ptable . ' AS p
@@ -166,8 +162,8 @@ function remove_duplicates($ptable, $partition) {
 
 	// Array of reference tables that might include jobs records
 	$tables = array(
-		'grid_jobs_jobhosts_finished', 
-		'grid_jobs_pendreasons_finished', 
+		'grid_jobs_jobhosts_finished',
+		'grid_jobs_pendreasons_finished',
 		'grid_jobs_reqhosts_finished'
 	);
 
