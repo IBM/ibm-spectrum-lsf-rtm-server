@@ -65,6 +65,8 @@ foreach($parms as $parameter) {
 	}
 }
 
+print date("Y-m-d h:i:sa ") . "\n";
+
 if (read_config_option('grid_partitioning_enable') !== 'on') {
 	print 'FATAL: Record Partitioning is not enabled in RTM.  Exiting!' . PHP_EOL;
 	exit(1);
