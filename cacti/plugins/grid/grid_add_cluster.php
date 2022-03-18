@@ -752,7 +752,7 @@ if (cacti_sizeof($parms)) {
 			$method = 2;
 		}
 
-		if (!preg_match("/^(91|1010|1017|10010012|9.1|10.1|10.1.0.7|10.1.0.12)$/", $cluster_lsfver)) {
+		if (!preg_match("/^(91|1010|1017|10010013|9.1|10.1|10.1.0.7|10.1.0.13)$/", $cluster_lsfver)) {
 			echo "FATAL: The LSF Version is invalid '$cluster_lsfver'\n";
 			exit -1;
 		} else if(isset($rtmvermap[$cluster_lsfver])){
@@ -1534,7 +1534,7 @@ function grid_lsf_generate_conf($clusterid, $pollerid, $lsfmaster, $lsf_lim_port
 		case '91':
 		case '1010':
 		case '1017':
-		case '10010012':
+		case '10010013':
 			curl_setopt($ch, CURLOPT_POSTFIELDS, "ACTION=save&LSF_GET_CONF=lim&LSF_CONFDIR=".$lsf_envdir."&LSF_LIM_PORT=".$lsf_lim_port."&LSF_SERVER_HOSTS=".$lsfmaster."&LSF_VERSION=".$rtm["lsf".$lsf_version]["VERSION"]."&LSF_EGO_ENVDIR=".$lsf_envdir."&LSF_ENABLE_EGO=".$lsf_ego."&LSF_LOGDIR=".$lsf_envdir."&LSF_STRICT_CHECKING=".$lsf_strict_checking."&LSF_LOG_MASK=LOG_WARNING".($lsf_krb_auth != 'on' ? '' : '&LSB_KRB_LIB_PATH=/usr/lib64%20/usr/lib/x86_64-linux-gnu')."&LSF_GETCONF_MAX=1");
 			break;
 	}
@@ -1639,7 +1639,7 @@ function display_help() {
 	echo "    --cluster-env  The LSF_ENVDIR for this cluster\n";
 	echo "    --masters      HOSTLIST, A list of hosts, separated by a space that are the LSF Master Cantidates\n";
 	//echo "    --master-ips   IPLIST, A list of IP Addresses, separated by a space that correspond to the LSF Master Cantidates\n";
-	echo "    --lsf-version  10.1.0.7, 9.1|10.1|10.1.0.7|10.1.0.12 The version of the LSF Cluster\n";
+	echo "    --lsf-version  10.1.0.7, 9.1|10.1|10.1.0.7|10.1.0.13 The version of the LSF Cluster\n";
 	echo "    --lim-port     7869, The LSF Clusters LIM Port\n";
 	//echo "    --lsf-ego      N, Y|N|0|1|Yes|No, The LSF EGO Status (for LSF 701 and above)\n";
 	echo "    --strict-chk   N, Y|N|0|1|Yes|No|Enhanced, The Status of LSF strict checking of communications (for LSF 701 and above)\n";

@@ -19271,7 +19271,7 @@ function simple_strip_host_domain ($host) {
  *  |          91 |
  *  |        1010 |
  *  |        1017 |
- *  |    10010012 |
+ *  |    10010013 |
  *  +-------------+
  *  If the first bit of $cluster_lsf_version < 6, the version is higher than 91, So extend it to 4 bits,
  *  others we extend it to 3 bits.  for example,

@@ -1298,6 +1298,10 @@ function show_cluster_health($export=false, &$header, &$data, &$others) {
 	html_header($display_text);
 
 	if (cacti_sizeof($clusters)) {
+		if(!is_array($data)){
+			$data = array();
+		}
+
 		foreach($clusters as $c) {
 			$cluster = db_fetch_row_prepared('SELECT *
 				FROM grid_clusters
@@ -1452,6 +1456,9 @@ function show_cluster_health($export=false, &$header, &$data, &$others) {
 			<td class='center'><?php print $tput_warn_title;?></td>
 			<?php
 			if($export == true) {
+				if(!isset($data[$c['clusterid']]) || !is_array($data[$c['clusterid']])) {
+					$data[$c['clusterid']] = array();
+				}
 				$data[$c['clusterid']][]=$c['clustername'];
 				$data[$c['clusterid']][]=preg_replace('/<(.*)>/sU', '', $cluster_status[0]);
 				$data[$c['clusterid']][]=preg_replace('/<(.*)>/sU', '', trim($collect_status));

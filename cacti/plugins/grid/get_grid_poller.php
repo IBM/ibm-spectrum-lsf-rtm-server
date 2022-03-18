@@ -29,7 +29,7 @@ array_shift($parms);
 
 // lsf_version
 if (empty($parms)) {
-    echo 'LSF version not provided: 9.1 10.1 10.1.0.7 10.1.0.12' . "\n";
+    echo 'LSF version not provided: 9.1 10.1 10.1.0.7 10.1.0.13' . "\n";
     exit(1);
 }
 
@@ -46,8 +46,8 @@ foreach($parms as $parameter) {
     }
 }
 
-if (!preg_match("/^(91|1010|1017|10010012|9.1|10.1|10.1.0.7|10.1.0.12)$/", $parms[0])) {
-    echo 'LSF version invalid: 9.1 10.1 10.1.0.7 10.1.0.12' . "\n";
+if (!preg_match("/^(91|1010|1017|10010013|9.1|10.1|10.1.0.7|10.1.0.13)$/", $parms[0])) {
+    echo 'LSF version invalid: 9.1 10.1 10.1.0.7 10.1.0.13' . "\n";
     exit(1);
 }
 

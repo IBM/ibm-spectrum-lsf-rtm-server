@@ -31,9 +31,9 @@ function upgrade_to_10_2_0_13() {
 	include_once(dirname(__FILE__) . '/../../../lib/api_device.php');
 	include_once(dirname(__FILE__) . '/../../../lib/api_data_source.php');
 
-	//Add new poller "Poller for LSF 10.1.0.12" for LSF 10.1.0.12 and later
+	//Add new poller "Poller for LSF 10.1.0.13" for LSF 10.1.0.13 and later
 	$php_cmd = read_config_option('path_php_binary');
-	$extra_args = ' -q ' . cacti_escapeshellarg($config['base_path'] . '/plugins/grid/get_grid_poller.php') . ' 10.1.0.12';
+	$extra_args = ' -q ' . cacti_escapeshellarg($config['base_path'] . '/plugins/grid/get_grid_poller.php') . ' 10.1.0.13';
 	shell_exec($php_cmd . $extra_args);
 
 	$data = array();

@@ -294,7 +294,7 @@ function form_save() {
 		case '91':
 		case '1010':
 		case '1017':
-		case '10010012':
+		case '10010013':
 			if (isset_request_var('save_component_cluster') && isempty_request_var('add_dq_y')) {
 				if (!isset_request_var('perfmon_run')) {
 					set_request_var('perfmon_run', '');
@@ -743,7 +743,7 @@ function api_grid_cluster_save($clusterid, $poller_id, $clustername, $lsf_envdir
 						case '91':
 						case '1010':
 						case '1017':
-						case '10010012':
+						case '10010013':
 							$lsf_envdir = $rtm['lsf'.$lsf_version]['LSF_ENVDIR'].$clusterid;
 							$LSF_EGO_ENVDIR = $lsf_envdir;
 							curl_setopt($ch, CURLOPT_URL, 'https://127.0.0.1:'.$advocate_port.'/hostSettings/lsfHosts');
@@ -1128,11 +1128,11 @@ function grid_cluster_edit() {
 
 		//For new freshed RTM and upgraded RTM, when adding a new cluster, just allow to show LSF 10 or above pollers
 		$fields_grid_cluster_edit1 = $fields_grid_cluster_edit;
-		$fields_grid_cluster_edit1['cluster_config']['poller_id']['sql'] = "SELECT poller_id AS id, poller_name AS name FROM grid_pollers WHERE lsf_version IN (91, 1010, 1017, 10010012) ORDER BY lsf_version ASC";
+		$fields_grid_cluster_edit1['cluster_config']['poller_id']['sql'] = "SELECT poller_id AS id, poller_name AS name FROM grid_pollers WHERE lsf_version IN (91, 1010, 1017, 10010013) ORDER BY lsf_version ASC";
 
 	}
 
-	$fields_grid_cluster_edit1['cluster_config']['poller_id']['default'] = db_fetch_cell('SELECT poller_id FROM grid_pollers WHERE lsf_version=10010012 ORDER BY poller_id LIMIT 1');
+	$fields_grid_cluster_edit1['cluster_config']['poller_id']['default'] = db_fetch_cell('SELECT poller_id FROM grid_pollers WHERE lsf_version=10010013 ORDER BY poller_id LIMIT 1');
 	if(isset($cluster['lsf_admins'])){
 		$fields_grid_cluster_edit1['cluster_control']['username']['default'] = get_defaul_lsfadmin($cluster['lsf_admins']);
 	}

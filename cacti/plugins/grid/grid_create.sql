@@ -1692,7 +1692,7 @@ INSERT INTO `grid_pollers` (`poller_id`, `poller_name`, `poller_lbindir`, `lsf_v
 (8,'Poller for LSF 9.1','/opt/IBM/rtm/lsf91/bin/',91),
 (9,'Poller for LSF 10.1','/opt/IBM/rtm/lsf101/bin/',1010),
 (10,'Poller for LSF 10.1.0.7','/opt/IBM/rtm/lsf1017/bin/',1017),
-(11,'Poller for LSF 10.1.0.12','/opt/IBM/rtm/lsf10.1.0.12/bin/',10010012);
+(11,'Poller for LSF 10.1.0.13','/opt/IBM/rtm/lsf10.1.0.13/bin/',10010013);
 UNLOCK TABLES;
 
 --
