@@ -244,7 +244,7 @@ function ss_grid_queue_stats_getvalue($clusterid, $index, $column) {
 				array($clusterid, $index));
 			break;
 		case 'queuemax':
-			$value = db_fetch_cell_prepared('SELECT IF(maxjobs='-',0,maxjobs) AS value
+			$value = db_fetch_cell_prepared('SELECT IF(maxjobs="-",0,maxjobs) AS value
 				FROM grid_queues
 				WHERE clusterid = ?
 				AND queuename = ?',
@@ -331,7 +331,7 @@ function ss_grid_queue_stats_getvalue($clusterid, $index, $column) {
 
 			break;
 		case 'hfree':
-			$value = db_fetch_cell("SELECT SUM(maxJobs)-SUM(numRun)
+			$value = db_fetch_cell_prepared("SELECT SUM(maxJobs)-SUM(numRun)
 				FROM grid_hosts AS gh
 				INNER JOIN grid_queues_hosts AS gqh
 				ON gh.clusterid = gqh.clusterid
@@ -343,7 +343,7 @@ function ss_grid_queue_stats_getvalue($clusterid, $index, $column) {
 
 			break;
 		case 'hdown':
-			$value = db_fetch_cell("SELECT SUM(maxJobs)
+			$value = db_fetch_cell_prepared("SELECT SUM(maxJobs)
 				FROM grid_hosts AS gh
 				INNER JOIN grid_queues_hosts AS gqh
 				ON gh.clusterid = gqh.clusterid
@@ -355,7 +355,7 @@ function ss_grid_queue_stats_getvalue($clusterid, $index, $column) {
 
 			break;
 		case 'hused':
-			$value = db_fetch_cell('SELECT SUM(numRun)
+			$value = db_fetch_cell_prepared('SELECT SUM(numRun)
 				FROM grid_hosts AS gh
 				INNER JOIN grid_queues_hosts AS gqh
 				ON gh.clusterid = gqh.clusterid
@@ -366,21 +366,21 @@ function ss_grid_queue_stats_getvalue($clusterid, $index, $column) {
 
 			break;
 		case 'hmax':
-			$queue_max  = db_fetch_cell("SELECT maxjobs
+			$queue_max  = db_fetch_cell_prepared("SELECT maxjobs
 				FROM grid_queues
 				WHERE clusterid = ?
 				AND queuename = ?
 				AND maxjobs != '-'",
 				array($clusterid, $index));
 
-			$commit_max = db_fetch_cell("SELECT META_COL2
+			$commit_max = db_fetch_cell_prepared("SELECT META_COL2
 				FROM grid_metadata
 				WHERE OBJECT_TYPE = 'queue'
 				AND CLUSTER_ID = ?
 				AND OBJECT_ID = ?",
 				array($clusterid, $index));
 
-			$hmax = db_fetch_cell('SELECT SUM(maxJobs)
+			$hmax = db_fetch_cell_prepared('SELECT SUM(maxJobs)
 				FROM grid_hosts AS gh
 				INNER JOIN grid_queues_hosts AS gqh
 				ON gh.clusterid = gqh.clusterid
