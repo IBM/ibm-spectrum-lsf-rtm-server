@@ -270,7 +270,7 @@
 				<data_name>snmp_port</data_name>
 			</hash_070102fc64b99742ec417cc424dbf8c7692d36>
 			<hash_07010220832ce12f099c8e54140793a091af90>
-				<name>SNMP Authenticaion Protocol (v3)</name>
+				<name>SNMP Authentication Protocol (v3)</name>
 				<update_rra></update_rra>
 				<regexp_match></regexp_match>
 				<allow_nulls></allow_nulls>

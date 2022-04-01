@@ -95,7 +95,7 @@ function upgrade_to_10_2_0_12() {
 
 function partition_tables_to_10_2_0_12(){
 	return array(
-		'grid_jobs' => array(
+		'grid_jobs_finished' => array(
 			'drop' => array(
 				'indexes' => array(
 					'clusterid_end_logged',

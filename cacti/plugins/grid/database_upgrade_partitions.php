@@ -171,7 +171,7 @@ function upgrade_partition_table($force = false, $force_ver = NULL) {
 			set_config_option('grid_partitions_upgrade_status', 'started');
 		}
 		if (detect_and_correct_running_processes('0', 'GRID_PARTITION_DBUPGRADE', 99999999) == true ) {
-			if (rtm_plugin_upgrade_partition($grid_part_ver, $grid_current_version) != DB_STATUS_ERROR ) {
+			if (rtm_plugin_upgrade_partition($grid_part_ver, $grid_current_version, 'grid', $grid_part_ver_min) != DB_STATUS_ERROR ) {
 				set_config_option('grid_partitions_upgrade_status', 'done');
 				set_config_option('grid_part_version', $grid_current_version);
 				cacti_log('GRID PARTITION DBUPGRADE - NOTICE: Altering partitioned tables completed.', true);

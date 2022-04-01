@@ -245,7 +245,7 @@
 				<data_name>oid</data_name>
 			</hash_0700214276a5ec6e3fe33995129041b1909762>
 			<hash_07002120832ce12f099c8e54140793a091af90>
-				<name>SNMP Authenticaion Protocol (v3)</name>
+				<name>SNMP Authentication Protocol (v3)</name>
 				<update_rra></update_rra>
 				<regexp_match></regexp_match>
 				<allow_nulls></allow_nulls>

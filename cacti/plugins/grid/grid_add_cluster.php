@@ -164,7 +164,7 @@ if (cacti_sizeof($parms)) {
 			break;
 		case '--baseconnto':
 			if (is_numeric($value) && $value > 0) {
-				$basecounto = $value;
+				$baseconnto = $value;
 			} else {
 				echo "ERROR: The base connection timeout must be > 0\n";
 				exit -1;
@@ -173,7 +173,7 @@ if (cacti_sizeof($parms)) {
 			break;
 		case '--batchconnto':
 			if (is_numeric($value) && $value > 0) {
-				$batchcounto = $value;
+				$batchconnto = $value;
 			} else {
 				echo "ERROR: The batch connection timeout must be > 0\n";
 				exit -1;
@@ -182,7 +182,7 @@ if (cacti_sizeof($parms)) {
 			break;
 		case '--batchjobto':
 			if (is_numeric($value) && $value > 0) {
-				$basecounto = $value;
+				$batchjobto = $value;
 			} else {
 				echo "ERROR: The jobs mbd timeout must be an integer > 0\n";
 				exit -1;
@@ -191,7 +191,7 @@ if (cacti_sizeof($parms)) {
 			break;
 		case '--batchjobrt':
 			if (is_numeric($value) && $value > 0) {
-				$basecounto = $value;
+				$batchjobrt = $value;
 			} else {
 				echo "ERROR: The jobs mbd retries must be > 0\n";
 				exit -1;

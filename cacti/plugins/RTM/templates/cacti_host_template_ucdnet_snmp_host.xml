@@ -3333,7 +3333,7 @@
 				<data_name>oid</data_name>
 			</hash_0700214276a5ec6e3fe33995129041b1909762>
 			<hash_07002120832ce12f099c8e54140793a091af90>
-				<name>SNMP Authenticaion Protocol (v3)</name>
+				<name>SNMP Authentication Protocol (v3)</name>
 				<update_rra></update_rra>
 				<regexp_match></regexp_match>
 				<allow_nulls></allow_nulls>
@@ -3457,7 +3457,7 @@
 				<data_name>snmp_port</data_name>
 			</hash_070021c1f36ee60c3dc98945556d57f26e475b>
 			<hash_0700212cf7129ad3ff819a7a7ac189bee48ce8>
-				<name>SNMP Authenticaion Protocol (v3)</name>
+				<name>SNMP Authentication Protocol (v3)</name>
 				<update_rra></update_rra>
 				<regexp_match></regexp_match>
 				<allow_nulls></allow_nulls>
