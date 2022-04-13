@@ -641,7 +641,8 @@ function ajax_benchmark_jobs() {
 				$cluster_name = '<i>' . __('Deleted') . '</i>';
 			}
 
-			$job_exitinfo = -1;
+			//Assume job done with exitcode '0'
+			$job_exitinfo = 0;
 			if ($benchmark_job['status'] == 5  ||
 				$benchmark_job['status'] == 14 ||
 				$benchmark_job['status'] == 15 ||

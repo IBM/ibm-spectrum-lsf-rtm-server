@@ -916,7 +916,7 @@ function lic_filter() {
 }
 
 function get_txt_service_level($errorno){
-	$error_text = db_fetch_cell_prepared("SELECT error_text FROM lic_errorcode_maps WHERE type=9 AND errorno=?", array($errorno));
+	$error_text = db_fetch_cell_prepared("SELECT error_text FROM lic_errorcode_maps WHERE (type=9 OR type=0 AND errorno < 0) AND errorno=?", array($errorno));
 	return $error_text;
 }
 

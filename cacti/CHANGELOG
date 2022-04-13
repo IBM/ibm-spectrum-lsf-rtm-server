@@ -1,21 +1,21 @@
 Cacti CHANGELOG
 
 1.2.20
--security:   Resolve issues with SQL injections in user_admin and user_group_admin.  Thanks @enesdex (CVE-2021-23225)
--security:   Resolve issues with XSS issues in color_template.  Thanks @M0rphling
+-security#4678: User and Group maintenance are vulnerable to SQL attacks (CVE-2021-23225)
+-security#4679: Color Templates are vulnerable to XSS attack
 -issue#4435: Unable to Save Graph Settings from the Graphs pages
--issue#4458: MIB Cache column check causes poller crash under PHP 8.x
--issue#4479: As a repair tool, the rebuild poller cache scripts lacks critical options to reduce runtimes
--issue#4482: Graph Automation slowed by in-efficient index selection when creating Graphs
--issue#4512: The Cacti API can not remove a Graph that has no Data Sources
--issue#4528: Default Setting "Device Threads" is ignored in device creation form
--issue#4589: db_update_table should ALTER table engine/row_format/charset before ADD/ALTER column/index
+-issue#4458: Checking for MIB Cache can cause crashes
+-issue#4479: Rebuild Poller Cache CLI script should have filter options
+-issue#4482: Graph Automation slowed by in-efficient index selection
+-issue#4512: When using API calls, graphs without data sources may be unremovable
+-issue#4528: When creating a device, default setting for Device Threads may be ignored
+-issue#4589: When updating tables, ensure engine, row_format and charset
 
 1.2.19
--security#4356: Potential fix for grave/backtick XSS usage (#4356)
--issue#3787: Add SHA256 and AES256 for snmp polling
+-security#4356: Further fixes for grave character security protection
+-issue#3787: Add SHA256 and AES256 security levels for SNMP polling
 -issue#4421: db_update_table function can not alter table from signed to unsigned
--issue#4435: Unable to Save Graph Settings from the Graphs pages
+-issue#4435: Unable to Save Graph Settings
 -issue#4437: Graph Template Cache is nullified too often when Graph Automation is running
 -issue#4438: When Adding a Data Query to a Device, no Progress Spinner is shown
 
