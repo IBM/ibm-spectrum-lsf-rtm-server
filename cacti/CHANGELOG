@@ -1,21 +1,25 @@
 Cacti CHANGELOG
 
+1.2.21
+-issue#4722: Detect table user_auth_group and column user_auth.lastfail for Pre-1.0 upgradeing
+
 1.2.20
 -security#4678: User and Group maintenance are vulnerable to SQL attacks (CVE-2021-23225)
 -security#4679: Color Templates are vulnerable to XSS attack
--issue#4435: Unable to Save Graph Settings from the Graphs pages
+-issue#4435: Unable to Save Graph Settings
 -issue#4458: Checking for MIB Cache can cause crashes
 -issue#4479: Rebuild Poller Cache CLI script should have filter options
 -issue#4482: Graph Automation slowed by in-efficient index selection
 -issue#4512: When using API calls, graphs without data sources may be unremovable
 -issue#4528: When creating a device, default setting for Device Threads may be ignored
 -issue#4589: When updating tables, ensure engine, row_format and charset
+-issue#4658: When upgrading from pre-1.0, tree information may not properly update
 
 1.2.19
 -security#4356: Further fixes for grave character security protection
 -issue#3787: Add SHA256 and AES256 security levels for SNMP polling
 -issue#4421: db_update_table function can not alter table from signed to unsigned
--issue#4435: Unable to Save Graph Settings
+-issue#4435: Unable to Save Graph Settings from the Graphs pages
 -issue#4437: Graph Template Cache is nullified too often when Graph Automation is running
 -issue#4438: When Adding a Data Query to a Device, no Progress Spinner is shown
 
@@ -43,11 +47,12 @@ Cacti CHANGELOG
 -issue#4021: Increase maximum number of device threads
 -issue#4043: Boost can become unresponsive when large number of archive tables exist
 -issue#4079: When checking current timestamps, make audit replace mysql function usage with preferred CURRENT_TIMESTAMP variable
--issue#4100: When viewing User Admins, a division by zero error can sometimes be seen
--issue#4130: On large systens, Graph creation can become unresponsive due to large number of data sources
--issue#4251: Caching of Graph Titles can be incorrect
 -issue#4092: On large systems, Primary ID usage on heavily used tables will overflow due to default MySQL variable size
+-issue#4100: When viewing User Admins, a division by zero error can sometimes be seen
+-issue#4116: Upgrading large trees from 0.8.x to 1.x is slow
+-issue#4130: On large systens, Graph creation can become unresponsive due to large number of data sources
 -issue#4134: MIB Caching does not always work as expected
+-issue#4251: Caching of Graph Titles can be incorrect
 -feature#3513: Add hooks for plugins to show customize graph source and customize template url
 -feature#4012: Allow CSRF security key to be refreshed at command line
 
@@ -656,7 +661,7 @@ Cacti CHANGELOG
 
 1.2.3
 -issue#1063: Tree View does not display the last item correctly under 'Modern' theme
--issue#2282: Install Wizard does not Detect RRDtool Version on Windows
+-issue#2282: Installation Wizard does not Detect RRDtool Version on Windows
 -issue#2430: "New Device" menu item showing as selected incorrect when "Devices" clicked
 -issue#2435: Tree View becomes narrower and narrower when expanding/collapsing nodes with long names
 -issue#2449: Index incorrectly changed to 1 if the index is alphanumeric when OID/REGEXP: or OIDVALUE/REGEXP:
@@ -875,8 +880,7 @@ Cacti CHANGELOG
 -issue#948: Do not create a new datasource when adding a new Graph for the same device/field
 -issue#454: Cacti Re-Index does not resolve index changes properly during re-index
 -issue#983: Import Template Preview is misleading
--issue#1097: When copying template user, newly created user should always be enabled to allow logging in
--issue#1097: When copying template user, it should be disable to prevent logging in as template user directly
+-issue#1097: Template user should be disable to prevent logging in directly. And newly created user should always be enabled to allow logging in when copying template user.
 -issue#1174: When display a tree, disable drag and drop unless in edit mode
 -issue#1298: Display fatal error to prevent issues caused when system log is not writable
 -issue#1350: When switching an Automation Tree Rule's leaf type, remove invalid Automation Rule Items
@@ -2384,7 +2388,6 @@ Cacti CHANGELOG
 -feature#0001201: Reapply Suggested Names for Data Sources and cli/poller_data_sources_reapply_names.php
 -feature#0001205: Add filtering and pagination to cdef management; add "Duplicate CDEF"
 -feature#0001220: Disable snmpbulkwalk if max OIDS is less than 2
--feature#0001233: Move $export_types variable definition from templates_export.php to include/global_form.php
 -feature#0001233: Move $export_types variable definition from templates_export.php to include/global_form.php
 -feature#0001235: CLI script needs to activate a query: add_data_query.php
 -feature#0001250: Dispatching job in poller can lead to unbalanced threads

@@ -1980,7 +1980,7 @@ CREATE TABLE `grid_clusters_perfmon_metrics_type` (
   `metric` varchar(40) NOT NULL default '',
   `type` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`metric`),
-  KEY `type_metric` (`type`,`metric`)
+  KEY `type` (`type`)
 ) ENGINE=InnoDB COMMENT='Define Perfmon Metrics type' DEFAULT CHARSET=latin1;
 
 --

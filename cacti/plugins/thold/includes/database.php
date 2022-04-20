@@ -1568,7 +1568,6 @@ function thold_setup_database() {
 	$data['columns'][] = array('name' => 'notes', 'type' => 'varchar(1024)', 'NULL' => true, 'default' => '');
 
 	$data['primary']   = 'id';
-	$data['keys'][]    = array('name' => 'id', 'columns' => 'id');
 	$data['keys'][]    = array('name' => 'data_source_id', 'columns' => 'data_source_id');
 	$data['keys'][]    = array('name' => 'data_template_id', 'columns' => 'data_template_id');
 	$data['type']      = 'InnoDB';
@@ -1582,7 +1581,6 @@ function thold_setup_database() {
 	$data['columns'][]     = array('name' => 'data', 'type' => 'text', 'NULL' => false);
 	$data['primary']       = 'id';
 	$data['keys'][]        = array('name' => 'type', 'columns' => 'type');
-	$data['keys'][]        = array('name' => 'user_id', 'columns' => 'user_id');
 	$data['unique_keys'][] = array('name' => 'user_id_type', 'columns' => 'user_id`, `type');
 	$data['type']          = 'InnoDB';
 	$data['comment']       = 'Table of Threshold contacts';

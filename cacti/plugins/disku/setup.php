@@ -99,8 +99,7 @@ function disku_setup_new_tables() {
 		`notes` varchar(255) default '',
 		`monitor` char(3) NOT NULL default 'on',
 		PRIMARY KEY  (`id`),
-		UNIQUE KEY `ext_contraint` (`extension`),
-		KEY `ext` (`extension`))
+		UNIQUE KEY `ext_contraint` (`extension`))
 		ENGINE=MyISAM
 		COMMENT='Registers File Extensions of Interest by Customer' DEFAULT CHARSET=latin1");
 
@@ -113,7 +112,6 @@ function disku_setup_new_tables() {
 		PRIMARY KEY  (`id`),
 		UNIQUE KEY `app_ext_contraint` (`application_id`,`extension`),
 		KEY `ext` (`extension`),
-		KEY `app` (`application_id`),
 		KEY `rid` (`rid`))
 		ENGINE=MyISAM
 		COMMENT='Holds the List of Applications Extensions to Monitor/Graph' DEFAULT CHARSET=latin1");
@@ -326,8 +324,7 @@ function disku_setup_new_tables() {
 		`avg_time` double default '0',
 		`total_polls` int(10) unsigned NOT NULL default '0',
 		PRIMARY KEY  (`id`),
-		UNIQUE KEY `pollerid_path_contraint` (`poller_id`,`path`),
-		KEY `poller_id` (`poller_id`))
+		UNIQUE KEY `pollerid_path_contraint` (`poller_id`,`path`))
 		ENGINE=MyISAM
 		COMMENT='Defined paths to be scanned' DEFAULT CHARSET=latin1");
 

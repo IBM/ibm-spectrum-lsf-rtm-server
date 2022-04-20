@@ -321,7 +321,7 @@ function partition_tables_to_10_2_0_11(){
 	return array(
 		'grid_jobs_finished' => array(
 			'columns' => array(
-				'isLoaningGSLA'           => array( 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0', 'after' => 'effectiveEligiblePendingTimeLimit')
+				'isLoaningGSLA' => array( 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0', 'after' => 'effectiveEligiblePendingTimeLimit')
 			)
 		),
 		'grid_jobs_jobhosts_finished' => array(

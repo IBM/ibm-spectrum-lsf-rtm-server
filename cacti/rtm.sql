@@ -11,7 +11,7 @@
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -895,8 +895,7 @@ DROP TABLE IF EXISTS `data_source_profiles_cf`;
 CREATE TABLE `data_source_profiles_cf` (
   `data_source_profile_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `consolidation_function_id` smallint(5) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`data_source_profile_id`,`consolidation_function_id`),
-  KEY `data_source_profile_id` (`data_source_profile_id`)
+  PRIMARY KEY (`data_source_profile_id`,`consolidation_function_id`)
 ) ENGINE=InnoDB COMMENT='Maps the Data Source Profile Consolidation Functions';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1187,7 +1186,6 @@ CREATE TABLE `data_template_rrd` (
   `data_input_field_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `duplicate_dsname_contraint` (`local_data_id`,`data_source_name`,`data_template_id`),
-  KEY `local_data_id` (`local_data_id`),
   KEY `data_template_id` (`data_template_id`),
   KEY `local_data_template_rrd_id` (`local_data_template_rrd_id`)
 ) ENGINE=InnoDB;
@@ -1283,7 +1281,6 @@ CREATE TABLE `disku_extension_monitors` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `app_ext_contraint` (`application_id`,`extension`),
   KEY `ext` (`extension`),
-  KEY `app` (`application_id`),
   KEY `rid` (`rid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Holds the List of Applications Extensions to Monitor/Graph';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1301,8 +1298,7 @@ CREATE TABLE `disku_extension_registry` (
   `notes` varchar(255) DEFAULT '',
   `monitor` char(3) NOT NULL DEFAULT 'on',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `ext_contraint` (`extension`),
-  KEY `ext` (`extension`)
+  UNIQUE KEY `ext_contraint` (`extension`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1615,8 +1611,7 @@ CREATE TABLE `disku_pollers_paths` (
   `avg_time` double DEFAULT '0',
   `total_polls` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `pollerid_path_contraint` (`poller_id`,`path`),
-  KEY `poller_id` (`poller_id`)
+  UNIQUE KEY `pollerid_path_contraint` (`poller_id`,`path`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Defined paths to be scanned';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1818,8 +1813,7 @@ DROP TABLE IF EXISTS `graph_template_input_defs`;
 CREATE TABLE `graph_template_input_defs` (
   `graph_template_input_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `graph_template_item_id` int(10) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`graph_template_input_id`,`graph_template_item_id`),
-  KEY `graph_template_input_id` (`graph_template_input_id`)
+  PRIMARY KEY (`graph_template_input_id`,`graph_template_item_id`)
 ) ENGINE=InnoDB COMMENT='Stores the relationship for what graph items are associated';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2174,7 +2168,7 @@ CREATE TABLE `grid_arrays` (
   `jType` int(10) unsigned NOT NULL DEFAULT '0',
   `jName` varchar(128) NOT NULL DEFAULT '',
   `user` varchar(45) NOT NULL DEFAULT '',
-  `userGroup` varchar(45) DEFAULT '',
+  `userGroup` varchar(256) DEFAULT '',
   `queue` varchar(60) NOT NULL DEFAULT '',
   `projectName` varchar(45) NOT NULL DEFAULT '0',
   `numJobs` int(10) unsigned NOT NULL DEFAULT '0',
@@ -2223,7 +2217,7 @@ CREATE TABLE `grid_arrays_finished` (
   `jType` int(10) unsigned NOT NULL DEFAULT '0',
   `jName` varchar(128) NOT NULL DEFAULT '',
   `user` varchar(45) NOT NULL DEFAULT '',
-  `userGroup` varchar(45) DEFAULT '',
+  `userGroup` varchar(256) DEFAULT '',
   `queue` varchar(60) NOT NULL DEFAULT '',
   `projectName` varchar(45) NOT NULL DEFAULT '0',
   `numJobs` int(10) unsigned NOT NULL DEFAULT '0',
@@ -2753,7 +2747,7 @@ CREATE TABLE `grid_clusters_perfmon_metrics_type` (
   `metric` varchar(40) NOT NULL DEFAULT '',
   `type` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`metric`),
-  KEY `type_metric` (`type`,`metric`)
+  KEY `type` (`type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Define Perfmon Metrics type';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3244,7 +3238,7 @@ DROP TABLE IF EXISTS `grid_heuristics`;
 CREATE TABLE `grid_heuristics` (
   `clusterid` int(10) unsigned NOT NULL,
   `queue` varchar(60) NOT NULL,
-  `custom` varchar(128) NOT NULL DEFAULT '',
+  `custom` varchar(256) NOT NULL DEFAULT '',
   `projectName` varchar(64) NOT NULL,
   `resReq` varchar(512) NOT NULL,
   `reqCpus` int(10) unsigned NOT NULL,
@@ -4017,7 +4011,7 @@ CREATE TABLE `grid_jobs` (
   `job_start_logged` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `job_end_logged` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `job_scan_logged` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `userGroup` varchar(40) NOT NULL,
+  `userGroup` varchar(256) NOT NULL,
   `jobDescription` varchar(512) DEFAULT '',
   `combinedResreq` varchar(512) DEFAULT '',
   `effectiveResreq` varchar(512) DEFAULT '',
@@ -4206,7 +4200,7 @@ CREATE TABLE `grid_jobs_finished` (
   `job_start_logged` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `job_end_logged` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `job_scan_logged` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `userGroup` varchar(40) NOT NULL,
+  `userGroup` varchar(256) NOT NULL,
   `jobDescription` varchar(512) DEFAULT '',
   `combinedResreq` varchar(512) DEFAULT '',
   `effectiveResreq` varchar(512) DEFAULT '',
@@ -4531,7 +4525,6 @@ CREATE TABLE `grid_jobs_pendreasons` (
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`jobid`,`indexid`,`submit_time`,`issusp`,`reason`,`subreason`,`type`,`end_time`),
-  KEY `clusterid_end_time` (`clusterid`,`end_time`),
   KEY `clusterid_end_time_last_updated` (`clusterid`,`end_time`,`last_updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -5550,7 +5543,7 @@ DROP TABLE IF EXISTS `grid_user_group_stats`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_user_group_stats` (
   `clusterid` int(10) unsigned NOT NULL,
-  `userGroup` varchar(40) NOT NULL,
+  `userGroup` varchar(256) NOT NULL,
   `numRUN` int(10) unsigned NOT NULL DEFAULT '0',
   `numPEND` int(10) unsigned NOT NULL DEFAULT '0',
   `numJOBS` int(10) unsigned NOT NULL DEFAULT '0',
@@ -6164,7 +6157,6 @@ CREATE TABLE `host` (
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `poller_id_disabled` (`poller_id`,`disabled`),
-  KEY `site_id` (`site_id`),
   KEY `external_id` (`external_id`),
   KEY `disabled` (`disabled`),
   KEY `status` (`status`),
@@ -6249,8 +6241,7 @@ CREATE TABLE `host_snmp_query` (
   `sort_field` varchar(50) NOT NULL DEFAULT '',
   `title_format` varchar(50) NOT NULL DEFAULT '',
   `reindex_method` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`host_id`,`snmp_query_id`),
-  KEY `host_id` (`host_id`)
+  PRIMARY KEY (`host_id`,`snmp_query_id`)
 ) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -6300,8 +6291,7 @@ DROP TABLE IF EXISTS `host_template_graph`;
 CREATE TABLE `host_template_graph` (
   `host_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `graph_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`host_template_id`,`graph_template_id`),
-  KEY `host_template_id` (`host_template_id`)
+  PRIMARY KEY (`host_template_id`,`graph_template_id`)
 ) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -6325,8 +6315,7 @@ DROP TABLE IF EXISTS `host_template_snmp_query`;
 CREATE TABLE `host_template_snmp_query` (
   `host_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `snmp_query_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`host_template_id`,`snmp_query_id`),
-  KEY `host_template_id` (`host_template_id`)
+  PRIMARY KEY (`host_template_id`,`snmp_query_id`)
 ) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -7203,8 +7192,7 @@ CREATE TABLE `plugin_thold_contacts` (
   `data` text NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_id_type` (`user_id`,`type`),
-  KEY `type` (`type`),
-  KEY `user_id` (`user_id`)
+  KEY `type` (`type`)
 ) ENGINE=InnoDB COMMENT='Table of Threshold contacts';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -7625,7 +7613,6 @@ CREATE TABLE `processes` (
   `last_update` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`pid`,`tasktype`,`taskname`,`taskid`),
   KEY `tasktype` (`tasktype`),
-  KEY `pid` (`pid`),
   KEY `id` (`id`)
 ) ENGINE=MEMORY COMMENT='Stores Process Status for Cacti Background Processes';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -7905,8 +7892,7 @@ CREATE TABLE `snmp_query_graph_rrd` (
   `data_template_rrd_id` int(10) unsigned NOT NULL DEFAULT '0',
   `snmp_field_name` varchar(50) NOT NULL DEFAULT '0',
   PRIMARY KEY (`snmp_query_graph_id`,`data_template_id`,`data_template_rrd_id`),
-  KEY `data_template_rrd_id` (`data_template_rrd_id`),
-  KEY `snmp_query_graph_id` (`snmp_query_graph_id`)
+  KEY `data_template_rrd_id` (`data_template_rrd_id`)
 ) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -8025,8 +8011,7 @@ CREATE TABLE `snmpagent_cache_notifications` (
   `mib` varchar(50) NOT NULL,
   `attribute` varchar(50) NOT NULL,
   `sequence_id` smallint(6) NOT NULL,
-  PRIMARY KEY (`name`,`mib`,`attribute`,`sequence_id`),
-  KEY `name` (`name`)
+  PRIMARY KEY (`name`,`mib`,`attribute`,`sequence_id`)
 ) ENGINE=InnoDB COMMENT='Notifcations and related attributes';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -8053,7 +8038,6 @@ CREATE TABLE `snmpagent_cache_textual_conventions` (
   `type` varchar(50) NOT NULL DEFAULT '',
   `description` varchar(5000) NOT NULL DEFAULT '',
   PRIMARY KEY (`name`,`mib`,`type`),
-  KEY `name` (`name`),
   KEY `mib` (`mib`)
 ) ENGINE=InnoDB COMMENT='Textual conventions';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -8109,8 +8093,7 @@ CREATE TABLE `snmpagent_managers_notifications` (
   `notification` varchar(50) NOT NULL,
   `mib` varchar(50) NOT NULL,
   PRIMARY KEY (`manager_id`,`notification`,`mib`),
-  KEY `mib` (`mib`),
-  KEY `manager_id_notification` (`manager_id`,`notification`)
+  KEY `mib` (`mib`)
 ) ENGINE=InnoDB COMMENT='snmp notifications to receivers';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -8733,7 +8716,6 @@ CREATE TABLE `thold_template` (
   `syslog_enabled` char(3) NOT NULL DEFAULT '',
   `notes` varchar(1024) DEFAULT '',
   PRIMARY KEY (`id`),
-  KEY `id` (`id`),
   KEY `data_source_id` (`data_source_id`),
   KEY `data_template_id` (`data_template_id`)
 ) ENGINE=InnoDB COMMENT='Table of Thresholds defaults for graphs';
@@ -9088,4 +9070,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-03-05 20:56:54
+-- Dump completed on 2022-04-19 19:50:35
