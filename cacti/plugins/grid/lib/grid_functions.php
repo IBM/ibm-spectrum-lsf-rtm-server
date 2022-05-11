@@ -12839,7 +12839,7 @@ function grid_view_job_detail($job_page = 'grid_bjobs.php') {
 				WHERE (grid_jobs_finished.jobid=?
 				AND indexid=?
 				AND submit_time=?
-				AND grid_clusters.clusterid=?",
+				AND grid_clusters.clusterid=?)",
 				array(get_request_var('jobid'), get_request_var('indexid'), date("Y-m-d H:i:s", get_request_var('submit_time')), get_request_var('clusterid')));
 
 			$pendreason_tables[0] = 'grid_jobs_pendreasons_finished';
