@@ -635,6 +635,10 @@ function grid_get_cluster_collect_status($cluster) {
 	$jobs               = db_fetch_cell_prepared("SELECT value FROM settings WHERE name=?", array("grid_update_time_bjobs_" . $cluster['clusterid'] . "_Major"));
 	$jobs_major_result  = grid_get_cluster_runtime_status($jobs, $now, $cluster['max_job_runtime']);
 
+	$jpend              = db_fetch_cell_prepared("SELECT value FROM settings WHERE name=?", array("grid_update_time_bpend_" . $cluster['clusterid']));
+	$jpend_result       = grid_get_cluster_runtime_status($jpend, $now, $cluster['max_job_runtime']);
+
+
 	$system_maint       = read_config_option('grid_system_collection_enabled', true);
 	$admin_disable      = read_config_option('grid_collection_enabled', true);
 
@@ -645,26 +649,30 @@ function grid_get_cluster_collect_status($cluster) {
 	} elseif (empty($admin_disable)) {
 		return 'Admin Down';
 	} elseif ($jobs_minor_result == 1 &&
+		$jpend_result  == 1 &&
 		$queue_result  == 1 &&
 		$bhosts_result == 1 &&
 		$load_result   == 1) {
 
 		return 'Up';
 	} elseif ($jobs_minor_result == 0 &&
+		$jpend_result  == 0 &&
 		$queue_result  == 0 &&
 		$bhosts_result == 0 &&
 		$load_result   == 0) {
 
 		return 'Down';
-	} elseif (($jobs_minor_result == 0) && ($jobs_major_result == 0)) {
+	} elseif (($jobs_minor_result == 0) && ($jobs_major_result == 0) && ($jpend_result == 0)) {
 		return 'Jobs Down';
 	} elseif ($jobs_minor_result == 1 ||
+		$jpend_result  == 1 ||
 		$queue_result  == 1 ||
 		$bhosts_result == 1 ||
 		$load_result   == 1) {
 
 		return 'Diminished';
 	} elseif ($jobs_minor_result == 2 &&
+		$jpend_result  == 2 &&
 		$queue_result  == 2 &&
 		$bhosts_result == 2 &&
 		$load_result   == 2) {

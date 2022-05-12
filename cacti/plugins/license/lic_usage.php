@@ -400,7 +400,7 @@ function lic_filter(){
 								$servers = db_fetch_assoc('SELECT DISTINCT
 									ls.service_id AS id, server_name AS name
 									FROM lic_services AS ls
-									INNER JOIN lic_services_feature AS lsf
+									INNER JOIN lic_services_feature_use AS lsf
 									ON ls.service_id=lsf.service_id
 									INNER JOIN lic_pollers AS lp
 									ON ls.poller_id=lp.id
@@ -409,7 +409,7 @@ function lic_filter(){
 								$servers = db_fetch_assoc_prepared('SELECT DISTINCT
 									ls.service_id AS id, server_name AS name
 									FROM lic_services AS ls
-									INNER JOIN lic_services_feature AS lsf
+									INNER JOIN lic_services_feature_use AS lsf
 									ON ls.service_id=lsf.service_id
 									INNER JOIN lic_pollers AS lp
 									ON ls.poller_id=lp.id
