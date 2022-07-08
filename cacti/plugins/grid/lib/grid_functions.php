@@ -3597,7 +3597,7 @@ function update_fairshare_tree_information() {
 								}
 
 								$total_shares   = $leaf_shares[$branch['level']];     // As an integer share value
-								$leaf_share     = $branch['shares'] / $total_shares;  // As a fractional percentage
+								$leaf_share     = ($total_shares == 0 ? 0 : $branch['shares'] / $total_shares);  // As a fractional percentage
 								$relative_share = $leaf_share * $parent_share;        // As a fractional percentage
 								$slot_share     = ceil($parent_slots * $leaf_share);  // As a integer number of slots
 
@@ -13325,25 +13325,34 @@ print '</tr></table>';
 			</tr>
 			<?php
 
-			if (!empty($job['chargedSAAP'] )) {
+			if (strlen($job['mailUser']) || strlen($job['sla'])) {
 			form_alternate_row();?>
 				<td width='15%'>
-					<?php print __('Charged SAAP', 'grid');?>
+					<?php print __('Service Class', 'grid');?>
 				</td>
-				<td colspan='3' width='85%'>
-					<?php print html_escape($job['chargedSAAP']);?>
+				<td width='35%'>
+					<?php print $job['sla'];?>
 				</td>
-			</tr>
-			<?php }
-
-			if (strlen($job['mailUser']) || $job['jobPriority'] > 0) {
-			form_alternate_row();?>
 				<td width='15%'>
 					<?php print __('Mail User', 'grid');?>
 				</td>
 				<td width='35%'>
-					<?php print $job['mailUser'];?>
+					<?php print $job['jobPriority'];?>
 				</td>
+			</tr>
+			<?php }
+
+			if ($job['userPriority'] > 0 || $job['jobPriority'] > 0) {
+			form_alternate_row();
+				if ($job['userPriority'] > 0) {?>
+				<td width='15%'>
+					<?php print __('User Priority', 'grid');?>
+				</td>
+				<td width='35%'>
+					<?php print ($job['userPriority'] == -1 ? "N/A" : $job['userPriority']);?>
+				</td>
+				<?php }
+				if ($job['jobPriority'] > 0) {?>
 				<td width='15%'>
 					<?php print __('Job Priority', 'grid');?>
 				</td>
@@ -13352,17 +13361,7 @@ print '</tr></table>';
 				</td>
 			</tr>
 			<?php }
-
-			if ($job['userPriority'] > 0) {
-			form_alternate_row();?>
-				<td width='15%'>
-					<?php print __('User Priority', 'grid');?>
-				</td>
-				<td width='35%' colspan='3'>
-					<?php print ($job['userPriority'] == -1 ? "N/A" : $job['userPriority']);?>
-				</td>
-			</tr>
-			<?php }
+			}
 
 			if ((isset($job['app']) && strlen($job['app'])) || strlen($job['jobGroup'])) {
 				form_alternate_row();?>
@@ -13952,6 +13951,17 @@ print '</tr></table>';
 				</tr>
 				<?php
 			}
+
+			if (!empty($job['chargedSAAP'] )) {
+			form_alternate_row();?>
+				<td width='15%'>
+					<?php print __('Charged SAAP', 'grid');?>
+				</td>
+				<td colspan='3' width='85%'>
+					<?php print html_escape($job['chargedSAAP']);?>
+				</td>
+			</tr>
+			<?php }
 
 			html_end_box(false);
 
