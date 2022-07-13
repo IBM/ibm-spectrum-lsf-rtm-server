@@ -51,7 +51,7 @@ function themeReady() {
 	if (!!!brandName) {
 		var brandName='IBM Spectrum';
 		var brandNameBold='IBM <b>Spectrum</b>';
-		var productName='LSF RTM 10.2.0.13';
+		var productName='LSF RTM 10.2.0.14';
 		var copyRight='© Copyright International Business Machines Corp. 1992, 2022. US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp. Portions Copyright © 2004, 2022 The Cacti Group, Inc.';
 	}
 
