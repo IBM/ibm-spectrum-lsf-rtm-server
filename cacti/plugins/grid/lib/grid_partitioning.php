@@ -146,8 +146,10 @@ function partition_create($table, $min_time_field, $max_time_field, $partition_v
 				$max_time = db_fetch_cell("SELECT MAX($max_time_field)
 					FROM $new_table");
 
-				if ((strtotime($alt_min_time1) < strtotime($alt_min_time2)) &&
-					(strtotime($alt_min_time1) > 87000) && ($alt_min_time1 != "")) {
+				if (((strtotime($alt_min_time1) > 87000) && !empty($alt_min_time1))
+					&& ((strtotime($alt_min_time2) > 87000) && !empty($alt_min_time2))) {
+					$min_time = min($alt_min_time1, $alt_min_time2);
+				} else if ((strtotime($alt_min_time1) > 87000) && !empty($alt_min_time1)) {
 					$min_time = $alt_min_time1;
 				} else {
 					$min_time = $alt_min_time2;
