@@ -50,6 +50,7 @@ Cacti CHANGELOG
 -issue#4092: On large systems, Primary ID usage on heavily used tables will overflow due to default MySQL variable size
 -issue#4100: When viewing User Admins, a division by zero error can sometimes be seen
 -issue#4116: Upgrading large trees from 0.8.x to 1.x is slow
+-issue#4121: LDAP search filter cannot be configured if too many OUs or filters are nested
 -issue#4130: On large systens, Graph creation can become unresponsive due to large number of data sources
 -issue#4134: MIB Caching does not always work as expected
 -issue#4251: Caching of Graph Titles can be incorrect
