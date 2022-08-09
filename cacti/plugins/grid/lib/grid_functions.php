@@ -11149,23 +11149,23 @@ function get_jobs_query($table_name, $apply_limits = true, &$jobsquery, &$rowsqu
 		} else {
 			if ($timespan_set) {
 				if (strlen($jobs_where)) {
-					$jobs_sql_where1 = $jobs_where . " AND (exec_host='" . get_request_var('exec_host') . "')";
+					$jobs_sql_where1 = $jobs_where . " AND (exec_host='" . get_request_var('exec_host') . "' AND grid_jobs.num_nodes <= 1)";
 					if ($non_single_exechost)
-						$jobs_sql_where2 = $jobs_where . " AND (grid_jobs_jobhosts.exec_host='" . get_request_var('exec_host') . "')";
+						$jobs_sql_where2 = $jobs_where . " AND (grid_jobs_jobhosts.exec_host='" . get_request_var('exec_host') . "' AND grid_jobs.num_nodes > 1)";
 				} else {
-					$jobs_sql_where1  = "WHERE (exec_host='" . get_request_var('exec_host') . "')";
+					$jobs_sql_where1  = "WHERE (exec_host='" . get_request_var('exec_host') . "' AND grid_jobs.num_nodes <= 1)";
 					if ($non_single_exechost)
-						$jobs_sql_where2  = "WHERE (grid_jobs_jobhosts.exec_host='" . get_request_var('exec_host') . "')";
+						$jobs_sql_where2  = "WHERE (grid_jobs_jobhosts.exec_host='" . get_request_var('exec_host') . "' AND grid_jobs.num_nodes > 1)";
 				}
 
 				if (strlen($jobs_finished_where)) {
-					$jobs_finished_sql_where1 = $jobs_finished_where . " AND (grid_jobs_finished.exec_host='" . get_request_var('exec_host') . "')";
+					$jobs_finished_sql_where1 = $jobs_finished_where . " AND (grid_jobs_finished.exec_host='" . get_request_var('exec_host') . "' AND grid_jobs_finished.num_nodes <= 1)";
 					if ($non_single_exechost)
-						$jobs_finished_sql_where2 = $jobs_finished_where . " AND (grid_jobs_jobhosts.exec_host='" . get_request_var('exec_host') . "')";
+						$jobs_finished_sql_where2 = $jobs_finished_where . " AND (grid_jobs_jobhosts.exec_host='" . get_request_var('exec_host') . "' AND grid_jobs_finished.num_nodes > 1)";
 				} else {
-					$jobs_finished_sql_where1  = "WHERE (grid_jobs_finished.exec_host='" . get_request_var('exec_host') . "')";
+					$jobs_finished_sql_where1  = "WHERE (grid_jobs_finished.exec_host='" . get_request_var('exec_host') . "' AND grid_jobs_finished.num_nodes <= 1)";
 					if ($non_single_exechost)
-						$jobs_finished_sql_where2  = "WHERE (grid_jobs_jobhosts.exec_host='" . get_request_var('exec_host') . "')";
+						$jobs_finished_sql_where2  = "WHERE (grid_jobs_jobhosts.exec_host='" . get_request_var('exec_host') . "' AND grid_jobs_finished.num_nodes > 1)";
 				}
 
 				if (strlen($jobs_where)) {
@@ -11200,13 +11200,13 @@ function get_jobs_query($table_name, $apply_limits = true, &$jobsquery, &$rowsqu
 				//print "rowsquery11: $rowsquery<br/>";
 			} else {
 				if (strlen($sql_where)) {
-					$sql_where1 = $sql_where . " AND (exec_host='" . get_request_var('exec_host') . "')";
+					$sql_where1 = $sql_where . " AND (exec_host='" . get_request_var('exec_host') . "' AND grid_jobs.num_nodes <= 1)";
 					if ($non_single_exechost)
-						$sql_where2 = $sql_where . " AND (grid_jobs_jobhosts.exec_host='" . get_request_var('exec_host') . "')";
+						$sql_where2 = $sql_where . " AND (grid_jobs_jobhosts.exec_host='" . get_request_var('exec_host') . "' AND grid_jobs.num_nodes > 1)";
 				} else {
-					$sql_where1  = "WHERE (exec_host='" . get_request_var('exec_host') . "')";
+					$sql_where1  = "WHERE (exec_host='" . get_request_var('exec_host') . "' AND grid_jobs.num_nodes <= 1)";
 					if ($non_single_exechost)
-						$sql_where2  = "WHERE (grid_jobs_jobhosts.exec_host='" . get_request_var('exec_host') . "')";
+						$sql_where2  = "WHERE (grid_jobs_jobhosts.exec_host='" . get_request_var('exec_host') . "' AND grid_jobs.num_nodes > 1)";
 				}
 
 				if ($table_name == "grid_jobs"){
@@ -11296,13 +11296,13 @@ function get_jobs_query($table_name, $apply_limits = true, &$jobsquery, &$rowsqu
 			}
 		} else {
 			if (strlen($sql_where)) {
-				$sql_where1 = $sql_where . " AND (exec_host='" . get_request_var('exec_host') . "')";
+				$sql_where1 = $sql_where . " AND (exec_host='" . get_request_var('exec_host') . "' AND grid_jobs.num_nodes <= 1)";
 				if ($non_single_exechost)
-					$sql_where2 = $sql_where . " AND (grid_jobs_jobhosts.exec_host='" . get_request_var('exec_host') . "')";
+					$sql_where2 = $sql_where . " AND (grid_jobs_jobhosts.exec_host='" . get_request_var('exec_host') . "' AND grid_jobs.num_nodes > 1)";
 			} else {
-				$sql_where1  = "WHERE (exec_host='" . get_request_var('exec_host') . "')";
+				$sql_where1  = "WHERE (exec_host='" . get_request_var('exec_host') . "' AND grid_jobs.num_nodes <= 1)";
 				if ($non_single_exechost)
-					$sql_where2  = "WHERE (grid_jobs_jobhosts.exec_host='" . get_request_var('exec_host') . "')";
+					$sql_where2  = "WHERE (grid_jobs_jobhosts.exec_host='" . get_request_var('exec_host') . "' AND grid_jobs.num_nodes > 1)";
 			}
 
 			if ($table_name == "grid_jobs"){
