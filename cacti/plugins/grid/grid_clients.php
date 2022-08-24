@@ -1,5 +1,5 @@
 <?php
-// $Id$
+// $Id: 4ef60934810fd06db82026f15746a2cffb8e4d86 $
 /*
  +-------------------------------------------------------------------------+
  | Copyright IBM Corp. 2006, 2022                                          |
@@ -32,19 +32,20 @@ grid_view_clients();
 bottom_footer();
 
 function grid_view_get_clients_records(&$sql_where, $apply_limits = true, $rows, &$sql_params) {
-	/* user id sql where */
-	if (get_request_var('clusterid') == '0') {
-		/* Show all items */
-	} else {
-		$sql_where = 'WHERE (grid_clusters.clusterid = ?)';
+	if (get_request_var('clusterid') > '0') {
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . 'grid_clusters.clusterid = ?';
 		$sql_params[] = get_request_var('clusterid');
 	}
 
 	/* make sure we are looking at clients only */
-	if ($sql_where != '') {
-		$sql_where .= " AND isServer='0'";
-	} else {
-		$sql_where = "WHERE isServer='0'";
+	$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . " isServer = 0";
+
+	if (get_request_var('type') > 0) {
+		if (get_request_var('type') == 1) {
+			$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . 'licFeaturesNeeded = 16';
+		} else {
+			$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . 'licFeaturesNeeded != 16';
+		}
 	}
 
 	/* filter sql where */
@@ -93,13 +94,33 @@ function clientsFilter() {
 						<input type='text' id='filter' size='30' value='<?php print get_request_var('filter');?>'>
 					</td>
 					<td>
+						<?php print __('Client Type', 'grid');?>
+					</td>
+					<td>
+						<select id='type'>
+							<?php
+							$types = array(
+								-1 => __esc('All Clients', 'grid'),
+								1  => __esc('Fixed Client', 'grid'),
+								2  => __esc('Float Client', 'grid')
+							);
+
+							if (cacti_sizeof($types)) {
+								foreach ($types as $key => $value) {
+									print '<option value="' . $key . '"'; if (get_request_var('type') == $key) { print ' selected'; } print '>' . $value . '</option>';
+								}
+							}
+							?>
+						</select>
+					</td>
+					<td>
 						<?php print __('Cluster', 'grid');?>
 					</td>
 					<td>
 						<select id='clusterid'>
 							<option value='0'<?php if (get_request_var('clusterid') == '0') {?> selected<?php }?>><?php print __('All', 'grid');?></option>
 							<?php
-							$clusters = grid_get_clusterlist();
+							$clusters = db_fetch_assoc('SELECT * FROM grid_clusters ORDER BY clustername');
 							if (cacti_sizeof($clusters)) {
 								foreach ($clusters as $cluster) {
 									print '<option value="' . $cluster['clusterid'] .'"'; if (get_request_var('clusterid') == $cluster['clusterid']) { print ' selected'; } print '>' . $cluster['clustername'] . '</option>';
@@ -152,6 +173,10 @@ function grid_view_clients() {
 			'filter' => FILTER_VALIDATE_INT,
 			'default' => '1'
 			),
+		'type' => array(
+			'filter' => FILTER_VALIDATE_INT,
+			'default' => '-1'
+			),
 		'filter' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
@@ -198,7 +223,7 @@ function grid_view_clients() {
 	?>
 	<script type='text/javascript'>
 	$(function() {
-		$('#clusterid, #rows, #filter').change(function() {
+		$('#clusterid, #rows, #type, #filter').change(function() {
 			applyFilter();
 		});
 
@@ -215,6 +240,7 @@ function grid_view_clients() {
 	function applyFilter() {
 		strURL  = 'grid_clients.php?header=false'
 		strURL += '&clusterid=' + $('#clusterid').val();
+		strURL += '&type=' + $('#type').val();
 		strURL += '&filter=' + $('#filter').val();
 		strURL += '&rows=' + $('#rows').val();
 		loadPageNoHeader(strURL);
