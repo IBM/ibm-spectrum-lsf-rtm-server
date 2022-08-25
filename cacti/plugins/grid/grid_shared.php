@@ -331,7 +331,7 @@ function grid_view() {
 			switch($r['resType']) {
 			case '1':
 				$res = __('Numeric', 'grid');
-				$url_base .= '&resource_str=' . urlencode($r['resource_name'] . '>=0 && type=any');
+				$url_base .= '&resource_str=' . urlencode($r['resource_name'] . '>=0 && type==any');
 				break;
 			case '2':
 				$res = __('Boolean', 'grid');

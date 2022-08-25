@@ -10677,7 +10677,7 @@ function get_jobs_query($table_name, $apply_limits = true, &$jobsquery, &$rowsqu
 					chdir(grid_get_res_tooldir(get_request_var('clusterid')));
 
 					if (is_executable($res_tool)) {
-						$res_cmd   = $res_tool . ' -C ' . get_filter_request_var('clusterid') . ' -R "' . cacti_escapeshellarg(get_nfilter_request_var('resource_str')). '"';
+						$res_cmd   = $res_tool . ' -C ' . get_filter_request_var('clusterid') . ' -R ' . cacti_escapeshellarg(get_nfilter_request_var('resource_str'));
 						$ret_val   = 0;
 						$ret_out   = array();
 						$res_hosts = exec($res_cmd, $ret_out, $ret_val);
