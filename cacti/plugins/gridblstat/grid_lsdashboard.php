@@ -25,6 +25,7 @@ include('./include/auth.php');
 include($config['base_path'] . '/lib/rrd.php');
 include($config['base_path'] . '/lib/timespan_settings.php');
 include($config['base_path'] . '/plugins/gridblstat/lib/functions.php');
+include_once($config['library_path'] . '/rtm_functions.php');
 
 $title = __('IBM Spectrum LSF RTM - License Scheduler Dashboard', 'gridblstat');
 
@@ -739,7 +740,7 @@ function grid_view_db() {
 				'filter' => FILTER_CALLBACK,
 				'pageset' => true,
 				'default' => '',
-				'options' => array('options' => 'sanitize_search_string')
+				'options' => array('options' => 'rtm_filter_sanitize_search_string')
 				),
 			'sort_column' => array(
 				'filter' => FILTER_CALLBACK,
@@ -1353,7 +1354,7 @@ function grid_project_filter() {
 				strURL +=  '&region=' + $('#region').val();
 				strURL +=  '&rows=' + $('#rows').val();
 				strURL +=  '&level=' + $('#level').val();
-				strURL +=  '&sd=' + $('#sd').val();
+				strURL +=  '&sd=' + encodeURIComponent($('#sd').val());
 				strURL +=  '&inuse=' + $('#inuse').is(':checked');
 				strURL +=  '&refresh=' + $('#refresh').val();
 				loadPageNoHeader(strURL);

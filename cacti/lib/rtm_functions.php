@@ -147,6 +147,28 @@ function resource_sanitize_search_string($string) {
 	return $string;
 }
 
+// Ref cacti sanitize_search_string(), exclude '+'.
+function rtm_filter_sanitize_search_string($string) {
+	static $drop_char_match = array('(',')','^', '$', '<', '>', '`', '\'', '"', '|', ',', '?', '[', ']', '{', '}', '#', ';', '!', '=', '*');
+	static $drop_char_replace = array('','',' ', ' ', ' ', ' ', '', '', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+
+	/* Replace line endings by a space */
+	$string = preg_replace('/[\n\r]/is', ' ', $string);
+
+	/* HTML entities like &nbsp; */
+	$string = preg_replace('/\b&[a-z]+;\b/', ' ', $string);
+
+	/* Remove URL's */
+	$string = preg_replace('/\b[a-z0-9]+:\/\/[a-z0-9\.\-]+(\/[a-z0-9\?\.%_\-\+=&\/]+)?/', ' ', $string);
+
+	/* Filter out strange characters like ^, $, &, change "it's" to "its" */
+	for($i = 0; $i < cacti_count($drop_char_match); $i++) {
+		$string =  str_replace($drop_char_match[$i], $drop_char_replace[$i], $string);
+	}
+
+	return $string;
+}
+
 function rtm_sanitize_unserialize_selected_items($items, $checkvalue = true) {
 	if ($items != '') {
 		$unstripped = stripslashes($items);
