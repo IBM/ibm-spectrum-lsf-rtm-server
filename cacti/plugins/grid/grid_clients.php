@@ -43,8 +43,8 @@ function grid_view_get_clients_records(&$sql_where, $apply_limits = true, $rows,
 	if (get_request_var('type') > 0) {
 		if (get_request_var('type') == 1) {
 			$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . 'licFeaturesNeeded = 16';
-		} else {
-			$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . 'licFeaturesNeeded != 16';
+		} else if (get_request_var('type') == 2) {
+			$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . 'licFeaturesNeeded != 512';
 		}
 	}
 
@@ -101,8 +101,8 @@ function clientsFilter() {
 							<?php
 							$types = array(
 								-1 => __esc('All Clients', 'grid'),
-								1  => __esc('Fixed Client', 'grid'),
-								2  => __esc('Float Client', 'grid')
+								1  => __esc('Fixed Clients', 'grid'),
+								2  => __esc('Float Clients', 'grid')
 							);
 
 							if (cacti_sizeof($types)) {
