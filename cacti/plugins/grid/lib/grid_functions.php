@@ -1,5 +1,5 @@
 <?php
-// $Id$
+// $Id: 9d561380bd21388c2f0f80bf109b4a0bfc4be257 $
 /*
  +-------------------------------------------------------------------------+
  | Copyright IBM Corp. 2006, 2022                                          |
@@ -15987,8 +15987,9 @@ function grid_view_get_queue_records() {
 }
 
 function grid_view_get_user_queue_slot_records() {
-	$user_queues = db_fetch_assoc("SELECT CONCAT(clusterid, '_', user, '_', queue) AS id, SUM(num_cpus) AS total_cpus
-		FROM grid_jobs WHERE stat IN ('RUNNING','PROV') GROUP BY clusterid, user, queue");
+	$user_queues = db_fetch_assoc("SELECT CONCAT(clusterid, '_', user_or_group, '_', queue) AS id, runjobs AS total_cpus
+		FROM grid_queues_users_stats");
+
 	return $user_queues;
 }
 
