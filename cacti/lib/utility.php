@@ -204,7 +204,7 @@ function update_poller_cache($data_source, $commit = false) {
 			$outputs = db_fetch_assoc_prepared('SELECT DISTINCT ' . SQL_NO_CACHE . "
 				sqgr.snmp_field_name, dtr.id as data_template_rrd_id
 				FROM snmp_query_graph_rrd AS sqgr
-				INNER JOIN data_template_rrd AS dtr FORCE INDEX (local_data_id)
+				INNER JOIN data_template_rrd AS dtr
 				ON sqgr.data_template_rrd_id = dtr.local_data_template_rrd_id
 				WHERE sqgr.data_template_id = ?
 				AND dtr.local_data_id = ?

@@ -1206,8 +1206,12 @@ function host_info() {
 			form_selectable_cell($detail['gModel'], $i);
 			if($detail['gpu_mode'] == 0) {
 				$gpu_mode = 'Shared';
-			} else {
+			} else if($detail['gpu_mode'] == 1) {
 				$gpu_mode = 'Exclusive';
+			} else if($detail['gpu_mode'] == 2) {
+				$gpu_mode = 'Prohibited';
+			} else {
+				$gpu_mode = '-';
 			}
 			form_selectable_cell($gpu_mode, $i);
 			form_selectable_cell($detail['gpu_error'], $i);
