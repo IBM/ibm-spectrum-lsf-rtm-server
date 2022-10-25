@@ -517,7 +517,7 @@ function get_graph_params($lsid, $type, $feature, $pc) {
 
 		$nproj = array();
 		foreach($bld_paths as $local_data_id => $rrd_path) {
-			if (!in_array($projects[$local_data_ids[$local_data_id]],$nproj)){
+			if (!in_array($projects[$local_data_ids[$local_data_id]],$nproj, true)){
 				$nproj[$local_data_id] = $projects[$local_data_ids[$local_data_id]];
 
 				/* update the rrdfile if performing a fetch */
@@ -605,7 +605,7 @@ function get_graph_params($lsid, $type, $feature, $pc) {
 
 		$nproj = array();
 		foreach($bld_paths as $local_data_id => $rrd_path) {
-			if (!in_array($projects[$local_data_ids[$local_data_id]],$nproj)){
+			if (!in_array($projects[$local_data_ids[$local_data_id]],$nproj, true)){
 				$nproj[$local_data_id] = $projects[$local_data_ids[$local_data_id]];
 
 				/* update the rrdfile if performing a fetch */
@@ -684,7 +684,7 @@ function get_graph_params($lsid, $type, $feature, $pc) {
 
 		$nclust = array();
 		foreach($bld_paths as $local_data_id => $rrd_path) {
-			if (!in_array($clusters[$local_data_ids[$local_data_id]],$nclust)){
+			if (!in_array($clusters[$local_data_ids[$local_data_id]],$nclust, true)){
 				$nclust[$local_data_id] = $clusters[$local_data_ids[$local_data_id]];
 
 				/* update the rrdfile if performing a fetch */
@@ -778,7 +778,7 @@ function get_graph_params($lsid, $type, $feature, $pc) {
 
 		$nclust = array();
 		foreach($bld_paths as $local_data_id => $rrd_path) {
-			if (!in_array($clusters[$local_data_ids[$local_data_id]],$nclust)){
+			if (!in_array($clusters[$local_data_ids[$local_data_id]],$nclust, true)){
 				$nclust[$local_data_id] = $clusters[$local_data_ids[$local_data_id]];
 
 				/* update the rrdfile if performing a fetch */

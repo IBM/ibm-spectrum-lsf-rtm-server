@@ -680,7 +680,7 @@ function grid_view_db() {
 				form_selectable_cell($row['region'], $i);
 				form_selectable_cell($row['type'], $i);
 				form_selectable_cell($row['maxavail']=='' ? __('N/A', 'gridblstat'):number_format_i18n($row['maxavail']), $i, '', 'right');
-				form_selectable_cell(filter_value(number_format_i18n($row['inuse']), '', 'grid_lsdashboard.php?action=users&tab=users&cluster=-1&filter=&user=&host=&region=' . $row['region'] . '&sd=' . $row['service_domain'] . '&resource=' . $ffirst . '&project=&rows=-1'), $i, '', 'right');
+				form_selectable_cell(filter_value(number_format_i18n($row['inuse']), '', 'grid_lsdashboard.php?action=users&tab=users&cluster=-1&filter=&user=&host=&region=' . $row['region'] . '&sd=' . urlencode($row['service_domain']) . '&resource=' . $ffirst . '&project=&rows=-1'), $i, '', 'right');
 
 				form_selectable_cell(filter_value($row['flexuse'] == '' ? __('N/A', 'gridblstat'):number_format_i18n($row['flexuse']), '', 'grid_lsdashboard.php?action=checkouts&tab=checkouts&region=' . $row['region'] . '&ffeature=' . read_config_option('grid_blstats_flexname_' . $row['lsid'] . '_' . $row['bfeature']) . '&sd=&lsf=-1&host=&user=&except=-1'), $i, '', 'right');
 
@@ -878,7 +878,7 @@ function grid_view_db() {
 
 				if ($row['type'] == 'Project') {
 					$actions_url .= "<a href='" . html_escape('grid_lsdashboard.php?action=clusters&tab=clusters&filter=&project=&cluster=-1&mode=1&feature=' . $row['feature'] . '&inuse=' . get_request_var('inuse')) . "'><img src='" . $config['url_path'] . "plugins/gridblstat/images/view_cluster.gif' title='" . __esc('View Cluster Use', 'gridblstat') . "'></a>\n";
-					$actions_url .= "<a href='" . html_escape('grid_lsdashboard.php?action=projects&tab=projects&sd=' . $row['service_domain'] . '&feature=' . $row['feature'] . '&inuse=' . get_request_var('inuse')) . "'><img src='" . $config['url_path'] . "plugins/gridblstat/images/view_project.gif' title='" . __esc('View Project Use', 'gridblstat') . "'></a>\n";
+					$actions_url .= "<a href='" . html_escape('grid_lsdashboard.php?action=projects&tab=projects&sd=' . urlencode($row['service_domain']) . '&feature=' . $row['feature'] . '&inuse=' . get_request_var('inuse')) . "'><img src='" . $config['url_path'] . "plugins/gridblstat/images/view_project.gif' title='" . __esc('View Project Use', 'gridblstat') . "'></a>\n";
 				} elseif ($row['type'] == 'Cluster') {
 					$actions_url .= "<a href='" . html_escape('grid_lsdashboard.php?action=clusters&tab=clusters&filter=&project=&cluster=-1&mode=2&feature=' . $row['feature'] . '&inuse=' . get_request_var('inuse')) . "'><img src='" . $config['url_path'] . "plugins/gridblstat/images/view_cluster.gif' title='" . __esc('View Cluster Use', 'gridblstat') . "'></a>\n";
 				}
@@ -953,7 +953,7 @@ function grid_view_db() {
 				'filter' => FILTER_CALLBACK,
 				'pageset' => true,
 				'default' => '',
-				'options' => array('options' => 'sanitize_search_string')
+				'options' => array('options' => 'rtm_filter_sanitize_search_string')
 				),
 			'sort_column' => array(
 				'filter' => FILTER_CALLBACK,
@@ -1101,8 +1101,8 @@ function grid_view_db() {
 
 				$actions_url = "<a href='" . html_escape('grid_lsdashboard.php?action=clusters&tab=clusters&filter=&cluster=-1&project=' . $row['project'] . '&mode=1&feature=' . $row['feature'] . '&inuse=' . get_request_var('inuse')) . "'><img src='" . $config['url_path'] . "plugins/gridblstat/images/view_cluster.gif' title='" . __esc('View Cluster Use', 'gridblstat') . "'></a>\n";
 				$actions_url .= "<a href='" . html_escape('grid_lsdashboard.php?action=features&tab=features&lsid=' . $row['lsid'] .'&feature=' . $row['feature'] . '&inuse=' . get_request_var('inuse')) . "'><img src='" . $config['url_path'] . "plugins/gridblstat/images/view_featdb.gif' title='" . __esc('View Feature Dashboard', 'gridblstat') . "'></a>\n";
-				$actions_url .= "<a href='" . html_escape('grid_lsdashboard.php?action=users&tab=users&cluster=-1&sd=' . $row['service_domain'] . '&resource=' . $ffirst . '&project=' . $row['project']) . "'><img src='" . $config['url_path'] . "plugins/grid/images/view_users.gif' title='" . __esc('View Users Jobs', 'gridblstat') . "'></a>\n";
-				$actions_url .= "<a href='" . html_escape('grid_lsdashboard.php?action=checkouts&tab=checkouts&ffeature=' . read_config_option('grid_blstats_flexname_' . $row['lsid'] . '_' . $row['feature']) . '&sd=' . $row['service_domain'] . '&lsf=-1&host=&user=') . "'><img src='" . $config['url_path'] . "plugins/grid/images/view_checkouts.gif' title='" . __esc('View Feature Checkouts', 'gridblstat') . "'></a>\n";
+				$actions_url .= "<a href='" . html_escape('grid_lsdashboard.php?action=users&tab=users&cluster=-1&sd=' . urlencode($row['service_domain']) . '&resource=' . $ffirst . '&project=' . $row['project']) . "'><img src='" . $config['url_path'] . "plugins/grid/images/view_users.gif' title='" . __esc('View Users Jobs', 'gridblstat') . "'></a>\n";
+				$actions_url .= "<a href='" . html_escape('grid_lsdashboard.php?action=checkouts&tab=checkouts&ffeature=' . read_config_option('grid_blstats_flexname_' . $row['lsid'] . '_' . $row['feature']) . '&sd=' . urlencode($row['service_domain']) . '&lsf=-1&host=&user=') . "'><img src='" . $config['url_path'] . "plugins/grid/images/view_checkouts.gif' title='" . __esc('View Feature Checkouts', 'gridblstat') . "'></a>\n";
 
 				if ($graph_select) {
 					$actions_url .= "<a href='" . html_escape('grid_lsdashboard.php?action=graphs&tab=graphs&template=0&query=1&region=' . get_request_var('region') . '&project=' . $row['project'] . '&feature=' . $row['feature'] . '&inuse=' . get_request_var('inuse')) . "&cluster=-1'><img src='" . $config['url_path'] . "plugins/grid/images/view_graphs.gif' title='" . __esc('View Feature Graphs', 'gridblstat') . "'></a>";
@@ -1465,7 +1465,7 @@ function grid_distribution_filter() {
 				strURL += '&region=' + $('#region').val();
 				strURL += '&rows=' + $('#rows').val();
 				strURL += '&inuse=' + $('#inuse').is(':checked');
-				strURL += '&sd=' + $('#sd').val();
+				strURL +=  '&sd=' + encodeURIComponent($('#sd').val());
 				strURL += '&refresh=' + $('#refresh').val();
 				loadPageNoHeader(strURL);
 			}
@@ -1704,7 +1704,7 @@ function grid_view_users() {
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '-1',
-			'options' => array('options' => 'sanitize_search_string')
+			'options' => array('options' => 'rtm_filter_sanitize_search_string')
 			),
 		'user' => array(
 			'filter' => FILTER_CALLBACK,
@@ -1938,7 +1938,7 @@ function grid_view_users() {
 				$actions_url .= "<a href='" . html_escape($config['url_path'] . 'plugins/grid/grid_bjobs.php?action=viewjob&reset=true&clusterid=' . $clusterid . '&jobid=' . $user['jobid'] . '&indexid=' . $user['indexid'] . '&submit_time=' . $submit_time) . "'><img src='" . $config['url_path'] . "plugins/grid/images/view_jobs.gif' title='" . __esc('View Users Job', 'gridblstat') . "'></a>\n";
 			}
 
-			$actions_url .= "<a href='" . html_escape('grid_lsdashboard.php?action=checkouts&tab=checkouts&ffeature=' . $tmp_features . '&sd=' . $user['service_domain'] . '&user=' . $user['user'] . '&host=' . $user['host']) . "'><img src='" . $config['url_path'] . "plugins/grid/images/view_checkouts.gif' title='" . __esc('View User/Host License Checkouts', 'gridblstat') . "'></a>\n";
+			$actions_url .= "<a href='" . html_escape('grid_lsdashboard.php?action=checkouts&tab=checkouts&ffeature=' . $tmp_features . '&sd=' . urlencode($user['service_domain']) . '&user=' . $user['user'] . '&host=' . $user['host']) . "'><img src='" . $config['url_path'] . "plugins/grid/images/view_checkouts.gif' title='" . __esc('View User/Host License Checkouts', 'gridblstat') . "'></a>\n";
 
 			if ($graph_select) {
 				$actions_url .= "<a href='" . html_escape($config['url_path'] . 'graph_view.php?' . $graph_select) . "'><img src='" . $config['url_path'] . "plugins/grid/images/view_graphs.gif' title='" . __esc('View User Graphs', 'gridblstat') . "'></a>";
@@ -2123,7 +2123,7 @@ function grid_user_filter() {
 				strURL +=  '&user=' + $('#ls_user').val();
 				strURL +=  '&region=' + $('#region').val();
 				strURL +=  '&host=' + $('#ls_host').val();
-				strURL +=  '&sd=' + $('#sd').val();
+				strURL +=  '&sd=' + encodeURIComponent($('#sd').val());
 				strURL +=  '&resource=' + $('#resource').val();
 				strURL +=  '&project=' + $('#project').val();
 				strURL +=  '&rows=' + $('#rows').val();
@@ -3270,9 +3270,9 @@ function grid_view_zen() {
 
 			form_selectable_cell(filter_value(number_format_i18n($details['inuse']), '', 'grid_lsdashboard.php?action=users&tab=users&lsid=' . get_request_var('lsid') . '&region=' . $details['region'] . '&cluster=-1&filter=&user=&host=&sd=-2&resource=' . $ffirst . '&project=&rows=-1'), $i, '', 'right');
 
-			form_selectable_cell(filter_value($no_lics == true ? __('N/A', 'gridblstat'):number_format_i18n($details['flexuse']), '', 'grid_lsdashboard.php?action=checkouts&tab=checkouts&lsid=' . get_request_var('lsid') . '&region=' . $details['region'] . '&ffeature=' . $details['lic_feature'] . '&sd=' . $sd . '&lsf=-1&host=&user=&except=-1'), $i, '', 'right');
+			form_selectable_cell(filter_value($no_lics == true ? __('N/A', 'gridblstat'):number_format_i18n($details['flexuse']), '', 'grid_lsdashboard.php?action=checkouts&tab=checkouts&lsid=' . get_request_var('lsid') . '&region=' . $details['region'] . '&ffeature=' . $details['lic_feature'] . '&sd=' . urlencode($sd) . '&lsf=-1&host=&user=&except=-1'), $i, '', 'right');
 
-			form_selectable_cell(filter_value(number_format_i18n($details['others']), '', 'grid_lsdashboard.php?action=checkouts&tab=checkouts&lsid=' . get_request_var('lsid') . '&region=' . $details['region'] . '&ffeature=' . $details['lic_feature'] . '&host=&user=&except=-2&lsf=-1&sd=' . $sd), $i, '', 'right');
+			form_selectable_cell(filter_value(number_format_i18n($details['others']), '', 'grid_lsdashboard.php?action=checkouts&tab=checkouts&lsid=' . get_request_var('lsid') . '&region=' . $details['region'] . '&ffeature=' . $details['lic_feature'] . '&host=&user=&except=-2&lsf=-1&sd=' . urlencode($sd)), $i, '', 'right');
 			form_selectable_cell(filter_value(number_format_i18n($details['reserve']), '', 'grid_lsdashboard.php?action=users&tab=users&lsid=' . get_request_var('lsid') . '&region=' . $details['region'] . '&cluster=-1&filter=&user=&host=&sd=UNKNOWN&resource=' . $ffirst . '&project=&rows=-1'), $i, '', 'right');
 			form_selectable_cell(number_format_i18n($details['free']), $i, '', 'right');
 			form_selectable_cell(filter_value( number_format($details['demand']), '', 'grid_lsdashboard.php?action=users&tab=users&lsid=' . get_request_var('lsid') . '&region=' . $details['region'] . '&cluster=-1&filter=&user=&host=&sd=-3&resource=' . $ffirst . '&project=&rows=-1'), $i, '', 'right');
@@ -3370,7 +3370,7 @@ function grid_view_zen() {
 					form_selectable_cell($p['share'] . '%', $i, '', 'right');
 					form_selectable_cell($p['own'] > 0 ? number_format_i18n($p['own']):'-', $i, '', 'right');
 
-					form_selectable_cell(filter_value(number_format_i18n($p['jobs']) . '/' . number_format_i18n($p['inuse']) . ' (' . ($totals[$p['service_domain']] > 0 ? round(($p['inuse'] / $totals[$p['service_domain']]) * 100,0) . '%)':'-)'), '', 'grid_lsdashboard.php?action=users&tab=users&cluster=-1&filter=&user=&host=&sd=' . $p['service_domain'] . '&resource=' . $ffirst . '&project=' . $p['project'] . '&rows=-1'), $i, '', 'right');
+					form_selectable_cell(filter_value(number_format_i18n($p['jobs']) . '/' . number_format_i18n($p['inuse']) . ' (' . ($totals[$p['service_domain']] > 0 ? round(($p['inuse'] / $totals[$p['service_domain']]) * 100,0) . '%)':'-)'), '', 'grid_lsdashboard.php?action=users&tab=users&cluster=-1&filter=&user=&host=&sd=' . urlencode($p['service_domain']) . '&resource=' . $ffirst . '&project=' . $p['project'] . '&rows=-1'), $i, '', 'right');
 
 					form_selectable_cell(filter_value(number_format_i18n($p['reserve']), '', 'grid_lsdashboard.php?action=users&tab=users&cluster=-1&filter=&user=&host=&sd=UNKNOWN&resource=' . $ffirst . '&project=' . $p['project'] . '&rows=-1'), $i, '', 'right');
 
@@ -3563,7 +3563,7 @@ function grid_view_zen() {
 						form_selectable_cell($user, $i);
 					}
 
-					form_selectable_cell(filter_value(number_format_i18n($v['maxtokens']), '', 'grid_lsdashboard.php?action=checkouts&tab=checkouts&ffeature=' . $details['lic_feature'] . '&host=&user=' . $v['username'] . '&except=-2&lsf=-1&sd=' . $sd), $i, '', 'right');
+					form_selectable_cell(filter_value(number_format_i18n($v['maxtokens']), '', 'grid_lsdashboard.php?action=checkouts&tab=checkouts&ffeature=' . $details['lic_feature'] . '&host=&user=' . $v['username'] . '&except=-2&lsf=-1&sd=' . urlencode($sd)), $i, '', 'right');
 
 					form_selectable_cell(number_format_i18n($v['tokens']), $i, '', 'right');
 					form_selectable_cell($v['duration'] > 1000000000 ? __('RESERVED', 'gridblstat'):display_job_time($v['duration'], 2, false), $i, '', 'right');
@@ -3986,7 +3986,7 @@ function grid_view_zen() {
 
 					form_selectable_cell(number_format_i18n($v['maxtokens']), $i, '', 'right');
 
-					form_selectable_cell(filter_value(number_format_i18n($v['tokens']), '', 'grid_lsdashboard.php?action=checkouts&tab=checkouts&query=1&ffeature=' . $details['lic_feature'] . '&host=&user=' . $v['username'] . '&except=-1&lsf=-1&sd=' . $sd), $i, '', 'right');
+					form_selectable_cell(filter_value(number_format_i18n($v['tokens']), '', 'grid_lsdashboard.php?action=checkouts&tab=checkouts&query=1&ffeature=' . $details['lic_feature'] . '&host=&user=' . $v['username'] . '&except=-1&lsf=-1&sd=' . urlencode($sd)), $i, '', 'right');
 
 					form_selectable_cell($v['duration'] > 1000000000 ? __('RESERVED', 'gridblstat'):display_job_time($v['duration'], 2, false), $i, '', 'right');
 
@@ -4540,7 +4540,7 @@ function grid_view_checkouts() {
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '',
-			'options' => array('options' => 'sanitize_search_string')
+			'options' => array('options' => 'rtm_filter_sanitize_search_string')
 			),
 		'user' => array(
 			'filter' => FILTER_CALLBACK,
@@ -4810,7 +4810,7 @@ function grid_checkouts_filter() {
 			function applyFilter() {
 				strURL  = urlPath + 'plugins/gridblstat/grid_lsdashboard.php?action=checkouts&tab=checkouts&header=false';
 				strURL +=  '&ffeature=' + $('#ffeature').val();
-				strURL +=  '&sd=' + $('#sd').val();
+				strURL +=  '&sd=' + encodeURIComponent($('#sd').val());
 				strURL +=  '&region=' + $('#region').val();
 				strURL +=  '&lsf=' + $('#lsf').val();
 				strURL +=  '&except=' + $('#except').val();

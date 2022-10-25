@@ -151,7 +151,7 @@ function ss_grid_proj_stats_getnames($clusterid, $level) {
 					if (strlen($sub_project) > 0) {
 						$added_project .= $sub_project;
 
-						if (!in_array($added_project, $return_arr)) {
+						if (!in_array($added_project, $return_arr, true)) {
 							$return_arr[] = $added_project;
 							$arr[$i]["projects"] = $added_project;
 							$i++;
@@ -210,7 +210,7 @@ function ss_grid_proj_stats_getinfo($clusterid, $level, $info_requested) {
 							if (strlen($sub_project) > 0) {
 								$added_project .= $sub_project;
 
-								if (!in_array($added_project, $return_arr)) {
+								if (!in_array($added_project, $return_arr, true)) {
 									$arr[$i]['qry_index'] = $added_project;
 									$arr[$i]['qry_value'] = $added_project;
 									$i++;

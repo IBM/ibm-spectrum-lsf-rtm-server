@@ -175,7 +175,7 @@ function ss_grid_ugroup_stats_getnames($clusterid) {
 				foreach ($sub_groupnames as $sub_groupname) {
 					if (strlen($sub_groupname) > 0) {
 						$added_groupname .= $sub_groupname;
-						if (!in_array($added_groupname, $return_arr)) {
+						if (!in_array($added_groupname, $return_arr, true)) {
 							$return_arr[] = $added_groupname;
 							$arr[$i]['groupName'] = $added_groupname;
 							$i++;
@@ -236,7 +236,7 @@ function ss_grid_ugroup_stats_getinfo($clusterid, $info_requested) {
 							if (strlen($sub_groupname) > 0) {
 								$added_groupname .= $sub_groupname;
 
-								if (!in_array($added_groupname, $return_arr)) {
+								if (!in_array($added_groupname, $return_arr, true)) {
 									$arr[$i]['qry_index'] = $added_groupname;
 									$arr[$i]['qry_value'] = $added_groupname;
 									$i++;

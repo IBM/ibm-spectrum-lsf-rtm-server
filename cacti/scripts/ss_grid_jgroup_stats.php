@@ -126,7 +126,7 @@ function ss_grid_jgroup_stats_getnames($clusterid) {
 			foreach($sub_gnames as $sub_gname) {
 				if (strlen($sub_gname) > 0) {
 					$added_gname .= $sub_gname;
-					if (!in_array($added_gname, $return_arr)) {
+					if (!in_array($added_gname, $return_arr, true)) {
 						$return_arr[] = $added_gname;
 					}
 					$added_gname .= '/';
@@ -158,7 +158,7 @@ function ss_grid_jgroup_stats_getinfo($clusterid, $info_requested) {
 				foreach($sub_gnames as $sub_gname) {
 					if (strlen($sub_gname) > 0) {
 						$added_gname .= $sub_gname;
-						if (!in_array($added_gname, $return_arr)) {
+						if (!in_array($added_gname, $return_arr, true)) {
 							$arr[$i]['qry_index'] = $added_gname;
 							$arr[$i]['qry_value'] = $added_gname;
 							$i++;
