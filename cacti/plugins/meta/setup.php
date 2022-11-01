@@ -28,8 +28,6 @@ function plugin_meta_install () {
 	api_plugin_register_hook('meta', 'page_head', 'meta_page_head', 'lib/metadata_api.php');
 	api_plugin_register_hook('meta', 'grid_page_bottom', 'meta_page_bottom', 'lib/metadata_api.php');
 	api_plugin_register_hook('meta', 'lic_page_bottom', 'meta_page_bottom', 'lib/metadata_api.php');
-	api_plugin_register_hook('meta', 'grid_user_details', 'meta_user_details', 'lib/metadata_api.php');
-	api_plugin_register_hook('meta', 'grid_object_details', 'meta_object_details', 'lib/metadata_api.php');
 	api_plugin_register_hook('meta', 'grid_meta_settings_tab', 'meta_settings_tab', 'lib/metadata_api.php');
 	api_plugin_register_hook('meta', 'grid_meta_column_header', 'meta_column_header', 'lib/metadata_api.php');
 	api_plugin_register_hook('meta', 'grid_meta_column_content', 'meta_column_content', 'lib/metadata_api.php');

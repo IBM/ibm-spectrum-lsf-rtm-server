@@ -21,7 +21,6 @@
 function plugin_rtm_install() {
 	api_plugin_register_hook('RTM', 'custom_login',          'rtm_custom_login',    'include/auth_login.php');
 	api_plugin_register_hook('RTM', 'custom_denied',         'rtm_custom_denied',   'include/permission_denied.php');
-	api_plugin_register_hook('RTM', 'custom_logout',         'rtm_custom_logout',   'include/logout.php');
 	api_plugin_register_hook('RTM', 'custom_logout_message', 'rtm_custom_logout',   'include/logout.php');
 	api_plugin_register_hook('RTM', 'custom_password',       'rtm_custom_password', 'include/auth_changepassword.php');
 	api_plugin_register_hook('RTM', 'console_before', 'rtm_console_before', 'setup.php');

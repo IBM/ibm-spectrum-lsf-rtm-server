@@ -267,6 +267,7 @@ function gridalarms_notify_list_display($save) {
 	}elseif ($current_tab == 'atemplates') {
 		atemplates($header_label);
 	}
+	return $save;
 }
 
 function alerts($header_label) {

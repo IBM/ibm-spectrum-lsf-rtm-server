@@ -1003,6 +1003,7 @@ function meta_settings_tab($tab_name) {
 			set_request_var('meta_arr', $grid_settings);
 		}
 	}
+	return $tab_name;
 }
 
 /**
@@ -1029,9 +1030,10 @@ function meta_column_header($page_name) {
 		if (read_grid_config_option("queue_group")) {
 			$meta_display_text += array("nosort" . (string)$i++ => array("Queue<br>Group(s)<br>", "ASC"));
 		}
+		return $meta_display_text;
 	}
 
-	return $meta_display_text;
+	return $page_name;
 }
 
 /**
@@ -1089,6 +1091,7 @@ function meta_column_content($row_data) {
 
 		}
 	}
+	return $row_data;
 }
 
 /**
@@ -1166,6 +1169,7 @@ function meta_param($page_name) {
 		print "</select>";
 		print "</td>";
 	}
+	return $page_name;
 }
 
 /**
@@ -1196,16 +1200,10 @@ function meta_param_where($page_name) {
 			if (isset($queue_list)) {
 				$where_clause = "'" . str_replace(" ", "','", $queue_list["queue_list"]) . "'";
 				return "queuename IN (" . $where_clause . ") AND gq.clusterid = " . $queue_list["cluster_id"];
-			} else {
-				// Nothing;
-				return;
 			}
 		}
-		else {
-			// Nothing
-			return;
-		}
 	}
+	return $page_name;
 }
 
 /**
@@ -1215,6 +1213,7 @@ function meta_column_filter($page_name) {
 	if ($page_name == "grid_bqueues") {
 		return "'&queue_group=' + $('#queue_group').val()";
 	}
+	return $page_name;
 }
 
 /**

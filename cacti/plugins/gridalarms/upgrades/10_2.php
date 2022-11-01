@@ -40,8 +40,8 @@ function upgrade_to_10_2() {
 
 	// Allow Modifying Thold Template form logic, javascript and save functions
 	api_plugin_register_hook('gridalarms', 'thold_template_edit_save_thold', 'gridalarms_tht_edit_save_thold', 'includes/thold.php', 1);
-	api_plugin_register_hook('gridalarms', 'thold_template_edit_form_array', 'gridalarms_tht_edit_form_array', 'includes/thold.php', 1);
-	api_plugin_register_hook('gridalarms', 'thold_template_edit_javascript', 'gridalarms_tht_edit_javascript', 'includes/thold.php', 1);
+	api_plugin_register_hook('gridalarms', 'thold_template_edit_form_array', 'gridalarms_th_edit_form_array', 'includes/thold.php', 1);
+	api_plugin_register_hook('gridalarms', 'thold_template_edit_javascript', 'gridalarms_th_edit_javascript', 'includes/thold.php', 1);
 
 	// Allow additional actions based upon Threshold breaches
 	api_plugin_register_hook('gridalarms', 'thold_action', 'gridalarms_thold_action', 'includes/thold.php', 1);

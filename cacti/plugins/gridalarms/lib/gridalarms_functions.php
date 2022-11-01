@@ -1807,7 +1807,7 @@ function gridalarms_check_all_alarms() {
 	$total_alarms = cacti_sizeof($alarms);
 
 	gridalarms_debug("START  - Processing $total_alarms Alert");
-	api_plugin_hook_function('gridalarms_reset_hostsalarm');
+	api_plugin_hook('gridalarms_reset_hostsalarm');
 
 	if (cacti_sizeof($alarms)) {
 		foreach ($alarms as $alarm) {

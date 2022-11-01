@@ -153,7 +153,7 @@ function plugin_grid_upgrade() {
 	return false;
 }
 
-function grid_graph_edit_after($graph_local_id) {
+function grid_graph_edit_after($graph_local_id = NULL) {
 	if (basename($_SERVER['SCRIPT_NAME']) == 'graphs.php') {
 		if (!empty($graph_local_id)) {
 			$is_elim_graph = db_fetch_cell_prepared("SELECT distinct local_graph_id
@@ -168,7 +168,11 @@ function grid_graph_edit_after($graph_local_id) {
 				print "});\n";
 				print "</script>\n";
 			}
+			return $graph_local_id;
 		}
+	}
+	if (!empty($graph_local_id)) {
+		return $graph_local_id;
 	}
 }
 
@@ -305,6 +309,7 @@ function grid_device_table_replace($hosts) {
 			form_end_row();
 		}
 	}
+	return $hosts;
 }
 function grid_copy_user($ids) {
 	$settings_grid = db_fetch_assoc_prepared('SELECT *
@@ -318,10 +323,12 @@ function grid_copy_user($ids) {
 			sql_save($row, 'grid_settings', array('user_id', 'name', 'value'), false);
 		}
 	}
+	return $ids;
 }
 
 function grid_user_remove($user_id) {
 	db_execute_prepared("DELETE FROM grid_settings WHERE user_id=?", array($user_id));
+	return $user_id;
 }
 
 function grid_device_action_execute($action) {
@@ -374,6 +381,7 @@ function grid_device_action_execute($action) {
 		}
 		}
 	}
+	return $action;
 }
 
 function grid_device_action_prepare($save) {
@@ -424,6 +432,7 @@ function grid_device_action_prepare($save) {
 			</td>
 		</tr>\n";
 	}
+	return $save;
 }
 
 function grid_device_action_array($action) {
@@ -512,9 +521,9 @@ function grid_user_edit($action) {
 		user_edit();
 		bottom_footer();
 
-		return true;
-	} else {
 		return false;
+	} else {
+		return $action;
 	}
 }
 
@@ -596,12 +605,16 @@ function grid_user_settings_edit($action) {
 
 		return false;
 	} else {
-		return true;
+		return $action;
 	}
 }
 
 function grid_valid_host_fields($fields) {
-	return '(id|host_id|hostname|clusterid|lic_server_id|snmp_community|snmp_username|snmp_password|snmp_version|snmp_port|snmp_timeout)';
+	$fields = str_replace(")", "", str_replace("(", "", $fields));
+	$fields = explode('|', $fields);
+	$fields[] = 'clusterid';
+
+	return '(' . implode('|', $fields) . ')';
 }
 
 function grid_substitute_host_data($array) {
@@ -7074,6 +7087,7 @@ function grid_thold_update_hostsalarm($item) {
 			clusterid=VALUES(clusterid),message=VALUES(message),present=1",
 			array($item['id'], $item['name_cache'], $host_info['hostname'], $host_info['clusterid'], $item['subject']));
 	}
+	return $item;
 }
 
 function grid_thold_reset_hostsalarm() {
@@ -7089,6 +7103,7 @@ function grid_thold_delete_hostsalarm($type_id = NULL) {
 			WHERE gha.type=0
 			AND gha.type_id=?
 			AND (td.thold_alert=0 OR td.thold_alert IS NULL OR td.thold_enabled='off')", array($type_id));
+		return $type_id;
 	} else {
 		db_execute("DELETE gha
 			FROM grid_hosts_alarm AS gha
@@ -7121,6 +7136,7 @@ function grid_syslog_update_hostsalarm($item) {
 				array($item['seq'], $item['alert_name'], $item['host'], $result['clusterid'], $item['logmsg'], $item['logtime']));
 		}
 	}
+	return $item;
 }
 
 function grid_syslog_delete_hostsalarm($delete_time) {
@@ -7131,6 +7147,7 @@ function grid_syslog_delete_hostsalarm($delete_time) {
 		WHERE t1.type=1
 		AND t2.logtime < ?',
 		array($delete_time));
+	return $delete_time;
 }
 
 function grid_gridalarms_update_hostsalarm($item) {
@@ -7165,14 +7182,14 @@ function grid_gridalarms_update_hostsalarm($item) {
 			clusterid=VALUES(clusterid),message=VALUES(message),present=1",
 			array($item['alarm_id'], $item['name'], $item['alarmhost'], $item['clusterid'], $item['email_subject'],  $item['time']));
 	}
-
+	return $item;
 }
 function grid_gridalarms_reset_hostsalarm() {
 	db_execute("UPDATE grid_hosts_alarm SET present='0' WHERE type=2");
 }
 
 function grid_gridalarms_delete_hostsalarm($type_id = NULL) {
-	if ($type_id) {
+	if (!empty($type_id)) {
 		db_execute_prepared("DELETE gha
 			FROM grid_hosts_alarm AS gha
 			LEFT JOIN gridalarms_alarm AS ga
@@ -7181,6 +7198,7 @@ function grid_gridalarms_delete_hostsalarm($type_id = NULL) {
 			AND gha.type_id = ?
 			AND (ga.alarm_alert = 0 OR ga.alarm_alert IS NULL OR ga.alarm_enabled = 'off')",
 			array($type_id));
+		return $type_id;
 	} else {
 		db_execute("DELETE gha
 			FROM grid_hosts_alarm AS gha
@@ -7551,7 +7569,7 @@ function grid_filter_views($page_name='grid_clusterdb', $filter_change_func='app
 	<?php
 }
 
-/*grid cluster graphs filter hook function*/
+/*grid clusterdb graphs filter hook function*/
 function grid_filter_graphs($page_name = 'grid_clusterdb', $filter_change_func = 'applyClusterdbFilterChange', $form_name = 'form_grid_view_clusterdb') {
 	$options = array(
 		'limstat'    => __('LIM Status', 'grid'),
@@ -7583,6 +7601,7 @@ function grid_filter_graphs($page_name = 'grid_clusterdb', $filter_change_func =
 
 function grid_view_cluster_summary ($params) {
 	show_view_summary($params[0]);
+	return $params;
 }
 
 function grid_view_cluster_status () {
@@ -7654,6 +7673,21 @@ function grid_auth_profile_run_action ($current_tab) {
 	global $config;
 	global $tabs_grid, $grid_settings;
 
+	if (empty($current_tab) && isset_request_var('tab')) {
+		$current_tab = get_request_var('tab');
+	}
+
+	/* set the default settings category */
+	$rtm_tabs = array_keys($tabs_grid);
+	if (empty($current_tab)) {
+		/* there is no selected tab; select the first one */
+		$current_tab = $rtm_tabs[0];
+	}
+
+	if (!in_array($current_tab, $rtm_tabs)) {
+		return $current_tab;
+	}
+
 	if (isset($_SERVER['HTTP_REFERER'])) {
 		$referer = $_SERVER['HTTP_REFERER'];
 
@@ -7670,15 +7704,6 @@ function grid_auth_profile_run_action ($current_tab) {
 	}
 
 	form_start('auth_profile.php', 'chk');
-
-	/* set the default settings category */
-	if (!isset_request_var('tab')) {
-		/* there is no selected tab; select the first one */
-		$current_tab = array_keys($tabs_grid);
-		$current_tab = $current_tab[0];
-	} else {
-		$current_tab = get_nfilter_request_var('tab');
-	}
 
 	if ($current_tab == 'host') {
 		append_host_elim_name();
@@ -7813,6 +7838,7 @@ function grid_auth_profile_run_action ($current_tab) {
 	</script>
 	<?php
 
+	return $current_tab;
 }
 
 function grid_auth_profile_update_data ($current_tab) {
@@ -7875,6 +7901,7 @@ function grid_auth_profile_update_data ($current_tab) {
 			}
 		}
 	}
+	return $current_tab;
 }
 
 function grid_auth_profile_save () {

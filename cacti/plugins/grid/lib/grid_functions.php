@@ -6644,10 +6644,10 @@ function get_project_aggregation_string($level_override = 0, $config_option_name
 	} else { // Aggregation turned off
 		$projMagic = "projectName";
 	}
-   if ($from_jobtbl)
-	return api_plugin_hook_function("job_project_name_expr", $projMagic);
-else return $projMagic;
-	//return $projMagic;
+	if ($from_jobtbl)
+		return api_plugin_hook_function("job_project_name_expr", $projMagic);
+	else
+		return $projMagic;
 }
 
 function get_ugroup_aggregation_string($level_override = 0) {
@@ -14815,7 +14815,7 @@ print '</tr></table>';
 
 			html_end_box(false);;
 		} else {
-			api_plugin_hook_function('grid_jobs_show_tab');
+			api_plugin_hook('grid_jobs_show_tab');
 		}
 	} else {
 		print __('Unable to find job record', 'grid');

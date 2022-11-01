@@ -1084,7 +1084,7 @@ function lic_debug($message) {
 	}
 }
 
-/* substitute_cluster_data - takes a string and substitutes all host variables contained in it
+/* substitute_lic_server_data - takes a string and substitutes all host variables contained in it
 	@arg $string - the string to make host variable substitutions on
 	@arg $l_escape_string - the character used to escape each variable on the left side
 	@arg $r_escape_string - the character used to escape each variable on the right side

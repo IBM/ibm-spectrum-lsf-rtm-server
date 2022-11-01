@@ -135,7 +135,7 @@ function show_views() {
 				$params = array('add_action');
 				api_plugin_hook_function($hook_func, $params);
 			} else {
-				api_plugin_hook_function($hook_func);
+				api_plugin_hook($hook_func);
 			}
 		}
 	}
@@ -146,7 +146,7 @@ function show_graphs_limstat() {
 	$clusterid = get_request_var('clusterid');
 
 	if (get_request_var('limstat') == 'true' ) {
-		api_plugin_hook_function('graph_cluster_limstat');
+		api_plugin_hook('graph_cluster_limstat');
 	}
 }
 
@@ -154,7 +154,7 @@ function show_graphs_batchstat() {
 	$clusterid = get_request_var('clusterid');
 
 	if (get_request_var('batchstat') == 'true' ) {
-		api_plugin_hook_function('graph_cluster_batchstat');
+		api_plugin_hook('graph_cluster_batchstat');
 	}
 }
 
@@ -162,7 +162,7 @@ function show_graphs_gridstat() {
 	$clusterid = get_request_var('clusterid');
 
 	if (get_request_var('gridstat') == 'true' ) {
-		api_plugin_hook_function('graph_cluster_gridstat');
+		api_plugin_hook('graph_cluster_gridstat');
 	}
 }
 
@@ -170,7 +170,7 @@ function show_graphs_memavastat() {
 	$clusterid = get_request_var('clusterid');
 
 	if (get_request_var('memavastat') == 'true' ) {
-		api_plugin_hook_function('graph_cluster_memavastat');
+		api_plugin_hook('graph_cluster_memavastat');
 	}
 }
 

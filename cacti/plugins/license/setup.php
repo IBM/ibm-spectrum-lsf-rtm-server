@@ -1226,10 +1226,11 @@ function license_poller_bottom () {
 }
 
 function license_valid_host_fields($fields){
+	$fields = str_replace(")", "", str_replace("(", "", $fields));
 	$fields = explode('|', $fields);
 	$fields[] = 'lic_server_id';
 
-	return implode('|', $fields);
+	return '(' . implode('|', $fields) . ')';
 }
 
 function license_substitute_host_data($array) {
