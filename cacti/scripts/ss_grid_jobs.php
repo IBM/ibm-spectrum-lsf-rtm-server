@@ -1,5 +1,5 @@
 <?php
-// $Id$
+// $Id: e49c0a9204a932b821630062c85b0b5c49d24134 $
 /*
  +-------------------------------------------------------------------------+
  | Copyright IBM Corp. 2006, 2022                                          |
@@ -30,13 +30,13 @@ if (!isset($called_by_script_server)) {
 function ss_grid_jobs($hostname = '', $clusterid = 0, $summary='no') {
 	if ($hostname == '' || $hostname == 'localhost' || $summary == 'yes') {
 		if ($clusterid == 0) {
-			$job_stats = db_fetch_row("SELECT SUM(maxJobs) as t_maxJobs, SUM(numJobs) as t_numJobs,
+			$job_stats = db_fetch_row("SELECT " . SQL_NO_CACHE . " SUM(maxJobs) as t_maxJobs, SUM(numJobs) as t_numJobs,
 				SUM(numRun) as t_numRun, SUM(numSSUSP) as t_numSSUSP, SUM(numUSUSP) as t_numUSUSP,
 				SUM(numRESERVE) as t_numRESERVE
 				FROM grid_hosts
 				WHERE status != 'Closed-Admin'");
 		} else {
-			$job_stats = db_fetch_row_prepared("SELECT SUM(maxJobs) as t_maxJobs, SUM(numJobs) as t_numJobs,
+			$job_stats = db_fetch_row_prepared("SELECT " . SQL_NO_CACHE . " SUM(maxJobs) as t_maxJobs, SUM(numJobs) as t_numJobs,
 				SUM(numRun) as t_numRun, SUM(numSSUSP) as t_numSSUSP, SUM(numUSUSP) as t_numUSUSP,
 				SUM(numRESERVE) as t_numRESERVE
 				FROM grid_hosts
@@ -46,7 +46,7 @@ function ss_grid_jobs($hostname = '', $clusterid = 0, $summary='no') {
 		}
 	} else {
 		if ($clusterid == 0) {
-			$job_stats = db_fetch_row_prepared("SELECT SUM(maxJobs) as t_maxJobs, SUM(numJobs) as t_numJobs,
+			$job_stats = db_fetch_row_prepared("SELECT " . SQL_NO_CACHE . " SUM(maxJobs) as t_maxJobs, SUM(numJobs) as t_numJobs,
 				SUM(numRun) as t_numRun, SUM(numSSUSP) as t_numSSUSP, SUM(numUSUSP) as t_numUSUSP,
 				SUM(numRESERVE) as t_numRESERVE
 				FROM grid_hosts
@@ -54,12 +54,12 @@ function ss_grid_jobs($hostname = '', $clusterid = 0, $summary='no') {
 				AND status != 'Closed-Admin'",
 				array($hostname));
 		} else {
-			$job_stats = db_fetch_row_prepared('SELECT maxJobs as t_maxJobs, numJobs as t_numJobs,
+			$job_stats = db_fetch_row_prepared("SELECT " . SQL_NO_CACHE . " maxJobs as t_maxJobs, numJobs as t_numJobs,
 				numRun as t_numRun, numSSUSP as t_numSSUSP, numUSUSP as t_numUSUSP,
 				numRESERVE as t_numRESERVE
 				FROM grid_hosts
 				WHERE clusterid = ?
-				AND host = ?',
+				AND host = ?",
 				array($clusterid, $hostname));
 		}
 	}
