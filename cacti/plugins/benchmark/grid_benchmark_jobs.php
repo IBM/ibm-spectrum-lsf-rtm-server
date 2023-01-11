@@ -1,5 +1,5 @@
 <?php
-// $Id$
+// $Id: 0268a3951207c879d92f6ca3569fd7ec3e1e6a9c $
 /*
  +-------------------------------------------------------------------------+
  | Copyright IBM Corp. 2006, 2022                                          |
@@ -87,13 +87,13 @@ if (isset_request_var('ajaxstats')) {
 	general_header();
 	ajax_benchmark_jobs();
 	bottom_footer();
-}else{
+} else {
 	general_header();
 	view_benchmark_jobs();
 	bottom_footer();
 }
 
-function grid_view_get_records(&$sql_where, $apply_limits = TRUE, $rows, &$sql_params) {
+function grid_view_get_records(&$sql_where, $apply_limits = true, $rows, &$sql_params) {
 	benchmark_status_where($sql_where);
 
 	/* cluster id sql where */
@@ -130,7 +130,7 @@ function grid_view_get_records(&$sql_where, $apply_limits = TRUE, $rows, &$sql_p
 		$sql_where
 		$sql_order";
 
-	//echo $sql_query;
+	//print $sql_query;
 
 	if ($apply_limits) {
 		$sql_query .= ' LIMIT ' . ($rows*(get_request_var('page')-1)) . ',' . $rows;
@@ -220,7 +220,7 @@ function job_config_filter() {
 
 					if ($('#date1').val() == date1 && $('#date2').val() == date2 && $('#predefined_timespan').val() != 0) {
 						strURL = strURL + '&predefined_timespan=' + $('#predefined_timespan').val();
-					}else{
+					} else {
 						strURL = strURL + '&date1=' + $('#date1').val();
 						strURL = strURL + '&date2=' + $('#date2').val();
 					}
@@ -313,10 +313,11 @@ function job_config_filter() {
 				function stopRKey(evt) {
 					var evt  = (evt) ? evt : ((event) ? event : null);
 					var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
-					if ((evt.keyCode == 13) && (node.type=='text')) { return false; }
+					if (evt.keyCode == 8 && node.type=='text' && node.value == '') {
+						return false;
+					}
 				}
 				document.onkeypress = stopRKey;
-
 
 				$('#views').multiselect({header: "Choose a View", minWidth: 140 });
 
@@ -463,10 +464,10 @@ function job_config_filter() {
 						</select>
 					</td>
 					<td>
-						<input id='go' type='submit' value='<?php print __('Go');?>' title='<?php print __('Apply Custom Date Ranges or Search');?>'>
-					</td>
-					<td>
-						<input id='clear' type='button' value='<?php print __('Clear');?>' title='<?php print __('Clear All Filters');?>'>
+						<span>
+							<input id='go' type='submit' value='<?php print __('Go');?>' title='<?php print __('Apply Custom Date Ranges or Search');?>'>
+							<input id='clear' type='button' value='<?php print __('Clear');?>' title='<?php print __('Clear All Filters');?>'>
+						</span>
 					</td>
 				</tr>
 			</table>
@@ -479,7 +480,7 @@ function job_config_filter() {
 						<select id='predefined_timespan'>
 							<?php
 							if (isset($_SESSION['custom']) && $_SESSION['custom']) {
-								$grid_timespans[GT_CUSTOM] = __('Custom', 'syslog');
+								$grid_timespans[GT_CUSTOM] = __('Custom', 'benchmark');
 								set_request_var('predefined_timespan', GT_CUSTOM);
 								$start_val = 0;
 								$end_val = cacti_sizeof($grid_timespans);
@@ -501,28 +502,28 @@ function job_config_filter() {
 						</select>
 					</td>
 					<td>
-						<?php print __('From', 'syslog');?>
+						<?php print __('From', 'benchmark');?>
 					</td>
 					<td>
 						<input type='text' id='date1' size='20' value='<?php print (isset($_SESSION['sess_gbmj_current_date1']) ? $_SESSION['sess_gbmj_current_date1'] : '');?>'>
 					</td>
 					<td>
-						<i title='<?php print __esc('Start Date Selector', 'syslog');?>' class='calendar fa fa-calendar' id='startDate'></i>
+						<i title='<?php print __esc('Start Date Selector', 'benchmark');?>' class='calendar fa fa-calendar' id='startDate'></i>
 					</td>
 					<td>
-						<?php print __('To', 'syslog');?>
+						<?php print __('To', 'benchmark');?>
 					</td>
 					<td>
 						<input type='text' id='date2' size='20' value='<?php print (isset($_SESSION['sess_gbmj_current_date2']) ? $_SESSION['sess_gbmj_current_date2'] : '');?>'>
 					</td>
 					<td>
-						<i title='<?php print __esc('End Date Selector', 'syslog');?>' class='calendar fa fa-calendar' id='endDate'></i>
+						<i title='<?php print __esc('End Date Selector', 'benchmark');?>' class='calendar fa fa-calendar' id='endDate'></i>
 					</td>
 					<td>
-						<i title='<?php print __esc('Shift Time Backward', 'syslog');?>' id='move_left' class='shiftArrow fa fa-backward'></i>
+						<i title='<?php print __esc('Shift Time Backward', 'benchmark');?>' id='move_left' class='shiftArrow fa fa-backward'></i>
 					</td>
 					<td>
-						<select id='predefined_timeshift' title='<?php print __esc('Define Shifting Interval', 'syslog');?>'>
+						<select id='predefined_timeshift' title='<?php print __esc('Define Shifting Interval', 'benchmark');?>'>
 							<?php
 							$start_val = 1;
 							$end_val = cacti_sizeof($grid_timeshifts)+1;
@@ -535,7 +536,7 @@ function job_config_filter() {
 						</select>
 					</td>
 					<td>
-						<i title='<?php print __esc('Shift Time Forward', 'syslog');?>' id='move_right' class='shiftArrow fa fa-forward'></i>
+						<i title='<?php print __esc('Shift Time Forward', 'benchmark');?>' id='move_right' class='shiftArrow fa fa-forward'></i>
 					</td>
 				</tr>
 			</table>
@@ -560,7 +561,7 @@ function view_benchmark_jobs() {
 	global $title, $report, $grid_search_types, $grid_rows_selector, $grid_refresh_interval, $minimum_user_refresh_intervals, $config, $benchmark_actions;
 	global $timespans, $grid_timespans, $timeshifts, $grid_timeshifts, $grid_weekdays, $timespan;
 
-	echo "<div id='stats_content'></div>\n";
+	print "<div id='stats_content'></div>\n";
 
 	?>
 	<script type='text/javascript'>
@@ -568,12 +569,13 @@ function view_benchmark_jobs() {
 		if (navigator.userAgent.match(/msie/i)) {
 			var D = (document.body.clientWidth)? document.body: document.documentElement;
 			fw  = D.clientWidth - 350;
-		}else{
+		} else {
 			fw = window.innerWidth - 350;
 		}
-		if(fw < 0){
+		if (fw < 0){
 			fw = 1;
 		}
+
 		$.get('grid_benchmark_jobs.php?ajaxstats=1&header=false&width='+fw+'&sort_column=<?php print get_request_var("sort_column");?>&sort_direction=<?php print get_request_var("sort_direction");?>&add=<?php print get_request_var("add");?>', function(data) {
 			$('#stats_content').html(data);
 			$('#status_ajax').html('');
@@ -605,7 +607,7 @@ function ajax_benchmark_jobs() {
 		$rows = get_request_var('rows');
 	}
 
-	$benchmark_jobs_results = grid_view_get_records($sql_where, TRUE, $rows, $sql_params);
+	$benchmark_jobs_results = grid_view_get_records($sql_where, true, $rows, $sql_params);
 
 	$rows_query_string = "SELECT COUNT(*)
 		FROM grid_clusters_benchmark_summary a
@@ -641,8 +643,7 @@ function ajax_benchmark_jobs() {
 				$cluster_name = '<i>' . __('Deleted') . '</i>';
 			}
 
-			//Assume job done with exitcode '0'
-			$job_exitinfo = 0;
+			$job_exitinfo = -1;
 			if ($benchmark_job['status'] == 5  ||
 				$benchmark_job['status'] == 14 ||
 				$benchmark_job['status'] == 15 ||
@@ -721,22 +722,34 @@ function ajax_benchmark_jobs() {
 			$start_time  = round($submit_time - 86400,0);
 			$end_time    = round($submit_time + 86400,0);
 
-			echo '<td>' . filter_value($benchmark_job['benchmark_name'], get_request_var('filter')) . '</td>';
-			echo '<td>'  . $benchmark_job['benchmark_id'] . '</td>';
-			echo '<td>' . $cluster_name . '</td>';
-			echo "<td class='nowrap'>"  . $benchmark_job['start_time'] . '</td>';
+			if (api_user_realm_auth('benchmark.php')) {
+				$url1 = $config['url_path'] . 'plugins/benchmark/benchmark.php?action=edit&id=' . $benhmark_job['benchmark_id'];
+				$url2 = $config['url_path'] . 'plugins/benchmark/benchmark.php?reset=true&clusterid=' . $benchmark_job['clusterid'];
+				$title1 = __esc('Edit Benchark Job', 'benchmark');
+				$title2 = __esc('View Cluster Benchark Jobs', 'benchmark');
+			} else {
+				$url1 = '';
+				$url2 = '';
+				$title1 = '';
+				$title2 = '';
+			}
 
-			echo '<td>' . filter_value($benchmark_job['pjob_jobid'], get_request_var('filter'), ($benchmark_job['pjob_jobid'] > 0)?$config['url_path'] . 'plugins/grid/grid_bjobs.php?action=viewjob&cluster_tz&clusterid=' . $benchmark_job['clusterid'] . '&jobid=' . $benchmark_job['pjob_jobid'] . '&indexid=0&submit_time=' . $submit_time . '&start_time=' . $start_time . '&end_time=' . $end_time:'') . '</td>';
+			print "<td class='drillDown' title='$title1'>" . filter_value($benchmark_job['benchmark_name'], get_request_var('filter'), $url1) . '</td>';
+			print '<td>'  . $benchmark_job['benchmark_id'] . '</td>';
+			print "<td class='drillDown' title='$title2'>" . filter_value($cluster_name, get_request_var('filter'), $url2) . '</td>';
+			print "<td class='nowrap'>"  . $benchmark_job['start_time'] . '</td>';
 
-			echo "<td class='nowrap'>"  . benchmark_get_status($benchmark_job['status']) . '</td>';
-			echo '<td>'  . benchmark_get_exit_code($benchmark_job['exitStatus'], $reason) . '</td>';
-			echo "<td class='right nowrap'>"  . benchmark_get_time($benchmark_job['pjob_bsubTime']) . '</td>';
-			echo "<td class='right nowrap'>"  . benchmark_get_time($benchmark_job['pjob_seenTime']) . '</td>';
-			echo "<td class='right nowrap'>"  . benchmark_get_time($benchmark_job['pjob_startTime']) . '</td>';
-			echo "<td class='right nowrap'>"  . benchmark_get_time($benchmark_job['pjob_runTime']) . '</td>';
-			echo "<td class='right nowrap'>"  . benchmark_get_time($benchmark_job['pjob_doneTime']) . '</td>';
-			echo "<td class='right nowrap'>"  . benchmark_get_time($benchmark_job['pjob_seenDoneTime']) . '</td>';
-			echo "<td>$reason</td>";
+			print '<td>' . filter_value($benchmark_job['pjob_jobid'], get_request_var('filter'), ($benchmark_job['pjob_jobid'] > 0)?$config['url_path'] . 'plugins/grid/grid_bjobs.php?action=viewjob&cluster_tz&clusterid=' . $benchmark_job['clusterid'] . '&jobid=' . $benchmark_job['pjob_jobid'] . '&indexid=0&submit_time=' . $submit_time . '&start_time=' . $start_time . '&end_time=' . $end_time:'') . '</td>';
+
+			print "<td class='nowrap'>"  . benchmark_get_status($benchmark_job['status']) . '</td>';
+			print '<td>'  . benchmark_get_exit_code($benchmark_job['exitStatus'], $reason) . '</td>';
+			print "<td class='right nowrap'>"  . benchmark_get_time($benchmark_job['pjob_bsubTime']) . '</td>';
+			print "<td class='right nowrap'>"  . benchmark_get_time($benchmark_job['pjob_seenTime']) . '</td>';
+			print "<td class='right nowrap'>"  . benchmark_get_time($benchmark_job['pjob_startTime']) . '</td>';
+			print "<td class='right nowrap'>"  . benchmark_get_time($benchmark_job['pjob_runTime']) . '</td>';
+			print "<td class='right nowrap'>"  . benchmark_get_time($benchmark_job['pjob_doneTime']) . '</td>';
+			print "<td class='right nowrap'>"  . benchmark_get_time($benchmark_job['pjob_seenDoneTime']) . '</td>';
+			print "<td>$reason</td>";
 
 			form_end_row();
 		}
@@ -753,78 +766,89 @@ function ajax_benchmark_jobs() {
 
 function process_request_var() {
 	global $grid_timespans, $grid_timeshifts, $grid_weekdays;
+
+	/**
+	 * check to see if the cluster has changed and if so, reset the
+	 * benchmark job filter if set.
+	 */
+	if (isset($_SESSION['sess_gbmj_clusterid']) && isset_request_var('clusterid')) {
+		if ($_SESSION['sess_gbmj_clusterid'] != get_filter_request_var('clusterid')) {
+			set_request_var('benchmark_id', '0');
+		}
+	}
+
 	/* ================= input validation and session storage ================= */
 	$filters = array(
 		'rows' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '-1'
-			),
+		),
 		'page' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'default' => '1'
-			),
+		),
 		'clusterid' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '0'
-			),
+		),
 		'status' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '-1'
-			),
+		),
 		'filter' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'refresh' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => read_grid_config_option('refresh_interval'),
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'user' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'filter' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'sort_column' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => 'start_time',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'sort_direction' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => 'DESC',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'benchmark_id' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '0'
-			)
+		)
 	);
 
 	validate_store_request_vars($filters, 'sess_gbmj');
 
-	$timespan = rtm_initialize_timespan($grid_timespans, $grid_timeshifts, 'sess_gbmj', 'read_grid_config_option', 'Y-m-d H:i:s');
+	$timespan  = rtm_initialize_timespan($grid_timespans, $grid_timeshifts, 'sess_gbmj', 'read_grid_config_option', 'Y-m-d H:i:s');
 	$timeshift = rtm_set_timeshift($grid_timeshifts, 'sess_gbmj', 'read_grid_config_option');
 
-		/* process the timespan/timeshift settings */
+	/* process the timespan/timeshift settings */
 	rtm_process_html_variables($grid_timespans, $grid_timeshifts, 'sess_gbmj', 'read_grid_config_option');
 	rtm_process_user_input($timespan, $timeshift, $grid_timespans, 'sess_gbmj', 'read_grid_config_option', 'Y-m-d H:i:s');
 
-		/* save session variables */
+	/* save session variables */
 	rtm_finalize_timespan($timespan, $grid_timespans, 'sess_gbmj', 'read_grid_config_option', 'Y-m-d H:i:s');
 
 	set_request_var('date1',$_SESSION['sess_gbmj_current_date1']);

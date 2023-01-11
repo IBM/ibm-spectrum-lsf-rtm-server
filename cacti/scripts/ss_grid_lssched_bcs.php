@@ -1,5 +1,5 @@
 <?php
-// $Id$
+// $Id: c862d69d1194abd50180b813877394b96b213c81 $
 /*
  +-------------------------------------------------------------------------+
  | Copyright IBM Corp. 2006, 2022                                          |
@@ -65,7 +65,7 @@ function ss_grid_lssched_bcs_getvalue($host_id, $index, $column) {
 	}
 
 	if ($column == 'totalInUse') {
-		$value = db_fetch_cell("SELECT SUM(totals)
+		$value = db_fetch_cell("SELECT " . SQL_NO_CACHE . " SUM(totals)
 			FROM (
 				SELECT SUM(inuse + `over`) AS totals
 				FROM grid_blstat_cluster_use
@@ -76,7 +76,7 @@ function ss_grid_lssched_bcs_getvalue($host_id, $index, $column) {
 				WHERE lsid='" . $index_arr[0] . "' AND feature='" . $index_arr[1] . "'  AND cluster='" . $index_arr[2] ."'
 			) AS totals");
 	} else if ($column == 'totalReserve') {
-		$value = db_fetch_cell("SELECT SUM(totals)
+		$value = db_fetch_cell("SELECT " . SQL_NO_CACHE . " SUM(totals)
 			FROM (
 				SELECT SUM(reserve) AS totals
 				FROM grid_blstat_cluster_use
@@ -87,7 +87,7 @@ function ss_grid_lssched_bcs_getvalue($host_id, $index, $column) {
 				WHERE lsid='" . $index_arr[0] . "' AND feature='" . $index_arr[1] . "'  AND cluster='" . $index_arr[2] ."'
 			) AS totals");
 	} else if ($column == 'totalFree') {
-		$value = db_fetch_cell("SELECT SUM(totals)
+		$value = db_fetch_cell("SELECT " . SQL_NO_CACHE . " SUM(totals)
 			FROM (
 				SELECT SUM(free) AS totals
 				FROM grid_blstat_cluster_use
@@ -98,7 +98,7 @@ function ss_grid_lssched_bcs_getvalue($host_id, $index, $column) {
 				WHERE lsid='" . $index_arr[0] . "' AND feature='" . $index_arr[1] . "'  AND cluster='" . $index_arr[2] ."'
 			) AS totals");
 	} else if ($column == 'totalDemand') {
-		$value = db_fetch_cell("SELECT SUM(totals)
+		$value = db_fetch_cell("SELECT " . SQL_NO_CACHE . " SUM(totals)
 			FROM (
 				SELECT SUM(need+demand) AS totals
 				FROM grid_blstat_cluster_use
@@ -109,7 +109,7 @@ function ss_grid_lssched_bcs_getvalue($host_id, $index, $column) {
 				WHERE lsid='" . $index_arr[0] . "' AND feature='" . $index_arr[1] . "'  AND cluster='" . $index_arr[2] ."'
 			) AS totals");
 	} else if ($column == 'totalOver') {
-		$value = db_fetch_cell("SELECT SUM(totals)
+		$value = db_fetch_cell("SELECT " . SQL_NO_CACHE . " SUM(totals)
 			FROM (
 				SELECT SUM(`over`) AS totals
 				FROM grid_blstat_clusters
@@ -131,7 +131,7 @@ function ss_grid_lssched_bcs_getvalue($host_id, $index, $column) {
 function ss_grid_lssched_bcs_getnames($host_id) {
 	$return_arr = array();
 
-	$lsid = db_fetch_cell_prepared('SELECT lsid
+	$lsid = db_fetch_cell_prepared('SELECT ' . SQL_NO_CACHE . ' lsid
 		FROM grid_blstat_collectors
 		WHERE cacti_host = ?',
 		array($host_id));
@@ -140,7 +140,7 @@ function ss_grid_lssched_bcs_getnames($host_id) {
 		return $return_arr;
 	}
 
-	$arr = db_fetch_assoc_prepared("SELECT DISTINCT lsid_feature_cl
+	$arr = db_fetch_assoc_prepared("SELECT " . SQL_NO_CACHE . " DISTINCT lsid_feature_cl
 		FROM (
 			SELECT CONCAT_WS('', lsid, '|', feature, '|', cluster, '') AS lsid_feature_cl
 			FROM grid_blstat_cluster_use
@@ -163,7 +163,7 @@ function ss_grid_lssched_bcs_getnames($host_id) {
 function ss_grid_lssched_bcs_getinfo($host_id, $info_requested) {
 	$return_arr = array();
 
-	$lsid = db_fetch_cell_prepared('SELECT lsid
+	$lsid = db_fetch_cell_prepared('SELECT ' . SQL_NO_CACHE . ' lsid
 		FROM grid_blstat_collectors
 		WHERE cacti_host = ?',
 		array($host_id));
@@ -173,7 +173,7 @@ function ss_grid_lssched_bcs_getinfo($host_id, $info_requested) {
 	}
 
 	if ($info_requested == 'lsid_feature_cl') {
-		$arr = db_fetch_assoc_prepared("SELECT DISTINCT qry_index, qry_value
+		$arr = db_fetch_assoc_prepared("SELECT " . SQL_NO_CACHE . " DISTINCT qry_index, qry_value
 			FROM (
 				SELECT CONCAT_WS('', lsid, '|', feature, '|', cluster, '') AS qry_index,
 				CONCAT_WS('', lsid, '|', feature, '|', cluster, '') AS qry_value
@@ -188,7 +188,7 @@ function ss_grid_lssched_bcs_getinfo($host_id, $info_requested) {
 			ORDER BY qry_index",
 			array($lsid, $lsid));
 	} elseif ($info_requested == 'cluster') {
-		$arr = db_fetch_assoc_prepared("SELECT DISTINCT qry_index, qry_value
+		$arr = db_fetch_assoc_prepared("SELECT " . SQL_NO_CACHE . " DISTINCT qry_index, qry_value
 			FROM (
 				SELECT CONCAT_WS('', lsid, '|', feature, '|', cluster, '') AS qry_index,
 				cluster AS qry_value
@@ -203,7 +203,7 @@ function ss_grid_lssched_bcs_getinfo($host_id, $info_requested) {
 			ORDER BY qry_index",
 			array($lsid, $lsid));
 	} elseif ($info_requested == 'region') {
-		$arr = db_fetch_assoc_prepared("SELECT DISTINCT qry_index, qry_value
+		$arr = db_fetch_assoc_prepared("SELECT " . SQL_NO_CACHE . " DISTINCT qry_index, qry_value
 			FROM (
 				SELECT CONCAT_WS('', gbcu.lsid, '|', feature, '|', cluster, '') AS qry_index,
 				region AS qry_value
@@ -222,7 +222,7 @@ function ss_grid_lssched_bcs_getinfo($host_id, $info_requested) {
 			ORDER BY qry_index",
 			array($lsid, $lsid));
 	} elseif ($info_requested == 'collector') {
-		$arr = db_fetch_assoc_prepared("SELECT DISTINCT qry_index, qry_value
+		$arr = db_fetch_assoc_prepared("SELECT " . SQL_NO_CACHE . " DISTINCT qry_index, qry_value
 			FROM (
 				SELECT CONCAT_WS('', gbcu.lsid, '|', feature, '|', cluster, '') AS qry_index,
 				gbc.name AS qry_value
@@ -241,7 +241,7 @@ function ss_grid_lssched_bcs_getinfo($host_id, $info_requested) {
 			ORDER BY qry_index",
 			array($lsid, $lsid));
 	} elseif ($info_requested == 'feature') {
-		$arr = db_fetch_assoc_prepared("SELECT DISTINCT qry_index, qry_value
+		$arr = db_fetch_assoc_prepared("SELECT " . SQL_NO_CACHE . " DISTINCT qry_index, qry_value
 			FROM (
 				SELECT CONCAT_WS('', lsid, '|', feature, '|', cluster, '') AS qry_index,
 				feature AS qry_value

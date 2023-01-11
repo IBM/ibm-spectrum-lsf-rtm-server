@@ -1,5 +1,5 @@
 <?php
-// $Id$
+// $Id: 441408528d80d8be03d377a6c23a42ceede5ec1c $
 /*
  +-------------------------------------------------------------------------+
  | Copyright IBM Corp. 2006, 2022                                          |
@@ -34,7 +34,7 @@ function ss_grid_effectiveut($clusterid = 0) {
 		$sql_where = "AND ghr.clusterid = $clusterid";
 	}
 
-	$effectiveUT = db_fetch_cell("SELECT
+	$effectiveUT = db_fetch_cell("SELECT " . SQL_NO_CACHE . "
 		SUM(effectiveUtil*totalSlots)/SUM(totalSlots) AS effectiveUtil
 		FROM (
 			SELECT host, GREATEST(memSlotUtil, slotUtil, cpuUtil) AS effectiveUtil, totalSlots

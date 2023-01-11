@@ -1,5 +1,5 @@
 <?php
-// $Id$
+// $Id: 898864bd80312c4af317fb2fc130dcad806ceed3 $
 /*
  +-------------------------------------------------------------------------+
  | Copyright IBM Corp. 2006, 2022                                          |
@@ -36,7 +36,7 @@ function ss_grid_slot_ut($host = '', $clusterid = 0) {
 	}
 
 	if ($host != 'localhost' ) {
-		$ut = db_fetch_row_prepared("SELECT
+		$ut = db_fetch_row_prepared("SELECT " . SQL_NO_CACHE . "
 			IFNULL(memSlotUtil, 0) AS memSlotUtil,
 			IFNULL(slotUtil, 0) AS slotUtil,
 			IFNULL(cpuUtil, 0) AS cpuUtil
@@ -66,7 +66,7 @@ function ss_grid_slot_ut($host = '', $clusterid = 0) {
 			) AS results2",
 			array($clusterid));
 	}else{
-		$ut = db_fetch_row_prepared("SELECT
+		$ut = db_fetch_row_prepared("SELECT " . SQL_NO_CACHE . "
 			IFNULL(memSlotUtil/totalSlots, 0) AS memSlotUtil,
 			IFNULL(slotUtil/totalSlots, 0) AS slotUtil,
 			IFNULL(cpuUtil/totalSlots, 0) AS cpuUtil
