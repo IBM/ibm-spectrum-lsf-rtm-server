@@ -7733,9 +7733,10 @@ function curve_fitting_rusage_records_host($rusage_records = array()) {
 		WHERE (jobid=?
 		AND indexid=?
 		AND clusterid=?
+		AND submit_time=?
 		AND host=?
 		AND update_time<?)
-		ORDER BY update_time DESC LIMIT 1", array($first_record['jobid'], $first_record['indexid'], $first_record['clusterid'], $first_record['host'], $first_record['update_time']));
+		ORDER BY update_time DESC LIMIT 1", array($first_record['jobid'], $first_record['indexid'], $first_record['clusterid'], $first_record['submit_time'], $first_record['host'], $first_record['update_time']));
 
 	if (!sizeof($prev)) {
 		$pt = db_fetch_row_prepared("select * from grid_table_partitions where table_name = 'grid_jobs_host_rusage'
@@ -7749,9 +7750,10 @@ function curve_fitting_rusage_records_host($rusage_records = array()) {
 				WHERE (jobid=?
 				AND indexid=?
 				AND clusterid=?
+				AND submit_time=?
 				AND host=?
 				AND update_time<?)
-				ORDER BY update_time DESC LIMIT 1", array($first_record['jobid'], $first_record['indexid'], $first_record['clusterid'], $first_record['host'], $first_record['update_time']));
+				ORDER BY update_time DESC LIMIT 1", array($first_record['jobid'], $first_record['indexid'], $first_record['clusterid'], $first_record['submit_time'], $first_record['host'], $first_record['update_time']));
 		}
 	}
 
@@ -7811,10 +7813,11 @@ function curve_fitting_rusage_records_gpu($rusage_records = array()) {
 		WHERE (jobid=?
 		AND indexid=?
 		AND clusterid=?
+		AND submit_time=?
 		AND host=?
 		AND gpu_id=?
 		AND update_time <?)
-		ORDER BY update_time DESC LIMIT 1", array($first_record['jobid'], $first_record['indexid'], $first_record['clusterid'], $first_record['host'], $first_record['gpu_id'], $first_record['update_time']));
+		ORDER BY update_time DESC LIMIT 1", array($first_record['jobid'], $first_record['indexid'], $first_record['clusterid'], $first_record['submit_time'], $first_record['host'], $first_record['gpu_id'], $first_record['update_time']));
 
 	if (!sizeof($prev)) {
 		$pt = db_fetch_row_prepared("select * from grid_table_partitions where table_name = 'grid_jobs_gpu_rusage'
@@ -7828,10 +7831,11 @@ function curve_fitting_rusage_records_gpu($rusage_records = array()) {
 				WHERE (jobid=?
 				AND indexid=?
 				AND clusterid=?
+				AND submit_time=?
 				AND host=?
 				AND gpu_id=?
 				AND update_time <?)
-				ORDER BY update_time DESC LIMIT 1", array($first_record['jobid'], $first_record['indexid'], $first_record['clusterid'], $first_record['host'], $first_record['gpu_id'], $first_record['update_time']));
+				ORDER BY update_time DESC LIMIT 1", array($first_record['jobid'], $first_record['indexid'], $first_record['clusterid'], $first_record['submit_time'], $first_record['host'], $first_record['gpu_id'], $first_record['update_time']));
 		}
 	}
 
