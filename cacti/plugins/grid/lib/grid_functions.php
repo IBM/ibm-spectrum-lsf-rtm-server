@@ -10142,7 +10142,7 @@ function sorting_json_format($selected_items_whole, $args_lists='', $action_leve
 	return $json_cluster;
 }
 
-function getlsfconf($master_host, $master_port, $enable_ego, $pollerid) {
+function getlsfconf($master_host, $master_port, $enable_ego, $strict_checking, $pollerid) {
 	global $rtm;
 
 	$action_level = 'getlsfconf';
@@ -10161,6 +10161,7 @@ function getlsfconf($master_host, $master_port, $enable_ego, $pollerid) {
 	$request['ip'] = $master_host;
 	$request['lim_port'] = $master_port;
 	$request['lsf_ego'] = $enable_ego;
+	$request['lsf_strict_checking'] = $strict_checking;
 	$request['RTM_POLLER_BINDIR'] = $pollerinfo['poller_lbindir'];
 	$request['LSF_SERVERDIR'] = $LSF_SERVERDIR;
 	$request['name'] = '';

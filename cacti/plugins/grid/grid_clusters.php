@@ -680,7 +680,7 @@ function api_grid_cluster_save($clusterid, $poller_id, $clustername, $lsf_envdir
 		$save['lsf_master'] = $master;
 
 		if ($advanced_enabled =='') {
-			$lsf_confdir = getlsfconf($save['lsf_master'], $save['lim_port'], $save['lsf_ego'], $save['poller_id']);
+			$lsf_confdir = getlsfconf($save['lsf_master'], $save['lim_port'], $save['lsf_ego'], $save['lsf_strict_checking'], $save['poller_id']);
 		} else {
 			$lsf_confdir = grid_get_lsf_conf_variable_value($lsf_envpath, 'LSF_CONFDIR');
 		}

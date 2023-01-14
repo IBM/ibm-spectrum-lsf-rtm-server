@@ -1559,7 +1559,7 @@ function grid_lsf_generate_conf($clusterid, $pollerid, $lsfmaster, $lsf_lim_port
 function grid_get_lsf_conf_from_lim($save) {
 	global $config, $rtm;
 
-	$lsf_confdir = getlsfconf($save["lsf_master"], $save["lim_port"], $save["lsf_ego"], $save["poller_id"]);
+	$lsf_confdir = getlsfconf($save["lsf_master"], $save["lim_port"], $save["lsf_ego"], $save['lsf_strict_checking'], $save["poller_id"]);
 
 	return $lsf_confdir;
 }
