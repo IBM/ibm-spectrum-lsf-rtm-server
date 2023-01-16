@@ -31,14 +31,14 @@ function ss_lic_flexlm_licenses($lic_id = 0, $cmd = 'index', $arg1 = '', $arg2 =
 	if ($cmd == 'index') {
 		$return_arr = ss_lic_flexlm_getnames($lic_id);
 
-		for ($i=0;($i<sizeof($return_arr));$i++) {
+		for ($i=0;($i<cacti_sizeof($return_arr));$i++) {
 			print $return_arr[$i] . "\n";
 		}
 	} elseif ($cmd == 'query') {
 		$arr_index = ss_lic_flexlm_getnames($lic_id);
 		$arr = ss_lic_flexlm_getinfo($lic_id, $arg1);
 
-		for ($i=0;($i<sizeof($arr_index));$i++) {
+		for ($i=0;($i<cacti_sizeof($arr_index));$i++) {
 			if (isset($arr[$arr_index[$i]])) {
 				print $arr_index[$i] . '!' . $arr[$arr_index[$i]] . "\n";
 			}
@@ -120,7 +120,7 @@ function ss_lic_flexlm_getnames($lic_id) {
 		ORDER BY feature_name",
 		array($lic_id));
 
-	for ($i=0;($i<sizeof($arr));$i++) {
+	for ($i=0;($i<cacti_sizeof($arr));$i++) {
 		$return_arr[$i] = $arr[$i]['feature_name'];
 	}
 	return $return_arr;
@@ -170,7 +170,7 @@ function ss_lic_flexlm_getinfo($lic_id, $info_requested) {
 			array($lic_id));
  	}
 
-	for ($i=0;($i<sizeof($arr));$i++) {
+	for ($i=0;($i<cacti_sizeof($arr));$i++) {
 		$return_arr[$arr[$i]['qry_index']] = addslashes($arr[$i]['qry_value']);
 	}
 

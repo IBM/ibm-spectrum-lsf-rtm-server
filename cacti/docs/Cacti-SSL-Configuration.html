@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Cacti-SSL-Configuration</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h3 id="configuring-and-enabling-ssl-for-cacti-with-a-self-signed-certificate">Configuring and enabling SSL for Cacti with a self signed certificate</h3>
+<p>Enabling SSL for cacti is mostly done at the webserver level an example SSL configuration for Http is as follows</p>
+<pre class="console"><code>yum install -y mod_ssl -y
+
+openssl genrsa -out ca.key 2048 
+openssl req -new -key ca.key -out ca.csr
+openssl x509 -req -days 700 -in ca.csr -signkey ca.key -out ca.crt
+cp ca.crt /etc/pki/tls/certs
+cp ca.key /etc/pki/tls/private/ca.key
+cp ca.csr /etc/pki/tls/private/ca.csr
+</code></pre>
+<p>Then we need to update the Apache SSL configuration file</p>
+<pre class="console"><code>vi +/SSLCertificateFile /etc/httpd/conf.d/ssl.conf
+SSLCertificateFile /etc/pki/tls/certs/ca.crt
+SSLCertificateKeyFile /etc/pki/tls/private/ca.key
+</code></pre>
+<p>restart the httpd service</p>
+<pre class="console"><code>systemctl restart httpd
+</code></pre>
+<p>After you have configured the web server to accept https you can force https in the Cacti GUI</p>
+<h4 id="warning-if-you-are-using-multiple-pollers-ensure-all-pollers-have-https-enabled-or-remote-polling-feature-will-not-work">Warning if you are using multiple pollers ensure all pollers have HTTPS enabled or remote polling feature will not work</h4>
+<p><img src="images/cacti-https.PNG" alt="cacti-ssl" /></p>
+<h4 id="note-if-your-cacti-system-is-public-it-is-recommended-to-get-a-certificate-from-a-trusted-certificate-provider">Note: If your Cacti system is public it is recommended to get a certificate from a trusted certificate provider</h4>
+</body>
+</html>

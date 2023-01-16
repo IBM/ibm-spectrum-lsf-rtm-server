@@ -18,11 +18,14 @@
  +-------------------------------------------------------------------------+
 */
 
-chdir('../../');
-include('./include/cli_check.php');
-include_once('./lib/poller.php');
-include('./plugins/syslog/config.php');
-include_once('./plugins/syslog/functions.php');
+include(__DIR__ . '/../../include/cli_check.php');
+include_once($config['library_path'] . '/poller.php');
+include_once(__DIR__ . '/functions.php');
+include_once(__DIR__ . '/database.php');
+
+syslog_determine_config();
+include(SYSLOG_CONFIG);
+syslog_connect();
 
 /* Let it run for an hour if it has to, to clear up any big
  * bursts of incoming syslog events
@@ -30,9 +33,9 @@ include_once('./plugins/syslog/functions.php');
 ini_set('max_execution_time', 3600);
 ini_set('memory_limit', '-1');
 
-global $syslog_debug;
+global $debug;
 
-$syslog_debug = true;
+$debug = true;
 
 /* process calling arguments */
 $parms = $_SERVER['argv'];
@@ -50,7 +53,7 @@ if (cacti_sizeof($parms)) {
 		switch ($arg) {
 			case '--debug':
 			case '-d':
-				$syslog_debug = true;
+				$debug = true;
 
 				break;
 			case '--version':

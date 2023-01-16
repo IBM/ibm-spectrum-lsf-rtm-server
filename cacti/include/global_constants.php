@@ -281,9 +281,10 @@ define('REPORTS_TYPE_INLINE_JPG_LN', 92);
 define('REPORTS_TYPE_INLINE_GIF_LN', 93);
 
 define('REPORTS_ITEM_GRAPH', 1);
-define('REPORTS_ITEM_TEXT', 2);
-define('REPORTS_ITEM_TREE', 3);
-define('REPORTS_ITEM_HR', 4);
+define('REPORTS_ITEM_TEXT',  2);
+define('REPORTS_ITEM_TREE',  3);
+define('REPORTS_ITEM_HR',    4);
+define('REPORTS_ITEM_HOST',  5);
 
 define('REPORTS_ALIGN_LEFT', 1);
 define('REPORTS_ALIGN_CENTER', 2);
@@ -426,8 +427,9 @@ define('ECANCELED',       125);
 
 define('DB_STATUS_ERROR'  , 0);
 define('DB_STATUS_WARNING', 1);
-define('DB_STATUS_SUCCESS', 2);
-define('DB_STATUS_SKIPPED', 3);
+define('DB_STATUS_RESTART', 2);
+define('DB_STATUS_SUCCESS', 3);
+define('DB_STATUS_SKIPPED', 4);
 
 define('MESSAGE_LEVEL_NONE',  0);
 define('MESSAGE_LEVEL_INFO',  1);
@@ -455,7 +457,16 @@ define('GRAPH_SOURCE_DATA_QUERY', 1);
 define('GRAPH_SOURCE_TEMPLATE', 2);
 define('GRAPH_SOURCE_AGGREGATE', 3);
 
-define('CACTI_LANGUAGE_HANDLER_NONE', 0);
+define('CACTI_LANGUAGE_HANDLER_DEFAULT', 0);
 define('CACTI_LANGUAGE_HANDLER_PHPGETTEXT', 1);
 define('CACTI_LANGUAGE_HANDLER_OSCAROTERO', 2);
 define('CACTI_LANGUAGE_HANDLER_MOTRANSLATOR', 3);
+
+if (!defined('LDAP_OPT_X_TLS_NEVER')) {
+	define('LDAP_OPT_X_TLS_NEVER', 0);
+	define('LDAP_OPT_X_TLS_HARD', 1);
+	define('LDAP_OPT_X_TLS_DEMAND', 2);
+	define('LDAP_OPT_X_TLS_ALLOW', 3);
+	define('LDAP_OPT_X_TLS_TRY', 4);
+}
+

@@ -26,7 +26,7 @@ include_once('./plugins/license/include/lic_functions.php');
 
 lic_view_license_file_details();
 
-function lic_view_get_lics_records(&$sql_where, &$sql_from_join, $apply_limits = true, $row_limit, &$sql_params) {
+function lic_view_get_lics_records(&$sql_where, &$sql_from_join, $apply_limits = true, $row_limit = 30, &$sql_params = array()) {
 	$current_time = mktime(date('H'), date('i'), date('s'), date('n'), date('j'), date('Y'));
 
 	/* license server sql where */

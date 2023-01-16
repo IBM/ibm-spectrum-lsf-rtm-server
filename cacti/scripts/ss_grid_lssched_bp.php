@@ -33,14 +33,14 @@ function ss_grid_lssched_bp($host_id = 0, $cmd = 'index', $arg1 = '', $arg2 = ''
 	if ($cmd == 'index') {
 		$return_arr = ss_grid_lssched_bp_getnames($host_id);
 
-		for ($i=0;($i<sizeof($return_arr));$i++) {
+		for ($i=0;($i<cacti_sizeof($return_arr));$i++) {
 			print $return_arr[$i] . "\n";
 		}
 	} elseif ($cmd == 'query') {
 		$arr_index = ss_grid_lssched_bp_getnames($host_id);
 		$arr = ss_grid_lssched_bp_getinfo($host_id, $arg1);
 
-		for ($i=0;($i<sizeof($arr_index));$i++) {
+		for ($i=0;($i<cacti_sizeof($arr_index));$i++) {
 			if (isset($arr[$arr_index[$i]])) {
 				print $arr_index[$i] . '!' . $arr[$arr_index[$i]] . "\n";
 			} else {
@@ -140,7 +140,7 @@ function ss_grid_lssched_bp_getvalue($host_id, $index, $column) {
 					WHERE lsid='" . $index_arr[0] . "' AND feature='" . $index_arr[1] . "' AND
 						service_domain='" . $index_arr[2] . "' AND project='" . $index_arr[3] . "'");
 
-				if (!empty($lic_ids) && sizeof($share_own)) {
+				if (!empty($lic_ids) && cacti_sizeof($share_own)) {
 					if ($share_own['own'] == 0) {
 						$feat = explode("@",$parts[1]);
 						$feature = db_fetch_cell("SELECT lic_feature
@@ -193,7 +193,7 @@ function ss_grid_lssched_bp_getvalue($host_id, $index, $column) {
 function ss_grid_lssched_bp_getnames($host_id) {
 	$return_arr = array();
 
-	$lsid = db_fetch_cell("SELECT lsid FROM grid_blstat_collectors WHERE cacti_host=$host_id");
+	$lsid = db_fetch_cell_prepared("SELECT lsid FROM grid_blstat_collectors WHERE cacti_host = ?", array($host_id));
 	if (empty($lsid)) {
 		return $return_arr;
 	}
@@ -203,7 +203,7 @@ function ss_grid_lssched_bp_getnames($host_id) {
 		WHERE lsid='$lsid'
 		ORDER BY CONCAT_WS('', lsid, '|', feature, '|', service_domain, '|', project, '')");
 
-	for ($i=0;($i<sizeof($arr));$i++) {
+	for ($i=0;($i<cacti_sizeof($arr));$i++) {
 		$return_arr[$i] = $arr[$i]["feature_sd_pr"];
 	}
 
@@ -260,7 +260,7 @@ function ss_grid_lssched_bp_getinfo($host_id, $info_requested) {
 			ORDER BY CONCAT_WS('', lsid, '|', feature, '|', service_domain, '|', project, '')");
 	}
 
-	for ($i=0;($i<sizeof($arr));$i++) {
+	for ($i=0;($i<cacti_sizeof($arr));$i++) {
 		$return_arr[$arr[$i]["qry_index"]] = addslashes($arr[$i]["qry_value"]);
 	}
 

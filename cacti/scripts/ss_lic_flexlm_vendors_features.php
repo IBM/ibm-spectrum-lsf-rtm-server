@@ -31,14 +31,14 @@ function ss_lic_get_vendors_features($lic_server_id = 0, $cmd = 'index', $arg1 =
 	if ($cmd == 'index') {
 		$return_arr = ss_lic_vendors_features_getnames($lic_server_id);
 
-		for ($i=0;($i<sizeof($return_arr));$i++) {
+		for ($i=0;($i<cacti_sizeof($return_arr));$i++) {
 			print $return_arr[$i] . "\n";
 		}
 	} elseif ($cmd == 'query') {
 		$arr_index = ss_lic_vendors_features_getnames($lic_server_id);
 		$arr = ss_lic_vendors_features_getinfo($lic_server_id, $arg1);
 
-		for ($i=0;($i<sizeof($arr_index));$i++) {
+		for ($i=0;($i<cacti_sizeof($arr_index));$i++) {
 			if (isset($arr[$arr_index[$i]])) {
 				print $arr_index[$i] . '!' . $arr[$arr_index[$i]] . "\n";
 			}
@@ -60,7 +60,7 @@ function ss_lic_vendors_features($lic_server_id, $featurename, $column) {
 	$feature_name = '';
 
 	if (cacti_sizeof($feat_explode) > 3) {
-		for ($i = 2;$i < sizeof($feat_explode); $i++) {
+		for ($i = 2;$i < cacti_sizeof($feat_explode); $i++) {
 			if (strlen($feature_name) > 0) {
 				$feature_name .= '='.$feat_explode[$i];
 			} else {
@@ -80,7 +80,7 @@ function ss_lic_vendors_features($lic_server_id, $featurename, $column) {
 	}
 
 	$earlier_time = mktime(date('H'), date('i')-$minus_time, date('s'), date('n'), date('j'), date('Y'));
-	$earlier_time = strftime('%F %H:%M:%S', $earlier_time);
+	$earlier_time = date('Y-m-d H:i:s', $earlier_time);
 
 	if ($column == 'inuse') {
 		$column_name = 'SUM(tokens_acquired)';
@@ -140,7 +140,7 @@ function ss_lic_vendors_features_getnames($lic_server_id) {
 		ORDER BY feature_name",
 		array($lic_server_id));
 
-	for ($i=0;($i<sizeof($arr));$i++) {
+	for ($i=0;($i<cacti_sizeof($arr));$i++) {
 		$return_arr[$i] = $arr[$i]['feature_name'];
 	}
 
@@ -183,7 +183,7 @@ function ss_lic_vendors_features_getinfo($lic_server_id, $info_requested) {
 			array($lic_server_id));
 	}
 
-	for ($i=0;($i<sizeof($arr));$i++) {
+	for ($i=0;($i<cacti_sizeof($arr));$i++) {
 		$return_arr[$arr[$i]['qry_index']] = addslashes($arr[$i]['qry_value']);
 	}
 

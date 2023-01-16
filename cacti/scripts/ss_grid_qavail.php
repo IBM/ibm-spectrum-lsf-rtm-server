@@ -37,9 +37,6 @@ function ss_grid_qavail($clusterid = 0) {
 		GROUP BY grid_queues_hosts.queue',
 		array($clusterid));
 
-	$max_queue_slots = array_rekey($max_queue_slots, 'queue', 'maxslots');
-	$max_of_slots = max($max_queue_slots);
-
 	$queues = db_fetch_assoc_prepared('SELECT *
 		FROM grid_queues
 		WHERE clusterid = ?
@@ -48,7 +45,10 @@ function ss_grid_qavail($clusterid = 0) {
 
 	$availability = 1;
 
-	if (sizeof($queues)) {
+	if (cacti_sizeof($queues) && cacti_sizeof($max_queue_slots)) {
+		$max_queue_slots = array_rekey($max_queue_slots, 'queue', 'maxslots');
+		$max_of_slots = max($max_queue_slots);
+	
 		$i=0;
 		foreach($queues as $queue) {
 			if ($i == 0) {

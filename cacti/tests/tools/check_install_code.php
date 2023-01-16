@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2022 The Cacti Group                                 |
@@ -13,6 +12,11 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDtool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -37,7 +41,7 @@ define('CACTI_PATH', str_replace('/tests/tools', '', dirname(__FILE__)));
 global $config;
 $config = array('base_path' => CACTI_PATH);
 
-// pre-flush oubput buffer to avoid header warning
+// pre-flush output buffer to avoid header warning
 flush();
 
 /*

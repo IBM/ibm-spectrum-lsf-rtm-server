@@ -39,12 +39,12 @@ function ss_grid_perfmon_ut($clusterid = 0, $metric = '') {
 		break;
 	}
 
-		$values = db_fetch_row("SELECT current, total
+		$values = db_fetch_row_prepared("SELECT current, total
 			FROM grid_clusters_perfmon_metrics
-			WHERE metric='$metric'
-			AND clusterid=$clusterid");
+			WHERE metric = ?
+			AND clusterid = ?", array($metric, $clusterid));
 
-	if (sizeof($values)) {
+	if (cacti_sizeof($values)) {
 		return 'current:' . trim($values['current']) . ' total:' . trim($values['total']);
 	}else{
 		return 'current:0 total:0';

@@ -33,14 +33,14 @@ function ss_grid_lssched_bf($host_id = 0, $cmd = 'index', $arg1 = '', $arg2 = ''
 	if ($cmd == 'index') {
 		$return_arr = ss_grid_lssched_bf_getnames($host_id);
 
-		for ($i=0;($i<sizeof($return_arr));$i++) {
+		for ($i=0;($i<cacti_sizeof($return_arr));$i++) {
 			print $return_arr[$i] . "\n";
 		}
 	} elseif ($cmd == 'query') {
 		$arr_index = ss_grid_lssched_bf_getnames($host_id);
 		$arr = ss_grid_lssched_bf_getinfo($host_id, $arg1);
 
-		for ($i=0;($i<sizeof($arr_index));$i++) {
+		for ($i=0;($i<cacti_sizeof($arr_index));$i++) {
 			if (isset($arr[$arr_index[$i]])) {
 				print $arr_index[$i] . '!' . $arr[$arr_index[$i]] . "\n";
 			} else {
@@ -150,7 +150,7 @@ function ss_grid_lssched_bf_getnames($host_id) {
 		ORDER BY CONCAT_WS('', lsid, '|', feature, '|', service_domain, '')",
 		array($lsid));
 
-	for ($i=0;($i<sizeof($arr));$i++) {
+	for ($i=0;($i<cacti_sizeof($arr));$i++) {
 		$return_arr[$i] = $arr[$i]['feature_sd'];
 	}
 
@@ -210,7 +210,7 @@ function ss_grid_lssched_bf_getinfo($host_id, $info_requested) {
 			array($lsid));
 	}
 
-	for ($i=0;($i<sizeof($arr));$i++) {
+	for ($i=0;($i<cacti_sizeof($arr));$i++) {
 		$return_arr[$arr[$i]['qry_index']] = addslashes($arr[$i]['qry_value']);
 	}
 

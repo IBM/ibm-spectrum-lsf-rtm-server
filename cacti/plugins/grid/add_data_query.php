@@ -61,10 +61,15 @@ if (!isset($called_by_script_server)) {
 	$graphs  = 0;
 
 	foreach ($parms as $parameter) {
-		@list($arg, $val) = @explode('=', $parameter);
+		if (strpos($parameter, '=')) {
+			list($arg, $value) = explode('=', $parameter);
+		} else {
+			$arg = $parameter;
+			$value = '';
+		}
 		switch ($arg) {
 			case '--clusterid':
-				$clusterid = trim($val);
+				$clusterid = trim($value);
 				break;
 			case '--force':
 				$force = true;
@@ -347,7 +352,7 @@ function add_data_query($clusterid, $force=false, $templates=false) {
 		array($clusterid));
 
 	if ($reindex) {
-		echo trim(passthru($php_bin . ' -q ' . $path_web . '/cli/poller_reindex_hosts.php -id=' . cacti_escapeshellarg($cluster_info['cacti_host']) . ' -qid=' . cacti_escapeshellarg($queryid) . ' -d'));
+		passthru($php_bin . ' -q ' . $path_web . '/cli/poller_reindex_hosts.php -id=' . cacti_escapeshellarg($cluster_info['cacti_host']) . ' -qid=' . cacti_escapeshellarg($queryid) . ' -d');
 	}
 
 	$snmp_queries_id = db_fetch_assoc_prepared('SELECT snmp_query.id,
@@ -379,7 +384,7 @@ function add_data_query($clusterid, $force=false, $templates=false) {
 			cacti_log('INFO: Creating/refreshing tree node now.');
 		}
 
-		echo trim(passthru($php_bin . ' -q ' . $path_grid . '/grid_add_trees.php --clusterid=' . cacti_escapeshellarg($clusterid)));
+		passthru($php_bin . ' -q ' . $path_grid . '/grid_add_trees.php --clusterid=' . cacti_escapeshellarg($clusterid));
 	} elseif (read_config_option('log_verbosity') >= POLLER_VERBOSITY_MEDIUM || $debug) {
 		cacti_log('INFO: Not Creating/refreshing tree node now as NO Graph were Added!');
 	}
@@ -466,7 +471,7 @@ function add_data_query_graphs(&$cluster, $graph_template_id, $snmp_query_id, $s
 						" --snmp-query-id=$snmp_query_id --snmp-field=$snmp_field_name" .
 						" --snmp-value='" . $item . "'";
 
-					echo trim(passthru($command)) . "\n";
+					passthru($command);
 
 					$graphs++;
 				}

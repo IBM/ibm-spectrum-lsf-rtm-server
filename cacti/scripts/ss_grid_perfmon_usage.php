@@ -47,7 +47,7 @@ function ss_grid_perfmon_usage($clusterid = 0, $metric = '') {
 			array($metric, $clusterid));
 	}
 
-	if (sizeof($values)) {
+	if (cacti_sizeof($values)) {
 		return 'total:' . trim($values['total']) . ' used:' . trim($values['used']) . ' free:' . trim($values['free']);
 	}else{
 		return 'total:0 used:0 free:0';

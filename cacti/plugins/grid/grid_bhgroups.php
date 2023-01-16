@@ -29,7 +29,7 @@ $title = __('IBM Spectrum LSF RTM - Host Group Batch Statistics', 'grid');
 
 grid_view_bhg();
 
-function grid_view_get_bhg_records(&$sql_where_in, &$sql_groupby, $apply_limits = true, $rows) {
+function grid_view_get_bhg_records(&$sql_where_in, &$sql_groupby, $apply_limits = true, $rows = 30) {
         global $config, $grid_out_of_services;
 
 	$DISTINCT = '';

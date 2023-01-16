@@ -391,7 +391,7 @@ function form_actions() {
 				print "<tr>
 					<td class='textArea'>
 						<p>" . __('The selected Aggregate Graphs does not appear to have any matching Aggregate Templates.') . "</p>
-						<p>" . __('In order to migrate the Aggregate Graphs below use an Aggregate Template, one must already exist.  Please press \'Return\' and then first create your Aggergate Template before retrying.') . "</p>
+						<p>" . __('In order to migrate the Aggregate Graphs below use an Aggregate Template, one must already exist.  Please press \'Return\' and then first create your Aggregate Template before retrying.') . "</p>
 						<div class='itemlist'><ul>$graph_list</ul></div>
 					</td>
 				</tr>";
@@ -482,7 +482,7 @@ function form_actions() {
 				print "<tr><td class='even'><span class='textError'>" . __('You currently have no reports defined.') . "</span></td></tr>";
 				$save_html = "<input type='button' class='ui-button ui-corner-all ui-widget' value='" . __esc('Return') . "' onClick='cactiReturnTo()'>";
 			}
-		} elseif (get_request_var('drp_action') == '5') { // conver to a normal graph
+		} elseif (get_request_var('drp_action') == '5') { // convert to a normal graph
 			print "<tr>
 				<td colspan='2' class='textArea'>
 					<p>" . __('Click \'Continue\' to convert the following Aggregate Graph(s) into a normal Graph.') . "</p>
@@ -551,6 +551,9 @@ function form_actions() {
 function item() {
 	global $consolidation_functions, $graph_item_types, $struct_graph_item;
 
+	// Remove filter item
+	unset($struct_graph_item['data_template_id']);
+
 	/* ================= input validation ================= */
 	get_filter_request_var('id');
 	/* ==================================================== */
@@ -563,13 +566,23 @@ function item() {
 		$template_item_list = db_fetch_assoc_prepared('SELECT
 			gti.id, gti.text_format, gti.value, gti.hard_return, gti.graph_type_id,
 			gti.consolidation_function_id, dtr.data_source_name, gti.alpha,
-			cdef.name AS cdef_name, colors.hex
+			cdef.name AS cdef_name, vdef.name AS vdef_name, colors.hex,
+			gtgp.name AS gprint_name
 			FROM graph_templates_item AS gti
-			LEFT JOIN data_template_rrd AS dtr ON (gti.task_item_id=dtr.id)
-			LEFT JOIN data_local AS dl ON (dtr.local_data_id=dl.id)
-			LEFT JOIN data_template_data AS dtd ON (dl.id=dtd.local_data_id)
-			LEFT JOIN cdef ON (gti.cdef_id=cdef.id)
-			LEFT JOIN colors ON (gti.color_id=colors.id)
+			LEFT JOIN data_template_rrd AS dtr
+			ON gti.task_item_id=dtr.id
+			LEFT JOIN data_local AS dl
+			ON dtr.local_data_id=dl.id
+			LEFT JOIN data_template_data AS dtd
+			ON dl.id=dtd.local_data_id
+			LEFT JOIN cdef
+			ON gti.cdef_id=cdef.id
+			LEFT JOIN vdef
+			ON gti.vdef_id=vdef.id
+			LEFT JOIN graph_templates_gprint gtgp
+			ON gti.gprint_id=gtgp.id
+			LEFT JOIN colors
+			ON gti.color_id=colors.id
 			WHERE gti.local_graph_id = ?
 			ORDER BY gti.sequence',
 			array(get_request_var('id')));
@@ -598,6 +611,9 @@ function item() {
 
 function graph_edit() {
 	global $config, $struct_graph, $struct_aggregate_graph, $image_types, $consolidation_functions, $graph_item_types, $struct_graph_item;
+
+	// Remove filter item
+	unset($struct_graph_item['data_template_id']);
 
 	/* ================= input validation ================= */
 	get_filter_request_var('id');
@@ -750,7 +766,7 @@ function graph_edit() {
 
 		if (!cacti_sizeof($graph)) {
 			html_start_box(__('Aggregate Preview Does Not Exist'), '100%', '', '3', 'center', '');
-			print "<tr><td id='imagewindow' class='center'>" . __('Aggreage Graph does not Exist') . '</tr></tr>';
+			print "<tr><td id='imagewindow' class='center'>" . __('Aggregate Graph does not Exist') . '</tr></tr>';
 			html_end_box(false);
 			raise_message('noaggregate', __('Aggregate Graph does not Exist'), MESSAGE_LEVEL_ERROR);
 			return false;
@@ -780,9 +796,9 @@ function graph_edit() {
 				</div>
 				<script type='text/javascript'>
 				$(function() {
-					var width = $(window).width() - $('.cactiConsoleNavigationArea').width();
+					var rrdwidth = $(window).width() - $('.cactiConsoleNavigationArea').width();
 					$('#agg_preview').show();
-					$('#rrdtoolinfo, #imagewindow').css('max-width', width);
+					$('#rrdtoolinfo, #imagewindow').css('max-width', rrdwidth);
 				});
 				</script>
 			</td></tr>
@@ -801,12 +817,38 @@ function graph_edit() {
 
 	form_start('aggregate_graphs.php', 'template_edit');
 
-	/* we will show the templated representation only when when there is a template and propagation is enabled */
+	/* we will show the templated representation only when there is a template and propagation is enabled */
 	if (!isempty_request_var('id') && $current_tab == 'details') {
 		if (cacti_sizeof($template)) {
 			print "<div id='templated'>";
 
 			html_start_box(__('Aggregate Graph %s', $header_label), '100%', true, '3', 'center', '');
+
+			$helper_string = '|host_description|';
+
+			if (isset($template)) {
+				$data_query = db_fetch_cell_prepared('SELECT snmp_query_id
+					FROM snmp_query_graph
+					WHERE graph_template_id = ?',
+					array($template['graph_template_id']));
+
+				if ($data_query > 0) {
+					$data_query_info = get_data_query_array($data_query);
+					foreach($data_query_info['fields'] as $field_name => $field_array) {
+						if ($field_array['direction'] == 'input' || $field_array['direction'] == 'input-output') {
+							$helper_string .= ($helper_string != '' ? ', ':'') . '|query_' . $field_name . '|';
+						}
+					}
+				}
+			}
+
+			// Append the helper string
+			$struct_aggregate_graph['suggestions'] = array(
+				'method' => 'other',
+				'friendly_name' => __('Prefix Replacement Values'),
+				'description' => __('You may use these replacement values for the Prefix in the Aggregate Graph'),
+				'value' => $helper_string
+			);
 
 			/* add template propagation to the structure */
 			draw_edit_form(
@@ -819,7 +861,6 @@ function graph_edit() {
 			html_end_box(true, true);
 
 			if (isset($template)) {
-
 				draw_aggregate_graph_items_list(0, $template['graph_template_id'], $aginfo);
 			}
 
@@ -1181,7 +1222,7 @@ function aggregate_items() {
 		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . ' agi.local_graph_id IN(' . get_request_var('local_graph_ids') . ')';
 	}
 
-	$total_rows = db_fetch_cell("SELECT COUNT(DISTINCT gl.id) AS total
+	$sql = "SELECT COUNT(DISTINCT gl.id) AS total
 		FROM graph_templates_graph AS gtg
 		INNER JOIN graph_local AS gl
 		ON gtg.local_graph_id=gl.id
@@ -1190,7 +1231,9 @@ function aggregate_items() {
 			FROM aggregate_graphs_items
 			WHERE aggregate_graph_id=$aggregate_id) AS agi
 		ON gtg.local_graph_id=agi.local_graph_id
-		$sql_where");
+		$sql_where";
+
+	$total_rows = get_total_row_data($_SESSION['sess_user_id'], $sql, array(), 'aggregate_graph');
 
 	$sql_order = get_order_string();
 	$sql_limit = ' LIMIT ' . ($rows*(get_request_var('page')-1)) . ',' . $rows;
@@ -1208,7 +1251,6 @@ function aggregate_items() {
 		$sql_where
 		$sql_order
 		$sql_limit");
-
 
 	?>
 	<script type='text/javascript'>
@@ -1234,10 +1276,6 @@ function aggregate_items() {
 			$('#agg_preview').show();
 		}
 
-		$('#refresh').click(function() {
-			applyFilter();
-		});
-
 		$('#clear').click(function() {
 			clearFilter();
 		});
@@ -1246,7 +1284,7 @@ function aggregate_items() {
 			applyFilter();
 		});
 
-		$('#form_graphs').submit(function(event) {
+		$('#forms').submit(function(event) {
 			event.preventDefault();
 			applyFilter();
 		});
@@ -1259,7 +1297,7 @@ function aggregate_items() {
 	?>
 	<tr class='even'>
 		<td>
-			<form id='form_graphs' action='aggregate_graphs.php'>
+			<form id='forms' action='aggregate_graphs.php'>
 			<table class='filterTable'>
 				<tr>
 					<td>
@@ -1291,7 +1329,7 @@ function aggregate_items() {
 					</td>
 					<td>
 						<span>
-							<input type='button' class='ui-button ui-corner-all ui-widget' id='refresh' value='<?php print __esc('Go');?>' title='<?php print __esc('Set/Refresh Filters');?>'>
+							<input type='submit' class='ui-button ui-corner-all ui-widget' id='go' value='<?php print __esc('Go');?>' title='<?php print __esc('Set/Refresh Filters');?>'>
 							<input type='button' class='ui-button ui-corner-all ui-widget' id='clear' onClick='clearFilter()' value='<?php print __esc('Clear');?>' title='<?php print __esc('Clear Filters');?>'>
 						</span>
 					</td>
@@ -1515,19 +1553,11 @@ function aggregate_graph() {
 			$('#agg_preview').show();
 		}
 
-		$('#refresh').click(function() {
-			applyFilter();
-		});
-
 		$('#clear').click(function() {
 			clearFilter();
 		});
 
-		$('#filter').change(function() {
-			applyFilter();
-		});
-
-		$('#form_graphs').submit(function(event) {
+		$('#forms').submit(function(event) {
 			event.preventDefault();
 			applyFilter();
 		});
@@ -1541,7 +1571,7 @@ function aggregate_graph() {
 	?>
 	<tr class='even'>
 		<td>
-			<form id='form_graphs' action='aggregate_graphs.php'>
+			<form id='forms' action='aggregate_graphs.php'>
 			<table class='filterTable'>
 				<tr>
 					<td>
@@ -1589,7 +1619,7 @@ function aggregate_graph() {
 					</td>
 					<td>
 						<span>
-							<input type='button' class='ui-button ui-corner-all ui-widget' id='refresh' value='<?php print __esc('Go');?>' title='<?php print __esc('Set/Refresh Filters');?>'>
+							<input type='submit' class='ui-button ui-corner-all ui-widget' id='go' value='<?php print __esc('Go');?>' title='<?php print __esc('Set/Refresh Filters');?>'>
 							<input type='button' class='ui-button ui-corner-all ui-widget' id='clear' value='<?php print __esc('Clear');?>' title='<?php print __esc('Clear Filters');?>'>
 						</span>
 					</td>
@@ -1617,7 +1647,7 @@ function aggregate_graph() {
 		$sql_where .= ' AND ag.aggregate_template_id=' . get_request_var('template_id');
 	}
 
-	$total_rows = db_fetch_cell("SELECT COUNT(DISTINCT gl.id) AS total
+	$sql = "SELECT COUNT(DISTINCT gl.id) AS total
 		FROM graph_templates_graph AS gtg
 		INNER JOIN graph_local AS gl
 		ON gtg.local_graph_id=gl.id
@@ -1625,7 +1655,9 @@ function aggregate_graph() {
 		ON gtg.local_graph_id=ag.local_graph_id
 		LEFT JOIN aggregate_graph_templates AS agt
 		ON agt.id=ag.aggregate_template_id
-		$sql_where");
+		$sql_where";
+
+	$total_rows = get_total_row_data($_SESSION['sess_user_id'], $sql, array(), 'aggregate_graph');
 
 	$sql_order = get_order_string();
 	$sql_limit = ' LIMIT ' . ($rows*(get_request_var('page')-1)) . ',' . $rows;

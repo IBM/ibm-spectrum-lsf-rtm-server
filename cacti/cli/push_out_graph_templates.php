@@ -36,7 +36,12 @@ $graph_template_id = 0;
 $action = "";
 
 foreach($parms as $parameter) {
-	@list($arg, $value) = @explode("=", $parameter);
+	if (strpos($parameter, '=')) {
+		list($arg, $value) = explode('=', $parameter);
+	} else {
+		$arg = $parameter;
+		$value = '';
+	}
 
 	switch ($arg) {
 		case "--host-template-id":
@@ -106,7 +111,7 @@ if(strstr($action, "list")){
 function push_out_by_host_template($host_template_id){
 	$ret = 0;
 	$host_template_graphs = db_fetch_assoc("SELECT graph_template_id AS id FROM host_template_graph WHERE host_template_id=$host_template_id UNION SELECT graph_template_id AS id FROM snmp_query_graph AS sqg JOIN host_template_snmp_query AS htsq ON sqg.snmp_query_id=htsq.snmp_query_id WHERE htsq.host_template_id=$host_template_id ORDER BY id");
-	if (sizeof($host_template_graphs)) {
+	if (cacti_sizeof($host_template_graphs)) {
 		foreach($host_template_graphs as $htg) {
 			$ret += push_out_by_graph_template($htg["id"]);
 		}
@@ -118,7 +123,7 @@ function push_out_by_host_template($host_template_id){
 function push_out_by_graph_template($graph_template_id){
 	$graph_template_items = db_fetch_assoc("SELECT id FROM graph_templates_item WHERE local_graph_id=0 AND graph_template_id=$graph_template_id");
 
-	if (sizeof($graph_template_items)) {
+	if (cacti_sizeof($graph_template_items)) {
 		foreach($graph_template_items as $gti) {
 			push_out_graph_item($gti['id']);
 		}

@@ -52,7 +52,12 @@ if (!isset($called_by_script_server)) {
 	$graphs    = 0;
 
 	foreach ($parms as $parameter){
-		@list($arg, $val) = @explode('=', $parameter);
+		if (strpos($parameter, '=')) {
+			list($arg, $value) = explode('=', $parameter);
+		} else {
+			$arg = $parameter;
+			$value = '';
+		}
 		switch ($arg) {
 			case '-f':
 			case '--force':
@@ -212,7 +217,7 @@ function disku_add_fs_device($force=false, $templates=false){
 
 			if ($reindex) {
 				foreach ($snmp_queries as $snmp_query){
-					echo trim(passthru("$php_bin -q $path_web/cli/poller_reindex_hosts.php -id=$host_id -qid=" . $snmp_query['id'] . ' -d'));
+					passthru("$php_bin -q $path_web/cli/poller_reindex_hosts.php -id=$host_id -qid=" . $snmp_query['id'] . ' -d');
 				}
 			}
 
@@ -372,7 +377,7 @@ function disku_add_device($host_id, $force=false, $templates=false){
 
 	if ($reindex) {
 		foreach ($snmp_queries as $snmp_query){
-			echo trim(passthru("$php_bin -q $path_web/cli/poller_reindex_hosts.php -id=$host_id -qid=" . $snmp_query['id'] . ' -d'));
+			passthru("$php_bin -q $path_web/cli/poller_reindex_hosts.php -id=$host_id -qid=" . $snmp_query['id'] . ' -d');
 		}
 	}
 
@@ -469,7 +474,7 @@ function add_disku_data_query_graphs($host_id, $graph_template_id, $snmp_query_i
 						" --snmp-query-id=$snmp_query_id --snmp-field=$snmp_field_name" .
 						" --snmp-value=\"$item\"";
 
-					echo trim(passthru($command)) . "\n";
+					passthru($command);
 				} else {
 					echo "NOTE: Already Exists item: $item for Query Type ID: $snmp_query_type_id\n";
 				}

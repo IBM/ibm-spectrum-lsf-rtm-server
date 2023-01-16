@@ -96,11 +96,15 @@ if (isset($_SESSION['refresh'])) {
 	$myrefresh['seconds'] = 99999999;
 	$myrefresh['page']    = sanitize_uri($_SERVER['REQUEST_URI']);
 	$refreshIsLogout      = 'false';
+} elseif (read_user_setting('user_auto_logout_time') > 0 && is_realm_allowed(8)) {
+	$myrefresh['seconds'] = read_user_setting('user_auto_logout_time');
+	$myrefresh['page']    = $config['url_path'] . 'logout.php?action=timeout';
+	$refreshIsLogout      = 'true';
 } elseif (read_config_option('auth_method') == 2) {
 	$myrefresh['seconds'] = 99999999;
 	$myrefresh['page']    = 'index.php';
 	$refreshIsLogout      = 'false';
-} elseif (!isset($_SESSION['sess_user_id']) && strpos($_SERVER['REQUEST_URI'], 'index.php') !== false) {
+} elseif (!isset($_SESSION['sess_user_id']) && isset($_SERVER['REQUEST_URL']) && strpos($_SERVER['REQUEST_URI'], 'index.php') !== false) {
 	$myrefresh['seconds'] = 99999999;
 	$myrefresh['page']    = sanitize_uri($_SERVER['REQUEST_URI']);
 	$refreshIsLogout      = 'false';
@@ -121,6 +125,7 @@ if (isset($_SESSION['sess_user_id']) && $_SESSION['sess_user_id'] == read_config
 <script type='text/javascript'>
 	var cactiVersion='<?php print $config['cacti_version'];?>';
 	var cactiServerOS='<?php print $config['cacti_server_os'];?>';
+	var cactiAction='<?php print get_filter_request_var('action', FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => '/^([-a-zA-Z0-9_\s]+)$/')));?>';
 	var theme='<?php print get_selected_theme();?>';
 	var refreshIsLogout=<?php print $refreshIsLogout;?>;
 	var refreshPage='<?php print $myrefresh['page'];?>';

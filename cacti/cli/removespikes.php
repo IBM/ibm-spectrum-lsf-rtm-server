@@ -1,4 +1,4 @@
-#!/usr/bin/php -q
+#!/usr/bin/env php
 <?php
 // $Id$
 /*
@@ -24,7 +24,12 @@ chdir($dir);
 
 /* Start Initialization Section */
 require(__DIR__ . '/../include/cli_check.php');
-include_once($config['base_path'] . '/lib/spikekill.php');
+require_once($config['base_path'] . '/lib/spikekill.php');
+
+if ($config['poller_id'] > 1) {
+	print "FATAL: This utility is designed for the main Data Collector only" . PHP_EOL;
+	exit(1);
+}
 
 /* allow more memory */
 ini_set('memory_limit', '-1');
@@ -211,7 +216,7 @@ function display_help () {
 	print "    [-P|--percent=N] [-N|--number=N] [-D|--dryrun] [-d|--debug]\n";
 	print "    [--html]\n\n";
 
-	print "A utility to programatically remove spikes from Cacti graphs. If no optional input parameters\n";
+	print "A utility to programmatically remove spikes from Cacti graphs. If no optional input parameters\n";
 	print "are specified the defaults are taken from the Cacti database.\n\n";
 
 	print "Required:\n";

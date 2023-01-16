@@ -1089,9 +1089,7 @@ function heuristics_sql_where($table_name) {
 	}
 
 	/* search filter sql where */
-	if (!strlen(get_request_var('filter'))) {
-		/* Show all items */
-	} else {
+	if (get_request_var('filter') != '') {
 		$sql_where .= (strlen($sql_where) ? " AND " : "WHERE ") . " ($table_name.jobname LIKE '%" . get_request_var('filter') . "%' OR
 			$table_name.projectName LIKE '%" . get_request_var('filter') . "%' OR
 			$table_name.licenseProject LIKE '%" . get_request_var('filter') . "%' OR

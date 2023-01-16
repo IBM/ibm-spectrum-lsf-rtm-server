@@ -34,13 +34,13 @@ function ss_grid_timein_state($hostname = '', $clusterid = 0, $summary = 'no') {
 				SUM(idleclose) AS a_idleclose, SUM(lowres) AS a_lowres, SUM(busy) AS a_busy,
 				SUM(idlewjobs) AS a_idlewjobs, SUM(idle) AS a_idle, SUM(starved) AS a_starved,
 				SUM(admindown) AS a_admindown, SUM(blackhole) AS a_blackhole
-				FROM grid_summary_timein_state');
+				FROM grid_summary_timeinstate');
 		} else {
 			$timein_state = db_fetch_row_prepared('SELECT SUM(unavail) AS a_unavail, SUM(busyclose) AS a_busyclose,
 				SUM(idleclose) AS a_idleclose, SUM(lowres) AS a_lowres, SUM(busy) AS a_busy,
 				SUM(idlewjobs) AS a_idlewjobs, SUM(idle) AS a_idle, SUM(starved) AS a_starved,
 				SUM(admindown) AS a_admindown, SUM(blackhole) AS a_blackhole
-				FROM grid_summary_timein_state
+				FROM grid_summary_timeinstate
 				WHERE clusterid = ?',
 				array($clusterid));
 		}
@@ -50,14 +50,14 @@ function ss_grid_timein_state($hostname = '', $clusterid = 0, $summary = 'no') {
 				SUM(idleclose) AS a_idleclose, SUM(lowres) AS a_lowres, SUM(busy) AS a_busy,
 				SUM(idlewjobs) AS a_idlewjobs, SUM(idle) AS a_idle, SUM(starved) AS a_starved,
 				SUM(admindown) AS a_admindown, SUM(blackhole) AS a_blackhole
-				FROM grid_summary_timein_state
+				FROM grid_summary_timeinstate
 				WHERE host = ?',
 				array($hostname));
 		} else {
 			$timein_state = db_fetch_row_prepared('SELECT unavail AS a_unavail, busyclose AS a_busyclose,
 				idleclose AS a_idleclose, lowres AS a_lowres, busy AS a_busy, idlewjobs AS a_idlewjobs,
 				idle AS a_idle, starved AS a_starved, admindown AS a_admindown, blackhole AS a_blackhole
-				FROM grid_summary_timein_state
+				FROM grid_summary_timeinstate
 				WHERE clusterid = ?
 				AND host = ?',
 				array($clusterid, $hostname));

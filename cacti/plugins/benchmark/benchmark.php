@@ -518,7 +518,7 @@ function grid_benchmark_clear($benchmark_id) {
 		array($benchmark_id));
 }
 
-function grid_view_get_records(&$sql_where, $apply_limits = TRUE, $rows, &$sql_params) {
+function grid_view_get_records(&$sql_where, $apply_limits = TRUE, $rows = 30, &$sql_params = array()) {
 	global $_CACTI_REQUEST;
 	// Job Status SQL Where
 	benchmark_status_where($sql_where);
@@ -832,9 +832,9 @@ function view_benchmarks() {
 					FROM graph_local
 					INNER JOIN graph_templates
 					ON graph_templates.id=graph_local.graph_template_id
-					WHERE graph_local.host_id = '?'
+					WHERE graph_local.host_id = ?
 					AND graph_templates.hash='6c8c4a6c27c0b73866f11748e17f5ed2'
-					AND graph_local.snmp_index= '?'",
+					AND graph_local.snmp_index= ?",
 					array($cacti_host, $benchmark['benchmark_id']));
 
 				if (cacti_sizeof($local_graph_ids)) {

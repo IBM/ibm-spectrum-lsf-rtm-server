@@ -242,7 +242,7 @@ function api_aggregate_create($aggregate_name, $graphs, $agg_template_id = 0) {
  * @param int $linenum		- line of error
  * @param array $vars		- additional variables
  */
-function aggregate_error_handler($errno, $errmsg, $filename, $linenum, $vars) {
+function aggregate_error_handler($errno, $errmsg, $filename, $linenum, $vars = []) {
 	$errno = $errno & error_reporting();
 
 	# return if error handling disabled by @
@@ -787,13 +787,13 @@ function auto_title($_local_graph_id) {
 
 	cacti_log('title:' . $graph_title, true, 'AGGREGATE', POLLER_VERBOSITY_DEBUG);
 
-	# remove all '- |query_*|' occurences
+	# remove all '- |query_*|' occurrences
 	$pattern = '/-?\s+\|query_\w+\|/';
 	$graph_title = preg_replace($pattern, '', $graph_title);
 
 	cacti_log('title:' . $graph_title, true, 'AGGREGATE', POLLER_VERBOSITY_DEBUG);
 
-	# remove all '- |host_*|' occurences
+	# remove all '- |host_*|' occurrences
 	$pattern = '/-?\s+\|host_\w+\|/';
 	$graph_title = preg_replace($pattern, '', $graph_title);
 

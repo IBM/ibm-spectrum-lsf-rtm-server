@@ -55,7 +55,12 @@ $template     = 0;
 
 if (cacti_sizeof($parms)) {
 	foreach($parms as $parameter) {
-		@list($arg, $value) = @explode('=', $parameter);
+		if (strpos($parameter, '=')) {
+			list($arg, $value) = explode('=', $parameter);
+		} else {
+			$arg = $parameter;
+			$value = '';
+		}
 
 		switch ($arg) {
 		case '-d':
@@ -154,9 +159,9 @@ function add_license_data_queries($hosts, $template) {
 
 	if (cacti_sizeof($hosts)) {
 		foreach($hosts as $host) {
-			print trim(passthru($php_bin . ' -q ' . cacti_escapeshellcmd($path_cacti . '/cli/poller_reindex_hosts.php') .
+			passthru($php_bin . ' -q ' . cacti_escapeshellcmd($path_cacti . '/cli/poller_reindex_hosts.php') .
 				' -id=' . cacti_escapeshellarg($host['id']) .
-				' -qid=all'));
+				' -qid=all');
 
 			$snmpQueryGraph = db_fetch_row("select * from snmp_query_graph where hash='9c4403070a529eed04304d1fbd88f699'");
 			/* License Use Graphs Graph Template: 52, Data Query: 14, Assoc Graph Template: 52, Query Field Name 'gridFeatureName' */

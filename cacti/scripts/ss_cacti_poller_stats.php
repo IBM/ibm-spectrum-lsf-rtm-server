@@ -69,7 +69,7 @@ function ss_poller_items() {
 #	initialize all data input method types in case one of them is not present
 	$entries = array(0, 0, 0);
 #	map all existing entries to $entries array
-        if (sizeof($poller_cache) > 0) {
+        if (cacti_sizeof($poller_cache) > 0) {
 		foreach ($poller_cache as $item) {
 			# print $item["action"] . ":" . $item["count"] . "\n";
 			$entries[$item["action"]] = $item["count"];

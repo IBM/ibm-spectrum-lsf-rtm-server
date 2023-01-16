@@ -81,7 +81,7 @@ function draw_tabs() {
 	print '</tr></table>';
 }
 
-function grid_view_get_bresources_records(&$sql_where, &$sql_groupby, $apply_limits = true, $rows, &$sql_params) {
+function grid_view_get_bresources_records(&$sql_where, &$sql_groupby, $apply_limits = true, $rows = 30, &$sql_params = array()) {
 	global $config;
 
 	$sql_where = '';
@@ -718,7 +718,7 @@ function guarSLAFilter($respools) {
 <?php
 }
 
-function grid_view_get_bgsla_records(&$sql_where, &$sql_groupby, $apply_limits = true, $rows, &$sql_params) {
+function grid_view_get_bgsla_records(&$sql_where, &$sql_groupby, $apply_limits = true, $rows = 30, &$sql_params = array()) {
 	global $config;
 
 	$sql_groupby = ' GROUP BY clusterid, poolName, name';

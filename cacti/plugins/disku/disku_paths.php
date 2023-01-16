@@ -637,7 +637,7 @@ function disku_paths() {
 	form_end();
 }
 
-function disku_get_path_records(&$sql_where, $apply_limits = true, $rows = 20, &$sql_params) {
+function disku_get_path_records(&$sql_where, $apply_limits = true, $rows = 30, &$sql_params = array()) {
 	if (get_request_var('filter') != '') {
 		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . "(path LIKE ? OR name LIKE ?)";
 		$sql_params[] = '%'. get_request_var('filter') . '%';

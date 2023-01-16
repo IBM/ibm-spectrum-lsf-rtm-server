@@ -50,7 +50,7 @@ switch (get_request_var('action')) {
 	break;
 }
 
-function grid_view_get_array_records(&$sql_where, $apply_limits = true, $rows = '30', &$sql_params) {
+function grid_view_get_array_records(&$sql_where, $apply_limits = true, $rows = '30', &$sql_params = array()) {
 	global $config, $timespan, $grid_efficiency_sql_ranges, $ws, $we;
 
 	include_once($config['base_path'] . '/plugins/grid/lib/grid_partitioning.php');

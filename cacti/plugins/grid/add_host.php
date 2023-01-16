@@ -90,7 +90,12 @@ array_shift($parms);
 
 if (cacti_sizeof($parms)) {
 	foreach($parms as $p) {
-		@list($arg, $value) = @explode('=', $p);
+		if (strpos($p, '=')) {
+			list($arg, $value) = explode('=', $p);
+		} else {
+			$arg = $p;
+			$value = '';
+		};
 
 		switch ($arg) {
 		case '--debug':

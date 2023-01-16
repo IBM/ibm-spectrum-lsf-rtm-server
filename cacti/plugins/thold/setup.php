@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2006-2022 The Cacti Group                                 |
+ | Copyright (C) 2006-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -40,7 +40,7 @@ function plugin_thold_install($upgrade = false) {
 	api_plugin_register_hook($plugin, 'config_form', 'thold_config_form', 'includes/settings.php');
 	api_plugin_register_hook($plugin, 'config_settings', 'thold_config_settings', 'includes/settings.php');
 
-	// Breadcrums
+	// Breadcrumbs
 	api_plugin_register_hook($plugin, 'draw_navigation_text', 'thold_draw_navigation_text', 'includes/settings.php');
 
 	// Inline thold checks
@@ -88,7 +88,7 @@ function plugin_thold_install($upgrade = false) {
 	// Follow New Graph Actions
 	api_plugin_register_hook($plugin, 'api_device_new', 'thold_api_device_new', 'setup.php');
 
-	// Miscelaneious hooks
+	// Miscellaneous hooks
 	api_plugin_register_hook($plugin, 'graphs_new_top_links', 'thold_graphs_new', 'setup.php');
 	api_plugin_register_hook($plugin, 'update_host_status', 'thold_update_host_status', 'includes/polling.php');
 	api_plugin_register_hook($plugin, 'user_admin_setup_sql_save', 'thold_user_admin_setup_sql_save', 'setup.php');
@@ -187,8 +187,8 @@ function thold_graph_button($data) {
 	if (isset_request_var('view_type') && !isempty_request_var('view_type')) {
 		$view_type = get_request_var('view_type');
 	} else {
-		set_request_var('view_type', '');
-		$view_type = read_config_option('dataquery_type');
+		set_request_var('view_type', 'tree');
+		$view_type = 'preview';
 	}
 
 	if (isset_request_var('graph_start') && !isempty_request_var('graph_start')) {
@@ -698,6 +698,8 @@ function thold_device_action_prepare($save) {
 			<div class='itemlist'><ul>" . $save['host_list'] . "</ul></div>
 		</td>
 	</tr>";
+
+	return $save;
 }
 
 function thold_device_action_array($device_action_array) {
@@ -1062,29 +1064,36 @@ function thold_graphs_action_prepare($save) {
 
 		if (cacti_sizeof($save['graph_array'])) {
 			foreach($save['graph_array'] as $item) {
-				$data_template_id = db_fetch_cell_prepared('SELECT DISTINCT dtr.data_template_id
-					 FROM data_template_rrd AS dtr
-					 LEFT JOIN graph_templates_item AS gti
-					 ON gti.task_item_id=dtr.id
-					 LEFT JOIN graph_local AS gl
-					 ON gl.id=gti.local_graph_id
-					 WHERE gl.id = ?',
+				$item_found = false;
+				$data_template_ids = db_fetch_assoc_prepared('SELECT DISTINCT dtr.data_template_id
+					FROM data_template_rrd AS dtr
+					LEFT JOIN graph_templates_item AS gti
+					ON gti.task_item_id=dtr.id
+					LEFT JOIN graph_local AS gl
+					ON gl.id=gti.local_graph_id
+					WHERE gl.id = ?',
 					array($item));
 
-				if ($data_template_id != '') {
-					$templates = db_fetch_assoc_prepared('SELECT id
-						FROM thold_template
-						WHERE data_template_id = ?',
-						array($data_template_id));
+				if (cacti_sizeof($data_template_ids)) {
+					foreach ($data_template_ids as $i => $data_template_rec) {
+						$data_template_id = $data_template_rec['data_template_id'];
 
-					if (cacti_sizeof($templates)) {
-						$found_list .= '<li>' . html_escape(get_graph_title($item)) . '</li>';
-						$template_ids[] = $data_template_id;
-					} else {
-						$not_found .= '<li>' . html_escape(get_graph_title($item)) . '</li>';
+						$templates = db_fetch_assoc_prepared('SELECT id
+							FROM thold_template
+							WHERE data_template_id = ?',
+							array($data_template_id));
+
+						if (cacti_sizeof($templates)) {
+							$item_found = true;
+							$template_ids[] = $data_template_id;
+						}
 					}
-				} else {
+				}
+
+				if (!$item_found) {
 					$not_found .= '<li>' . html_escape(get_graph_title($item)) . '</li>';
+				} else {
+					$found_list.= '<li>' . html_escape(get_graph_title($item)) . '</li>';
 				}
 			}
 		}
@@ -1426,6 +1435,7 @@ function thold_device_template_top() {
 
 function thold_device_autocreate($host_id) {
 	autocreate($host_id);
+	return $host_id;
 }
 
 function thold_create_graph_thold($save) {

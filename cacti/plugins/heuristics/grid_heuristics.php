@@ -28,7 +28,7 @@ $title = __('IBM Spectrum LSF RTM - Grid Heuristics Detail View', 'heuristics');
 
 grid_view_heuristics();
 
-function grid_view_get_heuristics_records(&$sql_where, $apply_limits = true, $row_limit, &$sql_params) {
+function grid_view_get_heuristics_records(&$sql_where, $apply_limits = true, $row_limit = 30, &$sql_params = array()) {
 	global $settings;
 
 	$sort_order = '';

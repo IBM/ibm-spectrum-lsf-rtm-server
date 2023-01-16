@@ -1,4 +1,4 @@
-#!/usr/bin/php -q
+#!/usr/bin/env php
 <?php
 // $Id$
 /*
@@ -19,8 +19,13 @@
  +-------------------------------------------------------------------------+
 */
 
-/* tick use required as of PHP 4.3.0 to accomodate signal handling */
-declare(ticks = 1);
+if (function_exists('pcntl_async_signals')) {
+	pcntl_async_signals(true);
+} else {
+	declare(ticks = 100);
+}
+
+ini_set('output_buffering', 'Off');
 
 require(__DIR__ . '/include/cli_check.php');
 require_once($config['base_path'] . '/lib/poller.php');
@@ -134,7 +139,7 @@ if (!db_table_exists('reports')) {
 	exit(0);
 }
 
-/* fetch all enabled reports that have a stratime in the past */
+/* fetch all enabled reports that have a start time in the past */
 if (!$force) {
 	$reports = db_fetch_assoc_prepared('SELECT * FROM reports WHERE mailtime < ? AND enabled="on"', array($t));
 } else {

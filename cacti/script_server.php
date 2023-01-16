@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 // $Id$
 /*
@@ -18,34 +19,12 @@
  +-------------------------------------------------------------------------+
 */
 
-require(__DIR__ . '/include/cli_check.php');
-
-declare(ticks = 1);
-
-/* need to capture signals from users */
-function sig_handler($signo) {
-	global $include_file, $function, $parameters;
-
-	switch ($signo) {
-		case SIGTERM:
-		case SIGINT:
-		case SIGABRT:
-		case SIGQUIT:
-		case SIGSEGV:
-			cacti_log("WARNING: Script Server terminated with signal '$signo' in file:'" . basename($include_file) . "', function:'$function', params:'$parameters'", false, 'PHPSVR', POLLER_VERBOSITY_MEDIUM);
-			db_close();
-
-			exit;
-			break;
-		default:
-			cacti_log("WARNING: Script Server received signal '$signo' in file:'$include_file', function:'$function', params:'$parameters'", false, 'PHPSVR', POLLER_VERBOSITY_HIGH);
-
-			break;
-	}
+if (function_exists('pcntl_async_signals')) {
+	pcntl_async_signals(true);
+} else {
+	declare(ticks = 100);
 }
 
-/* used for includes */
-/* install signal handlers for UNIX only */
 $parent_pid = '';
 if (function_exists('posix_getppid')) {
 	$parent_pid = posix_getppid();
@@ -67,52 +46,94 @@ if (php_sapi_name() != 'cli') {
 	define('STDOUT', fopen('php://stdout', 'w'));
 }
 
-/* signal for realtime */
-global $environ, $poller_id;
+/* make sure data is flushed immediately */
+ob_implicit_flush();
+ini_set('output_buffering', 'Off');
+
+global $environ, $poller_id, $connection;
+
+/* some debugging */
+$pid         = getmypid();
+$ctr         = 0;
+$poller_id   = 1;
+$environ     = 'cmd';
+$conn_mode   = 'online';
+$legacy      = true;
+$options     = array();
+$help        = false;
+$version     = false;
+
+$called_by_script_server = false;
+
+$shortopts = 'VvHh';
+
+$longopts = array(
+	'environ::',
+	'poller::',
+	'mode::',
+	'version',
+	'help'
+);
+
+$options = getopt($shortopts, $longopts);
+
+if (sizeof($options)) {
+	foreach($options as $arg => $value) {
+		$allow_multi = false;
+
+		switch($arg) {
+			case 'enviorn':
+				$environ = $value;
+
+				break;
+			case 'poller':
+				$poller_id = $value;
+
+				break;
+			case 'mode':
+				$conn_mode = $value;
+
+				break;
+			case 'help':
+				$help = true;
+
+				break;
+			case 'version':
+				$version = true;
+
+				break;
+		}
+	}
+} elseif ($_SERVER['argc'] >= 2) {
+	if (in_array('spine', $_SERVER['argv'])) {
+		$environ = 'spine';
+	} elseif (in_array('realtime', $_SERVER['argv'])) {
+		$environ = 'realtime';
+	} elseif (in_array('cmd', $_SERVER['argv']) || in_array('cmd.php', $_SERVER['argv'])) {
+		$environ = 'cmd';
+	} else {
+		$environ = 'other';
+	}
+
+	if ($_SERVER['argc'] == 3) {
+		$poller_id = $_SERVER['argv'][2];
+	} else {
+		$poller_id = 1;
+	}
+}
+
+require(__DIR__ . '/include/cli_check.php');
+
+if ($help) {
+	display_help();
+	exit(0);
+} elseif ($version) {
+	display_version();
+	exit(0);
+}
 
 /* record the script start time */
 $start = microtime(true);
-
-/* some debugging */
-$pid = getmypid();
-$ctr = 0;
-
-/* if multiple polling intervals are defined, compensate for them */
-$polling_interval = read_config_option('poller_interval');
-
-if (!empty($polling_interval)) {
-	$num_polling_items = db_fetch_cell_prepared('SELECT count(*) FROM poller_item WHERE rrd_next_step <= 0 AND poller_id = ?', array($config['poller_id']), 'count(*)');
-	define('MAX_POLLER_RUNTIME', $polling_interval);
-} else {
-	$num_polling_items = db_fetch_cell_prepared('SELECT count(*) FROM poller_item WHERE poller_id = ?', array($config['poller_id']), 'count(*)');
-	define('MAX_POLLER_RUNTIME', 300);
-}
-
-/* Let PHP only run 1 second longer than the max runtime */
-ini_set('max_execution_time', MAX_POLLER_RUNTIME + 1);
-
-/* Record the calling environment */
-if ($_SERVER['argc'] >= 2) {
-	if ($_SERVER['argv'][1] == 'spine')
-		$environ = 'spine';
-	else
-		if (($_SERVER['argv'][1] == 'cmd.php') || ($_SERVER['argv'][1] == 'cmd'))
-			$environ = 'cmd';
-		elseif ($_SERVER['argv'][1] == 'realtime')
-			$environ = 'realtime';
-		else
-			$environ = 'other';
-
-	if ($_SERVER['argc'] == 3)
-		$poller_id = $_SERVER['argv'][2];
-	else
-		$poller_id = 1;
-} else {
-	$environ = 'cmd';
-	$poller_id = 1;
-}
-
-cacti_log('DEBUG: SERVER: ' . $environ . ' PARENT: ' . $parent_pid, false, 'PHPSVR', POLLER_VERBOSITY_DEBUG);
 
 if ($config['cacti_server_os'] == 'win32') {
 	cacti_log('DEBUG: GETCWD: ' . strtolower(strtr(getcwd(),"\\",'/')), false, 'PHPSVR', POLLER_VERBOSITY_DEBUG);
@@ -122,7 +143,20 @@ if ($config['cacti_server_os'] == 'win32') {
 	cacti_log('DEBUG: DIRNAM: ' . strtr(dirname(__FILE__),"\\",'/'), false, 'PHPSVR', POLLER_VERBOSITY_DEBUG);
 }
 
+cacti_log('DEBUG: SERVER: ' . $environ . ' PARENT: ' . $parent_pid, false, 'PHPSVR', POLLER_VERBOSITY_DEBUG);
 cacti_log('DEBUG: FILENM: ' . __FILE__, false, 'PHPSVR', POLLER_VERBOSITY_DEBUG);
+
+/* if multiple polling intervals are defined, compensate for them */
+$polling_interval = read_config_option('poller_interval');
+
+if (!empty($polling_interval)) {
+	define('MAX_POLLER_RUNTIME', $polling_interval);
+} else {
+	define('MAX_POLLER_RUNTIME', 300);
+}
+
+/* Let PHP only run 1 second longer than the max runtime */
+ini_set('max_execution_time', MAX_POLLER_RUNTIME + 1);
 
 /* send status back to the server */
 cacti_log('PHP Script Server has Started - Parent is ' . $environ, false, 'PHPSVR', POLLER_VERBOSITY_HIGH);
@@ -168,9 +202,11 @@ while (1) {
 		$input_string = trim($input_string);
 
 		if (substr($input_string,0,4) == 'quit') {
-			fputs(STDOUT, 'PHP Script Server Shutdown request received, exiting' . PHP_EOL);
-			fflush(STDOUT);
-			cacti_log('DEBUG: PHP Script Server Shutdown request received, exiting', false, 'PHPSVR', POLLER_VERBOSITY_DEBUG);
+			if (!$called_by_script_server) {
+				fputs(STDOUT, 'PHP Script Server Shutdown request received, exiting' . PHP_EOL);
+				fflush(STDOUT);
+				cacti_log('DEBUG: PHP Script Server Shutdown request received, exiting', false, 'PHPSVR', POLLER_VERBOSITY_DEBUG);
+			}
 			db_close();
 			exit(0);
 		}
@@ -213,32 +249,40 @@ while (1) {
 			}
 
 			cacti_log("DEBUG: PID[$pid] CTR[$ctr] INC: '". basename($include_file) .
-			        "' FUNC: '$function' PARMS: '" . implode('\', \'',$parameter_array) .
-			        "'", false, 'PHPSVR', POLLER_VERBOSITY_DEBUG);
+				"' FUNC: '$function' PARMS: '" . implode('\', \'',$parameter_array) .
+				"'", false, 'PHPSVR', POLLER_VERBOSITY_DEBUG);
 
-			/* validate the existance of the function, and include if applicable */
+			/* validate the existence of the function, and include if applicable */
 			if (!function_exists($function)) {
 				if (file_exists($include_file)) {
-					/* quirk in php on Windows, believe it or not.... */
-					/* path must be lower case */
+					/**
+					 * quirk in php on Windows, believe it or not....
+					 * path must be lower case
+					 */
 					if ($config['cacti_server_os'] == 'win32') {
 						$include_file = strtolower($include_file);
 					}
 
-					/* set this variable so the calling script can determine if it was called
-					 * by the script server or stand-alone */
+					/**
+					 * set this variable so the calling script can determine if it was called
+					 * by the script server or stand-alone
+					 */
 					$called_by_script_server = true;
 
 					/* turn on output buffering to avoid problems with nasty scripts */
 					ob_start();
 					include_once($include_file);
 					ob_end_clean();
+
+					error_reporting(0);
 				} else {
 					cacti_log('WARNING: PHP Script File to be included, does not exist', false, 'PHPSVR');
 				}
 			}
 
 			if (function_exists($function)) {
+				error_reporting(0);
+
 				if ($parameters == '') {
 					$result = call_user_func($function);
 				} else {
@@ -317,7 +361,9 @@ function parseArgs($string, &$str_list, $debug = false) {
 
 			break;
 		case '\\':
-			if ($escaping) {
+			if ($indelim) {
+				$curstr  .= $char;
+			} elseif ($escaping) {
 				$curstr  .= $char;
 				$escaping = false;
 			} else {
@@ -373,3 +419,71 @@ function parseArgs($string, &$str_list, $debug = false) {
 
 	return $parse_ok;
 }
+
+/**
+ * sig_handler - properly handle signals and shutdown
+ */
+function sig_handler($signo) {
+	global $include_file, $function, $parameters;
+
+	switch ($signo) {
+		case SIGTERM:
+		case SIGINT:
+		case SIGABRT:
+		case SIGQUIT:
+		case SIGSEGV:
+			cacti_log("WARNING: Script Server terminated with signal '$signo' in file:'" . basename($include_file) . "', function:'$function', params:'$parameters'", false, 'PHPSVR', POLLER_VERBOSITY_MEDIUM);
+			db_close();
+
+			exit;
+			break;
+		default:
+			cacti_log("WARNING: Script Server received signal '$signo' in file:'$include_file', function:'$function', params:'$parameters'", false, 'PHPSVR', POLLER_VERBOSITY_HIGH);
+
+			break;
+	}
+}
+
+/**
+ * display_version - displays version information
+ *
+ * @return (void)
+ */
+function display_version() {
+	$version = get_cacti_version();
+	print "Cacti Script Server, Version $version " . COPYRIGHT_YEARS . PHP_EOL;
+}
+
+/**
+ * display_help - displays help information
+ *
+ * @return (void)
+ */
+function display_help () {
+	display_version();
+
+	print PHP_EOL;
+	print 'usage: script_server.php [environ poller_id] | [ --environ=S --poller=N --mode [--force-level=N] ]' . PHP_EOL . PHP_EOL;
+	print 'Cacti\'s Script Server.  The Script Server provides a memory resident server for executing php' . PHP_EOL;
+	print 'scripts saving reducing the time to process the scripts through pre-compiling them for all consumers.' . PHP_EOL;
+	print 'The Script Server can be called using two methods.  The first method is the legacy method.  When using' . PHP_EOL;
+	print 'the legacy method, the first argument will be the environment, and the second will be the poller id.' . PHP_EOL . PHP_EOL;
+
+	print 'The modern calling method has multiple options processed by getopt.  Those options include:' . PHP_EOL . PHP_EOL;
+
+	print '  --environ=S      The default being \'cmd\', and options being \'spine\', \'cmd\', and \'realtime\'' . PHP_EOL;
+	print '  --poller=N       The poller id for the Data Collector in use' . PHP_EOL;
+	print '  --force-level=N  Force the logging at the level specified.' . PHP_EOL;
+	print '  --mode=S         Force a Database mode \'online\' or \'offline\'.  This is only relevant for' . PHP_EOL;
+	print '                   Remote Data Collectors.' . PHP_EOL . PHP_EOL;
+
+	print 'If no options are passed to the Script Server, it assumes that the environ is \'cmd\' and the poller id' . PHP_EOL;
+	print 'is 1 or the Main Data Collector.' . PHP_EOL . PHP_EOL;
+
+	print 'It is common that when developing Cacti Data Input methods one will use the Script Server to test' . PHP_EOL;
+	print 'scripts prior to creating thousands of Graphs using them.  To to that simply create at least' . PHP_EOL;
+	print 'one Data Source, start the Script Server, and then copy the Poller Cache entry into a running' . PHP_EOL;
+	print 'Script Server.  When doing so you should see the output you expect printed to standard output.  When' . PHP_EOL;
+	print 'running the Script Server, simply enter \'quit\' to exit.' . PHP_EOL . PHP_EOL;
+}
+

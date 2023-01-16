@@ -63,11 +63,6 @@ switch (get_request_var('action')) {
 		clog_purge_logfile();
 		utilities_view_logfile();
 		break;
-	case 'view_cleaner':
-		top_header();
-		utilities_view_cleaner();
-		bottom_footer();
-		break;
 	case 'view_user_log':
 		top_header();
 		utilities_view_user_log();
@@ -135,7 +130,7 @@ function rebuild_resource_cache() {
 }
 
 function utilities_view_tech() {
-	global $database_default, $config, $rrdtool_versions, $poller_options, $input_types, $local_db_cnn_id;
+	global $database_default, $config, $rrdtool_versions, $poller_options, $input_types, $local_db_cnn_id, $remote_db_cnn_id;
 
 	/* ================= input validation ================= */
 	get_filter_request_var('tab', FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => '/^([a-z_A-Z]+)$/')));
@@ -211,7 +206,7 @@ function utilities_view_tech() {
 		/* Get RRDtool version */
 		$rrdtool_version = __('Unknown');
 		$rrdtool_release = __('Unknown');
-		$storage_location = read_config_option('$storage_location');
+		$storage_location = read_config_option('storage_location');
 
 		$out_array = array();
 
@@ -221,7 +216,7 @@ function utilities_view_tech() {
 			}
 		}else {
 			$rrdtool_pipe = rrd_init();
-			$out_array = rrdtool_execute('info', false, RRDTOOL_OUTPUT_STDOUT, $rrdtool_pipe, 'WEBLOG');
+			$out_array[] = rrdtool_execute('info', false, RRDTOOL_OUTPUT_STDOUT, $rrdtool_pipe, 'WEBLOG');
 			rrd_close($rrdtool_pipe);
 		}
 
@@ -405,11 +400,27 @@ function utilities_view_tech() {
 		print '<td>' . html_escape($script_servers) . '</td>';
 		form_end_row();
 
-		$max_connections  = db_fetch_row('SHOW GLOBAL VARIABLES LIKE "max_connections"');
+		if ($config['poller_id'] == 1) {
+			$max_connections       = db_fetch_row('SHOW GLOBAL VARIABLES LIKE "max_connections"');
+			$max_local_connections = array();
+		} elseif ($config['connection'] == 'online') {
+			$max_connections        = db_fetch_row('SHOW GLOBAL VARIABLES LIKE "max_connections"');
+			$max_local_connections  = db_fetch_row('SHOW GLOBAL VARIABLES LIKE "max_connections"', false, $local_db_cnn_id);
+		} else {
+			$max_connections        = array();
+			$max_local_connections  = db_fetch_row('SHOW GLOBAL VARIABLES LIKE "max_connections"');
+		}
+
 		if (cacti_sizeof($max_connections)) {
 			$max_connections = $max_connections['Value'];
 		} else {
 			$max_connections = 0;
+		}
+
+		if (cacti_sizeof($max_local_connections)) {
+			$max_local_connections = $max_local_connections['Value'];
+		} else {
+			$max_local_connections = 0;
 		}
 
 		$total_dc_threads = db_fetch_cell("SELECT
@@ -420,9 +431,29 @@ function utilities_view_tech() {
 		$recommend_mc = $total_dc_threads + 100;
 
 		if ($recommend_mc > $max_connections) {
-			$db_connections = '<span class="deviceDown">' . __('Current: %s, Min Required: %s', $max_connections, $recommend_mc) . '</span>';
+			if ($config['poller_id'] == 1) {
+				$db_connections = '<span class="deviceDown">' . __('Main Server: Current: %s, Min Required: %s', $max_connections, $recommend_mc) . '</span>';
+			} elseif ($config['connection'] == 'online') {
+				$db_connections = '<span class="deviceDown">' . __('Main Server: Current: %s, Min Required: %s', $max_connections, $recommend_mc) . '</span>';
+			} else {
+				$db_connections = '';
+			}
 		} else {
-			$db_connections = '<span class="deviceUp">' . __('Current: %s, Min Required: %s', $max_connections, $recommend_mc) . '</span>';
+			if ($config['poller_id'] == 1) {
+				$db_connections = '<span class="deviceUp">' . __('Main Server: Current: %s, Min Required: %s', $max_connections, $recommend_mc) . '</span>';
+			} elseif ($config['connection'] == 'online') {
+				$db_connections = '<span class="deviceUp">' . __('Main Server: Current: %s, Min Required: %s', $max_connections, $recommend_mc) . '</span>';
+			} else {
+				$db_connections = '';
+			}
+		}
+
+		if ($config['poller_id'] > 1) {
+			if ($recommend_mc > $max_local_connections) {
+				$db_connections .= '<br><span class="deviceDown">' . __('Local Server: Current: %s, Min Required: %s', $max_local_connections, $recommend_mc) . '</span>';
+			} else {
+				$db_connections .= '<br><span class="deviceUp">' . __('Local Server: Current: %s, Min Required: %s', $max_local_connections, $recommend_mc) . '</span>';
+			}
 		}
 
 		form_alternate_row();
@@ -451,6 +482,10 @@ function utilities_view_tech() {
 		/* Get System Memory */
 		$memInfo = utilities_get_system_memory();
 
+		//print '<pre>';print_r($memInfo);print '</pre>';
+
+		$total_memory = 0;
+
 		if (cacti_sizeof($memInfo)) {
 			html_section_header(__('System Memory'), 2);
 
@@ -471,14 +506,206 @@ function utilities_view_tech() {
 					case 'Buffers':
 					case 'Active':
 					case 'Inactive':
+						// Convert to GBi
+						$value /= (1000 * 1000 * 1000);
+
 						form_alternate_row();
 						print "<td>$name</td>";
-						print '<td>' . number_format_i18n($value, 2) . '</td>';
+						print '<td>' . __('%0.2f GB', number_format_i18n($value, 2, 1000)) . '</td>';
 						form_end_row();
+
+						if ($name == 'MemTotal') {
+							$total_memory = $value;
+						}
 					}
 				}
 			}
 
+			form_end_row();
+		}
+
+		$mysql_info = utilities_get_mysql_info($config['poller_id']);
+
+		$database  = $mysql_info['database'];
+		$version   = $mysql_info['version'];
+		$link_ver  = $mysql_info['link_ver'];
+		$variables = $mysql_info['variables'];
+
+		// Get Maximum Memory in GB for MySQL/MariaDB
+		if ($config['poller_id'] == 1) {
+			if (($database == 'MySQL' && version_compare($version, '8.0', '<')) || $database == 'MariaDB') {
+				$systemMemory = db_fetch_cell('SELECT
+					(@@GLOBAL.key_buffer_size
+					+ @@GLOBAL.query_cache_size
+					+ @@GLOBAL.tmp_table_size
+					+ @@GLOBAL.innodb_buffer_pool_size
+					+ @@GLOBAL.innodb_log_buffer_size) / 1024 / 1024 / 1024');
+
+				$maxPossibleMyMemory = db_fetch_cell('SELECT (
+					(@@GLOBAL.key_buffer_size
+					+ @@GLOBAL.query_cache_size
+					+ @@GLOBAL.tmp_table_size
+					+ @@GLOBAL.innodb_buffer_pool_size
+					+ @@GLOBAL.innodb_log_buffer_size
+					+ @@GLOBAL.max_connections * (
+						@@GLOBAL.sort_buffer_size
+						+ @@GLOBAL.read_buffer_size
+						+ @@GLOBAL.read_rnd_buffer_size
+						+ @@GLOBAL.join_buffer_size
+						+ @@GLOBAL.thread_stack
+						+ @@GLOBAL.binlog_cache_size)
+					) / 1024 / 1024 / 1024)');
+			} else {
+				$systemMemory = db_fetch_cell('SELECT
+					(@@GLOBAL.key_buffer_size
+					+ @@GLOBAL.tmp_table_size
+					+ @@GLOBAL.innodb_buffer_pool_size
+					+ @@GLOBAL.innodb_log_buffer_size) / 1024 / 1024 / 1024');
+
+				$maxPossibleMyMemory = db_fetch_cell('SELECT (
+					(@@GLOBAL.key_buffer_size
+					+ @@GLOBAL.tmp_table_size
+					+ @@GLOBAL.innodb_buffer_pool_size
+					+ @@GLOBAL.innodb_log_buffer_size
+					+ @@GLOBAL.max_connections * (
+						@@GLOBAL.sort_buffer_size
+						+ @@GLOBAL.read_buffer_size
+						+ @@GLOBAL.read_rnd_buffer_size
+						+ @@GLOBAL.join_buffer_size
+						+ @@GLOBAL.thread_stack
+						+ @@GLOBAL.binlog_cache_size)
+					) / 1024 / 1024 / 1024)');
+			}
+
+			$clientMemory = db_fetch_cell('SELECT @@GLOBAL.max_connections * (
+				@@GLOBAL.sort_buffer_size
+				+ @@GLOBAL.read_buffer_size
+				+ @@GLOBAL.read_rnd_buffer_size
+				+ @@GLOBAL.join_buffer_size
+				+ @@GLOBAL.thread_stack
+				+ @@GLOBAL.binlog_cache_size) / 1024 / 1024 / 1024');
+		} else {
+			if (($database == 'MySQL' && version_compare($version, '8.0', '<')) || $database == 'MariaDB') {
+				$maxPossibleMyMemory = db_fetch_cell('SELECT (
+					(@@GLOBAL.key_buffer_size
+					+ @@GLOBAL.query_cache_size
+					+ @@GLOBAL.tmp_table_size
+					+ @@GLOBAL.innodb_buffer_pool_size
+					+ @@GLOBAL.innodb_log_buffer_size
+					+ @@GLOBAL.max_connections * (
+						@@GLOBAL.sort_buffer_size
+						+ @@GLOBAL.read_buffer_size
+						+ @@GLOBAL.read_rnd_buffer_size
+						+ @@GLOBAL.join_buffer_size
+						+ @@GLOBAL.thread_stack
+						+ @@GLOBAL.binlog_cache_size)
+					) / 1024 / 1024 / 1024)', '', false, $local_db_cnn_id);
+
+				$systemMemory = db_fetch_cell('SELECT
+					(@@GLOBAL.key_buffer_size
+					+ @@GLOBAL.query_cache_size
+					+ @@GLOBAL.tmp_table_size
+					+ @@GLOBAL.innodb_buffer_pool_size
+					+ @@GLOBAL.innodb_log_buffer_size) / 1024 / 1024 / 1024', '', false, $local_db_cnn_id);
+			} else {
+				$maxPossibleMyMemory = db_fetch_cell('SELECT (
+					(@@GLOBAL.key_buffer_size
+					+ @@GLOBAL.tmp_table_size
+					+ @@GLOBAL.innodb_buffer_pool_size
+					+ @@GLOBAL.innodb_log_buffer_size
+					+ @@GLOBAL.max_connections * (
+						@@GLOBAL.sort_buffer_size
+						+ @@GLOBAL.read_buffer_size
+						+ @@GLOBAL.read_rnd_buffer_size
+						+ @@GLOBAL.join_buffer_size
+						+ @@GLOBAL.thread_stack
+						+ @@GLOBAL.binlog_cache_size)
+					) / 1024 / 1024 / 1024)', '', false, $local_db_cnn_id);
+
+				$systemMemory = db_fetch_cell('SELECT
+					(@@GLOBAL.key_buffer_size
+					+ @@GLOBAL.tmp_table_size
+					+ @@GLOBAL.innodb_buffer_pool_size
+					+ @@GLOBAL.innodb_log_buffer_size) / 1024 / 1024 / 1024', '', false, $local_db_cnn_id);
+			}
+
+			$clientMemory = db_fetch_cell('SELECT @@GLOBAL.max_connections * (
+				@@GLOBAL.sort_buffer_size
+				+ @@GLOBAL.read_buffer_size
+				+ @@GLOBAL.read_rnd_buffer_size
+				+ @@GLOBAL.join_buffer_size
+				+ @@GLOBAL.thread_stack
+				+ @@GLOBAL.binlog_cache_size) / 1024 / 1024 / 1024', '', false, $local_db_cnn_id);
+		}
+
+		html_section_header(__('MySQL/MariaDB Memory Statistics (Source: MySQL Tuner)'), 2);
+
+		if ($total_memory > 0) {
+			if ($maxPossibleMyMemory > ($total_memory * 0.8)) {
+				form_alternate_row();
+				print '<td>' . __('Max Total Memory Possible') . '</td>';
+				print '<td class="deviceDown">' . __('%0.2f GB', number_format_i18n($maxPossibleMyMemory, 2, 1000)) . '</td>';
+				form_end_row();
+				form_alternate_row();
+				print '<td></td>';
+				print '<td>' . __('Reduce MySQL/MariaDB Memory to less than 80% of System Memory.  Preserve additional Cache Memory for RRDfiles if the Database is on the same system as the RRDfiles.  See Core and Client Totals below for explanation of calculation method.') . '</td>';
+				form_end_row();
+			} else {
+				form_alternate_row();
+				print '<td>' . __('Max Total Memory Possible') . '</td>';
+				print '<td class="deviceUp">' . __('%0.2f GB', number_format_i18n($maxPossibleMyMemory, 2, 1000)) . '</td>';
+				form_end_row();
+			}
+		} else {
+			form_alternate_row();
+			print '<td>' . __('Max Total Memory Possible') . '</td>';
+			print '<td>' . __('%0.2f GB', number_format_i18n($maxPossibleMyMemory, 2, 1000)) . '</td>';
+			form_end_row();
+		}
+
+		if ($total_memory > 0) {
+			if ($systemMemory > ($total_memory * 0.8)) {
+				form_alternate_row();
+				print '<td>' . __('Max Core Memory Possible') . '</td>';
+				print '<td class="deviceDown">' . __('%0.2f GB', number_format_i18n($systemMemory, 2, 1000)) . '&nbsp;&nbsp;(' . __('Reduce Total Core Memory') . '</td>';
+				form_end_row();
+			} else {
+				form_alternate_row();
+				print '<td>' . __('Max Core Memory Possible') . '</td>';
+				print '<td class="deviceUp">' . __('%0.2f GB', number_format_i18n($systemMemory, 2, 1000)) . '</td>';
+				form_end_row();
+			}
+
+			form_alternate_row();
+			print '<td>' . __('Calculation Formula') . '</td>';
+			print '<td>SELECT @@GLOBAL.key_buffer_size + <br>@@GLOBAL.query_cache_size + <br>@@GLOBAL.tmp_table_size + <br>@@GLOBAL.innodb_buffer_pool_size + <br>@@GLOBAL.innodb_log_buffer_size</td>';
+			form_end_row();
+
+			if ($clientMemory > ($total_memory * 0.8)) {
+				form_alternate_row();
+				print '<td>' . __('Max Connection Memory Possible') . '</td>';
+				print '<td class="deviceDown">' . __('%0.2f GB', number_format_i18n($clientMemory, 2, 1000)) . '&nbsp;&nbsp;(' . __('Reduce Total Client Memory') . ')</td>';
+				form_end_row();
+			} else {
+				form_alternate_row();
+				print '<td>' . __('Max Connection Memory Possible') . '</td>';
+				print '<td class="deviceUp">' . __('%0.2f GB', number_format_i18n($clientMemory, 2, 1000)) . '</td>';
+				form_end_row();
+			}
+
+			form_alternate_row();
+			print '<td>' . __('Calculation Formula') . '</td>';
+			print '<td>SELECT @@GLOBAL.max_connections * (<br>@@GLOBAL.sort_buffer_size + <br>@@GLOBAL.read_buffer_size + <br>@@GLOBAL.read_rnd_buffer_size + <br>@@GLOBAL.join_buffer_size + <br>@@GLOBAL.thread_stack + <br>@@GLOBAL.binlog_cache_size)</td>';
+			form_end_row();
+		} else {
+			form_alternate_row();
+			print '<td>' . __('Max Core Memory Possible') . '</td>';
+			print '<td class="deviceUp">' . __('%0.2f GB', number_format_i18n($systemMemory, 2, 1000)) . '</td>';
+			form_end_row();
+
+			form_alternate_row();
+			print '<td>' . __('Max Connection Memory Possible') . '</td>';
+			print '<td>' . __('%0.2f GB', number_format_i18n($clientMemory, 2, 1000)) . '</td>';
 			form_end_row();
 		}
 
@@ -1682,42 +1909,47 @@ function utilities_view_poller_cache() {
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '-1'
-			),
+		),
 		'page' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'default' => '1'
-			),
+		),
 		'filter' => array(
 			'filter' => FILTER_DEFAULT,
 			'pageset' => true,
 			'default' => '',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'sort_column' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => 'dtd.name_cache',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'sort_direction' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => 'ASC',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'host_id' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '-1'
-			),
+		),
 		'template_id' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '-1'
-			),
+		),
 		'poller_action' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '-1'
-			)
+		),
+		'status' => array(
+			'filter' => FILTER_VALIDATE_INT,
+			'pageset' => true,
+			'default' => '-1'
+		)
 	);
 
 	validate_store_request_vars($filters, 'sess_poller');
@@ -1745,6 +1977,7 @@ function utilities_view_poller_cache() {
 		strURL += '&template_id=' + $('#template_id').val();
 		strURL += '&filter=' + $('#filter').val();
 		strURL += '&rows=' + $('#rows').val();
+		strURL += '&status=' + $('#status').val();
 		strURL += '&header=false';
 		loadPageNoHeader(strURL);
 	}
@@ -1826,6 +2059,16 @@ function utilities_view_poller_cache() {
 						<input type='text' class='ui-state-default ui-corner-all' id='filter' size='25' value='<?php print html_escape_request_var('filter');?>'>
 					</td>
 					<td>
+						<?php print __('Status');?>
+					</td>
+					<td>
+						<select id='status' onChange='applyFilter()'>
+							<option value='-1'<?php if (get_request_var('status') == '-1') {?> selected<?php }?>><?php print __('Any');?></option>
+							<option value='1'<?php if (get_request_var('status') == '1') {?> selected<?php }?>><?php print __('Enabled');?></option>
+							<option value='0'<?php if (get_request_var('status') == '0') {?> selected<?php }?>><?php print __('Disabled');?></option>
+						</select>
+					</td>
+					<td>
 						<?php print __('Action');?>
 					</td>
 					<td>
@@ -1862,18 +2105,18 @@ function utilities_view_poller_cache() {
 	html_end_box();
 
 	/* form the 'where' clause for our main sql query */
-	$sql_where = 'WHERE pi.local_data_id = dtd.local_data_id';
+	$sql_where = '';
 
 	if (get_request_var('poller_action') != '-1') {
-		$sql_where .= " AND pi.action='" . get_request_var('poller_action') . "'";
+		$sql_where .= ($sql_where != '' ? ' AND ':' WHERE') . " pi.action='" . get_request_var('poller_action') . "'";
 	}
 
 	if (get_request_var('host_id') == '-1') {
 		/* Show all items */
 	} elseif (get_request_var('host_id') == '0') {
-		$sql_where .= ' AND pi.host_id = 0';
+		$sql_where .= ($sql_where != '' ? ' AND ':' WHERE') . ' pi.host_id = 0';
 	} elseif (!isempty_request_var('host_id')) {
-		$sql_where .= ' AND pi.host_id = ' . get_request_var('host_id');
+		$sql_where .= ($sql_where != '' ? ' AND ':' WHERE') . ' pi.host_id = ' . get_request_var('host_id');
 	}
 
 	if (get_request_var('template_id') == '-1') {
@@ -1884,32 +2127,47 @@ function utilities_view_poller_cache() {
 		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . ' dl.data_template_id=' . get_request_var('template_id');
 	}
 
-	if (get_request_var('filter') != '') {
-		$sql_where .= ' AND (
-			dtd.name_cache LIKE '   . db_qstr('%' . get_request_var('filter') . '%') . '
-			OR h.description LIKE ' . db_qstr('%' . get_request_var('filter') . '%') . '
-			OR pi.arg1 LIKE '       . db_qstr('%' . get_request_var('filter') . '%') . '
-			OR pi.hostname LIKE '   . db_qstr('%' . get_request_var('filter') . '%') . '
-			OR pi.rrd_path  LIKE '  . db_qstr('%' . get_request_var('filter') . '%') . ')';
+	if (get_request_var('status') == 0) {
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . ' (h.disabled = "on" OR dtd.active = "")';
+	} elseif (get_request_var('status') == 1) {
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . ' (h.disabled = "" AND dtd.active = "on")';
 	}
 
-	$total_rows = db_fetch_cell("SELECT COUNT(*)
-		FROM poller_item AS pi
-		INNER JOIN data_local AS dl
-		ON dl.id=pi.local_data_id
-		INNER JOIN data_template_data AS dtd
-		ON dtd.local_data_id = pi.local_data_id
-		INNER JOIN host AS h
-		ON pi.host_id = h.id
-		$sql_where");
+	if (get_request_var('filter') != '') {
+		if (get_request_var('host_id') > 0) {
+			$sql_where .= ($sql_where != '' ? ' AND ':' WHERE') . ' (
+				dtd.name_cache LIKE '   . db_qstr('%' . get_request_var('filter') . '%') . '
+				OR pi.arg1 LIKE '       . db_qstr('%' . get_request_var('filter') . '%') . '
+				OR pi.rrd_path  LIKE '  . db_qstr('%' . get_request_var('filter') . '%') . ')';
+		} else {
+			$sql_where .= ($sql_where != '' ? ' AND ':' WHERE') . ' (
+				dtd.name_cache LIKE '   . db_qstr('%' . get_request_var('filter') . '%') . '
+				OR h.description LIKE ' . db_qstr('%' . get_request_var('filter') . '%') . '
+				OR pi.arg1 LIKE '       . db_qstr('%' . get_request_var('filter') . '%') . '
+				OR pi.hostname LIKE '   . db_qstr('%' . get_request_var('filter') . '%') . '
+				OR pi.rrd_path  LIKE '  . db_qstr('%' . get_request_var('filter') . '%') . ')';
+		}
+	}
 
-	$poller_sql = "SELECT pi.*, dtd.name_cache, h.description
+	$sql = "SELECT COUNT(*)
 		FROM poller_item AS pi
 		INNER JOIN data_local AS dl
-		ON dl.id=pi.local_data_id
-		INNER JOIN data_template_data AS dtd
+		ON dl.id = pi.local_data_id
+		LEFT JOIN data_template_data AS dtd
 		ON dtd.local_data_id = pi.local_data_id
-		INNER JOIN host AS h
+		LEFT JOIN host AS h
+		ON pi.host_id = h.id
+		$sql_where";
+
+	$total_rows = get_total_row_data($_SESSION['sess_user_id'], $sql, array(), 'poller_item');
+
+	$poller_sql = "SELECT pi.*, dtd.name_cache, h.description, h.id AS host_id
+		FROM poller_item AS pi
+		INNER JOIN data_local AS dl
+		ON dl.id = pi.local_data_id
+		LEFT JOIN data_template_data AS dtd
+		ON dtd.local_data_id = pi.local_data_id
+		LEFT JOIN host AS h
 		ON pi.host_id = h.id
 		$sql_where
 		ORDER BY " . get_request_var('sort_column') . ' ' . get_request_var('sort_direction') . ', action ASC
@@ -1944,7 +2202,7 @@ function utilities_view_poller_cache() {
 					<?php print filter_value($item['name_cache'], get_request_var('filter'), 'data_sources.php?action=ds_edit&id=' . $item['local_data_id']);?>
 				</td>
 				<td>
-					<?php print html_escape($item['description']);?>
+					<?php print filter_value($item['description'], get_request_var('filter'), 'host.php?action=edit&id=' . $item['host_id']);?>
 				</td>
 
 				<td>
@@ -1993,7 +2251,7 @@ function utilities_view_poller_cache() {
 }
 
 function utilities() {
-	global $utilities;
+	global $config, $utilities;
 
 	$utilities[__('Technical Support')] = array(
 		__('Technical Support') => array(
@@ -2021,10 +2279,12 @@ function utilities() {
 		),
 		__('Rebuild Poller Cache') => array(
 			'link'  => 'utilities.php?action=clear_poller_cache',
+			'mode'  => 'online',
 			'description' => __('The Poller Cache will be re-generated if you select this option. Use this option only in the event of a database crash if you are experiencing issues after the crash and have already run the database repair tools.  Alternatively, if you are having problems with a specific Device, simply re-save that Device to rebuild its Poller Cache.  There is also a command line interface equivalent to this command that is recommended for large systems.  <i class="deviceDown">NOTE: On large systems, this command may take several minutes to hours to complete and therefore should not be run from the Cacti UI.  You can simply run \'php -q cli/rebuild_poller_cache.php --help\' at the command line for more information.</i>')
 		),
 		__('Rebuild Resource Cache') => array(
 			'link'  => 'utilities.php?action=rebuild_resource_cache',
+			'mode'  => 'online',
 			'description' => __('When operating multiple Data Collectors in Cacti, Cacti will attempt to maintain state for key files on all Data Collectors.  This includes all core, non-install related website and plugin files.  When you force a Resource Cache rebuild, Cacti will clear the local Resource Cache, and then rebuild it at the next scheduled poller start.  This will trigger all Remote Data Collectors to recheck their website and plugin files for consistency.')
 		),
 	);
@@ -2039,33 +2299,46 @@ function utilities() {
 	$utilities[__('Data Source Statistics Utilities')] = array(
 		__('Purge Data Source Statistics') => array(
 			'link'  => 'utilities.php?action=purge_data_source_statistics',
+			'mode'  => 'online',
 			'description' => __('This menu pick will purge all existing Data Source Statistics from the Database.  If Data Source Statistics is enabled, the Data Sources Statistics will start collection again on the next Data Collector pass.')
 		),
 	);
 
-	$utilities[__('RRD Utilities')] = array(
-		__('RRDfile Cleaner') => array(
-			'link'  => 'rrdcleaner.php',
-			'description' => __('When you delete Data Sources from Cacti, the corresponding RRDfiles are not removed automatically.  Use this utility to facilitate the removal of these old files.')
-		),
-	);
+	if ($config['poller_id'] == 1) {
+		$utilities[__('RRD Utilities')] = array(
+			__('RRDfile Cleaner') => array(
+				'link'  => 'rrdcleaner.php',
+				'mode'  => 'online',
+				'description' => __('When you delete Data Sources from Cacti, the corresponding RRDfiles are not removed automatically.  Use this utility to facilitate the removal of these old files.')
+			),
+			__('RRDfile Checker') => array(
+				'link'  => 'rrdcheck.php',
+				'mode'  => 'online',
+				'description' => __('Use this utility to display problems with missing rrd files or missing values in rrdfiles. You need enable rrdcheck in Configuration->Settings->Data')
+			),
+		);
+	}
 
 	if (snmpagent_enabled()) {
 		$utilities[__('SNMP Agent Utilities')] = array(
 			__('View SNMP Agent Cache') => array(
 				'link'  => 'utilities.php?action=view_snmpagent_cache',
+				'mode'  => 'online',
 				'description' => __('This shows all objects being handled by the SNMP Agent.')
 			),
 			__('Rebuild SNMP Agent Cache') => array(
 				'link'  => 'utilities.php?action=rebuild_snmpagent_cache',
+				'mode'  => 'online',
 				'description' => __('The SNMP cache will be cleared and re-generated if you select this option. Note that it takes another poller run to restore the SNMP cache completely.')
 			),
 			__('View SNMP Agent Notification Log') => array(
 				'link'  => 'utilities.php?action=view_snmpagent_events',
+				'mode'  => 'online',
 				'description' => __('This menu pick allows you to view the latest events SNMP Agent has handled in relation to the registered notification receivers.')
 			),
 			__('SNMP Notification Receivers') => array(
 				'link'  => 'managers.php',
+				'mode'  => 'online',
 				'description' => __('Allows Administrators to maintain SNMP notification receivers.')
 			),
 		);
@@ -2076,16 +2349,25 @@ function utilities() {
 	html_start_box(__('Cacti System Utilities'), '100%', '', '3', 'center', '');
 
 	foreach($utilities as $header => $content) {
-		html_section_header($header, 2);
+		$i = 0;
+
 		foreach($content as $title => $details) {
-			form_alternate_row();
-			print "<td class='nowrap' style='vertical-align:top;'>";
-			print "<a class='hyperLink' href='" . html_escape($details['link']) . "'>" . $title . '</a>';
-			print '</td>';
-			print '<td>';
-			print $details['description'];
-			print '</td>';
-			form_end_row();
+			if ((isset($details['mode']) && $details['mode'] == 'online' && $config['connection'] == 'online') || !isset($details['mode'])) {
+				if ($i == 0) {
+					html_section_header($header, 2);
+				}
+
+				form_alternate_row();
+				print "<td class='nowrap' style='vertical-align:top;'>";
+				print "<a class='hyperLink' href='" . html_escape($details['link']) . "'>" . $title . '</a>';
+				print '</td>';
+				print '<td>';
+				print html_escape($details['description']);
+				print '</td>';
+				form_end_row();
+
+				$i++;
+			}
 		}
 	}
 
@@ -2107,6 +2389,12 @@ function purge_data_source_statistics() {
 
 	foreach($tables as $table) {
 		db_execute('TRUNCATE TABLE ' . $table);
+	}
+
+	if (isset($_SESSION['sess_user_id'])) {
+		cacti_log('NOTE: Cacti DS Stats purged by user ' . get_username($_SESSION['sess_user_id']), false, 'WEBUI');
+	} else {
+		cacti_log('NOTE: Cacti DS Stats purged by cli script');
 	}
 }
 
@@ -2202,24 +2490,54 @@ function boost_display_run_status() {
 		$max_data_length = $table['MAX_DATA_LENGTH'];
 	}
 
-	$total_records  = $pending_records + $arch_records;
+	if ($config['connection'] == 'online' && db_table_exists('poller_output_boost_local_data_ids')) {
+		$pending_ds = db_fetch_cell('SELECT COUNT(local_data_id) FROM poller_output_boost_local_data_ids');
+	} else {
+		$pending_ds = 0;
+	}
+
+	$poller_items = db_fetch_cell('SELECT COUNT(local_data_id)
+		FROM poller_item AS pi
+		INNER JOIN host AS h
+		ON h.id = pi.host_id
+		WHERE h.disabled = ""');
+
+	$data_sources = db_fetch_cell('SELECT COUNT(DISTINCT local_data_id)
+		FROM poller_item AS pi
+		INNER JOIN host AS h
+		ON h.id = pi.host_id
+		WHERE h.disabled = ""');
+
+	$pi_ds = ($data_sources ? ($poller_items / $data_sources) : 0);
+
+	if ($pending_ds == 0) {
+		$remaining = $arch_records;
+	} else {
+		$remaining = $arch_records * (($pending_ds * $pi_ds) / $data_sources);
+	}
+
+	$total_records  = $pending_records + $remaining;
 	$avg_row_length = ($total_records ? intval($data_length / $total_records) : 0);
 
-	$total_data_sources = db_fetch_cell('SELECT COUNT(*) FROM poller_item');
-
 	$boost_status = read_config_option('boost_poller_status', true);
-	if ($boost_status != '') {
+	if ($boost_status != '' && $boost_status != 'Disabled') {
 		$boost_status_array = explode(':', $boost_status);
 
 		$boost_status_date  = $boost_status_array[1];
 
-		if (substr_count($boost_status_array[0], 'complete'))    $boost_status_text = __('Idle');
-		elseif (substr_count($boost_status_array[0], 'running')) $boost_status_text = __('Running');
-		elseif (substr_count($boost_status_array[0], 'overrun')) $boost_status_text = __('Overrun Warning');
-		elseif (substr_count($boost_status_array[0], 'timeout')) $boost_status_text = __('Timed Out');
-		else   $boost_status_text = __('Other');
+		if (substr_count($boost_status_array[0], 'complete')) {
+			$status = '<span class="deviceRecovering">' . __('Idle') . '</span>';
+		} elseif (substr_count($boost_status_array[0], 'running')) {
+			$status = '<span class="deviceUp">' . __('Running') . '</span>';
+		} elseif (substr_count($boost_status_array[0], 'overrun')) {
+			$status = '<span class="deviceDown">' . __('Overrun Warning') . '</span>';
+		} elseif (substr_count($boost_status_array[0], 'timeout')) {
+			$status = '<span class="deviceDown">' . __('Timed Out') . '</span>';
+		} else {
+			$status = '<span class="deviceDown">' . __('Other') . '</span>';
+		}
 	} else {
-		$boost_status_text = __('Never Run');
+		$status = '<span class="deviceDisabled">' . __('Disabled') . '</span>';
 		$boost_status_date = '';
 	}
 
@@ -2280,26 +2598,47 @@ function boost_display_run_status() {
 		$cache_files    = '<strong>' . __('WARNING:') . '</strong> ' . __('N/A');
 	}
 
+	$running = db_fetch_cell('SELECT COUNT(*) FROM processes WHERE tasktype="boost" AND taskname="child"');
+
 	$i = 0;
 
 	/* boost status display */
 	html_section_header(__('Current Boost Status'), 2);
 
-	form_alternate_row();
-	print '<td>' . __('Boost On-demand Updating:') . '</td><td>' . ($rrd_updates == '' ? 'Disabled' : $boost_status_text) . '</td>';
+	if ($config['connection'] == 'online') {
+		form_alternate_row();
+		print '<td>' . __('Boost On-demand Updating:') . '</td><td><b>' . $status . '</b></td>';
+
+		if ($running > 0) {
+			form_alternate_row();
+			print '<td>' . __('Running Processes:') . '</td><td>' . ($running) . '</td>';
+		}
+	}
 
 	form_alternate_row();
-	print '<td>' . __('Total Data Sources:') . '</td><td>' . number_format_i18n($total_data_sources, -1) . '</td>';
+	print '<td>' . __('Total Poller Items:') . '</td><td>' . number_format_i18n($poller_items, -1) . '</td>';
+
+	$premaining = ($data_sources ? (round(($pending_ds / $data_sources) * 100, 1)) : 0);
 
 	if ($total_records) {
 		form_alternate_row();
-		print '<td>' . __('Pending Boost Records:') . '</td><td>' . number_format_i18n($pending_records, -1) . '</td>';
+		print '<td>' . __('Total Data Sources:') . '</td><td>' . number_format_i18n($data_sources, -1) . '</td>';
+
+		if ($config['connection'] == 'online') {
+			form_alternate_row();
+			print '<td>' . __('Remaining Data Sources:') . '</td><td>' . ($pending_ds > 0 ? number_format_i18n($pending_ds, -1) . " ($premaining %)":__('TBD')) . '</td>';
+		}
 
 		form_alternate_row();
-		print '<td>' . __('Archived Boost Records:') . '</td><td>' . number_format_i18n($arch_records, -1) . '</td>';
+		print '<td>' . __('Queued Boost Records:') . '</td><td>' . number_format_i18n($pending_records, -1) . '</td>';
 
-		form_alternate_row();
-		print '<td>' . __('Total Boost Records:') . '</td><td>' . number_format_i18n($total_records, -1) . '</td>';
+		if ($config['connection'] == 'online') {
+			form_alternate_row();
+			print '<td>' . __('Approximate in Process:') . '</td><td>' . number_format_i18n($remaining, -1) . '</td>';
+
+			form_alternate_row();
+			print '<td>' . __('Total Boost Records:') . '</td><td>' . number_format_i18n($total_records, -1) . '</td>';
+		}
 	}
 
 	/* boost status display */
@@ -2361,66 +2700,142 @@ function boost_display_run_status() {
 	form_alternate_row();
 	print '<td>' . __('Estimated Maximum Records:') . '</td><td>' . $max_table_records . ' Records</td>';
 
-	/* boost last runtime display */
-	html_section_header(__('Runtime Statistics'), 2);
+	if ($config['connection'] == 'online') {
+		/* boost last runtime display */
+		html_section_header(__('Previous Runtime Statistics'), 2);
 
-	form_alternate_row();
-	print '<td class="utilityPick">' . __('Last Start Time:') . '</td><td>' . (is_numeric($last_run_time) ? date('Y-m-d H:i:s', $last_run_time):$last_run_time) . '</td>';
+		form_alternate_row();
+		print '<td class="utilityPick">' . __('Last Start Time:') . '</td><td>' . (is_numeric($last_run_time) ? date('Y-m-d H:i:s', $last_run_time):$last_run_time) . '</td>';
 
-	form_alternate_row();
-	print '<td class="utilityPick">' . __('Last Run Duration:') . '</td><td>';
+		form_alternate_row();
+		print '<td class="utilityPick">' . __('Last Run Duration:') . '</td><td>';
 
-	if (is_numeric($boost_last_run_duration)) {
-		print (($boost_last_run_duration > 60) ? __('%d minutes', (int)($boost_last_run_duration/60)) : '' ) . __('%d seconds', $boost_last_run_duration%60);
-		if ($rrd_updates != ''){ print ' (' . __('%0.2f percent of update frequency)', round(100*$boost_last_run_duration/$update_interval/60));}
-	} else {
-		print __('N/A');
+		if (is_numeric($boost_last_run_duration)) {
+			print ($boost_last_run_duration > 60 ? __('%d minutes', (int)$boost_last_run_duration / 60) . ', ': '') . __('%d seconds', (int) $boost_last_run_duration % 60);
+
+			if ($rrd_updates != ''){
+				print ' (' . __('%0.2f percent of update frequency)', round(100 * $boost_last_run_duration / $update_interval / 60));
+			}
+		} else {
+			print __('N/A');
+		}
+		print '</td>';
+
+		form_alternate_row();
+		print '<td class="utilityPick">' . __('RRD Updates:') . '</td><td>' . ($boost_rrds_updated != '' ? number_format_i18n($boost_rrds_updated, -1):'-') . '</td>';
+
+		form_alternate_row();
+		print '<td class="utilityPick">' . __('Peak Poller Memory:') . '</td><td>' . ((read_config_option('boost_peak_memory') != '' && is_numeric(read_config_option('boost_peak_memory'))) ? (round(read_config_option('boost_peak_memory')/1024/1024,2)) . ' ' . __('MBytes') : __('N/A')) . '</td>';
+
+		form_alternate_row();
+		print '<td class="utilityPick">' . __('Max Poller Memory Allowed:') . '</td><td>' . ((read_config_option('boost_poller_mem_limit') != '') ? (read_config_option('boost_poller_mem_limit')) . ' ' . __('MBytes') : __('N/A')) . '</td>';
+
+		/* boost last runtime display */
+		html_section_header(__('Detailed Runtime Statistics'), 2);
+
+		form_alternate_row();
+
+		if ($detail_stats == '') {
+			$detail_stats = __('N/A');
+		} else {
+			$values = explode(' ', $detail_stats);
+			$rows   = explode(':', $values[0])[1];
+			$time   = explode(':', $values[1])[1];
+			$recs   = explode(':', $values[2])[1];
+			$rcycle = explode(':', $values[3])[1];
+			$fandt  = explode(':', $values[4])[1];
+			$lastu  = explode(':', $values[5])[1];
+			$update = explode(':', $values[6])[1];
+			$delete = explode(':', $values[7])[1];
+
+			$detail_stats = __('Records: %s (ds rows), Time: %s (secs), GetRows: %s (secs), ResultsCycle: %s (secs), FileAndTemplate: %s (secs), LastUpdate: %s (secs), RRDUpdate: %s (secs), Delete: %s (secs)',
+				number_format_i18n($rows),
+				number_format_i18n($time),
+				number_format_i18n($recs),
+				number_format_i18n($rcycle),
+				number_format_i18n($fandt),
+				number_format_i18n($lastu),
+				number_format_i18n($update),
+				number_format_i18n($delete));
+		}
+
+		print '<td class="utilityPick">' . __('Previous Runtime Timers:') . '</td><td>' . (($detail_stats != '') ? $detail_stats:__('N/A')) . '</td>';
+
+		$runtimes = db_fetch_assoc('SELECT name, value, CAST(replace(name, "stats_boost_", "") AS signed) AS ome
+			FROM settings
+			WHERE name LIKE "stats_boost_%"
+			ORDER BY ome');
+
+		if (cacti_sizeof($runtimes)) {
+			foreach($runtimes as $r) {
+				$process = str_replace('stats_boost_', '', $r['name']);
+
+				if ($r['value'] != '') {
+					$values = explode(' ', $r['value']);
+					$time = explode(':', $values[0])[1];
+					$rrds = explode(':', $values[2])[1];
+				} else {
+					$time = 0;
+					$rrds = 0;
+				}
+
+				$rows_to_process = db_fetch_cell_prepared('SELECT COUNT(*)
+					FROM poller_output_boost_local_data_ids
+					WHERE process_handler = ?',
+					array($process));
+
+				$runtime = db_fetch_cell_prepared('SELECT UNIX_TIMESTAMP() - UNIX_TIMESTAMP(started)
+					FROM processes
+					WHERE tasktype = "boost"
+					AND taskname = "child"
+					AND taskid = ?',
+					array($process));
+
+				form_alternate_row();
+
+				if ($rows_to_process > 0) {
+					print '<td class="utilityPick">' . __esc('Process: %d', $process) . '</td><td>' . __('Status: <span class="deviceUp"><b>Running</b></span>, Remaining: %s (dses), CurrentRuntime: %s (secs), PrevRuntime: %s (secs), PrevProcessed: %10s (ds rows)', number_format_i18n($rows_to_process), number_format_i18n($runtime), number_format_i18n($time), number_format_i18n($rrds)) . '</td>';
+				} else {
+					print '<td class="utilityPick">' . __esc('Process: %d', $process) . '</td><td>' . __('Status: <span class="deviceRecovering"><b>Idle</b></span>, PrevRuntime: %s (secs), PrevProcessed: %10s (ds rows)', number_format_i18n($time), number_format_i18n($rrds)) . '</td>';
+				}
+			}
+		}
+
+		/* boost runtime display */
+		html_section_header(__('Run Time Configuration'), 2);
+
+		form_alternate_row();
+		print '<td class="utilityPick">' . __('Update Frequency:') . '</td><td>' . ($rrd_updates == '' ? __('N/A') : $boost_refresh_interval[$update_interval]) . '</td>';
+
+		form_alternate_row();
+		print '<td class="utilityPick">' . __('Concurrent Processes:') . '</td><td>' . read_config_option('boost_parallel') . '</td>';
+
+		form_alternate_row();
+		print '<td class="utilityPick">' . __('Next Start Time:') . '</td><td>' . (is_numeric($next_run_time) ? date('Y-m-d H:i:s', $next_run_time):$next_run_time) . '</td>';
+
+		form_alternate_row();
+		print '<td class="utilityPick">' . __('Maximum Records:') . '</td><td>' . number_format_i18n($max_records, -1) . ' ' . __('Records') . '</td>';
+
+		form_alternate_row();
+		print '<td class="utilityPick">' . __('Maximum Allowed Runtime:') . '</td><td>' . $boost_max_runtime[$max_runtime] . '</td>';
+
+		/* boost caching */
+		html_section_header(__('Image Caching'), 2);
+
+		form_alternate_row();
+		print '<td>' . __('Image Caching Status:') . '</td><td>' . ($boost_cache == '' ? __('Disabled') : __('Enabled')) . '</td>';
+
+		form_alternate_row();
+		print '<td>' . __('Cache Directory:') . '</td><td>' . $cache_directory . '</td>';
+
+		form_alternate_row();
+		print '<td>' . __('Cached Files:') . '</td><td>' . $cache_files . '</td>';
+
+		form_alternate_row();
+		print '<td>' . __('Cached Files Size:') . '</td><td>' . $directory_size . '</td>';
+
+		html_end_box(true);
 	}
-	print '</td>';
-
-	form_alternate_row();
-	print '<td class="utilityPick">' . __('RRD Updates:') . '</td><td>' . ($boost_rrds_updated != '' ? number_format_i18n($boost_rrds_updated, -1):'-') . '</td>';
-
-	form_alternate_row();
-	print '<td class="utilityPick">' . __('Peak Poller Memory:') . '</td><td>' . ((read_config_option('boost_peak_memory') != '' && is_numeric(read_config_option('boost_peak_memory'))) ? (round(read_config_option('boost_peak_memory')/1024/1024,2)) . ' ' . __('MBytes') : __('N/A')) . '</td>';
-
-	form_alternate_row();
-	print '<td class="utilityPick">' . __('Detailed Runtime Timers:') . '</td><td>' . (($detail_stats != '') ? $detail_stats:__('N/A')) . '</td>';
-
-	form_alternate_row();
-	print '<td class="utilityPick">' . __('Max Poller Memory Allowed:') . '</td><td>' . ((read_config_option('boost_poller_mem_limit') != '') ? (read_config_option('boost_poller_mem_limit')) . ' ' . __('MBytes') : __('N/A')) . '</td>';
-
-	/* boost runtime display */
-	html_section_header(__('Run Time Configuration'), 2);
-
-	form_alternate_row();
-	print '<td class="utilityPick">' . __('Update Frequency:') . '</td><td>' . ($rrd_updates == '' ? __('N/A') : $boost_refresh_interval[$update_interval]) . '</td>';
-
-	form_alternate_row();
-	print '<td class="utilityPick">' . __('Next Start Time:') . '</td><td>' . (is_numeric($next_run_time) ? date('Y-m-d H:i:s', $next_run_time):$next_run_time) . '</td>';
-
-	form_alternate_row();
-	print '<td class="utilityPick">' . __('Maximum Records:') . '</td><td>' . number_format_i18n($max_records, -1) . ' ' . __('Records') . '</td>';
-
-	form_alternate_row();
-	print '<td class="utilityPick">' . __('Maximum Allowed Runtime:') . '</td><td>' . $boost_max_runtime[$max_runtime] . '</td>';
-
-	/* boost caching */
-	html_section_header(__('Image Caching'), 2);
-
-	form_alternate_row();
-	print '<td>' . __('Image Caching Status:') . '</td><td>' . ($boost_cache == '' ? __('Disabled') : __('Enabled')) . '</td>';
-
-	form_alternate_row();
-	print '<td>' . __('Cache Directory:') . '</td><td>' . $cache_directory . '</td>';
-
-	form_alternate_row();
-	print '<td>' . __('Cached Files:') . '</td><td>' . $cache_files . '</td>';
-
-	form_alternate_row();
-	print '<td>' . __('Cached Files Size:') . '</td><td>' . $directory_size . '</td>';
-
-	html_end_box(true);
 }
 
 /**

@@ -83,11 +83,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><p>(Optional) Apache - This software is optional if running Windows Internet Information Server.</p></li>
 <li><p>Cacti - Install from the zip distribution and install in the web root or your choice. Many choose to install into a <code>Cacti</code> sub folder.</p></li>
 <li><p>Spine - Install from the zip distribution into the <code>c:\cacti</code> directory. Make sure your <code>spine.conf.dist</code> is located in that directory as well.</p></li>
-<li><p>RRDTool - Install from the Cacti website. Install it into the <code>c:\cacti</code> directory.</p></li>
+<li><p>RRDtool - Install from the Cacti website. Install it into the <code>c:\cacti</code> directory.</p></li>
 <li><p>PHP X - Install into the <code>c:php</code> folder. If you choose to install into <code>c:\Program Files\php</code>, you will have to use 8.3 filenames to reference it's binaries in Cacti.</p></li>
 <li><p>MySQL 5.x - Install into the default location. This is typically:</p>
 <p><code>c:\Program Files\MySQL\MySQL Server X.XX</code>.</p></li>
-<li><p>(Optional) Cygwin - Download and execute <code>setup.exe</code> from the Cygwin website. Keep the <code>setup.exe</code> file for later use. You will need Cygwin and its development packages for building RRDTool and spine.</p></li>
+<li><p>(Optional) Cygwin - Download and execute <code>setup.exe</code> from the Cygwin website. Keep the <code>setup.exe</code> file for later use. You will need Cygwin and its development packages for building RRDtool and spine.</p></li>
 <li><p>(Optional) Net-SNMP - Install to the <code>c:net-snmp</code> directory. If you choose to use <code>c:\Program Files\net-snmp</code> you will have to use 8.3 filenames to reference its binaries in Cacti.</p></li>
 </ol>
 <h2 id="common-os-changes">Common OS Changes</h2>
@@ -130,7 +130,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 net start w3svc
 </code></pre></li>
 </ol>
-<h2 id="cygwin-installation-steps-for-spine-and-rrdtool">Cygwin Installation Steps for spine and RRDTool</h2>
+<h2 id="cygwin-installation-steps-for-spine-and-rrdtool">Cygwin Installation Steps for spine and RRDtool</h2>
 <ol>
 <li><p>Installing a single instance of Cygwin, and using it for all applications that require it is recommended so you do not have different versions of the Cygwin dlls laying around on your system, which can cause conflicts.</p></li>
 <li><p>Run <code>setup.exe</code> or <code>setup-x64.exe</code> you previously download.</p></li>
@@ -149,9 +149,9 @@ net start w3svc
 <li>libgcrypt20</li>
 <li>libgd3</li>
 <li>libglib2.0_0</li>
-<li>libmysqlclient-devel</li>
+<li>libmariadb-devel</li>
 <li>libmysqlclient18</li>
-<li>libopenssl100</li>
+<li>libssl1.0</li>
 <li>libpango1.0_0</li>
 <li>libpng16</li>
 <li>libreadline7</li>
@@ -172,14 +172,11 @@ net start w3svc
 <li>libltdl7</li>
 <li>libtool</li>
 <li>net-snmp-devel</li>
-<li>textinfo</li>
+<li>patch</li>
+<li>texinfo</li>
 <li>w32api-headers</li>
 <li>w32api-runtime</li>
 <li>windows-default-manifest</li>
-</ul></li>
-<li>Utils
-<ul>
-<li>patch</li>
 </ul></li>
 <li>Web
 <ul>
@@ -191,7 +188,7 @@ net start w3svc
 <li><p>Add <code>c:\cygwin\bin</code> to your Windows System PATH environment variable.</p></li>
 <li><p>Move <code>setup.exe</code> or <code>setup-x64.exe</code> to <code>c:cygwin</code> for future use. This binary is updated from time to time, so it's recommended that you update it periodically.</p></li>
 </ol>
-<h2 id="rrdtool-download-and-installation-instructions">RRDTool Download and Installation Instructions</h2>
+<h2 id="rrdtool-download-and-installation-instructions">RRDtool Download and Installation Instructions</h2>
 <ol>
 <li>TBD</li>
 </ol>
@@ -210,9 +207,11 @@ net start w3svc
 <div class="sourceCode" id="cb7"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb7-1" title="1"><span class="ex">shell</span><span class="op">&gt;</span> mysql --user=root --password cacti <span class="op">&lt;</span> c:\apache2\htdocs\cacti\cacti.sql</a></code></pre></div></li>
 <li><p>Create a MySQL username and password for Cacti.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb8-1" title="1"><span class="ex">shell</span><span class="op">&gt;</span> mysql --user=root --password mysql</a></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb9-1" title="1">MySQL<span class="op">&gt;</span> <span class="kw">GRANT</span> <span class="kw">ALL</span> <span class="kw">ON</span> cacti.<span class="op">*</span> <span class="kw">TO</span> cactiuser@localhost <span class="kw">IDENTIFIED</span> <span class="kw">BY</span> <span class="st">&#39;somepassword&#39;</span>;</a>
-<a class="sourceLine" id="cb9-2" title="2">MySQL<span class="op">&gt;</span> <span class="kw">GRANT</span> <span class="kw">SELECT</span> <span class="kw">ON</span> mysql.time_zone_name <span class="kw">TO</span> cactiuser@localhost <span class="kw">IDENTIFIED</span> <span class="kw">BY</span> <span class="st">&#39;somepassword&#39;</span>;</a>
-<a class="sourceLine" id="cb9-3" title="3">MySQL<span class="op">&gt;</span> <span class="kw">flush</span> <span class="kw">privileges</span>;</a></code></pre></div></li>
+<div class="sourceCode" id="cb9"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb9-1" title="1">MySQL<span class="op">&gt;</span> <span class="kw">CREATE</span> <span class="fu">USER</span> <span class="st">&#39;cactiuser&#39;</span>@<span class="st">&#39;localhost&#39;</span> <span class="kw">IDENTIFIED</span> <span class="kw">BY</span> <span class="st">&#39;cactiuser&#39;</span>;</a>
+<a class="sourceLine" id="cb9-2" title="2">MySQL<span class="op">&gt;</span> <span class="kw">GRANT</span> <span class="kw">ALL</span> <span class="kw">ON</span> cacti.<span class="op">*</span> <span class="kw">TO</span> <span class="st">&#39;cactiuser&#39;</span>@<span class="st">&#39;localhost&#39;</span>;</a>
+<a class="sourceLine" id="cb9-3" title="3">MySQL<span class="op">&gt;</span> <span class="kw">GRANT</span> <span class="kw">SELECT</span> <span class="kw">ON</span> mysql.time_zone_name <span class="kw">TO</span> <span class="st">&#39;cactiuser&#39;</span>@<span class="st">&#39;localhost&#39;</span>;</a>
+<a class="sourceLine" id="cb9-4" title="4">MySQL<span class="op">&gt;</span> <span class="kw">ALTER</span> <span class="kw">DATABASE</span> cacti <span class="dt">CHARACTER</span> <span class="kw">SET</span> utf8mb4 COLLATE utf8mb4_unicode_ci;</a>
+<a class="sourceLine" id="cb9-5" title="5">MySQL<span class="op">&gt;</span> <span class="kw">FLUSH</span> <span class="kw">PRIVILEGES</span>;</a></code></pre></div></li>
 </ol>
 <h2 id="net-snmp-installation">Net-SNMP Installation</h2>
 <ol>
@@ -242,7 +241,7 @@ net start w3svc
 <div class="sourceCode" id="cb10"><pre class="sourceCode ini"><code class="sourceCode ini"><a class="sourceLine" id="cb10-1" title="1"><span class="dt">DB_Host  127.0.0.1 or hostname (not localhost)</span></a>
 <a class="sourceLine" id="cb10-2" title="2"><span class="dt">DB_Database cacti</span></a>
 <a class="sourceLine" id="cb10-3" title="3"><span class="dt">DB_User     cactiuser</span></a>
-<a class="sourceLine" id="cb10-4" title="4"><span class="dt">DB_Password cacti</span></a>
+<a class="sourceLine" id="cb10-4" title="4"><span class="dt">DB_Password cactiuser</span></a>
 <a class="sourceLine" id="cb10-5" title="5"><span class="dt">DB_Port     3306</span></a></code></pre></div>
 <p>All other pre 0.8.6 settings are obsolete.</p></li>
 <li><p>Spine now comes with a binary distribution. However, we strongly suggest that you install Cygwin and then remove all the DLL files and <code>sh.exe</code> from the <code>c:\cacti</code> directory.</p></li>
@@ -253,7 +252,7 @@ net start w3svc
 <div class="sourceCode" id="cb11"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb11-1" title="1"><span class="kw">$database_default</span> = <span class="st">&quot;cacti&quot;</span><span class="ot">;</span></a>
 <a class="sourceLine" id="cb11-2" title="2"><span class="kw">$database_hostname</span> = <span class="st">&quot;localhost&quot;</span><span class="ot">;</span></a>
 <a class="sourceLine" id="cb11-3" title="3"><span class="kw">$database_username</span> = <span class="st">&quot;cactiuser&quot;</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb11-4" title="4"><span class="kw">$database_password</span> = <span class="st">&quot;cacti&quot;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb11-4" title="4"><span class="kw">$database_password</span> = <span class="st">&quot;cactiuser&quot;</span><span class="ot">;</span></a>
 <a class="sourceLine" id="cb11-5" title="5"><span class="kw">$database_port</span> = <span class="st">&quot;3306&quot;</span><span class="ot">;</span></a></code></pre></div></li>
 <li><p>Point your web browser to:</p>
 <p><code>http://your-server/cacti/</code></p>
@@ -262,7 +261,7 @@ net start w3svc
 <ul>
 <li><p>PHP Binary Path:</p>
 <p><code>c:/php/php.exe</code></p></li>
-<li><p>RRDTool Binary Path:</p>
+<li><p>RRDtool Binary Path:</p>
 <p><code>c:/cacti/rrdtool.exe</code></p></li>
 <li><p>SNMPGET, SNMPWALK, SNMPBULKWALK, SNMPGETNEXT Paths:</p>
 <p><code>c:/progra~1/net-snmp/bin/snmpget.exe</code> <code>c:/progra~1/net-snmp/bin/snmpwalk.exe</code> <code>c:/progra~1/net-snmp/bin/snmpbulkwalk.exe</code> <code>c:/progra~1/net-snmp/bin/snmpgetnext.exe</code></p></li>
@@ -287,7 +286,7 @@ net start w3svc
 <a class="sourceLine" id="cb13-4" title="4"><span class="ex">OK</span> u:0.00 s:0.16 r:2.59</a>
 <a class="sourceLine" id="cb13-5" title="5"><span class="ex">OK</span> u:0.00 s:0.17 r:2.62</a>
 <a class="sourceLine" id="cb13-6" title="6"><span class="ex">10/28/2005</span> 04:57:12 PM - SYSTEM STATS: Time:4.7272 Method:cmd.php Processes:1 Threads:N/A Hosts:1 HostsPerProcess:2 DataSources:4 RRDsProcessed:2</a></code></pre></div>
-<p>After this has ran once, you should have <code>cacti.log</code> in <code>/cacti/log/</code> and RRD files in <code>/cacti/rra/</code>.</p></li>
+<p>After this has ran once, you should have <code>cacti.log</code> in <code>/cacti/log/</code> and RRDfiles in <code>/cacti/rra/</code>.</p></li>
 <li><p>You are going to need to schedule a task while logged on as an Administrator. This task is required to you can run <code>poller.php</code> every 5 minutes. Make sure the Task Scheduler service is started and follow the steps below to begin.</p>
 <blockquote>
 <p>*<em>Note:</em> The following instructions are based on Windows XP and Windows Server 2003. You should be able to follow these instructions close enough for Windows 2000 as well.</p>
@@ -313,6 +312,6 @@ net start w3svc
 <p>The start in box should say <code>c:\mycacti\website\cacti</code>.</p></li>
 </ol>
 <hr />
-<p>Copyright (c) 2004-2020 The Cacti Group</p>
+<p><copy>Copyright (c) 2004-2022 The Cacti Group</copy></p>
 </body>
 </html>

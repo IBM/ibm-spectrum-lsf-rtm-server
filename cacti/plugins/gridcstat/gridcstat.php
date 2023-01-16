@@ -78,7 +78,7 @@ function generate_partition_union_query($sql_query, $table_name, $sql_where) {
 	return $sql_query_set;
 }
 
-function gridcstat_view_get_cstat_records(&$sql_where, &$group_by, &$table_name, $dimension = 'user', $page, $row_limit, $sort_column, $sort_direction) {
+function gridcstat_view_get_cstat_records(&$sql_where, &$group_by, &$table_name, $sort_column, $sort_direction, $dimension = 'user', $page = 1, $row_limit = 30) {
 	global $group_function, $summary_stats;
 
 	if (get_request_var('exit') == 'true') {

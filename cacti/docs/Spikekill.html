@@ -16,9 +16,9 @@
 <body>
 <h1 id="spikekill">Spikekill</h1>
 <h2 id="warning">Warning</h2>
-<p>Spikekill is designed to overwrite specific data points in one or more RRD files. You should use great caution when running Spikekill, and you should always ensure you have proper backups from which to restore your RRD files if Spikekill performs a modification that you did not expect.</p>
+<p>Spikekill is designed to overwrite specific data points in one or more RRD files. You should use great caution when running Spikekill, and you should always ensure you have proper backups from which to restore your RRDfiles if Spikekill performs a modification that you did not expect.</p>
 <h2 id="overview">Overview</h2>
-<p>Spikekill is a tool used to remove spikes in a graph. Spikes can appear in a graph after a device reboots, or when you switch from 32-bit to 64-bit interface counters on a device. Spikekill works by statistically analyzing the data contained inside an RRD file, and overwriting specific data points. It offers 4 methods by which to analyze the data and selectively overwrite data points:</p>
+<p>Spikekill is a tool used to remove spikes in a graph. Spikes can appear in a graph after a device reboots, or when you switch from 32-bit to 64-bit interface counters on a device. Spikekill works by statistically analyzing the data contained inside an RRDfile, and overwriting specific data points. It offers 4 methods by which to analyze the data and selectively overwrite data points:</p>
 <ol>
 <li><p><em>Standard Deviation</em></p>
 <p>Calulates the <a href="https://en.wikipedia.org/wiki/Standard_deviation">standard deviation</a> of the data, and overwrites data points that are <em>N</em> times higher than the standard deviation.</p></li>
@@ -54,7 +54,7 @@
 <li><p><em>Variance Outliers</em></p>
 <p>When using the Variance Average method, the highest <em>N</em> values and the lowest <em>N</em> values are considered <em>outliers</em>. These outliers are ignored when calculating the average of the data.</p></li>
 <li><p><em>Kills Per RRA</em></p>
-<p>Spikekill will limit the number of data points that it overwrites to the value of <em>Kills Per RRA</em>. For reference, a single RRD file can contain multiple <em>data sources</em> and multiple <em>archives</em>. Therefore, the total number of data points that could be overwritten in a single RRD file will be determined by the formula:</p>
+<p>Spikekill will limit the number of data points that it overwrites to the value of <em>Kills Per RRA</em>. For reference, a single RRDfile can contain multiple <em>data sources</em> and multiple <em>archives</em>. Therefore, the total number of data points that could be overwritten in a single RRDfile will be determined by the formula:</p>
 <pre class="console"><code>(number_of_RRAs) x (number_of_data_sources) x (Kills_Per_RRA)
 </code></pre>
 <p>This only applies when using the <code>Standard Deviation</code> or <code>Variance Average</code> methods, and does not apply when using the <code>GapFill</code> or <code>Float</code> methods.</p></li>
@@ -76,6 +76,6 @@
 <p>Spikekill will cease overwriting data points for any individual RRA when it has reached the value of <em>Kills Per RRA</em>, counting all DSes of that RRA together. It will then begin the process again on the next RRA.</p>
 <p>This means that for any given RRA, older spikes will always be overwritten before newer spikes. However, newer spikes in one RRA can still be overwritten before older spikes in a different RRA, since the thresholds are different per RRA:DS pair.</p>
 <hr />
-<p>Copyright (c) 2004-2020 The Cacti Group</p>
+<p><copy>Copyright (c) 2004-2022 The Cacti Group</copy></p>
 </body>
 </html>

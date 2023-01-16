@@ -1,4 +1,4 @@
-#!/usr/bin/php -q
+#!/usr/bin/env php
 <?php
 // $Id$
 /*
@@ -19,8 +19,11 @@
  +-------------------------------------------------------------------------+
 */
 
-/* tick use required as of PHP 4.3.0 to accomodate signal handling */
-declare(ticks = 1);
+if (function_exists('pcntl_async_signals')) {
+	pcntl_async_signals(true);
+} else {
+	declare(ticks = 100);
+}
 
 ini_set('output_buffering', 'Off');
 
@@ -41,8 +44,9 @@ require_once($config['base_path'] . '/lib/utility.php');
 if ($config['poller_id'] > 1) {
 	if ($config['connection'] == 'online') {
 		db_force_remote_cnn();
-	} else {
-		cacti_log('WARNING: Main Cacti database offline.  Can not run automation', false, 'AUTOM8');
+	} elseif (debounce_run_notification('db_offline')) {
+		cacti_log('WARNING: Main Cacti database offline or in recovery.  Can not run automation', false, 'AUTOM8');
+		admin_email(__('Cacti System Warning'), __('WARNING: Main Cacti database offline or in recovery'));
 		exit(1);
 	}
 }
@@ -215,6 +219,11 @@ if ($master) {
 	$launched = 0;
 	if (cacti_sizeof($networks)) {
 		foreach($networks as $network) {
+			if ($network['snmp_id'] == 0) {
+				cacti_log("ERROR: Automation can not run for Network '" . $network['name'] . "' since the SNMP ID is not set.", false, 'AUTOM8');
+				continue;
+			}
+
 			if (api_automation_is_time_to_start($network['id']) || $force) {
 				automation_debug("Launching Network Master for '" . $network['name'] . "'\n");
 				exec_background(read_config_option('path_php_binary'), '-q ' . read_config_option('path_webroot') . '/poller_automation.php --poller=' . $poller_id . ' --network=' . $network['id'] . ($force ? ' --force':'') . ($debug ? ' --debug':''));
@@ -412,10 +421,19 @@ function discoverDevices($network_id, $thread) {
 		if (cacti_sizeof($device) && isset($device['ip_address'])) {
 			$count++;
 
-			cacti_log(automation_get_pid() . ' NOTE: Found device IP address \'' . $device['ip_address'] .'\' to check',false,'AUTOM8',POLLER_VERBOSITY_MEDIUM);
+			cacti_log(automation_get_pid() . ' NOTE: Found device IP address \'' . $device['ip_address'] .'\' to check', false, 'AUTOM8', POLLER_VERBOSITY_MEDIUM);
+
+			if (!filter_var($device['ip_address'], FILTER_VALIDATE_IP)) {
+				cacti_log(automation_get_pid() . ' WARNING: IP address \'' . $device['ip_address'] .'\' is not a valid IP address.', false, 'AUTOM8');
+
+				markIPDone($device['ip_address'], $network_id);
+
+				continue;
+			}
 
 			if ($dns != '') {
 				$dnsname = automation_get_dns_from_ip($device['ip_address'], $dns, 300);
+
 				if ($dnsname != $device['ip_address'] && $dnsname != 'timed_out') {
 					automation_debug("Device: " . $device['ip_address'] . ", Checking DNS: Found '" . $dnsname . "'");
 
@@ -429,7 +447,9 @@ function discoverDevices($network_id, $thread) {
 					$device['dnsname_short'] = preg_split('/[\.]+/', strtolower($dnsname), -1, PREG_SPLIT_NO_EMPTY);
 				} elseif ($network['enable_netbios'] == 'on') {
 					automation_debug("Device: " . $device['ip_address'] . ", Checking DNS: Not found, Checking NetBIOS:");
+
 					$netbios = ping_netbios_name($device['ip_address']);
+
 					if ($netbios === false) {
 						automation_debug(" Not found");
 						$device['hostname']      = $device['ip_address'];
@@ -448,6 +468,7 @@ function discoverDevices($network_id, $thread) {
 					}
 				} else {
 					automation_debug("Device: " . $device['ip_address'] . ", Checking DNS: Not found");
+
 					$device['hostname']      = $device['ip_address'];
 					$device['dnsname']       = '';
 					$device['dnsname_short'] = '';
@@ -455,6 +476,7 @@ function discoverDevices($network_id, $thread) {
 			} else {
 				$dnsname = @gethostbyaddr($device['ip_address']);
 				$device['hostname'] = $dnsname;
+
 				if ($dnsname != $device['ip_address']) {
 					automation_debug("Device: " . $device['ip_address'] . ", Checking DNS: Found '" . $dnsname . "'");
 
@@ -467,6 +489,7 @@ function discoverDevices($network_id, $thread) {
 					$device['dnsname_short'] = preg_split('/[\.]+/', strtolower($dnsname), -1, PREG_SPLIT_NO_EMPTY);
 				} elseif ($network['enable_netbios'] == 'on') {
 					automation_debug("Device: " . $device['ip_address'] . ", Checking DNS: Not found, Checking NetBIOS:");
+
 					$netbios = ping_netbios_name($device['ip_address']);
 					if ($netbios === false) {
 						automation_debug(" Not found");
@@ -486,6 +509,7 @@ function discoverDevices($network_id, $thread) {
 					}
 				} else {
 					automation_debug("Device: " . $device['ip_address'] . ", Checking DNS: Not found");
+
 					$device['hostname']      = $device['ip_address'];
 					$device['dnsname']       = '';
 					$device['dnsname_short'] = '';
@@ -513,7 +537,7 @@ function discoverDevices($network_id, $thread) {
 					$device['snmp_id']              = $network['snmp_id'];
 					$device['poller_id']            = $network['poller_id'];
 					$device['site_id']              = $network['site_id'];
-					$device['snmp_version']         = '';
+					$device['snmp_version']         = '2';
 					$device['snmp_port']            = '';
 					$device['snmp_community']       = '';
 					$device['snmp_username']        = '';
@@ -534,6 +558,8 @@ function discoverDevices($network_id, $thread) {
 					$device['os']                   = '';
 					$device['snmp_priv_passphrase'] = '';
 					$device['snmp_priv_protocol']   = '';
+					$device['max_oids']             = '10';
+					$device['bulk_walk_size']       = '-1';
 
 					/* create new ping socket for host pinging */
 					$ping = new Net_Ping;

@@ -69,7 +69,12 @@ $lsid   = 0;
 $errors = array();
 
 foreach($parms as $parameter) {
-	@list($arg, $value) = @explode('=', $parameter);
+	if (strpos($parameter, '=')) {
+		list($arg, $value) = explode('=', $parameter);
+	} else {
+		$arg = $parameter;
+		$value = '';
+	}
 
 	switch ($arg) {
 	case '-d':
@@ -175,7 +180,7 @@ if ($collector['disabled'] == '' && isset($collector['disabled'])) {
 	gridblstat_debug('NOTE: License Scheduler Poller Disabled for Collector ' . $lsid);
 }
 
-function gridblstat_check_blstat($log = false, $collector) {
+function gridblstat_check_blstat($log = false, $collector = array()) {
 	global $errors, $config, $force, $cnn_id, $lsid;
 
 	/* record the start time */
@@ -254,7 +259,7 @@ function gridblstat_check_blstat($log = false, $collector) {
 
 	$blinfo_clusters = shell_exec($blinfo_binary . " -C | grep -vE '^[ ]' | awk '{print $1}' | grep -E '[^ ]' | grep -vE '^(NAME|CLUSTER_NAME|interactive)' | sort | uniq");
 
-	$blinfo_clusters = trim($blinfo_clusters);
+	$blinfo_clusters = trim($blinfo_clusters?:'');
 
 	if (strlen($blinfo_clusters)) {
 		$blinfo_clusters = explode("\n", $blinfo_clusters);
@@ -394,7 +399,7 @@ function gridblstat_check_blstat($log = false, $collector) {
 												$php_bin = read_config_option('path_php_binary');
 												$lic_cmd = cacti_escapeshellarg($config['base_path'] . '/plugins/license/lic_add_service.php');
 												$add_args = ' --name=' . cacti_escapeshellarg($lic_svc_name) . ' --portatserver=' . cacti_escapeshellarg($part) . ' --poller=' . cacti_escapeshellarg($licp_id);
-												echo trim(passthru($php_bin . ' -q ' . $lic_cmd . $add_args));
+												passthru($php_bin . ' -q ' . $lic_cmd . $add_args);
 												$lic_id = db_fetch_cell_prepared('SELECT service_id FROM lic_services WHERE server_portatserver=?', array($part));
 												if (!empty($lic_id)) {
 													db_execute_prepared("INSERT INTO grid_blstat_service_domains
@@ -421,7 +426,7 @@ function gridblstat_check_blstat($log = false, $collector) {
 				}
 			}
 		}
-		db_execute_prepared("DELETE FROM grid_blstat_service_domains WHERE present=0 AND lsid=?", array($lsid));
+		//db_execute_prepared("DELETE FROM grid_blstat_service_domains WHERE present=0 AND lsid=?", array($lsid));
 	}
 
 	/* get the flex mapping names */
@@ -463,7 +468,7 @@ function gridblstat_check_blstat($log = false, $collector) {
 				}
 			}
 		}
-		db_execute_prepared("DELETE FROM grid_blstat_feature_map WHERE present=0 AND lsid=?", array($lsid));
+		//db_execute_prepared("DELETE FROM grid_blstat_feature_map WHERE present=0 AND lsid=?", array($lsid));
 	}
 
 	/* get the feature use */
@@ -488,7 +493,7 @@ function gridblstat_check_blstat($log = false, $collector) {
 	}
 
 	/* now lets populate the tables */
-	if (strlen($blusers)) {
+	if (rtm_strlen($blusers)) {
 		$blusers = explode("\n", $blusers);
 
 		$line1         = false;
@@ -557,7 +562,7 @@ function gridblstat_check_blstat($log = false, $collector) {
 	$bluser_no_parm_array = array();
 
 	/* get the bluser */
-	if (strlen($blusers_no_parm)) {
+	if (rtm_strlen($blusers_no_parm)) {
 		$blusers_no_parm = explode("\n", $blusers_no_parm);
 		$in_use = false;
 		foreach($blusers_no_parm as $record) {
@@ -591,7 +596,7 @@ function gridblstat_check_blstat($log = false, $collector) {
 	$blstat_array_pgm = array(); // if project group mode, blstat output need to cover new case. fix #73083
 
 	/* get the feature distribution */
-	if (strlen($blstat_distrib)) {
+	if (rtm_strlen($blstat_distrib)) {
 		$blstat_distrib = explode("\n", $blstat_distrib);
 
 		$in_use = false;
@@ -672,7 +677,7 @@ function gridblstat_check_blstat($log = false, $collector) {
 		cacti_log("WARNING: blstat distribution returned no information from license scheduler collector:" . $collector['name'], false, "GRIDBLSTAT");
 	}
 
-	if (strlen($blstat)) {
+	if (rtm_strlen($blstat)) {
 		$blstat = explode("\n", $blstat);
 
 		$project_group_mode = false;
@@ -986,7 +991,7 @@ function gridblstat_check_blstat($log = false, $collector) {
 		} else {
 			if ($collector["ls_version"] >= "70") {
 				$blinfo_cluse = shell_exec($blinfo_binary . " |awk '{mode[\$2] = mode[\$2] \" \" \$1} END {print mode[\"Project\"]}' 2> /dev/null");
-				$blinfo_cluse=trim($blinfo_cluse);
+				$blinfo_cluse=trim($blinfo_cluse?:'');
 				if (strlen($blinfo_cluse)) {
 					cacti_log("WARNING: blstat cluster returned no information from license scheduler collector:" . $collector['name'], false, "GRIDBLSTAT");
 				}
@@ -994,7 +999,7 @@ function gridblstat_check_blstat($log = false, $collector) {
 		}
 
 		/* let's parse the bltasks now */
-		if (strlen($bltasks)) {
+		if (rtm_strlen($bltasks)) {
 			db_execute_prepared("UPDATE grid_blstat_tasks SET present=0 WHERE lsid=?", array($lsid));
 
 			$blt = explode("\n", $bltasks);
@@ -1081,7 +1086,7 @@ function gridblstat_check_blstat($log = false, $collector) {
 			$sql_suffix = " ON DUPLICATE KEY UPDATE stat=VALUES(stat), pgid=VALUES(pgid), cpu_time=VALUES(cpu_time), memory=VALUES(memory), swap=VALUES(swap), cpu_idle=VALUES(cpu_idle), present=1";
 			gridblstat_write_buffer($sql_prefix, $sql_suffix, $bltasks_array);
 
-			db_execute_prepared("DELETE FROM grid_blstat_tasks WHERE present=0 AND lsid=?", array($lsid));
+			//db_execute_prepared("DELETE FROM grid_blstat_tasks WHERE present=0 AND lsid=?", array($lsid));
 		} else {
 		}
 	}
@@ -1097,8 +1102,8 @@ function gridblstat_check_blstat($log = false, $collector) {
 		// db_execute("DELETE FROM grid_blstat_cluster_use WHERE present=0 AND lsid=$lsid");
 		db_execute_prepared("UPDATE grid_blstat_cluster_use SET present=0 WHERE lsid=? AND present=1 AND last_updated<?", array($lsid, $db_start_time));
 	}
-	db_execute_prepared("DELETE FROM grid_blstat_distribution WHERE present=0 AND lsid=?", array($lsid));
-	db_execute_prepared("DELETE FROM grid_blstat_users WHERE present=0 AND lsid=?", array($lsid));
+	//db_execute_prepared("DELETE FROM grid_blstat_distribution WHERE present=0 AND lsid=?", array($lsid));
+	//db_execute_prepared("DELETE FROM grid_blstat_users WHERE present=0 AND lsid=?", array($lsid));
 	db_execute_prepared("UPDATE grid_blstat_collectors SET blstat_lastrun=NOW() WHERE lsid=?", array($lsid));
 
 	/* record the end time */

@@ -30,7 +30,7 @@ $title = __('IBM Spectrum LSF RTM - Host Information', 'grid');
 
 grid_view_hosts();
 
-function grid_view_get_hosts_records(&$sql_where, $apply_limits = true, $rows, &$sql_params) {
+function grid_view_get_hosts_records(&$sql_where, $apply_limits = true, $rows = 30, &$sql_params = array()) {
 	/* user id sql where */
 	if (get_request_var('clusterid') != '0') {
 		$sql_where = 'WHERE (gc.clusterid=?)';

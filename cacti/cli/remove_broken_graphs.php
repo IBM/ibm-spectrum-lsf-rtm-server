@@ -19,9 +19,14 @@
  +-------------------------------------------------------------------------+
 */
 
-include ('../include/cli_check.php');
-include_once('../lib/api_data_source.php');
-include_once('../lib/api_graph.php');
+require(__DIR__ . '/../include/cli_check.php');
+require_once($config['base_path'] . '/lib/api_data_source.php');
+require_once($config['base_path'] . '/lib/api_graph.php');
+
+/* switch to main database for cli's */
+if ($config['poller_id'] > 1) {
+	db_switch_remote_to_main();
+}
 
 /* process calling arguments */
 $parms = $_SERVER['argv'];
@@ -29,14 +34,18 @@ array_shift($parms);
 
 global $debug;
 
-$debug  = false;
-$report = false;
-$remove = false;
+$debug   = false;
+$report  = false;
+$remove  = false;
+$columns = 80;
 
-$columns = explode(' ', shell_exec('stty size'))[1];
+if (empty($github_actions) && $config['cacti_server_os'] == 'unix') {
+	$stty = shell_exec('stty size');
+	$sizes = explode(' ', $stty);
 
-if (empty($columns)) {
-	$columns = 80;
+	if (!empty($sizes[1])) {
+		$columns = $sizes[1];
+	}
 }
 
 if (cacti_sizeof($parms)) {
@@ -162,7 +171,7 @@ function display_help () {
 	print PHP_EOL . 'usage: remove_broken_graphs.php [--report | --remove] [-d|--debug]' . PHP_EOL . PHP_EOL;
 	print 'A utility to remove broken graphs from Cacti.  A broken Graph is one that.' . PHP_EOL;
 	print 'lacks Data Sources.  This can happen from time to time when working with and modifying templates.' . PHP_EOL;
-	print 'It\'s important to periodically run this utility expecially on larger systems.' . PHP_EOL . PHP_EOL;
+	print 'It\'s important to periodically run this utility especially on larger systems.' . PHP_EOL . PHP_EOL;
 	print 'Optional:' . PHP_EOL;
 	print '--report  - Display the Graph Templates and Count of Broken Graphs' . PHP_EOL;
 	print '--remove  - Remove the Broken Graphs as Reported using the --report Option' . PHP_EOL;

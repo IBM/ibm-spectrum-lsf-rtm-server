@@ -69,9 +69,9 @@ function get_table_query($not_used_days) {
 		include_once($config['base_path'] . '/plugins/license/include/lic_functions.php');
 
 		$current = mktime(date('H'), date('i'), date('s'), date('n'), date('j'), date('Y'));
-		$current = strftime('%F %H:%M:%S', $current);
+		$current = date('Y-m-d H:i:s', $current);
 		$earlier = mktime(date('H'), date('i'), date('s'), date('n'), date('j')-$not_used_days, date('Y'));
-		$earlier = strftime('%F %H:%M:%S', $earlier);
+		$earlier = date('Y-m-d H:i:s', $earlier);
 
 		$table_query = make_partition_query('lic_daily_stats', $earlier, $current, " WHERE date_recorded > SUBDATE(NOW(),interval $not_used_days day) AND action='INUSE'");
 	}
@@ -119,7 +119,7 @@ function get($not_used_days) {
 
 	$arr = db_fetch_assoc($sql_query);
 
-	for ($i=0;($i<sizeof($arr));$i++) {
+	for ($i=0;($i<cacti_sizeof($arr));$i++) {
 		$item = '"' .
 			$arr[$i]['feature_name']        . '","'.
 			(!empty($arr[$i]['last_updated']) ? substr($arr[$i]['last_updated'],0,10):'Never') . '","' .

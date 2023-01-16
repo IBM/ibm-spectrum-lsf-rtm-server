@@ -81,12 +81,24 @@ function install_create_csrf_secret($file) {
 function install_test_local_database_connection() {
 	global $database_type, $database_hostname, $database_username, $database_password, $database_default, $database_type, $database_port, $database_retries, $database_ssl, $database_ssl_key, $database_ssl_cert, $database_ssl_ca;
 
-	if (!isset($database_ssl)) $rdatabase_ssl = false;
-	if (!isset($database_ssl_key)) $rdatabase_ssl_key = false;
-	if (!isset($database_ssl_cert)) $rdatabase_ssl_cert = false;
-	if (!isset($database_ssl_ca)) $rdatabase_ssl_ca = false;
+	if (!isset($database_ssl))      $database_ssl      = false;
+	if (!isset($database_ssl_key))  $database_ssl_key  = false;
+	if (!isset($database_ssl_cert)) $database_ssl_cert = false;
+	if (!isset($database_ssl_ca))   $database_ssl_ca   = false;
 
-	$connection = db_connect_real($database_hostname, $database_username, $database_password, $database_default, $database_type, $database_port, $database_retries, $database_ssl, $database_ssl_key, $database_ssl_cert, $database_ssl_ca);
+	$connection = db_connect_real(
+		$database_hostname,
+		$database_username,
+		$database_password,
+		$database_default,
+		$database_type,
+		$database_port,
+		$database_retries,
+		$database_ssl,
+		$database_ssl_key,
+		$database_ssl_cert,
+		$database_ssl_ca
+	);
 
 	if (is_object($connection)) {
 		db_close($connection);
@@ -99,12 +111,24 @@ function install_test_local_database_connection() {
 function install_test_remote_database_connection() {
 	global $rdatabase_type, $rdatabase_hostname, $rdatabase_username, $rdatabase_password, $rdatabase_default, $rdatabase_type, $rdatabase_port, $rdatabase_retries, $rdatabase_ssl, $rdatabase_ssl_key, $rdatabase_ssl_cert, $rdatabase_ssl_ca;
 
-	if (!isset($rdatabase_ssl)) $rdatabase_ssl = false;
-	if (!isset($rdatabase_ssl_key)) $rdatabase_ssl_key = false;
+	if (!isset($rdatabase_ssl))      $rdatabase_ssl      = false;
+	if (!isset($rdatabase_ssl_key))  $rdatabase_ssl_key  = false;
 	if (!isset($rdatabase_ssl_cert)) $rdatabase_ssl_cert = false;
-	if (!isset($rdatabase_ssl_ca)) $rdatabase_ssl_ca = false;
+	if (!isset($rdatabase_ssl_ca))   $rdatabase_ssl_ca   = false;
 
-	$connection = db_connect_real($rdatabase_hostname, $rdatabase_username, $rdatabase_password, $rdatabase_default, $rdatabase_type, $rdatabase_port, $rdatabase_retries, $rdatabase_ssl, $rdatabase_ssl_key, $rdatabase_ssl_cert, $rdatabase_ssl_ca);
+	$connection = db_connect_real(
+		$rdatabase_hostname,
+		$rdatabase_username,
+		$rdatabase_password,
+		$rdatabase_default,
+		$rdatabase_type,
+		$rdatabase_port,
+		$rdatabase_retries,
+		$rdatabase_ssl,
+		$rdatabase_ssl_key,
+		$rdatabase_ssl_cert,
+		$rdatabase_ssl_ca
+	);
 
 	if (is_object($connection)) {
 		db_close($connection);
@@ -439,12 +463,17 @@ function install_setup_get_templates() {
 	@ini_set('zlib.output_compression', '0');
 
 	$templates = array(
+		'Apache_Webserver.xml.gz',
+		'Cacti_Stats.xml.gz',
 		'Cisco_Router.xml.gz',
+		'Citrix_NetScaler_VPX.xml.gz',
+		'ESXi_Device.xml.gz',
 		'Generic_SNMP_Device.xml.gz',
 		'Local_Linux_Machine.xml.gz',
 		'NetSNMP_Device.xml.gz',
-		'Windows_Device.xml.gz',
-		'Cacti_Stats.xml.gz'
+		'PING_Advanced_Ping.xml.gz',
+		'Synology_NAS.xml.gz',
+		'Windows_Device.xml.gz'
 	);
 
 	$path = $config['base_path'] . '/install/templates';
@@ -605,7 +634,7 @@ function install_file_paths() {
 	/* PHP Binary Path */
 	$input['path_php_binary'] = install_tool_path('php_binary',
 		array(
-			'unix'  => '/usr/bin/php',
+			'unix'  => '/bin/php',
 			'win32' => 'c:/php/php.exe'
 		));
 
@@ -675,6 +704,17 @@ function install_file_paths() {
 			'win32' => 'c:/spine/bin/spine.exe'
 		));
 
+	// Workaround to support *BSD systems
+	if ($config['cacti_server_os'] == 'unix') {
+		$paths = array('/usr/local/spine/bin/spine', '/usr/local/bin/spine');
+		foreach($paths as $path) {
+			if (file_exists($path)) {
+				$input['path_spine']['default'] = $path;
+				break;
+			}
+		}
+	}
+
 	$input['path_spine_config'] = $settings['path']['path_spine_config'];
 
 	/* log file path */
@@ -722,16 +762,30 @@ function install_file_paths() {
 
 function remote_update_config_file() {
 	global $config, $rdatabase_type, $rdatabase_hostname, $rdatabase_username,
-		$rdatabase_password, $rdatabase_default, $rdatabase_type, $rdatabase_port, $rdatabase_ssl;
+		$rdatabase_password, $rdatabase_default, $rdatabase_type, $rdatabase_port, $rdatabase_retries,
+		$rdatabase_ssl, $rdatabase_ssl_key, $rdatabase_ssl_cert, $rdatabase_ssl_ca;
 
 	global $database_type, $database_hostname, $database_username,
-		$database_password, $database_default, $database_type, $database_port, $database_ssl;
+		$database_password, $database_default, $database_type, $database_port, $database_retries,
+		$database_ssl, $database_ssl_key, $database_ssl_cert, $database_ssl_ca;
 
 	$failure     = '';
 	$newfile     = array();
 	$config_file = $config['base_path'] . '/include/config.php';
 
-	$connection = db_connect_real($rdatabase_hostname, $rdatabase_username, $rdatabase_password, $rdatabase_default, $rdatabase_type, $rdatabase_port, $rdatabase_ssl);
+	$connection = db_connect_real(
+		$rdatabase_hostname,
+		$rdatabase_username,
+		$rdatabase_password,
+		$rdatabase_default,
+		$rdatabase_type,
+		$rdatabase_port,
+		$rdatabase_retries,
+		$rdatabase_ssl,
+		$rdatabase_ssl_key,
+		$rdatabase_ssl_cert,
+		$rdatabase_ssl_ca
+	);
 
 	if (is_object($connection)) {
 		if (function_exists('gethostname')) {
@@ -754,7 +808,11 @@ function remote_update_config_file() {
 			$save['dbuser']    = $database_username;
 			$save['dbpass']    = $database_password;
 			$save['dbport']    = $database_port;
+			$save['dbretries'] = $database_retries;
 			$save['dbssl']     = $database_ssl ? 'on' : '';
+			$save['dbsslkey']  = $database_ssl_key;
+			$save['dbsslcert'] = $database_ssl_cert;
+			$save['dbsslca']   = $database_ssl_ca;
 
 			$poller_id = sql_save($save, 'poller', 'id', true, $connection);
 		}
@@ -824,34 +882,37 @@ function import_colors() {
 	return true;
 }
 
-function log_install_debug($section, $string) {
-	log_install_and_file(POLLER_VERBOSITY_DEBUG, $string, $section);
+function log_install_debug($section, $text, $background = false) {
+	log_install_and_file(POLLER_VERBOSITY_DEBUG, $text, $section, $background);
 }
 
-function log_install_low($section, $string) {
-	log_install_and_file(POLLER_VERBOSITY_LOW, $string, $section);
+function log_install_low($section, $text, $background = false) {
+	log_install_and_file(POLLER_VERBOSITY_LOW, $text, $section, $background);
 }
 
-function log_install_medium($section, $string) {
-	log_install_and_file(POLLER_VERBOSITY_MEDIUM, $string, $section);
+function log_install_medium($section, $text, $background = false) {
+	log_install_and_file(POLLER_VERBOSITY_MEDIUM, $text, $section, $background);
 }
 
-function log_install_high($section, $string) {
-	log_install_and_file(POLLER_VERBOSITY_HIGH, $string, $section);
+function log_install_high($section, $text, $background = false) {
+	log_install_and_file(POLLER_VERBOSITY_HIGH, $text, $section, $background);
 }
 
-function log_install_always($section, $string) {
-	log_install_and_file(POLLER_VERBOSITY_NONE, $string, $section);
+function log_install_always($section, $text, $background = false) {
+	log_install_and_file(POLLER_VERBOSITY_NONE, $text, $section, $background);
 }
 
-function log_install_and_file($level, $string, $section = '') {
+function log_install_and_file($level, $text, $section = '', $background = false) {
 	$level = log_install_level_sanitize($level);
 	$name = 'INSTALL:';
 	if (!empty($section)) {
 		$name = 'INSTALL-' . strtoupper($section) . ':';
 	}
-	cacti_log(log_install_level_name($level) . ': ' . $string, false, $name, $level);
-	log_install_to_file($section, $string, FILE_APPEND, $level);
+	cacti_log(log_install_level_name($level) . ': ' . $text, false, $name, $level);
+	log_install_to_file($section, $text, FILE_APPEND, $level);
+	if ($background) {
+		set_config_option('install_updated', microtime(true));
+	}
 }
 
 function log_install_section_level($section) {
@@ -1027,21 +1088,26 @@ function install_full_sync() {
 		WHERE id > 1
 		AND disabled = ""');
 
+	log_install_always('sync', 'Found ' . cacti_sizeof($pollers) . ' poller(s) to sync');
 	if (cacti_sizeof($pollers)) {
 		foreach($pollers as $poller) {
+			log_install_debug('sync', 'Poller ' . $poller['id'] . ' has a status of ' . $poller['status'] . ' with gap ' . $poller['gap']);
 			if (($poller['status'] == POLLER_STATUS_NEW) ||
 				($poller['status'] == POLLER_STATUS_DOWN) ||
 				($poller['status'] == POLLER_STATUS_DISABLED)) {
 				$skipped[] = $poller['id'];
-			} elseif ($gap < $gap_time) {
+			} elseif ($poller['gap'] < $gap_time) {
+				log_install_medium('sync', 'Replicating to Poller ' . $poller['id']);
 				if (replicate_out($poller['id'])) {
+					log_install_debug('sync', 'Completed replication to Poller ' . $poller['id']);
 					$success[] = $poller['id'];
 
 					db_execute_prepared('UPDATE poller
 						SET last_sync = NOW()
 						WHERE id = ?',
-						array($id));
+						array($poller['id']));
 				} else {
+					log_install_debug('sync', 'Failed replication to Poller ' . $poller['id']);
 					$failed[] = $poller['id'];
 				}
 			} else {
@@ -1049,6 +1115,7 @@ function install_full_sync() {
 			}
 		}
 	}
+	log_install_debug('sync', 'Success: ' . cacti_sizeof($success) . ', Failed: ' . cacti_sizeof($failed) . ', Skipped: ' . cacti_sizeof($skipped) . ', Total: ' . cacti_sizeof($pollers));
 
 	return array(
 		'success' => $success,
@@ -1058,4 +1125,3 @@ function install_full_sync() {
 		'total'   => cacti_sizeof($pollers)
 	);
 }
-

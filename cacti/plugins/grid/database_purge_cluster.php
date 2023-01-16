@@ -35,7 +35,12 @@ if (cacti_sizeof($parms)) {
 	$debug   = false;
 
 	foreach($parms as $parameter) {
-		@list($arg, $value) = @explode('=', $parameter);
+		if (strpos($parameter, '=')) {
+			list($arg, $value) = explode('=', $parameter);
+		} else {
+			$arg = $parameter;
+			$value = '';
+		}
 
 		switch ($arg) {
 		case '-d':
@@ -86,7 +91,7 @@ if ($cluster > 0 && is_numeric($cluster)) {
 			} else {
 				$rows = db_fetch_cell_prepared("SELECT COUNT(*) FROM $t WHERE clusterid=?", array($cluster));
 				if ($debug) {
-					print 'There were ' . number_format($rows) . " Rows found in '$t'\n";
+					print 'There were ' . number_format($rows?:0) . " Rows found in '$t'\n";
 				}
 				$total += $rows;
 			}

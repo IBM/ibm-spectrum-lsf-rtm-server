@@ -155,7 +155,7 @@ function form_actions() {
 		if (get_nfilter_request_var('drp_action') == '1') { /* delete */
 			print "<tr>
 				<td class='textArea' class='odd'>
-					<p>" . __('Click \'Continue\' to delete the folling Automation Template(s).') . "</p>
+					<p>" . __('Click \'Continue\' to delete the following Automation Template(s).') . "</p>
 					<div class='itemlist'><ul>$at_list</ul></div>
 				</td>
 			</tr>\n";
@@ -195,7 +195,7 @@ function form_save() {
 		$save['sysName']       = get_nfilter_request_var('sysName');
 		$save['sysOid']        = get_nfilter_request_var('sysOid');
 		if (function_exists('filter_var')) {
-			$save['sysDescr'] = filter_var($save['sysDescr'], FILTER_SANITIZE_STRING);
+			$save['sysDescr'] = filter_var($save['sysDescr'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 		} else {
 			$save['sysDescr'] = strip_tags($save['sysDescr']);
 		}

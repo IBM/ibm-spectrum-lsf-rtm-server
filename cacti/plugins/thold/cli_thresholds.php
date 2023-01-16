@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2006-2022 The Cacti Group                                 |
+ | Copyright (C) 2006-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -21,7 +21,7 @@
 /* let PHP run just as long as it has to */
 ini_set('max_execution_time', '0');
 
-error_reporting('E_ALL');
+error_reporting(E_ALL);
 $dir = dirname(__FILE__);
 chdir($dir);
 
@@ -98,7 +98,6 @@ if (sizeof($parms)) {
 			case '-h':
 				display_help();
 				exit;
-			exit(-1);
 			default:
 				print 'ERROR: Invalid Parameter ' . $parameter . PHP_EOL . PHP_EOL;
 				display_help();
@@ -195,7 +194,7 @@ function display_help () {
 	print '--auto-create=N         - Auto Create all Thresholds for this Device id using Templates associated' . PHP_EOL;
 	print '                          the Devices Device Template.' . PHP_EOL . PHP_EOL;
 
-	print 'The second requires you to specify either a series of Devices, a Graph Template, a Treshold Template' . PHP_EOL;
+	print 'The second requires you to specify either a series of Devices, a Graph Template, a Threshold Template' . PHP_EOL;
 	print 'or a series of Graphs or any combination of the above.  However, at least one must be specified.' . PHP_EOL;
 	print 'Threshold Template and Graph IDs of the Graphs to be impacted.' . PHP_EOL . PHP_EOL;
 	print '--host-ids=\'N1 N2 ...\'  - The Devices ID to create Thresholds for' . PHP_EOL;

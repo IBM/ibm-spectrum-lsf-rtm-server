@@ -49,12 +49,12 @@ function ss_grid_poller_stats($clusterid = 0) {
 
 	if (strlen($job_stats_minor)) {
 		$stats = explode(' ', $job_stats_minor);
-		$date_minor = strtotime(substr_replace('_', ' ', $stats[0]));
+		$date_minor = strtotime(str_replace('_', ' ', str_replace('EndDate:', '', $stats[0])));
 	}
 
 	if (strlen($job_stats_major)) {
 		$stats = explode(' ', $job_stats_major);
-		$date_major = strtotime(substr_replace('_', ' ', $stats[0]));
+		$date_major = strtotime(str_replace('_', ' ', str_replace('EndDate:', '', $stats[0])));
 	}
 
 	if ($date_major > $date_minor) {
@@ -72,7 +72,7 @@ function ss_grid_poller_stats($clusterid = 0) {
 		$running   = 0;
 		$done      = 0;
 
-		if (sizeof($stat_array)) {
+		if (cacti_sizeof($stat_array)) {
 			foreach($stat_array as $stat) {
 				$job_stat = explode(':', $stat);
 
@@ -120,7 +120,7 @@ function ss_grid_poller_stats($clusterid = 0) {
 		$pending   = 0;
 		$suspended = 0;
 
-		if (sizeof($stat_array_pend)) {
+		if (cacti_sizeof($stat_array_pend)) {
 			foreach($stat_array_pend as $stat) {
 				$job_stat = explode(':', $stat);
 
@@ -178,7 +178,7 @@ function get_runtime($statsvalue) {
 	$stat_array = explode(' ', $statsvalue);
 	$runtime   = 0;
 
-	if (sizeof($stat_array)) {
+	if (cacti_sizeof($stat_array)) {
 		foreach($stat_array as $stat) {
 			$stats = explode(':', $stat);
 

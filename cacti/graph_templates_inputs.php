@@ -133,6 +133,9 @@ function input_remove() {
 function input_edit() {
 	global $consolidation_functions, $graph_item_types, $struct_graph_item, $fields_graph_template_input_edit;
 
+	// Remove filter item
+	unset($struct_graph_item['data_template_id']);
+
 	/* ================= input validation ================= */
 	get_filter_request_var('id');
 	get_filter_request_var('graph_template_id');
@@ -213,7 +216,7 @@ function input_edit() {
 
 			print '<td>';
 
-			$name = $start_bold . __('Item #%s', $i+1) . ': ' . $graph_item_types[$item['graph_type_id']] . ' (' . $consolidation_functions[$item['consolidation_function_id']] . ')' . $end_bold;
+			$name = $start_bold . __esc('Item #%s', $i+1) . ': ' . $graph_item_types[$item['graph_type_id']] . ' (' . $consolidation_functions[$item['consolidation_function_id']] . ')' . $end_bold;
 
 			form_checkbox('i_' . $item['graph_templates_item_id'], $old_value, '', '', '', get_request_var('graph_template_id'));
 			print "<label for='i_" . $item['graph_templates_item_id'] . "'>" . $name . '</label>';

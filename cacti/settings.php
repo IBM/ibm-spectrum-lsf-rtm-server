@@ -199,6 +199,12 @@ case 'save':
 					array($field_name, get_nfilter_request_var($field_name)));
 			}
 		}
+
+		if ($field_name == 'auth_method') {
+			if (get_nfilter_request_var($field_name) == '2') {
+				db_execute('TRUNCATE TABLE user_auth_cache');
+			}
+		}
 	}
 
 	if (isset_request_var('log_verbosity')) {
@@ -233,13 +239,13 @@ case 'save':
 	$gone_time = read_config_option('poller_interval') * 2;
 
 	$pollers = array_rekey(
-		db_fetch_assoc_prepared('SELECT id
+		db_fetch_assoc('SELECT
+			id,
+			UNIX_TIMESTAMP() - UNIX_TIMESTAMP(last_status) AS last_polled
 			FROM poller
 			WHERE id > 1
-			AND disabled=""
-			AND UNIX_TIMESTAMP() - UNIX_TIMESTAMP(last_status) <= ?',
-			array($gone_time)),
-		'id', 'id'
+			AND disabled=""'),
+		'id', 'last_polled'
 	);
 
 	if (get_request_var('tab') == 'path' && $config['poller_id'] > 1) {
@@ -253,11 +259,20 @@ case 'save':
 				VALUES ' . implode(', ', $inserts) . '
 				ON DUPLICATE KEY UPDATE value=VALUES(value)';
 
-			foreach($pollers as $p) {
-				$rcnn_id = poller_connect_to_remote($p);
+			foreach($pollers as $p => $t) {
+				if ($t > $gone_time) {
+					raise_message('poller_' . $p, __('Settings save to Data Collector %d skipped due to heartbeat.', $p), MESSAGE_LEVEL_WARN);
+				} else {
+					$rcnn_id = poller_connect_to_remote($p);
 
-				if ($rcnn_id) {
-					if (db_execute($sql, false, $rcnn_id) === false) {
+					if ($rcnn_id) {
+						if (db_execute($sql, false, $rcnn_id) === false) {
+							$rcnn_id = false;
+						}
+					}
+
+					// check if we still have rcnn_id, if it's now become false, we had a problem
+					if (!$rcnn_id) {
 						raise_message('poller_' . $p, __('Settings save to Data Collector %d Failed.', $p), MESSAGE_LEVEL_ERROR);
 					}
 				}
@@ -312,6 +327,8 @@ default:
 
 	$_SESSION['sess_settings_tab'] = $current_tab;
 
+	set_request_var('tab', $current_tab);
+
 	$data_collectors = db_fetch_cell('SELECT COUNT(*) FROM poller WHERE disabled=""');
 
 	if ($data_collectors > 1) {
@@ -357,7 +374,7 @@ default:
 		$suffix = '';
 	}
 
-	html_start_box( __('Cacti Settings (%s)%s', $tabs[$current_tab], $suffix), '100%', true, '3', 'center', '');
+	html_start_box(__('Cacti Settings (%s)%s', $tabs[$current_tab], $suffix), '100%', true, '3', 'center', '');
 
 	$form_array = array();
 
@@ -415,6 +432,30 @@ default:
 		}
 	}
 
+	// Cache this setting as on large systems
+	// this query runs long
+	if ($current_tab == 'spikes') {
+		if (!isset($_SESSION['sk_templates'])) {
+			$spikekill_templates = array_rekey(
+				db_fetch_assoc('SELECT DISTINCT gt.id, gt.name
+					FROM graph_templates AS gt
+					INNER JOIN graph_templates_item AS gti
+					ON gt.id=gti.graph_template_id
+					INNER JOIN data_template_rrd AS dtr
+					ON gti.task_item_id=dtr.id
+					WHERE gti.local_graph_id=0 AND data_source_type_id IN (3,2)
+					ORDER BY name'),
+				'id', 'name'
+			);
+
+			$_SESSION['sk_templates'] = $spikekill_templates;
+		} else {
+			$spikekill_templates = $_SESSION['sk_templates'];
+		}
+
+		$form_array['spikekill_templates']['array'] = $spikekill_templates;
+	}
+
 	draw_edit_form(
 		array(
 			'config' => array('no_form_tag' => true),
@@ -446,7 +487,7 @@ default:
 			loadPageNoHeader(strURL, true, false);
 		});
 
-		$('input[value="<?php print __esc('Save');?>"]').click(function(event) {
+		$('input[value="<?php print __esc('Save');?>"]').unbind().click(function(event) {
 			event.preventDefault();
 
 			if (parseInt($('#cron_interval').val()) < parseInt($('#poller_interval').val())) {
@@ -457,12 +498,12 @@ default:
 			}
 
 			if (themeChanged != true) {
-				$.post('settings.php?tab='+$('#tab').val()+'&header=false', $('input, select, textarea').serialize()).done(function(data) {
+				$.post('settings.php?tab='+$('#tab').val()+'&header=false', $('input, select, textarea').prop('disabled', false).serialize()).done(function(data) {
 					$('#main').hide().html(data);
 					applySkin();
 				});
 			} else {
-				$.post('settings.php?tab='+$('#tab').val()+'&header=false', $('input, select, textarea').serialize()).done(function(data) {
+				$.post('settings.php?tab='+$('#tab').val()+'&header=false', $('input, select, textarea').prop('disabled', false).serialize()).done(function(data) {
 					document.location = 'settings.php?newtheme=1&tab='+$('#tab').val();
 				});
 			}
@@ -470,7 +511,9 @@ default:
 
 		if (currentTab == 'general') {
 			$('#selective_plugin_debug').multiselect({
-				height: 300,
+				menuHeight: $(window).height()*.7,
+				menuWidth: 'auto',
+				linkInfo: faIcons,
 				noneSelectedText: '<?php print __('Select Plugin(s)');?>',
 				selectedText: function(numChecked, numTotal, checkedItems) {
 					myReturn = numChecked + ' <?php print __('Plugins Selected');?>';
@@ -490,6 +533,9 @@ default:
 			});
 
 			$('#selective_debug').multiselect({
+				menuHeight: $(window).height()*.7,
+				menuWidth: 'auto',
+				linkInfo: faIcons,
 				noneSelectedText: '<?php print __('Select File(s)');?>',
 				selectedText: function(numChecked, numTotal, checkedItems) {
 					myReturn = numChecked + ' <?php print __('Files Selected');?>';
@@ -497,7 +543,7 @@ default:
 				},
 				checkAllText: '<?php print __('All');?>',
 				uncheckAllText: '<?php print __('None');?>',
-				uncheckall: function() {
+				uncheckAll: function() {
 					$(this).multiselect('widget').find(':checkbox:first').each(function() {
 						$(this).prop('checked', true);
 					});
@@ -509,7 +555,9 @@ default:
 			});
 		} else if (currentTab == 'spikes') {
 			$('#spikekill_templates').multiselect({
-				height: 300,
+				menuHeight: $(window).height()*.7,
+				menuWidth: 'auto',
+				linkInfo: faIcons,
 				noneSelectedText: '<?php print __('Select Template(s)');?>',
 				selectedText: function(numChecked, numTotal, checkedItems) {
 					myReturn = numChecked + ' <?php print __('Templates Selected');?>';
@@ -523,7 +571,7 @@ default:
 				},
 				checkAllText: '<?php print __('All');?>',
 				uncheckAllText: '<?php print __('None');?>',
-				uncheckall: function() {
+				uncheckAll: function() {
 					$(this).multiselect('widget').find(':checkbox:first').each(function() {
 						$(this).prop('checked', true);
 					});
@@ -580,6 +628,14 @@ default:
 					$('#row_rrdp_fingerprint_backup').show();
 				}
 			}).trigger('change');
+
+			$('#extended_paths').change(function() {
+				if ($(this).is(':checked')) {
+					$('#row_extended_paths_type').show();
+				} else {
+					$('#row_extended_paths_type').hide();
+				}
+			}).trigger('change');
 		} else if (currentTab == 'mail') {
 			$('#row_settings_email_header div.formHeaderText').append('<div id="emailtest" class="emailtest"><?php print __('Send a Test Email');?></div>');
 
@@ -609,7 +665,7 @@ default:
 							},
 							hide: {
 								effect: 'appear',
-								duratin: 100
+								duration: 100
 							}
 						});
 					})
@@ -911,9 +967,10 @@ default:
 	function initAuth() {
 		switch($('#auth_method').val()) {
 		case '0': // None
-			$('#row_path_basic_mapfile').hide();
-			$('#row_special_users_header').hide();
+			$('#row_auth_method').show();
 			$('#row_auth_cache_enabled').hide();
+			$('#row_special_users_header').hide();
+			$('#row_admin_user').hide();
 			$('#row_guest_user').hide();
 			$('#row_user_template').hide();
 			$('#row_ldap_general_header').hide();
@@ -952,11 +1009,18 @@ default:
 			$('#row_secpass_lock_header').hide();
 			$('#row_secpass_lockfailed').hide();
 			$('#row_secpass_unlocktime').hide();
+			$('#row_basic_header').hide();
+			$('#row_basic_auth_fail_message').hide();
+			$('#row_path_basic_mapfile').hide();
+			$('#row_ldap_network_timeout').hide();
+			$('#row_ldap_bind_timeout').hide();
+			$('#row_ldap_tls_certificate').hide();
 			break;
 		case '1': // Builtin
-			$('#row_path_basic_mapfile').hide();
-			$('#row_special_users_header').show();
+			$('#row_auth_method').show();
 			$('#row_auth_cache_enabled').show();
+			$('#row_special_users_header').show();
+			$('#row_admin_user').show();
 			$('#row_guest_user').show();
 			$('#row_user_template').show();
 			$('#row_ldap_general_header').hide();
@@ -995,11 +1059,19 @@ default:
 			$('#row_secpass_lock_header').show();
 			$('#row_secpass_lockfailed').show();
 			$('#row_secpass_unlocktime').show();
+			$('#row_basic_header').hide();
+			$('#row_basic_auth_fail_message').hide();
+			$('#row_path_basic_mapfile').hide();
+			$('#row_ldap_network_timeout').hide();
+			$('#row_ldap_bind_timeout').hide();
+			$('#row_ldap_tls_certificate').hide();
+			$('#row_ldap_debug').hide();
 			break;
 		case '2': // Web Basic
-			$('#row_path_basic_mapfile').show();
-			$('#row_special_users_header').show();
+			$('#row_auth_method').show();
 			$('#row_auth_cache_enabled').hide();
+			$('#row_special_users_header').show();
+			$('#row_admin_user').show();
 			$('#row_guest_user').show();
 			$('#row_user_template').show();
 			$('#row_ldap_general_header').hide();
@@ -1038,17 +1110,25 @@ default:
 			$('#row_secpass_lock_header').hide();
 			$('#row_secpass_lockfailed').hide();
 			$('#row_secpass_unlocktime').hide();
+			$('#row_basic_header').show();
+			$('#row_basic_auth_fail_message').show();
+			$('#row_path_basic_mapfile').show();
+			$('#row_ldap_network_timeout').hide();
+			$('#row_ldap_bind_timeout').hide();
+			$('#row_ldap_tls_certificate').hide();
+			$('#row_ldap_debug').hide();
 			break;
 		case '4': // Multiple Domains
-			$('#row_path_basic_mapfile').hide();
-			$('#row_special_users_header').show();
+			$('#row_auth_method').show();
 			$('#row_auth_cache_enabled').show();
+			$('#row_special_users_header').show();
+			$('#row_admin_user').show();
 			$('#row_guest_user').show();
 			$('#row_user_template').hide();
-			$('#row_ldap_general_header').hide();
-			$('#row_ldap_server').hide();
-			$('#row_ldap_port').hide();
-			$('#row_ldap_port_ssl').hide();
+			$('#row_ldap_general_header').show();
+			$('#row_ldap_server').show();
+			$('#row_ldap_port').show();
+			$('#row_ldap_port_ssl').show();
 			$('#row_ldap_version').hide();
 			$('#row_ldap_encryption').hide();
 			$('#row_ldap_referrals').hide();
@@ -1081,10 +1161,19 @@ default:
 			$('#row_secpass_lock_header').show();
 			$('#row_secpass_lockfailed').show();
 			$('#row_secpass_unlocktime').show();
+			$('#row_basic_header').hide();
+			$('#row_basic_auth_fail_message').hide();
+			$('#row_path_basic_mapfile').hide();
+			$('#row_ldap_network_timeout').show();
+			$('#row_ldap_bind_timeout').show();
+			$('#row_ldap_tls_certificate').show();
+			$('#row_ldap_debug').show();
 			break;
 		case '3': // Single Domain
-			$('#row_special_users_header').show();
+			$('#row_auth_method').show();
 			$('#row_auth_cache_enabled').show();
+			$('#row_special_users_header').show();
+			$('#row_admin_user').show();
 			$('#row_guest_user').show();
 			$('#row_user_template').show();
 			$('#row_ldap_general_header').show();
@@ -1123,12 +1212,21 @@ default:
 			$('#row_secpass_lock_header').show();
 			$('#row_secpass_lockfailed').show();
 			$('#row_secpass_unlocktime').show();
+			$('#row_basic_header').hide();
+			$('#row_basic_auth_fail_message').hide();
+			$('#row_path_basic_mapfile').hide();
+			$('#row_ldap_network_timeout').show();
+			$('#row_ldap_bind_timeout').show();
+			$('#row_ldap_tls_certificate').show();
+			$('#row_ldap_debug').show();
 			initSearch();
 			initGroupMember();
 			break;
 		default:
-			$('#row_special_users_header').show();
+			$('#row_auth_method').show();
 			$('#row_auth_cache_enabled').show();
+			$('#row_special_users_header').show();
+			$('#row_admin_user').show();
 			$('#row_guest_user').show();
 			$('#row_user_template').show();
 			$('#row_ldap_general_header').hide();
@@ -1167,6 +1265,13 @@ default:
 			$('#row_secpass_lock_header').show();
 			$('#row_secpass_lockfailed').show();
 			$('#row_secpass_unlocktime').show();
+			$('#row_basic_header').hide();
+			$('#row_basic_auth_fail_message').hide();
+			$('#row_path_basic_mapfile').hide();
+			$('#row_ldap_network_timeout').hide();
+			$('#row_ldap_bind_timeout').hide();
+			$('#row_ldap_tls_certificate').hide();
+			$('#row_ldap_debug').hide();
 			break;
 		}
 	}
@@ -1209,15 +1314,5 @@ default:
 	bottom_footer();
 
 	break;
-}
-
-function is_remote_path_setting($field_name) {
-	global $config;
-
-	if ($config['poller_id'] > 1 && (strpos($field_name, 'path_') !== false || strpos($field_name, '_path') !== false)) {
-		return true;
-	} else {
-		return false;
-	}
 }
 

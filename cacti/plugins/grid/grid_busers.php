@@ -43,7 +43,7 @@ switch (get_request_var('action')) {
 		break;
 }
 
-function grid_view_get_users_records(&$sql_where, &$sql_join, $apply_limits = true, $rows, &$sql_params) {
+function grid_view_get_users_records(&$sql_where, &$sql_join, $apply_limits = true, $rows = 30, &$sql_params = array()) {
 	$sql_order = get_order_string();
 
 	/* here is the default 'non-drilldown query' */
@@ -686,7 +686,7 @@ function grid_view_users() {
 				form_selectable_cell_metadata('detailed', 'user', $user['clusterid'], $user['user_or_group'], '', '', __('Show User Jobs', 'grid'), true, $user_url);
 
 				form_selectable_cell_visible($user['clustername'], 'show_user_clustername', $i, '');
-				form_selectable_cell_visible(empty($user['maxJobs']) ? '-' : number_format_i18n($user['maxJobs']), 'show_user_maxSlots', $i, 'right');
+				form_selectable_cell_visible(empty($user['maxJobs']) ? '-' : number_format_grid($user['maxJobs']), 'show_user_maxSlots', $i, 'right');
 				form_selectable_cell_visible(number_format_i18n($user['maxPendJobs']), 'show_user_maxpendjob', $i, 'right');
 				form_selectable_cell_visible($user['procJobLimit'], 'show_user_procjoblimit', $i, 'right');
 				form_selectable_cell_visible(number_format_i18n($user['numJobs']), 'show_user_numSlots', $i, 'right');
@@ -737,7 +737,7 @@ function grid_view_users() {
 					form_selectable_cell_visible(number_format_i18n($user['priority']), 'show_user_priority', $i, 'right', get_request_var('queue') . "/" . $title_shareAcctPath . $user['user_or_group']);
 				}
 
-				form_selectable_cell_visible($user['userJobLimit'] == 0 ? '-' : number_format_i18n($user['userJobLimit']), 'show_user_userjoblimit', $i, 'right');
+				form_selectable_cell_visible(empty($user['userJobLimit']) ? '-' : number_format_grid($user['userJobLimit']), 'show_user_userjoblimit', $i, 'right');
 				form_selectable_cell_visible(number_format_i18n($user['numJobs']), 'show_user_numSlots', $i, 'right');
 				form_selectable_cell_visible($user['numStartJobs'] == '' ? __('N/A', 'grid') : number_format_i18n($user['numStartJobs']), 'show_user_started_slots', $i, 'right');
 				form_selectable_cell_visible(number_format_i18n($user['numPEND']), 'show_user_pendingslots', $i, 'right');

@@ -22,7 +22,7 @@
      their actual values
    @arg $form_array - an array that contains all of the information needed to draw
      the html form. see the arrays contained in include/global_settings.php
-     for the extact syntax of this array
+     for the exact syntax of this array
    @arg $arg1 - an array that represents the |arg1:| variable (see
      include/global_form.php for more details)
    @arg $arg2 - an array that represents the |arg2:| variable (see
@@ -47,7 +47,7 @@ function inject_form_variables(&$form_array, $arg1 = array(), $arg2 = array(), $
 				} elseif (isset($field_array[$field_to_check]) && !is_array($field_array[$field_to_check])) {
 					$count = 0;
 
-					/* loop through the $field_to_check and replace upto three times
+					/* loop through the $field_to_check and replace up to three times
 					 * for each arg1:arg2:arg3 variables.
 					 */
 					while (true) {
@@ -72,7 +72,7 @@ function inject_form_variables(&$form_array, $arg1 = array(), $arg2 = array(), $
 								}
 							} else {
 								/* copy the value down from the array/key specified in the variable
-								 * replace upto three times for arg1:arg2:arg3 variables
+								 * replace up to three times for arg1:arg2:arg3 variables
 								 */
 								if (isset($$matches1)) {
 									if (is_array($$matches1)) {
@@ -255,21 +255,6 @@ function form_checkbox_cell($title, $id, $disabled = false) {
 /* form_end_row - ends a table row that is started with form_alternate_row */
 function form_end_row() {
 	print "</tr>\n";
-}
-
-/* form_confirm_buttons - provides confirm buttons in the gui
-   @arg $message - the value of the HTML checkbox */
-function form_confim_buttons($post_variable, $item_array, $save_message, $return = false) {
-	print "<tr>
-		<td class='saveRow'>
-			<input type='hidden' name='action' value='actions'>
-			<input type='hidden' name='selected_items' value='" . (isset($item_array) ? serialize($item_array) : '') . "'>
-			<input type='hidden' name='drp_action' value='" . $post_variable . "'>" . ($return ? "
-			<input type='button' class='ui-button ui-corner-all ui-widget' value='" . __esc('Return') . "' onClick='cactiReturnTo()'>
-			":"
-			<input type='button' class='ui-button ui-corner-all ui-widget' value='" . __esc('Cancel') . "' onClick='cactiReturnTo()'>&nbsp;<input type='submit' class='ui-button ui-corner-all ui-widget' value='" . __esc('Continue') ."' title='$save_message'>") . "
-		</td>
-	</tr>\n";
 }
 
 /* html_boolean - returns the boolean equivalent of an HTML checkbox value
@@ -476,7 +461,7 @@ function get_filter_request_var($name, $filter = FILTER_VALIDATE_INT, $options =
 				}
 			} elseif ($filter == FILTER_VALIDATE_IS_NUMERIC_LIST) {
 				$valid = true;
-				$values = preg_split('/,/', $_REQUEST[$name], NULL, PREG_SPLIT_NO_EMPTY);
+				$values = preg_split('/,/', $_REQUEST[$name], -1, PREG_SPLIT_NO_EMPTY);
 				foreach($values AS $number) {
 					if (!is_numeric($number)) {
 						$valid = false;
@@ -696,7 +681,7 @@ function validate_store_request_vars($filters, $sess_prefix = '') {
 					}
 				} elseif ($options['filter'] == FILTER_VALIDATE_IS_NUMERIC_LIST) {
 					$valid = true;
-					$values = preg_split('/,/', $_REQUEST[$variable], NULL, PREG_SPLIT_NO_EMPTY);
+					$values = preg_split('/,/', $_REQUEST[$variable], -1, PREG_SPLIT_NO_EMPTY);
 					foreach($values AS $number) {
 						if (!is_numeric($number)) {
 							$valid = false;
@@ -1082,7 +1067,7 @@ function get_page_list($current_page, $pages_per_screen, $rows_per_page, $total_
 	if ($return_to != '') {
 		$url_page_select .= "<script type='text/javascript'>function goto$page_var(pageNo) { if (typeof url_graph === 'function') { var url_add=url_graph('') } else { var url_add=''; }; $.get('" . sanitize_uri($url) . "header=false&" . $page_var . "='+pageNo+url_add).done(function(data) { $('#$return_to').html(data); applySkin(); }); }</script>";
 	} else {
-		$url_page_select .= "<script type='text/javascript'>function goto${page_var}(pageNo) { if (typeof url_graph === 'function') { var url_add=url_graph('') } else { var url_add=''; }; document.location='$url$page_var='+pageNo+url_add }</script>";
+		$url_page_select .= "<script type='text/javascript'>function goto{$page_var}(pageNo) { if (typeof url_graph === 'function') { var url_add=url_graph('') } else { var url_add=''; }; document.location='$url$page_var='+pageNo+url_add }</script>";
 	}
 
 	return $url_page_select;

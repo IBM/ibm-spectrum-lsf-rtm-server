@@ -115,7 +115,7 @@ server {
 
    # Compression increases performance0
    gzip on;
-   gzip_types      text/plain text/html text/xml text/css application/xml application/javascript application/x-javascript application/rss+xml applicaiton/xhtml+xml;
+   gzip_types      text/plain text/html text/xml text/css application/xml application/javascript application/x-javascript application/rss+xml application/xhtml+xml;
    gzip_proxied    no-cache no-store private expired auth;
    gzip_min_length 1000;
 
@@ -280,6 +280,9 @@ Query OK, 1 row affected (0.00 sec)
 <a class="sourceLine" id="cb17-2" title="2"><span class="kw">Query</span> OK, <span class="dv">0</span> <span class="kw">rows</span> affected (<span class="fl">0.00</span> sec)</a>
 <a class="sourceLine" id="cb17-3" title="3">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">FLUSH</span> <span class="kw">PRIVILEGES</span>;</a>
 <a class="sourceLine" id="cb17-4" title="4"><span class="kw">Query</span> OK, <span class="dv">0</span> <span class="kw">rows</span> affected (<span class="fl">0.00</span> sec)</a></code></pre></div></li>
+<li><p>Save the Database Charset and Collation</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb18-1" title="1">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">ALTER</span> <span class="kw">DATABASE</span> cacti <span class="dt">CHARACTER</span> <span class="kw">SET</span> utf8mb4 COLLATE utf8mb4_unicode_ci;</a>
+<a class="sourceLine" id="cb18-2" title="2">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">FLUSH</span> <span class="kw">PRIVILEGES</span>;</a></code></pre></div></li>
 </ol>
 <h3 id="common-php-packages">Common PHP packages</h3>
 <h4 id="php">PHP</h4>
@@ -326,8 +329,8 @@ group = nginx
 <pre class="console"><code>systemctl restart php-fpm
 </code></pre></li>
 </ol>
-<h3 id="rrdtool">RRDTool</h3>
-<p>RRDTool is required to store the data retrieved from devices in <code>.rra</code> files to produce the graphs which are shown within Cacti</p>
+<h3 id="rrdtool">RRDtool</h3>
+<p>RRDtool is required to store the data retrieved from devices in <code>.rra</code> files to produce the graphs which are shown within Cacti</p>
 <pre class="console"><code>yum install -y rrdtool
 </code></pre>
 <h3 id="snmp">SNMP</h3>
@@ -350,24 +353,35 @@ mv -v cacti-1.y.z /usr/share/nginx/html/cacti
 <pre class="console"><code>mv -v /usr/share/nginx/html/cacti/include/config.php-dist /usr/share/nginx/html/cacti/include/config.php
 </code></pre></li>
 <li><p>Update database_ fields with your own details. This section only applies to the Main Cacti Server</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb30-1" title="1"><span class="kw">$database_type</span>     = <span class="st">&#39;mysql&#39;</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb30-2" title="2"><span class="kw">$database_default</span>  = <span class="st">&#39;your_cacti_database&#39;</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb30-3" title="3"><span class="kw">$database_hostname</span> = <span class="st">&#39;localhost&#39;</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb30-4" title="4"><span class="kw">$database_username</span> = <span class="st">&#39;your_cacti_username&#39;</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb30-5" title="5"><span class="kw">$database_password</span> = <span class="st">&#39;your_cacti_password&#39;</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb30-6" title="6"><span class="kw">$database_port</span>     = <span class="st">&#39;3306&#39;</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb30-7" title="7"><span class="kw">$database_ssl</span>      = <span class="kw">false</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb30-8" title="8"><span class="kw">$database_ssl_key</span>  = <span class="st">&#39;&#39;</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb30-9" title="9"><span class="kw">$database_ssl_cert</span> = <span class="st">&#39;&#39;</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb30-10" title="10"><span class="kw">$database_ssl_ca</span>   = <span class="st">&#39;&#39;</span><span class="ot">;</span></a></code></pre></div></li>
+<div class="sourceCode" id="cb31"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb31-1" title="1"><span class="kw">$database_type</span>     = <span class="st">&#39;mysql&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb31-2" title="2"><span class="kw">$database_default</span>  = <span class="st">&#39;your_cacti_database&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb31-3" title="3"><span class="kw">$database_hostname</span> = <span class="st">&#39;localhost&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb31-4" title="4"><span class="kw">$database_username</span> = <span class="st">&#39;your_cacti_username&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb31-5" title="5"><span class="kw">$database_password</span> = <span class="st">&#39;your_cacti_password&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb31-6" title="6"><span class="kw">$database_port</span>     = <span class="st">&#39;3306&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb31-7" title="7"><span class="kw">$database_ssl</span>      = <span class="kw">false</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb31-8" title="8"><span class="kw">$database_ssl_key</span>  = <span class="st">&#39;&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb31-9" title="9"><span class="kw">$database_ssl_cert</span> = <span class="st">&#39;&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb31-10" title="10"><span class="kw">$database_ssl_ca</span>   = <span class="st">&#39;&#39;</span><span class="ot">;</span></a></code></pre></div></li>
 <li><p>Set your cookie domain to match your web site domain name</p>
 <pre class="console"><code>$cacti_cookie_domain = &#39;cacti.yourdomain.com&#39;;
 </code></pre></li>
-<li><p>Create your cron task file</p></li>
-</ol>
-<p>Create and edit <code>/etc/cron.d/cacti</code> file. Make sure to setup the correct path to poller.php defaulting to 1 minute cron.</p>
-<pre class="console"><code>*/1 * * * * nginx php /usr/share/nginx/html/cacti/poller.php &amp;&gt;/dev/null
+<li><p>Create your cron task file or systemd units file</p>
+<p>Starting with Cacti 1.2.16, you have the option to use either the legacy Crontab entry, or an optional cactid units file and server to run your Cacti pollers.</p>
+<p>For Crontab use, follow the instructions below:</p>
+<p>Create and edit <code>/etc/cron.d/cacti</code> file. Make sure to setup the correct path to poller.php</p>
+<pre class="console"><code>*/5 * * * * nginx php /var/www/html/cacti/poller.php &amp;&gt;/dev/null
 </code></pre>
+<p>For systemd unit's file install, you will need to modify the included units file to following your install location and desired user and group's to run the Cacti poller as. To complete the task, follow the procedure below:</p>
+<pre class="console"><code>vim /var/www/html/cacti/service/cactid.service (edit the path)
+touch /etc/sysconfig/cactid
+cp -p /var/www/html/cacti/service/cactid.service /etc/systemd/system
+systemctl enable cactid
+systemctl start cactid
+systemctl status cactid
+</code></pre>
+<p>The systemd units file makes managing a highly available Cacti setup a bit more convenient.</p></li>
+</ol>
 <h4 id="spine">Spine</h4>
 <ol>
 <li><p>Install the necessary packages to compile and install spine</p>
@@ -426,6 +440,6 @@ DB_Port       3306
 </code></pre>
 <p><strong>Note:</strong> If you installed Cacti out of <code>/usr/share/nginx/html</code> make sure you fix up all SELinux context and permissions.</p>
 <hr />
-<p>Copyright (c) 2004-2020 The Cacti Group</p>
+<p><copy>Copyright (c) 2004-2022 The Cacti Group</copy></p>
 </body>
 </html>

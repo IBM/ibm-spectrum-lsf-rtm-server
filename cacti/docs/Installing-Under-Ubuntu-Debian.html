@@ -21,7 +21,7 @@ apt-get install -y apache2 rrdtool mariadb-server snmp snmpd php7.0 php-mysql ph
 </code></pre>
 <h3 id="downloading-the-cacti-software">Downloading the Cacti software</h3>
 <p>Once the OS packages are installed, you will need to download the Cacti files you can do this by using the git command</p>
-<pre class="console"><code>git clone https://github.com/Cacti/cacti.git
+<pre class="console"><code>git clone -b 1.2.x  https://github.com/Cacti/cacti.git
 Cloning into &#39;cacti&#39;...
 remote: Enumerating objects: 81, done.
 remote: Counting objects: 100% (81/81), done.
@@ -37,8 +37,9 @@ Resolving deltas: 100% (43598/43598), done.
 <p>Next we will create a database for the cacti installation to use</p>
 <pre class="console"><code>mysql -u root -p
 CREATE DATABASE cacti DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ;
-GRANT ALL PRIVILEGES ON cacti.* TO &#39;cacti&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;cacti&#39;;
-GRANT SELECT ON mysql.time_zone_name TO cacti@localhost;
+CREATE USER &#39;cactiuser&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;cactiuser&#39;;
+GRANT ALL ON cacti.* TO &#39;cactiuser&#39;@&#39;localhost&#39;;
+GRANT SELECT ON mysql.time_zone_name TO &#39;cactiuser&#39;@&#39;localhost&#39;;
 ALTER DATABASE cacti CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 FLUSH PRIVILEGES;
 </code></pre>
@@ -60,8 +61,50 @@ $database_retries  = 5;
 $database_ssl      = false;
 $database_ssl_key  = &#39;&#39;;
 </code></pre>
-<p>The system is now ready to finialise the steps by browsing to <a href="http://serverip/cacti">http://serverip/cacti</a> to start the cacti initalization wizard.</p>
+<h3 id="create-your-cron-task-file-or-systemd-units-file">Create your cron task file or systemd units file</h3>
+<p>Starting with Cacti 1.2.16, you have the option to use either the legacy Crontab entry, or an optional cactid units file and server to run your Cacti pollers.</p>
+<p>For Crontab use, follow the instructions below:</p>
+<p>Create and edit <code>/etc/cron.d/cacti</code> file. Make sure to setup the correct path to poller.php</p>
+<pre class="console"><code>*/5 * * * * apache php /var/www/html/cacti/poller.php &amp;&gt;/dev/null
+</code></pre>
+<p>For systemd unit's file install, you will need to modify the included units file to following your install location and desired user and group's to run the Cacti poller as. To complete the task, follow the procedure below:</p>
+<pre class="console"><code>vim /var/www/html/cacti/service/cactid.service (edit the path)
+touch /etc/sysconfig/cactid
+cp -p /var/www/html/cacti/service/cactid.service /etc/systemd/system
+systemctl enable cactid
+systemctl start cactid
+systemctl status cactid
+</code></pre>
+<p>The systemd units file makes managing a highly available Cacti setup a bit more convenient.</p>
+<p>The system is now ready to finialise the steps by browsing to <a href="http://serverip/cacti">http://serverip/cacti</a> to start the cacti initialization wizard.</p>
+<h3 id="considerations-when-using-proxys-in-front-of-cacti-cacti-1223">Considerations when using Proxys in front of Cacti (Cacti 1.2.23+)</h3>
+<p>For optimal security, only specify the HTTP headers that are set by your proxy software to prevent unauthorized access. These can be set by editing the following section of config.php</p>
+<pre><code> * Allow the use of Proxy IPs when searching for client
+ * IP to be used
+ *
+ * This can be set to one of the following:
+ *   - false: to use only REMOTE_ADDR
+ *   - true: to use all allowed headers (not advised)
+ *   - array of one or more the following:
+ *      &#39;X-Forwarded-For&#39;,
+ *      &#39;X-Client-IP&#39;,
+ *      &#39;X-Real-IP&#39;,
+ *      &#39;X-ProxyUser-Ip&#39;,
+ *      &#39;CF-Connecting-IP&#39;,
+ *      &#39;True-Client-IP&#39;,
+ *      &#39;HTTP_X_FORWARDED&#39;,
+ *      &#39;HTTP_X_FORWARDED_FOR&#39;,
+ *      &#39;HTTP_X_CLUSTER_CLIENT_IP&#39;,
+ *      &#39;HTTP_FORWARDED_FOR&#39;,
+ *      &#39;HTTP_FORWARDED&#39;,
+ *      &#39;HTTP_CLIENT_IP&#39;,
+ *
+ * NOTE: The following will always be checked:
+ *      &#39;REMOTE_ADDR&#39;,
+ */
+$proxy_headers = null;
+</code></pre>
 <hr />
-<p>Copyright (c) 2004-2020 The Cacti Group</p>
+<p><copy>Copyright (c) 2004-2022 The Cacti Group</copy></p>
 </body>
 </html>

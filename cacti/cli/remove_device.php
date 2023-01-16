@@ -1,4 +1,4 @@
-#!/usr/bin/php -q
+#!/usr/bin/env php
 <?php
 // $Id$
 /*
@@ -28,6 +28,11 @@ require_once($config['base_path'] . '/lib/data_query.php');
 require_once($config['base_path'] . '/lib/snmp.php');
 require_once($config['base_path'] . '/lib/poller.php');
 require_once($config['base_path'] . '/lib/utility.php');
+
+/* switch to main database for cli's */
+if ($config['poller_id'] > 1) {
+	db_switch_remote_to_main();
+}
 
 /* process calling arguments */
 $parms = $_SERVER['argv'];
@@ -107,7 +112,7 @@ if (cacti_sizeof($parms)) {
 
 		$ids_host = preg_array_key_match("/$description/", $hosts);
 		if (cacti_sizeof($ids_host) == 0) {
-			print "ERROR: Unable to find host in the database matching desciption ($description)\n";
+			print "ERROR: Unable to find host in the database matching description ($description)\n";
 			exit(1);
 		}
 	}

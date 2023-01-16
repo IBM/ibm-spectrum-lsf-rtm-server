@@ -25,7 +25,8 @@ $guest_account = true;
 
 chdir('../../');
 include('./include/auth.php');
-include($config['base_path'] . '/lib/rrd.php');
+include($config['library_path'] . '/rrd.php');
+include($config['library_path'] . '/rtm_functions.php');
 include($config['base_path'] . '/plugins/gridblstat/lib/functions.php');
 
 /* ================= input validation ================= */
@@ -151,11 +152,11 @@ if (!$error) {
 		$graph_opts,
 		'--title=' . $params['title'],
 		'--width=' . $graph_data_array['width'],
-        '--height=' . $graph_data_array['height']
+		'--height=' . $graph_data_array['height']
 	);
 
 	$watermark = read_config_option('plugin_watermark_text');
-	if (strlen($watermark)) {
+	if (rtm_strlen($watermark)) {
 		array_push($cmd, '--watermark "' . $watermark . '"');
 	}
 
@@ -172,6 +173,18 @@ if (!$error) {
 	$cmd = array_merge($cmd, $params['arguments'], $params['comments']);
 	$cmd = implode(' ', $cmd);
 
+	if (isset($graph_data_array['graph_theme'])) {
+		$rrdtheme = $config['base_path'] . '/include/themes/' . $graph_data_array['graph_theme'] . '/rrdtheme.php';
+	} else {
+		$rrdtheme = $config['base_path'] . '/include/themes/' . get_selected_theme() . '/rrdtheme.php';
+	}
+
+	$rrdborder = 1;
+	if (file_exists($rrdtheme) && is_readable($rrdtheme)) {
+		include_once($rrdtheme);
+	}
+
+	$cmd = str_replace('$rrdborder', $rrdborder, $cmd);
 	//cacti_log(str_replace(RRDNL, ' ', $cmd), false, 'GRIDBLSTAT');
 
 	/* flush the headers now */
@@ -185,38 +198,38 @@ if (!$error) {
 }
 
 function gridblstat_create_error_image($text, $width, $height) {
-    $font = 12;
+	$font = 12;
 	$fontwidth  = imagefontwidth($font);
 	$fontheight = imagefontheight($font);
 
-    $text = trim($text);
+	$text = trim($text);
 	$len  = strlen($text);
 
 	$x    = ceil(($width - ($len*$fontwidth))/2);
 	$y    = ceil(($height/2)-($fontheight/2));
 
-    $im   = imagecreatetruecolor($width, $height);
-    $imBg = imagecreatetruecolor($width+4, $height+4);
+	$im   = imagecreatetruecolor($width, $height);
+	$imBg = imagecreatetruecolor($width+4, $height+4);
 
-    $background = imagecolorallocatealpha($im, 244, 244, 244, 0);
-    $black      = imagecolorallocate($im, 60, 60, 60);
-    $grey       = imagecolorallocate($im, 180, 180, 180);
+	$background = imagecolorallocatealpha($im, 244, 244, 244, 0);
+	$black      = imagecolorallocate($im, 60, 60, 60);
+	$grey       = imagecolorallocate($im, 180, 180, 180);
 
 	/* background image */
-    imagesavealpha($imBg, true);
-    imagealphablending($imBg, false);
+	imagesavealpha($imBg, true);
+	imagealphablending($imBg, false);
 	imagefilledrectangle($imBg, 0,0, $width+4, $height+4, $grey);
 
 	/* text image */
-    imagesavealpha($im, true);
-    imagealphablending($im, false);
-    imagefilltoborder($im, 0, 0, $black, $background);
-    imagestring($im, $font, $x, $y, trim($text), $black);
+	imagesavealpha($im, true);
+	imagealphablending($im, false);
+	imagefilltoborder($im, 0, 0, $black, $background);
+	imagestring($im, $font, $x, $y, trim($text), $black);
 
 	imagecopyresized($imBg, $im, 2, 2, 0, 0, $width, $height, $width, $height);
-    header('Content-type: image/png');
-    imagepng($imBg);
-    imagedestroy($im);
-    imagedestroy($imBg);
+	header('Content-type: image/png');
+	imagepng($imBg);
+	imagedestroy($im);
+	imagedestroy($imBg);
 }
 

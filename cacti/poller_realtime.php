@@ -1,4 +1,4 @@
-#!/usr/bin/php -q
+#!/usr/bin/env php
 <?php
 // $Id$
 /*
@@ -101,7 +101,7 @@ $poller_start         = microtime(true);
 /* get number of polling items from the database */
 $poller_interval = 1;
 
-/* retreive the last time the poller ran */
+/* retrieve the last time the poller ran */
 $poller_lastrun = read_config_option('poller_lastrun');
 
 /* get the current cron interval from the database */
@@ -161,7 +161,7 @@ function display_help() {
 	display_version();
 
 	print "\nusage: poller_realtime.php --graph=ID [--interval=SEC] [--force] [--debug]\n\n";
-	print "Cacti's Realtime graphing poller.  This poller behavies very similary\n";
+	print "Cacti's Realtime graphing poller.  This poller behaves very similary\n";
 	print "to Cacti's main poller with the exception that it only polls data source\n";
 	print "that are specific to the graph being rendered in the Cacti UI.\n\n";
 	print "Required:\n";
@@ -204,8 +204,11 @@ function process_poller_output_rt($rrdtool_pipe, $poller_id, $interval) {
 				/* replace path */
 				$command = str_replace($data_source_path, $rt_graph_path, $command);
 
+				/* minimum refresh interval */
+				$step = read_config_option('realtime_interval');
+
 				/* replace step */
-				$command = preg_replace('/--step\s(\d+)/', '--step 1', $command);
+				$command = preg_replace('/--step\s(\d+)/', '--step ' . $step, $command);
 
 				/* WIN32: before sending this command off to rrdtool, get rid
 				of all of the '\' characters. Unix does not care; win32 does.

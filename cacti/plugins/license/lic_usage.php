@@ -26,7 +26,7 @@ include_once('./plugins/license/include/lic_functions.php');
 
 lic_view_lics();
 
-function lic_view_get_lics_records(&$sql_where, &$sql_from_join, $apply_limits = true, $row_limit, &$sql_params) {
+function lic_view_get_lics_records(&$sql_where, &$sql_from_join, $apply_limits = true, $row_limit = 30, &$sql_params = array()) {
 	$sql_where = '';
 
 	/* license server sql where */

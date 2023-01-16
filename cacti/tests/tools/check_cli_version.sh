@@ -12,13 +12,18 @@
 #| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
 #| GNU General Public License for more details.                            |
 #+-------------------------------------------------------------------------+
+#| Cacti: The Complete RRDtool-based Graphing Solution                     |
+#+-------------------------------------------------------------------------+
+#| This code is designed, written, and maintained by the Cacti Group. See  |
+#| about.php and/or the AUTHORS file for specific developer information.   |
+#+-------------------------------------------------------------------------+
 #| http://www.cacti.net/                                                   |
 #+-------------------------------------------------------------------------+
 
 SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
 cd $SCRIPTPATH/../../
-FILES1=`find cli -name \*.php | grep -v "index.php"`
-FILES2=`ls -1 poller*.php | egrep -v "(index.php|pollers.php)"`
+FILES1=`find cli -name \*.php | grep -v "index.php" | sort`
+FILES2=`ls -1 poller*.php | egrep -v "(index.php|pollers.php)" | sort`
 FILES3="cactid.php cmd.php"
 
 FAILED=0
@@ -55,6 +60,9 @@ for script in $FILES1 $FILES2 $FILES3; do
 	if [[ $script_lines -ne 1 ]]; then
 		FAILED=3
 		echo "   x Failed version output test (" $script_lines ")";
+		echo "   ==============================================================================="
+		echo $script_output
+		echo "   ==============================================================================="
 	fi
 
 	script_output=`php -q $script --help`

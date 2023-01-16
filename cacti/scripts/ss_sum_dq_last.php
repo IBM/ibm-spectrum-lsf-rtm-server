@@ -31,40 +31,42 @@ if (!isset($called_by_script_server)) {
 }
 
 function ss_sum_dq_last($clusterid = 0, $dq_string = 'eth4') {
-	include_once(dirname(__FILE__) . '../lib/rrd.php');
+	global $config;
+
+	include_once(dirname(__FILE__) . '/../lib/rrd.php');
 
 	$rrd_pipe = rrd_init();
 
-	$rrd_files = db_fetch_assoc_prepared("SELECT data_source_path
+	$rrd_files = array_rekey(db_fetch_assoc_prepared("SELECT data_source_path
 		FROM data_local AS dl
 		INNER JOIN host AS h
 		ON dl.host_id = h.id
 		INNER JOIN host_snmp_cache AS hsc
-		ON h.id = hsc.host_id)
+		ON h.id = hsc.host_id
 		INNER JOIN data_template_data AS dtd
 		ON dl.id = dtd.local_data_id
 		WHERE hsc.field_value = ?
 		AND h.clusterid = ?",
-		array($dq_string, $clusterid));
+		array($dq_string, $clusterid)), 'data_source_path', 'data_source_path');
 
 	$i = 0;
-	if (cacti_sizeof($rrd_file)) {
+	if (cacti_sizeof($rrd_files)) {
 		foreach($rrd_files as $rrd_file) {
-			$command_line = ' lastupdate ' . $rrd_file;
+			$command_line = ' lastupdate ' . str_replace('<path_rra>', $config['rra_path'], $rrd_file);
 
-			$output = rrdtool_execute($command_line, false, RRDTOOL_OUTPUT_STDOUT, $rrd_pipe, $logopt = 'POLLER');
+			$output = rrdtool_execute($command_line, true, RRDTOOL_OUTPUT_STDOUT, false, 'POLLER');
 
 			if (strlen($output)) {
 				$broken = explode(':', $output);
-				$rras = explode($broken[0]);
-				$last = explode($broken[1]);
+				$rras = explode(' ', $broken[0]);
+				$last = explode(' ', $broken[1]);
 
 				if ($i == 0) {
-					$total_rras = sizeof($rras) - 1;
+					$total_rras = cacti_sizeof($rras) - 1;
 
 					if ($total_rras > 0) {
 						for($j=0; $j<$total_rras; $j++) {
-							$final_rra[$j] = trim($rras[$j]);
+							$final_rras[$j] = trim($rras[$j]);
 						}
 					} else {
 						return 'U';

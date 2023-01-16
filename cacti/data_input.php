@@ -331,7 +331,7 @@ function field_remove_confirm() {
 	get_filter_request_var('data_input_id');
 	/* ==================================================== */
 
-	form_start('data_intput.php?action=edit&id' . get_request_var('data_input_id'));
+	form_start('data_input.php?action=edit&id' . get_request_var('data_input_id'));
 
 	html_start_box('', '100%', '', '3', 'center', '');
 
@@ -457,7 +457,7 @@ function field_edit() {
 
 	/* if there are no input fields to choose from, complain */
 	if ((!isset($array_field_names)) && (isset_request_var('type') ? get_request_var('type') == 'in' : false) && ($data_input['type_id'] == '1')) {
-		display_custom_error_message(__('This script appears to have no input values, therefore there is nothing to add.'));
+		raise_message('invalid_inputs', __('This script appears to have no input values, therefore there is nothing to add.'), MESSAGE_LEVEL_WARN);
 		header('Location: data_input.php?header=false&action=edit&id=' . get_filter_request_var('data_input_id'));
 		exit;
 	}
@@ -593,7 +593,7 @@ function data_edit() {
 			$fields_data_input_edit['type_id']['array'][DATA_INPUT_TYPE_SCRIPT_QUERY] = __('Script Query');
 			break;
 		case DATA_INPUT_TYPE_QUERY_SCRIPT_SERVER:
-			$fields_data_input_edit['type_id']['array'][DATA_INPUT_TYPE_QUERY_SCRIPT_SERVER] = __('Script Query - Script Server');
+			$fields_data_input_edit['type_id']['array'][DATA_INPUT_TYPE_QUERY_SCRIPT_SERVER] = __('Script Server Query');
 			break;
 		}
 

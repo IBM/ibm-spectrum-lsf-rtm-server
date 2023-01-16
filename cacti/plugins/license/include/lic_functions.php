@@ -408,7 +408,7 @@ function lic_get_quorum_status($id, $flage=true, &$server_title='') {
 				return lic_get_colored_quorum_status('', '');
 			} elseif ($lic_service_status['status'] == 1) {
 				/*flag is for multi server status item show*/
-				if ((substr_count($lic_service_status['server_portatserver'],':')==2) && !$flage) {
+				if ((substr_count($lic_service_status['server_portatserver'],',:')==2) && !$flage) {
 					return lic_get_colored_quorum_status('', '');
 				} else {
 					return 'N/A';
@@ -482,7 +482,7 @@ function lic_get_colored_quorum_status($disabled, $status) {
 	}
 }
 
-function lic_get_license_service_records(&$sql_where, $apply_limits = true, $row_limit, &$sql_params) {
+function lic_get_license_service_records(&$sql_where, $apply_limits = true, $row_limit = 30, &$sql_params = array()) {
 	/* license server sql where */
 	if (!isset_request_var('location') || get_request_var('location') == -1) {
 		/* Show all items */
@@ -1130,8 +1130,8 @@ function lic_update_license_interval_stats($current_time) {
 	}
 
 	$earlier_time = mktime(date('H'), date('i')-$minus_time, date('s'), date('n'), date('j'), date('Y'));
-	$earlier_time = strftime('%F %H:%M:%S', $earlier_time);
-	$current_time = strftime('%F %H:%M:%S', $current_time);
+	$earlier_time = date('Y-m-d H:i:s', $earlier_time);
+	$current_time = date('Y-m-d H:i:s', floor($current_time));
 
 	lic_debug("Tabulating interval stats between $earlier_time and $current_time!!!");
 
@@ -1597,8 +1597,8 @@ function lic_update_license_daily_stats($current_time) {
 		VALUES ('lic_daily_stats_start_time', ?)", array($current_time));
 
 	$earlier_time = mktime(date('H'), date('i'), date('s'), date('n'), date('j')-1, date('Y'));
-	$earlier_time = strftime('%F %H:%M:%S', $earlier_time);
-	$current_time = strftime('%F %H:%M:%S', $current_time);
+	$earlier_time = date('Y-m-d H:i:s', $earlier_time);
+	$current_time = date('Y-m-d H:i:s', floor($current_time));
 
 	lic_debug("Tabulating daily stats between $earlier_time and $current_time!!");
 
@@ -2737,7 +2737,7 @@ function lic_set_time_span_values(&$current, &$earlier, $for_filter=FALSE) {
 
 function lic_get_timespan($precision, $value, &$current, &$earlier, $for_filter=FALSE){
 	$current = mktime(date('H'), date('i'), date('s'), date('n'), date('j'), date('Y'));
-	$current = strftime('%F %H:%M:%S', $current);
+	$current = date('Y-m-d H:i:s', $current);
 
 	switch($precision){
 		case 'seconds':
@@ -2764,11 +2764,10 @@ function lic_get_timespan($precision, $value, &$current, &$earlier, $for_filter=
 	 * calculated for the day before.  The traffic table timestamp will be from day before.
 	 */
 	if($for_filter == TRUE) {
-
 		$earlier -=86400;
 	}
 
-	$earlier = strftime('%F %H:%M:%S', $earlier);
+	$earlier = date('Y-m-d H:i:s', $earlier);
 }
 
 function get_lic_managers() {

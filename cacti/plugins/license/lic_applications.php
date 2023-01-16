@@ -328,7 +328,7 @@ function lic_filter() {
 	<?php
 }
 
-function lic_application_records(&$sql_where, $apply_limits, $row_limit, &$sql_params) {
+function lic_application_records(&$sql_where, $apply_limits, $row_limit, &$sql_params = array()) {
 	global $cnn_id;
 
 	if (get_request_var('filter') != '') {

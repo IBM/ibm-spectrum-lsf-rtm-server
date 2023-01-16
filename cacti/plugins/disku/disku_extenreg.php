@@ -317,7 +317,7 @@ function create_graphs_for_extension($exts) {
 	}
 }
 
-function add_disku_extension_graphs($host_id, $graph_template_id, $snmp_query_id, $snmp_query_type_id, $snmp_field_name, $snmp_query_name='', $items) {
+function add_disku_extension_graphs($host_id, $graph_template_id, $snmp_query_id, $snmp_query_type_id, $snmp_field_name, $snmp_query_name='', $items = array()) {
 	global $php_bin, $path_web, $path_disku, $graphs, $debug;
 	$php_bin    = read_config_option('path_php_binary');
 	$path_web   = read_config_option('path_webroot');
@@ -1231,7 +1231,7 @@ function disku_extenreg() {
 	form_end();
 }
 
-function get_disku_extenreg(&$sql_where, $apply_limits = true, $rows = 30, &$sql_params) {
+function get_disku_extenreg(&$sql_where, $apply_limits = true, $rows = 30, &$sql_params = array()) {
 	if (get_request_var('filter') != '') {
 		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . "(r.extension LIKE ? OR r.notes LIKE ? OR em.notes LIKE ?)";
 		$sql_params[] = '%'. get_request_var('filter') . '%';

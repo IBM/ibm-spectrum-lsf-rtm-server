@@ -570,7 +570,7 @@ function disku_orgview() {
 	}
 }
 
-function get_orgview($selectcols, &$sql_where, &$group_by, $apply_limits = true, $row_limit = 30, &$sql_params) {
+function get_orgview($selectcols, &$sql_where, &$group_by, $apply_limits = true, $row_limit = 30, &$sql_params = array()) {
 	$level1 = $level1s = trim(read_config_option('disku_level1'));
 	$level2 = $level2s = trim(read_config_option('disku_level2'));
 	$level3 = $level3s = trim(read_config_option('disku_level3'));

@@ -1,4 +1,4 @@
-#!/usr/bin/php -q
+#!/usr/bin/env php
 <?php
 // $Id$
 /*
@@ -36,10 +36,15 @@ if (file_exists(__DIR__ . '/../include/cli_check.php')) {
 	exit(1);
 }
 
+if ($config['poller_id'] > 1) {
+	print "FATAL: This utility is designed for the main Data Collector only" . PHP_EOL;
+	exit(1);
+}
+
 // For legacy Cacti behavior
 if (!function_exists('cacti_sizeof')) {
 	function cacti_sizeof($object) {
-		return cacti_sizeof($object);
+		return ($object === false || !is_array($object)) ? 0 : sizeof($object);
 	}
 }
 
@@ -238,7 +243,7 @@ if (strlen($response)) {
 	$response_array = explode(' ', $response);
 	print 'NOTE: Using ' . $response_array[0] . ' Version ' . $response_array[1] . PHP_EOL;
 } else {
-	print 'FATAL: RRDTool not found in configuation or path.' . PHP_EOL . 'Please insure RRDTool can be found using one of these methods!' . PHP_EOL;
+	print 'FATAL: RRDTool not found in configuration or path.' . PHP_EOL . 'Please insure RRDTool can be found using one of these methods!' . PHP_EOL;
 	exit(-1);
 }
 

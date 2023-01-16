@@ -1273,9 +1273,7 @@ function grid_view_get_summary_records($is_summary_alarm_log = false) {
 	}
 
 	/* search filter sql where */
-	if (!strlen(get_request_var('filter'))) {
-		/* Show all items */
-	} else {
+	if (get_request_var('filter') != '') {
 		$sql_where .= (strlen($sql_where) ? ' AND':'WHERE') . " ((grid_summary.host LIKE ?) OR
 			(grid_summary.hostType LIKE ?) OR
 			(grid_summary.hostModel LIKE ?))";

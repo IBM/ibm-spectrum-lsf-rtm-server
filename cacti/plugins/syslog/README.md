@@ -22,27 +22,39 @@ For log events that continue to be generated frequently on a device, such as
 smartd's feature to notify every 15 minutes of an impending drive failure, can
 be quieted using syslog's 'Re-Alert' setting.
 
-## Features
+## Core Features
 
-* Message filter
+* Message filtering
 
-* Message search
+* Message searching
 
-* Output to screen or file
+* Message Alerting
 
-* Date time picker
+* Alert Levels of System and Host
 
-* Event Alerter
+* Alert Methods of Individual and Threshold Based
 
-* Event Removal (for Events you don't want to see)
+* Message Removal Rules to Delete or Hide Messages
 
-* Filter events by Cacti Graph window from Cacti's Graph View pages
+* Filter Messages by Cacti Graph window from Cacti's Graph View pages
 
 * Use of native MySQL and MariaDB database partitioning for larger installs
 
 * Remote Log Server connection capabilities
 
 * Custom column mappings between Remote Log Server and required Syslog columns
+
+* Ability to Generate Tickets to Ticketing Systems through Script Execution
+
+* Ability to run alert specific commands at Alert and Re-alert times
+
+## Important Version 4.0 Release Notes
+
+In prior releases of Syslog, the Individual Alert Method would send an Email, open a ticket
+or run a command per line in the Syslog that matches the pattern.  However, in Syslog
+Version 4, if you want an alert per Host, you will have to move your Alerts from the
+`System Level` to the `Host Level` as `System Level` Alerts will generate one command
+execution for all matching messages.
 
 ## Installation
 
@@ -64,6 +76,23 @@ are removed, and recreated at install time.
 In addtion, the rsyslog configuration has changed in 2.5.  So, for example, to
 configure modern rsyslog for Cacti, you MUST create a file called cacti.conf in
 the /etc/rsyslog.d/ directory that includes the following:
+
+You have two options for storing syslog information you can either use the exisiting
+Cacti Database or use a dedicated database for syslog as syslog databases especially
+for large networks can grow pretty quick it may be wise to create a dedicated database.
+To use a dedicated DB first create a database in mysql and assign a user you will then change
+```console
+$use_cacti_db = true; 
+to 
+$use_cacti_db = false;
+```
+
+You will also need to ensure the cacti user is granted select on the syslog database
+
+```shell
+GRANT SELECT  ON syslog.* TO  'cacti'@'localhost';
+```
+
 
 ### Cacti Configuration for RSYSLOG
 
@@ -93,6 +122,13 @@ $template cacti_syslog,"INSERT INTO syslog_incoming(facility_id, priority_id, pr
 
 *.* >localhost,my_database,my_user,my_password;cacti_syslog
 ```
+for centos/rhel systems you will all need to install the rsyslog-mysql package
+
+```
+yum install rsyslog-mysql
+systemctl resatrt rsyslog
+```
+
 
 If you are upgrading to version 2.5 from an earlier version, make sure that you
 update this template format and restart rsyslog.  You may loose some syslog

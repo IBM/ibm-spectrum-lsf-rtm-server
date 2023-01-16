@@ -38,7 +38,7 @@ git config --global user.email &quot;email@example.com&quot;
 <h2 id="creating-your-local-clone">Creating your local clone</h2>
 <ol>
 <li><p>Fork cacti on github.com using the Fork button that appears top right of the code area.</p>
-<p><img src="images/patch_creation_clone.png" alt="create fork" /></p></li>
+<p><img src="images/patch-creation-clone.png" alt="create fork" /></p></li>
 <li><p>Clone the source to your local machine, you can use one of the following two lines. The second allows you to clone into a directory of your own naming, whilst the first takes the repo's name.</p>
 <pre class="shell"><code>git clone https://github.com/&lt;myuser&gt;/cacti
 git clone https://github.com/&lt;myuser&gt;/cacti &lt;dirname&gt;
@@ -51,7 +51,7 @@ git clone https://github.com/&lt;myuser&gt;/cacti &lt;dirname&gt;
 git push --set-upstream origin Issue-1153
 </code></pre></li>
 <li><p>If you want to create a new branch on your forked repo on github, do so by clicking on the branch (normally Develop) on the GitHub code page, then type in the new name of a branch before hitting return. GitHub will then create and switch to that branch but your local repo will know nothing of this yet.</p>
-<p><img src="images/patch_creation_branch.png" alt="image" /></p></li>
+<p><img src="images/patch-creation-branch.png" alt="image" /></p></li>
 </ol>
 <p>To checkout the newly created branch, you need to pull down the latest GitHub information using <code>git fetch</code> before perform the checkout. It will as follows:</p>
 <pre class="shell"><code>git fetch
@@ -119,11 +119,11 @@ git checkout Issue-1153
 <p>If you are going to have many patch files, it is worth naming them using a convention that keeps them unique.</p>
 <h2 id="creating-a-pull-request-on-the-cacti-repo">Creating a pull request on the cacti repo</h2>
 <p>Once you have committed and published all the changes that you need to make for your issue/fix/enhancement, you will need to let the cacti group know that these changes are available. To do this, you can browse to your code and then click on pull request</p>
-<p><img src="images/patch_creation_pull_request_1.png" alt="cacti - create pull request 1" /></p>
+<p><img src="images/patch-creation-pull-request-1.png" alt="cacti - create pull request 1" /></p>
 <p>This will then switch you automatically over to the cacti repo, create a pull request and fill in details as much as possible. You will then have the opportunity to edit the title and enter a description. It would be wise to put as much detail as possible, and if you referring back to a previous issue, place a link to that too.</p>
-<p><img src="images/patch_creation_pull_request_2.png" alt="cacti - create pull request 2" /></p>
+<p><img src="images/patch-creation-pull-request-2.png" alt="cacti - create pull request 2" /></p>
 <p>After you have entered the details above, double check the changes that follow and make sure you have no conflicts again. It is normal to have conflicts here if you have no been updating your local repo with the changes from the upstream (cacti) repo. If not, everything will look OK.</p>
-<p><img src="images/patch_creation_pull_request_3.png" alt="cacti - create pull request 3" /></p>
+<p><img src="images/patch-creation-pull-request-3.png" alt="cacti - create pull request 3" /></p>
 <p>If you are positive that you have everything in order, click Create Pull Request and this will be submitted to the cacti repo. Once the developers there have reviewed your changes they will either suggest some alterations or they will successfully commit your code in.</p>
 <p>Once your code has been pulled in, you should see an option to safely delete the branch that you created at the bottom of the pull request. Clicking this will remove the repo from public view (though you can later revert this if you wish to).</p>
 <h2 id="alternative-to-setting-upstream-on-push">Alternative to setting upstream on push</h2>
@@ -134,6 +134,6 @@ git checkout Issue-1153
 <pre class="shell"><code>git push -u
 </code></pre>
 <hr />
-<p>Copyright (c) 2004-2020 The Cacti Group</p>
+<p><copy>Copyright (c) 2004-2022 The Cacti Group</copy></p>
 </body>
 </html>

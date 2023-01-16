@@ -27,11 +27,14 @@ include_once('./lib/poller.php');
 include_once('./lib/template.php');
 include_once('./lib/utility.php');
 
+ini_set('max_execution_time', '-1');
+
 $graph_actions = array(
 	1 => __('Delete'),
 	2 => __('Duplicate'),
 	3 => __('Change Settings'),
-	4 => __('Sync Graphs')
+	4 => __('Full Sync Graphs'),
+	5 => __('Quick Sync Graphs')
 );
 
 /* set default action */
@@ -93,10 +96,24 @@ function form_save() {
 		get_filter_request_var('graph_template_graph_id');
 		/* ==================================================== */
 
-		$save1['id']       = $graph_template_id;
-		$save1['hash']     = get_hash_graph_template($graph_template_id);
-		$save1['name']     = form_input_validate(get_nfilter_request_var('name'), 'name', '', false, 3);
-		$save1['multiple'] = isset_request_var('multiple') ? 'on':'';
+		$push_title = true;
+		if ($graph_template_id > 0) {
+			$prev_title = db_fetch_cell_prepared('SELECT title
+				FROM graph_templates_graph
+				WHERE graph_template_id = ?
+				AND local_graph_id = 0',
+				array($graph_template_id));
+
+			if ($prev_title == get_nfilter_request_var('title')) {
+				$push_title = false;
+			}
+		}
+
+		$save1['id']          = $graph_template_id;
+		$save1['hash']        = get_hash_graph_template($graph_template_id);
+		$save1['name']        = form_input_validate(get_nfilter_request_var('name'), 'name', '', false, 3);
+		$save1['multiple']    = isset_request_var('multiple') ? 'on':'';
+		$save1['test_source'] = isset_request_var('test_source') ? 'on':'';
 
 		$save2['id']                     = get_nfilter_request_var('graph_template_graph_id');
 		$save2['local_graph_template_graph_id'] = 0;
@@ -163,11 +180,6 @@ function form_save() {
 		$save2['left_axis_formatter']    = form_input_validate((isset_request_var('left_axis_formatter') ? get_nfilter_request_var('left_axis_formatter') : ''), 'left_axis_formatter', '', true, 3);
 
 		if (!is_error_message()) {
-			// Clear the Graph Template cache
-			if (empty($graph_template_id)) {
-				clear_cached_allowed_types();
-			}
-
 			$graph_template_id = sql_save($save1, 'graph_templates');
 
 			if ($graph_template_id) {
@@ -184,14 +196,10 @@ function form_save() {
 			if ($graph_template_graph_id) {
 				raise_message(1);
 
-				push_out_graph($graph_template_graph_id);
+				push_out_graph($graph_template_graph_id, $push_title);
 			} else {
 				raise_message(2);
 			}
-		}
-
-		if (!empty($graph_template_id)) {
-			resequence_graphs($graph_template_id);
 		}
 	}
 
@@ -274,8 +282,6 @@ function form_actions() {
 				db_execute('UPDATE graph_local
 					SET graph_template_id=0
 					WHERE ' . array_to_sql_or($selected_items, 'graph_template_id'));
-
-				clear_cached_allowed_types();
 			} elseif (get_request_var('drp_action') == '2') { // duplicate
 				for ($i=0;($i<cacti_count($selected_items));$i++) {
 					api_duplicate_graph(0, $selected_items[$i], get_nfilter_request_var('title_format'));
@@ -297,6 +303,32 @@ function form_actions() {
 			} elseif (get_request_var('drp_action') == '4') { // retemplate
 				for ($i=0;($i<cacti_count($selected_items));$i++) {
 					retemplate_graphs($selected_items[$i]);
+
+					$graph_template_name = db_fetch_cell_prepared('SELECT name
+						FROM graph_templates
+						WHERE id = ?',
+						array($selected_items[$i]));
+
+					if (isset($_SESSION['sess_gt_repairs']) && $_SESSION['sess_gt_repairs'] > 0) {
+						raise_message('gt_repair' . $selected_items[$i], __('Sync of Graph Template \'%s\' Resulted in %s Repairs!', $graph_template_name, $_SESSION['sess_gt_repairs']), MESSAGE_LEVEL_WARN);
+					} else {
+						raise_message('gt_repair' . $selected_items[$i], __('Sync of Graph Template \'%s\' Resulted in no Repairs.', $graph_template_name), MESSAGE_LEVEL_INFO);
+					}
+				}
+			} elseif (get_request_var('drp_action') == '5') { // resequence graphs with sequences off
+				for ($i=0;($i<cacti_count($selected_items));$i++) {
+					retemplate_graphs($selected_items[$i], 0, true);
+
+					$graph_template_name = db_fetch_cell_prepared('SELECT name
+						FROM graph_templates
+						WHERE id = ?',
+						array($selected_items[$i]));
+
+					if (isset($_SESSION['sess_gt_repairs']) && $_SESSION['sess_gt_repairs'] > 0) {
+						raise_message('gt_repair' . $selected_items[$i], __('Sync of Graph Template \'%s\' Resulted in %s Repairs!', $graph_template_name, $_SESSION['sess_gt_repairs']), MESSAGE_LEVEL_WARN);
+					} else {
+						raise_message('gt_repair' . $selected_items[$i], __('Sync of Graph Template \'%s\' Resulted in no Repairs.', $graph_template_name), MESSAGE_LEVEL_INFO);
+					}
 				}
 			}
 		}
@@ -373,7 +405,16 @@ function form_actions() {
 		} elseif (get_request_var('drp_action') == '4') { // retemplate
 			print "<tr>
 				<td class='textArea'>
-					<p>" . __('Click \'Continue\' to Synchronize your Graphs with the following Graph Template(s). This function is important if you have Graphs that exist with multiple versions of a Graph Template and wish to make them all common in appearance.') . "</p>
+					<p>" . __('Click \'Continue\' to perform a Full Synchronization between your Graphs and the chosen Graph Templates(s). If you simply have a situation where the Graph Items don\'t match the Graph Template, try the Quick Sync Graphs option first as it will take much less time.  This function is important if you have Graphs that exist with multiple versions of a Graph Template and wish to make them all common in appearance.') . "</p>
+					<div class='itemlist'><ul>$graph_list</ul></div>
+				</td>
+			</tr>\n";
+
+			$save_html = "<input type='button' class='ui-button ui-corner-all ui-widget' value='" . __esc('Cancel') . "' onClick='cactiReturnTo()'>&nbsp;<input type='submit' class='ui-button ui-corner-all ui-widget' value='" . __esc('Continue'). "' title='" . __esc('Synchronize Graphs to Graph Template(s)') . "'>";
+		} elseif (get_request_var('drp_action') == '5') { // retemplate only where sequences are off
+			print "<tr>
+				<td class='textArea'>
+					<p>" . __('Click \'Continue\' to perform a Quick Synchronization of your Graphs for the following Graph Template(s). Use this option if your Graphs have Graph Items that do not match your Graph Template.  If this option does not work, use the Full Sync Graphs option, which will take more time to complete.') . "</p>
 					<div class='itemlist'><ul>$graph_list</ul></div>
 				</td>
 			</tr>\n";
@@ -414,10 +455,10 @@ function item() {
 
 		$header_label = 'Graph Template Items [new]';
 	} else {
-		$template_item_list = db_fetch_assoc_prepared("SELECT gti.id, gti.text_format, gti.alpha,
+		$template_item_list = db_fetch_assoc_prepared("SELECT gti.id, gti.sequence, gti.text_format, gti.alpha,
 			gti.value, gti.hard_return, gti.graph_type_id, gti.consolidation_function_id, gti.textalign,
 			CONCAT(IFNULL(dt.name, ''), ' (', dtr.data_source_name, ')') AS data_source_name,
-			cdef.name AS cdef_name, colors.hex
+			cdef.name AS cdef_name, vdef.name as vdef_name, colors.hex, gtgp.name as gprint_name
 			FROM graph_templates_item AS gti
 			LEFT JOIN data_template_rrd AS dtr
 			ON gti.task_item_id=dtr.id
@@ -427,6 +468,8 @@ function item() {
 			ON dt.id=dtr.data_template_id
 			LEFT JOIN data_template_data AS dtd
 			ON dl.id=dtd.local_data_id
+			LEFT JOIN graph_templates_gprint as gtgp
+			ON gtgp.id=gti.gprint_id
 			LEFT JOIN cdef
 			ON cdef_id=cdef.id
 			LEFT JOIN vdef

@@ -40,6 +40,8 @@ function api_user_realm_auth($filename = '') {
 function api_plugin_hook($name) {
 	global $config, $plugin_hooks, $plugins_integrated;
 
+	static $hook_cache = array();
+
 	$args = func_get_args();
 	$ret = '';
 
@@ -47,27 +49,36 @@ function api_plugin_hook($name) {
 		return $args;
 	}
 
-	/* order the plugins by order */
-	$result = db_fetch_assoc_prepared('SELECT ph.name, ph.file, ph.function
-		FROM plugin_hooks AS ph
-		LEFT JOIN plugin_config AS pc
-		ON pc.directory = ph.name
-		WHERE ph.status = 1
-		AND hook = ?
-		ORDER BY pc.id ASC',
-		array($name),
-		true
-	);
+	if (!isset($hook_cache[$name])) {
+		/* order the plugins by order */
+		$result = db_fetch_assoc_prepared('SELECT ph.name, ph.file, ph.function
+			FROM plugin_hooks AS ph
+			LEFT JOIN plugin_config AS pc
+			ON pc.directory = ph.name
+			WHERE ph.status = 1
+			AND hook = ?
+			ORDER BY pc.id ASC',
+			array($name),
+			true
+		);
+
+		$hook_cache[$name] = $result;
+	} else {
+		$result = $hook_cache[$name];
+	}
 
 	if (!empty($result)) {
 		foreach ($result as $hdata) {
-			if (!in_array($hdata['name'], $plugins_integrated)) {
+			if (!in_array($hdata['name'], $plugins_integrated, true)) {
 				if (file_exists($config['base_path'] . '/plugins/' . $hdata['name'] . '/' . $hdata['file'])) {
 					include_once($config['base_path'] . '/plugins/' . $hdata['name'] . '/' . $hdata['file']);
 				}
+
 				$function = $hdata['function'];
 				if (function_exists($function)) {
 					api_plugin_run_plugin_hook($name, $hdata['name'], $function, $args);
+				} else {
+					cacti_log(sprintf('WARNING: Function does not exist %s with function %s' . PHP_EOL, $name, $hdata['function']), false, 'PLUGIN', POLLER_VERBOSITY_MEDIUM);
 				}
 			}
 		}
@@ -81,33 +92,63 @@ function api_plugin_hook($name) {
 function api_plugin_hook_function($name, $parm = NULL) {
 	global $config, $plugin_hooks, $plugins_integrated;
 
+	static $hook_cache = array();
+
 	$ret = $parm;
+
 	if (defined('IN_CACTI_INSTALL') || !db_table_exists('plugin_hooks')) {
 		return $ret;
 	}
 
-	/* order the plugins by order */
-	$result = db_fetch_assoc_prepared('SELECT ph.name, ph.file, ph.function
-		FROM plugin_hooks AS ph
-		LEFT JOIN plugin_config AS pc
-		ON pc.directory = ph.name
-		WHERE ph.status = 1
-		AND hook = ?
-		ORDER BY pc.id ASC',
-		array($name),
-		true
-	);
+	if (!isset($hook_cache[$name])) {
+		/* order the plugins by order */
+		$result = db_fetch_assoc_prepared('SELECT ph.name, ph.file, ph.function
+			FROM plugin_hooks AS ph
+			LEFT JOIN plugin_config AS pc
+			ON pc.directory = ph.name
+			WHERE ph.status = 1
+			AND hook = ?
+			ORDER BY pc.id ASC',
+			array($name),
+			true
+		);
+
+		$hook_cache[$name] = $result;
+	} else {
+		$result = $hook_cache[$name];
+	}
+
+	if (empty($ret)) {
+		$null_ret = true;
+	} else {
+		$null_ret = false;
+	}
 
 	if (!empty($result)) {
 		foreach ($result as $hdata) {
 			if (!in_array($hdata['name'], $plugins_integrated)) {
 				$p[] = $hdata['name'];
+
 				if (file_exists($config['base_path'] . '/plugins/' . $hdata['name'] . '/' . $hdata['file'])) {
 					include_once($config['base_path'] . '/plugins/' . $hdata['name'] . '/' . $hdata['file']);
 				}
+
 				$function = $hdata['function'];
+
 				if (function_exists($function)) {
+					if (is_array($ret)) {
+						$is_array = true;
+					} else {
+						$is_array = false;
+					}
+
 					$ret = api_plugin_run_plugin_hook_function($name, $hdata['name'], $function, $ret);
+
+					if (($is_array && !is_array($ret)) || ($ret == null && $null_ret === false)) {
+						if (cacti_sizeof($result) > 1) {
+							cacti_log(sprintf("WARNING: Plugin hook '%s' from Plugin '%s' must return the calling array or variable, and it is not doing so.  Please report this to the Plugin author.", $function, $hdata['name']), false, 'PLUGIN');
+						}
+					}
 				}
 			}
 		}
@@ -127,14 +168,12 @@ function api_plugin_run_plugin_hook($hook, $plugin, $function, $args) {
 
 		$required_capabilities = array(
 			// Poller related
-			'poller_top'               => array('remote_collect'), // Poller Top
-			'poller_bottom'            => array('remote_collect'), // Poller execution, api_plugin_hook
-			'update_host_status'       => array('remote_collect'), // Processing poller output, api_plugin_hook
-			'poller_output'            => array('remote_collect'), // Poller output activities
-			'poller_command_args'      => array('remote_collect'), // Command line arguments
-			'cacti_stats_update'       => array('remote_collect'), // Updating statistics
-			'poller_finishing'         => array('remote_collect'), // Poller post processing
-			'poller_exiting'           => array('remote_collect'), // Poller exception handling
+			'poller_top'               => array('remote_collect'),              // Poller Top, api_plugin_hook
+			'poller_bottom'            => array('remote_poller'),               // Poller execution, api_plugin_hook
+			'update_host_status'       => array('remote_collect'),              // Processing poller output, api_plugin_hook
+			'poller_output'            => array('remote_collect'),              // Poller output activities
+			'poller_finishing'         => array('remote_collect'),              // Poller post processing, api_plugin_hook
+			'poller_exiting'           => array('remote_collect'),              // Poller exception handling, api_plugin_hook
 
 			// GUI Related
 			'page_head'                => array('online_view', 'offline_view'), // Navigation, api_plugin_hook
@@ -150,19 +189,28 @@ function api_plugin_run_plugin_hook($hook, $plugin, $function, $args) {
 		if ($plugin_capabilities === false) {
 			$function($args);
 		} elseif (api_plugin_hook_is_remote_collect($hook, $plugin, $required_capabilities)) {
-			if (api_plugin_status_run($hook, $required_capabilities, $plugin_capabilities)) {
+			if (api_plugin_status_run($hook, $required_capabilities, $plugin_capabilities, $plugin)) {
 				$function($args);
 			}
 		} elseif (isset($required_capabilities[$hook])) {
-			if (api_plugin_status_run($hook, $required_capabilities, $plugin_capabilities)) {
+			if (api_plugin_status_run($hook, $required_capabilities, $plugin_capabilities, $plugin)) {
 				$function($args);
 			}
-		} else {
+		} elseif ($config['connection'] == 'online' ||
+			((api_plugin_has_capability($plugin, 'offline_mgmt') || api_plugin_has_capability($plugin, 'offline_view'))
+			&& $config['connection'] != 'online')) {
 			$function($args);
+		} else {
+			// Don't run as they are not required
 		}
 
 		// See if we need to restore the menu to original
-		if (($hook == 'config_arrays' || 'config_insert') && $config['connection'] == 'offline') {
+		$remote_hooks = array(
+			'config_arrays',
+			'config_insert',
+		);
+
+		if (in_array($hook, $remote_hooks) && ($config['connection'] == 'offline' || $config['connection'] == 'recovery')) {
 			if (!api_plugin_has_capability($plugin, 'offline_mgmt')) {
 				if ($orig_menu !== $menu) {
 					$menu = $orig_menu;
@@ -182,7 +230,8 @@ function api_plugin_run_plugin_hook_function($hook, $plugin, $function, $ret) {
 	if ($config['poller_id'] > 1) {
 		$required_capabilities = array(
 			// Poller related
-			'poller_output'            => array('remote_collect'), // Processing poller output, api_plugin_hook_function
+			'poller_output'            => array('remote_collect'),              // Processing poller output, api_plugin_hook_function
+			'cacti_stats_update'       => array('remote_collect'),              // Updating Cacti stats
 
 			// GUI Related
 			'top_header'               => array('online_view', 'offline_view'), // Top Tabs, api_plugin_hook_function
@@ -197,17 +246,17 @@ function api_plugin_run_plugin_hook_function($hook, $plugin, $function, $ret) {
 
 		$plugin_capabilities = api_plugin_remote_capabilities($plugin);
 
-		// we will run if capabilities are not set
 		if ($plugin_capabilities === false) {
+			// we will run if capabilities are not set
 			$ret = $function($ret);
-		// run if hooks is remote_collect and we support it
 		} elseif (api_plugin_hook_is_remote_collect($hook, $plugin, $required_capabilities)) {
-			if (api_plugin_status_run($hook, $required_capabilities, $plugin_capabilities)) {
+			// run if hook is remote_collect and we support it
+			if (api_plugin_status_run($hook, $required_capabilities, $plugin_capabilities, $plugin)) {
 				$ret = $function($ret);
 			}
-		// run if hooks is remote_collect and we support it
 		} elseif (isset($required_capabilities[$hook])) {
-			if (api_plugin_status_run($hook, $required_capabilities, $plugin_capabilities)) {
+			// run if hook is remote_collect and we support it
+			if (api_plugin_status_run($hook, $required_capabilities, $plugin_capabilities, $plugin)) {
 				$ret = $function($ret);
 			}
 		} else {
@@ -330,17 +379,33 @@ function api_plugin_has_capability($plugin, $capability) {
 	}
 }
 
-function api_plugin_status_run($hook, $required_capabilities, $plugin_capabilities) {
+function api_plugin_status_run($hook, $required_capabilities, $plugin_capabilities, $plugin = '') {
 	global $config;
 
 	$status = $config['connection'];
 
+	if ($plugin == '') {
+		cacti_log('WARNING: The function \'api_plugin_status_run\' API has changed.  Please add the $plugin attribute to the last position', false, 'PLUGIN');
+		$plugin = 'Unknown';
+	}
+
+	// Don't run if not a supported hook
 	if (!isset($required_capabilities[$hook])) {
-		return true;
+		cacti_log(sprintf('WARNING: Not running hook %s for plugin %s as its not a supported Remote Hook', $hook, $plugin), false, 'PLUGIN');
+
+		return false;
 	}
 
 	foreach($required_capabilities[$hook] as $capability) {
-		if ($status == 'online' && strpos($capability, 'online') === false) {
+		if ($capability == 'remote_collect') {
+			if (strpos($plugin_capabilities, "$capability:1") !== false) {
+				return true;
+			}
+		} elseif ($capability == 'remote_poller') {
+			if (strpos($plugin_capabilities, "$capability:1") !== false) {
+				return true;
+			}
+		} elseif ($status == 'online' && strpos($capability, 'online') === false) {
 			continue;
 		} elseif (($status == 'offline' || $status == 'recovery') && strpos($capability, 'offline') === false) {
 			continue;
@@ -449,15 +514,11 @@ function api_plugin_db_table_create($plugin, $table, $data) {
 
 		$sql .= ') ENGINE = ' . $data['type'];
 
-		if (isset($data['collate'])) {
-			$sql .= ' COLLATE = ' . $data['collate'];
-		}
-
 		if (isset($data['charset'])) {
 			$sql .= ' DEFAULT CHARSET = ' . $data['charset'];
 		}
 
-		if (isset($data['row_format']) && db_get_global_variable('innodb_file_format') == 'Barracuda') {
+		if (isset($data['row_format']) && strtolower(db_get_global_variable('innodb_file_format')) == 'barracuda') {
 			$sql .= ' ROW_FORMAT = ' . $data['row_format'];
 		}
 
@@ -470,8 +531,18 @@ function api_plugin_db_table_create($plugin, $table, $data) {
 				(plugin, `table`, `column`, `method`)
 				VALUES (?, ?, '', 'create')",
 				array($plugin, $table));
+
+			if (isset($data['collate'])) {
+				db_execute("ALTER TABLE `$table` COLLATE = " . $data['collate']);
+			}
 		}
 	}
+}
+
+function api_plugin_drop_table($table) {
+	db_execute("DROP TABLE IF EXISTS $table");
+
+	api_plugin_drop_remote_table($table);
 }
 
 function api_plugin_db_changes_remove($plugin) {
@@ -485,6 +556,8 @@ function api_plugin_db_changes_remove($plugin) {
 		foreach ($tables as $table) {
 			db_execute('DROP TABLE IF EXISTS `' . $table['table'] . '`;');
 		}
+
+		api_plugin_drop_remote_table($table['table']);
 
 		db_execute_prepared("DELETE FROM plugin_db_changes
 			WHERE plugin = ?
@@ -510,7 +583,7 @@ function api_plugin_db_changes_remove($plugin) {
 	}
 }
 
-function api_plugin_db_add_column ($plugin, $table, $column) {
+function api_plugin_db_add_column($plugin, $table, $column) {
 	global $config, $database_default;
 
 	// Example: api_plugin_db_add_column ('thold', 'plugin_config',
@@ -597,6 +670,7 @@ function api_plugin_install($plugin) {
 
 	if (!defined('IN_CACTI_INSTALL')) {
 		define('IN_CACTI_INSTALL', 1);
+		define('IN_PLUGIN_INSTALL', 1);
 	}
 
 	$dependencies = api_plugin_get_dependencies($plugin);
@@ -606,7 +680,7 @@ function api_plugin_install($plugin) {
 	if (!$proceed) {
 		$message .= '<br><br>' . __('Plugin cannot be installed.');
 
-		raise_message($message, MESSAGE_LEVEL_ERROR);
+		raise_message('dependency_check', $message, MESSAGE_LEVEL_ERROR);
 
 		header('Location: plugins.php?header=false');
 
@@ -668,6 +742,8 @@ function api_plugin_install($plugin) {
 				array($plugin));
 		}
 	}
+
+	api_plugin_replicate_config();
 }
 
 function api_plugin_uninstall_integrated() {
@@ -706,6 +782,8 @@ function api_plugin_uninstall($plugin, $tables = true) {
 			WHERE plugin = ?',
 			array($plugin));
 	}
+
+	api_plugin_replicate_config();
 }
 
 function api_plugin_check_config($plugin) {
@@ -742,14 +820,24 @@ function api_plugin_enable($plugin) {
 }
 
 function api_plugin_is_enabled($plugin) {
+	static $pstatus = array();;
+
+	if (isset($pstatus[$plugin])) {
+		return $pstatus[$plugin];
+	}
+
 	$status = db_fetch_cell_prepared('SELECT status
 		FROM plugin_config
 		WHERE directory = ?',
 		array($plugin), false);
 
 	if ($status == '1') {
+		$pstatus[$plugin] = true;
+
 		return true;
 	}
+
+	$pstatus[$plugin] = false;
 
 	return false;
 }
@@ -761,6 +849,62 @@ function api_plugin_disable($plugin) {
 		SET status = 4
 		WHERE directory = ?',
 		array($plugin));
+
+	api_plugin_replicate_config();
+}
+
+function api_plugin_replicate_config() {
+	global $config;
+
+	include_once($config['base_path'] . '/lib/poller.php');
+
+	$gone_time = read_config_option('poller_interval') * 2;
+
+	$pollers = array_rekey(
+		db_fetch_assoc('SELECT
+			id,
+			UNIX_TIMESTAMP() - UNIX_TIMESTAMP(last_status) AS last_polled
+			FROM poller
+			WHERE id > 1
+			AND disabled=""'),
+		'id', 'last_polled'
+	);
+
+	if (cacti_sizeof($pollers)) {
+		foreach($pollers as $poller_id => $last_polled) {
+			if ($last_polled < $gone_time) {
+				replicate_out($poller_id, 'plugins');
+			}
+		}
+	}
+}
+
+function api_plugin_drop_remote_table($table) {
+	global $config;
+
+	include_once($config['base_path'] . '/lib/poller.php');
+
+	$gone_time = read_config_option('poller_interval') * 2;
+
+	$pollers = array_rekey(
+		db_fetch_assoc('SELECT
+			id,
+			UNIX_TIMESTAMP() - UNIX_TIMESTAMP(last_status) AS last_polled
+			FROM poller
+			WHERE id > 1
+			AND disabled=""'),
+		'id', 'last_polled'
+	);
+
+	if (cacti_sizeof($pollers)) {
+		foreach($pollers as $poller_id => $last_polled) {
+			$rcnn_id = poller_connect_to_remote($poller_id);
+
+			if ($rcnn_id !== false) {
+				db_execute("DROP TABLE IF EXISTS $table", false, $rcnn_id);
+			}
+		}
+	}
 }
 
 function api_plugin_disable_all($plugin) {
@@ -770,6 +914,8 @@ function api_plugin_disable_all($plugin) {
 		SET status = 4
 		WHERE directory = ?',
 		array($plugin));
+
+	api_plugin_replicate_config();
 }
 
 function api_plugin_moveup($plugin) {
@@ -791,6 +937,8 @@ function api_plugin_moveup($plugin) {
 		db_execute_prepared('UPDATE plugin_config SET id = ? WHERE id = ?', array($prior_id, $id));
 		db_execute_prepared('UPDATE plugin_config SET id = ? WHERE id = ?', array($id, $temp_id));
 	}
+
+	api_plugin_replicate_config();
 }
 
 function api_plugin_movedown($plugin) {
@@ -802,6 +950,8 @@ function api_plugin_movedown($plugin) {
 	db_execute_prepared('UPDATE plugin_config SET id = ? WHERE id = ?', array($temp_id, $next_id));
 	db_execute_prepared('UPDATE plugin_config SET id = ? WHERE id = ?', array($next_id, $id));
 	db_execute_prepared('UPDATE plugin_config SET id = ? WHERE id = ?', array($id, $temp_id));
+
+	api_plugin_replicate_config();
 }
 
 function api_plugin_register_hook($plugin, $hook, $function, $file, $enable = false) {
@@ -852,12 +1002,16 @@ function api_plugin_register_hook($plugin, $hook, $function, $file, $enable = fa
 			AND `hook` = ?",
 			array($function, $status, $file, $plugin, $hook));
 	}
+
+	api_plugin_replicate_config();
 }
 
 function api_plugin_remove_hooks($plugin) {
 	db_execute_prepared('DELETE FROM plugin_hooks
 		WHERE name = ?',
 		array($plugin));
+
+	api_plugin_replicate_config();
 }
 
 function api_plugin_enable_hooks($plugin) {
@@ -865,16 +1019,20 @@ function api_plugin_enable_hooks($plugin) {
 		SET status = 1
 		WHERE name = ?',
 		array($plugin));
+
+	api_plugin_replicate_config();
 }
 
 function api_plugin_disable_hooks($plugin) {
 	db_execute_prepared("UPDATE plugin_hooks
-		SET status = 0
+		SET status = 4
 		WHERE name = ?
 		AND hook != 'config_settings'
 		AND hook != 'config_arrays'
 		AND hook != 'config_form'",
 		array($plugin));
+
+	api_plugin_replicate_config();
 }
 
 function api_plugin_disable_hooks_all($plugin) {
@@ -882,6 +1040,8 @@ function api_plugin_disable_hooks_all($plugin) {
 		SET status = 0
 		WHERE name = ?",
 		array($plugin));
+
+	api_plugin_replicate_config();
 }
 
 function api_plugin_register_realm($plugin, $file, $display, $admin = true) {
@@ -905,7 +1065,7 @@ function api_plugin_register_realm($plugin, $file, $display, $admin = true) {
 		$realm_id = $realm_ids[0]['id'];
 	} elseif (cacti_sizeof($realm_ids) > 1) {
 		$realm_id = $realm_ids[0]['id'];
-		cacti_log('WARNING: Registering Realm for Plugin ' . $plugin . ' and Filenames ' . $file . ' is ambiguous.  Using first matching Realm.  Contact the plugin owner to resolve this issue.');
+		cacti_log('WARNING: Registering Realm for Plugin ' . $plugin . ' and Filenames ' . $file . ' is ambiguous.  Using first matching Realm.  Contact the plugin owner to resolve this issue.', false, 'PLUGIN');
 
 		unset($realm_ids[0]);
 
@@ -983,6 +1143,8 @@ function api_plugin_register_realm($plugin, $file, $display, $admin = true) {
 			WHERE id = ?',
 			array($display, $file, $realm_id));
 	}
+
+	api_plugin_replicate_config();
 }
 
 function api_plugin_remove_realms($plugin) {
@@ -1005,6 +1167,8 @@ function api_plugin_remove_realms($plugin) {
 	db_execute_prepared('DELETE FROM plugin_realms
 		WHERE plugin = ?',
 		array($plugin));
+
+	api_plugin_replicate_config();
 }
 
 function api_plugin_load_realms() {

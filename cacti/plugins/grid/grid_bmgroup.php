@@ -45,7 +45,7 @@ switch (get_request_var('action')) {
 		break;
 }
 
-function grid_view_get_hgroup_records(&$sql_where, $apply_limits = true, $rows, &$sql_params) {
+function grid_view_get_hgroup_records(&$sql_where, $apply_limits = true, $rows = 30, &$sql_params = array()) {
 	/* clusterid sql where */
 	if (get_request_var('clusterid') != '0') {
 		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . 'gc.clusterid=?';

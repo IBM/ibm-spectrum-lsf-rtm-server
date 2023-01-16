@@ -51,7 +51,7 @@ use phpsnmp\SNMP;
 
 function cacti_snmp_session($hostname, $community, $version, $auth_user = '', $auth_pass = '',
 	$auth_proto = '', $priv_pass = '', $priv_proto = '', $context = '', $engineid = '',
-	$port = 161, $timeout_ms = 500, $retries = 0, $max_oids = 10) {
+	$port = 161, $timeout_ms = 500, $retries = 0, $max_oids = 10, $bulk_walk_size = 10) {
 
 	switch ($version) {
 		case '1':
@@ -68,7 +68,7 @@ function cacti_snmp_session($hostname, $community, $version, $auth_user = '', $a
 	$timeout_us = (int) ($timeout_ms * 1000);
 
 	try {
-		$session = new SNMP($version, $hostname . ':' . $port, ($version == 3 ? $auth_user : $community), $timeout_us, $retries);
+		$session = @new SNMP($version, $hostname . ':' . $port, ($version == 3 ? $auth_user : $community), $timeout_us, $retries);
 	} catch (Exception $e) {
 		return false;
 	}
@@ -80,6 +80,7 @@ function cacti_snmp_session($hostname, $community, $version, $auth_user = '', $a
 
 	$session->quick_print = false;
 	$session->max_oids = $max_oids;
+	$session->bulk_walk_size = $bulk_walk_size;
 
 	if (read_config_option('oid_increasing_check_disable') == 'on') {
 		$session->oid_increasing_check = false;
@@ -112,7 +113,7 @@ function cacti_snmp_session($hostname, $community, $version, $auth_user = '', $a
 
 function cacti_snmp_get($hostname, $community, $oid, $version, $auth_user = '', $auth_pass = '',
 	$auth_proto = '', $priv_pass = '', $priv_proto = '', $context = '',
-	$port = 161, $timeout_ms = 500, $retries = 0, $environ = SNMP_POLLER,
+	$port = 161, $timeout_ms = 500, $retries = 0, $environ = 'SNMP',
 	$engineid = '', $value_output_format = SNMP_STRING_OUTPUT_GUESS) {
 
 	global $config, $snmp_error;
@@ -134,29 +135,34 @@ function cacti_snmp_get($hostname, $community, $oid, $version, $auth_user = '', 
 		}
 
 		$timeout_us = (int) ($timeout_ms * 1000);
+		$snmp_value = 'U';
 
-		if ($version == '1') {
-			$snmp_value = @snmpget($hostname . ':' . $port, $community, $oid, $timeout_us, $retries);
-		} elseif ($version == '2') {
-			$snmp_value = @snmp2_get($hostname . ':' . $port, $community, $oid, $timeout_us, $retries);
-		} else {
-			if ($priv_proto == '[None]' || $priv_pass == '') {
-				if ($auth_pass == '' || $auth_proto == '[None]') {
-					$sec_level   = 'noAuthNoPriv';
+		try {
+			if ($version == '1') {
+				$snmp_value = @snmpget($hostname . ':' . $port, $community, $oid, $timeout_us, $retries);
+			} elseif ($version == '2') {
+				$snmp_value = @snmp2_get($hostname . ':' . $port, $community, $oid, $timeout_us, $retries);
+			} else {
+				if ($priv_proto == '[None]' || $priv_pass == '') {
+					if ($auth_pass == '' || $auth_proto == '[None]') {
+						$sec_level   = 'noAuthNoPriv';
+					} else {
+						$sec_level   = 'authNoPriv';
+					}
+
+					$priv_proto = '';
 				} else {
-					$sec_level   = 'authNoPriv';
+					$sec_level = 'authPriv';
 				}
 
-				$priv_proto = '';
-			} else {
-				$sec_level = 'authPriv';
+				$snmp_value = @snmp3_get($hostname . ':' . $port, $auth_user, $sec_level, $auth_proto, $auth_pass, $priv_proto, $priv_pass, $oid, $timeout_us, $retries);
 			}
-
-			$snmp_value = @snmp3_get($hostname . ':' . $port, $auth_user, $sec_level, $auth_proto, $auth_pass, $priv_proto, $priv_pass, $oid, $timeout_us, $retries);
+		} catch (Exception $ex) {
+			$snmp_error = $ex->getMessage();
 		}
 
 		if ($snmp_value === false) {
-			cacti_log("WARNING: SNMP Error:'$snmp_error', Device:'$hostname', OID:'$oid'", false);
+			cacti_log("WARNING: SNMP Error:'$snmp_error', Device:'$hostname', OID:'$oid'", false, $environ);
 			$snmp_value = 'U';
 		} else {
 			$snmp_value = format_snmp_string($snmp_value, false, $value_output_format);
@@ -298,7 +304,7 @@ function cacti_snmp_get_raw($hostname, $community, $oid, $version, $auth_user = 
 
 function cacti_snmp_getnext($hostname, $community, $oid, $version, $auth_user = '', $auth_pass = '',
 	$auth_proto = '', $priv_pass = '', $priv_proto = '', $context = '',
-	$port = 161, $timeout_ms = 500, $retries = 0, $environ = SNMP_POLLER,
+	$port = 161, $timeout_ms = 500, $retries = 0, $environ = 'SNMP',
 	$engineid = '', $value_output_format = SNMP_STRING_OUTPUT_GUESS) {
 
 	global $config, $snmp_error;
@@ -434,16 +440,20 @@ function cacti_snmp_session_walk($session, $oid, $dummy = false, $max_repetition
 
 	$session->value_output_format = $value_output_format;
 
-	if ($non_repeaters === NULL)
+	if ($non_repeaters === NULL) {
 		$non_repeaters = 0;
-	if ($max_repetitions === NULL)
-		$max_repetitions = $session->max_oids;
+	}
 
-	if ($max_repetitions <= 0)
+	if ($max_repetitions === NULL) {
+		$max_repetitions = $session->bulk_walk_size;
+	}
+
+	if ($max_repetitions <= 0) {
 		$max_repetitions = 10;
+	}
 
 	try {
-		$out = @$session->walk($oid, false, $max_repetitions, $non_repeaters);
+		$out = @$session->walk(trim($oid), false, $max_repetitions, $non_repeaters);
 	} catch (Exception $e) {
 		$out = false;
 	}
@@ -480,7 +490,7 @@ function cacti_snmp_session_get($session, $oid, $strip_alpha = false) {
 	}
 
 	try {
-		$out = @$session->get($oid);
+		$out = @$session->get(trim($oid));
 	} catch (Exception $e) {
 		$out = false;
 	}
@@ -515,7 +525,7 @@ function cacti_snmp_session_getnext($session, $oid) {
 	}
 
 	try {
-		$out = @$session->getnext($oid);
+		$out = @$session->getnext(trim($oid));
 	} catch (Exception $e) {
 		$out = false;
 	}
@@ -543,7 +553,7 @@ function cacti_snmp_session_getnext($session, $oid) {
 
 function cacti_snmp_walk($hostname, $community, $oid, $version, $auth_user = '', $auth_pass = '',
 	$auth_proto = '', $priv_pass = '', $priv_proto = '', $context = '',
-	$port = 161, $timeout_ms = 500, $retries = 0, $max_oids = 10, $environ = SNMP_POLLER,
+	$port = 161, $timeout_ms = 500, $retries = 0, $bulk_walk_size = 10, $environ = 'SNMP',
 	$engineid = '', $value_output_format = SNMP_STRING_OUTPUT_GUESS) {
 
 	global $config, $banned_snmp_strings, $snmp_error;
@@ -554,7 +564,7 @@ function cacti_snmp_walk($hostname, $community, $oid, $version, $auth_user = '',
 	$snmp_array        = array();
 	$temp_array        = array();
 
-	if (!cacti_snmp_options_sanitize($version, $community, $port, $timeout_ms, $retries, $max_oids)) {
+	if (!cacti_snmp_options_sanitize($version, $community, $port, $timeout_ms, $retries, $bulk_walk_size)) {
 		return array();
 	}
 
@@ -633,15 +643,13 @@ function cacti_snmp_walk($hostname, $community, $oid, $version, $auth_user = '',
 			$oidCheck = '';
 		}
 
-		$max_oids = read_config_option('snmp_bulk_walk_size');
-
-		if (file_exists($path_snmpbulkwalk) && ($version > 1) && ($max_oids > 1)) {
+		if (file_exists($path_snmpbulkwalk) && ($version > 1) && ($bulk_walk_size > 1)) {
 			$temp_array = exec_into_array(cacti_escapeshellcmd($path_snmpbulkwalk) .
 				' -O QnU'  . ($value_output_format == SNMP_STRING_OUTPUT_HEX ? 'x ':' ') . $snmp_auth .
 				' -v '     . $version .
 				' -t '     . $timeout_s .
 				' -r '     . $retries .
-				' -Cr'     . $max_oids .
+				' -Cr'     . $bulk_walk_size .
 				' '        . $oidCheck . ' ' .
 				cacti_escapeshellarg($hostname) . ':' . $port . ' ' .
 				cacti_escapeshellarg($oid));
@@ -658,6 +666,10 @@ function cacti_snmp_walk($hostname, $community, $oid, $version, $auth_user = '',
 
 		if (strpos(implode(' ', $temp_array), 'Timeout') !== false) {
 			cacti_log("WARNING: SNMP Error:'Timeout', Device:'$hostname', OID:'$oid'", false, 'SNMP', POLLER_VERBOSITY_HIGH);
+		}
+
+		if (strpos(implode(' ', $temp_array), '(tooBig)') !== false) {
+			cacti_log("WARNING: SNMP Error:'Error in packet.  Response message would have been too large.', Device:'$hostname', OID:'$oid'", false, 'SNMP', POLLER_VERBOSITY_HIGH);
 		}
 
 		/* check for bad entries */
@@ -710,7 +722,7 @@ function format_snmp_string($string, $snmp_oid_included, $value_output_format = 
 		$string = trim($string);
 	}
 
-	/* remove quotes and extranious data */
+	/* remove quotes and extraneous data */
 	$string = trim($string, " \n\r\v\"'");
 
 	/* return the easiest value */
@@ -890,7 +902,7 @@ function snmp_escape_string($string) {
 	}
 
 	if (substr_count($string, SNMP_ESCAPE_CHARACTER)) {
-		$string = substr_replace(SNMP_ESCAPE_CHARACTER, "\\" . SNMP_ESCAPE_CHARACTER, $string);
+		$string = str_replace(SNMP_ESCAPE_CHARACTER, "\\" . SNMP_ESCAPE_CHARACTER, $string);
 	}
 
 	return SNMP_ESCAPE_CHARACTER . $string . SNMP_ESCAPE_CHARACTER;
@@ -905,17 +917,13 @@ function snmp_get_method($type = 'walk', $version = 1, $context = '', $engineid 
 		return SNMP_METHOD_BINARY;
 	} elseif ($value_output_format == SNMP_STRING_OUTPUT_HEX) {
 		return SNMP_METHOD_BINARY;
-	} elseif ($version == 3 && $context != '') {
-		return SNMP_METHOD_BINARY;
-	} elseif ($version == 3 && $engineid != '') {
+	} elseif ($version == 3) {
 		return SNMP_METHOD_BINARY;
 	} elseif ($type == 'walk' && file_exists(read_config_option('path_snmpbulkwalk'))) {
 		return SNMP_METHOD_BINARY;
 	} elseif (function_exists('snmpget') && $version == 1) {
 		return SNMP_METHOD_PHP;
 	} elseif (function_exists('snmp2_get') && $version == 2) {
-		return SNMP_METHOD_PHP;
-	} elseif (function_exists('snmp3_get') && $version == 3) {
 		return SNMP_METHOD_PHP;
 	} else {
 		return SNMP_METHOD_BINARY;
@@ -924,16 +932,21 @@ function snmp_get_method($type = 'walk', $version = 1, $context = '', $engineid 
 
 function cacti_snmp_options_sanitize($version, $community, &$port, &$timeout, &$retries, &$max_oids) {
 	/* determine default retries */
-	if (($retries == 0) || (!is_numeric($retries))) {
+	if ($retries == 0 || !is_numeric($retries)) {
 		$retries = read_config_option('snmp_retries');
-		if ($retries == '') $retries = 3;
+
+		if ($retries == '') {
+			$retries = 3;
+		}
 	}
 
 	/* determine default max_oids */
-	if (($max_oids == 0) || (!is_numeric($max_oids))) {
+	if ($max_oids == 0 || !is_numeric($max_oids)) {
 		$max_oids = read_config_option('max_get_size');
 
-		if ($max_oids == '') $max_oids = 10;
+		if ($max_oids == '') {
+			$max_oids = 10;
+		}
 	}
 
 	/* determine default port */

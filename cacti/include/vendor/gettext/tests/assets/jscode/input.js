@@ -1,4 +1,3 @@
-// $Id$
 $(document).ready(function () {
 	var value = i18n.__('Value with simple quotes');
 	var value2 = __("Value with double quotes");

@@ -30,7 +30,7 @@ $title = __('IBM Spectrum LSF RTM - Batch Project Details', 'grid');
 
 grid_view_projects();
 
-function grid_view_get_project_records($projectName, &$sql_where, $apply_limits = true, $rows = '30', &$sql_params) {
+function grid_view_get_project_records($projectName, &$sql_where, $apply_limits = true, $rows = '30', &$sql_params = array()) {
 	global $timespan, $grid_efficiency_sql_ranges;
 
 	$sql_group_by = '';

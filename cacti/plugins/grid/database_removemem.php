@@ -22,7 +22,6 @@
 include(dirname(__FILE__) . "/../../include/cli_check.php");
 
 /* make the database more demo friendly */
-print db_execute("ALTER TABLE `grid_cont_users` ENGINE = InnoDB");
 print db_execute("ALTER TABLE `grid_hostgroups` ENGINE = InnoDB");
 print db_execute("ALTER TABLE `grid_hostresources` ENGINE = InnoDB");
 print db_execute("ALTER TABLE `grid_hosts` ENGINE = InnoDB");
@@ -38,7 +37,6 @@ print db_execute("ALTER TABLE `grid_queues_hosts` ENGINE = InnoDB");
 print db_execute("ALTER TABLE `grid_queues_users` ENGINE = InnoDB");
 print db_execute("ALTER TABLE `grid_users_or_groups` ENGINE = InnoDB");
 print db_execute("ALTER TABLE `grid_hosts_resources` ENGINE = InnoDB");
-print db_execute("ALTER TABLE `grid_jobs_groups` ENGINE = InnoDB");
 print db_execute("ALTER TABLE `grid_queues_shares` ENGINE = InnoDB");
 print db_execute("ALTER TABLE `grid_resources` ENGINE = InnoDB");
 print db_execute("ALTER TABLE `grid_summary` ENGINE = InnoDB");

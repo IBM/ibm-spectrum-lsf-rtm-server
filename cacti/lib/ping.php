@@ -22,6 +22,7 @@ class Net_Ping
 {
 	var $socket;
 	var $host;
+	var $port;
 	var $ping_status;
 	var $ping_response;
 	var $snmp_status;
@@ -69,7 +70,7 @@ class Net_Ping
 		$this->request_len = strlen($this->request);
 	}
 
-	function ping_error_handler($errno, $errmsg, $filename, $linenum, $vars) {
+	function ping_error_handler($errno, $errmsg, $filename, $linenum, $vars = []) {
 		return true;
 	}
 
@@ -162,7 +163,11 @@ class Net_Ping
 			} elseif (substr_count(strtolower(PHP_OS), 'mac')) {
 				$result = shell_exec('ping -t ' . ceil($this->timeout/1000) . ' -c ' . $this->retries . ' ' . $this->host['hostname']);
 			} elseif (substr_count(strtolower(PHP_OS), 'freebsd')) {
-				$result = shell_exec('ping -t ' . ceil($this->timeout/1000) . ' -c ' . $this->retries . ' ' . $this->host['hostname']);
+				if (strpos($host_ip, ':') !== false) {
+					$result = shell_exec('ping6 -x ' . $this->timeout . ' -c ' . $this->retries . ' ' . $this->host['hostname']);
+				} else {
+					$result = shell_exec('ping -W ' . $this->timeout . ' -c ' . $this->retries . ' ' . $this->host['hostname']);
+				}
 			} elseif (substr_count(strtolower(PHP_OS), 'darwin')) {
 				$result = shell_exec('ping -t ' . ceil($this->timeout/1000) . ' -c ' . $this->retries . ' ' . $this->host['hostname']);
 			} elseif (substr_count(strtolower(PHP_OS), 'bsd')) {
@@ -176,7 +181,7 @@ class Net_Ping
 				 * ping: cap_set_proc: Permission denied
 				 * as it now tries to open an ICMP socket and fails
 				 * $result will be empty, then. */
-				if (strpos($this->host['hostname'], ':') !== false) {
+				if (strpos($host_ip, ':') !== false) {
 					$result = shell_exec('ping6 -W ' . ceil($this->timeout/1000) . ' -c ' . $this->retries . ' -p ' . $pattern . ' ' . $this->host['hostname']);
 				} else {
 					$result = shell_exec('ping -W ' . ceil($this->timeout/1000) . ' -c ' . $this->retries . ' -p ' . $pattern . ' ' . $this->host['hostname'] . ' 2>&1');
@@ -302,7 +307,7 @@ class Net_Ping
 
 		/* check result for uptime */
 		if ($output !== false && $output != 'U' && strlen($output)) {
-			/* calculte total time */
+			/* calculate total time */
 			$this->snmp_status   = $this->time*1000;
 			$this->snmp_response = 'Device responded to SNMP';
 
@@ -408,15 +413,15 @@ class Net_Ping
 					switch($num_changed_sockets) {
 					case 2: /* response received, so host is available */
 					case 1:
-						/* get the end time */
-						$this->time = $this->get_time($this->precision);
-
 						/* get packet response */
 						//$code = socket_recv($this->socket, $this->reply, 256, 0);
 						$code = socket_recv($this->socket, $this->reply, 256, 0);
+
+						/* get the end time after the packet was received */
+						$this->time = $this->get_time($this->precision);
+
 						$errno = socket_last_error($this->socket);
 						socket_clear_error($this->socket);
-
 						if (($code == -1 || empty($code)) &&
 							($errno == EHOSTUNREACH || $errno == ECONNRESET || $errno == ECONNREFUSED)) {
 
@@ -483,7 +488,7 @@ class Net_Ping
 				}
 			}
 
-			/* initilize the socket */
+			/* initialize the socket */
 			if (strpos($host_ip, ':') !== false) {
 				if (defined('AF_INET6')) {
 					if (version_compare(PHP_VERSION, '5.5.4', '<')) {
@@ -522,10 +527,10 @@ class Net_Ping
 					$this->ping_response = __('TCP ping: socket_connect(), reason: %s', socket_strerror($errno));
 					$this->ping_status   = 'down';
 
+					socket_clear_error($this->socket);
+
 					$this->close_socket();
 					$this->restore_cacti_error_handler();
-
-					socket_clear_error($this->socket);
 
 					return false;
 				}

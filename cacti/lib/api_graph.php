@@ -19,6 +19,9 @@
 */
 
 function api_delete_graphs(&$local_graph_ids, $delete_type) {
+	/* check for a bad local_graph_id = 0, and remove graphs */
+	api_graph_remove_bad_graphs($local_graph_ids);
+
 	if (!cacti_sizeof($local_graph_ids)) {
 		return;
 	}
@@ -91,10 +94,18 @@ function api_delete_graphs(&$local_graph_ids, $delete_type) {
 
 		break;
 	}
+
+	/**
+	 * Save the last time a graph was created/updated
+	 * for Caching.
+	 */
+	set_config_option('time_last_change_graph', time());
 }
 
 function api_graph_remove($local_graph_id) {
 	if (empty($local_graph_id)) {
+		$local_graph_ids = array($local_graph_id);
+		api_graph_remove_bad_graphs($local_graph_ids);
 		return;
 	}
 
@@ -107,6 +118,38 @@ function api_graph_remove($local_graph_id) {
 	db_execute_prepared('DELETE FROM graph_tree_items WHERE local_graph_id = ?', array($local_graph_id));
 	db_execute_prepared('DELETE FROM reports_items WHERE local_graph_id = ?', array($local_graph_id));
 	db_execute_prepared('DELETE FROM graph_local WHERE id = ?', array($local_graph_id));
+
+	/**
+	 * Save the last time a graph was created/updated
+	 * for Caching.
+	 */
+	set_config_option('time_last_change_graph', time());
+}
+
+function api_graph_remove_bad_graphs(&$local_graph_ids = array()) {
+	if (cacti_sizeof($local_graph_ids)) {
+		$bad_graph = array_search(0, $local_graph_ids);
+		if ($bad_graph !== false) {
+			unset($local_graph_ids[$bad_graph]);
+
+			db_execute('DELETE FROM graph_local
+				WHERE id = 0');
+
+			db_execute('DELETE FROM graph_templates_graph
+				WHERE local_graph_id = 0
+				AND graph_template_id = 0');
+
+			db_execute('DELETE FROM graph_templates_item
+				WHERE hash = ""
+				AND local_graph_id = 0');
+		}
+	}
+
+	/**
+	 * Save the last time a graph was created/updated
+	 * for Caching.
+	 */
+	set_config_option('time_last_change_graph', time());
 }
 
 function api_graph_remove_aggregate_items($local_graph_ids) {
@@ -132,6 +175,9 @@ function api_graph_remove_aggregate_items($local_graph_ids) {
 }
 
 function api_graph_remove_multi($local_graph_ids) {
+	/* check for a bad local_graph_id = 0, and remove graphs */
+	api_graph_remove_bad_graphs($local_graph_ids);
+
 	if (!cacti_sizeof($local_graph_ids)) {
 		return;
 	}
@@ -176,6 +222,12 @@ function api_graph_remove_multi($local_graph_ids) {
 			db_execute("DELETE FROM reports_items WHERE local_graph_id IN ($ids_to_delete)");
 			db_execute("DELETE FROM graph_local WHERE id IN ($ids_to_delete)");
 		}
+
+		/**
+		 * Save the last time a graph was created/updated
+		 * for Caching.
+		 */
+		set_config_option('time_last_change_graph', time());
 	}
 }
 
@@ -443,7 +495,7 @@ function api_duplicate_graph($_local_graph_id, $_graph_template_id, $graph_title
 				unset($save);
 
 				$save['id']                = 0;
-				$save['hash']              = get_hash_data_query('', 'data_query_graph');
+				$save['hash']              = get_hash_data_query(0, 'data_query_graph');
 				$save['snmp_query_id']     = $dqg['snmp_query_id'];
 				$save['name']              = $name;
 				$save['graph_template_id'] = $graph_template_id;
@@ -518,6 +570,12 @@ function api_duplicate_graph($_local_graph_id, $_graph_template_id, $graph_title
 			}
 		}
 	}
+
+	/**
+	 * Save the last time a graph was created/updated
+	 * for Caching.
+	 */
+	set_config_option('time_last_change_graph', time());
 }
 
 function api_graph_change_device($local_graph_id, $host_id) {

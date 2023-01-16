@@ -105,9 +105,17 @@ function form_save() {
 		$save2['t_active']      = form_input_validate((isset_request_var('t_active') ? get_nfilter_request_var('t_active') : ''), 't_active', '', true, 3);
 		$save2['active']        = form_input_validate((isset_request_var('active') ? get_nfilter_request_var('active') : ''), 'active', '', true, 3);
 
-		$rrd_step               = db_fetch_cell_prepared('SELECT step FROM data_source_profiles WHERE id = ?', array(get_request_var('data_source_profile_id')));
-		$rrd_heartbeat          = db_fetch_cell_prepared('SELECT heartbeat FROM data_source_profiles WHERE id = ?', array(get_request_var('data_source_profile_id')));
-		$save2['rrd_step']      = $rrd_step;
+		$rrd_step = db_fetch_cell_prepared('SELECT step
+			FROM data_source_profiles
+			WHERE id = ?',
+			array(get_request_var('data_source_profile_id')));
+
+		$rrd_heartbeat = db_fetch_cell_prepared('SELECT heartbeat
+			FROM data_source_profiles
+			WHERE id = ?',
+			array(get_request_var('data_source_profile_id')));
+
+		$save2['rrd_step'] = $rrd_step;
 
 		$save2['t_data_source_profile_id'] = form_input_validate((isset_request_var('t_data_source_profile_id') ? get_nfilter_request_var('t_data_source_profile_id') : ''), 't_data_source_profile_id', '', true, 3);
 		$save2['data_source_profile_id']   = form_input_validate(get_request_var('data_source_profile_id'), 'data_source_profile_id', '^[0-9]+$', (isset_request_var('data_source_profile_id') ? true : false), 3);
@@ -205,7 +213,13 @@ function form_save() {
 			db_execute_prepared('UPDATE data_template_data
 				SET data_input_id = ?
 				WHERE data_template_id = ?',
-				array(get_request_var('data_input_id'), get_request_var('data_template_id')));
+				array(get_request_var('data_input_id'), $data_template_id));
+
+			db_execute_prepared('UPDATE data_template_rrd
+				SET rrd_heartbeat = ?
+				WHERE data_template_id = ?
+				AND local_data_id = 0',
+				array($rrd_heartbeat, $data_template_id));
 		}
 
 		if (!is_error_message()) {
@@ -216,6 +230,30 @@ function form_save() {
 				raise_message(1);
 			} else {
 				raise_message(2);
+			}
+		}
+
+		if (!is_error_message()) {
+			/* Lets make sure we don't have any fields not set */
+			$data_template_fields = db_fetch_assoc_prepared('SELECT
+					dt.id, dt.name, dtd.name, di.hash, di.name, di.type_id,
+					dtr.id dtr_id, dtr.data_source_name, dif.id dif_id, dif.name, dif.data_name,
+					dif.input_output, dif.update_rra
+				FROM data_template dt
+				INNER JOIN data_template_data dtd
+				ON dt.id = dtd.data_template_id
+				INNER JOIN data_input di
+				ON dtd.data_input_id = di.id
+				INNER JOIN data_template_rrd dtr
+				ON dt.id = dtr.data_template_id
+				LEFT OUTER JOIN data_input_fields dif
+				ON dtr.data_input_field_id = dif.id
+				WHERE di.type_id in (1,5) AND dt.id = ? AND dif.id IS NULL',
+				array($data_template_id));
+			if (cacti_sizeof($data_template_fields)) {
+				foreach ($data_template_fields as $data_template_field) {
+					raise_message('data_template_rrd_' . $data_template_field['dtr_id'], __('Field "%s" is missing an Output Field', $data_template_field['data_source_name']), MESSAGE_LEVEL_WARN);
+				}
 			}
 		}
 
@@ -263,7 +301,21 @@ function form_save() {
 
 				/* push out all "custom data" for this data source template */
 				push_out_data_source_custom_data($data_template_id);
-				push_out_host(0, 0, $data_template_id);
+
+				/* push out the hosts that use the data template */
+				$hosts = array_rekey(
+					db_fetch_assoc_prepared('SELECT DISTINCT host_id
+						FROM data_local
+						WHERE data_template_id = ?',
+						array($data_template_id)),
+					'host_id', 'host_id'
+				);
+
+				if (cacti_sizeof($hosts)) {
+					foreach($hosts as $host_id) {
+						push_out_host($host_id, 0, $data_template_id);
+					}
+				}
 
 				/* push out field mappings for the data collector */
 				/* its important to delete first due to the possibility that
@@ -308,6 +360,11 @@ function form_actions() {
 
 		if ($selected_items != false) {
 			if (get_nfilter_request_var('drp_action') == '1') { // delete
+				$data_template_data_ids = db_fetch_cell('SELECT GROUP_CONCAT(id)
+					FROM data_template_data
+					WHERE ' . array_to_sql_or($selected_items, 'data_template_id') . '
+					AND local_data_id=0');
+
 				db_execute('DELETE FROM data_template_data WHERE ' . array_to_sql_or($selected_items, 'data_template_id') . ' AND local_data_id=0');
 				db_execute('DELETE FROM data_template_rrd WHERE ' . array_to_sql_or($selected_items, 'data_template_id') . ' AND local_data_id=0');
 				db_execute('DELETE FROM snmp_query_graph_rrd WHERE ' . array_to_sql_or($selected_items, 'data_template_id'));
@@ -315,9 +372,22 @@ function form_actions() {
 				db_execute('DELETE FROM data_template WHERE ' . array_to_sql_or($selected_items, 'id'));
 
 				/* "undo" any graph that is currently using this template */
-				db_execute('UPDATE data_template_data set local_data_template_data_id=0,data_template_id=0 WHERE ' . array_to_sql_or($selected_items, 'data_template_id'));
-				db_execute('UPDATE data_template_rrd set local_data_template_rrd_id=0,data_template_id=0 WHERE ' . array_to_sql_or($selected_items, 'data_template_id'));
-				db_execute('UPDATE data_local set data_template_id=0 WHERE ' . array_to_sql_or($selected_items, 'data_template_id'));
+				db_execute('UPDATE data_template_data
+					SET local_data_template_data_id = 0, data_template_id = 0
+					WHERE ' . array_to_sql_or($selected_items, 'data_template_id'));
+
+				db_execute('UPDATE data_template_rrd
+					SET local_data_template_rrd_id = 0, data_template_id = 0
+					WHERE ' . array_to_sql_or($selected_items, 'data_template_id'));
+
+				db_execute('UPDATE data_local
+					SET data_template_id = 0
+					WHERE ' . array_to_sql_or($selected_items, 'data_template_id'));
+
+				/* delete data_input_data information */
+				if ($data_template_data_ids != '') {
+					db_execute('DELETE FROM data_input_data WHERE data_template_data_id IN(' . $data_template_data_ids . ')');
+				}
 			} elseif (get_nfilter_request_var('drp_action') == '2') { // duplicate
 				for ($i=0;($i<cacti_count($selected_items));$i++) {
 					api_duplicate_data_source(0, $selected_items[$i], get_nfilter_request_var('title_format'));
@@ -328,13 +398,25 @@ function form_actions() {
 					WHERE id = ?',
 					array(get_filter_request_var('data_source_profile_id')));
 
+				$heartbeat = db_fetch_cell_prepared('SELECT heartbeat
+					FROM data_source_profiles
+					WHERE id = ?',
+					array(get_filter_request_var('data_source_profile_id')));
+
 				if (!empty($step)) {
 					for ($i=0;($i<cacti_count($selected_items));$i++) {
 						db_execute_prepared('UPDATE data_template_data
 							SET data_source_profile_id = ?,
 							rrd_step = ?
-							WHERE data_template_id = ?',
+							WHERE data_template_id = ?
+							AND local_data_id = 0',
 							array(get_filter_request_var('data_source_profile_id'), $step, $selected_items[$i]));
+
+						db_execute_prepared('UPDATE data_template_rrd
+							SET rrd_heartbeat = ?
+							WHERE data_template_id = ?
+							AND local_data_id = 0',
+							array($heartbeat, $selected_items[$i]));
 					}
 				}
 			}
@@ -514,7 +596,7 @@ function template_edit() {
 	get_filter_request_var('view_rrd');
 	/* ==================================================== */
 
-	$isSNMPget = false;
+	$isSNMPGet = false;
 
 	if (!isempty_request_var('id')) {
 		$template_data = db_fetch_row_prepared('SELECT dtd.*, data_sources
@@ -542,7 +624,7 @@ function template_edit() {
 				array($template_data['data_input_id']));
 
 			if (cacti_sizeof($snmp_data)) {
-				$isSNMPget = true;
+				$isSNMPGet = true;
 			}
 		}
 
@@ -671,15 +753,16 @@ function template_edit() {
 	}
 
 	if (get_request_var('id') > 0) {
-		$readOnly = db_fetch_cell_prepared('SELECT *
+		$readOnly = db_fetch_cell_prepared('SELECT id
 			FROM data_local
-			WHERE data_template_id = ?',
+			WHERE data_template_id = ?
+			LIMIT 1',
 			array(get_request_var('id')));
 	} else {
 		$readOnly = false;
 	}
 
-	if (!$isSNMPget && !$readOnly) {
+	if (!$isSNMPGet && !$readOnly) {
 		html_start_box(__('Data Source Item [%s]', (isset($template_rrd) ? html_escape($template_rrd['data_source_name']) : '')), '100%', true, '0', 'center', (!isempty_request_var('id') ? 'data_templates.php?action=rrd_add&id=' . get_request_var('id'):''), __('New'));
 	} else {
 		html_start_box(__('Data Source Item [%s]', (isset($template_rrd) ? html_escape($template_rrd['data_source_name']) : '')), '100%', true, '0', 'center', '', '');
@@ -750,17 +833,42 @@ function template_edit() {
 
 			foreach ($fields as $field) {
 				$data_input_data = db_fetch_row_prepared('SELECT t_value, value
-					FROM data_input_data
+					FROM data_input_data AS did
 					WHERE data_template_data_id = ?
 					AND data_input_field_id = ?',
 					array($template_data['id'], $field['id']));
 
-				if (cacti_sizeof($data_input_data)) {
+				// Data Query Key fields
+				if (data_input_field_always_checked($field['id'])) {
+					$message = __esc('This value is disabled due to it either it value being derived from the Device or special Data Query object that keeps track of critical data Data Query associations.');
+
+					if (cacti_sizeof($data_input_data)) {
+						$old_value  = $data_input_data['value'];
+						$old_tvalue = 'on';
+						$disable    = 'disable';
+					} else {
+						$old_value  = '';
+						$old_tvalue = 'on';
+						$disable    = 'disable';
+					}
+				} elseif ($field['type_code'] == 'host_id') {
+					$message = __esc('This value is disabled due to it being derived from the Device and read only.');
+
 					$old_value  = $data_input_data['value'];
-					$old_tvalue = $data_input_data['t_value'];
-				} else {
-					$old_value  = '';
 					$old_tvalue = '';
+					$disable    = 'disable';
+				} else {
+					$message = __esc('Check this checkbox if you wish to allow the user to override the value on the right during Data Source creation.');
+
+					if (cacti_sizeof($data_input_data)) {
+						$old_value  = $data_input_data['value'];
+						$old_tvalue = $data_input_data['t_value'];
+						$disable    = '';
+					} else {
+						$old_value  = '';
+						$old_tvalue = '';
+						$disable    = '';
+					}
 				}
 
 				if ($field['data_name'] == 'management_ip') {
@@ -780,17 +888,17 @@ function template_edit() {
 				}
 
 				if (preg_match('/^' . VALID_HOST_FIELDS . '$/i', $field['type_code']) && $old_tvalue  == '') {
-					$title = __esc('Value will be derived from the device if this field is left empty.');
+					$title = __esc('Value will be derived from the Device if this field is left empty.');
 				} else {
 					$title = '';
 				}
 
 				?>
 				<div class='formColumnLeft'>
-					<div class='formFieldName'><?php form_checkbox('t_value_' . $field['data_name'], $old_tvalue, '', '', '', get_request_var('id'), '', __esc('Check this checkbox if you wish to allow the user to override the value on the right during Data Source creation.'));?><?php print html_escape($field['name']);?><div class='formTooltip'><?php print display_tooltip($help);?></div>
+					<div class='formFieldName customDataCheckbox <?php print $disable;?>'><?php form_checkbox('t_value_' . $field['data_name'], $old_tvalue, '', '', '', get_request_var('id'), '', $message);?><?php print html_escape($field['name']);?><div class='formTooltip'><?php print display_tooltip($help);?></div>
 					</div>
 				</div>
-				<div class='formColumnRight'>
+				<div class='formColumnRight <?php print $disable;?>'>
 					<?php form_text_box('value_' . $field['data_name'], $old_value, '', '', 30, 'text', 0, '', $title);?>
 				</div>
 				<?php
@@ -840,6 +948,24 @@ function template_edit() {
 				$('#data_source_type_id').selectmenu('disable');
 			}
 		}
+
+		// Disable Data Query Input Field Changes
+		$('.disable').find('input').each(function() {
+			$(this).prop('disabled', true).addClass('ui-stat-disabled');
+		});
+
+		$('.customDataCheckbox').find('input').on('change', function() {
+			if ($(this).prop('checked') == false) {
+				mixedReasonTitle = '<?php print __('Custom Data Warning Message');?>';
+				mixedOnPage      = '<?php print __esc('WARNING: Data Loss can Occur');?>';
+				sessionMessage   = {
+					message: '<?php print __esc('After you uncheck this checkbox and then Save the Data Template, any existing Data Sources based on this Data Template will loose their Custom Data.  This can result in broken Data Collection and Graphs');?>',
+					level: MESSAGE_LEVEL_MIXED
+				};
+
+				displayMessages();
+			}
+		});
 	});
 
 	</script>

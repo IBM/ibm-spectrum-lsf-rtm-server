@@ -46,7 +46,7 @@ if (get_request_var('action') == 'view') {
 	view_benchmarks();
 }
 
-function grid_view_get_records(&$sql_where, $apply_limits = TRUE, $rows, &$sql_params) {
+function grid_view_get_records(&$sql_where, $apply_limits = TRUE, $rows = 30, &$sql_params = array()) {
 	benchmark_status_where($sql_where);
 
 	/* cluster id sql where */
@@ -57,9 +57,7 @@ function grid_view_get_records(&$sql_where, $apply_limits = TRUE, $rows, &$sql_p
 		$sql_params[] = get_request_var('clusterid');
 	}
 
-	if (!strlen(get_request_var('filter'))) {
-		/* Show all items */
-    } else {
+	if (get_request_var('filter') != '') {
 		$sql_where .= ($sql_where != '' ? ' AND':'WHERE') . ' benchmark_name LIKE ?';
 		$sql_params[] = '%'. get_request_var('filter') . '%';
     }

@@ -25,7 +25,7 @@ $result1= db_fetch_assoc("SHOW INDEX
 	FROM lic_interval_stats
 	FROM cacti
 	WHERE key_name='PRIMARY'
-	AND column_name='interval_end'");
+	AND (column_name='interval_end' OR column_name='seq')");
 
 if(!cacti_sizeof($result1)) {
 	db_execute("ALTER TABLE lic_interval_stats DROP PRIMARY KEY");

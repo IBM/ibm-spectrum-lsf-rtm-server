@@ -29,9 +29,10 @@ function rtm_custom_login(){
 
 	$selectedTheme = get_selected_theme();
 	$user_enabled  = 1;
-	$ldap_error    = false;
+	$error         = false;
+	$error_msg     = '';
 	$username      = '';
-	$frv_realm    = get_nfilter_request_var('realm');
+	$frv_realm     = get_nfilter_request_var('realm');
 
 	$page_title    = RTM_BRAND_NAME . " " . RTM_PRODUCT_NAME . " " . RTM_VERSION;
 ?>
@@ -48,6 +49,16 @@ function rtm_custom_login(){
 		<legend><?php print RTM_BRAND_NAME_BOLD;?><span class="logo-area"> <?php print RTM_PRODUCT_NAME . " " . RTM_VERSION;?></span></legend>
 		<form id='login' name='login' method='post' class='login-form' action='<?php print get_current_page();?>'>
 			<input type='hidden' name='action' value='login'>
+			<?php api_plugin_hook_function('login_before',
+				array(
+					'error'        => $error,
+					'error_msg'    => $error_msg,
+					'username'     => $username,
+					'user_enabled' => $user_enabled,
+					'action'       => get_nfilter_request_var('action')
+				)
+			);
+			?>
 			<div class='cactiLogin'>
 				<table class='cactiLoginTable login-table'>
 					<tr>
@@ -107,7 +118,7 @@ function rtm_custom_login(){
 						</tr>
 					<?php } ?>
 						<tr>
-							<td cospan='2'>
+							<td colspan='2'>
 								<input type='submit' class='ui-button ui-corner-all ui-widget' value='<?php print __esc('Login');?>'>
 							</td>
 						</tr>
@@ -116,15 +127,8 @@ function rtm_custom_login(){
 			</form>
 			<div class='loginErrors'>
 				<?php
-				if ($ldap_error) {
-					print $ldap_error_message;
-				} else {
-					if (get_nfilter_request_var('action') == 'login') {
-						print __('Login failed. User name or password is incorrect.');
-					}
-					if ($user_enabled == '0') {
-						print __('User Account Disabled.');
-					}
+				if ($error) {
+					print $error_msg;
 				}
 				?>
 			</div>

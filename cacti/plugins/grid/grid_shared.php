@@ -30,7 +30,7 @@ $title = __('IBM Spectrum LSF RTM - Batch Shared Resources', 'grid');
 
 grid_view();
 
-function grid_view_get_records(&$sql_where, $apply_limits = true, $rows, &$sql_params) {
+function grid_view_get_records(&$sql_where, $apply_limits = true, $rows = 30, &$sql_params = array()) {
 	global $timespan, $grid_efficiency_sql_ranges;
 
 	$sql_where    = 'WHERE host="ALLHOSTS"';

@@ -56,7 +56,7 @@ if (cacti_sizeof($parms)) {
 	/* snmp settings */
 	$community            = '';
 	$snmp_ver             = '0';
-	$disable              = '';
+	$disable              = '0';
 	$snmp_username        = '';
 	$snmp_password        = '';
 	$snmp_auth_protocol   = '';
@@ -92,7 +92,7 @@ if (cacti_sizeof($parms)) {
 	$cluster_masters      = '';
 	$cluster_ips          = '';
 	$cluster_ego          = 'N';
-	$cluster_strict_chk   = 'N';
+	$cluster_strict_chk   = '';
 	$cluster_krb5         = 'N';
 	$lsf_admin            = '';
 	$admin_password       = '';
@@ -114,7 +114,12 @@ if (cacti_sizeof($parms)) {
 	$jobto                = 60;
 
 	foreach($parms as $parameter) {
-		@list($arg, $value) = @explode('=', $parameter);
+		if (strpos($parameter, '=')) {
+			list($arg, $value) = explode('=', $parameter);
+		} else {
+			$arg = $parameter;
+			$value = '';
+		}
 
 		switch ($arg) {
 		case '--basefreq':
@@ -266,14 +271,12 @@ if (cacti_sizeof($parms)) {
 		case '--admin-pass':
 		case '--admin_pass':
 			$admin_password = trim($value);
-
 			break;
 
-                case '--cluster-disable':
-                case '--cluster_disable':
-                        $cluster_disable = trim($value);
-
-                        break;
+		case '--cluster-disable':
+		case '--cluster_disable':
+			$cluster_disable = trim($value);
+			break;
 
 		case '--graphcheck':
 			$graphcheck = strtolower(trim($value));
@@ -760,18 +763,6 @@ if (cacti_sizeof($parms)) {
 		}
 
 		/* validate the disable state */
-		if ($disable != 1 && $disable != 0) {
-			echo "FATAL: Invalid disable flag ($disable)\n";
-			return 1;
-		}
-
-		if ($disable == 0) {
-			$disable = "";
-		} else {
-			$disable = "on";
-		}
-
-		/* validate the disable state */
 		if ($cluster_disable != 1 && $cluster_disable != 0) {
 			echo "FATAL: Invalid disable flag ($cluster_disable)\n";
 			return 1;
@@ -862,7 +853,7 @@ if (cacti_sizeof($parms)) {
 					$save['lsf_ego'] = "Y";
 				}
 
-				if (strcasecmp($cluster_strict_chk, 'ENHANCED') == 0) {
+				if ((strcasecmp($cluster_strict_chk, 'ENHANCED') == 0) || (strlen($cluster_strict_chk) == 0 && $cluster_lsfver == '10010013')) {
 					$save['lsf_strict_checking'] = "ENHANCED";
 				} else if (preg_match('/(1|Y|Yes|YES)/', $cluster_strict_chk)) {
 					$save['lsf_strict_checking'] = "Y";
@@ -906,7 +897,7 @@ if (cacti_sizeof($parms)) {
 					}
 
 					/* generate ego.conf if we can */
-					if(grid_ego_generate_conf($clusterid, $cluster_poller, $save["lsf_ego"]) != 0) {
+					if(strcasecmp($save["lsf_ego"], 'Y') === 0 && grid_ego_generate_conf($clusterid, $cluster_poller, $save["lsf_ego"]) != 0) {
 						echo "WARNING: Unable to initialize EGO.  EGO HA will not be functional\n";
 					}
 				} else {
@@ -1031,7 +1022,7 @@ function add_cluster_data_queries($cluster, $queryid) {
 		$query = "";
 	}
 
-	echo trim(passthru("$php_bin -q " . read_config_option("path_webroot") . "/cli/poller_reindex_hosts.php -id=" . $cluster["cacti_host"] . " -qid=$queryid -d"));
+	passthru("$php_bin -q " . read_config_option("path_webroot") . "/cli/poller_reindex_hosts.php -id=" . $cluster["cacti_host"] . " -qid=$queryid -d");
 
 	if ($queryid == 0 || $queryid == 13 || strtolower($queryid) == "all") {
 		/* Queue Job Statistics - Data Query ID 13, Graph Template ID 27, Query Field Name 'gridQname' */
@@ -1149,7 +1140,7 @@ function add_graphs_for_dq_ent($host, $graph_template_id, $snmp_query_id, $snmp_
 					" --snmp-query-id=$snmp_query_id --snmp-field=$snmp_field_name" .
 					" --snmp-value=$item";
 
-				echo trim(passthru($command)) . "\n";
+				passthru($command);
 			}
 		}
 		}
@@ -1202,7 +1193,7 @@ function add_graphs_for_dq(&$cluster, $graph_template_id, $snmp_query_id, $snmp_
 					" --snmp-query-id=$snmp_query_id --snmp-field=$snmp_field_name" .
 					" --snmp-value=$item";
 
-				echo trim(passthru($command)) . "\n";
+				passthru($command);
 			}
 		}
 		}

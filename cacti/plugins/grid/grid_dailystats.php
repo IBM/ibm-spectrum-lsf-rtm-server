@@ -89,7 +89,7 @@ if (isset_request_var('export')) {
 	grid_view_dstats();
 }
 
-function grid_view_get_dstat_records(&$sql_where, &$group_by, &$table_name, $apply_limits = true, $rows = '30', &$total_rows) {
+function grid_view_get_dstat_records(&$sql_where, &$group_by, &$table_name, $apply_limits = true, $rows = '30', &$total_rows = 0) {
 	global $grid_efficiency_sql_ranges;
 	$sql_params = array();
 

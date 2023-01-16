@@ -955,7 +955,7 @@ function lic_lm_get_first_feature() {
 	return $feature;
 }
 
-function lic_lm_get_license_records(&$sql_where, $apply_limits=TRUE, $row_limit='30', &$total_rows){
+function lic_lm_get_license_records(&$sql_where, $apply_limits=TRUE, $row_limit='30', &$total_rows = 0){
 	if (get_request_var('service_id') != -1){
 		$sql_where = 'WHERE lic_daily_stats.service_id='.get_request_var('service_id');
 	}

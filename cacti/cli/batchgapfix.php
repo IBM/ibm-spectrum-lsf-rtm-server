@@ -30,6 +30,11 @@ ini_set('output_buffering', 'Off');
 require(__DIR__ . '/../include/cli_check.php');
 require_once($config['base_path'] . '/lib/poller.php');
 
+if ($config['poller_id'] > 1) {
+	print "FATAL: This utility is designed for the main Data Collector only" . PHP_EOL;
+	exit(1);
+}
+
 ini_set('memory_limit', '-1');
 ini_set('max_execution_time', '0');
 
@@ -61,7 +66,12 @@ if (function_exists('pcntl_signal')) {
 $start = microtime(true);
 
 foreach($parms as $parameter) {
-	@list($arg, $value) = @explode('=', $parameter);
+	if (strpos($parameter, '=')) {
+		list($arg, $value) = explode('=', $parameter);
+	} else {
+		$arg = $parameter;
+		$value = '';
+	}
 
 	switch ($arg) {
 	case '--start':
@@ -369,9 +379,9 @@ if ($child == 0) {
 			array($rrdfile['id']));
 
 		// Run the command
-		print "NOTE: Running command: $command" . PHP_EOL;
+		debug("NOTE: Running command: $command");
 
-		//exec($command, $output, $return_var);
+		exec($command, $output, $return_var);
 
 		db_execute_prepared('UPDATE graph_local_spikekill
 			SET ended = NOW(), exit_code = ?
@@ -379,10 +389,10 @@ if ($child == 0) {
 			array($return_var, $rrdfile['id']));
 
 		if ($return_var == 0) {
-			print "SUCCESS: Gap Fills for RRDfile:" . $rrdfile['data_source_path'] . PHP_EOL;
+			printf("SUCCESS: Gap Fills for RRDfile:%s" . PHP_EOL, $rrdfile['data_source_path']);
 			$succeeded++;
 		} else {
-			print "FAILED:  Gap Fills faild for RRDfile:" . $graph['data_source_path'] . PHP_EOL;
+			printf("FAILED:  Gap Fills failed for RRDfile:%s" . PHP_EOL, $graph['data_source_path']);
 			$failed++;
 		}
 	}
@@ -420,6 +430,14 @@ function sig_handler($signo) {
 	}
 }
 
+function debug($string) {
+	global $debug;
+
+	if ($debug) {
+		print 'DEBUG: ' . trim($string) . PHP_EOL;
+	}
+}
+
 function display_version() {
     $version = get_cacti_cli_version();
     print "Cacti Batch Graph Gap Fill Utility, Version $version, " . COPYRIGHT_YEARS . PHP_EOL;
@@ -441,7 +459,7 @@ function display_help() {
 	print '   --threads=N                     - Default is 5.  The number of parallel threads [1..40]' . PHP_EOL;
 	print '   --method=fill|float             - Default is \'fill\'.  The method to fill gaps.' . PHP_EOL;
 	print '   --avgnan=last|avg               - Default is \'last\'.  The number to use to fill gaps.' . PHP_EOL;
-	print '   --host-ids=N,N,N,...            - A comma delimted list of Cacti Device ID\'s to process.' . PHP_EOL;
+	print '   --host-ids=N,N,N,...            - A comma delimited list of Cacti Device ID\'s to process.' . PHP_EOL;
 	print '   --force                         - Kill the current running batch gap fill and start over.' . PHP_EOL;
 	print '   --debug                         - Higher tracing level for select utilities.' . PHP_EOL . PHP_EOL;
 }

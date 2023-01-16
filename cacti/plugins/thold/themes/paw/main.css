@@ -269,3 +269,7 @@
 	color: #336600;
 }
 
+.tholdLog {
+	white-space: pre-wrap !important;
+}
+

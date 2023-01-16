@@ -175,7 +175,7 @@ function _ajax_search($column_name) {
 	return db_fetch_assoc_prepared($sql_query, $sql_where_args);
 }
 
-function lic_view_get_lic_checkouts($apply_limits = true, $row_limit, &$total_rows) {
+function lic_view_get_lic_checkouts($apply_limits = true, $row_limit = 30, &$total_rows = array()) {
 	$sql_where = '';
 	$sql_where_args = array();
 	$sql_join_lsf = '';

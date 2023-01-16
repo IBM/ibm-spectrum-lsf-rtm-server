@@ -51,6 +51,40 @@ if ($hasEverything) {
 	include_once('../lib/installer.php');
 }
 
+$help = '';
+
+if ($config['cacti_server_os'] == 'unix') {
+	if ($config['cacti_db_version'] == 'new_install') {
+		if (isset($_SERVER['SERVER_SOFTWARE']) && strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') !== false) {
+			$help = 'Install-Under-CentOS_LAMP.html';
+		} elseif (file_exists('/etc/redhat-release')) {
+			$help = 'Install-Under-CentOS_LAMP.html';
+		} elseif (file_exists('/etc/os-release')) {
+			$contents = file_get_contents('/etc/os-release');
+			if (stripos($contents, 'debian') !== false || stripos($contents, 'ubuntu')) {
+				$help = 'Installing-Under-Ubuntu-Debian.html';
+			}
+		}
+	} else {
+		if (isset($_SERVER['SERVER_SOFTWARE'])) {
+			$help = 'Upgrading-Cacti.html';
+		} else {
+			$help = 'Upgrading-Cacti.html';
+		}
+	}
+} else {
+	if ($config['cacti_db_version'] == 'new_install') {
+		$help = 'Installing-Under-Windows.html';
+	} else {
+		$help = 'Upgrading-Cacti-Under-Windows.html';
+	}
+}
+
+$help_anchor = '';
+if ($help != '') {
+	$help_anchor = '<a style="padding:2px" href="#" data-page="' . $help . '" title="' . __esc('Cacti Install Help') . '" class="helpPage menu_parent"><i class="far fa-question-circle"></i></a>';
+}
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -66,7 +100,7 @@ print get_md5_include_css('install/install.css');
 <body>
 	<div class='cactiInstallTable'>
 		<div class='cactiTableTitleRow cactiBorderWall'>
-			<div class='textHeaderDark'><?php print __('Cacti Server v%s - Installation Wizard', CACTI_VERSION); ?><span style="float:right"><i id="installRefresh" class="fa fa-redo"></i></span></div>
+			<div class='textHeaderDark'><?php print __esc('Cacti Server v%s - Installation Wizard', CACTI_VERSION); ?><span style="float:right"><?php print $help_anchor;?><a class="menu_parent" id="installRefresh" href="#" title="<?php print __esc('Refresh current page');?>" style="padding:2px"><i class="fa fa-redo"></i></a></span></div>
 		</div>
 		<div class='cactiInstallArea cactiBorderWall'>
 			<div class='cactiInstallAreaContent' id='installContent'>

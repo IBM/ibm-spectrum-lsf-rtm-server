@@ -332,7 +332,7 @@ function disku_extensions() {
 	}
 }
 
-function get_disku_extensions(&$sql_where, $apply_limits = true, $row_limit = 30, &$sql_params) {
+function get_disku_extensions(&$sql_where, $apply_limits = true, $row_limit = 30, &$sql_params = array()) {
 	$sort_order = get_order_string();
 
 	if (isset_request_var('filter') && get_request_var('filter') != '') {

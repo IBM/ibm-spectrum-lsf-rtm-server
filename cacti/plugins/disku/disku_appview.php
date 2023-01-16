@@ -263,7 +263,7 @@ function disku_appview() {
 	}
 }
 
-function get_disku_applications(&$sql_where, $apply_limits = true, $row_limit = 30, &$sql_params) {
+function get_disku_applications(&$sql_where, $apply_limits = true, $row_limit = 30, &$sql_params = array()) {
 	$sort_order = get_order_string();
 
 	if (isset_request_var('filter') && get_request_var('filter') != '') {

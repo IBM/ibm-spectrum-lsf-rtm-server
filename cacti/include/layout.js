@@ -42,7 +42,6 @@ var lastPage = null;
 var statePushed = false;
 var popFired = false;
 var hostInfoHeight = 0;
-var menuHideResponsive = null;
 var marginLeftTree = null;
 var marginLeftConsole = null;
 var minTreeWidth = null;
@@ -60,6 +59,35 @@ var isHover = false;
 var hoverTimer = false;
 var previousMainWidth = null;
 var previousColumns   = null;
+var faIcons = {
+	open: {
+		icon: '<i class="fas fa-caret-down" aria-hidden="true"></i>'
+	},
+	close: {
+		icon: '<i class="fas fa-times-circle" aria-hidden="true"></i>'
+	},
+	checkAll: {
+		icon: '<i class="fas fa-check" aria-hidden="true"></i>'
+	},
+	uncheckAll: {
+		icon: '<i class="fas fa-ban" aria-hidden="true"></i>'
+	},
+	flipAll: {
+		icon: '<i class="fas fa-undo" aria-hidden="true"></i>'
+	},
+	collapseAll: {
+		icon: '<i class="fas fa-double-angle-down" aria-hidden="true"></i>'
+	},
+	expandAll: {
+		icon: '<i class="fas fa-double-angle-right" aria-hidden="true"></i>'
+	},
+	collapse: {
+		icon: '<i class="fas fa-chevron-down" aria-hidden="true"></i>'
+	},
+	expand: {
+		icon: '<i class="fas fa-chevron-right" aria-hidden="true"></i>'
+	}
+};
 
 window.paceOptions = {
 	ajax: true,
@@ -153,7 +181,7 @@ function basename(path, suffix) {
 /** getTimestampFromDate - Simple function to convert a MySQL Date
  * to a timestamp */
 function getTimestampFromDate(dateStamp) {
-	if (typeof(dateStamp) != 'undefined') {
+	if (typeof dateStamp != 'undefined') {
 		var dateParts = dateStamp.split(' ');
 		var timeParts = dateParts[1].split(':');
 
@@ -251,7 +279,7 @@ $.fn.textWidth = function(text){
  *  without any wrapping. */
 $.fn.textBoxWidth = function() {
 	var org = $(this);
-	var html = $('<span style="display:none;white-space:nowrap;position:absolute;width:auto;left:-9999px">' + org.text() + '</span>');
+	var html = $('<span style="display:none;white-space:nowrap;position:absolute;width:auto;left:-9999px">' + (org.val() || org.text()) + '</span>');
 	html.css('font-family', org.css('font-family'));
 	html.css('font-weight', org.css('font-weight'));
 	html.css('font-size',   org.css('font-size'));
@@ -285,7 +313,7 @@ $.fn.classes = function(callback) {
 };
 
 /** These three functions will set the cursor into
- *  a textbox or textara and optionally select characters */
+ *  a textbox or textarea and optionally select characters */
 $.fn.setCursorPosition = function(position) {
 	if (this.length == 0) return this;
 	return this.setSelection(position, position);
@@ -401,11 +429,10 @@ function escapeString(string) {
 		'>': '&gt;',
 		'"': '&quot;',
 		"'": '&#39;',
-		'/': '&#x2F;',
 		'`': '&#x60;'
 	};
 
-	return String(string).replace(/[<>"'`\/]/g, function fromEntityMap (s) {
+	return String(string).replace(/[<>"'`]/g, function fromEntityMap (s) {
 		return entityMap[s];
 	});
 }
@@ -440,17 +467,57 @@ $.tablesorter.addParser({
 	});
 })(jQuery);
 
+// Helper function to get text dimensions
+(function($) {
+	$.textMetrics = function(el) {
+		var h = 0, w = 0;
+
+		var div = document.createElement('div');
+		document.body.appendChild(div);
+		$(div).css({
+			position: 'absolute',
+			left: -1000,
+			top: -1000,
+			display: 'none'
+		});
+
+		$(div).html($(el).html());
+
+		var styles = ['font-size','font-style', 'font-weight', 'font-family','line-height', 'text-transform', 'letter-spacing'];
+
+		$(styles).each(function() {
+			var s = this.toString();
+			$(div).css(s, $(el).css(s));
+		});
+
+		var h = $(div).outerHeight();
+		var w = $(div).outerWidth();
+
+		$(div).remove();
+
+		var ret = {
+			height: h,
+			width: w
+		};
+
+		return ret;
+	}
+})(jQuery);
+
 // helper function which selects row range when shift key is pressed during click
 function updateCheckboxes(checkboxes, clicked_element) {
 	var prev_checkbox = clicked_element.closest('table').find('[data-prev-check]:checkbox');
+
 	if (!prev_checkbox.length) {
 		return;
 	}
+
 	var check = prev_checkbox.attr('data-prev-check') == 'true';
 	var start = checkboxes.index(prev_checkbox);
 	var stop = checkboxes.index(clicked_element);
 	var i = Math.min(start, stop);
 	var j = Math.max(start, stop);
+
 	for (var k = i; k <= j; k++) {
 		var tr = $(checkboxes[k]).prop('checked', check).closest('tr');
 		if (check) {
@@ -604,7 +671,7 @@ function selectAll(attrib, checked) {
 				$(this).find(':checkbox').prop('checked', false).removeAttr('aria-checked').removeAttr('data-prev-check');
 			});
 		}
-	} else {
+	} else if (attrib.startsWith('sg_', 0)) {
 		var attribSplit = attrib.split('_');
 		var dq   = attribSplit[1];
 
@@ -620,16 +687,30 @@ function selectAll(attrib, checked) {
 				$(this).find(':checkbox').prop('checked', false).removeAttr('aria-checked').removeAttr('data-prev-check');
 			});
 		}
+	} else {
+		if (checked == true) {
+			$('tr[id^="line_'+attrib+'"]:not(.disabled_row)').each(function(data) {
+				$(this).addClass('selected');
+				$(this).find(':checkbox').prop('checked', true).attr('aria-checked', 'true').attr('data-prev-check', 'true');
+			});
+			disableSelection();
+		} else {
+			$('tr[id^="line_'+attrib+'"]:not(.disabled_row)').each(function(data) {
+				$(this).removeClass('selected');
+				$(this).find(':checkbox').prop('checked', false).removeAttr('aria-checked').removeAttr('data-prev-check');
+			});
+		}
 	}
 }
 
 /* graph filtering */
 function applyTimespanFilterChange() {
-	var strURL;
+	var href;
 
-	strURL = '?header=false&predefined_timespan=' + $('#predefined_timespan').val();
-	strURL = strURL + '&predefined_timeshift=' + $('#predefined_timeshift').val();
-	loadPageNoHeader(strURL);
+	href  = '?header=false&predefined_timespan=' + $('#predefined_timespan').val();
+	href += '&predefined_timeshift=' + $('#predefined_timeshift').val();
+
+	loadPageNoHeader(href);
 }
 
 /** cactiReturnTo - This function simply returns to the previous page
@@ -646,7 +727,7 @@ function cactiReturnTo(href) {
 }
 
 /** applySkin - This function re-asserts all javascript behavior to a page
- *  that can't be set using a live attrbute 'on()' */
+ *  that can't be set using a live attribute 'on()' */
 function applySkin() {
 	pageName = basename($(location).attr('pathname'));
 
@@ -691,6 +772,11 @@ function applySkin() {
 
 	applySelectorVisibilityAndActions();
 
+	$('.helpPage').off('click').on('click', function(event) {
+		event.stopPropagation();
+		getCactiHelp($(this).attr('data-page'));
+	});
+
 	if (typeof themeReady == 'function') {
 		themeReady();
 	}
@@ -717,7 +803,7 @@ function applySkin() {
 		copyToClipboard(containerId);
 	});
 
-	$('i, th, img, input, label, select, button, .drillDown, .checkboxSlider')
+	$('i, a, th, img, input, label, select, button, .drillDown, .checkboxSlider')
 	.tooltip({
 		close: true
 	})
@@ -1188,25 +1274,17 @@ function setupResponsiveMenuAndTabs() {
 			event.preventDefault();
 		}
 
-		if ($(this).hasClass('selected')) {
-			if ($('#navigation').length) {
-				if (menuOpen(page)) {
-					menuHide(true);
-				} else {
-					menuShow();
-				}
-			}
-		} else if (pageName == page && pageName != 'graph_view.php' && pageName != 'link.php') {
-			if ($('#navigation').length) {
-				if (menuOpen(page)) {
-					menuHide(true);
-				} else {
-					menuShow();
-				}
-			}
+		if ($('#navigation').length) {
+			var hasNavigation = true;
 		} else {
-			id   = $(this).attr('id');
-			href = $(this).attr('href');
+			var hasNavigation = false;
+		}
+
+		if (hasNavigation && ($(this).hasClass('selected') || (pageName == page && pageName != 'graph_view.php') && pageName != 'link.php')) {
+			handleUserMenu(true);
+		} else {
+			var id   = $(this).attr('id');
+			var href = $(this).attr('href');
 
 			loadTopTab(href, id, false);
 		}
@@ -1217,37 +1295,20 @@ function setupResponsiveMenuAndTabs() {
 	});
 }
 
-function loadMenuStateOpen(page) {
-	storage = Storages.localStorage;
-	page    = page.replace('.php', '');
+function getMenuState() {
+	var storage = Storages.localStorage;
 
-	if (storage.isSet('menuState_' + page)) {
-		state = storage.get('menuState_' + page);
-		if (state == 'hidden') {
-			return false;
-		} else {
-			return true;
-		}
+	if (storage.isSet('menuState_' + pageName)) {
+		state = storage.get('menuState_' + pageName);
+
+		return state;
 	} else {
-		return true;
-	}
-}
-
-function menuOpen(page) {
-	storage = Storages.localStorage;
-	page    = page.replace('.php', '');
-
-	if ($('#navigation').is(':visible')) {
-		return true;
-	} else {
-		return false;
+		return 'visible';
 	}
 }
 
 function responsiveUI(event) {
-	var page = basename(location.pathname);
 	var tree = false;
-	var windowWidth = $(window).width();
 
 	if (event != 'force') {
 	    if (new Date() - resizeTime < resizeDelta) {
@@ -1268,25 +1329,7 @@ function responsiveUI(event) {
 		tree = false;
 	}
 
-	if ($('#navigation').length) {
-		if (theme != 'classic') {
-			if (loadMenuStateOpen(page)) {
-				if (windowWidth < 640) {
-					menuHide(false);
-					menuHideResponsive = true;
-				} else {
-					menuShow();
-				}
-			} else {
-				menuHide(false);
-			}
-		} else if (windowWidth < 640) {
-			menuHide(true);
-			menuHideResponsive = true;
-		} else {
-			menuShow();
-		}
-	}
+	handleUserMenu(false);
 
 	var mainWidth = getMainWidth();
 
@@ -1325,21 +1368,42 @@ function responsiveUI(event) {
 }
 
 function getMainWidth() {
+	// Subtract 15px for the scroll bar
 	if ($('#navigation').length && $('#navigation').is(':visible')) {
-		var mainWidth = $('body').innerWidth() - $('#navigation').width();
+		var mainWidth = $('body').outerWidth() - $('#navigation').width() - 15;
 	} else {
-		var mainWidth = $('body').innerWidth();
+		var mainWidth = $('body').outerWidth() - 15;
 	}
 
 	return mainWidth;
 }
 
-function responsiveResizeGraphs() {
+function getCactiHelp(cactiPage) {
+	var url = urlPath + 'help.php?page=' + cactiPage;
+
+	$.getJSON(url, function(data) {
+		if (data.status == 'Success') {
+			window.open(data.location, '_blank');
+		}
+	});
+}
+
+function responsiveResizeGraphs(initialize) {
 	var mainWidth = getMainWidth() - 30;
 	var myColumns = $('#columns').val();
 	var isThumb   = $('#thumbnails').is(':checked');
-	var graphRow  = $('.tableRowGraph:first').width();
-	var drillDown = $('.graphDrillDown:first').outerWidth() + 15;
+
+	if ($('.tableRowGraph:first').length) {
+		var graphRow = $('.tableRowGraph:first').width();
+	} else {
+		var graphRow = 0;
+	}
+
+	if ($('.graphDrillDown:first').length) {
+		var drillDown = $('.graphDrillDown:first').outerWidth() + 15;
+	} else {
+		var drillDown = 0;
+	}
 
 	if (myColumns == null) {
 		myColumns = 1;
@@ -1352,7 +1416,7 @@ function responsiveResizeGraphs() {
 	}
 
 	// Dont resize if nothing changed
-	if (previousMainWidth == null || (previousMainWidth == mainWidth && previousColumns == myColumns)) {
+	if (typeof initialize == 'undefined' && (previousMainWidth == null || (previousMainWidth == mainWidth && previousColumns == myColumns))) {
 		previousMainWidth = mainWidth;
 		return true;
 	}
@@ -1390,6 +1454,11 @@ function responsiveResizeGraphs() {
 			ratio = original_cwidth / canvas_width;
 		}
 
+		// Dont change the size if the differential is small
+		if (ratio > .97 && ratio < 1.03) {
+			ratio = 1;
+		}
+
 		var new_image_width       = parseInt(image_width * ratio)
 		var new_image_height      = parseInt(image_height * ratio)
 		var new_canvas_width      = parseInt(canvas_width  * ratio);
@@ -1418,6 +1487,67 @@ function responsiveResizeGraphs() {
 
 	if ($('.cactiTreeNavigationArea').length) {
 		resizeTreePanel();
+	}
+}
+
+function resizeTreePanel() {
+	if (theme != 'classic') {
+		var docHeight      = $(window).outerHeight();
+		var navWidth       = $('.cactiTreeNavigationArea').width();
+		var searchHeight   = $('.cactiTreeSearch').outerHeight();
+		var pageHeadHeight = $('.cactiPageHead').outerHeight();
+		var breadCrHeight  = $('.breadCrumbBar').outerHeight();
+		var pageBottomHeight = $('.cactiPageBottom').outerHeight();
+		//console.log('----------------------');
+
+		var jsTreeHeight  = Math.max.apply(Math, $('#jstree').children(':visible').map(function() {
+			return $(this).outerHeight();
+		}).get());
+
+		var treeAreaHeight = docHeight - pageHeadHeight - breadCrHeight - searchHeight - pageBottomHeight;
+		//console.log('docHeight:' + docHeight);
+		//console.log('searchHeight:' + searchHeight);
+		//console.log('pageHeadHeight:' + pageHeadHeight);
+		//console.log('pageBottomHeight:' + pageBottomHeight);
+		//console.log('breadCrHeight:' + breadCrHeight);
+		//console.log('jsTreeHeight:' + jsTreeHeight);
+		//console.log('treeAreaHeight:' + treeAreaHeight);
+
+		$('#jstree').height(jsTreeHeight + 30);
+		$('.cactiTreeNavigationArea').height(treeAreaHeight+searchHeight);
+
+		var visWidth = Math.max.apply(Math, $('#jstree').children(':visible').map(function() {
+			return $(this).width();
+		}).get());
+
+		if (visWidth < 0) {
+			$('.cactiTreeNavigationArea').css('width', 0);
+			$('.cactiGraphContentArea').css('margin-left', 0);
+			$('.cactiTreeNavigationArea').css('overflow-x', '');
+		} else if (visWidth < minTreeWidth) {
+			$('.cactiTreeNavigationArea').css('width', minTreeWidth);
+			$('.cactiGraphContentArea').css('margin-left', minTreeWidth+5);
+			$('.cactiTreeNavigationArea').css('overflow-x', '');
+		} else if (visWidth > maxTreeWidth) {
+			$('.cactiTreeNavigationArea').css('width', maxTreeWidth);
+			$('.cactiGraphContentArea').css('margin-left', maxTreeWidth+5);
+			$('.cactiTreeNavigationArea').css('overflow-x', 'auto');
+		} else if (visWidth > navWidth) {
+			$('.cactiTreeNavigationArea').css('width', visWidth);
+			$('.cactiGraphContentArea').css('margin-left', visWidth+5);
+			$('.cactiTreeNavigationArea').css('overflow-x', 'auto');
+		} else {
+			$('.cactiTreeNavigationArea').css('width', navWidth);
+			$('.cactiGraphContentArea').css('margin-left', navWidth+5);
+			$('.cactiTreeNavigationArea').css('overflow-x', '');
+		}
+	}
+
+	var navWidth = $('#navigation').width();
+	if (navWidth > 220) {
+		$('#searcher').css('width', navWidth-70);
+	} else {
+		$('#searcher').css('width', 150);
 	}
 }
 
@@ -1475,7 +1605,6 @@ function resetTable(object) {
 
 function tuneTable(object, width) {
 	var rows           = $(object).find('tr').length;
-	var width          = width;
 	var tableWidth     = $(object).width();
 	var totalCols      = $(object).find('th').length;
 	var reducedWidth   = 0;
@@ -1494,56 +1623,131 @@ function tuneTable(object, width) {
 		$('#main, .cactiConsoleContentArea').css({ 'overflow-x': 'hidden' });
 	}
 
-	if (tableWidth > width) {
-		var column = totalCols;
-		var hasCheckbox = $(object).find('th.tableSubHeaderCheckbox').length;
+	// We have to both show and hide columns that fit.
+	// So, always find the size of the page columns.
+	var calculatedColumns = [];
+	var calculatedWidth   = 0;
+	var allSeenWidth      = 0;
+	var calculatedPadding = 15;
+	var tableChanged      = false;
+	var stopExpand        = false;
+	var debug             = false;
 
-		if (hasCheckbox) {
-			var minColumns = 2;
-		} else {
-			var minColumns = 2;
+	var tableHeaders = $(object).find('th');
+	var tableCheckBox = $(tableHeaders).each(function() {
+		if ($(this).index() == tableHeaders.length) {
+			calculatedColumns.addClass('noHide');
+		}
+	});
+
+	// Traverse the table and look for columns to hide from left to right
+	$($(object).find('th').get()).each(function() {
+		var isLastCheckBox = $(this).hasClass('tableSubHeaderCheckbox') && $(this).index() == tableHeaders.length - 1;
+		var columnWidth = $.textMetrics(this).width;
+
+		// Get the width of columns that can not be hidden
+		if ($(this).hasClass('noHide') || isLastCheckBox) {
+			calculatedColumns.push($(this).index());
+			calculatedWidth += columnWidth + calculatedPadding;
 		}
 
-		$($(object).find('th').not('.noHide').get().reverse()).each(function() {
-			if (!$(this).hasClass('tableSubHeaderCheckbox') && $(this).is(':visible')) {
-				reducedWidth += $(this).width();
-				$('#'+id+' th:nth-child('+column+')').hide();
-				$('#'+id+' td:nth-child('+column+')').hide();
-				columnsHidden++;
-			}
+		if ($(this).is(':visible')) {
+			allSeenWidth += columnWidth + calculatedPadding;
+		}
+	});
 
-			visibleColumns = totalCols - columnsHidden;
+	if (debug) {
+		console.log(
+			'allSeenWidth:'     + Math.round(allSeenWidth, 1) +
+			', calulatedWidth:'  + Math.round(calculatedWidth, 1) +
+			', tableWidth:' + Math.round(tableWidth, 1) +
+			', width:'  + Math.round(width, 1)
+		);
+	}
 
-			if (tableWidth-reducedWidth < width || visibleColumns <= minColumns) {
-				lastColumnsHidden[id] = columnsHidden;
-				lastWidth[id] = $(object).width();
-				return false;
-			}
-
-			column--;
-		});
-
-		lastWidth[id] = $(object).width();
-	} else if ($(object).width() > lastWidth[id]+40 && columnsHidden > 0) {
-		var column = 1;
-		var id     = $(object).attr('id');
-
+	if (width < tableWidth) {
 		$($(object).find('th').get()).each(function() {
-			if (!$(this).hasClass('tableSubHeaderCheckbox') && $(this).is(':hidden')) {
-				if (lastWidth[id]+$(this).width() < width) {
-					$('#'+id+' td:nth-child('+column+')').show();
-					$('#'+id+' th:nth-child('+column+')').show();
+			// Now traverse the available columns for hiding
+			// and See which need to be hidden
+			if (!calculatedColumns.includes($(this).index())) {
+				var columnWidth = $.textMetrics(this).width + calculatedPadding;
+				var name = $(this).find('div.sortinfo').attr('sort-column');
+
+				if (debug) {
+					console.log(
+						'ColIndex:' + $(this).index() +
+						', ColWidth:' + Math.round(columnWidth, 1) +
+						', TotalWidth:' + Math.round(calculatedWidth, 1) +
+						', PageWidth:' + Math.round(width, 1)
+					);
+				}
+
+				if (width < calculatedWidth) {
+					$(this).hide();
+					tableChanged = true;
+				} else {
+					calculatedColumns.push($(this).index());
+					calculatedWidth += columnWidth + calculatedPadding;
 				}
 			}
-
-			if ($(object).width() >= width) {
-				lastColumnsHidden[id] = columnsHidden = $(object).find('th:hidden').length;
-			}
-
-			column++;
 		});
 
-		lastWidth[id] = $(object).width();
+		if (tableChanged) {
+			$($(object).find('td').each(function() {
+				if (!calculatedColumns.includes($(this).index())) {
+					$(this).hide();
+				}
+			}));
+		}
+	}
+
+	tableChanged = false;
+
+	if (allSeenWidth < width) {
+		calculatedColumns = calculatedColumns.sort();
+
+		// Since we can show hidden columns now, let's go
+		// in reverse until we run out of space
+		$($(object).find('th').get()).each(function() {
+			if (!calculatedColumns.includes($(this).index())) {
+				if ($(this).is(':hidden') && stopExpand == false) {
+					var columnWidth = $.textMetrics(this).width + calculatedPadding;
+					var name = $(this).find('div.sortinfo').attr('sort-column');
+
+					if (allSeenWidth + columnWidth < tableWidth) {
+						$(this).show();
+
+						var newTableWidth = $(object).width();
+
+						if (debug) {
+							console.log(
+								'Reverse ColIndex:' + $(this).index() +
+								', columnWidth:' + Math.round(columnWidth, 1) +
+								', allSeenWidth:' + Math.round(allSeenWidth, 1) +
+								', width:' + Math.round(width, 1) +
+								', newTableWidth:' + Math.round(newTableWidth, 1)
+							);
+						}
+
+						if (newTableWidth > width) {
+							$(this).hide();
+							stopExpand = true;
+						} else {
+							calculatedColumns.push($(this).index());
+							tableChanged = true;
+						}
+					}
+				}
+			}
+		});
+
+		if (tableChanged) {
+			$($(object).find('td').each(function() {
+				if (calculatedColumns.includes($(this).index())) {
+					$(this).show();
+				}
+			}));
+		}
 	}
 }
 
@@ -1694,9 +1898,39 @@ function tuneFilter(object, width) {
 	}
 }
 
+function handleUserMenu(toggle) {
+	var windowWidth = $(window).width();
+	var savedState  = getMenuState();
+	var curState    = $('#navigation').is(':visible') ? 'visible':'hidden';
+
+	//console.log('handle called, curState:'+curState+', savedState:'+savedState+', Toggle:'+toggle);
+	if ($('#navigation').length) {
+		if (theme != 'classic') {
+			if (curState == 'visible' && toggle) {
+				menuHide(true);
+			} else if (curState == 'hidden' && toggle) {
+				menuShow();
+			} else if (savedState == 'visible') {
+				if (windowWidth < 640) {
+					menuHide(false);
+				} else {
+					menuShow();
+				}
+			} else {
+				menuHide(false);
+			}
+		} else if (windowWidth < 640) {
+			menuHide(true);
+		} else if (savedState == 'visible') {
+			menuShow();
+		} else {
+			menuHide();
+		}
+	}
+}
+
 function menuHide(store) {
 	var storage = Storages.localStorage;
-	var page = basename(location.pathname).replace('.php', '');
 
 	var myClass = '';
     var curMargin = parseInt($('#navigation_right').css('margin-left'));
@@ -1726,7 +1960,7 @@ function menuHide(store) {
 
 	$('#navigation').hide();
 
-	if (myClass == '.cactiTreeNavigationArea' || page == 'graph_view') {
+	if (myClass == '.cactiTreeNavigationArea' || pageName == 'graph_view.php') {
 		responsiveResizeGraphs();
 	}
 
@@ -1737,8 +1971,6 @@ function menuHide(store) {
 
 function menuShow() {
 	var storage = Storages.localStorage;
-	var page = basename(location.pathname).replace('.php', '');
-
 	var myClass = '';
 
 	if ($('.cactiTreeNavigationArea').length) {
@@ -1770,7 +2002,7 @@ function menuShow() {
 
 	$('#navigation').show();
 
-	storage.set('menuState_' + page, 'visible');
+	storage.set('menuState_' + pageName, 'visible');
 }
 
 function loadTopTab(href, id, force) {
@@ -1812,7 +2044,7 @@ function loadTopTab(href, id, force) {
 				var htmlObject  = $(html);
 				var matches     = html.match(/<title>(.*?)<\/title>/);
 
-				$('#main').hide();
+				$('#main').empty().hide();
 
 				if (matches != null) {
 					var htmlTitle   = matches[1];
@@ -1820,7 +2052,7 @@ function loadTopTab(href, id, force) {
 					var parts       = html.split('</title>');
 					var html        = parts[1];
 
-					checkForLogout(html);
+					checkForRedirects(html, href);
 
 					$('title').text(htmlTitle);
 					$('#breadcrumbs').html(breadCrumbs);
@@ -1832,7 +2064,7 @@ function loadTopTab(href, id, force) {
 
 					pushState(myTitle, href);
 				} else {
-					checkForLogout(html);
+					checkForRedirects(html, href);
 
 					$('#cactiContent').replaceWith(html);
 
@@ -1862,6 +2094,8 @@ function loadTopTab(href, id, force) {
 					window.scrollTo(0,0);
 				}
 
+				handleUserMenu();
+
 				handleConsole(pageName);
 
 				$('#main').css('display', 'table');
@@ -1871,7 +2105,7 @@ function loadTopTab(href, id, force) {
 				return false;
 			})
 			.fail(function(html) {
-				getPresentHTTPError(html);
+				getPresentHTTPErrorOrRedirect(html, url);
 			}
 		);
 
@@ -1893,6 +2127,18 @@ function loadTopTab(href, id, force) {
 	} else {
 		return false;
 	}
+}
+
+function loadPageUsingPost(href, postData, returnLocation) {
+	$.post(href, postData, function(data) {
+		if (returnLocation !== undefined) {
+			$('#'+returnLocation).empty().html(data);
+		} else {
+			$('#main').empty().html(data);
+		}
+
+		applySkin();
+	});
 }
 
 function loadPage(href, force) {
@@ -1924,9 +2170,12 @@ function loadPage(href, force) {
 					var htmlTitle   = matches[1];
 					var breadCrumbs = htmlObject.find('#breadcrumbs').html();
 					var html        = htmlObject.find('#main').html();
+					var jstree		= htmlObject.find('.cactiTreeNavigationArea').html();
 
-					checkForLogout(html);
-
+					checkForRedirects(html, href);
+					if(typeof jstree !== 'undefined' && $('.cactiTreeNavigationArea').length !== 0) {
+						$('.cactiTreeNavigationArea').html(jstree);
+					}
 					$('#main').empty().hide();
 					$('title').text(htmlTitle);
 					$('#breadcrumbs').html(breadCrumbs);
@@ -1938,7 +2187,7 @@ function loadPage(href, force) {
 
 					pushState(myTitle, href);
 				} else {
-					checkForLogout(html);
+					checkForRedirects(html, href);
 
 					$('#main').empty().hide();
 					$('#main').html(html);
@@ -1989,7 +2238,7 @@ function loadPage(href, force) {
 				return false;
 			})
 			.fail(function(html) {
-				getPresentHTTPError(html);
+				getPresentHTTPErrorOrRedirect(html, href);
 			}
 		);
 	}
@@ -2085,7 +2334,7 @@ function loadPageNoHeader(href, scroll, force) {
 				var matches     = html.match(/<title>(.*?)<\/title>/);
 
 				if (matches != null) {
-					checkForLogout(html);
+					checkForRedirects(html, href);
 
 					var htmlTitle   = matches[1];
 					var breadCrumbs = htmlObject.filter('#breadcrumbs').html();
@@ -2102,7 +2351,7 @@ function loadPageNoHeader(href, scroll, force) {
 
 					pushState(myTitle, href);
 				} else {
-					checkForLogout(html);
+					checkForRedirects(html, href);
 
 					$('#main').empty().hide();
 					$('div[class^="ui-"]').remove();
@@ -2152,7 +2401,7 @@ function loadPageNoHeader(href, scroll, force) {
 				return false;
 			})
 			.fail(function(html) {
-				getPresentHTTPError(html);
+				getPresentHTTPErrorOrRedirect(html, href);
 			}
 		);
 	}
@@ -2161,7 +2410,11 @@ function loadPageNoHeader(href, scroll, force) {
 }
 
 function getPresentHTTPError(data) {
-	if (typeof data != 'undefined') {
+	getPresentHTTPErrorOrRedirect(data);
+}
+
+function getPresentHTTPErrorOrRedirect(data, url) {
+	if (typeof data.status != 'undefined') {
 		var errorStr  = data.status;
 		var errorSub  = data.statusText;
 		var errorText = errorReasonUnexpected;
@@ -2223,11 +2476,21 @@ function getPresentHTTPError(data) {
 			});
 		}
 	}
+
+	if (typeof url != 'undefined') {
+		if (data.status >= 500) {
+			// Let the HTTP Error stick log an error
+			$.get(urlPath + 'help.php?page=' + escape(url) + '&error=' + data.status);
+		} else if (data.status >= 400) {
+			// Let the HTTP Error stick
+		} else if (data.statusText != 'abort') {
+			$.ajaxQ.abortAll();
+			document.location = stripHeaderSuppression(url);
+		}
+	}
 }
 
 function ajaxAnchors() {
-	var page = basename(location.pathname);
-
 	$('a.pic, a.linkOverDark, a.linkEditMain, a.console, a.hyperLink, a.tab').not('[href^="http"], [href^="https"], [href^="#"], [href^="mailto"], [target="_blank"]').off('click').on('click', function(event) {
 		event.preventDefault();
 		event.stopPropagation();
@@ -2413,7 +2676,7 @@ function setupSortable() {
 
 		var $target = $(e.target);
 		var sortAdd = '';
-		var url     = '';
+		var href    = '';
 
 		if (!$target.is('.ui-resizable-handle')) {
 			var page      = $(this).find('.sortinfo').attr('sort-page');
@@ -2427,7 +2690,7 @@ function setupSortable() {
 				sortAdd='&add=reset';
 			}
 
-			var url = page+(page.indexOf('?') > 0 ? '&':'?') +
+			href = page+(page.indexOf('?') > 0 ? '&':'?') +
 				'sort_column=' + column +
 				'&sort_direction=' + direction +
 				'&header=false' +
@@ -2436,9 +2699,9 @@ function setupSortable() {
 			closeDateFilters();
 
 			$.ajaxQ.abortAll();
-			$.get(url)
+			$.get(href)
 				.done(function(data) {
-					checkForLogout(data);
+					checkForRedirects(data, href);
 
 					$('#'+returnto).empty().hide();
 
@@ -2451,7 +2714,7 @@ function setupSortable() {
 					applySkin();
 				})
 				.fail(function(data) {
-					getPresentHTTPError(data);
+					getPresentHTTPErrorOrRedirect(data, href);
 				}
 			);
 		}
@@ -2603,7 +2866,8 @@ function appendHeaderSuppression(url) {
 }
 
 function stripHeaderSuppression(url) {
-	return url.replace('header=false', '').replace('?&', '?').replace('&&', '&');
+	url = url.replace('header=false', '').replace('?&', '?').replace('&&', '&');
+	return url.replace('headercontent=true', '').replace('?&', '?').replace('&&', '&');
 }
 
 /** setupPageTimeout - This function will setup the page timeout based upon
@@ -2619,7 +2883,7 @@ function setupPageTimeout() {
 	if (typeof refreshMSeconds != 'undefined') {
 		myRefresh = setTimeout(function() {
 			if (refreshIsLogout) {
-				document.location = urlPath+'logout.php?action=timeout';
+				document.location = urlPath + 'logout.php?action=timeout';
 			} else {
 				if (previousPage != '') {
 					refreshPage = previousPage;
@@ -2633,7 +2897,7 @@ function setupPageTimeout() {
 				$.ajaxQ.abortAll();
 				$.get(refreshPage)
 					.done(function(data) {
-						checkForLogout(data);
+						checkForRedirects(data, refreshPage);
 
 						$('#main').empty().hide();
 						$('div[class^="ui-"]').remove();
@@ -2641,7 +2905,7 @@ function setupPageTimeout() {
 						applySkin();
 					})
 					.fail(function(data) {
-						getPresentHTTPError(data);
+						getPresentHTTPErrorOrRedirect(data, refreshPage);
 					}
 				);
 			}
@@ -2681,10 +2945,32 @@ function clearAllTimeouts() {
 	}
 }
 
+function setZoneInfo() {
+	var dt     = new Date();
+	var tz     = -dt.getTimezoneOffset();
+	var maxAge = 365*86400;
+
+	var CactiDateTime = 'CactiDateTime=' + dt.toString() + '; Max-Age=' + maxAge + '; path=' + urlPath + '; SameSite=Strict;';
+	var CactiTimeZone = 'CactiTimeZone=' + tz.toString() + '; Max-Age=' + maxAge + '; path=' + urlPath + '; SameSite=Strict;';
+
+	if (window.location.protocol == 'https:') {
+		CactiDateTime += ' Secure;';
+		CactiTimeZone += ' Secure;';
+	}
+
+	document.cookie = CactiDateTime;
+	document.cookie = CactiTimeZone;
+}
+
 $(function() {
 	statePushed = false;
 	popFired    = false;
 	var tapped  = false;
+
+	/**
+	 * Unbind key elements to debounce actions
+	 */
+	$('input, select, textarea, a').unbind();
 
 	// Use traditional popstate handler
 	window.onpopstate = function(event) {
@@ -2697,6 +2983,8 @@ $(function() {
 		}
 	});
 
+	setZoneInfo();
+
 	setTitleAndHref();
 
 	setupUserMenu();
@@ -2704,6 +2992,8 @@ $(function() {
 	applySkin();
 
 	setupEllipsis();
+
+	handleUserMenu();
 
 	$('#navigation_right').show();
 
@@ -2843,13 +3133,15 @@ function keepWindowSize() {
 			}
 
 			var navWidth = $('#navigation').width();
-			if (navWidth > 0) {
+			if (navWidth > 220) {
 				$('#searcher').css('width', navWidth-70);
+			} else {
+				$('#searcher').css('width', 150);
 			}
 
 			responsiveResizeGraphs();
 
-			/* close open dropdown menues first off */
+			/* close open dropdown menus first off */
 			$('.dropdownMenu > ul').hide();
 
 			if ($('#gtabs > .tabs').is(':visible')) {
@@ -2886,7 +3178,7 @@ function keepWindowSize() {
 				userTabPos = mainTabPos;
 			}
 
-			pageWidth  = bodyWidth;
+			pageWidth = bodyWidth;
 
 			var items = $($('.maintabs nav ul li a.lefttab').get());
 			var done = false;
@@ -2917,7 +3209,7 @@ function keepWindowSize() {
 				$('.ellipsis').show();
 			}
 		}, 50, 'resize-content');
-	}).trigger('resize')
+	}).trigger('resize');
 }
 
 function hideCurrentTab(id, shrinking) {
@@ -2993,17 +3285,37 @@ if (typeof urlPath == 'undefined') {
 	var urlPath = '';
 }
 
-var graphPage  = urlPath+'graph_view.php';
+var graphPage  = urlPath + 'graph_view.php';
 var pageAction = 'preview';
 
 function checkForLogout(data) {
+	checkForRedirects(data, null);
+}
+
+function checkForRedirects(data, href) {
 	if (typeof data == 'undefined') {
 		return true;
 	} else if (typeof data == 'object') {
 		return true;
 	} else if (data.indexOf('cactiLoginSuspend') >= 0) {
+		$.ajaxQ.abortAll();
 		document.location = urlPath + 'logout.php?action=disabled';
+	} else if (data.indexOf('cactiRemoteState') >= 0) {
+		$.ajaxQ.abortAll();
+		document.location = urlPath + 'logout.php?action=remote';
+	} else if (data.indexOf('cactiPermissionDenied') >= 0) {
+		$.ajaxQ.abortAll();
+		document.location = urlPath + 'permission_denied.php';
+	} else if (data.indexOf('cactiRedirect') >= 0) {
+		if (typeof href == 'undefined' || href == null) {
+			$.ajaxQ.abortAll();
+			document.location = stripHeaderSuppression(document.location.href);
+		} else {
+			$.ajaxQ.abortAll();
+			document.location = stripHeaderSuppression(href);
+		}
 	} else if (data.indexOf('cactiLoginLogo') >= 0) {
+		$.ajaxQ.abortAll();
 		document.location = urlPath + 'logout.php?action=timeout';
 	}
 
@@ -3018,7 +3330,7 @@ function clearGraphFilter() {
 	$.ajaxQ.abortAll();
 	$.get(href)
 		.done(function(data) {
-			checkForLogout(data);
+			checkForRedirects(data, href);
 
 			$('#main').empty().hide();
 			$('div[class^="ui-"]').remove();
@@ -3027,7 +3339,7 @@ function clearGraphFilter() {
 			applySkin();
 		})
 		.fail(function(data) {
-			getPresentHTTPError(data);
+			getPresentHTTPErrorOrRedirect(data, href);
 		}
 	);
 }
@@ -3043,24 +3355,26 @@ function closeDateFilters() {
 function saveGraphFilter(section) {
 	closeDateFilters();
 
+	var error_href = graphPage;
+
 	$.post(graphPage+'?action=save', {
-			section: section,
-			columns: $('#columns').val(),
-			graphs: $('#graphs').val(),
-			graph_template_id: $('#graph_template_id').val(),
-			predefined_timespan: $('#predefined_timespan').val(),
-			predefined_timeshift: $('#predefined_timeshift').val(),
-			thumbnails: $('#thumbnails').is(':checked'),
-			__csrf_magic: csrfMagicToken
-			}).done(function(data) {
-			checkForLogout(data);
+		section: section,
+		columns: $('#columns').val(),
+		graphs: $('#graphs').val(),
+		graph_template_id: $('#graph_template_id').val(),
+		predefined_timespan: $('#predefined_timespan').val(),
+		predefined_timeshift: $('#predefined_timeshift').val(),
+		thumbnails: $('#thumbnails').is(':checked'),
+		__csrf_magic: csrfMagicToken
+		}).done(function(data) {
+			checkForRedirects(data);
 
 			$('#text').show().text(filterSettingsSaved).fadeOut(2000, function() {
 				$('#text').empty();
 			});
 		})
 		.fail(function(data) {
-			getPresentHTTPError(data);
+			getPresentHTTPErrorOrRedirect(data, error_href);
 		}
 	);
 }
@@ -3068,7 +3382,7 @@ function saveGraphFilter(section) {
 function applyGraphFilter() {
 	var href = appendHeaderSuppression(graphPage+'?action='+pageAction+
 		'&rfilter=' + base64_encode($('#rfilter').val())+
-		(typeof($('#host_id').val()) != 'undefined' ? '&host_id='+$('#host_id').val():'')+
+		(typeof $('#host_id').val() != 'undefined' ? '&host_id='+$('#host_id').val():'')+
 		'&columns='+$('#columns').val()+
 		'&graphs='+$('#graphs').val()+
 		'&graph_template_id='+$('#graph_template_id').val()+
@@ -3079,9 +3393,9 @@ function applyGraphFilter() {
 	$.ajaxQ.abortAll();
 	$.get(href)
 		.done(function(data) {
-			checkForLogout(data);
+			checkForRedirects(data, href);
 
-			$('#main').hide();
+			$('#main').empty().hide();
 			$('div[class^="ui-"]').remove();
 			$('#main').html(data);
 			applySkin();
@@ -3089,7 +3403,7 @@ function applyGraphFilter() {
 			pushState(myTitle, myHref);
 		})
 		.fail(function(data) {
-			getPresentHTTPError(data);
+			getPresentHTTPErrorOrRedirect(data, href);
 		}
 	);
 }
@@ -3148,7 +3462,7 @@ function applyGraphTimespan() {
 	$.ajaxQ.abortAll();
 	$.get(href)
 		.done(function(data) {
-			checkForLogout(data);
+			checkForRedirects(data, href);
 
 			$('#main').empty().hide();
 			$('div[class^="ui-"]').remove();
@@ -3156,7 +3470,7 @@ function applyGraphTimespan() {
 			applySkin();
 		})
 		.fail(function(data) {
-			getPresentHTTPError(data);
+			getPresentHTTPErrorOrRedirect(data, href);
 		}
 	);
 }
@@ -3179,7 +3493,7 @@ function refreshGraphTimespanFilter() {
 
 	$.ajaxQ.abortAll();
 	$.post(href, json).done(function(data) {
-		checkForLogout(data);
+		checkForRedirects(data, href);
 
 		$('#main').empty().hide();
 		$('div[class^="ui-"]').remove();
@@ -3205,7 +3519,7 @@ function timeshiftGraphFilterLeft() {
 
 	$.ajaxQ.abortAll();
 	$.post(href, json).done(function(data) {
-		checkForLogout(data);
+		checkForRedirects(data, href);
 
 		$('#main').empty().hide();
 		$('div[class^="ui-"]').remove();
@@ -3231,7 +3545,7 @@ function timeshiftGraphFilterRight() {
 
 	$.ajaxQ.abortAll();
 	$.post(href, json).done(function(data) {
-		checkForLogout(data);
+		checkForRedirects(data, href);
 
 		$('#main').empty().hide();
 		$('div[class^="ui-"]').remove();
@@ -3256,7 +3570,7 @@ function clearGraphTimespanFilter() {
 
 	$.ajaxQ.abortAll();
 	$.post(href, json).done(function(data) {
-		checkForLogout(data);
+		checkForRedirects(data, href);
 
 		$('#main').empty().hide();
 		$('div[class^="ui-"]').remove();
@@ -3266,16 +3580,21 @@ function clearGraphTimespanFilter() {
 }
 
 function removeSpikesStdDev(local_graph_id) {
-	var strURL = urlPath+'spikekill.php?method=stddev&local_graph_id='+local_graph_id;
+	var href = urlPath + 'spikekill.php' +
+		'?method=stddev'   +
+		'&local_graph_id=' + local_graph_id;
 
 	closeDateFilters();
 
-	$.getJSON(strURL)
+	$.getJSON(href)
 		.done(function(data) {
-			checkForLogout(data);
+			checkForRedirects(data, href);
 
 			redrawGraph(local_graph_id);
 			$('#spikeresults').remove();
+			$('body').append('<div id="spikeresults" style="overflow-y:scroll;" title="' + spikeKillResults + '"></div>');
+			$('#spikeresults').html(data.results);
+			$('#spikeresults').dialog({ width:1100, maxHeight: 600 });
 		})
 		.fail(function(data) {
 			getPresentHTTPError(data);
@@ -3284,16 +3603,21 @@ function removeSpikesStdDev(local_graph_id) {
 }
 
 function removeSpikesVariance(local_graph_id) {
-	var strURL = urlPath+'spikekill.php?method=variance&local_graph_id='+local_graph_id;
+	var href = urlPath + 'spikekill.php' +
+		'?method=variance' +
+		'&local_graph_id=' + local_graph_id;
 
 	closeDateFilters();
 
-	$.getJSON(strURL)
+	$.getJSON(href)
 		.done(function(data) {
-			checkForLogout(data);
+			checkForRedirects(data, href);
 
 			redrawGraph(local_graph_id);
 			$('#spikeresults').remove();
+			$('body').append('<div id="spikeresults" style="overflow-y:scroll;" title="' + spikeKillResults + '"></div>');
+			$('#spikeresults').html(data.results);
+			$('#spikeresults').dialog({ width:1100, maxHeight: 600 });
 		})
 		.fail(function(data) {
 			getPresentHTTPError(data);
@@ -3302,16 +3626,23 @@ function removeSpikesVariance(local_graph_id) {
 }
 
 function removeSpikesInRange(local_graph_id) {
-	var strURL = urlPath+'spikekill.php?method=fill&local_graph_id='+local_graph_id+'&outlier-start='+graph_start+'&outlier-end='+graph_end;
+	var href = urlPath + 'spikekill.php' +
+		'?method=fill' +
+		'&local_graph_id=' + local_graph_id +
+		'&outlier-start='  + graph_start    +
+		'&outlier-end='    + graph_end;
 
 	closeDateFilters();
 
-	$.getJSON(strURL)
+	$.getJSON(href)
 		.done(function(data) {
-			checkForLogout(data);
+			checkForRedirects(data, href);
 
 			redrawGraph(local_graph_id);
 			$('#spikeresults').remove();
+			$('body').append('<div id="spikeresults" style="overflow-y:scroll;" title="' + spikeKillResults + '"></div>');
+			$('#spikeresults').html(data.results);
+			$('#spikeresults').dialog({ width:1100, maxHeight: 600 });
 		})
 		.fail(function(data) {
 			getPresentHTTPError(data);
@@ -3320,16 +3651,23 @@ function removeSpikesInRange(local_graph_id) {
 }
 
 function removeRangeFill(local_graph_id) {
-	var strURL = urlPath+'spikekill.php?method=float&local_graph_id='+local_graph_id+'&outlier-start='+graph_start+'&outlier-end='+graph_end;
+	var href = urlPath + 'spikekill.php' +
+		'?method=float'    +
+		'&local_graph_id=' + local_graph_id +
+		'&outlier-start='  + graph_start +
+		'&outlier-end='    + graph_end;
 
 	closeDateFilters();
 
-	$.getJSON(strURL)
+	$.getJSON(href)
 		.done(function(data) {
-			checkForLogout(data);
+			checkForRedirects(data, href);
 
 			redrawGraph(local_graph_id);
 			$('#spikeresults').remove();
+			$('body').append('<div id="spikeresults" style="overflow-y:scroll;" title="' + spikeKillResults + '"></div>');
+			$('#spikeresults').html(data.results);
+			$('#spikeresults').dialog({ width:1100, maxHeight: 600 });
 		})
 		.fail(function(data) {
 			getPresentHTTPError(data);
@@ -3338,16 +3676,19 @@ function removeRangeFill(local_graph_id) {
 }
 
 function dryRunStdDev(local_graph_id) {
-	var strURL = urlPath+'spikekill.php?method=stddev&dryrun=true&local_graph_id='+local_graph_id;
+	var href = urlPath + 'spikekill.php' +
+		'?method=stddev'   +
+		'&dryrun=true'     +
+		'&local_graph_id=' + local_graph_id;
 
 	closeDateFilters();
 
-	$.getJSON(strURL)
+	$.getJSON(href)
 		.done(function(data) {
-			checkForLogout(data);
+			checkForRedirects(data, href);
 
 			$('#spikeresults').remove();
-			$('body').append('<div id="spikeresults" style="overflow-y:scroll;" title="'+spikeKillResults+'"></div>');
+			$('body').append('<div id="spikeresults" style="overflow-y:scroll;" title="' + spikeKillResults + '"></div>');
 			$('#spikeresults').html(data.results);
 			$('#spikeresults').dialog({ width:1100, maxHeight: 600 });
 		})
@@ -3358,16 +3699,19 @@ function dryRunStdDev(local_graph_id) {
 }
 
 function dryRunVariance(local_graph_id) {
-	var strURL = urlPath+'spikekill.php?method=variance&dryrun=true&local_graph_id='+local_graph_id;
+	var href = urlPath + 'spikekill.php' +
+		'?method=variance' +
+		'&dryrun=true'     +
+		'&local_graph_id=' + local_graph_id;
 
 	closeDateFilters();
 
-	$.getJSON(strURL)
+	$.getJSON(href)
 		.done(function(data) {
-			checkForLogout(data);
+			checkForRedirects(data, href);
 
 			$('#spikeresults').remove();
-			$('body').append('<div id="spikeresults" style="overflow-y:scroll;" title="'+spikeKillResults+'"></div>');
+			$('body').append('<div id="spikeresults" style="overflow-y:scroll;" title="' + spikeKillResults + '"></div>');
 			$('#spikeresults').html(data.results);
 			$('#spikeresults').dialog({ width:1100, maxHeight: 600 });
 		})
@@ -3378,17 +3722,22 @@ function dryRunVariance(local_graph_id) {
 }
 
 function dryRunSpikesInRange(local_graph_id) {
-	var strURL = urlPath+'spikekill.php?method=fill&dryrun=true&local_graph_id='+local_graph_id+'&outlier-start='+graph_start+'&outlier-end='+graph_end;
+	var href = urlPath + 'spikekill.php' +
+		'?method=fill' +
+		'&dryrun=true' +
+		'&local_graph_id=' + local_graph_id +
+		'&outlier-start='  + graph_start +
+		'&outlier-end='    + graph_end;
 
 	closeDateFilters();
 
-	$.getJSON(strURL)
+	$.getJSON(href)
 		.done(function(data) {
-			checkForLogout(data);
+			checkForRedirects(data, href);
 
 			redrawGraph(local_graph_id);
 			$('#spikeresults').remove();
-			$('body').append('<div id="spikeresults" style="overflow-y:scroll;" title="'+spikeKillResults+'"></div>');
+			$('body').append('<div id="spikeresults" style="overflow-y:scroll;" title="' + spikeKillResults + '"></div>');
 			$('#spikeresults').html(data.results);
 			$('#spikeresults').dialog({ width:1100, maxHeight: 600 });
 		})
@@ -3399,17 +3748,22 @@ function dryRunSpikesInRange(local_graph_id) {
 }
 
 function dryRunRangeFill(local_graph_id) {
-	var strURL = urlPath+'spikekill.php?method=float&dryrun=true&local_graph_id='+local_graph_id+'&outlier-start='+graph_start+'&outlier-end='+graph_end;
+	var href = urlPath + 'spikekill.php' +
+		'?method=float' +
+		'&dryrun=true'  +
+		'&local_graph_id=' + local_graph_id +
+		'&outlier-start='  + graph_start +
+		'&outlier-end='    + graph_end;
 
 	closeDateFilters();
 
-	$.getJSON(strURL)
+	$.getJSON(href)
 		.done(function(data) {
-			checkForLogout(data);
+			checkForRedirects(data, href);
 
 			redrawGraph(local_graph_id);
 			$('#spikeresults').remove();
-			$('body').append('<div id="spikeresults" style="overflow-y:scroll;" title="'+spikeKillResults+'"></div>');
+			$('body').append('<div id="spikeresults" style="overflow-y:scroll;" title="' + spikeKillResults + '"></div>');
 			$('#spikeresults').html(data.results);
 			$('#spikeresults').dialog({ width:1100, maxHeight: 600 });
 		})
@@ -3439,13 +3793,15 @@ function redrawGraph(graph_id) {
 
 	closeDateFilters();
 
-	$.getJSON(urlPath+'graph_json.php?rra_id=0'+
-		'&local_graph_id='+graph_id+
-		'&graph_start='+graph_start+
-		'&graph_end='+graph_end+
-		'&graph_height='+graph_height+
-		'&graph_width='+graph_width+
-		(isThumb ? '&graph_nolegend=true':''))
+	var url = 'graph_json.php?rra_id=0'   +
+		'&local_graph_id=' + graph_id     +
+		'&graph_start='    + graph_start  +
+		'&graph_end='      + graph_end    +
+		'&graph_height='   + graph_height +
+		'&graph_width='    + graph_width  +
+		(isThumb ? '&graph_nolegend=true':'');
+
+	$.getJSON(url)
 		.done(function(data) {
 			if (typeof data.status == 'undefined') {
 				if (myWidth < data.image_width) {
@@ -3458,7 +3814,7 @@ function redrawGraph(graph_id) {
 					data.graph_left   = parseInt(data.graph_left * ratio);
 				}
 
-				$('#wrapper_'+data.local_graph_id).html(
+				$('#wrapper_'+data.local_graph_id).empty().html(
 					"<img class='graphimage' id='graph_"+data.local_graph_id+"'"+
 					" src='data:image/"+data.type+";base64,"+data.image+"'"+
 					" rra_id='"+data.rra_id+"'"+
@@ -3487,6 +3843,8 @@ function redrawGraph(graph_id) {
 					inputfieldEndTime : 'date2',
 					serverTimeOffset : timeOffset
 				});
+
+				data = undefined;
 			} else {
 				getPresentHTTPError(data);
 			}
@@ -3497,13 +3855,15 @@ function redrawGraph(graph_id) {
 	);
 }
 
-function initializeGraphs() {
+function initializeGraphs(disable_cache) {
+	disable_cache = (typeof disable_cache == 'undefined') ? false : true;
+
 	$.ajaxQ.abortAll();
 
 	$('a[id$="_mrtg"]').each(function() {
 		var graph_id = $(this).attr('id').replace('graph_','').replace('_mrtg','');
 
-		$(this).attr('href', urlPath+'graph.php?local_graph_id='+graph_id).addClass('linkEditMain');;
+		$(this).attr('href', urlPath + 'graph.php?local_graph_id=' + graph_id);
 
 		$(this).off('click').on('click', function(event) {
 			var graph_id=$(this).attr('id').replace('graph_','').replace('_mrtg','');
@@ -3513,10 +3873,12 @@ function initializeGraphs() {
 
 			closeDateFilters();
 
+			var url = urlPath + 'graph.php?local_graph_id=' + graph_id + '&header=false';
+
 			$.ajaxQ.abortAll();
-			$.get(urlPath+'graph.php?local_graph_id='+graph_id+'&header=false')
+			$.get(url)
 				.done(function(data) {
-					checkForLogout(data);
+					checkForRedirects(data);
 
 					$('#main').empty().hide();
 					$('#breadcrumbs').append('<li><a id="nav_mrgt" href="#">'+timeGraphView+'</a></li>');
@@ -3526,7 +3888,7 @@ function initializeGraphs() {
 					clearTimeout(myRefresh);
 				})
 				.fail(function(data) {
-					getPresentHTTPError(data);
+					getPresentHTTPErrorOrRedirect(data, url);
 				}
 			);
 		});
@@ -3541,22 +3903,32 @@ function initializeGraphs() {
 
 		// Disable context menu
 		$(this).children().contextmenu(function() {
-				return false;
+			return false;
 		});
 
-		$(this).attr('href',urlPath+
-			'graph_xport.php?local_graph_id='+graph_id+
-			'&rra_id=0&view_type=tree&graph_start='+timestampDate1+
-			'&graph_end='+timestampDate2).addClass('linkEditMain');
+		var url = urlPath +
+			'graph_xport.php'  +
+			'?local_graph_id=' + graph_id +
+			'&rra_id=0'        +
+			'&view_type=tree'  +
+			'&graph_start='    + timestampDate1 +
+			'&graph_end='      + timestampDate2;
+
+		$(this).attr('href', url);
 
 		$(this).off('click').on('click', function(event) {
 			var graph_id = $(this).attr('id').replace('graph_','').replace('_csv','');
 			event.preventDefault();
 			event.stopPropagation();
-			document.location = urlPath+
-				'graph_xport.php?local_graph_id='+graph_id+
-				'&rra_id=0&view_type=tree&graph_start='+timestampDate1+
-				'&graph_end='+timestampDate2;
+
+			document.location = urlPath +
+				'graph_xport.php'  +
+				'?local_graph_id=' + graph_id+
+				'&rra_id=0'        +
+				'&view_type=tree'  +
+				'&graph_start='    + timestampDate1+
+				'&graph_end='      + timestampDate2;
+
 			Pace.stop();
 		});
 	});
@@ -3586,19 +3958,25 @@ function initializeGraphs() {
 
 		var graph_height = $(this).attr('graph_height');
 		var graph_width  = $(this).attr('graph_width');
+		var error_url    = urlPath + 'graph_view.php';
 
 		closeDateFilters();
 
-		$.getJSON(urlPath+'graph_json.php?rra_id='+rra_id+
-			'&local_graph_id='+graph_id+
-			'&graph_start='+graph_start+
-			'&graph_end='+graph_end+
-			'&graph_height='+graph_height+
-			'&graph_width='+graph_width+
-			(isThumb ? '&graph_nolegend=true':''))
+		var url = urlPath + 'graph_json.php' +
+			'?rra_id='         +rra_id +
+			'&local_graph_id=' + graph_id +
+			'&graph_start='    + graph_start +
+			'&graph_end='      + graph_end +
+			'&graph_height='   + graph_height +
+			'&graph_width='    + graph_width +
+			(disable_cache ? '&disable_cache=true':'') +
+			(isThumb ? '&graph_nolegend=true':'');
+
+		$.getJSON(url)
 			.done(function(data) {
 				if (myWidth < data.image_width) {
-					ratio=myWidth/data.image_width;
+					ratio = myWidth/data.image_width;
+
 					data.image_width  = parseInt(data.image_width  * ratio);
 					data.image_height = parseInt(data.image_height * ratio);
 					data.graph_width  = parseInt(data.graph_width  * ratio);
@@ -3608,11 +3986,12 @@ function initializeGraphs() {
 				}
 
 				var wrapper_id = '#wrapper_'+data.local_graph_id;
+
 				if (rra_id > 0) {
 					wrapper_id += '[rra_id=\'' + data.rra_id + '\']';
 				}
 
-				$(wrapper_id).html(
+				$(wrapper_id).empty().html(
 					"<img class='graphimage' id='graph_"+data.local_graph_id+"'"+
 					" src='data:image/"+data.type+";base64,"+data.image+"'"+
 					" rra_id='"+data.rra_id+"'"+
@@ -3647,14 +4026,18 @@ function initializeGraphs() {
 					serverTimeOffset : timeOffset
 				});
 
-				realtimeArray[data.local_graph_id] = false;
+				if (typeof realtimeArray != 'undefined') {
+					realtimeArray[data.local_graph_id] = false;
+				}
 
 				if (!--numGraphs) {
 					responsiveResizeGraphs();
 				}
+
+				data = undefined;
 			})
 			.fail(function(data) {
-				getPresentHTTPError(data);
+				getPresentHTTPErrorOrRedirect(data, error_url);
 			}
 		);
 	});
@@ -3670,10 +4053,13 @@ function initializeGraphs() {
 	$('a[id$="_util"]').each(function() {
 		var graph_id = $(this).attr('id').replace('graph_','').replace('_util','');
 
-		$(this).attr('href',urlPath+
-			'graph.php?action=zoom&local_graph_id='+graph_id+
-			'&rra_id=0&graph_start='+timestampDate1+
-			'&graph_end='+timestampDate2).addClass('linkEditMain');
+		$(this).attr('href', urlPath +
+			'graph.php'    +
+			'?action=zoom' +
+			'&rra_id=0'    +
+			'&local_graph_id=' + graph_id +
+			'&graph_start='    + timestampDate1 +
+			'&graph_end='      + timestampDate2);
 
 		$(this).off('click').on('click', function(event) {
 			var graph_id = $(this).attr('id').replace('graph_','').replace('_util','');
@@ -3683,10 +4069,18 @@ function initializeGraphs() {
 
 			closeDateFilters();
 
+			var url = urlPath + 'graph.php' +
+				'?action=zoom'  +
+				'&header=false' +
+				'&rra_id=0'     +
+				'&local_graph_id=' + graph_id +
+				'&graph_start='    + getTimestampFromDate($('#date1').val()) +
+				'&graph_end='      + getTimestampFromDate($('#date2').val());
+
 			$.ajaxQ.abortAll();
-			$.get(urlPath+'graph.php?action=zoom&header=false&local_graph_id='+graph_id+'&rra_id=0&graph_start='+getTimestampFromDate($('#date1').val())+'&graph_end='+getTimestampFromDate($('#date2').val()))
+			$.get(url)
 				.done(function(data) {
-					checkForLogout(data);
+					checkForRedirects(data);
 
 					$('#main').empty().hide();
 					$('div[class^="ui-"]').remove();
@@ -3696,7 +4090,7 @@ function initializeGraphs() {
 					clearTimeout(myRefresh);
 				})
 				.fail(function(data) {
-					getPresentHTTPError(data);
+					getPresentHTTPErrorOrRedirect(data, url);
 				}
 			);
 		});
@@ -3716,7 +4110,7 @@ function initializeGraphs() {
 
 			if (realtimeArray[graph_id]) {
 				$('#wrapper_'+graph_id).html(keepRealtime[graph_id]).change();
-				$(this).html("<img class='drillDown' title='"+realtimeClickOn+"' alt='' src='"+urlPath+"images/chart_curve_go.png'>");
+				$(this).html("<img class='drillDown' title='"+realtimeClickOn+"' alt='' src='" + urlPath + "images/chart_curve_go.png'>");
 
 				$('graph_id'+graph_id).tooltip().zoom({
 					inputfieldStartTime : 'date1',
@@ -3758,10 +4152,8 @@ $.widget('custom.languageselect', $.ui.selectmenu, {
 // combobox example borrowed from jqueryui
 $.widget('custom.dropcolor', {
 	_create: function() {
-		$('body').append('<div id="cwrap" class="ui-selectmenu-menu ui-front">');
-
-		this.wrapper = $('<span><span class="ui-select-text"><div id="bgc" class="ui-icon color-icon" style="margin-left:2px;margin-right:3px;"></div></span></span>')
-		.addClass('class="ui-selectmenu-button ui-selectmenu-button-closed ui-corner-all ui-button ui-widget"')
+		this.wrapper = $('<span style="display:inline-flex"><span class="ui-select-text"><div id="bgc" class="ui-icon color-icon" style="margin-left:2px;margin-right:3px;"></div></span></span>')
+		.addClass('ui-selectmenu-button ui-selectmenu-button-closed ui-corner-all ui-button ui-widget')
 		.insertAfter(this.element);
 
 		this.element.hide();
@@ -3778,7 +4170,7 @@ $.widget('custom.dropcolor', {
 		if (hex != null) {
 			this.wrapper.find('#bgc').css('background-color', '#'+hex[1]);
 		}
-		this.input = $('<input class="ui-autocomplete-input ui-state-default ui-selectmenut-text" style="background:transparent;border:0px;margin-left:-22px;padding:0px 3px 0px 22px;" value="'+value+'">')
+		this.input = $('<input class="ui-autocomplete-input ui-state-default ui-selectmenu-text" style="background:transparent;border:0px;padding:0px;padding-left:24px;margin-left:-24px" value="'+value+'">')
 		.appendTo(this.wrapper)
 		.on('click', function() {
 			$(this).autocomplete('search', '');
@@ -3850,7 +4242,7 @@ $.widget('custom.dropcolor', {
 		$('<span>')
 		.attr('tabIndex', -1)
 		.appendTo(this.wrapper)
-		.addClass('ui-icon ui-icon-triangle-1-s')
+		.addClass('ui-icon ui-icon-triangle-1-s ui-selectmenu-icon')
 		.on('mousedown', function() {
 			wasOpen = input.autocomplete('widget').is(':visible');
 		})
@@ -4323,7 +4715,8 @@ function checkSNMPPassphraseConfirm(type) {
 	}
 
 	if ($(conf).val().length < minChars) {
-		passphrase = $(pass).val();
+		var passphrase = $(pass).val();
+
 		if (passphrase.indexOf($(conf).val()) == 0) {
 			$('#'+spanconf).remove();
 			$(conf).after('<span id="'+spanconf+'"><i class="badpassword fa fa-times"></i><span style="padding-left:4px;">'+passwordMatchTooShort+'<span></span>');
@@ -4342,3 +4735,4 @@ function checkSNMPPassphraseConfirm(type) {
 		}
 	}
 }
+

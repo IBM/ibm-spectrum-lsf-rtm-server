@@ -50,8 +50,9 @@ switch (get_request_var('action')) {
 	case 'ajax_span':
 		get_filter_request_var('profile_id');
 		get_filter_request_var('span');
+		get_filter_request_var('rows');
 
-		if (is_numeric(get_nfilter_request_var('rows'))) {
+		if (is_numeric(get_request_var('rows')) && get_request_var('rows') > 0) {
 			get_filter_request_var('rows');
 
 			$sampling_interval = db_fetch_cell_prepared('SELECT step
@@ -72,7 +73,8 @@ switch (get_request_var('action')) {
 	case 'ajax_size':
 		get_filter_request_var('id');
 		get_filter_request_var('cfs');
-		print get_size(get_request_var('id'), get_nfilter_request_var('type'), get_request_var('cfs'));
+		get_filter_request_var('rows');
+		print get_size(get_request_var('id'), get_nfilter_request_var('type'), get_request_var('cfs'), get_request_var('rows'));
 
 		break;
 	case 'item_edit':
@@ -98,16 +100,7 @@ switch (get_request_var('action')) {
 		break;
 }
 
-/* --------------------------
-    Global Form Functions
-   -------------------------- */
-
-/* --------------------------
-    The Save Function
-   -------------------------- */
-
 function form_save() {
-
 	// make sure ids are numeric
 	if (isset_request_var('id') && ! is_numeric(get_filter_request_var('id'))) {
 		set_request_var('id', 0);
@@ -115,6 +108,15 @@ function form_save() {
 
 	if (isset_request_var('profile_id') && ! is_numeric(get_filter_request_var('profile_id'))) {
 		set_request_var('profile_id', 0);
+	}
+
+	if (get_request_var('id') > 0) {
+		$prev_heartbeat = db_fetch_cell_prepared('SELECT heartbeat
+			FROM data_source_profiles
+			WHERE id = ?',
+			array(get_request_var('id')));
+	} else {
+		$prev_heartbeat = get_request_var('heartbeat');
 	}
 
 	if (isset_request_var('save_component_profile')) {
@@ -131,7 +133,7 @@ function form_save() {
 
 		if (isset_request_var('default')) {
 			$save['default'] = (isset_request_var('default') ? 'on':'');
-			db_execute('UPDATE data_source_profiles SET `default`=""');
+			db_execute('UPDATE data_source_profiles SET `default` = ""');
 		}
 
 		if (!is_error_message()) {
@@ -160,6 +162,25 @@ function form_save() {
 								(data_source_profile_id, consolidation_function_id)
 								VALUES (?, ?)', array($profile_id, $cf));
 						}
+					}
+				}
+
+				if ($prev_heartbeat != get_request_var('heartbeat')) {
+					$existing = db_fetch_cell_prepared('SELECT COUNT(*)
+						FROM data_template_data
+						WHERE data_source_profile_id = ?
+						AND local_data_id > 0',
+						array(get_request_var('id')));
+
+					if ($existing) {
+						db_execute_prepared('UPDATE data_template_rrd AS dtr
+							INNER JOIN data_template_data AS dtd
+							ON dtd.local_data_id = dtr.local_data_id
+							SET dtr.rrd_heartbeat = ?
+							WHERE dtd.data_source_profile_id = ?',
+							array(get_request_var('heartbeat'), get_request_var('id')));
+
+						raise_message('heartbeat_change', __('Changing the Heartbeat from this page, does not change the Heartbeat for your existing Data Sources.  Use RRDtool\'s \'tune\' function to make that change to your existing RRDfiles heartbeats, or run the CLI utility update_heartbeat.php to correct.<br>'), MESSAGE_LEVEL_WARN);
 					}
 				}
 
@@ -458,14 +479,19 @@ function item_edit() {
 		$oneguy = db_fetch_cell_prepared('SELECT id
 			FROM data_source_profiles_rra
 			WHERE data_source_profile_id = ?
-			AND steps=1',
+			AND steps = 1',
 			array(get_request_var('profile_id')));
 
 		if (empty($oneguy)) {
 			$fields_profile_rra_edit['steps']['array'] = array('1' => __('Each Insert is New Row'));
 		} else {
+			$max = db_fetch_cell_prepared('SELECT MAX(steps) * ?
+				FROM data_source_profiles_rra
+				WHERE data_source_profile_id = ?',
+				array($sampling_interval, get_request_var('profile_id')));
+
 			foreach($aggregation_levels as $interval => $name) {
-				if ($interval <= $sampling_interval) {
+				if ($interval <= $max) {
 					unset($aggregation_levels[$interval]);
 				}
 			}
@@ -681,7 +707,7 @@ function profile_edit() {
 			event.preventDefault();
 
 			id = $(this).attr('id').split('_');
-			request = 'data_source_profiles.php?action=item_remove_confirm&id='+id[1]+'&profle_id='+id[0];
+			request = 'data_source_profiles.php?action=item_remove_confirm&id='+id[1]+'&profile_id='+id[0];
 			$.get(request)
 				.done(function(data) {
 					$('#cdialog').html(data);
@@ -717,11 +743,6 @@ function profile_edit() {
 
 		$('#x_files_factor').prop('disabled', true);
 
-		$('#heartbeat').prop('disabled', true);
-		if ($('#heartbeat').selectmenu('instance')) {
-			$('#heartbeat').selectmenu('disable')
-		}
-
 		$('#consolidation_function_id').prop('disabled', true);
 		if ($('#consolidation_function_id').multiselect('instance')) {
 			$('#consolidation_function_id').multiselect('disable');
@@ -744,7 +765,7 @@ function profile_edit() {
 	<?php
 }
 
-function get_size($id, $type, $cfs = '') {
+function get_size($id, $type, $cfs = '', $rows = 1) {
 	// On x86_64 platform, here is the equation
 	// file_size = $header + (# data sources * 300) + (# cfs * #rows in all RRAs)
 	$header   = 284;
@@ -765,15 +786,15 @@ function get_size($id, $type, $cfs = '') {
 			array($id));
 
 		return __('%s KBytes per Data Sources and %s Bytes for the Header', number_format_i18n(($rows * $row * $cfs + $dsheader) / 1000), $header);
-	} else {
+	} elseif ($rows > 0) {
 		$cfs  = db_fetch_cell_prepared('SELECT COUNT(*)
 			FROM data_source_profiles_cf
 			WHERE data_source_profile_id = ?',
 			array($id));
 
-		$rows = get_filter_request_var('rows');
-
 		return __('%s KBytes per Data Source', number_format_i18n(($rows * $row * $cfs) / 1000));
+	} else {
+		return __('Enter a valid number of Rows to obtain the RRA size.');
 	}
 }
 
@@ -912,7 +933,7 @@ function profile() {
 					</td>
 					<td>
 						<span>
-							<input type='button' class='ui-button ui-corner-all ui-widget' id='refresh' value='<?php print __esc('Go');?>' title='<?php print __esc('Set/Refresh Filters');?>'>
+							<input type='submit' class='ui-button ui-corner-all ui-widget' id='go' value='<?php print __esc('Go');?>' title='<?php print __esc('Set/Refresh Filters');?>'>
 							<input type='button' class='ui-button ui-corner-all ui-widget' id='clear' value='<?php print __esc('Clear');?>' title='<?php print __esc('Clear Filters');?>'>
 						</span>
 					</td>
@@ -935,10 +956,6 @@ function profile() {
 			}
 
 			$(function() {
-				$('#refresh').click(function() {
-					applyFilter();
-				});
-
 				$('#has_data').click(function() {
 					applyFilter();
 				});

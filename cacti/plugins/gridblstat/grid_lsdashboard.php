@@ -22,10 +22,10 @@ $guest_account = true;
 
 chdir('../../');
 include('./include/auth.php');
-include($config['base_path'] . '/lib/rrd.php');
-include($config['base_path'] . '/lib/timespan_settings.php');
+include($config['library_path'] . '/rrd.php');
+include($config['library_path'] . '/timespan_settings.php');
+include($config['library_path'] . '/rtm_functions.php');
 include($config['base_path'] . '/plugins/gridblstat/lib/functions.php');
-include_once($config['library_path'] . '/rtm_functions.php');
 
 $title = __('IBM Spectrum LSF RTM - License Scheduler Dashboard', 'gridblstat');
 
@@ -1488,7 +1488,7 @@ function grid_distribution_filter() {
 	<?php
 }
 
-function grid_view_get_users_records(&$sql_where, $apply_limits = true, $rows, &$sql_params) {
+function grid_view_get_users_records(&$sql_where, $apply_limits = true, $rows = 30, &$sql_params = array()) {
 	if (get_request_var('sd') == '-1') {
 		/* show all service domains */
 	} elseif (get_request_var('sd') == '-3') {
@@ -2148,7 +2148,7 @@ function grid_user_filter() {
 	<?php
 }
 
-function grid_view_get_cluster_records(&$sql_where, $apply_limits = true, $rows, &$sql_params) {
+function grid_view_get_cluster_records(&$sql_where, $apply_limits = true, $rows = 30, &$sql_params = array()) {
 	if (get_request_var('cluster') != '-1') {
 		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE') . ' a.cluster=' . db_qstr(get_request_var('cluster'));
 		$sql_params[] = get_request_var('cluster');
@@ -3926,7 +3926,7 @@ function grid_view_zen() {
 						SELECT lic_id
 						FROM grid_blstat_service_domains
 						WHERE lsid = ?
-						AND service_domain IN ('" . implode($service_domains, "','") . "')
+						AND service_domain IN ('" . implode("','", $service_domains) . "')
 					)
 				) AS recordset
 				ON gh.host = recordset.hostname
@@ -3941,7 +3941,7 @@ function grid_view_zen() {
 						SELECT lic_id
 						FROM grid_blstat_service_domains
 						WHERE lsid = ?
-						AND service_domain IN ('" . implode($service_domains, "','") . "')
+						AND service_domain IN ('" . implode("','", $service_domains) . "')
 					)
 					GROUP BY fu.username) AS maxrs
 				ON maxrs.username=recordset.username
@@ -4341,7 +4341,7 @@ function grid_feature_filter() {
 	<?php
 }
 
-function grid_get_checkouts(&$sql_where, $apply_limits = true, $rows, &$total_rows) {
+function grid_get_checkouts(&$sql_where, $apply_limits = true, $rows = 30, &$total_rows = 0) {
 	$sql_params = array();
 	if (get_request_var('host') != '') {
 		$sql_where = "WHERE hostname LIKE ?";
@@ -4951,13 +4951,6 @@ function grid_blstat_view_graphs() {
 
 	validate_store_request_vars($filters, 'sess_gbs_graph');
 	/* ================= input validation ================= */
-	?>
-	<script type='text/javascript'>
-		$(function() {
-			initializeGraphs();
-		});
-	</script>
-	<?php
 
 	$sql_where = '';
 
@@ -5641,8 +5634,8 @@ function grid_blstat_header($suffix='') {
 		AND blstat_lastrun!="0000-00-00"');
 
 	if (cacti_sizeof($last_run)) {
-		$minMax = (($now-$last_run['max'])/3600) % 60;
-		$minMin = (($now-$last_run['min'])/3600) % 60;
+		$minMax = floor(($now-$last_run['max'])/3600) % 60;
+		$minMin = floor(($now-$last_run['min'])/3600) % 60;
 		$secMax = date('s', $now-$last_run['max']);
 		$secMin = date('s', $now-$last_run['min']);
 		$suffix = " $suffix</td><td align='right' style='min-width:0px;'><span id='message'></span></td><td width='0'>";

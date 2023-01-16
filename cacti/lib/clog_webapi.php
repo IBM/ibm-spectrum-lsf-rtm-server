@@ -19,14 +19,21 @@
 */
 
 function clog_get_datasource_titles($local_data_ids) {
+	static $title_cache = null;
+
 	if (!is_array($local_data_ids)) {
 		$local_data_ids = array($local_data_ids);
 	}
 
 	$titles = array();
+
 	foreach ($local_data_ids as $local_data_id) {
 		if (!array_key_exists($local_data_id, $titles)) {
-			$titles[$local_data_id] = get_data_source_title($local_data_id);
+			if (!isset($title_cache[$local_data_id])) {
+				$title_cache[$local_data_id] = get_data_source_title($local_data_id);
+			}
+
+			$titles[$local_data_id] = $title_cache[$local_data_id];
 		}
 	}
 
@@ -498,10 +505,10 @@ function filter($clogAdmin, $selectedFile) {
 						</select>
 					</td>
 					<td>
-						<?php print __('Tail Lines');?>
+						<?php print (get_request_var('reverse') == 1 ? __('Tail Lines'):__('Head Lines'));?>
 					</td>
 					<td>
-						<select id='tail_lines' name='tail_lines'>
+						<select id='tail_lines'>
 							<?php
 							foreach($log_tail_lines AS $tail_lines => $display_text) {
 								print "<option value='" . $tail_lines . "'";
@@ -515,9 +522,9 @@ function filter($clogAdmin, $selectedFile) {
 					</td>
 					<td>
 						<span>
-							<input type='button' class='ui-button ui-corner-all ui-widget' id='go' name='go' value='<?php print __esc('Go');?>'>
-							<input type='button' class='ui-button ui-corner-all ui-widget' id='clear' name='clear' value='<?php print __esc('Clear');?>'>
-						<?php if ($clogAdmin) {?><input type='button' class='ui-button ui-corner-all ui-widget' id='purge' name='purge' value='<?php print __esc('Purge');?>'><?php }?>
+							<input type='submit' class='ui-button ui-corner-all ui-widget' id='go' value='<?php print __esc('Go');?>'>
+							<input type='button' class='ui-button ui-corner-all ui-widget' id='clear' value='<?php print __esc('Clear');?>'>
+						<?php if ($clogAdmin) {?><input type='button' class='ui-button ui-corner-all ui-widget' id='purge' value='<?php print __esc('Purge');?>'><?php }?>
 						</span>
 					</td>
 				</tr>
@@ -528,20 +535,43 @@ function filter($clogAdmin, $selectedFile) {
 						<?php print __('Type');?>
 					</td>
 					<td>
-						<select id='message_type' name='message_type'>
-							<option value='-1'<?php if (get_request_var('message_type') == '-1') {?> selected<?php }?>><?php print __('All');?></option>
-							<option value='1'<?php if (get_request_var('message_type') == '1') {?> selected<?php }?>><?php print __('Stats');?></option>
-							<option value='2'<?php if (get_request_var('message_type') == '2') {?> selected<?php }?>><?php print __('Warnings');?></option>
-							<option value='3'<?php if (get_request_var('message_type') == '3') {?> selected<?php }?>><?php print __('Errors');?></option>
-							<option value='4'<?php if (get_request_var('message_type') == '4') {?> selected<?php }?>><?php print __('Debug');?></option>
-							<option value='5'<?php if (get_request_var('message_type') == '5') {?> selected<?php }?>><?php print __('SQL Calls');?></option>
+						<select id='message_type'>
+							<?php
+							$message_types = array(
+								'-1' => __('All'),
+								'1'  => __('Stats'),
+								'2'  => __('Warnings'),
+								'3'  => __('Warnings++'),
+								'4'  => __('Errors'),
+								'5'  => __('Errors++'),
+								'6'  => __('Debug'),
+								'7'  => __('SQL Calls'),
+								'8'  => __('AutoM8'),
+								'9'  => __('Non Stats'),
+								'10' => __('Boost'),
+								'11' => __('Device Up/Down'),
+								'12' => __('Recaches'),
+							);
+
+							if (api_plugin_is_enabled('thold')) {
+								$message_types['99'] = __('Threshold');
+							}
+
+							foreach ($message_types as $index => $type) {
+								print "<option value='" . $index . "'";
+								if (get_request_var('message_type') == $index) {
+									print ' selected';
+								}
+								print '>' . $type . '</option>';
+							}
+							?>
 						</select>
 					</td>
 					<td>
-						<?php print __('Display Order');?>
+						<?php print __('Display');?>
 					</td>
 					<td>
-						<select id='reverse' name='reverse'>
+						<select id='reverse'>
 							<option value='1'<?php if (get_request_var('reverse') == '1') {?> selected<?php }?>><?php print __('Newest First');?></option>
 							<option value='2'<?php if (get_request_var('reverse') == '2') {?> selected<?php }?>><?php print __('Oldest First');?></option>
 						</select>
@@ -550,14 +580,14 @@ function filter($clogAdmin, $selectedFile) {
 						<?php print __('Refresh');?>
 					</td>
 					<td>
-						<select id='refresh' name='refresh'>
+						<select id='refresh'>
 							<?php
 							foreach($page_refresh_interval AS $seconds => $display_text) {
 								print "<option value='" . $seconds . "'";
 								if (get_request_var('refresh') == $seconds) {
 									print ' selected';
 								}
-								print '>' . $display_text . "</option>\n";
+								print '>' . $display_text . '</option>';
 							}
 							?>
 						</select>
@@ -577,54 +607,28 @@ function filter($clogAdmin, $selectedFile) {
 		</form>
 		<script type='text/javascript'>
 
-		$('#rfilter').change(function() {
-			refreshFilter();
+		$(function() {
+			$('#rfilter, #reverse, #refresh, #message_type, #filename, #tail_lines').unbind().change(function() {
+				applyFilter();
+			});
+
+			$('#clear').unbind().click(function() {
+				strURL = basename(location.pathname) + '?clear=true&header=false';
+				loadPageNoHeader(strURL);
+			});
+
+			$('#purge').unbind().click(function() {
+				strURL = basename(location.pathname) + '?purge=true&header=false&filename=' + $('#filename').val();
+				loadPageNoHeader(strURL);
+			});
+
+			$('#logfile').submit(function(event) {
+				event.preventDefault();
+				applyFilter();
+			});
 		});
 
-		$('#reverse').change(function() {
-			refreshFilter();
-		});
-
-		$('#refresh').change(function() {
-			refreshFilter();
-		});
-
-		$('#message_type').change(function() {
-			refreshFilter();
-		});
-
-		$('#filename').change(function() {
-			refreshFilter();
-		});
-
-		$('#tail_lines').change(function() {
-			refreshFilter();
-		});
-
-		$('#go').click(function() {
-			refreshFilter();
-		});
-
-		$('#clear').click(function() {
-			clearFilter();
-		});
-
-		$('#purge').click(function() {
-			strURL = basename(location.pathname) + '?purge=1&header=false&filename=' + $('#filename').val();
-			loadPageNoHeader(strURL);
-		});
-
-		$('#logfile').submit(function(event) {
-			event.preventDefault();
-			refreshFilter();
-		});
-
-		function clearFilter() {
-			strURL = basename(location.pathname) + '?clear=1&header=false&nostate=true';
-			loadPageNoHeader(strURL);
-		}
-
-		function refreshFilter() {
+		function applyFilter() {
 			refreshMSeconds=$('#refresh').val()*1000;
 
 			strURL = basename(location.pathname)+
@@ -714,24 +718,31 @@ function clog_regex_parser($matches) {
 function clog_regex_device($matches) {
 	global $config;
 
+	static $host_cache = null;
+
+	if (!cacti_sizeof($host_cache)) {
+		$host_cache[0] = __('System Device');
+	}
+
 	$result = $matches[0];
 
-	$dev_ids = explode(',',str_replace(" ","",$matches[2]));
+	$dev_ids = explode(',', str_replace(' ', '', $matches[2]));
 	if (cacti_sizeof($dev_ids)) {
 		$result = '';
-		$hosts = db_fetch_assoc('SELECT id, description
-			FROM host
-			WHERE id in (' . implode(',',$dev_ids) . ')');
 
-		$hostDescriptions = array();
-		if (cacti_sizeof($hosts)) {
-			foreach ($hosts as $host) {
-				$hostDescriptions[$host['id']] = html_escape($host['description']);
+		foreach($dev_ids as $id) {
+			if (!isset($host_cache[$id])) {
+				$host_cache[$id] = db_fetch_cell_prepared('SELECT description
+        		    FROM host
+		            WHERE id = ?',
+					array($id));
 			}
-		}
 
-		foreach ($dev_ids as $host_id) {
-			$result .= $matches[1].'<a href=\'' . html_escape($config['url_path'] . 'host.php?action=edit&id=' . $host_id) . '\'>' . (isset($hostDescriptions[$host_id]) ? $hostDescriptions[$host_id]:$host_id) . '</a>' . $matches[3];
+			if ($id != 0) {
+				$result .= $matches[1] . '<a href=\'' . html_escape($config['url_path'] . 'host.php?action=edit&id=' . $id) . '\'>' . (isset($host_cache[$id]) ? html_escape($host_cache[$id]):$id) . '</a>' . $matches[3];
+			} else {
+				$result .= $matches[1] . (isset($host_cache[$id]) ? html_escape($host_cache[$id]):$id) . $matches[3];
+			}
 		}
 	}
 
@@ -741,26 +752,39 @@ function clog_regex_device($matches) {
 function clog_regex_datasource($matches) {
 	global $config;
 
+	static $gr_cache = null;
+
 	$result = $matches[0];
 
-	$ds_ids = explode(',',str_replace(" ","",$matches[2]));
-	if (cacti_sizeof($ds_ids)) {
-		$result = '';
+	$ds_ids = explode(',', str_replace(' ', '', $matches[2]));
 
-		$graph_rows = array_rekey(db_fetch_assoc('SELECT DISTINCT
-			gtg.local_graph_id AS id
-			FROM graph_templates_graph AS gtg
-			INNER JOIN graph_templates_item AS gti
-			ON gtg.local_graph_id=gti.local_graph_id
-			INNER JOIN data_template_rrd AS dtr
-			ON gti.task_item_id=dtr.id
-			WHERE gtg.local_graph_id>0
-			AND dtr.local_data_id IN (' . $matches[2] . ')'),'id','id');
+	if (cacti_sizeof($ds_ids)) {
+		$result     = '';
+		$graph_rows = array();
+		$ds_ids     = array_unique($ds_ids);
+
+		foreach($ds_ids as $ds) {
+			if (!isset($gr_cache[$ds])) {
+				$gr_cache[$ds] = array_rekey(
+					db_fetch_assoc_prepared('SELECT DISTINCT
+						gti.local_graph_id AS id
+						FROM graph_templates_item AS gti
+						INNER JOIN data_template_rrd AS dtr
+						ON gti.task_item_id=dtr.id
+						WHERE gti.local_graph_id > 0
+						AND dtr.local_data_id = ?',
+						array($ds)),
+					'id','id'
+				);
+			}
+
+			$graph_rows = array_merge($graph_rows, $gr_cache[$ds]);
+		}
 
 		$graph_results = '';
 		if (cacti_sizeof($graph_rows)) {
 			$graph_ids = implode(',',$graph_rows);
-			$graph_array = array( 0 => '', 1 => ' Graphs[', 2 => $graph_ids, 3 => ']');
+			$graph_array = array(0 => '', 1 => ' Graphs[', 2 => $graph_ids, 3 => ']');
 
 			$graph_results = clog_regex_graphs($graph_array);
 		}
@@ -768,7 +792,6 @@ function clog_regex_datasource($matches) {
 		$result .= $matches[1];
 		$i       = 0;
 
-		$ds_ids = array_unique($ds_ids);
 		$ds_titles = clog_get_datasource_titles($ds_ids);
 		if (!isset($ds_titles)) {
 			$ds_titles = array();
@@ -793,24 +816,25 @@ function clog_regex_datasource($matches) {
 function clog_regex_poller($matches) {
 	global $config;
 
+	static $poller_cache = null;
+
+	if (!cacti_sizeof($poller_cache)) {
+		$poller_cache = array_rekey(
+			db_fetch_assoc('SELECT id, name
+				FROM poller'),
+			'id', 'name'
+		);
+	}
+
 	$result = $matches[0];
 
-	$poller_ids = explode(',',str_replace(" ","",$matches[2]));
+	$poller_ids = explode(',', str_replace(' ', '', $matches[2]));
+
 	if (cacti_sizeof($poller_ids)) {
 		$result = '';
-		$pollers = db_fetch_assoc_prepared('SELECT id, name
-			FROM poller
-			WHERE id in (' . implode(',',$poller_ids) . ')');
-
-		$pollerDescriptions = array();
-		if (cacti_sizeof($pollers)) {
-			foreach ($pollers as $poller) {
-				$pollerDescriptions[$poller['id']] = html_escape($poller['name']);
-			}
-		}
 
 		foreach ($poller_ids as $poller_id) {
-			$result .= $matches[1].'<a href=\'' . html_escape($config['url_path'] . 'pollers.php?action=edit&id=' . $poller_id) . '\'>' . (isset($pollerDescriptions[$poller_id]) ? $pollerDescriptions[$poller_id]:$poller_id) . '</a>' . $matches[3];
+			$result .= $matches[1].'<a href=\'' . html_escape($config['url_path'] . 'pollers.php?action=edit&id=' . $poller_id) . '\'>' . (isset($poller_cache[$poller_id]) ? html_escape($poller_cache[$poller_id]):$poller_id) . '</a>' . $matches[3];
 		}
 	}
 
@@ -820,24 +844,25 @@ function clog_regex_poller($matches) {
 function clog_regex_dataquery($matches) {
 	global $config;
 
+	static $query_cache = null;
+
+	if (!cacti_sizeof($query_cache)) {
+		$query_cache = array_rekey(
+			db_fetch_assoc('SELECT id, name
+				FROM snmp_query'),
+			'id', 'name'
+		);
+	}
+
 	$result = $matches[0];
 
-	$query_ids = explode(',',str_replace(" ","",$matches[2]));
+	$query_ids = explode(',', str_replace(' ', '', $matches[2]));
+
 	if (cacti_sizeof($query_ids)) {
 		$result = '';
-		$querys = db_fetch_assoc('SELECT id, name
-			FROM snmp_query
-			WHERE id in (' . implode(',',$query_ids) . ')');
-
-		$queryDescriptions = array();
-		if (cacti_sizeof($querys)) {
-			foreach ($querys as $query) {
-				$queryDescriptions[$query['id']] = html_escape($query['name']);
-			}
-		}
 
 		foreach ($query_ids as $query_id) {
-			$result .= $matches[1].'<a href=\'' . html_escape($config['url_path'] . 'data_queries.php?action=edit&id=' . $query_id) . '\'>' . (isset($queryDescriptions[$query_id]) ? $queryDescriptions[$query_id]:$query_id) . '</a>' . $matches[3];
+			$result .= $matches[1] . '<a href=\'' . html_escape($config['url_path'] . 'data_queries.php?action=edit&id=' . $query_id) . '\'>' . (isset($query_cache[$query_id]) ? html_escape($query_cache[$query_id]):$query_id) . '</a>' . $matches[3];
 		}
 	}
 
@@ -853,6 +878,7 @@ function clog_regex_rra($matches) {
 	if (strlen($local_data_ids)) {
 		$datasource_array = array( 0 => '', 1 => ' DS[', 2 => $local_data_ids, 3 => ']');
 		$datasource_result = clog_regex_datasource($datasource_array);
+
 		if (strlen($datasource_result)) {
 			$result .= ' '. $datasource_result;
 		}
@@ -864,68 +890,65 @@ function clog_regex_rra($matches) {
 function clog_regex_graphs($matches) {
 	global $config;
 
+	static $graph_cache = null;
+
 	$result = $matches[0];
 
-	$query_ids = explode(',',str_replace(" ","",$matches[2]));
-	if (cacti_sizeof($query_ids)) {
+	$graph_ids = explode(',', str_replace(' ', '', $matches[2]));
+
+	if (cacti_sizeof($graph_ids)) {
 		$result = '';
 		$graph_add = $config['url_path'] . 'graph_view.php?page=1&style=selective&action=preview&graph_add=';
 
 		$title = '';
 		$i     = 0;
 
-		$querys = db_fetch_assoc('SELECT DISTINCT
-			gtg.local_graph_id AS id,
-			gtg.title_cache AS title
-			FROM graph_templates_graph AS gtg
-			INNER JOIN graph_templates_item AS gti
-			ON gtg.local_graph_id=gti.local_graph_id
-			INNER JOIN data_template_rrd AS dtr
-			ON gti.task_item_id=dtr.id
-			WHERE gtg.local_graph_id in (' . implode(',',$query_ids) . ')');
-
-		$result .= $matches[1] . "<a href='";
-
-		$queryDescriptions = array();
-		if (cacti_sizeof($querys)) {
-			foreach ($querys as $query) {
-				$queryDescriptions[$query['id']] = html_escape($query['title']);
+		foreach($graph_ids as $id) {
+			if (!isset($graph_cache[$id])) {
+				$graph_cache[$id] = db_fetch_cell_prepared('SELECT title_cache AS title
+					FROM graph_templates_graph AS gtg
+					WHERE local_graph_id = ?',
+					array($id));
 			}
 		}
 
-		$i=0;
-		foreach ($query_ids as $query_id) {
-			$graph_add .= ($i > 0 ? '%2C' : '') . $query_id;
-			$title     .= ($title != '' ? ', ':'') . html_escape((isset($queryDescriptions[$query_id]) ? $queryDescriptions[$query_id]:$query_id));
+		$result .= $matches[1] . "<a href='";
+
+		$i = 0;
+		foreach ($graph_ids as $id) {
+			$graph_add .= ($i > 0 ? '%2C' : '') . $id;
+			$title     .= ($title != '' ? ', ':'') . html_escape((isset($graph_cache[$id]) ? html_escape($graph_cache[$id]):$id));
 			$i++;
 		}
 
 		$result .= html_escape($graph_add) . '\'>' . $title . '</a>' . $matches[3];
 	}
+
 	return $result;
 }
 
 function clog_regex_graphtemplates($matches) {
 	global $config;
 
+	static $templates_cache = null;
+
+	if (!cacti_sizeof($templates_cache)) {
+		$templates_cache = array_rekey(
+			db_fetch_assoc('SELECT id, name
+				FROM graph_templates'),
+			'id', 'name'
+		);
+	}
+
 	$result = $matches[0];
 
-	$query_ids = explode(',',str_replace(" ","",$matches[2]));
-	if (cacti_sizeof($query_ids)) {
+	$ids = explode(',', str_replace(' ', '', $matches[2]));
+
+	if (cacti_sizeof($ids)) {
 		$result = '';
-		$querys = db_fetch_assoc('SELECT id, name
-			FROM graph_templates
-			WHERE id in ('  . implode(',',$query_ids) . ')');
 
-		$queryDescriptions = array();
-		if (cacti_sizeof($querys)) {
-			foreach ($querys as $query) {
-				$queryDescriptions[$query['id']] = html_escape($query['name']);
-			}
-		}
-
-		foreach ($query_ids as $query_id) {
-			$result .= $matches[1].'<a href=\'' . html_escape($config['url_path'] . 'graph_templates.php?action=template_edit&id=' . $query_id) . '\'>' . (isset($queryDescriptions[$query_id]) ? $queryDescriptions[$query_id]:$query_id) . '</a>' . $matches[3];
+		foreach ($ids as $id) {
+			$result .= $matches[1] . '<a href=\'' . html_escape($config['url_path'] . 'graph_templates.php?action=template_edit&id=' . $id) . '\'>' . (isset($templates_cache[$id]) ? html_escape($templates_cache[$id]):$id) . '</a>' . $matches[3];
 		}
 	}
 
@@ -935,58 +958,62 @@ function clog_regex_graphtemplates($matches) {
 function clog_regex_users($matches) {
 	global $config;
 
+	static $users_cache = null;
+
 	$result = $matches[0];
 
-	$query_ids = explode(',',str_replace(" ","",$matches[2]));
-	if (cacti_sizeof($query_ids)) {
+	$user_ids = explode(',', str_replace(' ', '', $matches[2]));
+
+	if (cacti_sizeof($user_ids)) {
 		$result = '';
 
-		$querys = db_fetch_assoc('SELECT DISTINCT
-			id, username
-			FROM user_auth
-			WHERE id in (' . implode(',',$query_ids) . ')');
-
-		$queryDescriptions = array();
-		if (cacti_sizeof($querys)) {
-			foreach ($querys as $query) {
-				$queryDescriptions[$query['id']] = html_escape($query['username']);
+		foreach($user_ids as $id) {
+			if (!isset($users_cache[$id])) {
+				$users_cache[$id] = db_fetch_cell_prepared('SELECT username
+					FROM user_auth
+					WHERE id = ?',
+					array($id));
 			}
 		}
 
-		foreach ($query_ids as $query_id) {
+		foreach ($user_ids as $id) {
 			$result .= $matches[1];
-			if (isset($queryDescriptions[$query_id])) {
-				$result .= '<a href=\'' . html_escape($config['url_path'] . 'user_admin.php?action=user_edit&tab=general&id=' . $query_id) . '\'>' . $queryDescriptions[$query_id] . '</a>';
+
+			if (isset($users_cache[$id])) {
+				$result .= '<a href=\'' . html_escape($config['url_path'] . 'user_admin.php?action=user_edit&tab=general&id=' . $id) . '\'>' . html_escape($users_cache[$id]) . '</a>';
 			} else {
-				$result .= $query_id;
+				$result .= $id;
 			}
+
 			$result .= $matches[3];
 		}
 	}
+
 	return $result;
 }
 
 function clog_regex_rule($matches) {
 	global $config;
 
+	static $rules_cache = null;
+
+	if (!cacti_sizeof($rules_cache)) {
+		$rules_cache = array_rekey(
+			db_fetch_assoc('SELECT id, name
+				FROM automation_graph_rules'),
+			'id', 'name'
+		);
+	}
+
 	$result = $matches[0];
 
-	$dev_ids = explode(',',str_replace(" ","",$matches[2]));
+	$dev_ids = explode(',', str_replace(' ', '', $matches[2]));
+
 	if (cacti_sizeof($dev_ids)) {
 		$result = '';
-		$rules = db_fetch_assoc('SELECT id, name
-			FROM automation_graph_rules
-			WHERE id in (' . implode(',',$dev_ids) . ')');
-
-		$ruleNames = array();
-		if (cacti_sizeof($rules)) {
-			foreach ($rules as $rule) {
-				$ruleNames[$rule['id']] = html_escape($rule['name']);
-			}
-		}
 
 		foreach ($dev_ids as $rule_id) {
-			$result .= $matches[1].'<a href=\'' . html_escape($config['url_path'] . 'automation_graph_rules.php?action=edit&id=' . $rule_id) . '\'>' . (isset($ruleNames[$rule_id]) ? $ruleNames[$rule_id]:$rule_id) . '</a>' . $matches[3];
+			$result .= $matches[1] . '<a href=\'' . html_escape($config['url_path'] . 'automation_graph_rules.php?action=edit&id=' . $rule_id) . '\'>' . (isset($rules_cache[$rule_id]) ? html_escape($rules_cache[$rule_id]):$rule_id) . '</a>' . $matches[3];
 		}
 	}
 

@@ -351,7 +351,7 @@ function disku_users() {
 	}
 }
 
-function get_disku_users(&$sql_where, $apply_limits = true, $row_limit = 30, &$sql_params) {
+function get_disku_users(&$sql_where, $apply_limits = true, $row_limit = 30, &$sql_params = array()) {
 	if (get_request_var('type') >= 0) {
 		$urange = read_config_option('disku_uid_range');
 		$urange = explode('-', $urange);

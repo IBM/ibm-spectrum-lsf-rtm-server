@@ -59,10 +59,15 @@ if (!isset($called_by_script_server)) {
 	$graphs    = 0;
 
 	foreach ($parms as $parameter) {
-		@list($arg, $val) = @explode('=', $parameter);
+		if (strpos($parameter, '=')) {
+			list($arg, $value) = explode('=', $parameter);
+		} else {
+			$arg = $parameter;
+			$value = '';
+		}
 		switch ($arg) {
 			case '--licid':
-				$licid = trim($val);
+				$licid = trim($value);
 				break;
 			case '--force':
 				$force = true;
@@ -300,7 +305,7 @@ function lic_add_host($licid, $force=false, $templates=false) {
 			if (strstr($snmp_query_id['name'], 'Feature Summary Use') || in_array($snmp_query_id['name'], $ignored_queries)) {
 				// do nothing
 			} else {
-				echo trim(passthru($php_bin.' -q ' . $path_web . '/cli/poller_reindex_hosts.php -id=' . $host_value . ' -qid=' . $snmp_query_id['id'] . ' -d'));
+				passthru($php_bin.' -q ' . $path_web . '/cli/poller_reindex_hosts.php -id=' . $host_value . ' -qid=' . $snmp_query_id['id'] . ' -d');
 			}
 		}
 	}
@@ -437,7 +442,7 @@ function add_lic_data_query_graphs($host_id, $graph_template_id, $snmp_query_id,
 						" --snmp-query-id=$snmp_query_id --snmp-field=$snmp_field_name" .
 						" --snmp-value=\"$item\"";
 
-					echo trim(passthru($command)) . "\n";
+					passthru($command);
 				}
 				else {
 					echo "NOTE: Already Exists item: $item for Query Type ID: $snmp_query_type_id\n";

@@ -237,7 +237,7 @@ function form_actions() {
 	Poller Functions
    --------------------- */
 
-function get_disku_poller_records(&$sql_where, $apply_limits = true, $rows = 20, &$sql_params) {
+function get_disku_poller_records(&$sql_where, $apply_limits = true, $rows = 30, &$sql_params = array()) {
 	$sql_where = " WHERE (disku_processes.taskname='RTMCLIENTD' OR disku_processes.taskname IS NULL)";
 	if (isset_request_var('filter') && get_request_var('filter') != '') {
 		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . "(hostname LIKE ? OR location LIKE ?)";

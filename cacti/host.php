@@ -28,6 +28,7 @@ include_once('./lib/data_query.php');
 include_once('./lib/html_tree.php');
 include_once('./lib/ping.php');
 include_once('./lib/poller.php');
+include_once('./lib/reports.php');
 include_once('./lib/snmp.php');
 include_once('./lib/template.php');
 include_once('./lib/utility.php');
@@ -39,7 +40,8 @@ $device_actions = array(
 	4 => __('Change Device Settings'),
 	5 => __('Clear Statistics'),
 	6 => __('Apply Automation Rules'),
-	7 => __('Sync to Device Template')
+	7 => __('Sync to Device Template'),
+	8 => __('Place Device on Report')
 );
 
 $device_actions = api_plugin_hook_function('device_action_array', $device_actions);
@@ -110,6 +112,7 @@ switch (get_request_var('action')) {
 		get_filter_request_var('host_id');
 
 		host_reload_query();
+		raise_message('query_reloaded', __('Data Query Re-indexed.'), MESSAGE_LEVEL_INFO);
 
 		header('Location: host.php?header=false&action=edit&id=' . get_request_var('host_id'));
 		break;
@@ -117,6 +120,7 @@ switch (get_request_var('action')) {
 		get_filter_request_var('host_id');
 
 		host_reload_query();
+		raise_message('query_reloaded', __('Device Data Query Re-indexed.  Verbose output displayed.'), MESSAGE_LEVEL_INFO);
 
 		header('Location: host.php?header=' . (isset_request_var('header') && get_nfilter_request_var('header') == 'true' ? 'true':'false') . '&action=edit&id=' . get_request_var('host_id') . '&display_dq_details=true');
 		break;
@@ -135,11 +139,26 @@ switch (get_request_var('action')) {
 		break;
 	case 'enable_debug':
 		enable_device_debug(get_filter_request_var('host_id'));
+		raise_message('enable_debug', __('Device Debugging Enabled for Device.'), MESSAGE_LEVEL_INFO);
+
 		header('Location: host.php?header=false&action=edit&id=' . get_request_var('host_id'));
 
 		break;
 	case 'disable_debug':
 		disable_device_debug(get_filter_request_var('host_id'));
+		raise_message('disable_debug', __('Device Debugging Disabled for Device.'), MESSAGE_LEVEL_INFO);
+
+		header('Location: host.php?header=false&action=edit&id=' . get_request_var('host_id'));
+
+		break;
+	case 'repopulate':
+		if (get_filter_request_var('host_id') > 0) {
+			push_out_host(get_request_var('host_id'));
+			raise_message('repopulate_message', __('Poller Cache for Device Refreshed.'), MESSAGE_LEVEL_INFO);
+		} else {
+			raise_message('repopulate_error', __('ERROR: Invalid Device ID.'), MESSAGE_LEVEL_ERROR);
+		}
+
 		header('Location: host.php?header=false&action=edit&id=' . get_request_var('host_id'));
 
 		break;
@@ -246,7 +265,7 @@ function form_save() {
 				get_nfilter_request_var('snmp_engine_id'), get_nfilter_request_var('max_oids'),
 				get_nfilter_request_var('device_threads'), get_nfilter_request_var('poller_id'),
 				get_nfilter_request_var('site_id'), get_nfilter_request_var('external_id'),
-				get_nfilter_request_var('location'));
+				get_nfilter_request_var('location'), get_nfilter_request_var('bulk_walk_size'));
 
 			if ($host_id !== false) {
 				api_plugin_hook_function('host_save', array('host_id' => $host_id));
@@ -279,10 +298,19 @@ function form_actions() {
 				api_device_disable_devices($selected_items);
 			} elseif (get_request_var('drp_action') == '4') { // change device options
 				api_device_change_options($selected_items, $_POST);
-			} elseif (get_request_var('drp_action') == '5') { // Clear Statisitics for Selected Devices
+			} elseif (get_request_var('drp_action') == '5') { // Clear Statistics for Selected Devices
 				api_device_clear_statistics($selected_items);
 			} elseif (get_request_var('drp_action') == '7') { // sync to device template
 				api_device_sync_device_templates($selected_items);
+			} elseif (get_request_var('drp_action') == '8') { // place device on report
+				if (!reports_add_devices(get_filter_request_var('report_id'), $selected_items, get_filter_request_var('timespan'), get_filter_request_var('align'))) {
+					$name = db_fetch_cell_prepared('SELECT name
+						FROM reports
+						WHERE id = ?',
+						array(get_request_var('report_id')));
+
+					raise_message('reports_add_error', __('Unable to add some Devices to Report \'%s\'', $name), MESSAGE_LEVEL_WARN);
+				}
 			} elseif (get_request_var('drp_action') == '1') { // delete
 				if (!isset_request_var('delete_type')) {
 					set_request_var('delete_type', 2);
@@ -418,7 +446,7 @@ function form_actions() {
 			device_change_javascript();
 
 			$save_html = "<input type='button' class='ui-button ui-corner-all ui-widget' value='" . __esc('Cancel') . "' onClick='cactiReturnTo()'>&nbsp;<input type='submit' class='ui-button ui-corner-all ui-widget' value='" . __esc('Continue') . "' title='" . __esc('Change Device(s) SNMP Options') . "'>";
-		} elseif (get_request_var('drp_action') == '5') { // Clear Statisitics for Selected Devices
+		} elseif (get_request_var('drp_action') == '5') { // Clear Statistics for Selected Devices
 			print "<tr>
 				<td colspan='2' class='textArea'>
 					<p>" . __('Click \'Continue\' to clear the counters for the following Device(s).') . "</p>
@@ -473,6 +501,39 @@ function form_actions() {
 			</tr>";
 
 			$save_html = "<input type='button' class='ui-button ui-corner-all ui-widget' value='" . __esc('Cancel'). "' onClick='cactiReturnTo()'>&nbsp;<input type='submit' class='ui-button ui-corner-all ui-widget' value='" . __esc('Continue') . "' title='" . __esc('Run Automation on Device(s)') . "'>";
+        } elseif (get_request_var('drp_action') == '8') {
+			global $alignment, $graph_timespans;
+
+			$reports = db_fetch_assoc_prepared('SELECT id, name
+				FROM reports
+				WHERE user_id = ?
+				ORDER BY name',
+				array($_SESSION['sess_user_id']));
+
+			if (cacti_sizeof($reports)) {
+				print "<tr>
+					<td class='textArea'>
+						<p>" . __('Click \'Continue\' to add the selected Graphs to the Report below.') . "</p>
+						<div class='itemlist'><ul>$host_list</ul></div>
+					</td>
+				</tr>
+				<tr><td>" . __('Report Name') . '<br>';
+				form_dropdown('report_id', $reports, 'name', 'id', '', '', '0');
+				print '</td></tr>';
+
+				print '<tr><td>' . __('Timespan') . '<br>';
+				form_dropdown('timespan', $graph_timespans, '', '', '', '', read_user_setting('default_timespan'));
+				print '</td></tr>';
+
+				print '<tr><td>' . __('Align') . '<br>';
+				form_dropdown('align', $alignment, '', '', '', '', REPORTS_ALIGN_CENTER);
+				print "</td></tr>\n";
+
+				$save_html = "<input type='button' class='ui-button ui-corner-all ui-widget' value='" . __esc('Cancel') . "' onClick='cactiReturnTo()'>&nbsp;<input type='submit' class='ui-button ui-corner-all ui-widget' value='" . __esc('Continue') . "' title='" . __esc('Add Devices to Report') . "'>";
+            } else {
+                print "<tr><td class='even'><span class='textError'>" . __('You currently have no Reports defined.') . "</span></td></tr>\n";
+                $save_html = "<input type='button' class='ui-button ui-corner-all ui-widget' value='" . __esc('Return') . "' onClick='cactiReturnTo()'>";
+            }
 		} else {
 			$save['drp_action'] = get_request_var('drp_action');
 			$save['host_list']  = $host_list;
@@ -612,6 +673,7 @@ function host_edit() {
 
 	$header_label = __('Device [new]');
 	$debug_link   = '';
+	$repop_link   = '';
 	if (!isempty_request_var('id')) {
 		$_SESSION['cur_device_id'] = get_request_var('id');
 
@@ -627,6 +689,9 @@ function host_edit() {
 			} else {
 				$debug_link = "<span class='linkMarker'>*</span><a class='hyperLink' href='" . html_escape('host.php?action=enable_debug&host_id=' . $host['id']) . "'>" . __('Enable Device Debug') . "</a><br>";
 			}
+
+			$repop_link = "<span class='linkMarker'>*</span><a class='hyperLink' href='" . html_escape('host.php?action=repopulate&host_id=' . $host['id']) . "'>" . __('Repopulate Poller Cache') . "</a><br>";
+			$repop_link .= "<span class='linkMarker'>*</span><a class='hyperLink' href='" . html_escape('utilities.php?poller_action=-1&action=view_poller_cache&host_id=' . $host['id'] . '&template_id=-1&filter=&rows=-1') . "'>" . __('View Poller Cache') . "</a><br>";
 		}
 	} else {
 		$_SESSION['cur_device_id'] = 0;
@@ -644,6 +709,7 @@ function host_edit() {
 					<span class='linkMarker'>*</span><a class='hyperLink' href='<?php print html_escape('graphs_new.php?reset=true&host_id=' . $host['id']);?>'><?php print __('Create Graphs for this Device');?></a><br>
 					<span class='linkMarker'>*</span><a class='hyperLink' href='<?php print html_escape('host.php?action=reindex&host_id=' . $host['id']);?>'><?php print __('Re-Index Device');?></a><br>
 					<?php print $debug_link;?>
+					<?php print $repop_link;?>
 					<span class='linkMarker'>*</span><a class='hyperLink' href='<?php print html_escape('data_sources.php?reset=true&host_id=' . $host['id'] . '&ds_rows=30&filter=&template_id=-1&method_id=-1&page=1');?>'><?php print __('Data Source List');?></a><br>
 					<span class='linkMarker'>*</span><a class='hyperLink' href='<?php print html_escape('graphs.php?reset=true&host_id=' . $host['id'] . '&graph_rows=30&filter=&template_id=-1&page=1');?>'><?php print __('Graph List');?></a>
 					<?php api_plugin_hook('device_edit_top_links'); ?>
@@ -677,32 +743,6 @@ function host_edit() {
 	html_end_box(true, true);
 
 	device_javascript();
-
-	if ((isset_request_var('display_dq_details')) && (isset($_SESSION['debug_log']['data_query']))) {
-		$dbg_copy_uid = generate_hash();
-		?>
-		<div id='dqdebug' class='cactiTable'>
-			<div id='clipboardHeader<?php print $dbg_copy_uid;?>'>
-				<div class='cactiTableTitle'>
-					<span style='padding:3px;'><?php print __('Data Query Debug Information');?></span>
-				</div>
-				<div class='cactiTableButton'>
-					<span>
-						<a class='linkCopyDark cactiTableCopy' id='copyToClipboard<?php print $dbg_copy_uid;?>'><?php print __('Copy');?></a>
-						<a id='dbghide' class='fa fa-times' href='#'><?php print __('Hide');?></a>
-					</span>
-				</div>
-				<table class='cactiTable' id='clipboardData<?php print $dbg_copy_uid;?>'>
-					<tr class='tableRow'>
-						<td class='debug'>
-							<span><?php print debug_log_return('data_query');?></span>
-						</td>
-					</tr>
-				</table>
-			</div>
-		</div>
-		<?php
-	}
 
 	if (!empty($host['id'])) {
 		html_start_box(__('Associated Graph Templates'), '100%', '', '3', 'center', '');
@@ -802,6 +842,32 @@ function host_edit() {
 
 		<?php
 		html_end_box();
+
+		if ((isset_request_var('display_dq_details')) && (isset($_SESSION['debug_log']['data_query']))) {
+			$dbg_copy_uid = generate_hash();
+			?>
+			<div id='dqdebug' class='cactiTable'>
+				<div id='clipboardHeader<?php print $dbg_copy_uid;?>'>
+					<div class='cactiTableTitle'>
+						<span style='padding:3px;'><?php print __('Data Query Debug Information');?></span>
+					</div>
+					<div class='cactiTableButton'>
+						<span>
+							<a class='linkCopyDark cactiTableCopy' id='copyToClipboard<?php print $dbg_copy_uid;?>'><?php print __('Copy');?></a>
+							<a id='dbghide' class='fa fa-times' href='#'><?php print __('Hide');?></a>
+						</span>
+					</div>
+					<table class='cactiTable' id='clipboardData<?php print $dbg_copy_uid;?>'>
+						<tr class='tableRow'>
+							<td class='debug'>
+								<span><?php print debug_log_return('data_query');?></span>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<?php
+		}
 
 		html_start_box(__('Associated Data Queries'), '100%', '', '3', 'center', '');
 
@@ -1105,7 +1171,7 @@ function device_javascript() {
 				$('#row_ping_timeout').hide();
 				$('#row_ping_port').hide();
 				$('#row_ping_timeout').hide();
-				$('#row_ping_retrie').hide();
+				$('#row_ping_retries').hide();
 
 				break;
 			case '1': // ping and snmp sysUptime
@@ -1136,6 +1202,15 @@ function device_javascript() {
 		setSNMP();
 		setAvailability();
 		setPing();
+	}
+
+	function hostPageLoad(strURL) {
+		var scrollTop = $(window).scrollTop();
+		$.get(strURL, function(data) {
+			$('#main').html(data);
+			applySkin();
+			$(window).scrollTop(scrollTop);
+		});
 	}
 
 	$(function() {
@@ -1171,23 +1246,22 @@ function device_javascript() {
 		$('[id^="reload"]').click(function(data) {
 			$(this).addClass('fa-spin');
 			strURL = 'host.php?action=query_reload&id='+$(this).attr('data-id')+'&host_id='+$('#id').val()+'&nostate=true';
-			loadPageNoHeader(strURL, true);
+			hostPageLoad(strURL);
 		});
 
 		$('[id^="verbose"]').click(function(data) {
-			$(this).addClass('fa-spin');
-			strURL = 'host.php?action=query_verbose&id='+$(this).attr('data-id')+'&host_id='+$('#id').val()+'&nostate=true';
+			var strURL = 'host.php?action=query_verbose&id='+$(this).attr('data-id')+'&host_id='+$('#id').val()+'&nostate=true';
 			loadPageNoHeader(strURL, true);
 		});
 
 		$('[id^="remove"]').click(function(data) {
-			strURL = 'host.php?action=query_remove&id='+$(this).attr('data-id')+'&host_id='+$('#id').val()+'&nostate=true';
-			loadPageNoHeader(strURL, true);
+			var strURL = 'host.php?action=query_remove&id='+$(this).attr('data-id')+'&host_id='+$('#id').val()+'&nostate=true';
+			hostPageLoad(strURL);
 		});
 
 		$('[id^="gtremove"]').click(function(data) {
 			strURL = 'host.php?action=gt_remove&id='+$(this).attr('data-id')+'&host_id='+$('#id').val()+'&nostate=true';
-			loadPageNoHeader(strURL, true);
+			hostPageLoad(strURL);
 		});
 
 		$('#add_dq').click(function() {
@@ -1222,6 +1296,11 @@ function device_javascript() {
 			$('#dqdebug').empty().fadeOut('fast');
 		});
 
+		if ($('#dbghide').length) {
+			var dbgloc = parseInt($('#dbghide').offset().top - $('.breadCrumbBar').outerHeight() - $('.cactiPageHead').outerHeight());
+			$('.cactiConsoleContentArea').scrollTop(dbgloc);
+		}
+
 		$('[id$="spacer"]').click(function() {
 			changeHostForm();
 		});
@@ -1241,7 +1320,6 @@ function device_javascript() {
 			.done(function(data) {
 				$('#ping_results').html(data);
 				hostInfoHeight = $('.hostInfoHeader').height();
-				$('#navigation_right, #main').scrollTop(0);
 			})
 			.fail(function(data) {
 				getPresentHTTPError(data);
@@ -1284,6 +1362,7 @@ function host_validate_vars() {
 			),
 		'location' => array(
 			'filter' => FILTER_CALLBACK,
+			'pageset' => true,
 			'default' => '-1',
 			'options' => array('options' => 'sanitize_search_string')
 			),
@@ -1326,6 +1405,8 @@ function host_validate_vars() {
 }
 
 function get_device_records(&$total_rows, $rows) {
+	$sql_where = '';
+
 	/* form the 'where' clause for our main sql query */
 	if (get_request_var('filter') != '') {
 		$sql_where = 'WHERE (deleted = "" AND (
@@ -1378,10 +1459,9 @@ function get_device_records(&$total_rows, $rows) {
 
 	$sql_where = api_plugin_hook_function('device_sql_where', $sql_where);
 
-	$total_rows = db_fetch_cell("SELECT
-		COUNT(host.id)
-		FROM host
-		$sql_where");
+	$sql = "SELECT COUNT(host.id) FROM host $sql_where";
+
+	$total_rows = get_total_row_data($_SESSION['sess_user_id'], $sql, array(), 'device');
 
 	$poller_interval = read_config_option('poller_interval');
 
@@ -1401,7 +1481,6 @@ function get_device_records(&$total_rows, $rows) {
 		LEFT JOIN (SELECT host_id, COUNT(*) AS data_sources FROM data_local GROUP BY host_id) AS dl
 		ON host.id=dl.host_id
 		$sql_where
-		GROUP BY host.id
 		$sql_order
 		$sql_limit";
 
@@ -1425,59 +1504,6 @@ function host() {
 	} else {
 		$rows = get_request_var('rows');
 	}
-
-	?>
-	<script type='text/javascript'>
-
-	function applyFilter() {
-		strURL  = 'host.php';
-		strURL += '?host_status=' + $('#host_status').val();
-		strURL += '&host_template_id=' + $('#host_template_id').val();
-		strURL += '&site_id=' + $('#site_id').val();
-		strURL += '&poller_id=' + $('#poller_id').val();
-		strURL += '&location=' + $('#location').val();
-		strURL += '&rows=' + $('#rows').val();
-		strURL += '&filter=' + $('#filter').val();
-		strURL += '&header=false';
-		loadPageNoHeader(strURL);
-	}
-
-	function clearFilter() {
-		strURL = 'host.php?clear=1&header=false';
-		loadPageNoHeader(strURL);
-	}
-
-	function exportRecords() {
-		strURL = 'host.php?action=export';
-		document.location = strURL;
-		Pace.stop();
-	}
-
-	$(function() {
-		$('#rows, #site_id, #poller_id, #location, #host_template_id, #host_status').change(function() {
-			applyFilter();
-		});
-
-		$('#refresh').click(function() {
-			applyFilter();
-		});
-
-		$('#clear').click(function() {
-			clearFilter();
-		});
-
-		$('#export').click(function() {
-			exportRecords();
-		});
-
-		$('#form_devices').submit(function(event) {
-			event.preventDefault();
-			applyFilter();
-		});
-	});
-
-	</script>
-	<?php
 
 	if (get_request_var('host_template_id') > 0) {
 		$url = 'host.php?action=edit&host_template_id=' . get_request_var('host_template_id');
@@ -1506,7 +1532,7 @@ function host() {
 
 							if (cacti_sizeof($sites)) {
 								foreach ($sites as $site) {
-									print "<option value='" . $site['id'] . "'"; if (get_request_var('site_id') == $site['id']) { print ' selected'; } print '>' . html_escape($site['name']) . "</option>";
+									print "<option value='" . $site['id'] . "'"; if (get_request_var('site_id') == $site['id']) { print ' selected'; } print '>' . html_escape($site['name']) . '</option>';
 								}
 							}
 							?>
@@ -1523,7 +1549,7 @@ function host() {
 
 							if (cacti_sizeof($pollers)) {
 								foreach ($pollers as $poller) {
-									print "<option value='" . $poller['id'] . "'"; if (get_request_var('poller_id') == $poller['id']) { print ' selected'; } print '>' . html_escape($poller['name']) . "</option>";
+									print "<option value='" . $poller['id'] . "'"; if (get_request_var('poller_id') == $poller['id']) { print ' selected'; } print '>' . html_escape($poller['name']) . '</option>';
 								}
 							}
 							?>
@@ -1537,11 +1563,14 @@ function host() {
 							<option value='-1'<?php if (get_request_var('host_template_id') == '-1') {?> selected<?php }?>><?php print __('Any');?></option>
 							<option value='0'<?php if (get_request_var('host_template_id') == '0') {?> selected<?php }?>><?php print __('None');?></option>
 							<?php
-							$host_templates = db_fetch_assoc('SELECT id, name FROM host_template ORDER BY name');
+							$host_templates = db_fetch_assoc('SELECT DISTINCT ht.id, ht.name
+								FROM host_template ht
+								JOIN host h ON h.host_template_id = ht.id
+								ORDER BY ht.name');
 
 							if (cacti_sizeof($host_templates)) {
 								foreach ($host_templates as $host_template) {
-									print "<option value='" . $host_template['id'] . "'"; if (get_request_var('host_template_id') == $host_template['id']) { print ' selected'; } print '>' . html_escape($host_template['name']) . "</option>";
+									print "<option value='" . $host_template['id'] . "'"; if (get_request_var('host_template_id') == $host_template['id']) { print ' selected'; } print '>' . html_escape($host_template['name']) . '</option>';
 								}
 							}
 							?>
@@ -1567,7 +1596,7 @@ function host() {
 
 							if (cacti_sizeof($locations)) {
 								foreach ($locations as $l) {
-									print "<option value='" . $l['location'] . "'"; if (get_request_var('location') == $l['location']) { print ' selected'; } print '>' . html_escape($l['location']) . "</option>";
+									print "<option value='" . $l['location'] . "'"; if (get_request_var('location') == $l['location']) { print ' selected'; } print '>' . html_escape($l['location']) . '</option>';
 								}
 							}
 							?>
@@ -1575,7 +1604,7 @@ function host() {
 					</td>
 					<td>
 						<span>
-							<input type='button' class='ui-button ui-corner-all ui-widget' id='refresh' value='<?php print __('Go');?>' title='<?php print __esc('Set/Refresh Filters');?>'>
+							<input type='submit' class='ui-button ui-corner-all ui-widget' id='go' value='<?php print __('Go');?>' title='<?php print __esc('Set/Refresh Filters');?>'>
 							<input type='button' class='ui-button ui-corner-all ui-widget' id='clear' value='<?php print __('Clear');?>' title='<?php print __esc('Clear Filters');?>'>
 							<input type='button' class='ui-button ui-corner-all ui-widget' id='export' value='<?php print __('Export');?>' title='<?php print __esc('Export Devices');?>'>
 						</span>
@@ -1614,7 +1643,7 @@ function host() {
 							<?php
 							if (cacti_sizeof($item_rows)) {
 								foreach ($item_rows as $key => $value) {
-									print "<option value='" . $key . "'"; if (get_request_var('rows') == $key) { print ' selected'; } print '>' . html_escape($value) . "</option>";
+									print "<option value='" . $key . "'"; if (get_request_var('rows') == $key) { print ' selected'; } print '>' . html_escape($value) . '</option>';
 								}
 							}
 							?>
@@ -1624,6 +1653,52 @@ function host() {
 				</tr>
 			</table>
 		</form>
+		<script type='text/javascript'>
+
+		function applyFilter() {
+			strURL  = 'host.php';
+			strURL += '?host_status=' + $('#host_status').val();
+			strURL += '&host_template_id=' + $('#host_template_id').val();
+			strURL += '&site_id=' + $('#site_id').val();
+			strURL += '&poller_id=' + $('#poller_id').val();
+			strURL += '&location=' + $('#location').val();
+			strURL += '&rows=' + $('#rows').val();
+			strURL += '&filter=' + $('#filter').val();
+			strURL += '&header=false';
+			loadPageNoHeader(strURL);
+		}
+
+		function clearFilter() {
+			strURL = 'host.php?clear=1&header=false';
+			loadPageNoHeader(strURL);
+		}
+
+		function exportRecords() {
+			strURL = 'host.php?action=export';
+			document.location = strURL;
+			Pace.stop();
+		}
+
+		$(function() {
+			$('#rows, #site_id, #poller_id, #location, #host_template_id, #host_status').change(function() {
+				applyFilter();
+			});
+
+			$('#clear').click(function() {
+				clearFilter();
+			});
+
+			$('#export').click(function() {
+				exportRecords();
+			});
+
+			$('#form_devices').submit(function(event) {
+				event.preventDefault();
+				applyFilter();
+			});
+		});
+
+		</script>
 		</td>
 	</tr>
 	<?php
@@ -1704,6 +1779,7 @@ function host() {
 			'tip' => __('The availability percentage based upon ping results since the counters were cleared for this Device.')
 		)
 	);
+
 	$display_text_size = sizeof($display_text);
 	$display_text = api_plugin_hook_function('device_display_text', $display_text);
 

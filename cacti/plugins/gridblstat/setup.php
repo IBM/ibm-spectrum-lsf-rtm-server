@@ -136,7 +136,7 @@ function gridblstat_database_upgrade($old, $version) {
 	global $plugins, $config;
 	include_once(dirname(__FILE__) . '/../grid/lib/grid_functions.php');
 
-	if ($old['version'] < 2.2) {
+	if (cacti_version_compare($old['version'], 2.2, '<')) {
 		db_execute("ALTER TABLE `grid_blstat_users`
 			ADD COLUMN `indexid` int(10) unsigned NOT NULL AFTER `jobid`");
 
@@ -145,7 +145,7 @@ function gridblstat_database_upgrade($old, $version) {
 			ADD PRIMARY KEY USING HASH(`jobid`,`indexid`,`cluster`,`resource`)");
 	}
 
-	if ($old['version'] < 3.0) {
+	if (cacti_version_compare($old['version'], 3.0, '<')) {
 		db_execute("CREATE TABLE IF NOT EXISTS `grid_blstat_clusters` (
 			`feature` varchar(64) NOT NULL,
 			`service_domain` varchar(64) NOT NULL,
@@ -173,7 +173,7 @@ function gridblstat_database_upgrade($old, $version) {
 			ADD COLUMN `total_use` int(10) unsigned NOT NULL");
 	}
 
-	if ($old['version'] < 5.0) {
+	if (cacti_version_compare($old['version'], 5.0, '<')) {
 		db_execute("CREATE TABLE IF NOT EXISTS `grid_blstat_collectors` (
 			`lsid` int(10) unsigned NOT NULL auto_increment,
 			`clusterid` int(10) unsigned NOT NULL,
@@ -318,7 +318,7 @@ function gridblstat_database_upgrade($old, $version) {
 		}
 	}
 
-	if ($old['version'] < 6.0) {
+	if (cacti_version_compare($old['version'], 6.0, '<')) {
 		db_execute("ALTER IGNORE TABLE grid_blstat_cluster_use
 			ADD COLUMN `type` TINYINT unsigned default NULL AFTER project,
 			ADD COLUMN `over` INT unsigned default NULL AFTER reserve,
@@ -796,3 +796,4 @@ function gridblstat_grid_menu($grid_menu = array()) {
 
 	return $gridblstat_menu;
 }
+

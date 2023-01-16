@@ -37,7 +37,12 @@ if (cacti_sizeof($parms)) {
 	$users_list        = '';
 
 	foreach($parms as $parameter) {
-		@list($arg, $value) = @explode('=', $parameter);
+		if (strpos($parameter, '=')) {
+			list($arg, $value) = explode('=', $parameter);
+		} else {
+			$arg = $parameter;
+			$value = '';
+		}
 
 		switch ($arg) {
 		case '-d':
@@ -244,7 +249,7 @@ function create_alert_from_templates($template_id, $clusterid){
 	}
 }
 
-function get_users_list($id, $type = 'alarm', &$users_list) {
+function get_users_list($id, $type = 'alarm', &$users_list = '') {
 	if ($type == 'alarm') {
 		$alarm = db_fetch_row_prepared('SELECT *
 			FROM gridalarms_alarm

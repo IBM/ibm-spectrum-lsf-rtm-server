@@ -82,7 +82,12 @@ if (read_config_option('grid_tree_benchmarks') == 'on') {
 }
 
 foreach($parms as $parameter) {
-	@list($arg, $value) = @explode('=', $parameter);
+	if (strpos($parameter, '=')) {
+		list($arg, $value) = explode('=', $parameter);
+	} else {
+		$arg = $parameter;
+		$value = '';
+	}
 
 	switch ($arg) {
 	case '-d':
@@ -731,7 +736,7 @@ function get_cluster_tree_nodes($clustername) {
 
 	if (cacti_sizeof($ctrees)) {
 		foreach($ctrees as $key => $cluster) {
-			if (trim($cluster) == $clustername) {
+			if (trim($cluster) == trim($clustername)) {
 				$nodeid = $key;
 				break;
 			}

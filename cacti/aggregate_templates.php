@@ -20,6 +20,7 @@
 
 include_once('./include/auth.php');
 include_once('./lib/api_aggregate.php');
+include_once('./lib/data_query.php');
 
 $aggregate_actions = array(
 	1 => __('Delete')
@@ -365,6 +366,32 @@ function aggregate_template_edit() {
 
 	html_start_box($header_label, '100%', true, '3', 'center', '');
 
+	$helper_string = '|host_description|';
+
+	if (isset($template)) {
+		$data_query = db_fetch_cell_prepared('SELECT snmp_query_id
+			FROM snmp_query_graph
+			WHERE graph_template_id = ?',
+			array($template['graph_template_id']));
+
+		if ($data_query > 0) {
+			$data_query_info = get_data_query_array($data_query);
+			foreach($data_query_info['fields'] as $field_name => $field_array) {
+				if ($field_array['direction'] == 'input' || $field_array['direction'] == 'input-output') {
+					$helper_string .= ($helper_string != '' ? ', ':'') . '|query_' . $field_name . '|';
+				}
+			}
+		}
+	}
+
+	// Append the helper string
+	$struct_aggregate_template['suggestions'] = array(
+		'method' => 'other',
+		'friendly_name' => __('Prefix Replacement Values'),
+		'description' => __('You may use these replacement values for the Prefix in the Aggregate Graph'),
+		'value' => $helper_string
+	);
+
 	draw_edit_form(
 		array(
 			'config' => array('no_form_tag' => true),
@@ -387,6 +414,7 @@ function aggregate_template_edit() {
 
 	?>
 	<script type='text/javascript'>
+
 	$(function() {
 		if ($('#id').val() == 0) {
 			$('[id^="agg_total_"]').prop('checked', true);
@@ -548,26 +576,25 @@ function aggregate_template() {
 		$rows = get_request_var('rows');
 	}
 
-	form_start('aggregate_templates.php', 'template');
-
 	html_start_box(__('Aggregate Templates'), '100%', '', '3', 'center', 'aggregate_templates.php?action=edit');
 
 	$filter_html = '<tr class="even">
 		<td>
-			<table class="filterTable">
-				<tr>
-					<td>
-						' . __('Search') . '
-					</td>
-					<td>
-						<input type="text" class="ui-state-default ui-corner-all" id="filter" size="25" value="' . html_escape_request_var('filter') . '">
-					</td>
-					<td>
-						' . __('Templates') . '
-					</td>
-					<td>
-						<select id="rows" onChange="applyFilter()">
-						<option value="-1" ';
+			<form id="forms">
+				<table class="filterTable">
+					<tr>
+						<td>
+							' . __('Search') . '
+						</td>
+						<td>
+							<input type="text" class="ui-state-default ui-corner-all" id="filter" size="25" value="' . html_escape_request_var('filter') . '">
+						</td>
+						<td>
+							' . __('Templates') . '
+						</td>
+						<td>
+							<select id="rows" onChange="applyFilter()">
+							<option value="-1" ';
 
 	if (get_request_var("rows") == "-1") {
 		$filter_html .= 'selected';
@@ -586,28 +613,27 @@ function aggregate_template() {
 
 	$filter_html .= '</select>
 					</td>
-					<td>
-						<span>
-							<input type="checkbox" id="has_graphs" ' . (get_request_var('has_graphs') == 'true' ? 'checked':'') . ' onChange="applyFilter()">
-							<label for="has_graphs">' . __('Has Graphs') . '</label>
-						</span>
-					</td>
-					<td>
-						<span>
-							<input type="button" class="ui-button ui-corner-all ui-widget" value="' . __esc('Go') . '" id="refresh">
-							<input type="button" class="ui-button ui-corner-all ui-widget" value="' . __esc('Clear') . '" id="clear">
-						</span>
-					</td>
-				</tr>
-			</table>
+						<td>
+							<span>
+								<input type="checkbox" id="has_graphs" ' . (get_request_var('has_graphs') == 'true' ? 'checked':'') . ' onChange="applyFilter()">
+								<label for="has_graphs">' . __('Has Graphs') . '</label>
+							</span>
+						</td>
+						<td>
+							<span>
+								<input type="submit" class="ui-button ui-corner-all ui-widget" value="' . __esc('Go') . '" id="go">
+								<input type="button" class="ui-button ui-corner-all ui-widget" value="' . __esc('Clear') . '" id="clear">
+							</span>
+						</td>
+					</tr>
+				</table>
+			</form>
 		</td>
 	</tr>';
 
 	print $filter_html;
 
 	html_end_box();
-
-	form_end();
 
 	/* form the 'where' clause for our main sql query */
 	$sql_where = '';
@@ -716,19 +742,16 @@ function aggregate_template() {
 	}
 
 	$(function() {
-		$('#refresh').click(function() {
-			applyFilter();
-		});
-
 		$('#clear').click(function() {
 			clearFilter();
 		});
 
-		$('#filter').change(function() {
+		$('#template').submit(function(event) {
+			event.preventDefault();
 			applyFilter();
 		});
 
-		$('#template').submit(function(event) {
+		$('#forms').submit(function(event) {
 			event.preventDefault();
 			applyFilter();
 		});

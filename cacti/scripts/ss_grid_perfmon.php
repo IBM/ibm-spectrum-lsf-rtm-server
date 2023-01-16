@@ -89,12 +89,12 @@ function ss_grid_perfmon($clusterid = 0, $metric = '') {
 		break;
 	}
 
-		$values = db_fetch_row("SELECT current, avg
+		$values = db_fetch_row_prepared("SELECT current, avg
 			FROM grid_clusters_perfmon_metrics
-			WHERE metric='$metric'
-			AND clusterid=$clusterid");
+			WHERE metric = ?
+			AND clusterid = ?", array($metric, $clusterid));
 
-	if (sizeof($values)) {
+	if (cacti_sizeof($values)) {
 		return 'current:' . trim($values['current']) . ' avg:' . trim($values['avg']);
 	}else{
 		return 'current:0 avg:0';

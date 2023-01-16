@@ -120,6 +120,8 @@ switch (get_request_var('action')) {
 		get_allowed_ajax_hosts(false, 'applyFilter', $sql_where);
 
 		break;
+	case 'runall':
+		debug_runall_filtered();
 	default:
 		$refresh = array(
 			'seconds' => get_request_var('refresh'),
@@ -133,6 +135,56 @@ switch (get_request_var('action')) {
 		debug_wizard();
 		bottom_footer();
 		break;
+}
+
+function debug_runall_filtered() {
+	$info = array(
+		'rrd_folder_writable' => '',
+		'rrd_exists'          => '',
+		'rrd_writable'        => '',
+		'active'              => '',
+		'owner'               => '',
+		'runas_poller'        => '',
+		'runas_website'       => get_running_user(),
+		'last_result'         => '',
+		'valid_data'          => '',
+		'rra_timestamp'       => '',
+		'rra_timestamp2'      => '',
+		'rrd_match'           => ''
+	);
+
+	$info = serialize($info);
+
+	$sql_where = '';
+	$dd_join   = '';
+	$now       = time();
+
+	debug_get_filter($sql_where, $dd_join);
+
+	db_execute("DELETE dd
+		FROM data_debug AS dd
+		INNER JOIN data_local AS dl
+		ON dd.datasource = dl.id
+		INNER JOIN data_template_data AS dtd
+		ON dl.id=dtd.local_data_id
+		INNER JOIN data_template AS dt
+		ON dt.id=dl.data_template_id
+		INNER JOIN host AS h
+		ON h.id = dl.host_id
+		$sql_where");
+
+	db_execute_prepared("INSERT INTO data_debug
+		(started, done, info, user, datasource)
+		SELECT ?, '0', ?, ?, dl.id
+		FROM data_local AS dl
+		INNER JOIN data_template_data AS dtd
+		ON dl.id=dtd.local_data_id
+		INNER JOIN data_template AS dt
+		ON dt.id=dl.data_template_id
+		INNER JOIN host AS h
+		ON h.id = dl.host_id
+		$sql_where",
+		array($now, $info, $_SESSION['sess_user_id']));
 }
 
 function debug_process_status($id) {
@@ -317,6 +369,68 @@ function validate_request_vars() {
 	/* ================= input validation ================= */
 }
 
+function debug_get_filter(&$sql_where, &$dd_join) {
+	/* form the 'where' clause for our main sql query */
+	if (get_request_var('rfilter') != '') {
+		$sql_where = "WHERE (dtd.name_cache RLIKE '" . get_request_var('rfilter') . "'" .
+			" OR dtd.local_data_id RLIKE '" . get_request_var('rfilter') . "'" .
+			" OR dt.name RLIKE '" . get_request_var('rfilter') . "')";
+	} else {
+		$sql_where = '';
+	}
+
+	if (get_request_var('host_id') == '-1') {
+		/* Show all items */
+	} elseif (isempty_request_var('host_id')) {
+		$sql_where .= ($sql_where != '' ? ' AND':'WHERE') . ' (dl.host_id=0 OR dl.host_id IS NULL)';
+	} elseif (!isempty_request_var('host_id')) {
+		$sql_where .= ($sql_where != '' ? ' AND':'WHERE') . ' dl.host_id=' . get_request_var('host_id');
+	}
+
+	if (get_request_var('site_id') == '-1') {
+		/* Show all items */
+	} elseif (isempty_request_var('site_id')) {
+		$sql_where .= ($sql_where != '' ? ' AND':'WHERE') . ' (h.site_id=0 OR h.site_id IS NULL)';
+	} elseif (!isempty_request_var('site_id')) {
+		$sql_where .= ($sql_where != '' ? ' AND':'WHERE') . ' h.site_id=' . get_request_var('site_id');
+	}
+
+	if (get_request_var('template_id') == '-1') {
+		/* Show all items */
+	} elseif (get_request_var('template_id') == '0') {
+		$sql_where .= ($sql_where != '' ? ' AND':'WHERE') . ' dtd.data_template_id=0';
+	} elseif (!isempty_request_var('template_id')) {
+		$sql_where .= ($sql_where != '' ? ' AND':'WHERE') . ' dtd.data_template_id=' . get_request_var('template_id');
+	}
+
+	if (get_request_var('profile') == '-1') {
+		/* Show all items */
+	} else {
+		$sql_where .= ($sql_where != '' ? ' AND':'WHERE') . ' dtd.data_source_profile_id=' . get_request_var('profile');
+	}
+
+	if (get_request_var('status') == '-1') {
+		/* Show all items */
+	} elseif (get_request_var('status') == '0') {
+		$sql_where .= ($sql_where != '' ? ' AND':'WHERE') . ' dd.issue != ""';
+	} elseif (get_request_var('status') == '1') {
+		$sql_where .= ($sql_where != '' ? ' AND':'WHERE') . ' dtd.active="on"';
+	} else {
+		$sql_where .= ($sql_where != '' ? ' AND':'WHERE') . ' dtd.active=""';
+	}
+
+	if (get_request_var('debug') == '-1') {
+		$dd_join = 'LEFT';
+	} elseif (get_request_var('debug') == 0) {
+		$dd_join = 'LEFT';
+		$sql_where .= ($sql_where != '' ? ' AND':'WHERE') . ' dd.datasource IS NULL';
+	} else {
+		$dd_join = 'INNER';
+	}
+
+	// Get the SQL Where and Join
+}
+
 function debug_wizard() {
 	global $actions;
 
@@ -383,7 +497,7 @@ function debug_wizard() {
 			'display' => __('RRD Updated'),
 			'align'   => 'center',
 			'sort'    => '',
-			'tip'     => __('Determines if the RRDfile has been writted to properly.'),
+			'tip'     => __('Determines if the RRDfile has been written to properly.'),
 		),
 		'nosort8' => array(
 			'display' => __('Issues'),
@@ -415,63 +529,10 @@ function debug_wizard() {
 		$rows = get_request_var('rows');
 	}
 
-	/* form the 'where' clause for our main sql query */
-	if (get_request_var('rfilter') != '') {
-		$sql_where1 = "WHERE (dtd.name_cache RLIKE '" . get_request_var('rfilter') . "'" .
-			" OR dtd.local_data_id RLIKE '" . get_request_var('rfilter') . "'" .
-			" OR dt.name RLIKE '" . get_request_var('rfilter') . "')";
-	} else {
-		$sql_where1 = '';
-	}
+	$sql_where = '';
+	$dd_join   = '';
 
-	if (get_request_var('host_id') == '-1') {
-		/* Show all items */
-	} elseif (isempty_request_var('host_id')) {
-		$sql_where1 .= ($sql_where1 != '' ? ' AND':'WHERE') . ' (dl.host_id=0 OR dl.host_id IS NULL)';
-	} elseif (!isempty_request_var('host_id')) {
-		$sql_where1 .= ($sql_where1 != '' ? ' AND':'WHERE') . ' dl.host_id=' . get_request_var('host_id');
-	}
-
-	if (get_request_var('site_id') == '-1') {
-		/* Show all items */
-	} elseif (isempty_request_var('site_id')) {
-		$sql_where1 .= ($sql_where1 != '' ? ' AND':'WHERE') . ' (h.site_id=0 OR h.site_id IS NULL)';
-	} elseif (!isempty_request_var('site_id')) {
-		$sql_where1 .= ($sql_where1 != '' ? ' AND':'WHERE') . ' h.site_id=' . get_request_var('site_id');
-	}
-
-	if (get_request_var('template_id') == '-1') {
-		/* Show all items */
-	} elseif (get_request_var('template_id') == '0') {
-		$sql_where1 .= ($sql_where1 != '' ? ' AND':'WHERE') . ' dtd.data_template_id=0';
-	} elseif (!isempty_request_var('template_id')) {
-		$sql_where1 .= ($sql_where1 != '' ? ' AND':'WHERE') . ' dtd.data_template_id=' . get_request_var('template_id');
-	}
-
-	if (get_request_var('profile') == '-1') {
-		/* Show all items */
-	} else {
-		$sql_where1 .= ($sql_where1 != '' ? ' AND':'WHERE') . ' dtd.data_source_profile_id=' . get_request_var('profile');
-	}
-
-	if (get_request_var('status') == '-1') {
-		/* Show all items */
-	} elseif (get_request_var('status') == '0') {
-		$sql_where1 .= ($sql_where1 != '' ? ' AND':'WHERE') . ' dd.issue != ""';
-	} elseif (get_request_var('status') == '1') {
-		$sql_where1 .= ($sql_where1 != '' ? ' AND':'WHERE') . ' dtd.active="on"';
-	} else {
-		$sql_where1 .= ($sql_where1 != '' ? ' AND':'WHERE') . ' dtd.active=""';
-	}
-
-	if (get_request_var('debug') == '-1') {
-		$dd_join = 'LEFT';
-	} elseif (get_request_var('debug') == 0) {
-		$dd_join = 'LEFT';
-		$sql_where1 .= ($sql_where1 != '' ? ' AND':'WHERE') . ' dd.datasource IS NULL';
-	} else {
-		$dd_join = 'INNER';
-	}
+	debug_get_filter($sql_where, $dd_join);
 
 	$total_rows = db_fetch_cell("SELECT COUNT(*)
 		FROM data_local AS dl
@@ -483,7 +544,7 @@ function debug_wizard() {
 		ON h.id = dl.host_id
 		$dd_join JOIN data_debug AS dd
 		ON dl.id = dd.datasource
-		$sql_where1");
+		$sql_where");
 
 	$sql_order = get_order_string();
 	$sql_limit = ' LIMIT ' . ($rows*(get_request_var('page')-1)) . ',' . $rows;
@@ -500,7 +561,7 @@ function debug_wizard() {
 		ON dl.id = dd.datasource
 		LEFT JOIN user_auth AS u
 		ON u.id = dd.user
-		$sql_where1
+		$sql_where
 		$sql_order
 		$sql_limit");
 
@@ -516,12 +577,21 @@ function debug_wizard() {
 
 	if (cacti_sizeof($checks)) {
 		foreach ($checks as $check) {
-			$info = unserialize($check['info']);
-			$issues = explode("\n", $check['issue']);
-			$issue_line = '';
+			if (isset($check['info']) && $check['info'] != '') {
+				$info = unserialize($check['info']);
+			} else {
+				$info = '';
+			}
 
+			if (isset($check['issue']) && $check['issue'] != '') {
+				$issues = explode("\n", $check['issue']);
+			} else {
+				$issues = array();
+			}
+
+			$iline  = '';
 			if (cacti_sizeof($issues)) {
-				$issue_line = $issues[0];
+				$iline = $issues[0];
 			}
 
 			$issue_title = implode('<br/>',$issues);
@@ -534,7 +604,7 @@ function debug_wizard() {
 				form_selectable_ecell($check['username'], $check['local_data_id']);
 				form_selectable_cell(date($datefmt, $check['started']), $check['local_data_id'], '', 'right');
 				form_selectable_cell($check['local_data_id'], $check['local_data_id'], '', 'right');
-				form_selectable_cell(debug_icon(($check['done'] ? (strlen($issue_line) ? 'off' : 'on'):'')), $check['local_data_id'], '', 'center');
+				form_selectable_cell(debug_icon(($check['done'] ? ($iline != '' ? 'off' : 'on'):'')), $check['local_data_id'], '', 'center');
 				form_selectable_cell(debug_icon($info['rrd_writable']), $check['local_data_id'], '', 'center');
 				form_selectable_cell(debug_icon($info['rrd_exists']), $check['local_data_id'], '', 'center');
 				form_selectable_cell(debug_icon($info['active']), $check['local_data_id'], '', 'center');
@@ -547,7 +617,7 @@ function debug_wizard() {
 					form_selectable_cell(debug_icon(($info['rra_timestamp2'] != '' ? 1 : '')), $check['local_data_id'], '', 'center');
 				}
 
-				form_selectable_cell('<a class=\'linkEditMain\' href=\'#\' title="' . html_escape($issue_title) . '">' . ($issue_line != '' ? __esc('Issues') : __esc('N/A')) . '</a>', $check['local_data_id'], '', 'right');
+				form_selectable_cell('<a class=\'linkEditMain\' href=\'#\' title="' . html_escape($issue_title) . '">' . ($iline != '' ? __esc('Issues') : __esc('N/A')) . '</a>', $check['local_data_id'], '', 'right');
 			} else {
 				form_selectable_cell('-', $check['local_data_id']);
 				form_selectable_cell(__('Not Debugging'), $check['local_data_id'], '', 'right');
@@ -813,7 +883,7 @@ function debug_view() {
 
 				$output = '';
 				foreach($details as $attribute => $recommendation) {
-					$output .= __('For attrbitute \'%s\', issue found \'%s\'', $attribute, $recommendation);
+					$output .= __('For attribute \'%s\', issue found \'%s\'', $attribute, $recommendation);
 				}
 
 				form_selectable_cell($output, 'line_2' . $i);
@@ -977,6 +1047,7 @@ function data_debug_filter() {
 							<input type='button' class='ui-button ui-corner-all ui-widget' id='go' value='<?php print __esc('Go');?>' title='<?php print __esc('Set/Refresh Filters');?>'>
 							<input type='button' class='ui-button ui-corner-all ui-widget' id='clear' value='<?php print __esc('Clear');?>' title='<?php print __esc('Clear Filters');?>'>
 							<input type='button' class='ui-button ui-corner-all ui-widget' id='purge' value='<?php print __esc('Purge');?>' title='<?php print __esc('Delete All Checks');?>'>
+							<input type='button' class='ui-button ui-corner-all ui-widget' id='runall' value='<?php print __esc('Run All');?>' title='<?php print __esc('Run checks on currently filtered Data Sources and preserve other results');?>'>
 						</span>
 					</td>
 				</tr>
@@ -1094,6 +1165,11 @@ function data_debug_filter() {
 			loadPageNoHeader(strURL);
 		}
 
+		function runallFilter() {
+			strURL = 'data_debug.php?action=runall&debug=-1&header=false';
+			loadPageNoHeader(strURL);
+		}
+
 		$(function() {
 			$('#go').click(function() {
 				applyFilter()
@@ -1105,6 +1181,10 @@ function data_debug_filter() {
 
 			$('#purge').click(function() {
 				purgeFilter()
+			});
+
+			$('#runall').click(function() {
+				runallFilter()
 			});
 
 			$('#form_data_debug').submit(function(event) {

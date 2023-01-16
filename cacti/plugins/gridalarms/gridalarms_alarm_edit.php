@@ -3000,7 +3000,7 @@ function select_template() {
 	bottom_footer();
 }
 
-function get_users_list($id, $type = 'alarm', &$users_custom_list, &$users_list, &$send_notification_array) {
+function get_users_list($id, $type = 'alarm', &$users_custom_list = '', &$users_list = '', &$send_notification_array = array()) {
 	$sql_params = array();
 
 	if ($type == 'alarm') {

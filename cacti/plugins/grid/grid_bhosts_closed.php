@@ -173,7 +173,7 @@ function grid_closure_events_request_vars() {
 	set_request_var('date2', $_SESSION['sess_grid_closure_event_current_date2']);
 }
 
-function grid_bhosts_closed_event_records(&$total_rows, $apply_limits = true, $rows) {
+function grid_bhosts_closed_event_records(&$total_rows, $apply_limits = true, $rows = 30) {
 	global $grid_out_of_services;
 	global $grid_timespans, $grid_timeshifts, $grid_weekdays, $timespan;
 
@@ -225,9 +225,7 @@ function grid_bhosts_closed_event_records(&$total_rows, $apply_limits = true, $r
 	}
 
 	/* execution host sql where */
-	if (!strlen(get_request_var('filter'))) {
-		/* Show all items */
-	} else {
+	if (get_request_var('filter') != '') {
 		$sql_where .= (strlen($sql_where) ? ' AND':'WHERE') . " ((host LIKE '%" . get_request_var('filter') . "%') OR (hCtrlMsg LIKE '%" . get_request_var('filter') . "%'))";
 	}
 
@@ -287,7 +285,7 @@ function grid_bhosts_closed_event_records(&$total_rows, $apply_limits = true, $r
 					) AS a
 					$group_by");
 			if(cacti_sizeof($total_rows_array)){
-				$total_rows = sizeof($total_rows_array);
+				$total_rows = cacti_sizeof($total_rows_array);
 			}
 		} else {//no group by
 			$sql_query = "$select
@@ -329,7 +327,7 @@ function grid_bhosts_closed_event_records(&$total_rows, $apply_limits = true, $r
 			//cacti_log("total_rows SELECT clusterid FROM ($rowsquery) AS a $group_by");
 			$total_rows_array = db_fetch_assoc("SELECT clusterid FROM ($rowsquery) AS a $group_by");
 			if(cacti_sizeof($total_rows_array)){
-				$total_rows = sizeof($total_rows_array);
+				$total_rows = cacti_sizeof($total_rows_array);
 			}
 		} else {//no group by
 			$sql_query = "$sql_query $sql_order";
@@ -821,9 +819,9 @@ function form_action() {
 		$rsp_content = array();
 		$advocate_max = 30;
 		if ($selected_items_whole != false) {
-		for($i=0; $i<sizeof($selected_items_whole); $i+=$advocate_max){
+		for($i=0; $i<cacti_sizeof($selected_items_whole); $i+=$advocate_max){
 			$selected_items = array_slice($selected_items_whole, $i, $advocate_max);
-			if(sizeof($selected_items)<=0) break;
+			if(cacti_sizeof($selected_items)<=0) break;
 			//print_r($selected_items_whole);
 			$json_return_format = sorting_json_format($selected_items, $message, $action_level); //sort the variables into required format
 
@@ -1056,7 +1054,7 @@ function form_action() {
 	bottom_footer();
 }
 
-function grid_view_get_bhosts_records(&$sql_where, $apply_limits = true, $rows) {
+function grid_view_get_bhosts_records(&$sql_where, $apply_limits = true, $rows = 30) {
 	global $grid_out_of_services;
 
 	/* request validation */
@@ -1210,9 +1208,7 @@ function grid_view_get_bhosts_records(&$sql_where, $apply_limits = true, $rows) 
 	$sql_where .= (strlen($sql_where) ? ' AND ':'WHERE ') . '(gh.status="Closed-Admin")';
 
 	/* execution host sql where */
-	if (!strlen(get_request_var('filter'))) {
-		/* Show all items */
-	} else {
+	if (get_request_var('filter') != '') {
 		$sql_where .= (strlen($sql_where) ? ' AND':'WHERE') . " ((gh.host LIKE '%" . get_request_var('filter') . "%') OR
 			(gh.hCtrlMsg LIKE '%" . get_request_var('filter') . "%') OR
 			(ghi.hostType LIKE '%" . get_request_var('filter') . "%') OR

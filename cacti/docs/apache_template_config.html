@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – apache_template_config</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<p>The Apache http webserver template allows you to monitor your local Cacti server's Apache server for performance KPI's</p>
+<p>This template leverages the mod_status module in apache in order to pull the kpi data to feed into the script</p>
+<p><img src="images/apache-template-preview.png" alt="apache template view" /></p>
+<p>For Centos/Redhat implementations the config will look as follows</p>
+<p>Place the below config in /etc/httpd/conf/httpd.conf</p>
+<pre class="console"><code>
+LoadModule status_module modules/mod_status.so
+ExtendedStatus On
+
+&lt;Location /server-status&gt;
+    SetHandler server-status
+    Require local
+&lt;/Location&gt;
+</code></pre>
+<h4 id="restart-httpd--systemctl-restart-httpd-for-the-config-to-take-effect">restart httpd ( systemctl restart httpd) for the config to take effect</h4>
+<p>For Debian</p>
+<pre class="shell"><code>a2enmod status
+</code></pre>
+<p>Place the below config in /etc/apache2/sites-enabled</p>
+<pre class="console"><code>
+LoadModule status_module modules/mod_status.so
+ExtendedStatus On
+
+&lt;Location /server-status&gt;
+    SetHandler server-status
+    Require local
+&lt;/Location
+</code></pre>
+<h4 id="restart-apache--systemctl-restart-apache2-for-the-config-to-take-effect">restart apache ( systemctl restart apache2) for the config to take effect</h4>
+<h4 id="the-require-local-directive-will-restrict-access-to-the-server-status-page-to-only-local">The require local directive will restrict access to the server-status page to only local</h4>
+</body>
+</html>

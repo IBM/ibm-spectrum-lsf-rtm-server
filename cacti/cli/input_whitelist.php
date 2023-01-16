@@ -1,4 +1,4 @@
-#!/usr/bin/php -q
+#!/usr/bin/env php
 <?php
 // $Id$
 /*
@@ -23,6 +23,11 @@ require(__DIR__ . '/../include/cli_check.php');
 require_once($config['base_path'] . '/lib/utility.php');
 require_once($config['base_path'] . '/lib/poller.php');
 require_once($config['base_path'] . '/lib/template.php');
+
+if ($config['poller_id'] > 1) {
+	print "FATAL: This utility is designed for the main Data Collector only" . PHP_EOL;
+	exit(1);
+}
 
 $audit  = false;
 $update = false;
@@ -112,7 +117,7 @@ if ($audit) {
 		if ($totals) {
 			print 'ERROR: ' . $totals . ' audits failed out of a total of ' . $items . ' Data Input Methods' . PHP_EOL;
 		} else {
-			print 'SUCCESS: Audits successfull for total of ' . $items . ' Data Input Methods' . PHP_EOL;
+			print 'SUCCESS: Audits successful for total of ' . $items . ' Data Input Methods' . PHP_EOL;
 		}
 	}
 } elseif ($update) {

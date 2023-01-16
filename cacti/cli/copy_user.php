@@ -1,4 +1,4 @@
-#!/usr/bin/php -q
+#!/usr/bin/env php
 <?php
 // $Id$
 /*
@@ -37,6 +37,11 @@ if (empty($_SERVER['argv'][1]) ){
 			display_version();
 			exit(0);
 	}
+}
+
+/* switch to main database for cli's */
+if ($config['poller_id'] > 1) {
+	db_switch_remote_to_main();
 }
 
 $template_user = $_SERVER['argv'][1];

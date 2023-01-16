@@ -32,14 +32,14 @@ function ss_grid_throughput($clusterid = 0, $cmd = 'index', $arg1 = '', $arg2 = 
 	if ($cmd == 'index') {
 		$return_arr = ss_grid_throughput_getnames($clusterid, $arg1);
 
-		for ($i=0;($i<sizeof($return_arr));$i++) {
+		for ($i=0;($i<cacti_sizeof($return_arr));$i++) {
 			print $return_arr[$i] . "\n";
 		}
 	} elseif ($cmd == 'query') {
 		$arr_index = ss_grid_throughput_getnames($clusterid, $arg1);
 		$arr = ss_grid_throughput_getinfo($clusterid, $arg1, $arg2);
 
-		for ($i=0;($i<sizeof($arr_index));$i++) {
+		for ($i=0;($i<cacti_sizeof($arr_index));$i++) {
 			if (isset($arr[$arr_index[$i]])) {
 				print $arr_index[$i] . '!' . $arr[$arr_index[$i]] . "\n";
 			} else {
@@ -98,7 +98,7 @@ function ss_grid_throughput_getnames($clusterid) {
 		ORDER BY queuename',
 		array($clusterid));
 
-	for ($i=0;($i<sizeof($arr));$i++) {
+	for ($i=0;($i<cacti_sizeof($arr));$i++) {
 		$return_arr[$i] = $arr[$i]['queuename'];
 	}
 
@@ -131,7 +131,7 @@ function ss_grid_throughput_getinfo($clusterid, $info_requested) {
 			array($clusterid));
 	}
 
-	for ($i=0;($i<sizeof($arr));$i++) {
+	for ($i=0;($i<cacti_sizeof($arr));$i++) {
 		$return_arr[$arr[$i]['qry_index']] = addslashes($arr[$i]['qry_value']);
 	}
 

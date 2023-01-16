@@ -124,6 +124,14 @@ $cacti_version_codes = array(
 	'1.2.13'  => '0102',
 	'1.2.14'  => '0102',
 	'1.2.15'  => '0102',
+	'1.2.16'  => '0102',
+	'1.2.17'  => '0102',
+	'1.2.18'  => '0102',
+	'1.2.19'  => '0103',
+	'1.2.20'  => '0103',
+	'1.2.21'  => '0103',
+	'1.2.22'  => '0103',
+	'1.2.23'  => '0103',
 );
 
 $messages = array(
@@ -263,13 +271,13 @@ $messages = array(
 		'message' => __('Data Input Saved.  You must update the Data Templates referencing this Data Input Method before creating Graphs or Data Sources.'),
 		'level' => MESSAGE_LEVEL_INFO),
 	'input_save_w_ds' => array(
-		'message' => __('Data Input Saved.  You must update the Data Templates referencing this Data Input Method before the Data Collectors will start using any new or modified Data Input Input Fields.'),
+		'message' => __('Data Input Saved.  You must update the Data Templates referencing this Data Input Method before the Data Collectors will start using any new or modified Data Input - Input Fields.'),
 		'level' => MESSAGE_LEVEL_INFO),
 	'input_field_save_wo_ds' => array(
 		'message' => __('Data Input Field Saved.  You must update the Data Templates referencing this Data Input Method before creating Graphs or Data Sources.'),
 		'level' => MESSAGE_LEVEL_INFO),
 	'input_field_save_w_ds' => array(
-		'message' => __('Data Input Field Saved.  You must update the Data Templates referencing this Data Input Method before the Data Collectors will start using any new or modified Data Input Input Fields.'),
+		'message' => __('Data Input Field Saved.  You must update the Data Templates referencing this Data Input Method before the Data Collectors will start using any new or modified Data Input - Input Fields.'),
 		'level' => MESSAGE_LEVEL_INFO),
 	'clog_invalid' => array(
 		'message' => __('Log file specified is not a Cacti log or archive file.'),
@@ -412,7 +420,58 @@ $cdef_functions = array(1 =>
 	'NEGINF',
 	'NOW',
 	'TIME',
-	'LTIME'
+	'LTIME',
+	'ADDNAN',
+	'TREND',
+	'TRENDNAN',
+	'PREDICT',
+	'PREDICTSIGMA',
+	'PREDICTPERC',
+	'SQRT',
+	'ATAN',
+	'ATAN2',
+	'POW',
+	'ISINF',
+	'MINNAN',
+	'MAXNAN',
+	'DEG2RAD',
+	'RAD2DEG',
+	'ABS',
+	'REV',
+	'SMIN',
+	'SMAX',
+	'MEDIAN',
+	'STDEV',
+	'PERCENT',
+	'COUNT',
+	'STEPWIDTH',
+	'NEWDAY',
+	'NEWWEEK',
+	'NEWMONTH',
+	'NEWYEAR',
+	'DEPTH',
+	'COPY',
+	'INDEX',
+	'ROLL'
+);
+
+$phperrors = array (
+	E_ERROR => 'ERROR',
+	E_WARNING => 'WARNING',
+	E_PARSE => 'PARSE',
+	E_NOTICE => 'NOTICE',
+	E_CORE_ERROR => 'CORE_ERROR',
+	E_CORE_WARNING => 'CORE_WARNING',
+	E_COMPILE_ERROR  => 'COMPILE_ERROR',
+	E_COMPILE_WARNING => 'COMPILE_WARNING',
+	E_USER_ERROR => 'USER_ERROR',
+	E_USER_WARNING => 'USER_WARNING',
+	E_USER_NOTICE  => 'USER_NOTICE',
+	E_STRICT => 'STRICT',
+	E_RECOVERABLE_ERROR  => 'RECOVERABLE_ERROR',
+	E_DEPRECATED => 'DEPRECATED',
+	E_USER_DEPRECATED  => 'USER_DEPRECATED',
+	E_ALL => 'ALL'
 );
 
 if (cacti_version_compare(get_rrdtool_version(), '1.8.0', '>=')) {
@@ -450,7 +509,7 @@ $input_types = array(
 	DATA_INPUT_TYPE_SCRIPT              => __('Script/Command'),  // Action 1:
 	DATA_INPUT_TYPE_SCRIPT_QUERY        => __('Script Query'), // Action 1:
 	DATA_INPUT_TYPE_PHP_SCRIPT_SERVER   => __('Script Server'),
-	DATA_INPUT_TYPE_QUERY_SCRIPT_SERVER => __('Script Query - Script Server')
+	DATA_INPUT_TYPE_QUERY_SCRIPT_SERVER => __('Script Server Query')
 );
 
 $input_types_script = array(
@@ -635,7 +694,7 @@ $poller_options = array(
 	2 => 'spine'
 );
 
-if (!file_exists(read_config_option('path_spine')) || !is_executable(read_config_option('path_spine'))) {
+if (read_config_option('path_spine') != '' && (!file_exists(read_config_option('path_spine')) || !is_executable(read_config_option('path_spine')))) {
 	unset($poller_options[2]);
 }
 
@@ -665,6 +724,7 @@ $sampling_intervals = array(
 	60    => __('Every Minute'),
 	300   => __('Every %d Minutes', 5),
 	600   => __('Every %d Minutes', 10),
+	900   => __('Every %d Minutes', 15),
 	1200  => __('Every %d Minutes', 20),
 	1800  => __('Every %d Minutes', 30),
 	3600  => __('Every Hour'),
@@ -679,10 +739,15 @@ $heartbeats = array(
 	20     => __('%d Seconds', 20),
 	30     => __('%d Seconds', 30),
 	40     => __('%d Seconds', 40),
-	60     => __('%d Minute',  1),
+	45     => __('%d Seconds', 45),
+	60     => __('%d Seconds', 60),
+	90     => __('%d Seconds', 90),
 	120    => __('%d Minutes', 2),
 	300    => __('%d Minutes', 5),
+	330    => __('%0.1f Minutes', 5.5),
 	600    => __('%d Minutes', 10),
+	660    => __('%d Minutes', 11),
+	900    => __('%d Minutes', 15),
 	1200   => __('%d Minutes', 20),
 	1800   => __('%d Minutes', 30),
 	2400   => __('%d Minutes', 40),
@@ -796,8 +861,16 @@ $ldap_versions = array(
 
 $ldap_encryption = array(
 	0 => __('None'),
-	1 => __('SSL'),
-	2 => __('TLS')
+	1 => __('LDAPS'),
+	2 => __('LDAP + TLS')
+);
+
+$ldap_tls_cert_req = array(
+	LDAP_OPT_X_TLS_NEVER  => __('Never'),
+	LDAP_OPT_X_TLS_HARD   => __('Hard'),
+	LDAP_OPT_X_TLS_DEMAND => __('Demand'),
+	LDAP_OPT_X_TLS_ALLOW  => __('Allow'),
+	LDAP_OPT_X_TLS_TRY    => __('Try')
 );
 
 $ldap_modes = array(
@@ -928,6 +1001,7 @@ if ($config['poller_id'] == 1 || $config['connection'] == 'online') {
 			),
 		__('Import/Export') => array(
 			'templates_import.php' => __('Import Templates'),
+			'package_import.php'   => __('Import Packages'),
 			'templates_export.php' => __('Export Templates')
 			),
 		__('Configuration')  => array(
@@ -977,6 +1051,30 @@ $menu_glyphs = array(
 	__('Troubleshooting') => 'fa fa-bug'
 );
 
+$device_classes = array(
+	'wireless'     => __('Access Points, Controllers'),
+	'application'  => __('Application Related'),
+	'cacti'        => __('Cacti Related'),
+	'database'     => __('Database Related'),
+	'facilities'   => __('Facilities Related'),
+	'general'      => __('Generic Device'),
+	'hpc'          => __('HPC/Grid Computing'),
+	'hypervisor'   => __('Hypervisor Related'),
+	'remotemgmt'   => __('ILO, IPMI, iDrac, etc.'),
+	'license'      => __('Licensing Related'),
+	'linux'        => __('Linux Related'),
+	'loadbalancer' => __('Load Balancer'),
+	'switch'       => __('Network Switch'),
+	'router'       => __('Network Router'),
+	'firewall'     => __('Network Firewall'),
+	'storage'      => __('Storage Related'),
+	'telephony'    => __('Telco Related'),
+	'webserver'    => __('Web Server Related'),
+	'windows'      => __('Windows Related'),
+	'ups'          => __('UPS Related'),
+	'unassigned'   => __('Unassigned')
+);
+
 if ((isset($_SESSION['sess_user_id']))) {
 	if (db_table_exists('external_links')) {
 		$consoles = db_fetch_assoc('SELECT id, title, extendedstyle
@@ -987,7 +1085,7 @@ if ((isset($_SESSION['sess_user_id']))) {
 
 		if (cacti_sizeof($consoles)) {
 			foreach ($consoles as $page) {
-				if (is_realm_allowed($page['id']+10000)) {
+				if (!$config['is_web'] || is_realm_allowed($page['id']+10000)) {
 					$menuname = (isset($page['extendedstyle']) && $page['extendedstyle'] != '' ? $page['extendedstyle'] : __('External Links'));
 					$menu[$menuname]['link.php?id=' . $page['id']] = $page['title'];
 				}
@@ -1093,7 +1191,7 @@ $user_auth_realms = array(
 	20   => __('Update Profile'),
 	24   => __('External Links'),
 
-	1    => __('User Management'),
+	1    => __('Users/Groups'),
 	15   => __('Settings/Utilities'),
 	23   => __('Automation'),
 	26   => __('Installation/Upgrades'),
@@ -1104,7 +1202,7 @@ $user_auth_realms = array(
 	3    => __('Sites/Devices/Data'),
 	5    => __('Graphs'),
 	4    => __('Trees'),
-	1043 => __('Spike Management'),
+	1043 => __('Spike Handling'),
 
 	9    => __('Data Source Profiles'),
 	14   => __('Presets'),
@@ -1116,22 +1214,25 @@ $user_auth_realms = array(
 	16   => __('Export Templates'),
 	17   => __('Import Templates'),
 
-	18   => __('Log Management'),
+	18   => __('Log Administration'),
 	19   => __('Log Viewing'),
 
-	21   => __('Reports Management'),
-	22   => __('Reports Creation')
+	21   => __('Reports Administration'),
+	22   => __('Reports Creation'),
+	27   => __('Show Graph Action Icons'),
+	28   => __('Show User Help Links'),
+	101  => __('Plugin Administration')
 );
 
 $user_auth_roles = array(
-	__('Normal User')            => array(7, 19, 20, 22, 24, 25),
+	__('Normal User')            => array(7, 19, 20, 22, 24, 25, 27, 28),
 	__('Template Editor')        => array(8, 2, 9, 10, 11, 12, 13, 14, 16, 17),
 	__('General Administration') => array(8, 3, 4, 5, 23, 1043),
 	__('System Administration')  => array(8, 15, 26, 1, 18, 21, 101)
 );
 
 $user_auth_realm_filenames = array(
-	'about.php' => 8,
+	'about.php' => -1,
 	'cdef.php' => 14,
 	'clog.php' => 18,
 	'clog_user.php' => 19,
@@ -1163,11 +1264,13 @@ $user_auth_realm_filenames = array(
 	'step_json.php' => 26,
 	'managers.php' => 15,
 	'rrdcleaner.php' => 15,
+	'rrdcheck.php' => 15,
 	'settings.php' => 15,
 	'links.php' => 15,
 	'data_queries.php' => 13,
 	'templates_export.php' => 16,
 	'templates_import.php' => 17,
+	'package_import.php' => 17,
 	'tree.php' => 4,
 	'user_admin.php' => 1,
 	'user_domains.php' => 1,
@@ -1181,8 +1284,8 @@ $user_auth_realm_filenames = array(
 	'logout.php' => -1,
 	'auth_profile.php' => 20,
 	'auth_changepassword.php' => -1,
-	'reports_user.php' => 21,
-	'reports_admin.php' => 22,
+	'reports_user.php' => 22,
+	'reports_admin.php' => 21,
 	'automation_graph_rules.php' => 23,
 	'automation_tree_rules.php' => 23,
 	'automation_templates.php' => 23,
@@ -1195,7 +1298,8 @@ $user_auth_realm_filenames = array(
 	'aggregate_graphs.php' => 5,
 	'aggregate_items.php' => 5,
 	'spikekill.php' => 1043,
-	'permission_denied.php' => -1
+	'permission_denied.php' => -1,
+	'help.php' => -1
 );
 
 //Do not touch array order to avoid "Unmet Dependency" Error
@@ -1265,8 +1369,11 @@ $host_struc = array(
 	'snmp_port',
 	'snmp_timeout',
 	'max_oids',
+	'bulk_walk_size',
 	'device_threads',
 	'availability_method',
+	'location',
+	'external_id',
 	'ping_method',
 	'ping_port',
 	'ping_timeout',
@@ -1419,6 +1526,13 @@ $dsstats_hourly_avg = array(
 	'360' => __('%d Hours', 6)
 );
 
+$rrdcheck_intervals = array(
+	'boost' => __('After Boost'),
+	'60'  => __('1 Hour'),
+	'240' => __('%d Hours', 4),
+	'1440' => __('%d Hours', 24)
+);
+
 $boost_max_rows_per_select = array(
 	'2000'   => __('2,000 Data Source Items'),
 	'5000'   => __('5,000 Data Source Items'),
@@ -1514,7 +1628,7 @@ $reports_actions = array(
 	REPORTS_DELETE    => __('Delete'),
 );
 
-if (is_realm_allowed(22)) {
+if (!$config['is_web'] || is_realm_allowed(21)) {
 	$reports_actions[REPORTS_OWN] = __('Take Ownership');
 }
 
@@ -1547,6 +1661,7 @@ $item_types = array(
 	REPORTS_ITEM_TEXT  => __('Text'),
 	REPORTS_ITEM_TREE  => __('Tree'),
 	REPORTS_ITEM_GRAPH => __('Graph'),
+	REPORTS_ITEM_HOST  => __('Device'),
 	REPORTS_ITEM_HR    => __('Horizontal Rule')
 );
 
@@ -1752,7 +1867,7 @@ $i18n_months = array(
 	'January'	=> __('January'),
 	'February'	=> __('February'),
 	'March'		=> __('March'),
-	'Arpil'		=> __('April'),
+	'April'		=> __('April'),
 	'May'		=> __('May'),
 	'June'		=> __('June'),
 	'July'		=> __('July'),
@@ -1777,6 +1892,22 @@ $i18n_months_short = array(
 	'Nov'	=> __x('A short textual representation of a month, three letters', 'Nov'),
 	'Dec'	=> __x('A short textual representation of a month, three letters', 'Dec'),
 );
+
+$i18n_supported_languages = array(
+	CACTI_LANGUAGE_HANDLER_DEFAULT => __('Use the First Handler Found'),
+);
+
+if (is_dir($config['base_path'] . '/include/vendor/phpgettext')) {
+	$i18n_supported_languages[CACTI_LANGUAGE_HANDLER_PHPGETTEXT]  = __('Use the PHP GetText Handler');
+}
+
+if (is_dir($config['base_path'] . '/include/vendor/gettext') && version_compare(PHP_VERSION, '8.0', '<=')) {
+	$i18n_supported_languages[CACTI_LANGUAGE_HANDLER_OSCAROTERO]  = __('Use the Oscarotero GetText Handler');
+}
+
+if (is_dir($config['base_path'] . '/include/vendor/monotranslator')) {
+	$i18n_supported_languages[CACTI_LANGUAGE_HANDLER_MOTRANSLATOR]  = __('Use the MonoTranslator GetText Handler');
+}
 
 $i18n_weekdays = array(
 	'Sunday'	=> __('Sunday'),
@@ -1835,27 +1966,9 @@ $i18n_themes = array(
 $database_statuses = array(
 	0 => __('[Fail]'),
 	1 => __('[Warning]'),
-	2 => __('[Success]'),
-	3 => __('[Skipped]'),
-);
-
-$phperrors = array (
-	E_ERROR => 'ERROR',
-	E_WARNING => 'WARNING',
-	E_PARSE => 'PARSE',
-	E_NOTICE => 'NOTICE',
-	E_CORE_ERROR => 'CORE_ERROR',
-	E_CORE_WARNING => 'CORE_WARNING',
-	E_COMPILE_ERROR  => 'COMPILE_ERROR',
-	E_COMPILE_WARNING => 'COMPILE_WARNING',
-	E_USER_ERROR => 'USER_ERROR',
-	E_USER_WARNING => 'USER_WARNING',
-	E_USER_NOTICE  => 'USER_NOTICE',
-	E_STRICT => 'STRICT',
-	E_RECOVERABLE_ERROR  => 'RECOVERABLE_ERROR',
-	E_DEPRECATED => 'DEPRECATED',
-	E_USER_DEPRECATED  => 'USER_DEPRECATED',
-	E_ALL => 'ALL'
+	2 => __('[Restart]'),
+	3 => __('[Success]'),
+	4 => __('[Skipped]'),
 );
 
 $navigation = array(
@@ -2056,6 +2169,30 @@ $navigation = array(
 	'tree.php:edit' => array(
 		'title' => __('(Edit)'),
 		'mapping' => 'index.php:,tree.php:',
+		'url' => '',
+		'level' => '2'
+	),
+	'pollers.php:' => array(
+		'title' => __('Data Collectors'),
+		'mapping' => 'index.php:',
+		'url' => 'pollers.php',
+		'level' => '1'
+	),
+	'pollers.php:edit' => array(
+		'title' => __('(Edit)'),
+		'mapping' => 'index.php:,pollers.php:',
+		'url' => '',
+		'level' => '2'
+	),
+	'links.php:' => array(
+		'title' => __('External Links'),
+		'mapping' => 'index.php:',
+		'url' => 'links.php',
+		'level' => '1'
+	),
+	'links.php:edit' => array(
+		'title' => __('(Edit)'),
+		'mapping' => 'index.php:,links.php:',
 		'url' => '',
 		'level' => '2'
 	),
@@ -2281,6 +2418,12 @@ $navigation = array(
 		'url' => 'rrdcleaner.php?action=restart',
 		'level' => '2'
 	),
+	'rrdcheck.php:' => array(
+		'title' => __('RRD Check'),
+		'mapping' => 'index.php:,utilities.php:',
+		'url' => 'rrdcheck.php',
+		'level' => '2'
+	),
 	'utilities.php:' => array(
 		'title' => __('Utilities'),
 		'mapping' => 'index.php:',
@@ -2434,7 +2577,7 @@ $navigation = array(
 	'user_domains.php:edit' => array(
 		'title' => __('(Edit)'),
 		'mapping' => 'user_domains.php:,index.php:',
-		'url' => 'user_domains.php:edit',
+		'url' => 'user_domains.php',
 		'level' => '2'
 	),
 	'user_group_admin.php:' => array(
@@ -2457,8 +2600,14 @@ $navigation = array(
 	),
 	'about.php:' => array(
 		'title' => __('About Cacti'),
-		'mapping' => 'index.php:',
+		'mapping' => '',
 		'url' => 'about.php',
+		'level' => '1'
+	),
+	'help.php:' => array(
+		'title' => __('Cacti Help'),
+		'mapping' => '',
+		'url' => 'help.php',
 		'level' => '1'
 	),
 	'templates_export.php:' => array(
@@ -2477,6 +2626,12 @@ $navigation = array(
 		'title' => __('Import Templates'),
 		'mapping' => 'index.php:',
 		'url' => 'templates_import.php',
+		'level' => '1'
+	),
+	'package_import.php:' => array(
+		'title' => __('Import Packages'),
+		'mapping' => 'index.php:',
+		'url' => 'package_import.php',
 		'level' => '1'
 	),
 	'reports_admin.php:' => array(
@@ -2730,6 +2885,36 @@ $graph_sources = array(
 	1 => __('Data Query'),
 	2 => __('Template'),
 	3 => __('Aggregate'),
+);
+
+if ($config['cacti_server_os'] == 'unix') {
+	$dejavu_paths = array(
+		'/usr/share/fonts/dejavu/', //RHEL/CentOS
+		'/usr/share/fonts/truetype/', //SLES
+		'/usr/share/fonts/truetype/dejavu/', //Ubuntu
+		'/usr/local/share/fonts/dejavu/', //FreeBSD
+		__DIR__ . '/fonts'  //Build-in
+	);
+} else {
+	$dejavu_paths = array(
+		'C:/Windows/Fonts/' //Windows
+	);
+}
+
+$allowed_proxy_headers =	array(
+	'X-Forwarded-For',
+	'X-Client-IP',
+	'X-Real-IP',
+	'X-ProxyUser-Ip',
+	'CF-Connecting-IP',
+	'True-Client-IP',
+	'HTTP_X_FORWARDED',
+	'HTTP_X_FORWARDED_FOR',
+	'HTTP_X_CLUSTER_CLIENT_IP',
+	'HTTP_FORWARDED_FOR',
+	'HTTP_FORWARDED',
+	'HTTP_CLIENT_IP',
+	'REMOTE_ADDR',
 );
 
 api_plugin_hook('config_arrays');

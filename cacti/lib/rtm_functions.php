@@ -45,7 +45,7 @@ function kill_process_tree($pid, $signal = SIGTERM) {
 function detect_and_correct_running_processes($pollerid, $taskname, $max_runtime, $noprocess = FALSE) {
 	$now = time();
 	$row = db_fetch_row_prepared("SELECT pid, heartbeat FROM grid_processes WHERE taskid=? AND taskname=?", array($pollerid, $taskname));
-	if (sizeof($row)) {
+	if (cacti_sizeof($row)) {
 		$heartbeat = strtotime($row["heartbeat"]);
 		if (($now - $heartbeat) > $max_runtime) {
 			cacti_log("ERROR: TASK:$taskname, TASKID:$pollerid, PID:". $row["pid"] . " Detected an abended task, restarting", FALSE, "GRIDPOLLER");
@@ -104,7 +104,7 @@ function get_child_processes($pid, &$exist, $process_arr = array()) {
 	$err = 0;
 	$exist = FALSE;
 	exec('ps -eo pid,ppid',$out,$err);
-	if (sizeof($out) > 0) {
+	if (cacti_sizeof($out) > 0) {
 		foreach ($out as $line){
 			$fileds = sscanf($line, '%d %d');
 			if (!empty($fileds) && !empty($fileds[0])) {
@@ -362,7 +362,7 @@ function rtm_hover_help($url, $text) {
 //Copy from Cacti 0.8, the new version of this function cannot handle multi-level array case.
 function rtm_array_to_sql_or($array, $sql_column) {
 	/* if the last item is null; pop it off */
-	if ((empty($array[count($array)-1])) && (sizeof($array) > 1)) {
+	if ((empty($array[count($array)-1])) && (cacti_sizeof($array) > 1)) {
 		array_pop($array);
 	}
 
@@ -613,4 +613,8 @@ function rtm_safe_session($sessionName) {
 	} else {
 		return;
 	}
+}
+
+function rtm_strlen($string){
+	return isset($string) ? strlen($string) : 0;
 }

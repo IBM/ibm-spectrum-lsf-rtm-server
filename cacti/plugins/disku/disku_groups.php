@@ -298,7 +298,7 @@ function disku_groups() {
 	}
 }
 
-function get_disku_groups(&$sql_where, $apply_limits = true, $row_limit = 30, &$sql_params) {
+function get_disku_groups(&$sql_where, $apply_limits = true, $row_limit = 30, &$sql_params = array()) {
 	$sql_where = "WHERE files IS NOT NULL ";
 
 	if (isset_request_var('filter') && get_request_var('filter') != '') {

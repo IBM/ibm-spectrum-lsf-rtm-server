@@ -1130,6 +1130,8 @@ function format_job_slots($break = false, $force_slots = false) {
 }
 
 function grid_format_seconds($time, $second_base_flag = false) {
+	global $config;
+	include_once($config["library_path"] . '/rtm_functions.php');
 	if(!isset($time) || !strlen($time) || $time == '-'){
 		return '-';
 	}
@@ -3697,8 +3699,8 @@ function update_fairshare_tree_information() {
 
 	$clusters = db_fetch_assoc("SELECT DISTINCT clusterid FROM grid_clusters WHERE disabled!='on'");
 
-	if (sizeof($clusters)) {
-		grid_debug("Processing '" . sizeof($clusters) . "' Clusters");
+	if (cacti_sizeof($clusters)) {
+		grid_debug("Processing '" . cacti_sizeof($clusters) . "' Clusters");
 		foreach($clusters as $cluster) {
 			db_execute_prepared("UPDATE grid_queues_shares AS gqs
 				LEFT JOIN $temp_table AS tt
@@ -5191,7 +5193,7 @@ function move_records_into_finished_table() {
 	while ($wait) {
 		$counter++;
 		$row = db_fetch_row("show tables like 'grid_jobs_finished'");
-		if ((isset($row) && sizeof($row) >= 1) || $counter > 60) {/*here we wait at most 1 minute*/
+		if ((isset($row) && cacti_sizeof($row) >= 1) || $counter > 60) {/*here we wait at most 1 minute*/
 			$wait = false;
 		} else {
 			/*grid_jobs_finished does not exist due to db maintain, so let's wait for a while.*/
@@ -7724,7 +7726,7 @@ function curve_fitting_rusage_records($rusage_records = array()) {
 }
 
 function curve_fitting_rusage_records_host($rusage_records = array()) {
-	if (!sizeof($rusage_records)) return array();
+	if (!cacti_sizeof($rusage_records)) return array();
 
 	//get the last rusage record in last job graphing if it exists and assgin it to $prev. $prev could be empty.
 	$first_record = current($rusage_records);
@@ -7738,12 +7740,12 @@ function curve_fitting_rusage_records_host($rusage_records = array()) {
 		AND update_time<?)
 		ORDER BY update_time DESC LIMIT 1", array($first_record['jobid'], $first_record['indexid'], $first_record['clusterid'], $first_record['submit_time'], $first_record['host'], $first_record['update_time']));
 
-	if (!sizeof($prev)) {
+	if (!cacti_sizeof($prev)) {
 		$pt = db_fetch_row_prepared("select * from grid_table_partitions where table_name = 'grid_jobs_host_rusage'
 		          and min_time <=?
 		          and max_time >=?
 		          order by max_time asc limit 1", array($first_record['submit_time'], $first_record['update_time']));
-		if (sizeof($pt)) {
+		if (cacti_sizeof($pt)) {
 			$tablename = 'grid_jobs_host_rusage_v' . $pt['partition'];
 			$select_list=build_partition_select_list($tablename, "grid_jobs_host_rusage");
 			$prev = db_fetch_row_prepared("SELECT $select_list FROM $tablename
@@ -7760,7 +7762,7 @@ function curve_fitting_rusage_records_host($rusage_records = array()) {
 	$new_rusage_records = array();
 	foreach ($rusage_records as $cur) {
 		// if $prev is empty, meaning $cur is the first point to draw in all time. no way to do curv fitting.
-		if (!sizeof($prev)) {
+		if (!cacti_sizeof($prev)) {
 			$new_rusage_records[] = $cur;
 			$prev = $cur;
 			continue;
@@ -7804,7 +7806,7 @@ function curve_fitting_rusage_records_host($rusage_records = array()) {
 }
 
 function curve_fitting_rusage_records_gpu($rusage_records = array()) {
-	if (!sizeof($rusage_records)) return array();
+	if (!cacti_sizeof($rusage_records)) return array();
 
 	//get the last rusage record in last job graphing if it exists and assgin it to $prev. $prev could be empty.
 	$first_record = current($rusage_records);
@@ -7819,12 +7821,12 @@ function curve_fitting_rusage_records_gpu($rusage_records = array()) {
 		AND update_time <?)
 		ORDER BY update_time DESC LIMIT 1", array($first_record['jobid'], $first_record['indexid'], $first_record['clusterid'], $first_record['submit_time'], $first_record['host'], $first_record['gpu_id'], $first_record['update_time']));
 
-	if (!sizeof($prev)) {
+	if (!cacti_sizeof($prev)) {
 		$pt = db_fetch_row_prepared("select * from grid_table_partitions where table_name = 'grid_jobs_gpu_rusage'
 		          and min_time <=?
 		          and max_time >=?
 		          order by max_time asc limit 1", array($first_record['submit_time'], $first_record['update_time']));
-		if (sizeof($pt)) {
+		if (cacti_sizeof($pt)) {
 			$tablename = 'grid_jobs_gpu_rusage_v' . $pt['partition'];
 			$select_list=build_partition_select_list($tablename, "grid_jobs_gpu_rusage");
 			$prev = db_fetch_row_prepared("SELECT $select_list FROM $tablename
@@ -7842,7 +7844,7 @@ function curve_fitting_rusage_records_gpu($rusage_records = array()) {
 	$new_rusage_records = array();
 	foreach ($rusage_records as $cur) {
 		// if $prev is empty, meaning $cur is the first point to draw in all time. no way to do curv fitting.
-		if (!sizeof($prev)) {
+		if (!cacti_sizeof($prev)) {
 			$new_rusage_records[] = $cur;
 			$prev = $cur;
 			continue;
@@ -8043,7 +8045,7 @@ function update_job_rrds_gpu($table_name, $cache_directory, $file_base, $cluster
 	/* validate the job record */
 	$job = get_rusage_job_record($table_name, $jobid, $indexid, $clusterid, $submit_time);
 
-	if (sizeof($job)) {
+	if (cacti_sizeof($job)) {
 		$cache_file = $cache_directory . "/" . $file_base . ".rrd";
 		if (file_exists($cache_file)) {
 			//Skip update rrd and re-create graph if the last_updated time of rrd file is in rusage collection frequency.
@@ -8065,7 +8067,7 @@ function update_job_rrds_gpu($table_name, $cache_directory, $file_base, $cluster
 		/* set the rrdtool update prefix */
 		$update_prefix  = "update " . $cache_file . " --template gut:gmut:gmem ";
 
-		if (sizeof($update_records)) {
+		if (cacti_sizeof($update_records)) {
 			$len = 0;
 			$update = $update_prefix;
 			$last_record=null;
@@ -8167,6 +8169,8 @@ function get_rusage_job_record($table_name, $jobid, $indexid, $clusterid, $submi
  */
 function get_rusage_records($clusterid, $jobid, $indexid, $submit_time, $mod_time, $oldest = 0, $unixtime = false, $end_time = NULL, $isrun = false) {
 	global $config;
+	include_once($config["library_path"] . '/rtm_functions.php');
+
 	$build_flag   = false;
 	$limitstr     = "";
 	$orderstr     = "";
@@ -8199,7 +8203,7 @@ function get_rusage_records($clusterid, $jobid, $indexid, $submit_time, $mod_tim
 			$update_time = db_fetch_cell_prepared($query_update_time, array($clusterid, $jobid, $indexid, $submit_time, $mod_time));
 		}
 
-		if(strlen($update_time)){
+		if(rtm_strlen($update_time)){
 			$where_update_time .= '?';
 			$query = "SELECT $fieldlist FROM grid_jobs_rusage
 				WHERE (clusterid = ? AND jobid = ? AND indexid = ? AND submit_time = ? $where_update_time)
@@ -8236,7 +8240,7 @@ function get_rusage_records($clusterid, $jobid, $indexid, $submit_time, $mod_tim
 				$update_time = db_fetch_cell_prepared("SELECT $update_time_field FROM ($query_update_time) AS rusage_record");
 			}
 
-			if(strlen($update_time)){
+			if(rtm_strlen($update_time)){
 				$where_update_time .= "'$update_time'";
 
 				foreach ($tables as $table) {
@@ -8338,7 +8342,7 @@ function get_rusage_records_gpu($jobid, $indexid, $clusterid, $submit_time, $hos
 		$sql_params = array();
 		$tables = partition_get_partitions_for_query("grid_jobs_gpu_rusage", $update_time, date("Y-m-d H:i:s"));
 
-		if (sizeof($tables)) {
+		if (cacti_sizeof($tables)) {
 			foreach($tables as $table) {
 				if (strlen($query)) {
 					$query .= " UNION ";
@@ -8376,6 +8380,9 @@ function get_rusage_records_gpu($jobid, $indexid, $clusterid, $submit_time, $hos
  * Get the latest GPU allocation info(hostname,  gpu id) for job.
  */
 function get_rusage_records_gpu_per_job($clusterid, $jobid, $indexid, $submit_time, $mod_time, $end_time, $isrun) {
+	global $config;
+	include_once($config["library_path"] . '/rtm_functions.php');
+
 	$update_time_field  = "MAX(update_time) AS update_time";
 	$where_update_time  = "AND update_time = ";
 
@@ -8384,7 +8391,7 @@ function get_rusage_records_gpu_per_job($clusterid, $jobid, $indexid, $submit_ti
 								WHERE (clusterid = ? AND jobid = ? AND indexid = ? AND submit_time = ? AND update_time >= ?)";
         $update_time = db_fetch_cell_prepared($query_update_time, array($clusterid, $jobid, $indexid, $submit_time, $mod_time));
 
-        if(strlen($update_time)){
+        if(rtm_strlen($update_time)){
             $where_update_time .= '?';
             $query = "SELECT host, gpu_id, exec_time, energy, sm_ut_avg, mem_ut_avg, gpu_mused_max FROM grid_jobs_gpu_rusage
                 WHERE (clusterid = ? AND jobid = ? AND indexid = ? AND submit_time = ? $where_update_time) ORDER BY host, gpu_id";
@@ -8408,7 +8415,7 @@ function get_rusage_records_gpu_per_job($clusterid, $jobid, $indexid, $submit_ti
 			}
 			$update_time = db_fetch_cell_prepared("SELECT $update_time_field FROM ($query_update_time) AS rusage_record");
 
-			if(strlen($update_time)){
+			if(rtm_strlen($update_time)){
 				$where_update_time .= "'$update_time'";
 
 				foreach($tables as $table) {
@@ -8597,7 +8604,7 @@ function create_job_graph($file_base, $clusterid, $jobid, $indexid, $submit_time
 		AND submit_time=?" , array($clusterid, $jobid, $indexid, date("Y-m-d H:i:s", $submit_time)));
 
 	//TODO: $grid_hostinfo should directly get from grid_hostinfo when $host_name is not empry for host rusage graph.
-	if (!sizeof($job)) {
+	if (!cacti_sizeof($job)) {
 		if (read_config_option("grid_partitioning_enable") == "") {
 			$job = db_fetch_row_prepared("SELECT stat, submit_time, start_time, end_time, mem_requested, mem_reserved, max_swap
 				FROM grid_jobs_finished
@@ -8614,7 +8621,7 @@ function create_job_graph($file_base, $clusterid, $jobid, $indexid, $submit_time
 			$query  = "";
 			$tables = partition_get_partitions_for_query("grid_jobs_finished", date("Y-m-d H:i:s", $submit_time), date("Y-m-d H:i:s"));
 
-			if (sizeof($tables)) {
+			if (cacti_sizeof($tables)) {
 				foreach($tables as $table) {
 					if (strlen($query)) {
 						$query .= " UNION ";
@@ -10044,6 +10051,7 @@ function sorting_json_format($selected_items_whole, $args_lists='', $action_leve
 		$lsf_master      = $get_dir['lsf_master'];
 		$privatekey_path = $get_dir['privatekey_path'];
 		$lim_port        = $get_dir['lim_port'];
+		$lsf_version     = $get_dir['lsf_version'];
 		$lsf_version_str = 'lsf' . $get_dir['lsf_version'];
 		$lsf_ego         = $get_dir['lsf_ego'];
 		$lsf_confdir     = (empty($get_dir['lsf_confdir']) ? $get_dir['lsf_envdir']:$get_dir['lsf_confdir']);
@@ -10103,7 +10111,7 @@ function sorting_json_format($selected_items_whole, $args_lists='', $action_leve
 						'LSF_ENVDIR'        => $LSF_ENVDIR,
 						'RTM_POLLER_BINDIR' => $RTM_POLLER_BINDIR
 					);
-					$bulkctrl_first_location[$clusterid] = sizeof($json_cluster) - 1;
+					$bulkctrl_first_location[$clusterid] = cacti_sizeof($json_cluster) - 1;
 				} else {
 					$json_cluster[$bulkctrl_first_location[$clusterid]]['name'] .= "|" . $explode_selected_items[0];
 					continue;
@@ -10336,7 +10344,7 @@ function create_user($username) {
 	}
 }
 
-function get_jobs_query($table_name, $apply_limits = true, &$jobsquery, &$rowsquery, $resreq_query = '1') {
+function get_jobs_query($table_name, $apply_limits = true, &$jobsquery = '', &$rowsquery = '', $resreq_query = '1') {
 	global $timespan, $grid_efficiency_sql_ranges;
 	global $job_id, $index_id, $config, $authfull;
 	global $ws_abrev, $we_abrev, $graph_timeshifts;
@@ -10613,10 +10621,7 @@ function get_jobs_query($table_name, $apply_limits = true, &$jobsquery, &$rowsqu
 	}
 
 	/* search filter sql where */
-	//if (!strlen(get_request_var('filter'))) {
-		/* Show all items */
-	/*
-   	} else {
+	/* if (get_request_var('filter') != '') {
 		if (strlen($sql_where)) {
 			$sql_where .= " AND ($table_name.jobname LIKE '%" . get_request_var('filter') . "%' OR
 								$table_name.projectName LIKE '%" . get_request_var('filter') . "%' OR
@@ -10631,11 +10636,9 @@ function get_jobs_query($table_name, $apply_limits = true, &$jobsquery, &$rowsqu
 								$table_name.jobid LIKE '%" . get_request_var('filter') . "%')";
 		}
 	}
-  */
-  if (!strlen(get_request_var('filter'))) {
-		/* Show all items */
-	} else {
-		if (strlen($sql_where)) {
+  	*/
+  	if (get_request_var('filter') != '') {
+		if ($sql_where != '') {
 			$sql_where .= ' AND ';
 		} else {
 			$sql_where  = 'WHERE ';
@@ -11714,7 +11717,7 @@ function orderby_clustername() {
 	return false;
 }
 
-function union_grids($grid_jobs_query, $grid_jobs_finished_query, $apply_limits = true, $rows, &$total_rows) {
+function union_grids($grid_jobs_query, $grid_jobs_finished_query, $apply_limits = true, $rows = 30, &$total_rows = 0) {
 	$sort_order = get_order_string();
 
 	//if ((get_request_var('status')  == 'ALL') && (get_request_var('exec_host')  != -1))
@@ -12614,7 +12617,7 @@ function get_grid_job_x_rusage_total_rows($jobid, $indexid, $clusterid, $submit_
 		$query  = "";
 		$tables = partition_get_partitions_for_query($tbl_name, $submit_time, date("Y-m-d H:i:s"));
 
-		if (sizeof($tables)) {
+		if (cacti_sizeof($tables)) {
 			foreach($tables as $table) {
 				if (strlen($query)) {
 					$query .= " UNION ALL";
@@ -12713,7 +12716,7 @@ function get_grid_job_hosts($rows) {
 /**
  * ! Deperacated method, do not use because option.grid_archive_rrd_location was removed.
  */
-function get_grid_job_hosts_rraarchive($job, $row_limit, $pageno, &$total_rows){
+function get_grid_job_hosts_rraarchive($job, $row_limit, $pageno, &$total_rows = 0){
 	$total_rows = 0;
 	$job_hosts = null;
 	return $job_hosts;
@@ -12741,7 +12744,7 @@ function get_grid_job_gpus($row_limit){
 		$query  = "";
 		$tables = partition_get_partitions_for_query("grid_jobs_gpu_rusage", $_REQUEST["submit_time"], date("Y-m-d H:i:s"));
 
-		if (sizeof($tables)) {
+		if (cacti_sizeof($tables)) {
 			foreach($tables as $table) {
 				if (strlen($query)) {
 					$query .= " UNION ";
@@ -12969,7 +12972,7 @@ function grid_view_job_detail($job_page = 'grid_bjobs.php') {
 	$exec_hosts = array();
 	if (cacti_sizeof($job) && (get_request_var('tab') == '' || get_request_var('tab') == 'general' || get_request_var('tab') == 'hostgraph')) {
 		/* get all execution hosts, if this was a multi CPU job */
-		if (cacti_sizeof($job) && ((substr_count($job['exec_host'], '*')) || ($job['num_nodes'] > 1) || ($job['maxNumProcessors'] > $job['num_cpus']))) {
+		if (cacti_sizeof($job) && ((substr_count($job['exec_host']?:'', '*')) || ($job['num_nodes'] > 1) || ($job['maxNumProcessors'] > $job['num_cpus']))) {
 			include_once($config['library_path'] . '/sort.php');
 			$sql_params = array();
 			if (read_config_option('grid_partitioning_enable') == '') {
@@ -13041,7 +13044,7 @@ function grid_view_job_detail($job_page = 'grid_bjobs.php') {
 
 			sort_by_subkey($exec_hosts, 'isborrowed');
 
-			if (!substr_count($job['exec_host'], '*')) {
+			if (!substr_count($job['exec_host']?:'', '*')) {
 				$job['exec_host'] = $job['max_allocated_processes'] . '*' . $job['exec_host'];
 			}
 		}
@@ -17611,7 +17614,7 @@ function get_graphs_from_hash($clusterid, $hash) {
 			WHERE gl.host_id=?
 			AND gt.hash=?", array($cacti_host, $hash));
 
-		if (sizeof($local_graph_ids)) {
+		if (cacti_sizeof($local_graph_ids)) {
 			$graph_select = $config['url_path'] . "graph_view.php?page=1&graph_template_id=-1&rfilter=&style=selective&action=preview&graph_add=";
 
 			foreach($local_graph_ids as $graph) {
@@ -18202,7 +18205,7 @@ function show_view_tput() {
 	$sql_where = "";
 	$sql_params = array();
 	if (get_request_var('clusterid') > 0) {
-		$sql_where = "AND rd.clusterid='" . get_request_var('clusterid') . "' ";
+		$sql_where = "AND rd.clusterid=?";
 		$sql_params[] = get_request_var('clusterid');
 	}
 
@@ -18234,6 +18237,8 @@ function show_view_tput() {
 	$last_24hours_results = db_fetch_assoc_prepared($last_24hours_query, $sql_params);
 
 	$cluster_results = array();
+
+	if (cacti_sizeof($last_hour_results)) {
 	foreach ($last_hour_results as $last_hour_result) {
 		$clusterid = $last_hour_result['clusterid'];
 
@@ -18247,7 +18252,9 @@ function show_view_tput() {
 		if (empty ($cluster_results[$clusterid]['numStarted_24hour'])) $cluster_results[$clusterid]['numStarted_24hour'] = 0;
 		if (empty ($cluster_results[$clusterid]['tput_24hour']))       $cluster_results[$clusterid]['tput_24hour'] = 0;
 	}
+	}
 
+	if (cacti_sizeof($last_24hours_results)) {
 	foreach ($last_24hours_results as $last_24hours_result) {
 		$clusterid = $last_24hours_result['clusterid'];
 
@@ -18260,6 +18267,7 @@ function show_view_tput() {
 		if (empty ($cluster_results[$clusterid]['numExit_hour']))    $cluster_results[$clusterid]['numExit_hour'] = 0;
 		if (empty ($cluster_results[$clusterid]['numStarted_hour'])) $cluster_results[$clusterid]['numStarted_hour'] = 0;
 		if (empty ($cluster_results[$clusterid]['tput_hour']))       $cluster_results[$clusterid]['tput_hour'] = 0;
+	}
 	}
 
 	print "<div id='div_view_tput'>";
@@ -19790,7 +19798,7 @@ function display_job_results($jobs_page, $table_name, $job_results, $rows, $tota
 
 			if (read_grid_config_option('show_exec_host')) {
 				if ($job['num_nodes'] > 1) {
-					if (substr_count($job['exec_host'], '*')) {
+					if (substr_count($job['exec_host']?:'', '*')) {
 						$exechost = $job['exec_host'];
 					} else {
 						$exechost = $job['max_allocated_processes'] . '*' . $job['exec_host'];
@@ -19811,24 +19819,27 @@ function display_job_results($jobs_page, $table_name, $job_results, $rows, $tota
 
 			/* Assume only a single instance of * to represent the number of slots used
 			 * on the first node of a parallel job */
-			$lookup_exec_host = substr($job['exec_host'], strpos($job['exec_host'], '*'));
+			$field_value = '-';
+			if(isset($job['exec_host'])) {
+				$lookup_exec_host = substr($job['exec_host'], strpos($job['exec_host'], '*'));
 
-			$host_key = $job['clusterid'] . '_' . $lookup_exec_host;
-			if (isset($host_lookup[$host_key]['hostType'])) {
-				$field_value = $host_lookup[$host_key]['hostType'];
-			} else {
-				$field_value = '-';
+				$host_key = $job['clusterid'] . '_' . $lookup_exec_host;
+				if (isset($host_lookup[$host_key]['hostType'])) {
+					$field_value = $host_lookup[$host_key]['hostType'];
+				}
 			}
 
 			form_selectable_cell_visible($field_value, 'show_exec_host_type', $row_id);
 
-			if (isset($host_lookup[$host_key]['hostModel'])) {
-				$field_value = $host_lookup[$host_key]['hostModel'];
-			} else {
-				$field_value = '-';
+			$field_value = '-';
+			if(isset($job['exec_host'])) {
+				if (isset($host_lookup[$host_key]['hostModel'])) {
+					$field_value = $host_lookup[$host_key]['hostModel'];
+				}
 			}
 
 			form_selectable_cell_visible($field_value, 'show_exec_host_model', $row_id);
+
 			form_selectable_cell_metadata('simple', 'host', $job['clusterid'], jc($job,'from_host'), 'show_from_host');
 
 			if (basename($jobs_page) == 'heuristics_jobs.php') {

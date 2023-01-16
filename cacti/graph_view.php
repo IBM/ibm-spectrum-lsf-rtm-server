@@ -50,14 +50,34 @@ function get_matching_nodes() {
 		$matching = db_fetch_assoc_prepared("SELECT gti.parent, gti.graph_tree_id
 			FROM graph_tree_items AS gti
 			LEFT JOIN host AS h
-			ON h.id=gti.host_id
-			LEFT JOIN graph_templates_graph AS gtg
-			ON gtg.local_graph_id=gti.local_graph_id AND gtg.local_graph_id>0
-			WHERE gtg.title_cache LIKE ?
-			OR h.description LIKE ?
-			OR h.hostname LIKE ?
-			OR gti.title LIKE ?",
-			array($filter, $filter, $filter, $filter));
+			ON h.id = gti.host_id
+			LEFT JOIN (
+				SELECT DISTINCT site_id
+				FROM host
+				WHERE description LIKE ?
+				OR hostname LIKE ?
+			) AS h2
+			ON h2.site_id = gti.site_id
+			LEFT JOIN (
+				SELECT local_graph_id
+				FROM graph_templates_graph
+				WHERE local_graph_id > 0
+				AND title_cache LIKE ?
+			) AS gtg
+			ON gtg.local_graph_id = gti.local_graph_id
+			LEFT JOIN (
+				SELECT id
+				FROM sites
+				WHERE name LIKE ?
+			) AS site
+			ON site.id = gti.site_id
+			WHERE (gti.title LIKE ?)
+			OR (h.description LIKE ? AND (gti.host_id > 0 OR gti.site_id > 0))
+			OR (h.hostname LIKE ? AND (gti.host_id > 0 OR gti.site_id > 0))
+			OR (h2.site_id > 0)
+			OR (gtg.local_graph_id > 0)
+			OR (site.id > 0)",
+			array($filter, $filter, $filter, $filter, $filter, $filter, $filter));
 	} else {
 		$matching = db_fetch_assoc("SELECT parent, graph_tree_id FROM graph_tree_items");
 	}
@@ -106,9 +126,9 @@ function get_matching_nodes() {
 			}
 		}
 
-		if (cacti_sizeof($final_array)) {
-			$fa = array();
+		$fa = array();
 
+		if (cacti_sizeof($final_array)) {
 			foreach($final_array as $key => $matches) {
 				foreach($matches as $branch => $dnc) {
 					$fa[] = $branch;
@@ -164,7 +184,8 @@ case 'ajax_reports':
 
 	break;
 case 'update_timespan':
-	// we really don't need to do anything.  The session variables have already been updated
+	$_SESSION['sess_current_date1'] = get_request_var('date1');
+	$_SESSION['sess_current_date2'] = get_request_var('date2');
 
 	break;
 case 'save':
@@ -333,7 +354,7 @@ case 'tree_content':
 	if (isset_request_var('node')) {
 		$parts = explode('-', sanitize_search_string(get_request_var('node')));
 
-		// Check for tree anchoe
+		// Check for tree anchor
 		if (strpos(get_nfilter_request_var('node'), 'tree_anchor') !== false) {
 			$tree_id = $parts[1];
 			$node_id = 0;
@@ -596,7 +617,7 @@ case 'list':
 						<?php print __('Search');?>
 					</td>
 					<td>
-						<input type='text' class='ui-state-default ui-corner-all' id='rfilter' size='30' value='<?php print html_escape_request_var('rfilter');?>'>
+						<input type='text' class='ui-state-default ui-corner-all' id='rfilter' size='55' value='<?php print html_escape_request_var('rfilter');?>'>
 					</td>
 					<?php html_host_filter(get_request_var('host_id'));?>
 					<td>
@@ -707,33 +728,48 @@ case 'list':
 
 	html_start_box('', '100%', '', '3', 'center', '');
 
-	$display_text = array(
-		'title_cache' => array(
-			'display' => __('Graph Name'),
-			'align'   => 'left',
-			'tip'     => __('The Title of this Graph.  Generally programatically generated from the Graph Template definition or Suggested Naming rules.  The max length of the Title is controlled under Settings->Visual.')
-		),
-		'local_graph_id' => array(
-			'display' => __('Device'),
-			'align'   => 'left',
-			'tip'     => __('The device for this Graph.')
-		),
-		'source' => array(
-			'display' => __('Source Type'),
-			'align'   => 'right',
-			'tip'     => __('The underlying source that this Graph was based upon.')
-		),
-		'name' => array(
-			'display' => __('Source Name'),
-			'align'   => 'left',
-			'tip'     => __('The Graph Template or Data Query that this Graph was based upon.')
-		),
-		'height' => array(
-			'display' => __('Size'),
-			'align'   => 'left',
-			'tip'     => __('The size of this Graph when not in Preview mode.')
-		)
-	);
+	if (is_realm_allowed(10)) {
+		$display_text = array(
+			'title_cache' => array(
+				'display' => __('Graph Name'),
+				'align'   => 'left',
+				'tip'     => __('The Title of this Graph.  Generally programmatically generated from the Graph Template definition or Suggested Naming rules.  The max length of the Title is controlled under Settings->Visual.')
+			),
+			'local_graph_id' => array(
+				'display' => __('Device'),
+				'align'   => 'left',
+				'tip'     => __('The device for this Graph.')
+			),
+			'source' => array(
+				'display' => __('Source Type'),
+				'align'   => 'right',
+				'tip'     => __('The underlying source that this Graph was based upon.')
+			),
+			'name' => array(
+				'display' => __('Source Name'),
+				'align'   => 'left',
+				'tip'     => __('The Graph Template or Data Query that this Graph was based upon.')
+			),
+			'height' => array(
+				'display' => __('Size'),
+				'align'   => 'left',
+				'tip'     => __('The size of this Graph when not in Preview mode.')
+			)
+		);
+	} else {
+		$display_text = array(
+			'title_cache' => array(
+				'display' => __('Graph Name'),
+				'align'   => 'left',
+				'tip'     => __('The Title of this Graph.  Generally programmatically generated from the Graph Template definition or Suggested Naming rules.  The max length of the Title is controlled under Settings->Visual.')
+			),
+			'height' => array(
+				'display' => __('Size'),
+				'align'   => 'left',
+				'tip'     => __('The size of this Graph when not in Preview mode.')
+			)
+		);
+	}
 
 	html_header_checkbox($display_text, false);
 
@@ -758,9 +794,11 @@ case 'list':
 
 			form_alternate_row('line' . $graph['local_graph_id'], true);
 			form_selectable_cell(filter_value($graph['title_cache'], get_request_var('rfilter'), 'graph.php?local_graph_id=' . $graph['local_graph_id'] . '&rra_id=0'), $graph['local_graph_id']);
-			form_selectable_ecell($graph['description'], $graph['local_graph_id']);
-			form_selectable_cell(filter_value($graph_sources[$template_details['source']], get_request_var('rfilter')), $graph['local_graph_id'], '', 'right');
-			form_selectable_cell(filter_value($template_details['name'], get_request_var('rfilter'), $template_details['url']), $graph['local_graph_id'], '', 'left');
+			if (is_realm_allowed(10)) {
+				form_selectable_ecell($graph['description'], $graph['local_graph_id']);
+				form_selectable_cell(filter_value($graph_sources[$template_details['source']], get_request_var('rfilter')), $graph['local_graph_id'], '', 'right');
+				form_selectable_cell(filter_value($template_details['name'], get_request_var('rfilter'), $template_details['url']), $graph['local_graph_id'], '', 'left');
+			}
 			form_selectable_ecell($graph['height'] . 'x' . $graph['width'], $graph['local_graph_id']);
 			form_checkbox_cell($graph['title_cache'], $graph['local_graph_id']);
 			form_end_row();
@@ -853,20 +891,20 @@ case 'list':
 		strURL = urlPath+'graph_view.php?action=preview';
 		$('#chk').find('select, input').each(function() {
 			switch($(this).attr('id')) {
-			case 'graph_template_id':
-				strURL += '&' + $(this).attr('id') + '=' + $(this).val();
-				break;
-			case 'host_id':
-			case 'rfilter':
-			case 'graph_add':
-			case 'graph_remove':
-			case 'graph_list':
-			case 'style':
-			case 'csrf_magic':
-				strURL += '&' + $(this).attr('id') + '=' + $(this).val();
-				break;
-			default:
-				break;
+				case 'rfilter':
+					strURL += '&' + $(this).attr('id') + '=' + base64_encode($(this).val());
+					break;
+				case 'graph_template_id':
+				case 'host_id':
+				case 'graph_add':
+				case 'graph_remove':
+				case 'graph_list':
+				case 'style':
+				case 'csrf_magic':
+					strURL += '&' + $(this).attr('id') + '=' + $(this).val();
+					break;
+				default:
+					break;
 			}
 		});
 

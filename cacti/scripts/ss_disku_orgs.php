@@ -31,18 +31,18 @@ function ss_disku_orgs($cmd = 'index', $arg1 = '', $arg2 = '') {
 	if ($cmd == 'index') {
 		$return_arr = ss_disku_orgs_getnames();
 
-		for ($i=0;($i<sizeof($return_arr));$i++) {
+		for ($i=0;($i<cacti_sizeof($return_arr));$i++) {
 			print $return_arr[$i] . "\n";
 		}
 	} elseif ($cmd == 'query') {
 		$arr_index = ss_disku_orgs_getnames();
 		if ($arg1 == 'orgId') {
-			for ($i=0;($i<sizeof($arr_index));$i++) {
+			for ($i=0;($i<cacti_sizeof($arr_index));$i++) {
 				print $arr_index[$i] . '!' . $arr_index[$i] . "\n";
 			}
 		} else {
 			$arr = ss_disku_orgs_getinfo($arg1);
-			for ($i=0;($i<sizeof($arr_index));$i++) {
+			for ($i=0;($i<cacti_sizeof($arr_index));$i++) {
 				if (isset($arr[$arr_index[$i]])) {
 					print $arr_index[$i] . '!' . $arr[$arr_index[$i]] . "\n";
 				}
@@ -334,7 +334,7 @@ function ss_disku_orgs_getnames() {
 
 		$arr = db_fetch_assoc($users_sql);
 
-		for ($i=0;($i<sizeof($arr));$i++) {
+		for ($i=0;($i<cacti_sizeof($arr));$i++) {
 			$return_arr[$i+1] = $arr[$i]['primaryKey'];
 		}
 
@@ -358,7 +358,7 @@ function ss_disku_orgs_getnames() {
 
 		$arr = db_fetch_assoc($users_sql);
 
-		for ($i=0;($i<sizeof($arr));$i++) {
+		for ($i=0;($i<cacti_sizeof($arr));$i++) {
 			$return_arr[$j+$i] = $arr[$i]['primaryKey'];
 		}
 
@@ -381,7 +381,7 @@ function ss_disku_orgs_getnames() {
 
 		$arr = db_fetch_assoc($users_sql);
 
-		for ($i=0;($i<sizeof($arr));$i++) {
+		for ($i=0;($i<cacti_sizeof($arr));$i++) {
 			$return_arr[$j+$i] = $arr[$i]['primaryKey'];
 		}
 
@@ -400,7 +400,7 @@ function ss_disku_orgs_getnames() {
 
 		$arr = db_fetch_assoc($users_sql);
 
-		for ($i=0;($i<sizeof($arr));$i++) {
+		for ($i=0;($i<cacti_sizeof($arr));$i++) {
 			$return_arr[$j+$i] = $arr[$i]['primaryKey'];
 		}
 
@@ -418,7 +418,7 @@ function ss_disku_orgs_getnames() {
 
 		$arr = db_fetch_assoc($users_sql);
 
-		for ($i=0;($i<sizeof($arr));$i++) {
+		for ($i=0;($i<cacti_sizeof($arr));$i++) {
 			$return_arr[$j+$i] = $arr[$i]['primaryKey'];
 		}
 
@@ -436,7 +436,7 @@ function ss_disku_orgs_getnames() {
 
 		$arr = db_fetch_assoc($users_sql);
 
-		for ($i=0;($i<sizeof($arr));$i++) {
+		for ($i=0;($i<cacti_sizeof($arr));$i++) {
 			$return_arr[$j+$i] = $arr[$i]['primaryKey'];
 		}
 
@@ -454,7 +454,7 @@ function ss_disku_orgs_getnames() {
 
 		$arr = db_fetch_assoc($users_sql);
 
-		for ($i=0;($i<sizeof($arr));$i++) {
+		for ($i=0;($i<cacti_sizeof($arr));$i++) {
 			$return_arr[$j+$i] = $arr[$i]['primaryKey'];
 		}
 
@@ -494,7 +494,7 @@ function ss_disku_orgs_getinfo($info_requested) {
 
 		$arr = db_fetch_assoc($users_sql);
 
-		for ($i=0;($i<sizeof($arr));$i++) {
+		for ($i=0;($i<cacti_sizeof($arr));$i++) {
 			$return_arr[$arr[$i]['qry_index']] = (empty($arr[$i]['qry_value']) ? 'Unregistered': $arr[$i]['qry_value']);
 		}
 
@@ -518,7 +518,7 @@ function ss_disku_orgs_getinfo($info_requested) {
 
 		$arr = db_fetch_assoc($users_sql);
 
-		for ($i=0;($i<sizeof($arr));$i++) {
+		for ($i=0;($i<cacti_sizeof($arr));$i++) {
 			$return_arr[$arr[$i]['qry_index']] = (empty($arr[$i]['qry_value']) ? 'Unregistered': $arr[$i]['qry_value']);
 		}
 
@@ -541,7 +541,7 @@ function ss_disku_orgs_getinfo($info_requested) {
 
 		$arr = db_fetch_assoc($users_sql);
 
-		for ($i=0;($i<sizeof($arr));$i++) {
+		for ($i=0;($i<cacti_sizeof($arr));$i++) {
 			$return_arr[$arr[$i]['qry_index']] = (empty($arr[$i]['qry_value']) ? 'Unregistered': $arr[$i]['qry_value']);
 		}
 
@@ -562,7 +562,7 @@ function ss_disku_orgs_getinfo($info_requested) {
 
 		$arr = db_fetch_assoc($users_sql);
 
-		for ($i=0;($i<sizeof($arr));$i++) {
+		for ($i=0;($i<cacti_sizeof($arr));$i++) {
 			$return_arr[$arr[$i]['qry_index']] = (empty($arr[$i]['qry_value1']) ? 'Unregistered': $arr[$i]['qry_value1']) . '_' .
 				(empty($arr[$i]['qry_value2']) ? 'Unregistered': $arr[$i]['qry_value2']);
 		}
@@ -582,7 +582,7 @@ function ss_disku_orgs_getinfo($info_requested) {
 
 		$arr = db_fetch_assoc($users_sql);
 
-		for ($i=0;($i<sizeof($arr));$i++) {
+		for ($i=0;($i<cacti_sizeof($arr));$i++) {
 			$return_arr[$arr[$i]['qry_index']] = (empty($arr[$i]['qry_value1']) ? 'Unregistered': $arr[$i]['qry_value1']) . '_' .
 				(empty($arr[$i]['qry_value2']) ? 'Unregistered': $arr[$i]['qry_value2']);
 		}
@@ -602,7 +602,7 @@ function ss_disku_orgs_getinfo($info_requested) {
 
 		$arr = db_fetch_assoc($users_sql);
 
-		for ($i=0;($i<sizeof($arr));$i++) {
+		for ($i=0;($i<cacti_sizeof($arr));$i++) {
 			$return_arr[$arr[$i]['qry_index']] = (empty($arr[$i]['qry_value1']) ? 'Unregistered': $arr[$i]['qry_value1']) . '_' .
 				(empty($arr[$i]['qry_value2']) ? 'Unregistered': $arr[$i]['qry_value2']);
 		}
@@ -622,7 +622,7 @@ function ss_disku_orgs_getinfo($info_requested) {
 
 		$arr = db_fetch_assoc($users_sql);
 
-		for ($i=0;($i<sizeof($arr));$i++) {
+		for ($i=0;($i<cacti_sizeof($arr));$i++) {
 			$return_arr[$arr[$i]['qry_index']] = (empty($arr[$i]['qry_value1']) ? 'Unregistered': $arr[$i]['qry_value1']) . '_' .
 				(empty($arr[$i]['qry_value2']) ? 'Unregistered': $arr[$i]['qry_value2']) . '_' .
 				(empty($arr[$i]['qry_value3']) ? 'Unregistered': $arr[$i]['qry_value3']);

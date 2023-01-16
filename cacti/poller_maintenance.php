@@ -1,4 +1,4 @@
-#!/usr/bin/php -q
+#!/usr/bin/env php
 <?php
 // $Id$
 /*
@@ -47,6 +47,7 @@ $debug    = false;
 $force    = false;
 $archived = 0;
 $purged   = 0;
+$start    = microtime(true);
 
 if (cacti_sizeof($parms)) {
 	foreach ($parms as $parameter) {
@@ -95,6 +96,8 @@ if ($config['poller_id'] == 1) {
 	authcache_purge();
 
 	secpass_check_expired();
+
+	reindex_devices();
 }
 
 // Check the realtime cache and poller
@@ -106,9 +109,80 @@ api_device_purge_deleted_devices();
 // Rotate Cacti Logs
 logrotate_check($force);
 
+// Remove deleted devices
+remove_aged_row_cache();
+
+if ($config['poller_id'] > 1) {
+	api_plugin_hook('poller_remote_maint');
+}
+
+$end = microtime(true);
+
+cacti_log(sprintf('MAINT STATS: Time:%0.2f', $end - $start), false, 'SYSTEM');
+
 unregister_process('maintenance', 'master', $config['poller_id']);
 
 exit(0);
+
+function reindex_devices() {
+	global $config;
+
+	$schedule = read_config_option('automatic_reindex');
+
+	// 0 - Disabled
+	// 1 - Daily at Midnight
+	// 2 - Weekly on Sunday
+	// 3 - Monthly on Sunday
+
+	$command_string = cacti_escapeshellcmd(read_config_option('path_php_binary'));
+	$extra_args     = $config['base_path'] . '/cli/poller_reindex_hosts.php --id=all --qid=all';
+
+	if ($schedule == 0) {
+		return;
+	}
+
+	$last_run = read_config_option('periodic_reindex_lastrun');
+	$now      = time();
+
+	if (empty($last_run)) {
+		set_config_option('periodic_reindex_lastrun', time());
+		return;
+	} else {
+		if ($schedule == 1) {
+			if (date('z', $now) != date('z', $last_run)) {
+				set_config_option('periodic_reindex_lastrun', $now);
+				exec_background($command_string, $extra_args);
+			}
+		} elseif ($schedule == 2) {
+			if (date('z', $now) != date('z', $last_run) && date('w', $now) == 0) {
+				exec_background($command_string, $extra_args);
+			}
+		} elseif ($schedule == 3) {
+			if (date('z', $now) != date('z', $last_run)) {
+				if (date('w', $now) == 0 && date('n', $now) != date('n', $last_run)) {
+					exec_background($command_string, $extra_args);
+				}
+			}
+		}
+	}
+}
+
+function remove_aged_row_cache() {
+	$classes = array_rekey(
+		db_fetch_assoc('SELECT REPLACE(name, "time_last_change_", "") AS name, value
+			FROM settings
+			WHERE name LIKE "time_last_change%"'),
+		'name', 'value'
+	);
+
+	if (cacti_sizeof($classes)) {
+		foreach($classes as $name => $ts) {
+			db_execute_prepared('DELETE FROM user_auth_row_cache
+				WHERE class = ? AND UNIX_TIMESTAMP(time) < ?',
+				array($name, $ts));
+		}
+	}
+}
 
 function logrotate_check($force) {
 	global $disable_log_rotation;
@@ -459,39 +533,66 @@ function remove_files($file_array) {
 		$rra_path = $config['base_path'] . '/rra';
 	}
 
-	/* let's prepare the archive directory */
-	$rrd_archive = read_config_option('rrd_archive', true);
-	if ($rrd_archive == '') {
-		$rrd_archive = $rra_path . '/archive';
+	if ( read_config_option('storage_location')) {
+		$rrdtool_pipe = rrd_init();
+		rrdtool_execute('setcnn timeout off', false, RRDTOOL_OUTPUT_NULL, $rrdtool_pipe, $logopt = 'POLLER');
+	}else {
+		/* let's prepare the archive directory */
+		$rrd_archive = read_config_option('rrd_archive', true);
+		if ($rrd_archive == '') {
+			$rrd_archive = $rra_path . '/archive';
+		}
+		rrdclean_create_path($rrd_archive);
 	}
-	rrdclean_create_path($rrd_archive);
 
 	/* now scan the files */
 	foreach ($file_array as $file) {
 		$source_file = $rra_path . '/' . $file['name'];
-		switch ($file['action']) {
-		case '1' :
-			if (unlink($source_file)) {
-				maint_debug('Deleted: ' . $file['name']);
-			} else {
-				cacti_log($file['name'] . " ERROR: RRDfile Maintenance unable to delete from $rra_path!", true, 'MAINT');
-			}
-			$purged++;
-			break;
-		case '3' :
-			$target_file = $rrd_archive . '/' . $file['name'];
-			$target_dir = dirname($target_file);
-			if (!is_dir($target_dir)) {
-				rrdclean_create_path($target_dir);
-			}
 
-			if (rename($source_file, $target_file)) {
-				maint_debug('Moved: ' . $file['name'] . ' to: ' . $rrd_archive);
-			} else {
-				cacti_log($file['name'] . " ERROR: RRDfile Maintenance unable to move to $rrd_archive!", true, 'MAINT');
+		if( read_config_option('storage_location') == 0) {
+			switch ($file['action']) {
+				case '1' :
+					if (unlink($source_file)) {
+						maint_debug('Deleted: ' . $file['name']);
+					} else {
+						cacti_log($file['name'] . " ERROR: RRDfile Maintenance unable to delete from $rra_path!", true, 'MAINT');
+					}
+					$purged++;
+					break;
+				case '3' :
+					$target_file = $rrd_archive . '/' . $file['name'];
+					$target_dir = dirname($target_file);
+					if (!is_dir($target_dir)) {
+						rrdclean_create_path($target_dir);
+					}
+
+					if (rename($source_file, $target_file)) {
+						maint_debug('Moved: ' . $file['name'] . ' to: ' . $rrd_archive);
+					} else {
+						cacti_log($file['name'] . " ERROR: RRDfile Maintenance unable to move to $rrd_archive!", true, 'MAINT');
+					}
+					$archived++;
+					break;
 			}
-			$archived++;
-			break;
+		}else {
+			switch($file['action']) {
+				case '1':
+					if ( rrdtool_execute('unlink ' . $source_file, false, RRDTOOL_OUTPUT_BOOLEAN, $rrdtool_pipe, $logopt = 'MAINT')) {
+						maint_debug('Deleted: ' . $file['name']);
+					}else {
+						cacti_log($file['name'] . 'ERROR: RRDfile Maintenance unable to delete from RRDproxy!', true, 'MAINT');
+					}
+					$purged++;
+					break;
+				case '3':
+					if ( rrdtool_execute('archive ' . $source_file, false, RRDTOOL_OUTPUT_BOOLEAN, $rrdtool_pipe, $logopt = 'MAINT')) {
+						maint_debug('Moved: ' . $file['name'] . ' to: RRDproxy Archive');
+					}else {
+						cacti_log($file['name'] . 'ERROR: RRDfile Maintenance unable to move to RRDproxy Archive!', true, 'MAINT');
+					}
+					$archived++;
+					break;
+			}
 		}
 
 		/* drop from data_source_purge_action table */
@@ -536,6 +637,10 @@ function remove_files($file_array) {
 		}
 	}
 
+	if(read_config_option('storage_location')) {
+		rrd_close($rrdtool_pipe);
+	}
+
 	maint_debug('RRDClean has finished a purge pass of ' . cacti_sizeof($file_array) . ' items');
 }
 
@@ -549,7 +654,7 @@ function rrdclean_create_path($path) {
 				$group_id      = filegroup($config['rra_path']);
 
 				// NOTE: chown/chgrp fails for non-root users, checking their
-				// result is therefore irrevelevant
+				// result is therefore irrelevant
 				@chown($path, $owner_id);
 				@chgrp($path, $group_id);
 			}
@@ -647,7 +752,7 @@ function display_help() {
 	display_version();
 
 	print "\nusage: poller_maintenance.php [--force] [--debug]\n\n";
-	print "Cacti's maintenance poller.  This poller is repsonsible for executing periodic\n";
+	print "Cacti's maintenance poller.  This poller is responsible for executing periodic\n";
 	print "maintenance activities for Cacti including log rotation, deactivating accounts, etc.\n\n";
 	print "Optional:\n";
 	print "    --force   - Force immediate execution, e.g. for testing.\n";

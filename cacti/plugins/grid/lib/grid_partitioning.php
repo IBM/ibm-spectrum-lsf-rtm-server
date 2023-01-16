@@ -146,10 +146,10 @@ function partition_create($table, $min_time_field, $max_time_field, $partition_v
 				$max_time = db_fetch_cell("SELECT MAX($max_time_field)
 					FROM $new_table");
 
-				if (((strtotime($alt_min_time1) > 87000) && !empty($alt_min_time1))
-					&& ((strtotime($alt_min_time2) > 87000) && !empty($alt_min_time2))) {
+				if ((!empty($alt_min_time1) && (strtotime($alt_min_time1) > 87000))
+						&& (!empty($alt_min_time2) && (strtotime($alt_min_time2) > 87000))) {
 					$min_time = min($alt_min_time1, $alt_min_time2);
-				} else if ((strtotime($alt_min_time1) > 87000) && !empty($alt_min_time1)) {
+				} else if (!empty($alt_min_time1) && (strtotime($alt_min_time1) > 87000)) {
 					$min_time = $alt_min_time1;
 				} else {
 					$min_time = $alt_min_time2;
@@ -250,7 +250,9 @@ function partition_get_partitions_for_query($table, $min_time, $max_time, $type 
 	$max_partition_time = db_fetch_cell_prepared("SELECT MAX(max_time)
 		FROM grid_table_partitions
 		WHERE table_name=?", array($table));
-
+	if (!$max_partition_time){
+		$max_partition_time = '0000-00-00 00:00:00';
+	}
 	if (strtotime($max_partition_time) < strtotime($max_time)) {
 		$partitions = array('MAIN' => $table) + $partitions;
 	}

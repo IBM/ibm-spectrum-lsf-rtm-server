@@ -50,7 +50,12 @@ $forcerun       = false;
 $forcerun_maint = false;
 
 foreach($parms as $parameter) {
-	@list($arg, $value) = @explode('=', $parameter);
+	if (strpos($parameter, '=')) {
+		list($arg, $value) = explode('=', $parameter);
+	} else {
+		$arg = $parameter;
+		$value = '';
+	}
 
 	switch ($arg) {
 	case '-d':
@@ -226,10 +231,12 @@ if ((read_config_option('grid_system_collection_enabled') == 'on') &&
 			//cacti_log("NOTE: Move time, current_date_maint_time=$current_date_maint_time, current_time=$current_time, database_maint_time=$database_maint_time");
 		}
 		// obtain previous DB maintain start time
-		$grid_prev_db_maint_time = strtotime(read_config_option("grid_prev_db_maint_time"));
-		if (!$grid_prev_db_maint_time) {
+		$grid_prev_db_maint_time = read_config_option("grid_prev_db_maint_time");
+		if (!empty($grid_prev_db_maint_time)) {
+			$grid_prev_db_maint_time = strtotime($grid_prev_db_maint_time);
+		} else {
 			$install_time = read_config_option('install_complete');
-			$install_date = date('Y-m-d',$install_time);
+			$install_date = date('Y-m-d',floor($install_time));
 			$grid_prev_db_maint_time = strtotime($install_date. ' '.  $grid_db_maint_time);
 			$grid_prev_db_maint_time += $poller_interval;
 			//cacti_log("NOTE: Install time, install_time=$install_time, grid_db_maint_time=$grid_db_maint_time, grid_prev_db_maint_time=$grid_prev_db_maint_time");

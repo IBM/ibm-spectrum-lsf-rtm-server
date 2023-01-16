@@ -133,7 +133,7 @@ function form_actions() {
 		if (preg_match('/^chk_([^.]+)$/', $var, $matches)) {
 			$id = explode('|', $matches[1]);
 
-			if (sizeof($id) == 2) {
+			if (cacti_sizeof($id) == 2) {
 				$service_id = $id[0];
 				$feature    = $id[1];
 
@@ -231,7 +231,7 @@ function api_update_feature($id) {
 
 	$id = explode('|', $id);
 
-	if (sizeof($id == 2)) {
+	if (cacti_sizeof($id) == 2) {
 		$service_id = $id[0];
 		$feature    = $id[1];
 	} else {
@@ -502,7 +502,7 @@ function rebuild_feature_maps() {
 		array($_SESSION['sess_user_id']));
 }
 
-function lic_feature_map_records(&$sql_where, $apply_limits, $row_limit, &$sql_params) {
+function lic_feature_map_records(&$sql_where, $apply_limits, $row_limit, &$sql_params = array()) {
 
 	if (get_request_var('application') == '0') {
 		// Show all
@@ -749,7 +749,7 @@ function lic_feature_maps() {
 			}
 
 			form_selectable_cell($fm['critical'] > 0 ? 'Yes':'No', $fm['id']);
-			form_selectable_cell(number_format($fm['utilization'], 1) . ' %', $fm['id'], '', 'text-align:right');
+			form_selectable_cell(number_format($fm['utilization']?:0, 1) . ' %', $fm['id'], '', 'text-align:right');
 			form_selectable_cell(number_format($fm['feature_max_licenses']), $fm['id'], '', 'text-align:right');
 			form_selectable_cell(number_format($fm['feature_inuse_licenses']), $fm['id'], '', 'text-align:right');
 			form_selectable_cell(number_format($fm['services']), $fm['id'], '', 'right');

@@ -101,7 +101,7 @@ function validate_lsgload_request_vars() {
     /* ================= input validation and session storage ================= */
 }
 
-function grid_view_get_gload_records(&$sql_where, $apply_limits = true, $rows, &$sql_params) {
+function grid_view_get_gload_records(&$sql_where, $apply_limits = true, $rows = 30, &$sql_params = array()) {
 	global $config;
 
 	/* user id sql where */

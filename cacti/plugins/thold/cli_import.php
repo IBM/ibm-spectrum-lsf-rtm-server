@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2006-2022 The Cacti Group                                 |
+ | Copyright (C) 2006-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -21,7 +21,7 @@
 /* let PHP run just as long as it has to */
 ini_set('max_execution_time', '0');
 
-error_reporting('E_ALL');
+error_reporting(E_ALL);
 
 include(dirname(__FILE__) . '/../../include/cli_check.php');
 include_once($config['base_path'] . '/lib/xml.php');
@@ -65,7 +65,6 @@ if (sizeof($parms)) {
 			case '-h':
 				display_help();
 				exit;
-			exit(-1);
 			default:
 				print 'ERROR: Invalid Parameter ' . $parameter . PHP_EOL . PHP_EOL;
 				display_help();

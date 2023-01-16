@@ -39,7 +39,12 @@ $forcerun       = FALSE;
 $forcerun_maint = FALSE;
 
 foreach($parms as $parameter) {
-	@list($arg, $value) = @explode("=", $parameter);
+	if (strpos($parameter, '=')) {
+		list($arg, $value) = explode('=', $parameter);
+	} else {
+		$arg = $parameter;
+		$value = '';
+	}
 
 	switch ($arg) {
 	case "-d":

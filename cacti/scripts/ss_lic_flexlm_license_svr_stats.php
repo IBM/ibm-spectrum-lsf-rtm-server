@@ -31,14 +31,14 @@ function ss_lic_flexlm_license_svr_stats($cmd = 'index', $arg1 = '', $arg2 = '')
 	if ($cmd == 'index') {
 		$return_arr = ss_lic_flexlm_svr_stats_getnames();
 
-		for ($i=0;($i<sizeof($return_arr));$i++) {
+		for ($i=0;($i<cacti_sizeof($return_arr));$i++) {
 			print $return_arr[$i] . "\n";
 		}
 	} elseif ($cmd == 'query') {
 		$arr_index = ss_lic_flexlm_svr_stats_getnames();
 		$arr = ss_lic_flexlm_svr_stats_getinfo($arg1);
 
-		for ($i=0;($i<sizeof($arr_index));$i++) {
+		for ($i=0;($i<cacti_sizeof($arr_index));$i++) {
 			if (isset($arr[$arr_index[$i]])) {
 				print $arr_index[$i] . '!' . $arr[$arr_index[$i]] . "\n";
 			}
@@ -76,7 +76,7 @@ function ss_lic_flexlm_svr_stats_getnames() {
 
 	$arr = db_fetch_assoc('SELECT service_id from lic_services ORDER BY service_id');
 
-	for ($i=0;($i<sizeof($arr));$i++) {
+	for ($i=0;($i<cacti_sizeof($arr));$i++) {
 		$return_arr[$i] = $arr[$i]['service_id'];
 	}
 
@@ -100,7 +100,7 @@ function ss_lic_flexlm_svr_stats_getinfo($info_requested) {
 			ORDER BY qry_index');
 	}
 
-	for ($i=0;($i<sizeof($arr));$i++) {
+	for ($i=0;($i<cacti_sizeof($arr));$i++) {
 		$return_arr[$arr[$i]['qry_index']] = addslashes($arr[$i]['qry_value']);
 	}
 

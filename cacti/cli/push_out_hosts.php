@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 // $Id$
 /*
@@ -18,10 +19,15 @@
  +-------------------------------------------------------------------------+
 */
 
-include(dirname(__FILE__) . '/../include/cli_check.php');
-include_once($config['base_path'] . '/lib/utility.php');
-include_once($config['base_path'] . '/lib/api_data_source.php');
-include_once($config['base_path'] . '/lib/poller.php');
+require(__DIR__ . '/../include/cli_check.php');
+require_once($config['base_path'] . '/lib/utility.php');
+require_once($config['base_path'] . '/lib/api_data_source.php');
+require_once($config['base_path'] . '/lib/poller.php');
+
+/* switch to main database for cli's */
+if ($config['poller_id'] > 1) {
+	db_switch_remote_to_main();
+}
 
 /* process calling arguments */
 $parms = $_SERVER['argv'];
@@ -33,7 +39,12 @@ $host_template_id = 0;
 $data_template_id = 0;
 
 foreach($parms as $parameter) {
-	@list($arg, $value) = @explode('=', $parameter);
+	if (strpos($parameter, '=')) {
+		list($arg, $value) = explode('=', $parameter);
+	} else {
+		$arg = $parameter;
+		$value = '';
+	}
 
 	switch ($arg) {
 		case '--host-id':

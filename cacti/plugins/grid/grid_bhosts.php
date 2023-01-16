@@ -209,9 +209,9 @@ function form_action() {
 		$rsp_content = array();
 		$advocate_max = 30;
 		if ($selected_items_whole != false) {
-		for($i=0; $i<sizeof($selected_items_whole); $i+=$advocate_max){
+		for($i=0; $i<cacti_sizeof($selected_items_whole); $i+=$advocate_max){
 			$selected_items = array_slice($selected_items_whole, $i, $advocate_max);
-			if(sizeof($selected_items)<=0) break;
+			if(cacti_sizeof($selected_items)<=0) break;
 			$json_return_format = sorting_json_format($selected_items, $message, $action_level); //sort the variables into required format
 
 			$advocate_key = session_auth();
@@ -461,7 +461,7 @@ function form_action() {
 	bottom_footer();
 }
 
-function grid_view_get_bhosts_records(&$sql_where, $apply_limits = true, $rows, &$sql_params) {
+function grid_view_get_bhosts_records(&$sql_where, $apply_limits = true, $rows = 30, &$sql_params = array()) {
 	global $grid_out_of_services;
 
 	get_filter_request_var('clusterid');

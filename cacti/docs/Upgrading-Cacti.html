@@ -78,34 +78,35 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </head>
 <body>
 <h1 id="upgrading-cacti-under-unix-compatible-operating-systems">Upgrading Cacti Under UNIX Compatible Operating Systems</h1>
-<p>To upgrade Cacti under UNIX style operating systems, you should use the following instructions. To upgrade Cacti on Windows, you should use the instructions in the Link below:</p>
+<p>To upgrade Cacti under UNIX style operating systems is very strait forward. To upgrade Cacti on Windows, you should use the instructions in the Link below:</p>
 <p><a href="Upgrading-Cacti-Under-Windows.html">Upgrading in Windows</a></p>
+<p>Before you begin, generally both your Apache/NGINX and your Crontab or systemd based pollers should run as the same account. In most Linux operating systems these days, that'll be the <code>apache</code> account. Under SLES, it'll be <code>www-run</code>. For this guide, we will use the <code>apache</code> account but please keep this in mind before starting.</p>
 <ol>
 <li><p>Backup the old Cacti database.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb1-1" title="1"><span class="ex">shell</span><span class="op">&gt;</span> mysqldump -l --add-drop-table --lock-tables=false cacti <span class="op">&gt;</span> mysql.cacti</a></code></pre></div>
 <blockquote>
-<p><strong>Note:</strong> You will probably have to specify the -u and -p flags for the MySQL username and password. This user must have permission to read from Cacti's database or you will end up with an empty backup.</p>
+<p><strong>NOTE:</strong> You will probably have to specify the -u and -p flags for the MySQL username and password. This user must have permission to read from Cacti's database or you will end up with an empty backup.</p>
 </blockquote></li>
-<li><p>Backup the old Cacti directory with the exception of the RRD files which should not need backup.</p>
+<li><p>Backup the old Cacti directory with the exception of the RRDfiles which should not need backup.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb2-1" title="1"><span class="ex">shell</span><span class="op">&gt;</span> tar --exclude=*.rrd -zcf cacti_backup_YYYYMMDD.tgz cacti</a></code></pre></div></li>
 <li><p>Extract the distribution tarball.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" title="1"><span class="ex">shell</span><span class="op">&gt;</span> tar -xzvf cacti-version.tar.gz</a></code></pre></div></li>
 <li><p>Copy the distribution tarball over the existing installation.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" title="1"><span class="ex">shell</span><span class="op">&gt;</span> /bin/cp -rpf cacti-version cacti</a></code></pre></div></li>
 <li><p>Set the appropriate permissions on Cacti's directories for graph/log generation. You should execute these commands from inside Cacti's directory to change the permissions.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" title="1"><span class="ex">shell</span><span class="op">&gt;</span> chown -R cactiuser rra/ log/</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" title="1"><span class="ex">shell</span><span class="op">&gt;</span> chown -R apache:apache rra/ log/</a></code></pre></div>
 <p>(Enter a valid username for cactiuser, this user will also be used in the next step for data gathering.)</p></li>
-<li><p>If you are using the optional feature Performance -&gt; Image Caching, also recreate the folder and correct the permissions.</p>
+<li><p>If you are using the optional feature <code>Performance &gt; Image Caching</code>, or Realtime Graphing, then recreate the <code>cache</code> folder and correct the permissions.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb6-1" title="1"><span class="ex">shell</span><span class="op">&gt;</span> mkdir cache</a>
-<a class="sourceLine" id="cb6-2" title="2"><span class="ex">shell</span><span class="op">&gt;</span> chown -R cactiuser cache</a></code></pre></div></li>
+<a class="sourceLine" id="cb6-2" title="2"><span class="ex">shell</span><span class="op">&gt;</span> chown -R apache:apache cache</a></code></pre></div></li>
 <li><p>Point your web browser to:</p>
 <p><code>http://your-server/cacti/</code></p>
 <p>Follow the on-screen instructions so your database can be updated to the new version.</p></li>
 </ol>
 <blockquote>
-<p>Note that starting with Cacti 1.0, all <strong>Data Collectors</strong> will upgrade themselves automatically within two polling cycles. If for some reason they do not, upgrade them one at a time.</p>
+<p>NOTE: That starting with Cacti 1.0, all <strong>Data Collectors</strong> will upgrade themselves automatically within two polling cycles. If for some reason they do not, upgrade them one at a time using the procedure above.</p>
 </blockquote>
 <hr />
-<p>Copyright (c) 2004-2020 The Cacti Group</p>
+<p><copy>Copyright (c) 2004-2022 The Cacti Group</copy></p>
 </body>
 </html>

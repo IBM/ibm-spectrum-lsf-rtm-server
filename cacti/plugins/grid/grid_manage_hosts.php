@@ -258,7 +258,7 @@ function api_grid_host_remove($host, $clusterid) {
     Manage Hosts Functions
    --------------------- */
 
-function grid_get_host_records(&$sql_where, &$sql_join, $apply_limits = TRUE, $rows, &$sql_params) {
+function grid_get_host_records(&$sql_where, &$sql_join, $apply_limits = TRUE, $rows = 30, &$sql_params = array()) {
 	$sql_order = get_order_string();
 
 	if (get_request_var('integrated') != '2') {
@@ -317,9 +317,7 @@ function grid_get_host_records(&$sql_where, &$sql_join, $apply_limits = TRUE, $r
 		}
 
 		/* filter sql where */
-		if (!strlen(get_request_var('filter'))) {
-			/* Show all items */
-		}else {
+		if (get_request_var('filter') != '') {
 			$sql_where .= (strlen($sql_where) ? ' AND ' : 'WHERE ' ) . '(
 				(grid_hostinfo.host LIKE ?) OR
 				(grid_hostinfo.last_seen LIKE ?) OR

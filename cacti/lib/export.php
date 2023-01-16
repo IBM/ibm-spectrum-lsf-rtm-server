@@ -21,6 +21,9 @@
 function graph_template_to_xml($graph_template_id) {
 	global $struct_graph, $fields_graph_template_input_edit, $struct_graph_item, $export_errors;
 
+	// Remote caching item
+	unset($struct_graph_item['data_template_id']);
+
 	$hash['graph_template'] = get_hash_version('graph_template') . get_hash_graph_template($graph_template_id);
 	$xml_text = '';
 
@@ -32,14 +35,15 @@ function graph_template_to_xml($graph_template_id) {
 	$graph_template_graph = db_fetch_row_prepared('SELECT *
 		FROM graph_templates_graph
 		WHERE graph_template_id = ?
-		AND local_graph_id=0
+		AND local_graph_id = 0
 		ORDER BY id',
 		array($graph_template_id));
 
 	$graph_template_items = db_fetch_assoc_prepared('SELECT *
 		FROM graph_templates_item
 		WHERE graph_template_id = ?
-		AND local_graph_id=0
+		AND local_graph_id = 0
+		AND hash != ""
 		ORDER BY sequence',
 		array($graph_template_id));
 
@@ -185,7 +189,8 @@ function data_template_to_xml($data_template_id) {
 	$data_template_rrd = db_fetch_assoc_prepared('SELECT *
 		FROM data_template_rrd
 		WHERE data_template_id = ?
-		AND local_data_id=0
+		AND local_data_id = 0
+		AND hash != ""
 		ORDER BY id',
 		array($data_template_id));
 
@@ -871,9 +876,9 @@ function resolve_dependencies($type, $id, $dep_array) {
 		$graph_template_items = db_fetch_assoc_prepared('SELECT
 			data_template_rrd.data_template_id
 			FROM (graph_templates_item,data_template_rrd)
-			WHERE graph_templates_item.task_item_id=data_template_rrd.id
+			WHERE graph_templates_item.task_item_id = data_template_rrd.id
 			AND graph_templates_item.graph_template_id = ?
-			AND graph_templates_item.local_graph_id=0
+			AND graph_templates_item.local_graph_id = 0
 			AND graph_templates_item.task_item_id > 0
 			GROUP BY data_template_rrd.data_template_id', array($id));
 
@@ -889,7 +894,7 @@ function resolve_dependencies($type, $id, $dep_array) {
 		$cdef_items = db_fetch_assoc_prepared('SELECT cdef_id
 			FROM graph_templates_item
 			WHERE graph_template_id = ?
-			AND local_graph_id=0
+			AND local_graph_id = 0
 			AND cdef_id > 0
 			GROUP BY cdef_id', array($id));
 
@@ -914,7 +919,7 @@ function resolve_dependencies($type, $id, $dep_array) {
 					 * ATTENTION!
 					 * sequence of parameters matters!
 					 * we must place the newly found inherited items first
-					 * reason is, that during import, the leafes have to be tackled first,
+					 * reason is, that during import, the leaves have to be tackled first,
 					 * that is, the inherited items must be placed first so that they are "resolved" (decoded)
 					 * first during re-import */
 					$cdef_items = array_merge_recursive($inherited_cdef_items, $cdef_items);
@@ -937,7 +942,7 @@ function resolve_dependencies($type, $id, $dep_array) {
 		$vdef_items = db_fetch_assoc_prepared('SELECT vdef_id
 			FROM graph_templates_item
 			WHERE graph_template_id = ?
-			AND local_graph_id=0
+			AND local_graph_id = 0
 			AND vdef_id > 0
 			GROUP BY vdef_id',
 			array($id));
@@ -954,7 +959,7 @@ function resolve_dependencies($type, $id, $dep_array) {
 		$graph_template_items = db_fetch_assoc_prepared('SELECT gprint_id
 			FROM graph_templates_item
 			WHERE graph_template_id = ?
-			AND local_graph_id=0
+			AND local_graph_id = 0
 			AND gprint_id > 0
 			GROUP BY gprint_id',
 			array($id));
@@ -973,7 +978,7 @@ function resolve_dependencies($type, $id, $dep_array) {
 		$item = db_fetch_row_prepared('SELECT data_input_id
 			FROM data_template_data
 			WHERE data_template_id = ?
-			AND local_data_id=0
+			AND local_data_id = 0
 			AND data_input_id > 0',
 			array($id));
 
@@ -985,7 +990,7 @@ function resolve_dependencies($type, $id, $dep_array) {
 		$profiles = db_fetch_assoc_prepared('SELECT DISTINCT data_source_profile_id
 			FROM data_template_data
 			WHERE data_template_id = ?
-			AND local_data_id=0',
+			AND local_data_id = 0',
 			array($id));
 
 		if (cacti_sizeof($profiles)) {

@@ -25,7 +25,7 @@
 /* draw_edit_form - draws an html edit form
    @arg $array - an array that contains all of the information needed to draw
      the html form. see the arrays contained in include/global_settings.php
-     for the extact syntax of this array */
+     for the extract syntax of this array */
 function draw_edit_form($array) {
 	if (cacti_sizeof($array) > 0) {
 		foreach ($array as $top_branch => $top_children) {
@@ -346,9 +346,9 @@ function draw_edit_control($field_name, &$field_array) {
 		break;
 	case 'checkbox_group':
 		if (isset($field_array['type']) && $field_array['type'] == 'flex') {
-			print "</td></tr><tr><td><div id='${field_name}_group' class='checkboxgroup1 flexContainer'>" . PHP_EOL;
+			print "</td></tr><tr><td><div id='{$field_name}_group' class='checkboxgroup1 flexContainer'>" . PHP_EOL;
 		} else {
-			print "<div id='${field_name}_group' class='checkboxgroup1'>" . PHP_EOL;
+			print "<div id='{$field_name}_group' class='checkboxgroup1'>" . PHP_EOL;
 		}
 
 		foreach ($field_array['items'] as $check_name => $check_array) {
@@ -432,7 +432,8 @@ function draw_edit_control($field_name, &$field_array) {
 		break;
 	case 'file':
 		form_file($field_name,
-			((isset($field_array['size'])) ? $field_array['size'] : '40'));
+			((isset($field_array['size'])) ? $field_array['size'] : '40'),
+			((isset($field_array['accept'])) ? $field_array['accept'] : ''));
 
 		break;
 	case 'button':
@@ -496,8 +497,10 @@ function form_submit($form_name, $value, $title = '', $action = '') {
 
 /* form_file - draws a standard html file input element
    @arg $form_name - the name of this form element
-   @arg $form_size - the size (width) of the textbox */
-function form_file($form_name, $form_size = 30) {
+   @arg $form_size - the size (width) of the textbox
+   @arg $form_accept - the file types permitted
+ */
+function form_file($form_name, $form_size = 30, $form_accept = '') {
 	print "<div>\n";
 	print "<label class='import_label' for='$form_name'>" . __('Select a File'). "</label>\n";
 	print "<input type='file'";
@@ -509,7 +512,7 @@ function form_file($form_name, $form_size = 30) {
 		print " class='import_button ui-state-default ui-corner-all'";
 	}
 
-	print " id='$form_name' name='$form_name' size='$form_size'>\n";
+	print " id='$form_name' name='$form_name' size='$form_size'" . ($form_accept != '' ? " accept='$form_accept'":'') . ">\n";
 	print "<span class='import_text'></span>\n";
 	print "</div>\n";
 }
@@ -698,9 +701,9 @@ function form_hidden_box($form_name, $form_previous_value, $form_default_value, 
      -- or --
      $array[0]["id"] = 43;
      $array[0]["name"] = "Red";
-   @arg $column_display - used to indentify the key to be used for display data. this
+   @arg $column_display - used to identify the key to be used for display data. this
      is only applicable if the array is formatted using the second method above
-   @arg $column_id - used to indentify the key to be used for id data. this
+   @arg $column_id - used to identify the key to be used for id data. this
      is only applicable if the array is formatted using the second method above
    @arg $form_previous_value - the current value of this form element
    @arg $form_none_entry - the name to use for a default 'none' element in the dropdown
@@ -807,12 +810,6 @@ function form_callback($form_name, $classic_sql, $column_display, $column_id, $c
 		}
 	}
 
-	if (isset($_SESSION['sess_field_values'])) {
-		if (!empty($_SESSION['sess_field_values'][$form_name])) {
-			$previous_value = $_SESSION['sess_field_values'][$form_name];
-		}
-	}
-
 	if ($class != '') {
 		$class = " class='$class' ";
 	}
@@ -873,7 +870,7 @@ function form_callback($form_name, $classic_sql, $column_display, $column_id, $c
 				<?php print $form_name;?>Open = false;
 				clearTimeout(<?php print $form_name;?>Timer);
 				clearTimeout(<?php print $form_name;?>ClickTimer);
-				$('#<?php print $form_name;?>_input').autocomplete('close');
+				$('#<?php print $form_name;?>_input').autocomplete('close').select();
 			}).on('click', function() {
 				if (<?php print $form_name;?>Open) {
 					$('#<?php print $form_name;?>_input').autocomplete('close');
@@ -886,6 +883,9 @@ function form_callback($form_name, $classic_sql, $column_display, $column_id, $c
 						<?php print $form_name;?>Open = true;
 					}, 200);
 				}
+				$('#<?php print $form_name;?>_input').select();
+			}).on('keyup', function() {
+				$('#<?php print $form_name;?>').val($('#<?php print $form_name;?>_input').val());
 			}).on('mouseleave', function() {
 				<?php print $form_name;?>Timer = setTimeout(function() { $('#<?php print $form_name;?>_input').autocomplete('close'); }, 800);
 			});
@@ -1220,7 +1220,7 @@ function form_font_box($form_name, $form_previous_value, $form_default_value, $f
 		}
 	}
 
-	if ($form_previous_value == '') { # no data: defaults are used; everythings fine
+	if ($form_previous_value == '') { # no data: defaults are used; everything is fine
 		$extra_data = '';
 	} else {
 		/* verifying all possible pango font params is too complex to be tested here

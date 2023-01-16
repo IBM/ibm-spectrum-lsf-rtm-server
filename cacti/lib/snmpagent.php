@@ -16,7 +16,7 @@
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
-*/
+ */
 
 function snmpagent_enabled() {
 	return read_config_option('enable_snmp_agent') == 'on';
@@ -252,7 +252,7 @@ function snmpagent_device_action_bottom($data){
 				$mc->object('cactiApplLastUpdate')->set(time());
 				break;
 			case '5':
-				/* clear device statisitics */
+				/* clear device statistics */
 				$values = array(
 					'cactiStatsDeviceMinTime'      => '9.99999',
 					'cactiStatsDeviceMaxTime'      => '0',
@@ -292,6 +292,9 @@ function snmpagent_poller_exiting($poller_index = 1){
 	try
 	{
 		$poller = $mc->table('cactiApplPollerTable')->row($poller_index)->select();
+		if ($poller == false) {
+			throw new Exception('Unable to find a poller');
+		}
 
 		$varbinds = array(
 			'cactiApplPollerIndex'     => $poller_index,
@@ -406,7 +409,7 @@ function snmpagent_poller_bottom() {
 		$mc_device_stats = $mc->table('cactiStatsDeviceTable')->select(array('cactiStatsDeviceIndex','cactiStatsDeviceFailedPolls'));
 		if ($mc_device_stats && cacti_sizeof($mc_device_stats)>0) {
 			foreach($mc_device_stats as $mc_device_stat) {
-				if (isset($mc_device_stat['cactiStatsDeviceFailedPolls'])) {
+				if (isset($mc_device_stat['cactiStatsDeviceFailedPolls']) && isset($mc_device_stat['cactiStatsDeviceIndex'])) {
 					$mc_dfailed[$mc_device_stat['cactiStatsDeviceIndex']] = $mc_device_stat['cactiStatsDeviceFailedPolls'];
 				}
 			}
@@ -598,10 +601,7 @@ function snmpagent_cache_install() {
 	}
 
 	/* drop everything */
-	db_execute('TRUNCATE `snmpagent_cache`');
-	db_execute('TRUNCATE `snmpagent_mibs`;');
-	db_execute('TRUNCATE `snmpagent_cache_notifications`;');
-	db_execute('TRUNCATE `snmpagent_cache_textual_conventions`;');
+	snmpagent_cache_uninstall();
 
 	$mc = new MibCache();
 	$mc->install($config['base_path'] . '/mibs/CACTI-MIB');
@@ -609,16 +609,26 @@ function snmpagent_cache_install() {
 	$mc->install($config['base_path'] . '/mibs/CACTI-BOOST-MIB');
 	snmpagent_cache_init();
 
-	/* call install routine of plugins supporting the SNMPagent */
+	/* call install routine of plugins supporting the SNMPAgent */
 	api_plugin_hook('snmpagent_cache_install');
 }
 
 function snmpagent_cache_uninstall() {
-	/* drop everything */
-	db_execute('TRUNCATE `snmpagent_cache`');
-	db_execute('TRUNCATE `snmpagent_mibs`;');
-	db_execute('TRUNCATE `snmpagent_cache_notifications`;');
-	db_execute('TRUNCATE `snmpagent_cache_textual_conventions`;');
+	/* drop everything if not empty */
+
+	$tables = array(
+		'snmpagent_cache',
+		'snmpagent_mibs',
+		'snmpagent_cache_notifications',
+		'snmpagent_cache_textual_conventions'
+	);
+
+	foreach($tables as $table) {
+		$rows = db_fetch_cell("SELECT COUNT(*) FROM $table");
+		if ($rows > 0) {
+			db_execute("TRUNCATE $table");
+		}
+	}
 }
 
 function snmpagent_cache_initialized() {
@@ -630,7 +640,7 @@ function snmpagent_cache_rebuilt(){
 }
 
 function snmpagent_cache_init(){
-	/* fill up the cache with a minimum of data data and ignore all values that
+	/* fill up the cache with a minimum of data and ignore all values that
 	   *  will be updated automatically at the bottom of the next poller run
 	*/
 	$mc = new MibCache();
@@ -861,7 +871,7 @@ function snmpagent_notification($notification, $mib, $varbinds, $severity = SNMP
 	$difference = array_diff(array_keys($registered_var_binds), array_keys($varbinds));
 
 	if (cacti_sizeof($difference) == 0) {
-		/* order the managers by message type to send out all notifications immmediately. Informs
+		/* order the managers by message type to send out all notifications immediately. Informs
 		   will take more processing time.
 		*/
 		$notification_managers = db_fetch_assoc_prepared('SELECT sm.*

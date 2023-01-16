@@ -33,7 +33,7 @@ function ss_disku_fs($host_id = 0, $cmd = 'index', $arg1 = '', $arg2 = '') {
 	if (!isset($poller_ids[$host_id])) {
 		$table_fields = array_rekey(db_fetch_assoc('DESCRIBE disku_pollers'), 'Field', 'Field');
 		if (key_exists('cacti_host', $table_fields)) {
-			$poller_id = db_fetch_cell("SELECT id FROM disku_pollers WHERE cacti_host=$host_id");
+			$poller_id = db_fetch_cell_prepared("SELECT id FROM disku_pollers WHERE cacti_host = ?", array($host_id));
 			if (!empty($poller_id)) {
 				$poller_ids[$host_id] = $poller_id;
 			}
@@ -46,14 +46,14 @@ function ss_disku_fs($host_id = 0, $cmd = 'index', $arg1 = '', $arg2 = '') {
 	if ($cmd == 'index') {
 		$return_arr = ss_disku_fs_getnames($poller_ids[$host_id]);
 
-		for ($i=0;($i<sizeof($return_arr));$i++) {
+		for ($i=0;($i<cacti_sizeof($return_arr));$i++) {
 			print $return_arr[$i] . "\n";
 		}
 	} elseif ($cmd == 'query') {
 		$arr_index = ss_disku_fs_getnames($poller_ids[$host_id]);
 		$arr = ss_disku_fs_getinfo($poller_ids[$host_id], $arg1);
 
-		for ($i=0;($i<sizeof($arr_index));$i++) {
+		for ($i=0;($i<cacti_sizeof($arr_index));$i++) {
 			if (isset($arr[$arr_index[$i]])) {
 				print $arr_index[$i] . '!' . $arr[$arr_index[$i]] . "\n";
 			}
@@ -94,7 +94,7 @@ function ss_disku_fs_getnames($poller_id) {
 		WHERE poller_id=$poller_id
 		ORDER BY primaryKey");
 
-	for ($i=0;($i<sizeof($arr));$i++) {
+	for ($i=0;($i<cacti_sizeof($arr));$i++) {
 		$return_arr[$i] = $arr[$i]['primaryKey'];
 	}
 
@@ -145,7 +145,7 @@ function ss_disku_fs_getinfo($poller_id, $info_requested) {
 			ORDER BY qry_index");
 	}
 
-	for ($i=0;($i<sizeof($arr));$i++) {
+	for ($i=0;($i<cacti_sizeof($arr));$i++) {
 		$return_arr[$arr[$i]['qry_index']] = trim(addslashes($arr[$i]['qry_value']));
 	}
 

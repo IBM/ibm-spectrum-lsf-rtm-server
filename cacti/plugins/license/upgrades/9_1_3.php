@@ -341,7 +341,7 @@ function upgrade_standard_to_9_1_3() {
 		COMMENT='Per Feature/Type Options'");
 
 	$opt_table = db_fetch_assoc("SHOW TABLES LIKE 'lic_flexlm_servers_options_feature_type'");
-	if (sizeof($opt_table)) {
+	if (cacti_sizeof($opt_table)) {
 		execute_sql("load data into new table lic_services_options_feature_type",
 			"INSERT INTO lic_services_options_feature_type
 			SELECT *

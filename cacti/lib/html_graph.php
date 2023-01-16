@@ -199,7 +199,7 @@ function html_graph_preview_filter($page, $action, $devices_where = '', $templat
 						<?php print __('Search');?>
 					</td>
 					<td>
-						<input type='text' class='ui-state-default ui-corner-all' id='rfilter' size='30' value='<?php print html_escape_request_var('rfilter');?>'>
+						<input type='text' class='ui-state-default ui-corner-all' id='rfilter' size='55' value='<?php print html_escape_request_var('rfilter');?>'>
 					</td>
 					<td>
 						<?php print __('Graphs');?>
@@ -250,9 +250,10 @@ function html_graph_preview_filter($page, $action, $devices_where = '', $templat
 					<td>
 						<select id='predefined_timespan' onChange='applyGraphTimespan()'>
 							<?php
-							$graph_timespans[GT_CUSTOM] = __('Custom');
+							$graph_timespans = array_merge(array(GT_CUSTOM => __('Custom')), $graph_timespans);
+
 							$start_val = 0;
-							$end_val = cacti_sizeof($graph_timespans);
+							$end_val   = cacti_sizeof($graph_timespans);
 
 							if (cacti_sizeof($graph_timespans)) {
 								foreach($graph_timespans as $value => $text) {
@@ -413,8 +414,7 @@ function html_graph_preview_filter($page, $action, $devices_where = '', $templat
 				 saveGraphFilter('preview');
 			});
 
-			$.when(initPage())
-			.pipe(function() {
+			$.when(initPage()).done(function() {
 				initializeGraphs();
 			});
 		});
@@ -427,27 +427,32 @@ function html_graph_preview_filter($page, $action, $devices_where = '', $templat
 }
 
 function html_graph_new_graphs($page, $host_id, $host_template_id, $selected_graphs_array) {
-	/* we use object buffering on this page to allow redirection to another page if no
-	fields are actually drawn */
-	ob_start();
-
-	top_header();
-
-	form_start($page);
-
-	$snmp_query_id = 0;
+	$snmp_query_id     = 0;
 	$num_output_fields = array();
+	$output_started    = false;
 
 	foreach ($selected_graphs_array as $form_type => $form_array) {
 		foreach ($form_array as $form_id1 => $form_array2) {
-			$num_output_fields += html_graph_custom_data($host_id, $host_template_id, $snmp_query_id, $form_type, $form_id1, $form_array2);
+			ob_start();
+
+			$count = html_graph_custom_data($host_id, $host_template_id, $snmp_query_id, $form_type, $form_id1, $form_array2);
+
+			if (array_sum($count)) {
+				if (!$output_started) {
+					$output_started = true;
+
+					top_header();
+				}
+
+				ob_end_flush();
+			} else {
+				ob_end_clean();
+			}
 		}
 	}
 
 	/* no fields were actually drawn on the form; just save without prompting the user */
-	if (!cacti_sizeof($num_output_fields)) {
-		ob_end_clean();
-
+	if (!$output_started) {
 		/* since the user didn't actually click "Create" to POST the data; we have to
 		pretend like they did here */
 		set_request_var('save_component_new_graphs', '1');
@@ -459,17 +464,15 @@ function html_graph_new_graphs($page, $host_id, $host_template_id, $selected_gra
 		exit;
 	}
 
-	/* flush the current output buffer to the browser */
-	ob_end_flush();
-
 	form_hidden_box('host_template_id', $host_template_id, '0');
 	form_hidden_box('host_id', $host_id, '0');
 	form_hidden_box('save_component_new_graphs', '1', '');
 	form_hidden_box('selected_graphs_array', serialize($selected_graphs_array), '');
 
-	if (isset($_SERVER['HTTP_REFERER']) && !substr_count($_SERVER['HTTP_REFERER'], 'graphs_new')) {
+	if (isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'graphs_new') === false) {
 		set_request_var('returnto', basename($_SERVER['HTTP_REFERER']));
 	}
+
 	load_current_session_value('returnto', 'sess_grn_returnto', '');
 
 	form_save_button(get_nfilter_request_var('returnto'));
@@ -483,6 +486,7 @@ function html_graph_custom_data($host_id, $host_template_id, $snmp_query_id, $fo
 	/* ==================================================== */
 
 	$num_output_fields = array();
+	$display = false;
 
 	if ($form_type == 'cg') {
 		$graph_template_id   = $form_id1;
@@ -491,7 +495,10 @@ function html_graph_custom_data($host_id, $host_template_id, $snmp_query_id, $fo
 			WHERE id = ?',
 			array($graph_template_id));
 
-		html_start_box(__('Create Graph from %s', html_escape($graph_template_name)), '100%', '', '3', 'center', '');
+		if (graph_template_has_override($graph_template_id)) {
+			$display = true;
+			$header  = __('Create Graph from %s', html_escape($graph_template_name));
+		}
 	} elseif ($form_type == 'sg') {
 		foreach ($form_array2 as $form_id2 => $form_array3) {
 			/* ================= input validation ================= */
@@ -514,13 +521,20 @@ function html_graph_custom_data($host_id, $host_template_id, $snmp_query_id, $fo
 				array($snmp_query_graph_id));
 		}
 
-		if ($num_graphs > 1) {
-			$header = __('Create %s Graphs from %s', $num_graphs, html_escape($snmp_query));
-		} else {
-			$header = __('Create Graph from %s', html_escape($snmp_query));
-		}
+		if (graph_template_has_override($graph_template_id)) {
+			$display = true;
 
-		/* DRAW: Data Query */
+			if ($num_graphs > 1) {
+				$header = __('Create %s Graphs from %s', $num_graphs, html_escape($snmp_query));
+			} else {
+				$header = __('Create Graph from %s', html_escape($snmp_query));
+			}
+		}
+	}
+
+	if ($display) {
+		form_start('graphs_new.php', 'new_graphs');
+
 		html_start_box($header, '100%', '', '3', 'center', '');
 	}
 
@@ -553,6 +567,7 @@ function html_graph_custom_data($host_id, $host_template_id, $snmp_query_id, $fo
 		array($graph_template_id));
 
 	array_push($num_output_fields, draw_nontemplated_fields_graph($graph_template_id, $graph_template, "g_$snmp_query_id" . '_' . $graph_template_id . '_|field|', __('Graph [Template: %s]', html_escape($graph_template['graph_template_name'])), true, false, (isset($snmp_query_graph_id) ? $snmp_query_graph_id : 0)));
+
 	array_push($num_output_fields, draw_nontemplated_fields_graph_item($graph_template_id, 0, 'gi_' . $snmp_query_id . '_' . $graph_template_id . '_|id|_|field|', __('Graph Items [Template: %s]', html_escape($graph_template['graph_template_name'])), true));
 
 	/* DRAW: Data Sources */
@@ -572,7 +587,9 @@ function html_graph_custom_data($host_id, $host_template_id, $snmp_query_id, $fo
 		}
 	}
 
-	html_end_box(false);
+	if ($display) {
+		html_end_box(false);
+	}
 
 	return $num_output_fields;
 }

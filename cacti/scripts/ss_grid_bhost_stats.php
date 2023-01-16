@@ -43,7 +43,7 @@ function ss_grid_bhost_stats($clusterid = 0) {
 	$host_unlicensed = 0;
 	$host_unknown    = 0;
 
-	if (sizeof($host_status)) {
+	if (cacti_sizeof($host_status)) {
 		foreach($host_status as $stat) {
 			if (substr_count($stat['status'], 'Full'))           $host_full       = $stat['total'];
 			elseif (substr_count($stat['status'], 'Closed'))     $host_closed     = $stat['total'];

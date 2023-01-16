@@ -1,4 +1,22 @@
 // $Id$
+/*
+  +-------------------------------------------------------------------------+
+  | Copyright (C) 2004-2022 The Cacti Group                                 |
+  |                                                                         |
+  | This program is free software; you can redistribute it and/or           |
+  | modify it under the terms of the GNU General Public License             |
+  | as published by the Free Software Foundation; either version 2          |
+  | of the License, or (at your option) any later version.                  |
+  |                                                                         |
+  | This program is distributed in the hope that it will be useful,         |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
+  | GNU General Public License for more details.                            |
+  +-------------------------------------------------------------------------+
+  | http://www.cacti.net/                                                   |
+  +-------------------------------------------------------------------------+
+*/
+
 // Host Autocomplete Magic
 var pageName = basename($(location).attr('pathname'));
 
@@ -145,6 +163,10 @@ function themeReady() {
 				id = $(this).attr('id');
 
 				$(this).selectmenu({
+					open: function(event, ui) {
+						var instance = $(this).selectmenu('instance');
+						instance.menuInstance.focus(null, instance._getSelectedItem());
+					},
 					change: function(event, ui) {
 						$(this).val(ui.item.value).change();
 					},
@@ -189,7 +211,7 @@ function themeReady() {
 		hostOpen = false;
 		clearTimeout(hostTimer);
 		clearTimeout(clickTimeout);
-		$('#host').autocomplete('close');
+		$('#host').autocomplete('close').select();
 	}).click(function() {
 		if (hostOpen) {
 			$('#host').autocomplete('close');
@@ -202,6 +224,7 @@ function themeReady() {
 				hostOpen = true;
 			}, 200);
 		}
+		$('#host').select();
 	}).on('mouseenter', function() {
 		$(this).addClass('ui-state-hover');
 		$('input#host').addClass('ui-state-hover');
@@ -269,7 +292,7 @@ function setMenuVisibility() {
 		}
 	});
 
-	// Functon to give life to the Navigation pane
+	// Function to give life to the Navigation pane
 	$('#nav li:has(ul) a.active').unbind().click(function(event) {
 		event.preventDefault();
 

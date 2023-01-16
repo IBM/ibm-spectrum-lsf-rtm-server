@@ -78,8 +78,6 @@ function update_data_source_title_cache_from_host($host_id, $query_id = 0, $ids 
 	}
 
 	if (cacti_sizeof($data)) {
-		cacti_log('Updating ' . cacti_sizeof($data) . ' Data Source');
-
 		foreach ($data as $item) {
 			update_data_source_title_cache($item['id']);
 		}
@@ -93,7 +91,7 @@ function update_data_source_title_cache($local_data_id) {
 		FROM data_template_data
 		WHERE local_data_id = ?',
 		array($local_data_id));
-
+	
 	$data_source = get_data_source_title($local_data_id);
 
 	if (strstr($data_source, '|query_') !== false || strstr($data_source, '|host_') !== false) {
@@ -214,7 +212,11 @@ function update_graph_title_cache($local_graph_id) {
    @arg $string - the string to clean out unsubstituted variables for
    @returns - the cleaned up string */
 function null_out_substitutions($string) {
-	return preg_replace("/\|host_" . VALID_HOST_FIELDS . "\|( - )?/i", '', $string);
+	if ($string != '') {
+		return preg_replace("/\|host_" . VALID_HOST_FIELDS . "\|( - )?/i", '', $string);
+	} else {
+		return $string;
+	}
 }
 
 /* expand_title - takes a string and substitutes all data query variables contained in it or cleans
@@ -469,3 +471,4 @@ function substitute_data_input_data($string, $graph, $local_data_id, $max_chars 
 
 	return $string;
 }
+

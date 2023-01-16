@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2006-2022 The Cacti Group                                 |
+ | Copyright (C) 2006-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -143,8 +143,8 @@ function form_thold_filter() {
 								ORDER BY name');
 
 							if (cacti_sizeof($sites)) {
-								foreach ($sites as $sites) {
-									print "<option value='" . $sites['id'] . "'"; if (get_request_var('site_id') == $sites['id']) { print ' selected'; } print '>' . html_escape($sites['name']) . '</option>';
+								foreach ($sites as $site) {
+									print "<option value='" . $site['id'] . "'"; if (get_request_var('site_id') == $site['id']) { print ' selected'; } print '>' . html_escape($site['name']) . '</option>';
 								}
 							}
 							?>
@@ -157,8 +157,10 @@ function form_thold_filter() {
 							<input id='clear' type='button' value='<?php print __esc('Clear', 'thold');?>' onClick='clearFilter()'>
 						</span>
 					</td>
-				</table>
-				<table class='filterTable'>
+				</tr>
+			</table>
+			<table class='filterTable'>
+				<tr>
 					<td>
 						<?php print __('Template', 'thold');?>
 					</td>
@@ -256,6 +258,40 @@ function form_thold_filter() {
 			$('#thold').submit(function(event) {
 				event.preventDefault();
 				applyFilter();
+			});
+
+			$('.ackMessage').tooltip({
+				items: '.ackMessage',
+				track: false,
+				position: { my: 'left', of: event, at: 'right+10', collision: 'fit' },
+				content: function() {
+					var text = atob($(this).attr('data-ack'));
+					return text;
+				},
+				open: function(event, ui) {
+					if (typeof(event.originalEvent) === 'undefined') {
+						return false;
+					}
+
+					var id = $(ui.tooltip).attr('id');
+
+					$('div.ui-tooltip').not('#' + id).remove();
+
+					ui.tooltip.css('width', '800px');
+					ui.tooltip.css('max-width', '800px');
+				},
+				close: function(event, ui) {
+					ui.tooltip.hover(
+						function() {
+							$(this).stop(true).fadeTo(400, 1);
+						},
+						function() {
+							$(this).fadeOut('400', function() {
+								$(this).remove();
+							});
+						}
+					);
+				}
 			});
 		});
 
@@ -417,6 +453,10 @@ function tholds() {
 			'sort' => 'ASC',
 			'align' => 'right'
 		),
+		'nosort6' => array(
+			'display' => __('Ack Detail', 'thold'),
+			'align' => 'center'
+		),
 		'thold_type' => array(
 			'display' => __('Type', 'thold'),
 			'sort' => 'ASC',
@@ -477,7 +517,6 @@ function tholds() {
 	html_header_sort($display_text, get_request_var('sort_column'), get_request_var('sort_direction'), false, 'thold_graph.php?action=thold');
 
 	$c=0;
-	$i=0;
 
 	if (cacti_sizeof($tholds)) {
 		foreach ($tholds as $thold_data) {
@@ -547,7 +586,7 @@ function tholds() {
 				$suffix = true;
 			}
 
-			$show_units = ($thold_data['show_units'] ? true : false);;
+			$show_units = ($thold_data['show_units'] ? true : false);
 
 			if (empty($baseu)) {
 				cacti_log('WARNING: Graph Template for local_graph_id ' . $thold_data['local_graph_id'] . ' has been removed!');
@@ -565,7 +604,7 @@ function tholds() {
 
 			if (api_user_realm_auth('thold.php')) {
 				if ($thold_data['thold_enabled'] == 'on') {
-					$actions_url .= '<a class="pic" href="' .  html_escape($config['url_path'] . 'plugins/thold/thold_graph.php?action=disable&id=' . $thold_data['id']) . '" alt="" title="' . __esc('Disable Threshold', 'thold') . '"><i class="tholdGlyphDisable fas fa-stop-circle"></i></a>';
+					$actions_url .= '<a class="pic" href="' .  html_escape($config['url_path'] . 'plugins/thold/thold_graph.php?action=disable&id=' . $thold_data['id']) . '" title="' . __esc('Disable Threshold', 'thold') . '"><i class="tholdGlyphDisable fas fa-stop-circle"></i></a>';
 				} else {
 					$actions_url .= '<a class="pic" href="' .  html_escape($config['url_path'] . 'plugins/thold/thold_graph.php?action=enable&id=' . $thold_data['id']) . '" title="' . __esc('Enable Threshold', 'thold') . '"><i class="tholdGlyphEnable fas fa-play-circle"></i></a>';
 				}
@@ -599,11 +638,50 @@ function tholds() {
 				$actions_url = $data['actions_url'];
 			}
 
+			if ($thold_data['reset_ack'] == 'on' || $thold_data['persist_ack'] == 'on') {
+				$acks = db_fetch_assoc_prepared('SELECT *
+					FROM plugin_thold_log
+					WHERE type = 99
+					AND threshold_id = ?
+					LIMIT 5',
+					array($thold_data['id']));
+
+				if (cacti_sizeof($acks)) {
+					$table = '<table class="cactiTable">
+						<tr class="tableHeader">
+							<th>' . __('Acknowledgement Message', 'thold') . '</th>
+							<th>' . __('Date', 'thold')    . '</th>
+						</tr>';
+
+					foreach($acks as $a) {
+						$parts = explode('Additional Comments:', $a['description']);
+						if (isset($parts[1])) {
+							$comment = trim($parts[1], '" ');
+						} else {
+							$comment = __('Comment Not Found', 'thold');
+						}
+
+						$table .= '<tr>
+							<td>' . $comment . '</td>
+							<td>' . date('Y-m-d H:i:s', $a['time']) . '</td>
+						</tr>';
+					}
+
+					$details = '<a class="ackMessage" href="#" data-ack="' . base64_encode($table) . '">' . __('Ack History', 'thold') . '</a>';
+				} else {
+					$details = '';
+				}
+			} else {
+				$details = '';
+			}
+
 			form_selectable_cell($actions_url, $thold_data['id'], '', 'left');
 
 			form_selectable_cell($thold_data['name_cache'] != '' ? filter_value($thold_data['name_cache'], get_request_var('rfilter')) : __('No name set', 'thold'), $thold_data['id'], '', 'left');
 
 			form_selectable_cell($thold_data['id'], $thold_data['id'], '', 'right');
+
+			form_selectable_cell($details, $thold_data['id'], '', 'center');
 
 			form_selectable_cell($thold_types[$thold_data['thold_type']], $thold_data['id'], '', 'right');
 
@@ -927,9 +1005,9 @@ function hosts() {
 
 				form_selectable_cell(filter_value($host['description'], get_request_var('rfilter')), $host['id'], '', 'left');
 
-				form_selectable_cell(number_format_i18n($host['id']), $host['id'], '', 'right');
-				form_selectable_cell(number_format_i18n($host['graphs']), $host['id'], '', 'right');
-				form_selectable_cell(number_format_i18n($host['data_sources']), $host['id'], '', 'right');
+				form_selectable_cell(number_format_i18n($host['id'], -1), $host['id'], '', 'right');
+				form_selectable_cell(number_format_i18n($host['graphs'], -1), $host['id'], '', 'right');
+				form_selectable_cell(number_format_i18n($host['data_sources'], -1), $host['id'], '', 'right');
 
 				form_selectable_cell(get_uncolored_device_status(($host['disabled'] == 'on' ? true : false), $host['status']), $host['id'], '', 'right');
 
@@ -953,9 +1031,9 @@ function hosts() {
 
 				form_selectable_cell(filter_value($host['description'], get_request_var('rfilter')), $host['id'], '', 'left');
 
-				form_selectable_cell(number_format_i18n($host['id']), $host['id'], '', 'right');
-				form_selectable_cell(number_format_i18n($host['graphs']), $host['id'], '', 'right');
-				form_selectable_cell(number_format_i18n($host['data_sources']), $host['id'], '', 'right');
+				form_selectable_cell(number_format_i18n($host['id'], -1), $host['id'], '', 'right');
+				form_selectable_cell(number_format_i18n($host['graphs'], -1), $host['id'], '', 'right');
+				form_selectable_cell(number_format_i18n($host['data_sources'], -1), $host['id'], '', 'right');
 
 				form_selectable_cell(__('Not Monitored', 'thold'), $host['id'], '', 'center');
 
@@ -1012,8 +1090,8 @@ function form_host_filter() {
 								ORDER BY name');
 
 							if (cacti_sizeof($sites)) {
-								foreach ($sites as $sites) {
-									print "<option value='" . $sites['id'] . "'"; if (get_request_var('site_id') == $sites['id']) { print ' selected'; } print '>' . html_escape($sites['name']) . '</option>';
+								foreach ($sites as $site) {
+									print "<option value='" . $site['id'] . "'"; if (get_request_var('site_id') == $site['id']) { print ' selected'; } print '>' . html_escape($site['name']) . '</option>';
 								}
 							}
 							?>
@@ -1041,8 +1119,10 @@ function form_host_filter() {
 							<input id='clear' type='button' value='<?php print __esc('Clear', 'thold');?>' onClick='clearFilter()'>
 						</span>
 					</td>
-				</table>
-				<table class='filterTable'>
+				</tr>
+			</table>
+			<table class='filterTable'>
+				<tr>
 					<td>
 						<?php print __('Type', 'thold');?>
 					</td>
@@ -1358,7 +1438,6 @@ function thold_show_log() {
 
 	$thold_types[99] = __('Acknowledgment', 'thold');
 
-	$i = 0;
 	if (cacti_sizeof($logs)) {
 		foreach ($logs as $l) {
 			$baseu = db_fetch_cell_prepared('SELECT base_value
@@ -1386,7 +1465,7 @@ function thold_show_log() {
 			form_selectable_cell($l['hdescription'], $l['id'], '', 'left');
 			form_selectable_cell(date('Y-m-d H:i:s', $l['time']), $l['id'], '', 'left');
 			form_selectable_cell($thold_types[$l['type']], $l['id'], '', 'left');
-			form_selectable_cell((strlen($l['description']) ? filter_value($l['description'], get_request_var('rfilter')):__('Restoral Event', 'thold')), $l['id'], '', 'left');
+			form_selectable_cell((strlen($l['description']) ? filter_value($l['description'], get_request_var('rfilter')):__('Restoral Event', 'thold')), $l['id'], '', 'left tholdLog');
 			form_selectable_cell($l['threshold_value'] != '' ? thold_format_number($l['threshold_value'], 2, $baseu, $suffix, $show_units):__('N/A', 'thold'), $l['id'], '', 'right');
 			form_selectable_cell($l['current'] != '' ? thold_format_number($l['current'], 2, $baseu, $suffix, $show_units):__('N/A', 'thold'), $l['id'], '', 'right');
 			form_end_row();
@@ -1432,8 +1511,8 @@ function form_thold_log_filter() {
 								ORDER BY name');
 
 							if (cacti_sizeof($sites)) {
-								foreach ($sites as $sites) {
-									print "<option value='" . $sites['id'] . "'"; if (get_request_var('site_id') == $sites['id']) { print ' selected'; } print '>' . html_escape($sites['name']) . '</option>';
+								foreach ($sites as $site) {
+									print "<option value='" . $site['id'] . "'"; if (get_request_var('site_id') == $site['id']) { print ' selected'; } print '>' . html_escape($site['name']) . '</option>';
 								}
 							}
 							?>
@@ -1447,8 +1526,10 @@ function form_thold_log_filter() {
 							<input id='export' type='button' value='<?php print __esc('Export', 'thold');?>' onClick='exportLog()'>
 						</span>
 					</td>
-				</table>
-				<table class='filterTable'>
+				</tr>
+			</table>
+			<table class='filterTable'>
+				<tr>
 					<td>
 						<?php print __('Template', 'thold');?>
 					</td>
@@ -1567,3 +1648,4 @@ function form_thold_log_filter() {
 	</tr>
 	<?php
 }
+

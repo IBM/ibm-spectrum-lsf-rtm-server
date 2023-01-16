@@ -32,14 +32,14 @@ if (!isset($called_by_script_server)) {
 function ss_grid_jgroup_stats($clusterid = 0, $cmd = 'index', $arg1 = '', $arg2 = '') {
 	if ($cmd == 'index') {
 		$return_arr = ss_grid_jgroup_stats_getnames($clusterid, $arg1);
-		for ($i=0;($i<sizeof($return_arr));$i++) {
+		for ($i=0;($i<cacti_sizeof($return_arr));$i++) {
 			print $return_arr[$i] . "\n";
 		}
 	} elseif ($cmd == 'query') {
 		$arr_index = ss_grid_jgroup_stats_getnames($clusterid, $arg1);
 		$arr = ss_grid_jgroup_stats_getinfo($clusterid, $arg1, $arg2);
 
-		for ($i=0;($i<sizeof($arr_index));$i++) {
+		for ($i=0;($i<cacti_sizeof($arr_index));$i++) {
 			if (isset($arr[$arr_index[$i]])) {
 				print $arr_index[$i] . '!' . $arr[$arr_index[$i]] . "\n";
 			}
@@ -170,7 +170,7 @@ function ss_grid_jgroup_stats_getinfo($clusterid, $info_requested) {
 		}
 	}
 
-	for ($i=0;(isset($arr) && $i<sizeof($arr));$i++) {
+	for ($i=0;(isset($arr) && $i<cacti_sizeof($arr));$i++) {
 		$return_arr[$arr[$i]['qry_index']] = addslashes($arr[$i]['qry_value']);
 	}
 
@@ -186,12 +186,12 @@ function ss_grid_jgroup_get_maxdate($clusterid) {
 	$date_minor = 0;
 	if (strlen($job_stats_minor)) {
 		$stats = explode(' ', $job_stats_minor);
-		$date_minor = strtotime(substr_replace('_', ' ', $stats[0]));
+		$date_minor = strtotime(str_replace('_', ' ', str_replace('EndDate:', '', $stats[0])));
 	}
 
 	if (strlen($job_stats_major)) {
 		$stats = explode(' ', $job_stats_major);
-		$date_major = strtotime(substr_replace('_', ' ', $stats[0]));
+		$date_major = strtotime(str_replace('_', ' ', str_replace('EndDate:', '', $stats[0])));
 	}
 
 	if ($date_major > $date_minor) {

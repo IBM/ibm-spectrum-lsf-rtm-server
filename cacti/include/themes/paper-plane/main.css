@@ -151,6 +151,10 @@ label {
 	white-space: nowrap;
 }
 
+.wrap {
+	white-space: normal !important;
+}
+
 .top {
 	vertical-align: top;
 }
@@ -322,7 +326,7 @@ label {
 
 .spikeKillMenuItem {
 	display: block;
-	width: 100%:;
+	width: 100%;
 }
 
 .deviceUp {
@@ -594,6 +598,7 @@ label {
 .tableRowGraph td {
 	padding: 3px;
 	vertical-align: top;
+	background: none repeat scroll 0 0 #FFFFFF;
 }
 
 .even {
@@ -838,7 +843,7 @@ label {
 }
 
 .cactiLogo {
-	background: #efefef;
+	background: transparent url('./images/cacti_logo.svg') no-repeat 30px;
 	display: none;
 	cursor: pointer;
 	padding-bottom: 140px;
@@ -1107,6 +1112,10 @@ legend {
 	display: inline-block;
 }
 
+.piinstall, .pienable, .pidisable, .piuninstall, .pierror {
+	padding: 0px 3px !important;
+}
+
 .linkEditMain, .linkEditMain:visited, .linkEditMain:active {
 	color: #2d4ca8;
 	text-decoration: none;
@@ -1258,9 +1267,11 @@ tr>td.textInfo.right {
 	color: white;
 	float: left;
 	text-align: left;
-	padding: 3px 0px;
-	display: table-column;
+	padding-left: 3px;
+	display: block;
 	width: 100%;
+	height: 28px;
+	line-height: 28px;
 	font-size: 13px;
 	font-weight: 600;
 	border-color: #222;
@@ -1272,10 +1283,12 @@ tr>td.textInfo.right {
 	color: white;
 	float: left;
 	text-align: left;
-	padding: 0px 0px 4px 0px;
+	padding-left: 3px;
 	vertical-align: middle;
-	display: table-column;
+	display: block;
 	width: 70%;
+	height: 28px;
+	line-height: 28px;
 	font-size: 13px;
 	font-weight: 600;
 	border-color: #222;
@@ -1285,13 +1298,15 @@ tr>td.textInfo.right {
 
 .cactiTableButton {
 	float: right;
-	padding: 0px 0px 4px 0px;
-	display: table-column;
+	padding: 0px;
+	display: block;
 	text-align: right;
 	vertical-align: middle;
 	font-size: 13px;
 	color: #FFF;
-	width: 30%;
+	width: calc(30% - 3px);
+	height: 28px;
+	line-height: 28px;
 	border-color: #222;
 	background-image: linear-gradient(to bottom, #3a3b3c 0%, #100000 100%);
 	background-repeat: repeat-x;
@@ -1310,15 +1325,14 @@ tr>td.textInfo.right {
 	padding: 0px;
 	white-space: nowrap;
 	overflow: hidden;
-	vertical-align: middle;
 }
 
 .cactiTableButton i {
 	padding: 0px 8px;
 }
 
-.cactiTableButton span:last-child, .cactiTableTitle span:last-child {
-	padding: 0px 5px;
+.cactiTableButton span:last-child i, .cactiTableTitle span:last-child i {
+	padding: 0px 8px !important;
 }
 
 .cactiDebugTable {
@@ -1414,7 +1428,7 @@ tr>td.textInfo.right {
 
 .formHeaderAnchor {
 	float: right;
-	padding-right: 4px;
+	padding-right: 8px;
 }
 
 .formHeaderText {
@@ -2315,8 +2329,9 @@ tr#realtime td:first-child {
 
 .menu_glyph {
 	font-size: 12px;
-	width: 20px;
 	vertical-align: 30%;
+	text-align: left;
+	width: 20px;
 }
 
 .submenu_glyph {
@@ -2359,6 +2374,7 @@ tr#realtime td:first-child {
 
 .ui-multiselect-header {
 	background-color: #E5E5E5;
+	margin-bottom: 3px;
 }
 
 .ui-multiselect, .ui-multiselect-button, .ui-selectmenu-button {
@@ -2372,8 +2388,7 @@ tr#realtime td:first-child {
 }
 
 .ui-multiselect-header ul {
-	margin-top: 4px;
-	height: 15px;
+	height: 20px;
 	float: left;
 }
 
@@ -2567,3 +2582,198 @@ td.center > table {
 	color: #FFFFFF !important;
 }
 
+.bb-chart {
+}
+
+.bb-chart-arc path {
+	fill: #A8A8A8;
+}
+
+.bb-tooltip {
+}
+
+.bb-legend-item {
+	fill: #A8A8A8;
+}
+
+.bb-grid {
+	fill: #A8A8A8;
+}
+
+.bb-axis {
+	fill: #A8A8A8;
+}
+
+/*-- Chart --*/
+.bb svg {
+  font: 10px sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bb path, .bb line {
+  fill: none;
+  stroke: #E0E0E0;
+}
+
+.bb text {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+.bb-legend-item-tile,
+.bb-xgrid-focus,
+.bb-ygrid,
+.bb-event-rect,
+.bb-bars path {
+  shape-rendering: crispEdges;
+}
+
+.bb-chart-arc path {
+  stroke: #fff;
+}
+
+.bb-chart-arc text {
+  fill: #fff;
+  font-size: 13px;
+}
+
+/*-- Axis --*/
+/*-- Grid --*/
+.bb-grid line {
+  stroke: #aaa;
+}
+
+.bb-grid text {
+  fill: #aaa;
+}
+
+.bb-xgrid, .bb-ygrid {
+  stroke-dasharray: 3 3;
+}
+
+/*-- Text on Chart --*/
+.bb-text.bb-empty {
+  fill: #808080;
+  font-size: 2em;
+}
+
+/*-- Line --*/
+.bb-line {
+  stroke-width: 1px;
+}
+
+/*-- Point --*/
+.bb-circle._expanded_ {
+  stroke-width: 1px;
+  stroke: white;
+}
+
+.bb-selected-circle {
+  fill: white;
+  stroke-width: 2px;
+}
+
+/*-- Bar --*/
+.bb-bar {
+  stroke-width: 0;
+}
+
+.bb-bar._expanded_ {
+  fill-opacity: 0.75;
+}
+
+/*-- Focus --*/
+.bb-target.bb-focused {
+  opacity: 1;
+}
+
+.bb-target.bb-focused path.bb-line, .bb-target.bb-focused path.bb-step {
+  stroke-width: 2px;
+}
+
+.bb-target.bb-defocused {
+  opacity: 0.3 !important;
+}
+
+/*-- Region --*/
+.bb-region {
+  fill: steelblue;
+  fill-opacity: .1;
+}
+
+/*-- Brush --*/
+.bb-brush .extent {
+  fill-opacity: .1;
+}
+
+/*-- Select - Drag --*/
+/*-- Legend --*/
+.bb-legend-item {
+  font-size: 12px;
+}
+
+.bb-legend-item-hidden {
+  opacity: 0.15;
+}
+
+.bb-legend-background {
+  opacity: 0.75;
+  fill: white;
+  stroke: lightgray;
+  stroke-width: 1;
+}
+
+/*-- Title --*/
+.bb-title {
+  font: 14px sans-serif;
+}
+
+/*-- Area --*/
+.bb-area {
+  stroke-width: 0;
+  opacity: 0.2;
+}
+
+/*-- Arc --*/
+.bb-chart-arcs-title {
+  dominant-baseline: middle;
+  font-size: 1.3em;
+}
+
+.bb-chart-arcs .bb-chart-arcs-background {
+  fill: #E0E0E0;
+  stroke: none;
+}
+
+.bb-chart-arcs .bb-chart-arcs-gauge-unit {
+  fill: #000;
+  font-size: 16px;
+}
+
+.bb-chart-arcs .bb-chart-arcs-gauge-max {
+  fill: #777;
+}
+
+.bb-chart-arcs .bb-chart-arcs-gauge-min {
+  fill: #777;
+}
+
+.bb-chart-arc .bb-gauge-value {
+  fill: #000;
+  /*  font-size: 28px !important;*/
+}
+
+circle {
+	stroke: #7e818f;
+	stroke-width: 1px;
+	fill: transparent !important;
+}
+
+[id*='_edit'] .tableRowGraph:hover, .tableRowGraph:hover td {
+     background: none repeat scroll 0 0 rgba(200,200,200,0.8) !important;
+}
+
+.tableRowGraph {
+     border: 2px solid rgba(0,0,0,0);
+}

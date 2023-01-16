@@ -31,14 +31,14 @@ function ss_grid_fstree($clusterid = 0, $cmd = 'index', $arg1 = '', $arg2 = '') 
 	if ($cmd == 'index') {
 		$return_arr = ss_grid_fstree_getnames($clusterid, $arg1);
 
-		for ($i=0;($i<sizeof($return_arr));$i++) {
+		for ($i=0;($i<cacti_sizeof($return_arr));$i++) {
 			print $return_arr[$i] . "\n";
 		}
 	} elseif ($cmd == 'query') {
 		$arr_index = ss_grid_fstree_getnames($clusterid, $arg1);
 		$arr = ss_grid_fstree_getinfo($clusterid, $arg1, $arg2);
 
-		for ($i=0;($i<sizeof($arr_index));$i++) {
+		for ($i=0;($i<cacti_sizeof($arr_index));$i++) {
 			if (isset($arr[$arr_index[$i]])) {
 				print $arr_index[$i] . '!' . $arr[$arr_index[$i]] . "\n";
 			}
@@ -91,7 +91,7 @@ function ss_grid_fstree_getvalue($clusterid, $index, $column) {
 				$shareAcctPath = $parts[1];
 				$acctpaths = explode('/',$shareAcctPath);
 				$group = end($acctpaths);
-				$shareAcctPathNew = implode(array_slice($acctpaths, 0, count($acctpaths) - 1), '/');
+				$shareAcctPathNew = implode('/', array_slice($acctpaths, 0, count($acctpaths) - 1));
 
 				$value = db_fetch_cell("SELECT $column
 					FROM grid_queues_shares
@@ -115,7 +115,7 @@ function ss_grid_fstree_getvalue($clusterid, $index, $column) {
 	}
 }
 
-function ss_grid_fstree_get_tree($clusterid, $queue, $parent = '', $level = 0, &$tree) {
+function ss_grid_fstree_get_tree($clusterid, $queue, $parent = '', $level = 0, &$tree = array()) {
 	if ($level > 0) {
 		$parent .= '/';
 		$level ++;

@@ -1,4 +1,4 @@
-#!/usr/bin/php -q
+#!/usr/bin/env php
 <?php
 // $Id$
 /*
@@ -20,7 +20,7 @@
 */
 
 require(__DIR__ . '/../include/cli_check.php');
-include_once($config['base_path'] . '/install/functions.php');
+require_once($config['base_path'] . '/install/functions.php');
 
 /* process calling arguments */
 $parms = $_SERVER['argv'];
@@ -264,7 +264,7 @@ function set_install_option(&$options, $key, $display_name, $value) {
 	log_install_high('cli',sprintf('Setting %s to \'%s\'', $display_name, $value));
 }
 
-/*  set_install_multioption - sets sub-options that have mutiple key/value combinations with optional prefix */
+/*  set_install_multioption - sets sub-options that have multiple key/value combinations with optional prefix */
 function set_install_multioption(&$options, $key, $display_name, $value, $prefix, $replace_dots = false) {
 	$option_pos = strpos($value, ':');
 	if ($option_pos !== false) {
@@ -308,6 +308,7 @@ function process_install_errors($results) {
 		$errors = $results['Errors'];
 		$count = 0;
 		$sections = 0;
+
 		foreach ($errors as $error_section => $error_array) {
 			$sections++;
 			print $error_section . PHP_EOL;
@@ -316,8 +317,10 @@ function process_install_errors($results) {
 				print $error_key . ' Error #' . $count . ' - ' . $error . PHP_EOL;
 			}
 		}
+
 		print PHP_EOL . 'Unable to continue as ' . $count . ' issue' . ($count == 1?'':'s') . ' in ' . $sections . ' section' . ($sections == 1?'':'s') . ' were found.' . PHP_EOL;
-		exit();
+
+		exit(1);
 	}
 }
 
@@ -354,7 +357,7 @@ function display_help () {
 	print '  -t  | --theme           - Set system theme' . PHP_EOL;
 	print '  -i  | --ini             - Load settings from ini file' . PHP_EOL;
 	print '  -j  | --json            - Load settings from json file' . PHP_EOL;
-	print PHP_EOL . 'Mutli-value optional:' . PHP_EOL;
+	print PHP_EOL . 'Multi-value optional:' . PHP_EOL;
 	print '  These options may be used more than once to apply multiple values.  All' . PHP_EOL;
 	print '  values should be in "option_key:option_value" format (see below). If an' . PHP_EOL;
 	print '  option has a prefix, this is optional and is automatically added to the' . PHP_EOL;

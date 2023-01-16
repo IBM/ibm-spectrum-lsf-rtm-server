@@ -403,8 +403,7 @@ function lic_get_count($id, $feature) {
 			$query = 'SELECT COUNT(*) FROM (SELECT DISTINCT feature_name FROM '.$checkouts_table.' WHERE '.$field.' = '.$id.') AS A';
 			break;
 	};
-
-	return number_format(db_fetch_cell($query));
+	return number_format(db_fetch_cell($query)?:0);
 }
 
 function lic_filter() {

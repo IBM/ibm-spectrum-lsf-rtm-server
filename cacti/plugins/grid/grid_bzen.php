@@ -1473,7 +1473,7 @@ function license_info($job = array()) {
 		}
 
 		$total_rows = 0;
-		$license_details  = grid_get_license_events($job, $total_rows, $apply_limits = true, $rows);
+		$license_details  = grid_get_license_events($job, $total_rows, true, $rows);
 
 		html_start_box(__('Historical License Usage', 'grid'), '100%', '', '3', 'center', '');
 
@@ -1649,7 +1649,7 @@ function grid_get_license_records($host, $user, $apply_limits = true, $rows = "3
 // @param $rows - When applying limits, the number of rows to return
 //
 // @return An array of license checkouts or events related to the given job, or time period for a host and user
-function grid_get_license_events($job, &$row_count, $apply_limits = true, $rows) {
+function grid_get_license_events($job, &$row_count, $apply_limits = true, $rows = 30) {
 	if (isset($job['jobid'])) {
 		$one_job     = true;
 		$clusterid   = $job['clusterid'];

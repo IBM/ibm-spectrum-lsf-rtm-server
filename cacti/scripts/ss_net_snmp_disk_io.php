@@ -74,6 +74,10 @@ function ss_net_snmp_disk_io($host_id_or_hostname = '') {
 		WHERE id = ?',
 		array($host_id));
 
+	if (!cacti_sizeof($host)) {
+		return 'reads:0 writes:0';
+	}
+
 	$uptime  = cacti_snmp_get($host['hostname'],
 		$host['snmp_community'],
 		'.1.3.6.1.2.1.1.3.0',
@@ -87,7 +91,6 @@ function ss_net_snmp_disk_io($host_id_or_hostname = '') {
 		$host['snmp_port'],
 		$host['snmp_timeout'],
 		$host['ping_retries'],
-		$host['max_oids'],
 		SNMP_POLLER,
 		$host['snmp_engine_id']);
 
@@ -106,12 +109,11 @@ function ss_net_snmp_disk_io($host_id_or_hostname = '') {
 		$host['snmp_port'],
 		$host['snmp_timeout'],
 		$host['ping_retries'],
-		$host['max_oids'],
 		SNMP_POLLER,
 		$host['snmp_engine_id']);
 
 	foreach($names as $measure) {
-		if (substr($measure['value'],0,2) == 'sd') {
+		if (substr($measure['value'],0,2) == 'sd' || substr($measure['value'],0,4) == 'nvme' || substr($measure['value'],0,2) == 'vm') {
 			if (is_numeric(substr(strrev($measure['value']),0,1))) {
 				continue;
 			}

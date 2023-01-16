@@ -31,7 +31,7 @@ general_header();
 grid_view_clients();
 bottom_footer();
 
-function grid_view_get_clients_records(&$sql_where, $apply_limits = true, $rows, &$sql_params) {
+function grid_view_get_clients_records(&$sql_where, $apply_limits = true, $rows = 30, &$sql_params = array()) {
 	/* user id sql where */
 	if (get_request_var('clusterid') == '0') {
 		/* Show all items */

@@ -30,7 +30,7 @@ general_header();
 grid_view_params();
 bottom_footer();
 
-function grid_view_get_params_records(&$sql_where, $apply_limits = TRUE, $rows, &$sql_params) {
+function grid_view_get_params_records(&$sql_where, $apply_limits = TRUE, $rows = 30, &$sql_params = array()) {
 	/* user id sql where */
 	if (get_request_var('clusterid') != '0') {
 		$sql_where .= 'WHERE grid_params.clusterid=?';

@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2006-2022 The Cacti Group                                 |
+ | Copyright (C) 2006-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -711,7 +711,7 @@ function form_actions() {
 				print "<tr>
 					<td class='textArea'>
 						<p>" . __esc('Click \'Continue\' to Associate the Notification List \'%s\' with the Device(s) below.', $list_name, 'thold') . "</p>
-						<p>" . __('You may also Associate the Devices Thresholds as well. However, these Device Tresholds will must allow the allow the Thrshold Notification List to be overwritten.', 'thold') . "</p>
+						<p>" . __('You may also Associate the Devices Thresholds as well. However, these Device Thresholds will allow the Threshold Notification List to be overwritten.', 'thold') . "</p>
 						<ul>$list</ul>
 						<p>" . __('Resulting Membership:', 'thold'). "<br>"; form_dropdown('notification_action', array(2 => __('Notification List Only', 'thold'), 3 => __('Notification and Global Lists', 'thold')), '', '', 2, '', ''); print "</p>
 						<p>" . __('Device Threshold Warning Membership:', 'thold') . "<br>"; form_dropdown('notification_warning_action', array(0 => __('No Change', 'thold'), 1 => __('Notification List Only', 'thold'), 2 => __('Notification List, Retain Other Settings', 'thold')), '', '', 1, '', ''); print "</p>
@@ -724,7 +724,7 @@ function form_actions() {
 				print "<tr>
 					<td class='textArea'>
 						<p>" . __esc('Click \'Continue\' to Disassociate the Notification List \'%s\' from the Device(s) below.', $list_name, 'thold') . "</p>
-						<p>" . __('You may also Disssociate the Devices Thresholds as well. However, these Device Tresholds will must allow the allow the Thrshold Notification List to be overwritten.', 'thold') . "</p>
+						<p>" . __('You may also Disassociate the Devices Thresholds as well. However, these Device Thresholds will allow the Threshold Notification List to be overwritten.', 'thold') . "</p>
 						<ul>$list</ul>
 						<p>" . __('Resulting Membership:', 'thold') . "<br>"; form_dropdown('notification_action', array(1 => __('Global List', 'thold'), 0 => __('Disabled', 'thold')), '', '', 1, '', ''); print "</p>
 						<p>" . __('Device Threshold Warning Membership:', 'thold') . "<br>"; form_dropdown('notification_warning_action', array(0 => __('No Change', 'thold'), 1 => __('Remove List', 'thold')), '', '', 1, '', ''); print "</p>
@@ -1061,7 +1061,7 @@ function hosts($header_label) {
 	if (strlen(get_request_var('rfilter'))) {
 		$sql_where = 'WHERE (
 			host.hostname RLIKE "'       . get_request_var('rfilter') . '"
-			OR host.description RLIKE "' . get_request_var('filter')  . '")';
+			OR host.description RLIKE "' . get_request_var('rfilter')  . '")';
 	} else {
 		$sql_where = '';
 	}
@@ -1239,7 +1239,7 @@ function tholds($header_label) {
 	}
 
 	if (strlen(get_request_var('rfilter'))) {
-		$sql_where .= (!strlen($sql_where) ? '' : ' AND ') . 'td.name_cache RLIKE "' . get_request_var('filter') . '"';
+		$sql_where .= (!strlen($sql_where) ? '' : ' AND ') . 'td.name_cache RLIKE "' . get_request_var('rfilter') . '"';
 	}
 
 	if ($statefilter != '') {
@@ -1348,7 +1348,7 @@ function tholds($header_label) {
 
 		function applyFilter() {
 			strURL  = 'notify_lists.php?header=false&action=edit&tab=tholds&id=<?php print get_request_var('id');?>'
-			strURL += '&associated=' + $('#associated').is(':checked');;
+			strURL += '&associated=' + $('#associated').is(':checked');
 			strURL += '&state=' + $('#state').val();
 			strURL += '&site_id=' + $('#site_id').val();
 			strURL += '&rows=' + $('#rows').val();
@@ -1402,12 +1402,10 @@ function tholds($header_label) {
 	html_header_sort_checkbox($display_text, get_request_var('sort_column'), get_request_var('sort_direction'), false, 'notify_lists.php?action=edit&tab=tholds&id=' . get_filter_request_var('id'));
 
 	$c=0;
-	$i=0;
 	if (cacti_sizeof($result)) {
 		foreach ($result as $row) {
 			$c++;
 			$alertstat = __('No', 'thold');
-			$bgcolor='green';
 			if ($row['thold_type'] != 1) {
 				if ($row['thold_alert'] != 0) {
 					$alertstat = __('Yes', 'thold');
@@ -1418,7 +1416,7 @@ function tholds($header_label) {
 				} elseif ($row['bl_alert'] == 2)  {
 					$alertstat = __('baseline-HIGH', 'thold');
 				}
-			};
+			}
 
 			/* show alert stats first */
 			$alert_stat = '';
@@ -1659,7 +1657,6 @@ function templates($header_label) {
 	html_header_sort_checkbox($display_text, get_request_var('sort_column'), get_request_var('sort_direction'), false, 'notify_lists.php?action=edit&tab=templates&id=' . get_filter_request_var('id'));
 
 	$c=0;
-	$i=0;
 	if (cacti_sizeof($result)) {
 		foreach ($result as $row) {
 			$c++;
@@ -1807,6 +1804,11 @@ function thold_request_validation() {
 		'page' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'default' => '1'
+			),
+		'site_id' => array(
+			'filter' => FILTER_VALIDATE_INT,
+			'pageset' => true,
+			'default' => '-1'
 			),
 		'rfilter' => array(
 			'filter' => FILTER_VALIDATE_IS_REGEX,
@@ -1999,13 +2001,16 @@ function lists() {
 
 	if (cacti_sizeof($lists)) {
 		foreach ($lists as $item) {
+			// Add wrappable characters to emails
+			$item['emails'] = implode(', ', explode(',', $item['emails']));
+
 			form_alternate_row('line' . $item['id'], true);
-			form_selectable_cell(filter_value($item['name'], get_request_var('rfilter'), 'notify_lists.php?action=edit&id=' . $item['id']), $item['id'], '20%','badclass');
-			form_selectable_cell(filter_value($item['hosts'], get_request_var('rfilter'), 'notify_lists.php?tab=hosts&action=edit&id='.$item['id']), $item['id'], '5%','badclass');
-			form_selectable_cell(filter_value('Warn: '.$item['thold_warnings'].', Alert: '.$item['thold_alerts'] , get_request_var('rfilter'), 'notify_lists.php?tab=tholds&action=edit&id='.$item['id']), $item['id'], '10%');
-			form_selectable_cell(filter_value('Warn: '.$item['template_warnings'].', Alert: '.$item['template_alerts'] , get_request_var('rfilter'), 'notify_lists.php?tab=templates&action=edit&id='.$item['id']), $item['id'], '10%','badclass');
-			form_selectable_cell(filter_value($item['description'], get_request_var('rfilter')), $item['id'], '25%','badclass');
-			form_selectable_cell(filter_value($item['emails'], get_request_var('rfilter')), $item['id'], '45%','badclass');
+			form_selectable_cell(filter_value($item['name'], get_request_var('rfilter'), 'notify_lists.php?action=edit&id=' . $item['id']), $item['id']);
+			form_selectable_cell(filter_value($item['hosts'], get_request_var('rfilter'), 'notify_lists.php?tab=hosts&action=edit&id='.$item['id']), $item['id']);
+			form_selectable_cell(filter_value('Warn: '.$item['thold_warnings'].', Alert: '.$item['thold_alerts'] , get_request_var('rfilter'), 'notify_lists.php?tab=tholds&action=edit&id='.$item['id']), $item['id']);
+			form_selectable_cell(filter_value('Warn: '.$item['template_warnings'].', Alert: '.$item['template_alerts'] , get_request_var('rfilter'), 'notify_lists.php?tab=templates&action=edit&id='.$item['id']), $item['id']);
+			form_selectable_cell(filter_value($item['description'], get_request_var('rfilter')), $item['id'], '', 'wrap');
+			form_selectable_cell(filter_value($item['emails'], get_request_var('rfilter')), $item['id'], '', 'white-space:pre-wrap');
 			form_checkbox_cell($item['name'], $item['id']);
 			form_end_row();
 		}

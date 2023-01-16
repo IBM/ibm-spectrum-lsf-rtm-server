@@ -1,4 +1,4 @@
-#!/usr/bin/php -q
+#!/usr/bin/env php
 <?php
 // $Id$
 /*
@@ -25,6 +25,11 @@ require_once($config['base_path'] . '/lib/poller.php');
 require_once($config['base_path'] . '/lib/utility.php');
 
 ini_set('max_execution_time', '0');
+
+/* switch to main database for cli's */
+if ($config['poller_id'] > 1) {
+	db_switch_remote_to_main();
+}
 
 /* process calling arguments */
 $parms = $_SERVER['argv'];
@@ -167,7 +172,7 @@ function display_help() {
 	print "\nusage: poller_data_sources_reapply_names.php --host-id=[id|all][N1,N2,...] [--filter=string] [--debug]\n\n";
 	print "A utility that will recalculate Data Source names for the selected Data Templates.\n\n";
 	print "Required:\n";
-	print "    --host-id=N|all|N1,N2,... - The deivces id, 'all' or a comma delimited list of id's\n\n";
+	print "    --host-id=N|all|N1,N2,... - The devices id, 'all' or a comma delimited list of id's\n\n";
 	print "Optional:\n";
 	print "    --filter=search           - A Data Template name or Data Source Title to search for\n";
 	print "    --debug                   - Display verbose output during execution\n\n";

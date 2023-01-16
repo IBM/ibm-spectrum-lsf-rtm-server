@@ -1384,7 +1384,7 @@ function queue_attribs($qAttrib, $break = true) {
 	return $attrib;
 }
 
-function grid_view_get_queues_records(&$sql_where, $apply_limits = true, $rows, &$sql_params) {
+function grid_view_get_queues_records(&$sql_where, $apply_limits = true, $rows = 30, &$sql_params = array()) {
 	if (get_filter_request_var('clusterid') > '0') {
 		$sql_where .= 'WHERE (gq.clusterid=?)';
 		$sql_params[] = get_request_var('clusterid');
@@ -2822,7 +2822,7 @@ function grid_view_queue_fairshare($queue) {
 	<?php
 }
 
-function get_fairshare_tree($clusterid, $queue, $parent = '', $level = 0, &$tree) {
+function get_fairshare_tree($clusterid, $queue, $parent = '', $level = 0, &$tree = '') {
 	global $config;
 
 	if ($level < 0) {

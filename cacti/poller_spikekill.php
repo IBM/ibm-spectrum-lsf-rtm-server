@@ -1,4 +1,4 @@
-#!/usr/bin/php -q
+#!/usr/bin/env php
 <?php
 // $Id$
 /*
@@ -106,7 +106,7 @@ if (!cacti_sizeof($templates)) {
 if (timeToRun()) {
 	debug('Starting Spikekill Process');
 
-	$start  = microtime(true);
+	$start   = microtime(true);
 
 	$graphs = kill_spikes($templates, $kills);
 

@@ -2133,9 +2133,9 @@ function grid_config_settings () {
 			'method' => 'drop_array',
 			'default' => '50',
 			'array' => array(
-				'75' => __('75%', 'grid'),
-				'50' => __('>= 50%', 'grid'),
-				'25' => __('>= 25%', 'grid')
+				'75' => __('75%%%', 'grid'),
+				'50' => __('>= 50%%%', 'grid'),
+				'25' => __('>= 25%%%', 'grid')
 			)
 		),
 		'grid_thold_blue_cpu' => array(
@@ -7499,7 +7499,7 @@ function grid_elim_xml_to_template($param) {
 				if (isset($item_array[$field_name])) {
 					/* is the value of this field a hash or not? */
 					if (preg_match('/hash_([a-f0-9]{2})([a-f0-9]{4})([a-f0-9]{32})/', $item_array[$field_name])) {
-						$save[$field_name] = resolve_hash_to_id($item_array[$field_name], $hash_cache);
+						$save[$field_name] = resolve_hash_to_id($item_array[$field_name], $hash_cache, 'grid_elim_templates_item');
 					} elseif (($field_name == 'color_id') && (preg_match('/^[a-fA-F0-9]{6}$/', $item_array[$field_name])) && (get_version_index($parsed_hash['version']) >= get_version_index('0.8.5'))) { /* treat the 'color' field differently */
 						$color_id = db_fetch_cell_prepared('SELECT id FROM colors WHERE hex = ?', array($item_array[$field_name]));
 

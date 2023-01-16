@@ -29,6 +29,7 @@ $poller_actions = array(
 	1 => __('Delete'),
 	2 => __('Disable'),
 	3 => __('Enable'),
+	5 => __('Clear Statistics'),
 );
 
 if ($config['poller_id'] == 1) {
@@ -165,6 +166,15 @@ $fields_poller_edit = array(
 		'default' => $database_port,
 		'max_length' => '5'
 	),
+	'dbretries' => array(
+		'method' => 'textbox',
+		'friendly_name' => __('Remote Database Retries'),
+		'description' => __('The number of times to attempt to retry to connect to the remote database.'),
+		'value' => '|arg1:dbretries|',
+		'size' => '5',
+		'default' => $database_retries,
+		'max_length' => '5'
+	),
 	'dbssl' => array(
 		'method' => 'checkbox',
 		'friendly_name' => __('Remote Database SSL'),
@@ -280,7 +290,8 @@ function form_save() {
 			$save['dbhost']        = form_input_validate(get_nfilter_request_var('dbhost'),    'dbhost',    '', true, 3);
 			$save['dbuser']        = form_input_validate(get_nfilter_request_var('dbuser'),    'dbuser',    '', true, 3);
 			$save['dbpass']        = form_input_validate(get_nfilter_request_var('dbpass'),    'dbpass',    '', true, 3);
-			$save['dbport']        = form_input_validate(get_nfilter_request_var('dbport'),    'dbport',    '', true, 3);
+			$save['dbport']        = form_input_validate(get_nfilter_request_var('dbport'),    'dbport',    '^[0-9]+$', true, 3);
+			$save['dbretries']     = form_input_validate(get_nfilter_request_var('dbretries'), 'dbretries', '^[0-9]+$', true, 3);
 			$save['dbssl']         = isset_request_var('dbssl') ? 'on':'';
 			$save['dbsslkey']      = form_input_validate(get_nfilter_request_var('dbsslkey'),  'dbsslkey',  '', true, 3);
 			$save['dbsslcert']     = form_input_validate(get_nfilter_request_var('dbsslcert'), 'dbsslcert', '', true, 3);
@@ -324,7 +335,7 @@ function poller_check_duplicate_poller_id($poller_id, $hostname, $column) {
 	$ip_hostnames  = array();
 
 	if (is_ipaddress($hostname)) {
-		$address = gethostbyaddr($hostname);
+		$address = @gethostbyaddr($hostname);
 
 		if ($address != $hostname) {
 			$ip_hostnames[$address] = $address;
@@ -333,9 +344,9 @@ function poller_check_duplicate_poller_id($poller_id, $hostname, $column) {
 		}
 
 		$ip_addresses[$hostname] = $hostname;
-	} else {
-		$addresses = dns_get_record($hostname);
-		$ip        = gethostbyname($hostname);
+	} elseif (strpos($hostname, '.') !== false) {
+		$addresses = @dns_get_record($hostname);
+		$ip        = @gethostbyname($hostname);
 
 		if ($ip != $hostname) {
 			$ip_addresses[$ip] = $ip;
@@ -358,6 +369,14 @@ function poller_check_duplicate_poller_id($poller_id, $hostname, $column) {
 				}
 			}
 		}
+	} else {
+		$ip_hostname[$hostname] = $hostname;
+
+		$address = @gethostbyname($hostname);
+
+		if ($address != $hostname) {
+			$ip_addresses[$address] = $address;
+		}
 	}
 
 	$sql_where1 = '';
@@ -369,15 +388,23 @@ function poller_check_duplicate_poller_id($poller_id, $hostname, $column) {
 	if (cacti_sizeof($ip_hostnames)) {
 		foreach($ip_hostnames as $host) {
 			$parts = explode('.', $host);
-			$sql_where2 .= ($sql_where2 != '' ? ' OR ' : ($sql_where1 != '' ? ' OR ' : '') . ' (') . "($column = '$parts[0]' OR $column LIKE '$parts[0].%' OR $column = '$host')";
+			$sql_where2 .= ($sql_where2 != '' ? ' OR ':' (') .
+				"($column = " . db_qstr($parts[0]) .
+				" OR $column = " . db_qstr($host) . ")";
 		}
 		$sql_where2 .= ')';
+	}
+
+	if ($sql_where1 != '' || $sql_where2 != '') {
+		$sql_where = ' AND (' . $sql_where1 . ($sql_where1 != '' && $sql_where2 != '' ? ' OR ':'') . $sql_where2 . ')';
+	} else {
+		$sql_where = '';
 	}
 
 	$duplicate = db_fetch_cell_prepared("SELECT id
 		FROM poller
 		WHERE id != ?
-		AND ($sql_where1 $sql_where2)",
+		$sql_where",
 		array($poller_id));
 
 	if (empty($duplicate)) {
@@ -477,6 +504,15 @@ function form_actions() {
 				} else {
 					cacti_log('NOTE: All selected Remote Data Collectors in [' . implode(', ', $ids) . '] synchronized correctly by user ' . get_username($_SESSION['sess_user_id']), false, 'WEBUI');
 				}
+			} elseif (get_request_var('drp_action') == '5') { // clear statistics
+				foreach($selected_items as $item) {
+					db_execute_prepared('UPDATE poller
+						SET total_time = 0, max_time = 0, min_time = 9999999, avg_time = 0, total_polls = 0
+						WHERE id = ?',
+						array($item));
+				}
+
+				raise_message('poller_clear', __('Data Collector Statistics cleared.'), MESSAGE_LEVEL_INFO);
 			}
 		}
 
@@ -544,6 +580,15 @@ function form_actions() {
 			</tr>\n";
 
 			$save_html = "<input type='button' class='ui-button ui-corner-all ui-widget' value='" . __esc('Cancel') . "' onClick='cactiReturnTo()'>&nbsp;<input type='submit' class='ui-button ui-corner-all ui-widget' value='" . __esc('Continue') . "' title='" . __n('Enable Data Collector', 'Synchronize Remote Data Collectors', cacti_sizeof($poller_array)) . "'>";
+		} elseif (get_request_var('drp_action') == '5') { // clear statistics
+			print "<tr>
+				<td class='textArea' class='odd'>
+					<p>" . __n('Click \'Continue\' to Clear Data Collector Statistics for the Data Collector.', 'Click \'Continue\' to Clear DAta Collector Statistics for the Data Collectors.', cacti_sizeof($poller_array)) . "</p>
+					<div class='itemlist'><ul>$pollers</ul></div>
+				</td>
+			</tr>\n";
+
+			$save_html = "<input type='button' class='ui-button ui-corner-all ui-widget' value='" . __esc('Cancel') . "' onClick='cactiReturnTo()'>&nbsp;<input type='submit' class='ui-button ui-corner-all ui-widget' value='" . __esc('Continue') . "' title='" . __n('Clear Statistics for Data Collector', 'Clear Statistics for Data Collectors', cacti_sizeof($poller_array)) . "'>";
 		}
 	} else {
 		raise_message(40);
@@ -604,6 +649,7 @@ function poller_edit() {
 			unset($fields_poller_edit['dbuser']);
 			unset($fields_poller_edit['dbpass']);
 			unset($fields_poller_edit['dbport']);
+			unset($fields_poller_edit['dbretries']);
 			unset($fields_poller_edit['dbssl']);
 			unset($fields_poller_edit['dbsslkey']);
 			unset($fields_poller_edit['dbsslcert']);
@@ -681,6 +727,7 @@ function poller_edit() {
 					dbuser:       $('#dbuser').val(),
 					dbpass:       $('#dbpass').val(),
 					dbport:       $('#dbport').val(),
+					dbretries:    $('#dbretries').val(),
 					dbssl:        dbssl,
 					dbsslkey:     $('#dbsslkey').val(),
 					dbsslcert:    $('#dbsslcert').val(),
@@ -715,7 +762,19 @@ function test_database_connection($poller = array()) {
 	if (!cacti_sizeof($poller)) {
 		$poller['dbtype'] = 'mysql';
 
-		$fields = array('dbhost', 'dbuser', 'dbpass', 'dbdefault', 'dbport', 'dbssl', 'dbsslkey', 'dbsslcert', 'dbsslca');
+		$fields = array(
+			'dbhost',
+			'dbuser',
+			'dbpass',
+			'dbdefault',
+			'dbport',
+			'dbretries',
+			'dbssl',
+			'dbsslkey',
+			'dbsslcert',
+			'dbsslca'
+		);
+
 		foreach ($fields as $field) {
 			if ($field == 'dbssl') {
 				if (isset_request_var('dbssl') && get_nfilter_request_var('dbssl') == 'on') {
@@ -739,6 +798,7 @@ function test_database_connection($poller = array()) {
 		$poller['dbdefault'],
 		$poller['dbtype'],
 		$poller['dbport'],
+		$poller['dbretries'],
 		$poller['dbssl'],
 		$poller['dbsslkey'],
 		$poller['dbsslcert'],
@@ -857,7 +917,7 @@ function pollers() {
 					</td>
 					<td>
 						<span>
-							<input type='button' class='ui-button ui-corner-all ui-widget' id='refresh' value='<?php print __esc('Go');?>' title='<?php print __esc('Set/Refresh Filters');?>'>
+							<input type='submit' class='ui-button ui-corner-all ui-widget' id='go' value='<?php print __esc('Go');?>' title='<?php print __esc('Set/Refresh Filters');?>'>
 							<input type='button' class='ui-button ui-corner-all ui-widget' id='clear' value='<?php print __esc('Clear');?>' title='<?php print __esc('Clear Filters');?>'>
 						</span>
 					</td>
@@ -880,10 +940,6 @@ function pollers() {
 			}
 
 			$(function() {
-				$('#refresh').click(function() {
-					applyFilter();
-				});
-
 				$('#clear').click(function() {
 					clearFilter();
 				});
@@ -931,20 +987,91 @@ function pollers() {
 	html_start_box('', '100%', '', '3', 'center', '');
 
 	$display_text = array(
-		'name'        => array('display' => __('Collector Name'), 'align' => 'left',   'sort' => 'ASC',  'tip' => __('The Name of this Data Collector.')),
-		'id'          => array('display' => __('ID'),             'align' => 'right',  'sort' => 'ASC',  'tip' => __('The unique id associated with this Data Collector.')),
-		'hostname'    => array('display' => __('Hostname'),       'align' => 'right',  'sort' => 'ASC',  'tip' => __('The Hostname where the Data Collector is running.')),
-		'status'      => array('display' => __('Status'),         'align' => 'center', 'sort' => 'DESC', 'tip' => __('The Status of this Data Collector.')),
-		'nosort0'   => array('display' => __('Proc/Threads'),      'align' => 'right',  'sort' => 'DESC', 'tip' => __('The Number of Poller Processes and Threads for this Data Collector.')),
-		'total_time'  => array('display' => __('Polling Time'),   'align' => 'right',  'sort' => 'DESC', 'tip' => __('The last data collection time for this Data Collector.')),
-		'nosort1'     => array('display' => __('Avg/Max'),        'align' => 'right',  'sort' => 'DESC', 'tip' => __('The Average and Maximum Collector timings for this Data Collector.')),
-		'hosts'       => array('display' => __('Devices'),        'align' => 'right',  'sort' => 'DESC', 'tip' => __('The number of Devices associated with this Data Collector.')),
-		'snmp'        => array('display' => __('SNMP Gets'),      'align' => 'right',  'sort' => 'DESC', 'tip' => __('The number of SNMP gets associated with this Collector.')),
-		'script'      => array('display' => __('Scripts'),        'align' => 'right',  'sort' => 'DESC', 'tip' => __('The number of script calls associated with this Data Collector.')),
-		'server'      => array('display' => __('Servers'),        'align' => 'right',  'sort' => 'DESC', 'tip' => __('The number of script server calls associated with this Data Collector.')),
-		'last_update' => array('display' => __('Last Finished'),  'align' => 'right',  'sort' => 'DESC', 'tip' => __('The last time this Data Collector completed.')),
-		'last_status' => array('display' => __('Last Update'),    'align' => 'right',  'sort' => 'DESC', 'tip' => __('The last time this Data Collector checked in with the main Cacti site.')),
-		'last_sync' => array('display' => __('Last Sync'),        'align' => 'right',  'sort' => 'DESC', 'tip' => __('The last time this Data Collector was full synced with main Cacti site.')));
+		'name' => array(
+			'display' => __('Collector Name'),
+			'align' => 'left',
+			'sort' => 'ASC',
+			'tip' => __('The Name of this Data Collector.')
+		),
+		'id' => array(
+			'display' => __('ID'),
+			'align' => 'right',
+			'sort' => 'ASC',
+			'tip' => __('The unique id associated with this Data Collector.')
+		),
+		'poller.hostname'    => array(
+			'display' => __('Hostname'),
+			'align' => 'right',
+			'sort' => 'ASC',
+			'tip' => __('The Hostname where the Data Collector is running.')
+		),
+		'status'      => array(
+			'display' => __('Status'),
+			'align' => 'center',
+			'sort' => 'DESC',
+			'tip' => __('The Status of this Data Collector.')
+		),
+		'nosort0'   => array(
+			'display' => __('Proc/Threads'),
+			'align' => 'right',
+			'sort' => 'DESC',
+			'tip' => __('The Number of Poller Processes and Threads for this Data Collector.')
+		),
+		'total_time'  => array(
+			'display' => __('Polling Time'),
+			'align' => 'right',
+			'sort' => 'DESC',
+			'tip' => __('The last data collection time for this Data Collector.')
+		),
+		'nosort1'     => array(
+			'display' => __('Avg/Max'),
+			'align' => 'right',
+			'sort' => 'DESC',
+			'tip' => __('The Average and Maximum Collector timings for this Data Collector.')
+		),
+		'hosts'       => array(
+			'display' => __('Devices'),
+			'align' => 'right',
+			'sort' => 'DESC',
+			'tip' => __('The number of Devices associated with this Data Collector.')
+		),
+		'snmp'        => array(
+			'display' => __('SNMP Gets'),
+			'align' => 'right',
+			'sort' => 'DESC',
+			'tip' => __('The number of SNMP gets associated with this Collector.')
+		),
+		'script'      => array(
+			'display' => __('Scripts'),
+			'align' => 'right',
+			'sort' => 'DESC',
+			'tip' => __('The number of script calls associated with this Data Collector.')
+		),
+		'server'      => array(
+			'display' => __('Servers'),
+			'align' => 'right',
+			'sort' => 'DESC',
+			'tip' => __('The number of script server calls associated with this Data Collector.')
+		),
+		'last_update' => array(
+			'display' => __('Last Finished'),
+			'align' => 'right',
+			'sort' => 'DESC',
+			'tip' => __('The last time this Data Collector completed.')
+		),
+		'last_status' => array(
+			'display' => __('Last Update'),
+			'align' => 'right',
+			'sort' => 'DESC',
+			'tip' => __('The last time this Data Collector checked in with the main Cacti site.')
+		),
+		'last_sync' => array(
+			'display' => __('Last Sync'),
+			'align' => 'right',
+			'sort' => 'DESC',
+			'tip' => __('The last time this Data Collector was full synced with main Cacti site.')
+		)
+	);
 
 	html_header_sort_checkbox($display_text, get_request_var('sort_column'), get_request_var('sort_direction'), false);
 
@@ -963,7 +1090,7 @@ function pollers() {
 				$poller['status'] = 6;
 			}
 
-			$mma = round($poller['avg_time'], 2) . '/' .  round($poller['max_time'], 2);
+			$mma = round($poller['avg_time']?:0, 2) . '/' .  round(max($poller['max_time']?:1,1), 2);
 
 			if (empty($poller['name'])) {
 				$poller['name'] = '&lt;no name&gt;';

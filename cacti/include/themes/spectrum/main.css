@@ -175,6 +175,10 @@ span[class^="fa glyph_tab-link"]:before {
 	white-space: nowrap;
 }
 
+.wrap {
+	white-space: normal !important;
+}
+
 .top {
 	vertical-align:top;
 }
@@ -347,7 +351,7 @@ span[class^="fa glyph_tab-link"]:before {
 
 .spikeKillMenuItem {
 	display: block;
-	width: 100%:
+	width: 100%;
 }
 
 .deviceUp {
@@ -902,7 +906,7 @@ tr.tableRow.even-alternate:hover:not(.selected), tr.tableRow.even:hover:not(.sel
 
 .loginArea label {
 	color: rgb(149, 159, 159);
-	font-family: Helvetica Neue Roman for IBM,Helvetica,Arial,sans-serif;;
+	font-family: Helvetica Neue Roman for IBM,Helvetica,Arial,sans-serif;
 	font-size: 14px;
 	font-weight: 400;
 	vertical-align: -2px !important;
@@ -1120,6 +1124,10 @@ legend {
 	display: inline-block;
 }
 
+.piinstall, .pienable, .pidisable, .piuninstall, .pierror {
+	padding: 0px 3px !important;
+}
+
 .linkEditMain, .linkEditMain:visited, .linkEditMain:active {
 	text-decoration: none;
 	font-size: 12px;
@@ -1259,9 +1267,11 @@ legend {
 .cactiTableTitleRow {
 	color: white;
 	float: left;
+	padding-left: 3px;
 	text-align: left;
 	line-height: 26px;
-	display: table-column;
+	height: 26px;
+	display: block;
 	width: 100%;
 	font-size: 1em;
 	font-weight: 600;
@@ -1271,9 +1281,11 @@ legend {
 .cactiTableTitle {
 	color: white;
 	float: left;
+	padding-left: 3px;
 	text-align: left;
 	line-height: 26px;
-	display: table-column;
+	height: 26px;
+	display: block;
 	width: 70%;
 	font-size: 1em;
 	font-weight: 600;
@@ -1282,10 +1294,12 @@ legend {
 
 .cactiTableButton {
 	float: right;
+	padding: 0px;
+	display: block;
 	line-height: 26px;
-	display: table-column;
+	height: 26px;
 	text-align: right;
-	width: 30%;
+	width: calc(30% - 3px);
 	white-space: nowrap;
 	background-color: rgba(00,65,65,1.0) !important;
 }
@@ -1309,8 +1323,8 @@ legend {
 	padding: 0px 8px;
 }
 
-.cactiTableButton span:last-child, .cactiTableTitle span:last-child {
-	padding: 0px 5px;
+.cactiTableButton span:last-child i, .cactiTableTitle span:last-child i, .cactiTableTitle span:last-child a {
+	padding: 0px 8px !important;
 }
 
 .cactiDebugTable {
@@ -1426,7 +1440,7 @@ legend {
 
 .formHeaderAnchor {
 	float:right;
-	padding-right:4px;
+	padding-right: 8px;
 }
 
 .hostInfoHeader {
@@ -1542,7 +1556,9 @@ legend {
 	text-align: left;
 	font-size: 12px;
 	font-weight: 500;
-	padding: 2px;
+	padding: 0px 2px;
+	height: 28px;
+	line-height: 28px;
 }
 
 .tableHeader th div {
@@ -2314,8 +2330,9 @@ tr#realtime td:first-child {
 
 .menu_glyph {
 	font-size: 12px;
-	width: 20px;
 	vertical-align: middle;
+	text-align: left;
+	width: 20px;
 }
 
 .menuitem span {
@@ -2341,6 +2358,7 @@ tr#realtime td:first-child {
 
 .ui-multiselect-header {
 	background-color: #E5E5E5;
+	margin-bottom: 5px;
 }
 
 .ui-multiselect, .ui-multiselect-button, .ui-selectmenu-button {
@@ -2354,8 +2372,7 @@ tr#realtime td:first-child {
 }
 
 .ui-multiselect-header ul {
-	margin-top: 4px;
-	height: 15px;
+	height: 20px;
 	float: left;
 }
 
@@ -2622,4 +2639,14 @@ td.center > table {
 	color: rgb(13, 17, 17);
 	width: 240px !important;
 	border-radius: 0px !important;
+}
+
+[id*='_edit'] .tableRowGraph:hover {
+	background-color: rgba(0, 200, 200, .1) !important;
+	border-left: 2px solid yellow !important;
+	border-right: 2px solid yellow !important;
+}
+
+.tableRowGraph {
+	border: 2px solid rgba(0,0,0,0);
 }

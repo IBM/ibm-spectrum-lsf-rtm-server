@@ -1,4 +1,4 @@
-#!/usr/bin/php -q
+#!/usr/bin/env php
 <?php
 // $Id$
 /*
@@ -32,6 +32,11 @@ require_once($config['base_path'] . '/lib/snmp.php');
 require_once($config['base_path'] . '/lib/sort.php');
 require_once($config['base_path'] . '/lib/template.php');
 require_once($config['base_path'] . '/lib/utility.php');
+
+/* switch to main database for cli's */
+if ($config['poller_id'] > 1) {
+	db_switch_remote_to_main();
+}
 
 /* process calling arguments */
 $parms = $_SERVER['argv'];
@@ -361,7 +366,7 @@ if (cacti_sizeof($parms)) {
 		}
 	}
 
-	/* Verify the host's existance */
+	/* Verify the host's existence */
 	if (!isset($hosts[$host_id]) || $host_id == 0) {
 		print "ERROR: Unknown Host ID ($host_id)\n";
 		print "Try --list-hosts\n";
@@ -515,7 +520,7 @@ if (cacti_sizeof($parms)) {
 					$field_name       = $option_value[0];
 				}
 
-				/* check for the input fields existance */
+				/* check for the input fields existence */
 				$field_found = false;
 				if (cacti_sizeof($input_fields)) {
 					foreach ($input_fields as $key => $row) {
@@ -769,7 +774,7 @@ function display_help() {
 	print "    [--graph-title=S]       Defaults to what ever is in the Graph Template/Data Template.\n";
 	print "    [--reindex-method=N]    The reindex method to be used for that data query.\n";
 	print "                            NOTE: If Data Query is already associated, the reindex method will NOT be changed.\n\n";
-	print "    Valid --reindex-methos include\n";
+	print "    Valid --reindex-methods include\n";
 	print "        0|None   = No reindexing\n";
 	print "        1|Uptime = Uptime goes Backwards (Default)\n";
 	print "        2|Index  = Index Count Changed\n";

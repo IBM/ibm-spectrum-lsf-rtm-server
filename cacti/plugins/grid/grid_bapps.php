@@ -30,7 +30,7 @@ $title = __('IBM Spectrum LSF RTM - Batch Application Details', 'grid');
 
 grid_view_applications();
 
-function grid_view_get_application_records(&$sql_where, $apply_limits = true, $rows = '30', &$sql_params) {
+function grid_view_get_application_records(&$sql_where, $apply_limits = true, $rows = '30', &$sql_params = array()) {
 	global $timespan, $grid_efficiency_sql_ranges;
 
 	$sql_group_by = '';
@@ -49,9 +49,7 @@ function grid_view_get_application_records(&$sql_where, $apply_limits = true, $r
 	}
 
 	/* search filter sql where */
-	if (!strlen(get_request_var('filter'))) {
-		/* Show all items */
-	} else {
+	if (get_request_var('filter') != '') {
 		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . ' (grid_applications.appName LIKE ?)';
 		$sql_params[] = '%'. get_request_var('filter') . '%';
 	}

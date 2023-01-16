@@ -147,6 +147,10 @@ function themeReady() {
 				id = $(this).attr('id');
 
 				$(this).selectmenu({
+					open: function(event, ui) {
+						var instance = $(this).selectmenu('instance');
+						instance.menuInstance.focus(null, instance._getSelectedItem());
+					},
 					change: function(event, ui) {
 						$(this).val(ui.item.value).change();
 					},
@@ -189,7 +193,7 @@ function themeReady() {
 		hostOpen = false;
 		clearTimeout(hostTimer);
 		clearTimeout(clickTimeout);
-		$('#host').autocomplete('close');
+		$('#host').autocomplete('close').select();
 	}).click(function() {
 		if (hostOpen) {
 			$('#host').autocomplete('close');
@@ -202,6 +206,7 @@ function themeReady() {
 				hostOpen = true;
 			}, 200);
 		}
+		$('#host').select();
 	}).on('mouseenter', function() {
 		$(this).addClass('ui-state-hover');
 		$('input#host').addClass('ui-state-hover');
@@ -292,7 +297,7 @@ function setMenuVisibility() {
 		}
 	});
 
-	// Functon to give life to the Navigation pane
+	// Function to give life to the Navigation pane
 	$('#nav li:has(ul) a').unbind().click(function(event) {
 		event.preventDefault();
 

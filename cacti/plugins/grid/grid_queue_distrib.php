@@ -330,9 +330,7 @@ function get_records(&$sql_where, &$queues) {
 	}
 
 	/* filter sql where */
-	if (!strlen(get_request_var('filter'))) {
-		/* Show all items */
-	} else {
+	if (get_request_var('filter') != '') {
 		$values = explode(" ", trim(get_request_var('filter')));
 
 		$qsql_where .= strlen($qsql_where) ? " AND (":"WHERE (";

@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>Cacti – LDAP</title>
+  <title>Cacti – LDAP Authentication</title>
   <style type="text/css">
       code{white-space: pre-wrap;}
       span.smallcaps{font-variant: small-caps;}
@@ -77,11 +77,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <link rel="stylesheet" href="Cacti-Github.css" />
 </head>
 <body>
-<h1 id="ldap">LDAP</h1>
+<h1 id="ldap-authentication">LDAP Authentication</h1>
 <p>Cacti supports using LDAP authentication to access the Cacti GUI. There are several different ways to use LDAP, which will be described in the following sections.</p>
 <h2 id="be-aware">Be Aware</h2>
-<p>When changing LDAP settings in Cacti, such as LDAP General Settings, LDAP Group Settings, and LDAP Specific Search Settings, you may notice that changes do not take effect immediately. You may need to close and reopen your web browser for some changes to take effect.</p>
-<p>!! It would be good if someone could elaborate here on why this happens. !!</p>
+<p>New authentication settings may not take effect immediately. We recommend to open a <strong>new</strong> private browser window to test configuration changes.</p>
 <h2 id="defining-some-terms">Defining some terms</h2>
 <p>Before proceeding, please ensure you are familiar with the following terms:</p>
 <ol>
@@ -94,14 +93,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ol>
 <h2 id="configuring-ldap">Configuring LDAP</h2>
 <h3 id="ldap-general-settings">LDAP General Settings</h3>
+<p><img src="images/ldap-settings.png" alt="LDAP Settings Page" /></p>
 <h4 id="mode">Mode</h4>
 <p>There are three basic routines that Cacti can execute when handling an LDAP authentication.</p>
 <ol>
 <li><em>No Searching</em> - In this routine, Cacti simply binds to the LDAP server using the credentials that were entered during login. Cacti performs a transformation upon the username before binding, that which is specified in the <em>Distinguished Name (DN)</em> field. This transformation is useful, for example, to add a fully-qualified domain name suffix, or to add a NetBIOS domain name prefix. For example:</li>
 </ol>
-<p><code>{username}@example.com</code></p>
+<p><code>&lt;username&gt;@example.com</code></p>
 <p>or</p>
-<p><code>domain\{username}</code></p>
+<p><code>domain\&lt;username&gt;</code></p>
 <ol start="2">
 <li><p><em>Anonymous Searching</em> - In this routine, Cacti connects to LDAP with no authentication and attempts to perform a search for the <em>username</em>, in an attempt to retrieve the specific DN associated with the username. Once the specific DN of the username is found, Cacti binds to LDAP using the DN of the user and the password that was entered during login. Please note, by default, Microsoft's Active Directory does not permit anonymous searches, and will refuse the search request.</p></li>
 <li><p><em>Specific Searching</em> - In this routine, Cacti binds to LDAP using a service account that was provided beforehand, then performs a search for the <em>username</em>, in an attempt to retrieve the specific DN associated with the username. Once the specific DN of the username is found, Cacti binds to LDAP using the DN of the user and the password that was entered during login.</p></li>
@@ -134,11 +134,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3 id="specific-search-settings">Specific Search Settings</h3>
 <ol>
 <li><p><em>Search Base</em> - The portion of the directory hierarchy inside which the server should perform the search. When the directory contains many objects, the time and resources required to search the directory are greater. The <em>search base</em> setting is useful to reduce the portion of the directory that is searched, thus increasing speed and reducing processor load on the directory server. This setting is also useful if you want to restrict access to Cacti to users who exist in a particular location in the director heierarchy.</p></li>
-<li><p><em>Search Filter</em> - The criteria for which the directory server should search. Any parameters that the server is capable of understanding are permitted here. Cacti will perform a substitution for the phrase <code>{username}</code> in the search filter, and will replace it with the username. This field must be in acceptable LDAP syntax. A useful example of a search filter would be:</p></li>
+<li><p><em>Search Filter</em> - The criteria for which the directory server should search. Any parameters that the server is capable of understanding are permitted here. Cacti will perform a substitution for the phrase <code>&lt;username&gt;</code> in the search filter, and will replace it with the username. This field must be in acceptable LDAP syntax. A useful example of a search filter would be:</p></li>
 </ol>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">(</span><span class="va">sAMAccountName=</span><span class="dt">{username}</span><span class="kw">)</span></a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">(</span><span class="va">sAMAccountName=</span><span class="op">&lt;</span><span class="ex">username</span><span class="op">&gt;</span><span class="kw">)</span></a></code></pre></div>
 <p>But more complex filers are also permitted, such as:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">(&amp;(</span><span class="va">sAMAccountName=</span><span class="dt">{username}</span><span class="kw">)(</span><span class="va">memberOf=</span>CN=<span class="ex">cacti-admins</span>,OU=Admin_Groups,OU=Groups</a>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">(&amp;(</span><span class="va">sAMAccountName=</span><span class="op">&lt;</span><span class="ex">username</span><span class="op">&gt;</span><span class="kw">)(</span><span class="va">memberOf=</span>CN=<span class="ex">cacti-admins</span>,OU=Admin_Groups,OU=Groups</a>
 <a class="sourceLine" id="cb4-2" title="2">,<span class="va">DC=</span>corp,DC=<span class="ex">company</span>,DC=com<span class="kw">))</span></a></code></pre></div>
 <ol start="3">
 <li><p><em>Search Distinguished Name (DN)</em> - The username of the service account with which Cacti will bind to the directory.</p></li>
@@ -151,6 +151,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><p><em>Full Name</em> - The LDAP attribute name which contains a user's full name. Some common examples are 'displayname' or 'cn'.</p></li>
 <li><p><em>Email</em> - The LDAP attribute name which contains a user's email address. One common example is 'mail'.</p></li>
 </ol>
+<p><strong>Always user lower case</strong>. No matter if the directory's attribute name contains uppercase characters (e.g. <code>fullName</code>), the respective field must be filled out in lower-case (<code>fullname</code>).</p>
 <h2 id="a-few-notes">A few notes</h2>
 <h3 id="certificate-verification">Certificate verification</h3>
 <p>When using LDAPS, a key and certificate must be installed on the directory server. When the client attaches to the server, it must make a decision to trust or reject the certificate that the server provided. The client will attempt to find the issuer of the certificate in a local repository of trusted certificate signers. If you install onto the directory server a certificate signed by an internal authority or a self-signed certificate, you will need to add the certificate of the issuer to the local repository on the Cacti server. If you do not, the client will surely reject the certificate, causing authentication to fail. To install a trusted certificate into the local repository, consult the documentation for the Operating System platform upon which you installed Cacti.</p>
@@ -160,13 +161,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>These following scenarios are designed to help you see the different ways to harness the power of LDAP and build a working LDAP configuration in your environment.</p>
 <h3 id="a-small-office-where-everyone-has-access-to-cacti">A small office where everyone has access to Cacti</h3>
 <p>In this scenario, a small LDAP directory contains users who are all granted access to Cacti (there are no users denied from Cacti). Some may be administrators, while others are read-only users.</p>
-<p>To handle this scenario, start by creating a new local user in Cacti with read-only permissions. Name the user 'MyLdapTemplate'. Next, in Cacti's Authentication settings, set the <code>User Template</code> field to 'MyLdapTemplate'. Set the <code>Mode</code> to 'No Searching'. Set the <code>Distinguished Name (DN)</code> field to '{username}@example.com', where 'example.com' is the name of your domain. When any user logs in to Cacti, their password will be checked against the LDAP directory and they'll be granted access to Cacti with read-only access (from the LDAP template user). Once a new user logs in, Cacti will create a local user where the user's <code>Realm</code> is 'LDAP'. You may then optionally promote that user to an administrator by visiting the <code>Users</code> page, locating the account for the LDAP user, and granting additional permissions to that user.</p>
+<p>To handle this scenario, start by creating a new local user in Cacti with read-only permissions. Name the user 'MyLdapTemplate'. Next, in Cacti's Authentication settings, set the <code>User Template</code> field to 'MyLdapTemplate'. Set the <code>Mode</code> to 'No Searching'. Set the <code>Distinguished Name (DN)</code> field to '<username>@example.com', where 'example.com' is the name of your domain. When any user logs in to Cacti, their password will be checked against the LDAP directory and they'll be granted access to Cacti with read-only access (from the LDAP template user). Once a new user logs in, Cacti will create a local user where the user's <code>Realm</code> is 'LDAP'. You may then optionally promote that user to an administrator by visiting the <code>Users</code> page, locating the account for the LDAP user, and granting additional permissions to that user.</p>
 <h3 id="a-large-office-where-you-only-want-a-subset-of-users-to-access-cacti">A large office where you only want a subset of users to access Cacti</h3>
 <p>In this scenario, a large LDAP directory contains a mix of users who should, and should not, be granted access to Cacti.</p>
 <p>There are two ways to handle this scenario. You may either manually authorize users within Cacti, or you may use a group in the directory to define the authorized users.</p>
-<p>To handle this scenario by manually authorizing users within Cacti, navigate to the Authentication settings, and set the <code>User Template</code> field to 'No User'. Set the <code>Mode</code> to 'No Searching'. Set the <code>Distinguished Name (DN)</code> field to '{username}@example.com', where 'example.com' is the name of your domain. Next, navigate to the <code>Users</code> page and create a new user where the username matches the username in the directory. Set the user's <code>Realm</code> to 'LDAP'. Grant your desired permissions to the user. When that user logs in to Cacti, their password will be checked against the LDAP directory and they'll be granted access to Cacti based upon their local account.</p>
-<p>To handle the large office scenario by using group membership, start by creating a user in the directory that can be used for searching the directory (this is sometimes referred to as a Service Account). Under normal circumstances, this directory user does not need elevated permissions. Next, create a group in the directory that contains all the users who should be granted access to Cacti. Next, in Cacti, create a new local user named 'MyLdapTemplate', with administrator permissions. In Cacti's Authentication settings, set the <code>User Template</code> field to 'MyLdapTemplate'. Set the <code>Mode</code> to 'Specific Searching'. Leave the <code>Distinguished Name (DN)</code> field blank. Set the <code>Require Group Membership</code> field to enabled. Set the <code>Group Distinguished Name (DN)</code> to the name of the group. Set <code>Group Member Attribute</code> to 'member'. Set <code>Group Member Type</code> to 'Distinguished Name'. Set <code>Search Base</code> to the DN of the hierarchical structure in the directory which contains all the users, such as 'OU=Users,DC=example,DC=com'. Set <code>Search Filter</code> to 'sAMAccountName={username}'. Set <code>Search Distinguished Name (DN)</code> to the username of the service account you created in the directory. Set <code>Search Password</code> to the password for the service account. Optionally, set <code>Full Name</code> to the directory attribute that contains the user's name, such as 'cn', and also set <code>Email</code> to the directory attribute that contains the user's email address, such as 'mail'.</p>
+<p>To handle this scenario by manually authorizing users within Cacti, navigate to the Authentication settings, and set the <code>User Template</code> field to 'No User'. Set the <code>Mode</code> to 'No Searching'. Set the <code>Distinguished Name (DN)</code> field to '<username>@example.com', where 'example.com' is the name of your domain. Next, navigate to the <code>Users</code> page and create a new user where the username matches the username in the directory. Set the user's <code>Realm</code> to 'LDAP'. Grant your desired permissions to the user. When that user logs in to Cacti, their password will be checked against the LDAP directory and they'll be granted access to Cacti based upon their local account.</p>
+<p>To handle the large office scenario by using group membership, start by creating a user in the directory that can be used for searching the directory (this is sometimes referred to as a Service Account). Under normal circumstances, this directory user does not need elevated permissions. Next, create a group in the directory that contains all the users who should be granted access to Cacti. Next, in Cacti, create a new local user named 'MyLdapTemplate', with administrator permissions. In Cacti's Authentication settings, set the <code>User Template</code> field to 'MyLdapTemplate'. Set the <code>Mode</code> to 'Specific Searching'. Leave the <code>Distinguished Name (DN)</code> field blank. Set the <code>Require Group Membership</code> field to enabled. Set the <code>Group Distinguished Name (DN)</code> to the name of the group. Set <code>Group Member Attribute</code> to 'member'. Set <code>Group Member Type</code> to 'Distinguished Name'. Set <code>Search Base</code> to the DN of the hierarchical structure in the directory which contains all the users, such as 'OU=Users,DC=example,DC=com'. Set <code>Search Filter</code> to 'sAMAccountName=<username>'. Set <code>Search Distinguished Name (DN)</code> to the username of the service account you created in the directory. Set <code>Search Password</code> to the password for the service account. Optionally, set <code>Full Name</code> to the directory attribute that contains the user's name, such as 'cn', and also set <code>Email</code> to the directory attribute that contains the user's email address, such as 'mail'.</p>
 <hr />
-<p>Copyright (c) 2004-2020 The Cacti Group</p>
+<p><copy>Copyright (c) 2004-2022 The Cacti Group</copy></p>
 </body>
 </html>

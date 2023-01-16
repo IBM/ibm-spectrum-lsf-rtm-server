@@ -30,7 +30,7 @@ $title = __('IBM Spectrum LSF RTM - Batch Job Group Statistics', 'grid');
 
 grid_view_groups();
 
-function grid_view_get_group_records($groupName, &$sql_where, $apply_limits = true, $rows = '30', &$sql_params) {
+function grid_view_get_group_records($groupName, &$sql_where, $apply_limits = true, $rows = '30', &$sql_params = array()) {
 	global $timespan, $grid_efficiency_sql_ranges;
 
 	$sql_group_by = '';
@@ -50,9 +50,7 @@ function grid_view_get_group_records($groupName, &$sql_where, $apply_limits = tr
 	}
 
 	/* search filter sql where */
-	if (!strlen(get_request_var('filter'))) {
-		/* Show all items */
-	} else {
+	if (get_request_var('filter') != '') {
 		$sql_where .= (strlen($sql_where) ? " AND " : " WHERE ") .  " (groupName LIKE ?)";
 		$sql_params[] = '%'. get_request_var('filter') . '%';
 	}
@@ -276,6 +274,7 @@ function grid_view_groups() {
 	groupFilter($agragatelevel);
 	html_end_box();
 
+	$sql_where = '';
 	if (!isset_request_var('unused') || (get_request_var('unused') != 'true' && get_request_var('unused') != 'on' )) {
 		$sql_where = 'WHERE grid_groups.numJOBS>0';
 	}

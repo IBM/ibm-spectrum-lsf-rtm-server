@@ -56,7 +56,12 @@ $graphs    = 0;
 $lsid      = 0;
 
 foreach ($parms as $parameter){
-	@list($arg, $val) = @explode('=', $parameter);
+	if (strpos($parameter, '=')) {
+		list($arg, $value) = explode('=', $parameter);
+	} else {
+		$arg = $parameter;
+		$value = '';
+	}
 	switch ($arg) {
 	case '--force':
 		$force = true;
@@ -68,7 +73,7 @@ foreach ($parms as $parameter){
 		$debug = true;
 		break;
 	case '--lsid':
-		$lsid = $val;
+		$lsid = $value;
 		break;
 	case '--no-reindex':
 		$reindex = false;
@@ -242,7 +247,7 @@ function add_data_query($force, $templates, $reindex, $lsid) {
 	}
 
 	if ($reindex) {
-		echo trim(passthru($php_bin." -q " . $path_web . "/cli/poller_reindex_hosts.php -id=" . $host_id . " -qid=$queryid"));
+		passthru($php_bin." -q " . $path_web . "/cli/poller_reindex_hosts.php -id=" . $host_id . " -qid=$queryid");
 	}
 
 	$snmp_queries = db_fetch_assoc_prepared("SELECT snmp_query.id,
@@ -344,7 +349,7 @@ function add_data_query_graphs($host_id, $graph_template_id, $snmp_query_id, $sn
 					" --snmp-query-id=$snmp_query_id --snmp-field=$snmp_field_name" .
 					" --snmp-value='" . $item . "'";
 
-				echo trim(passthru($command)) . "\n";
+				passthru($command);
 				$graphs++;
 			}
 		}

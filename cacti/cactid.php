@@ -1,4 +1,4 @@
-#!/usr/bin/php -q
+#!/usr/bin/env php
 <?php
 // $Id$
 /*
@@ -19,7 +19,13 @@
  +-------------------------------------------------------------------------+
 */
 
-declare(ticks = 1);
+if (function_exists('pcntl_async_signals')) {
+	pcntl_async_signals(true);
+} else {
+	declare(ticks = 100);
+}
+
+ini_set('output_buffering', 'Off');
 
 /* sig_handler - provides a generic means to catch exceptions to the Cacti log.
    @arg $signo - (int) the signal that was thrown by the interface.
@@ -31,6 +37,7 @@ function sig_handler($signo) {
 	case SIGTERM:
 	case SIGINT:
 		cacti_log('WARNING: Cacti Daemon PID[' . getmypid() . '] Terminated on Device[' . gethostname() . ']', true, 'CACTID');
+		admin_email(__('Cacti System Warning'), __('WARNING: Cacti Daemon PID[' . getmypid() . '] Terminated on Device[' . gethostname() . ']', true, 'CACTID'));
 		exit(1);
 		break;
 	default:
@@ -117,13 +124,14 @@ if (!$foreground) {
 			// We are the child
 		} else {
 			cacti_log('NOTE: Cacti Daemon PID[' . getmypid() . '] Started on Device[' . gethostname() . ']');
+			admin_email(__('Cacti System Notice'), __('Notice: Cacti Daemon PID[' . getmypid() . '] Started on Device[' . gethostname() . ']', true, 'CACTID'));
 
 			print '[OK]' . PHP_EOL;
 
 			exit(0);
 		}
 	} else {
-		// On Windows we run in foregroud mode
+		// On Windows we run in foreground mode
 		print '[OK]' . PHP_EOL . '[NOTE] This system does not support forking.' . PHP_EOL;
 	}
 } else {
@@ -233,23 +241,6 @@ function get_options() {
 	}
 
 	return $options;
-}
-
-function db_check_reconnect() {
-	chdir(dirname(__FILE__));
-
-	include('./include/config.php');
-
-	$version = db_fetch_cell('SELECT cacti FROM version', 'cacti', false);
-
-	if ($version === false) {
-		debug('Connection went away.  Reconnecting...');
-
-		db_close();
-
-		// Connect to the database server
-		db_connect_real($database_hostname, $database_username, $database_password, $database_default, $database_type, $database_port, $database_ssl);
-	}
 }
 
 function debug($string) {

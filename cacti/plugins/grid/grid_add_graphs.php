@@ -75,7 +75,12 @@ if (cacti_sizeof($parms)) {
 	$dsGraph['snmpValue']     = '';
 
 	foreach($parms as $parameter) {
-		@list($arg, $value) = @explode('=', $parameter,2);
+		if (strpos($parameter, '=')) {
+			list($arg, $value) = explode('=', $parameter, 2);
+		} else {
+			$arg = $parameter;
+			$value = '';
+		}
 
 		switch($arg) {
 		case '--graph-type':

@@ -79,11 +79,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <body>
 <h1 id="how-to-graph-your-network">How to Graph Your Network</h1>
 <p>At this point, you probably realize that graphing is Cacti's greatest strength. Cacti has many powerful features that provide complex graphing and data acquisition, some which have a slight learning curve. Do not let that stop you however, because graphing your network is incredibly simple.</p>
-<p>The next two sections will outline the two basic steps which are typically required to create graphs for most devices.</p>
+<p>The next two sections will outline the two basic steps which are typically required to create <strong>Graphs</strong> for most <strong>Devices</strong> or <strong>Device Types</strong>.</p>
+<blockquote>
+<p><strong>NOTE</strong>: The process described below is the Classic way for you to create and manage <strong>Devices</strong> and <strong>Graphs</strong>. However, Cacti now allows your to Automate many of these tasks in the <strong>Automation</strong> section of the Console. That topic is covered in the Automation Chapter.</p>
+</blockquote>
 <h2 id="creating-a-device">Creating a Device</h2>
-<p>The first step to creating graphs for your network is adding a device for each network device that you want to create graphs for. A device specifies important details such as the network hostname, SNMP parameters, and host type.</p>
-<p>To manage devices within Cacti, click on the Devices menu item. Clicking Add will bring up a new device form. The first two fields, Description and Hostname are the only two fields that require your input beyond the defaults. If your host type is defined under the host template dropdown, be sure to select it here. You can always choose "Generic SNMP-enabled Host" if you are just graphing traffic or "None" if you are unsure. It is important to remember that the host template you choose will not lock you into any particular configuration, it will just provide more intelligent defaults for that type of host.</p>
-<p><img src="images/new_device.png" alt="Adding a New Device" /></p>
+<p>The first step to creating <strong>Graphs</strong> for your network is adding a <strong>Device</strong> for each network device that you want to create <strong>Graphs</strong> for. A <strong>Device</strong> contains important details such as the network hostname, SNMP parameters, and <strong>Device Type</strong> (aka <strong>Device Template</strong>).</p>
+<p>To manage <strong>Devices</strong> within Cacti, click on the Devices menu item. Clicking Add will bring up a new device form. The first two fields, Description and Hostname are the only two fields that require your input beyond the defaults. If your host type is defined under the host template dropdown, be sure to select it here. You can always choose "Generic SNMP-enabled Host" if you are just graphing traffic or "None" if you are unsure. It is important to remember that the host template you choose will not lock you into any particular configuration, it will just provide more intelligent defaults for that type of host.</p>
+<p><img src="images/new-device.png" alt="Adding a New Device" /></p>
 <h3 id="device-field-definitions">Device Field Definitions</h3>
 <ul>
 <li><p><strong>Description</strong> - This description will show up in the first column of the device list. You may refer to it e.g. in graph titles.</p></li>
@@ -97,9 +100,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><p><strong>Downed Device Detection</strong></p>
 <ul>
 <li><em><strong>NONE</strong></em> - Deactivate downed host detection</li>
-<li><em><strong>SNMP</strong></em> - verify SNMP check on OID .1 and .1.3</li>
-<li><em><strong>ICMP</strong></em> - perform a ping test, see below</li>
-<li><em><strong>PING and SNMP</strong></em> - perform both tests</li>
+<li><em><strong>PING and SNMP Uptime</strong></em> - Ping and then also check SNMP Uptime</li>
+<li><em><strong>PING or SNMP Uptime</strong></em> - Ping and if successful, move on, if not check SNMP Uptime</li>
+<li><em><strong>SNMP Uptime</strong></em> - verify the SNMP Uptime only</li>
+<li><em><strong>SNMP Desc</strong></em> - verify the SNMP System Description</li>
+<li><em><strong>SNMP GetNext</strong></em> - verify the very next SNMP OID after .1.3</li>
+<li><em><strong>PING</strong></em> - perform a ping test, see below</li>
 </ul></li>
 <li><p><strong>Ping Method</strong> - Available only for <em><strong>PING and SNMP</strong></em> or <em><strong>PING</strong></em></p>
 <ul>
@@ -122,15 +128,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><p><strong>SNMP Community</strong> - SNMP read community for this device</p></li>
 <li><p><strong>SNMP Port</strong> - UDP port number to use for SNMP (default is 161).</p></li>
 <li><p><strong>SNMP Timeout</strong> - Maximum number of milliseconds Cacti will wait for an SNMP response (does not work with php-snmp support).</p></li>
-<li><p><strong>Maximum OID's Per Get Request</strong> - This is a performance feature. Specifies the number of OID's that can be obtained in a single SNMP Get request. <em><strong>WARNING</strong></em>: This feature only works when using Spine. <em><strong>WARNING</strong></em> Some devices do not support values greater than <code>1</code> and/or may crash if this value is to high.</p></li>
+<li><p><strong>Maximum OID's Per Get Request</strong> - This is a performance feature. Specifies the number of OID's that can be obtained in a single SNMP Get request. <em><strong>WARNING</strong></em>: This feature only works when using Spine. <em><strong>WARNING</strong></em> Some devices do not support values greater than <code>1</code> and/or may reports as unknown data if this value is too high.</p></li>
 </ul>
 <h3 id="security-options-for-snmp-v3">Security Options for SNMP V3</h3>
 <ul>
 <li><p><em><strong>SNMP Username</strong></em> - <code>username</code> of an SNMP V3 <code>createUser</code> statement or equivalent</p></li>
 <li><p><em><strong>SNMP Password</strong></em> - <code>authpassphrase</code> of an SNMP V3 <code>createUser</code> statement or equivalent</p></li>
-<li><p><em><strong>SNMP Auth Protocol</strong></em> - Authentication type of an SNMP V3 <code>createUser</code> statement or equivalent. Select either MD5 or SHA. Defaults to MD5.</p></li>
+<li><p><em><strong>SNMP Auth Protocol</strong></em> - Authentication type of an SNMP V3 <code>createUser</code> statement or equivalent. Select either MD5, SHA, SHA-224, SHA-256, SHA-392, or SHA-512. Defaults to MD5.</p></li>
 <li><p><em><strong>SNMP Privacy Passphrase</strong></em> - The <code>privacy passphrase</code> of an SNMP V3 <code>createUser</code> statement or equivalent.</p></li>
-<li><p><em><strong>SNMP Privacy Protocol</strong></em> - The <code>privacy protocol</code> of an SNMP V3 <code>createUser</code> statement or equivalent. Select either DES or AES. Defaults to DES.</p></li>
+<li><p><em><strong>SNMP Privacy Protocol</strong></em> - The <code>privacy protocol</code> of an SNMP V3 <code>createUser</code> statement or equivalent. Select DES (if available), AES-128, AES-192, or AES-256. Defaults to DES.</p>
+<p><strong>NOTE</strong> Spine may not support DES today as some Net-SNMP distributions have disabled it.</p></li>
 <li><p><em><strong>SNMP Context</strong></em> - When using the View-Based Access Control Model (VACM), it is possible to specify an SNMP Context when mapping a community name to a security name with a <code>com2sec</code> directive, with the <code>group</code> directive and the <code>access</code> directive. This allows for defining special access models. If using such a parameter with your target's SNMP configuration, specify the context name to be used to access that target here.</p></li>
 </ul>
 <p>After saving your new device, you should be redirected back to the same edit form with some additional information. If you configured SNMP for this host by providing a valid community string, you should see various statistics listed at the top of the page. If you see "SNMP error" instead, this indicates an SNMP problem between Cacti and your device.</p>
@@ -279,12 +286,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb4-12" title="12"><span class="ex">...</span></a></code></pre></div>
 <h2 id="creating-the-graphs">Creating the Graphs</h2>
 <p>Now that you have created some devices, it is time to create graphs for these devices. To do this, select the New Graphs menu option under the Create heading. If you're still at the device edit screen, select Create Graphs for this Host to see a screen similar to the image pictured below.</p>
-<p><img src="images/new_graphs.png" alt="Creating New Graphs" /></p>
+<p><img src="images/new-graphs.png" alt="Creating New Graphs" /></p>
 <p>The dropdown menu that contains each device should be used to select the host that you want to create new graphs for. The basic concept to this page is simple, place a check in each row that you want to create a graph for and click Create.</p>
 <p>If you are creating graphs from inside a "Data Query" box, there are a few additional things to keep in mind. First is that you may encounter the situation as pictured above with the "SNMP - Interface Statistics" data query. If this occurs you may want to consult the section on debugging data queries to see why your data query is not returning any results. Also, you may see a "Select a graph type" dropdown box under some data query boxes. Changing the value of this dropdown box affects which type of graph Cacti will make after clicking the Create button. Cacti only displays this dropdown box when there is more than one type to choose from, so it may not be displayed in all cases.</p>
 <p>Once you have selected the graphs that you want to create, simply click the Create button at the bottom of the page. You will be taken to a new page that allows you to specify additional information about the graphs you are about to create. You only see the fields here that are not part of each template, otherwise the value automatically comes from the template. When all of the values on this page look correct, click the Create button one last time to actually create your graphs.</p>
 <p>If you would like to edit or delete your graphs after they have been created, use the Graph Management item on the menu. Likewise, the Data Source menu item allows you to manage your data sources in Cacti.</p>
 <hr />
-<p>Copyright (c) 2004-2020 The Cacti Group</p>
+<p><copy>Copyright (c) 2004-2022 The Cacti Group</copy></p>
 </body>
 </html>

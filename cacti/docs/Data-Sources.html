@@ -20,11 +20,13 @@
 <li><p>Monitoring a device via ping will usually count as 1 data source.</p></li>
 <li><p>A 24 port switch and you poll the device via snmp and graph all of the ports then there will be 24 data sources</p></li>
 </ul>
-<p>Note: if you add more graphs that base their data on the original data source that would not count as another data source since it uses the already existing source.</p>
-<p>For example, if you have a 24 port switch that you create an <strong>In/Out Bits</strong> graph for each interface, and you then add the <strong>In/Out Bits with 95th Percential</strong> for each interface, you would still only have 24 data sources.</p>
+<blockquote>
+<p><strong>Note</strong>: if you add more graphs that base their data on the original <strong>Data source</strong> that would not count as another <strong>Data Source</strong> since it uses the already existing source.</p>
+</blockquote>
+<p>For example, if you have a 24 port switch that you create an <strong>In/Out Bits</strong> graph for each interface, and you then add the <strong>In/Out Bits with 95th Percentile</strong> for each interface, you would still only have 24 data sources.</p>
 <p>Keeping on top of the amount of data sources you have is important as the more data sources you have the more resources you will need to allocate to your server.</p>
-<p>You can see how many data sources are associated with a single device by going to managment then clicking on devices.</p>
-<p><img src="images/cacti_device_datasource.JPG" alt="device datasources" /></p>
+<p>You can see how many data sources are associated with a single device by going to management then clicking on devices.</p>
+<p><img src="images/device-datasource.png" alt="device datasources" /></p>
 <p>You can also see the total amount of data sources by checking the poller stats on the system. Click the log tab and filter by stats and lookout for the below messege</p>
 <pre class="console"><code>2019/05/24 17:21:11 - SYSTEM STATS: Time:9.5913 Method:spine Processes:2 Threads:2 Hosts:14 HostsPerProcess:7 DataSources:162 RRDsProcessed:117
 </code></pre>
@@ -113,7 +115,11 @@
 </tr>
 </tbody>
 </table>
+<h3 id="viewing-all-data-sources-by-device">Viewing all Data sources by device</h3>
+<p>You are able to check the data sources associated to a specific device in the Console -&gt; Management -&gt; Data sources You can then search based on a device you may be interested in to view the Data sources in use</p>
+<p><img src="images/data-sources-per-device.png" alt="device datasources" /></p>
+<p>You can also view Orphaned data sources in this view by setting Orphaned from All to Orphaned Orphaned data sources are where the graph has been deleted but the data source was not deleted</p>
 <hr />
-<p>Copyright (c) 2004-2020 The Cacti Group</p>
+<p><copy>Copyright (c) 2004-2022 The Cacti Group</copy></p>
 </body>
 </html>

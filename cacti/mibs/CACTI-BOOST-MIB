@@ -3,7 +3,7 @@
 --
 -- Jan 2015, Andreas Braun (aka browniebraun)
 --
--- Copyright (C) 2004-2022 The Cacti Group
+-- Copyright (c) 2004-2022 by The Cacti Group
 -- All rights reserved.
 --
 -- *****************************************************************
@@ -114,7 +114,7 @@ boost MODULE-IDENTITY
     "
     REVISION        "201603080000Z"
     DESCRIPTION
-        "- With decommission of the BOOST SERVER status of:
+        "- With decommission of the BOOST SERVER status of: 
             boostApplServerEnabled, boostApplServerMultiprocess, boostApplServerHostname
             boostApplServerListenPort, boostApplServerTimeOut and cactiStatsPollerRunTime
            has been set to obsolete."
@@ -399,7 +399,7 @@ boostStatsRrdUpdateUtilization OBJECT-TYPE
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
-        "The proportion of the maximum upate frequency in percent Boost requires
+        "The proportion of the maximum update frequency in percent Boost requires
          to update all rrds."
     ::= { boostStats 6 }
 

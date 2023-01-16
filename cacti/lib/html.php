@@ -52,14 +52,36 @@
         This parameter is only used in the legacy behavior.
  */
 function html_start_box($title, $width, $div, $cell_padding, $align, $add_text, $add_label = false) {
+   global $config;
+
 	static $table_suffix = 1;
+	static $help_count   = 0;
+	static $mode_count   = 0;
+	static $beta_count   = 0;
 
 	if ($add_label === false) {
 		$add_label = __('Add');
 	}
 
-	if (defined('CACTI_VERSION_BETA') && $title != '') {
+	if (defined('CACTI_VERSION_BETA') && $title != '' && $beta_count == 0) {
 		$title .= ' [ ' . get_cacti_version_text(false) . ' ]';
+		$beta_count++;
+	}
+
+	if ($config['poller_id'] > 1 && $title != '' && $mode_count == 0) {
+		$title .= ' [ ' . __('Remote Server') . ': ';
+
+		if ($config['connection'] == 'offline') {
+			$title .= '<span class="deviceDown">' . __('Offline') . '</span>';
+		} elseif ($config['connection'] == 'recovery') {
+			$title .= '<span class="deviceRecovering">' . __('Recovering') . '</span>';
+		} else {
+			$title .= __('Online');
+		}
+
+		$title .= ' ]';
+
+		$mode_count++;
 	}
 
 	$table_prefix = basename(get_current_page(), '.php');;
@@ -77,6 +99,29 @@ function html_start_box($title, $width, $div, $cell_padding, $align, $add_text, 
 		print '<div>';
 		print "<div class='cactiTableTitle'><span>" . ($title != '' ? $title:'') . '</span></div>';
 		print "<div class='cactiTableButton'>";
+
+		$page      = get_current_page();
+		$help_file = html_help_page($page);
+
+		if ($help_file === false) {
+			if (isset_request_var('tab')) {
+				$tpage     = $page . ':' . get_nfilter_request_var('tab');
+				$help_file = html_help_page($tpage);
+			}
+		}
+
+		if ($help_file === false) {
+			if (isset_request_var('action')) {
+				$tpage     = $page . ':' . get_nfilter_request_var('action');
+				$help_file = html_help_page($tpage);
+			}
+		}
+
+		if ($help_file !== false && $help_count == 0 && is_realm_allowed(28)) {
+			print "<span class='cactiHelp' title='" . __esc('Get Page Help') . "'><a class='linkOverDark helpPage' data-page='" . html_escape(basename($help_file)) . "' href='#'><i class='far fa-question-circle'></i></a></span>";
+			$help_count++;
+		}
+
 		if ($add_text != '' && !is_array($add_text)) {
 			print "<span class='cactiFilterAdd' title='$add_label'><a class='linkOverDark' href='" . html_escape($add_text) . "'><i class='fa fa-plus'></i></a></span>";
 		} else {
@@ -155,8 +200,9 @@ function html_graph_template_multiselect() {
 	var msWidth = 200;
 
 	$('#graph_template_id').hide().multiselect({
-		height: 300,
+		menuHeight: $(window).height()*.7,
 		menuWidth: 'auto',
+		linkInfo: faIcons,
 		buttonWidth: 'auto',
 		noneSelectedText: '<?php print __('All Graphs & Templates');?>',
 		selectedText: function(numChecked, numTotal, checkedItems) {
@@ -174,7 +220,7 @@ function html_graph_template_multiselect() {
 		},
 		checkAllText: '<?php print __('All');?>',
 		uncheckAllText: '<?php print __('None');?>',
-		uncheckall: function() {
+		uncheckAll: function() {
 			$(this).multiselect('widget').find(':checkbox:first').each(function() {
 				$(this).prop('checked', true);
 			});
@@ -269,9 +315,9 @@ function html_graph_area(&$graph_array, $no_graphs_message = '', $extra_url_args
 							<div class='graphWrapper' style='width:100%;' id='wrapper_<?php print $graph['local_graph_id']?>' graph_width='<?php print $graph['width'];?>' graph_height='<?php print $graph['height'];?>' title_font_size='<?php print ((read_user_setting('custom_fonts') == 'on') ? read_user_setting('title_size') : read_config_option('title_size'));?>'></div>
 							<?php print (read_user_setting('show_graph_title') == 'on' ? "<span class='center'>" . html_escape($graph['title_cache']) . '</span>' : '');?>
 						</td>
-						<td id='dd<?php print $graph['local_graph_id'];?>' class='noprint graphDrillDown'>
+						<?php if (is_realm_allowed(27)) { ?><td id='dd<?php print $graph['local_graph_id'];?>' class='noprint graphDrillDown'>
 							<?php graph_drilldown_icons($graph['local_graph_id'], 'graph_buttons', $tree_id, $branch_id);?>
-						</td>
+						</td><?php } ?>
 					</tr>
 				</table>
 				<div>
@@ -387,9 +433,9 @@ function html_graph_thumbnail_area(&$graph_array, $no_graphs_message = '', $extr
 							<div class='graphWrapper' id='wrapper_<?php print $graph['local_graph_id']?>' graph_width='<?php print read_user_setting('default_width');?>' graph_height='<?php print read_user_setting('default_height');?>'></div>
 							<?php print (read_user_setting('show_graph_title') == 'on' ? "<span class='center'>" . html_escape($graph['title_cache']) . '</span>' : '');?>
 						</td>
-						<td id='dd<?php print $graph['local_graph_id'];?>' class='noprint graphDrillDown'>
+						<?php if (is_realm_allowed(27)) { ?><td id='dd<?php print $graph['local_graph_id'];?>' class='noprint graphDrillDown'>
 							<?php print graph_drilldown_icons($graph['local_graph_id'], 'graph_buttons_thumbnails', $tree_id, $branch_id);?>
-						</td>
+						</td><?php } ?>
 					</tr>
 				</table>
 			</td>
@@ -423,14 +469,20 @@ function html_graph_thumbnail_area(&$graph_array, $no_graphs_message = '', $extr
 
 function graph_drilldown_icons($local_graph_id, $type = 'graph_buttons', $tree_id = 0, $branch_id = 0) {
 	global $config;
+
 	static $rand = 0;
 
 	$aggregate_url = aggregate_build_children_url($local_graph_id);
 
+	$graph_template_id = db_fetch_cell_prepared('SELECT graph_template_id
+		FROM graph_local
+		WHERE id = ?',
+		array($local_graph_id));
+
 	print "<div class='iconWrapper'>";
 	print "<a class='iconLink utils' href='#' role='link' id='graph_" . $local_graph_id . "_util'><img class='drillDown' src='" . $config['url_path'] . "images/cog.png' alt='' title='" . __esc('Graph Details, Zooming and Debugging Utilities') . "'></a><br>";
 	print "<a class='iconLink csvexport' href='#' role='link' id='graph_" . $local_graph_id . "_csv'><img class='drillDown' src='" . $config['url_path'] . "images/table_go.png' alt='' title='" . __esc('CSV Export of Graph Data'). "'></a><br>";
-	print "<a class='iconLink mrgt' href='#' role='link' id='graph_" . $local_graph_id . "_mrtg'><img class='drillDown' src='" . $config['url_path'] . "images/timeview.png' alt='' title='" . __esc('Time Graph View'). "'></a><br>";
+	print "<a class='iconLink mrtg' href='#' role='link' id='graph_" . $local_graph_id . "_mrtg'><img class='drillDown' src='" . $config['url_path'] . "images/timeview.png' alt='' title='" . __esc('Time Graph View'). "'></a><br>";
 
 	if (is_realm_allowed(3)) {
 		$host_id = db_fetch_cell_prepared('SELECT host_id
@@ -443,6 +495,11 @@ function graph_drilldown_icons($local_graph_id, $type = 'graph_buttons', $tree_i
 			print '<br/>';
 			$rand++;
 		}
+	}
+
+	if (is_realm_allowed(10) && $graph_template_id > 0) {
+		print "<a class='iconLink' role='link' title='" . __esc('Edit Graph Template') . "' href='" . html_escape($config['url_path'] . '/graph_templates.php?action=template_edit&id=' . $graph_template_id) . "'><img src='" . html_escape($config['url_path'] . 'images/template_edit.png') . "'></img></a>";
+		print '<br/>';
 	}
 
 	if (read_config_option('realtime_enabled') == 'on' && is_realm_allowed(25)) {
@@ -541,7 +598,7 @@ function html_nav_bar($base_url, $max_pages, $current_page, $rows_per_page, $tot
 			if ($return_to != '') {//code as in get_page_list()
 				$nav .= "<script type='text/javascript'>function goto$page_var(pageNo) { if (typeof url_graph === 'function') { var url_add=url_graph('') } else { var url_add=''; }; $.get('" . $base_url . "header=false&" . $page_var . "='+pageNo+url_add).done(function(data) { $('#$return_to').html(data); applySkin(); }); }</script>";
 			} else {
-				$nav .= "<script type='text/javascript'>function goto${page_var}(pageNo) { if (typeof url_graph === 'function') { var url_add=url_graph('') } else { var url_add=''; }; document.location='$base_url$page_var='+pageNo+url_add }</script>";
+				$nav .= "<script type='text/javascript'>function goto{$page_var}(pageNo) { if (typeof url_graph === 'function') { var url_add=url_graph('') } else { var url_add=''; }; document.location='$base_url$page_var='+pageNo+url_add }</script>";
 			}
 		}
 	} else {
@@ -556,7 +613,7 @@ function html_nav_bar($base_url, $max_pages, $current_page, $rows_per_page, $tot
 }
 
 /* html_header_sort - draws a header row suitable for display inside of a box element.  When
-        a user selects a column header, the collback function "filename" will be called to handle
+        a user selects a column header, the callback function "filename" will be called to handle
         the sort the column and display the altered results.
    @arg $header_items - an array containing a list of column items to display.  The
         format is similar to the html_header, with the exception that it has three
@@ -714,7 +771,7 @@ function html_header_sort($header_items, $sort_column, $sort_direction, $last_it
 
 /* html_header_sort_checkbox - draws a header row with a 'select all' checkbox in the last cell
         suitable for display inside of a box element.  When a user selects a column header,
-        the collback function "filename" will be called to handle the sort the column and display
+        the callback function "filename" will be called to handle the sort the column and display
         the altered results.
    @arg $header_items - an array containing a list of column items to display.  The
         format is similar to the html_header, with the exception that it has three
@@ -725,7 +782,7 @@ function html_header_sort($header_items, $sort_column, $sort_direction, $last_it
         will be opposite this direction if the user selects the same named column.
    @arg $form_action - the url to post the 'select all' form to
    @arg $return_to - the id of the object to inject output into as a result of the sort action */
-function html_header_sort_checkbox($header_items, $sort_column, $sort_direction, $include_form = true, $form_action = '', $return_to = '') {
+function html_header_sort_checkbox($header_items, $sort_column, $sort_direction, $include_form = true, $form_action = '', $return_to = '', $prefix = 'chk') {
 	static $page = 0;
 
 	/* reverse the sort direction */
@@ -869,7 +926,7 @@ function html_header_sort_checkbox($header_items, $sort_column, $sort_direction,
 		}
 	}
 
-	print "<th class='tableSubHeaderCheckbox'><input id='selectall' class='checkbox' type='checkbox' title='" . __esc('Select All Rows'). "' onClick='selectAll(\"chk\",this.checked)'><label class='formCheckboxLabel' title='" . __esc('Select All Rows') . "' for='selectall'></label></th>" . ($include_form ? "<th style='display:none;'><form id='chk' name='chk' method='post' action='$form_action'></th>":'');
+	print "<th class='tableSubHeaderCheckbox'><input id='selectall' class='checkbox' type='checkbox' title='" . __esc('Select All Rows'). "' onClick='selectAll(\"$prefix\",this.checked)'><label class='formCheckboxLabel' title='" . __esc('Select All Rows') . "' for='selectall'></label></th>" . ($include_form ? "<th style='display:none;'><form id='$prefix' name='$prefix' method='post' action='$form_action'></th>":'');
 	print '</tr>';
 
 	$page++;
@@ -915,7 +972,7 @@ function html_header($header_items, $last_item_colspan = 1) {
 }
 
 /* html_section_header - draws a header row suitable for display inside of a box element
-         but for display as a secton title and not as a series of table header columns
+         but for display as a section title and not as a series of table header columns
    @arg $header_name - an array of the display name of the header for the section and
         optional alignment.
    @arg $last_item_colspan - the TD 'colspan' to apply to the last cell in the row */
@@ -936,7 +993,7 @@ function html_section_header($header_item, $last_item_colspan = 1) {
    @arg $header_items - an array containing a list of items to be included in the header
         alternatively and array of header names and alignment array('display' = 'blah', 'align' = 'blah')
    @arg $form_action - the url to post the 'select all' form to */
-function html_header_checkbox($header_items, $include_form = true, $form_action = '', $resizable = true) {
+function html_header_checkbox($header_items, $include_form = true, $form_action = '', $resizable = true, $prefix = 'chk') {
 	/* default to the 'current' file */
 	if ($form_action == '') { $form_action = get_current_page(); }
 
@@ -968,7 +1025,7 @@ function html_header_checkbox($header_items, $include_form = true, $form_action 
 		}
 	}
 
-	print "<th class='tableSubHeaderCheckbox'><input id='selectall' class='checkbox' type='checkbox' title='" . __esc('Select All Rows'). "' onClick='selectAll(\"chk\",this.checked)'><label class='formCheckboxLabel' title='" . __esc('Select All') . "' for='selectall'></label></th>" . ($include_form ? "<th style='display:none;'><form id='chk' name='chk' method='post' action='$form_action'></th>":'');
+	print "<th class='tableSubHeaderCheckbox'><input id='selectall' class='checkbox' type='checkbox' title='" . __esc('Select All Rows'). "' onClick='selectAll(\"$prefix\",this.checked)'><label class='formCheckboxLabel' title='" . __esc('Select All') . "' for='selectall'></label></th>" . ($include_form ? "<th style='display:none;'><form id='$prefix' name='$prefix' method='post' action='$form_action'></th>":'');
 	print '</tr>';
 }
 
@@ -979,9 +1036,9 @@ function html_header_checkbox($header_items, $include_form = true, $form_action 
         -- or --
         $array[0]["id"] = 43;
         $array[0]["name"] = "Red";
-   @arg $column_display - used to indentify the key to be used for display data. this
+   @arg $column_display - used to identify the key to be used for display data. this
         is only applicable if the array is formatted using the second method above
-   @arg $column_id - used to indentify the key to be used for id data. this
+   @arg $column_id - used to identify the key to be used for id data. this
         is only applicable if the array is formatted using the second method above
    @arg $form_previous_value - the current value of this form element */
 function html_create_list($form_data, $column_display, $column_id, $form_previous_value) {
@@ -1038,9 +1095,12 @@ function html_escape($string) {
 	}
 
 	// Grave Accent character can lead to xss
-	$string = str_replace('`', '&#96;', $string);
-
-	return htmlspecialchars($string, ENT_QUOTES|ENT_HTML5, $charset, false);
+	if ($string !== null) {
+		$string = str_replace('`', '&#96;', $string);
+		return htmlspecialchars($string, ENT_QUOTES|ENT_HTML5, $charset, false);
+	} else {
+		return $string;
+	}
 }
 
 /* html_split_string - takes a string and breaks it into a number of <br> separated segments
@@ -1092,9 +1152,13 @@ function draw_graph_items_list($item_list, $filename, $url_data, $disable_contro
 
 	print "<tr class='tableHeader'>";
 		DrawMatrixHeaderItem(__('Graph Item'),'',1);
+		DrawMatrixHeaderItem(__('#'), '', 1);
 		DrawMatrixHeaderItem(__('Data Source'),'',1);
 		DrawMatrixHeaderItem(__('Graph Item Type'),'',1);
 		DrawMatrixHeaderItem(__('CF Type'),'',1);
+		DrawMatrixHeaderItem(__('GPrint'),'',1);
+		DrawMatrixHeaderItem(__('CDEF'),'',1);
+		DrawMatrixHeaderItem(__('VDEF'),'',1);
 		DrawMatrixHeaderItem(__('Alpha %'),'',1);
 		DrawMatrixHeaderItem(__('Item Color'),'',4);
 	print '</tr>';
@@ -1111,6 +1175,7 @@ function draw_graph_items_list($item_list, $filename, $url_data, $disable_contro
 			if (!preg_match('/(GPRINT|TEXTALIGN|HRULE|VRULE|TICK)/', $graph_item_types[$item['graph_type_id']])) {
 				$this_row_style = 'font-weight: bold;';
 				$use_custom_class = true;
+				$item['gprint_name'] = __('N/A');
 
 				if ($group_counter % 2 == 0) {
 					$customClass = 'graphItem';
@@ -1135,6 +1200,7 @@ function draw_graph_items_list($item_list, $filename, $url_data, $disable_contro
 			print __('Item # %d', ($i+1));
 			if ($disable_controls == false) { print '</a>'; }
 			print '</td>';
+			print '<td>' . $item['sequence'] . '</td>';
 
 			if (empty($item['data_source_name'])) {
 				$item['data_source_name'] = __('No Source');
@@ -1177,6 +1243,16 @@ function draw_graph_items_list($item_list, $filename, $url_data, $disable_contro
 			} else {
 				print '<td>' . __('N/A') . '</td>';
 			}
+
+			print "<td style='$this_row_style'>";
+			print $item['gprint_name'];
+			print "</td>";
+			print "<td style='$this_row_style'>";
+			print $item['cdef_name'];
+			print "</td>";
+			print "<td style='$this_row_style'>";
+			print $item['vdef_name'];
+			print "</td>";
 
 			/* alpha type */
 			if (preg_match('/(AREA|STACK|TICK|LINE[123])/', $_graph_type_name)) {
@@ -1363,7 +1439,7 @@ function draw_menu($user_menu = '') {
 			}
 
 			print "<li class='menuitem' role='menuitem' aria-haspopup='true' id='$id'><a class='menu_parent active' href='#'>$glyph<span>$header_name</span></a>";
-			print "<ul role='menu' id='${id}_div' style='display:block;'>";
+			print "<ul role='menu' id='{$id}_div' style='display:block;'>";
 
 			/* pass 2: loop through each top level item and render it */
 			foreach ($header_array as $item_url => $item_title) {
@@ -1456,7 +1532,7 @@ function draw_menu($user_menu = '') {
         on one or more data elements
    @arg $actions_array - an array that contains a list of possible actions. this array should
         be compatible with the form_dropdown() function
-   @arg $delete_action - if there is a delete action that should surpress removal of rows
+   @arg $delete_action - if there is a delete action that should suppress removal of rows
         specify it here.  If you don't want any delete actions, set to 0.*/
 function draw_actions_dropdown($actions_array, $delete_action = 1) {
 	global $config;
@@ -1535,18 +1611,6 @@ function draw_actions_dropdown($actions_array, $delete_action = 1) {
 		$('#drp_action').change(function() {
 			setDisabled();
 		});
-
-		$('.tableSubHeaderCheckbox').find(':checkbox').off('click').on('click', function(data) {
-			if ($(this).is(':checked')) {
-				$('input[id^="chk_"]').not(':disabled').prop('checked', true).attr('data-prev-check', 'true').attr('aria-checked', 'true');
-				$('tr.selectable').addClass('selected');
-				disableSelection();
-			} else {
-				$('input[id^="chk_"]').not(':disabled').prop('checked', false).removeAttr('data-prev-check').removeAttr('aria-checked');
-				$('tr.selectable').removeClass('selected');
-				enableSelection();
-			}
-		});
 	});
 	</script>
 	<?php
@@ -1555,7 +1619,6 @@ function draw_actions_dropdown($actions_array, $delete_action = 1) {
 /*
  * Deprecated functions
  */
-
 function DrawMatrixHeaderItem($matrix_name, $matrix_text_color, $column_span = 1) {
 	?>
 	<th style='height:1px;' colspan='<?php print $column_span;?>'>
@@ -1572,7 +1635,7 @@ function form_area($text) { ?>
 	</tr>
 <?php }
 
-/* is_console_page - determinese if current passed url is considered to be
+/* is_console_page - determines if current passed url is considered to be
           a console page
    @arg url - url to be checked
    @returns true if console page, false if not
@@ -1646,12 +1709,12 @@ function html_show_tabs_left() {
 
 		if ($realm_allowed[21] || $realm_allowed[22]) {
 			if ($config['poller_id'] > 1) {
-				// Don't show reports tabe if not poller 1
+				// Don't show reports table if not poller 1
 			} else {
 				if (substr_count($_SERVER['REQUEST_URI'], 'reports_')) {
-					print '<a id="tab-reports" href="' . $config['url_path'] . ($realm_allowed[22] ? 'reports_admin.php':'reports_user.php') . '"><img src="' . $config['url_path'] . 'images/tab_nectar_down.gif" alt="' . __('Reporting') . '"></a>';
+					print '<a id="tab-reports" href="' . $config['url_path'] . ($realm_allowed[21] === true ? 'reports_admin.php':'reports_user.php') . '"><img src="' . $config['url_path'] . 'images/tab_nectar_down.gif" alt="' . __('Reporting') . '"></a>';
 				} else {
-					print '<a id="tab-reports" href="' . $config['url_path'] . ($realm_allowed[22] ? 'reports_admin.php':'reports_user.php') . '"><img src="' . $config['url_path'] . 'images/tab_nectar.gif" alt="' . __('Reporting') . '"></a>';
+					print '<a id="tab-reports" href="' . $config['url_path'] . ($realm_allowed[21] === true ? 'reports_admin.php':'reports_user.php') . '"><img src="' . $config['url_path'] . 'images/tab_nectar.gif" alt="' . __('Reporting') . '"></a>';
 				}
 			}
 		}
@@ -1732,7 +1795,7 @@ function html_show_tabs_left() {
 					array(
 						'title' => __('Reporting'),
 						'id'	=> 'tab-reports',
-						'url'   => $config['url_path'] . ($realm_allowed[22] ? 'reports_admin.php':'reports_user.php'),
+						'url'   => $config['url_path'] . ($realm_allowed[21] ? 'reports_admin.php':'reports_user.php'),
 					);
 			}
 		}
@@ -2175,7 +2238,7 @@ function html_spikekill_menu($local_graph_id) {
 
 	$rkills  = '';
 	foreach ($settings['spikes']['spikekill_number']['array'] as $key => $value) {
-		$rkills .= html_spikekill_menu_item($value,html_spikekill_setting('spikekill_number') == $key ? 'fa fa-check':'fa', 'skkills', 'kills_' . $key);
+		$rkills .= html_spikekill_menu_item($value,html_spikekill_setting('spikekill_number') == $key ? 'fa fa-check':'fa', 'skills', 'kills_' . $key);
 	}
 	$rkills  = html_spikekill_menu_item(__('Kills Per RRA'), '', '', '', '', $rkills);
 
@@ -2304,8 +2367,8 @@ function html_spikekill_js() {
 				});
 		});
 
-		$('.skkills').unbind().click(function() {
-			$('.skkills').find('i').removeClass('fa fa-check');
+		$('.skills').unbind().click(function() {
+			$('.skills').find('i').removeClass('fa fa-check');
 			$(this).find('i:first').addClass('fa fa-check');
 			$(this).find('.spikekillMenu').menu('destroy').parent().remove();
 
@@ -2361,7 +2424,7 @@ function html_spikekill_js() {
    @arg selectedTheme - optionally sets a specific theme over the current one
 */
 function html_common_header($title, $selectedTheme = '') {
-	global $config, $path2calendar, $path2timepicker, $path2colorpicker;
+	global $config, $path2calendar, $path2timepicker, $path2colorpicker, $path2ms, $path2msfilter;
 
 	if ($selectedTheme == '') {
 		$selectedTheme = get_selected_theme();
@@ -2387,7 +2450,7 @@ function html_common_header($title, $selectedTheme = '') {
 	<meta name='description' content='Monitoring tool of the Internet'>
 	<meta name='mobile-web-app-capable' content='yes'>
 	<meta name="theme-color" content="#161616"/>
-	<meta http-equiv="Content-Security-Policy" content="default-src *; img-src 'self' <?php print $alternates;?> data: blob:; style-src 'self' 'unsafe-inline' <?php print $alternates;?>; script-src 'self' <?php print html_escape($script_policy);?> 'unsafe-inline' <?php print $alternates;?>; worker-src 'self'">
+	<meta http-equiv="Content-Security-Policy" content="default-src *; img-src 'self' <?php print $alternates;?> data: blob:; style-src 'self' 'unsafe-inline' <?php print $alternates;?>; script-src 'self' <?php print html_escape($script_policy);?> 'unsafe-inline' <?php print $alternates;?>; worker-src 'self' <?php print $alternates;?>;">
 	<meta name='robots' content='noindex,nofollow'>
 	<title><?php print $title; ?></title>
 	<meta http-equiv='Content-Type' content='text/html;charset=utf-8'>
@@ -2401,19 +2464,49 @@ function html_common_header($title, $selectedTheme = '') {
 		var noFileSelected='<?php print __esc('No file selected');?>';
 		var timeGraphView='<?php print __esc('Time Graph View');?>';
 		var filterSettingsSaved='<?php print __esc('Filter Settings Saved');?>';
-		var spikeKillResuls='<?php print __esc('SpikeKill Results');?>';
+		var spikeKillResults='<?php print __esc('SpikeKill Results');?>';
 		var utilityView='<?php print __esc('Utility View');?>';
 		var realtimeClickOn='<?php print __esc('Click to view just this Graph in Realtime');?>';
 		var realtimeClickOff='<?php print __esc('Click again to take this Graph out of Realtime');?>';
 		var treeView='<?php print __esc('Tree View');?>';
 		var listView='<?php print __esc('List View');?>';
 		var previewView='<?php print __esc('Preview View');?>';
+		var editProfile='<?php print __esc('Edit Profile');?>';
+		var cactiConsoleAllowed=<?php print (is_realm_allowed(8) ? 'true':'false');?>;
+		var cactiGraphsAllowed=<?php print (is_realm_allowed(7) ? 'true':'false');?>;
+		var changePassword='<?php print __esc('Change Password');?>';
+		var logout='<?php print __esc('Logout');?>';
+		var standardGraphicalUserInterface='<?php print __esc('Standard Mode');?>';
+		var compactGraphicalUserInterface='<?php print __esc('Compact Mode');?>';
+		var darkColorMode='<?php print __esc('Dark Color Mode');?>';
+		var lightColorMode='<?php print __esc('Light Color Mode');?>';
+		var usePreferredColorTheme='<?php print __esc('Use System Color');?>';
+		var ignorePreferredColorTheme='<?php print __esc('Ignore System Color');?>';
+		var help='<?php print __esc('Help');?>';
 		var cactiHome='<?php print __esc('Cacti Home');?>';
+		var cactiConsole='<?php print __esc('Console');?>';
+		var cactiMisc='<?php print __esc('Miscellaneous');?>';
+		var cactiDashboards='<?php print __esc('Dashboards');?>';
+		var cactiGeneral='<?php print __esc('General');?>';
+		var cactiCharts='<?php print __esc('Charts');?>';
 		var cactiProjectPage='<?php print __esc('Cacti Project Page');?>';
 		var cactiCommunityForum='<?php print __esc('User Community');?>';
+		var cactiUser='<?php print __esc('User');?>';
 		var cactiDocumentation='<?php print __esc('Documentation');?>';
+		var cactiSpine='<?php print __esc('Spine');?>';
+		var cactiRRDProxy='<?php print __esc('RRDProxy');?>';
+		var cactiKeyboard='<?php print __esc('Keyboard');?>';
+		var cactiShortcuts='<?php print __esc('Shortcuts');?>';
+		var cactiContributeTo='<?php print __esc('Contribute to the Cacti Project');?>';
+		var cactiDevHelp='<?php print __esc('Help in Developing');?>';
+		var cactiDonate='<?php print __esc('Donation & Sponsoring');?>';
+		var cactiProfile='<?php print __esc('Profile');?>';
+		var cactiTheme='<?php print __esc('Theme');?>';
+		var cactiClient='<?php print __esc('Client');?>';
+		var cactiTranslate='<?php print __esc('Help in Translating');?>';
 		var reportABug='<?php print __esc('Report a bug');?>';
 		var aboutCacti='<?php print __esc('About Cacti');?>';
+		var justCacti='<?php print __esc('Cacti');?>';
 		var spikeKillResults='<?php print __esc('SpikeKill Results');?>';
 		var showHideFilter='<?php print __esc('Click to Show/Hide Filter');?>';
 		var clearFilterTitle='<?php print __esc('Clear Current Filter');?>';
@@ -2486,8 +2579,9 @@ function html_common_header($title, $selectedTheme = '') {
 	print get_md5_include_css('include/themes/' . $selectedTheme .'/jquery.multiselect.filter.css');
 	print get_md5_include_css('include/themes/' . $selectedTheme .'/jquery.timepicker.css');
 	print get_md5_include_css('include/themes/' . $selectedTheme .'/jquery.colorpicker.css');
-	print get_md5_include_css('include/themes/' . $selectedTheme .'/c3.css');
+	print get_md5_include_css('include/themes/' . $selectedTheme .'/billboard.css');
 	print get_md5_include_css('include/themes/' . $selectedTheme .'/pace.css');
+	print get_md5_include_css('include/themes/' . $selectedTheme .'/Diff.css');
 	print get_md5_include_css('include/fa/css/all.css');
 	print get_md5_include_css('include/vendor/flag-icon-css/css/flag-icon.css');
 	print get_md5_include_css('include/themes/' . $selectedTheme .'/main.css');
@@ -2495,7 +2589,7 @@ function html_common_header($title, $selectedTheme = '') {
 	print get_md5_include_js('include/js/jquery.js');
 	print get_md5_include_js('include/js/jquery-ui.js');
 	print get_md5_include_js('include/js/jquery.ui.touch.punch.js', true);
-	print get_md5_include_js('include/js/jquery.cookie.js', true);
+	print get_md5_include_js('include/js/jquery.cookie.js');
 	print get_md5_include_js('include/js/js.storage.js');
 	print get_md5_include_js('include/js/jstree.js');
 	print get_md5_include_js('include/js/jquery.hotkeys.js', true);
@@ -2511,11 +2605,11 @@ function html_common_header($title, $selectedTheme = '') {
 	print get_md5_include_js('include/js/jquery.sparkline.js', true);
 	print get_md5_include_js('include/js/Chart.js', true);
 	print get_md5_include_js('include/js/dygraph-combined.js', true);
-	print get_md5_include_js('include/js/d3.js', true);
-	print get_md5_include_js('include/js/c3.js', true);
+	print get_md5_include_js('include/js/d3.js');
+	print get_md5_include_js('include/js/billboard.js');
 	print get_md5_include_js('include/layout.js');
 	print get_md5_include_js('include/js/pace.js');
-	print get_md5_include_js('include/realtime.js', true);
+	print get_md5_include_js('include/realtime.js');
 	print get_md5_include_js('include/themes/' . $selectedTheme .'/main.js');
 
 	if (isset($path2calendar) && file_exists($path2calendar)) {
@@ -2530,8 +2624,91 @@ function html_common_header($title, $selectedTheme = '') {
 		print get_md5_include_js($path2colorpicker);
 	}
 
+	if (isset($path2ms) && file_exists($path2ms)) {
+		print get_md5_include_js($path2ms);
+	}
+
+	if (isset($path2msfilter) && file_exists($path2msfilter)) {
+		print get_md5_include_js($path2msfilter);
+	}
+
 	if (file_exists('include/themes/custom.css')) {
 		print get_md5_include_css('include/themes/custom.css');
 	}
+
 	api_plugin_hook('page_head');
+}
+
+function html_help_page($page) {
+	global $config, $help;
+
+	$help = array(
+		'aggregates.php'              => 'Aggregates.html',
+		'aggregate_templates.php'     => 'Aggregate-Templates.html',
+		'automation_networks.php'     => 'Automation-Networks.php',
+		'cdef.php'                    => 'CDEFs.html',
+		'color_templates.php'         => 'Color-Templates.html',
+		'color.php'                   => 'Colors.html',
+		'pollers.php'                 => 'Data-Collectors.html',
+		'data_debug.php'              => 'Data-Debug.html',
+		'data_input.php'              => 'Data-Input-Methods.html',
+		'data_source_profiles.php'    => 'Data-Profiles.html',
+		'data_queries.php'            => 'Data-Queries.html',
+		'data_templates.php'          => 'Data-Source-Templates.html',
+		'data_sources.php'            => 'Data-Sources.html',
+		'host.php'                    => 'Devices.html',
+		'automation_templates.php'    => 'Device-Rules.html',
+		'host_templates.php'          => 'Device-Templates.html',
+		'automation_devices.php'      => 'Discovered-Devices.html',
+		'templates_export.php'        => 'Export-Template.html',
+		'links.php'                   => 'External-Links.html',
+		'gprint_presets.php'          => 'GPRINTs.html',
+		'graphs_new.php'              => 'Graph-a-Single-SNMP-OID.html',
+		'graph_view.php'              => 'Graph-Overview.html',
+		'automation_graph_rules.php'  => 'Graph-Rules.html',
+		'graph_templates.php'         => 'Graph-Templates.html',
+		'graph_templates_items.php'   => 'Graph-Templates.html',
+		'graph_templates_inputs.php'  => 'Graph-Templates.html',
+		'graphs.php'                  => 'Graphs.html',
+		'templates_import.php'        => 'Import-Template.html',
+		'plugins.php'                 => 'Plugins.html',
+		'automation_snmp.php'         => 'SNMP-Options.html',
+		'settings.php:authentication' => 'Settings-Auth.html',
+		'settings.php:data'           => 'Settings-Data.html',
+		'settings.php:snmp'           => 'Settings-Device-Defaults.html',
+		'settings.php:general'        => 'Settings-General.html',
+		'settings.php:mail'           => 'Settings-Mail-Reporting-DNS.html',
+		'settings.php:path'           => 'Settings-Paths.html',
+		'settings.php:boost'          => 'Settings-Performance.html',
+		'settings.php:poller'         => 'Settings-Poller.html',
+		'settings.php:spikes'         => 'Settings-Spikes.html',
+		'settings.php:visual'         => 'Settings-Visual.html',
+		'sites.php'                   => 'Sites.html',
+		'automation_tree_rules.php'   => 'Tree-Rules.html',
+		'tree.php'                    => 'Trees.html',
+		'user_domains.php'            => 'User-Domains.html',
+		'user_group_admin.php'        => 'User-Group-Management.html',
+		'user_admin.php'              => 'User-Management.html',
+		'vdef.php'                    => 'VDEFs.html',
+		'reports_admin.php'           => 'Reports-Admin.html',
+		'reports_admin.php:details'   => 'Reports-Admin.html',
+		'reports_admin.php:items'     => 'Reports-Items.html',
+		'reports_admin.php:preview'   => 'Reports-Preview.html',
+		'reports_admin.php:events'    => 'Reports-Events.html',
+		'reports_user.php'            => 'Reports-User.html',
+		'reports_user.php:details'    => 'Reports-User.html',
+		'reports_user.php:items'      => 'Reports-Items.html',
+		'reports_user.php:preview'    => 'Reports-Preview.html',
+		'reports_user.php:events'     => 'Reports-Events.html',
+		'clog.php'                    => 'Cacti-Log.html',
+		'clog_user.php'               => 'Cacti-Log.html',
+	);
+
+	$help = api_plugin_hook_function('help_page', $help);
+
+	if (isset($help[$page])) {
+		return $config['url_path'] . 'docs/' . $help[$page];
+	}
+
+	return false;
 }

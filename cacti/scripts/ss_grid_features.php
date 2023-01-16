@@ -32,13 +32,13 @@ if (!isset($called_by_script_server)) {
 function ss_grid_features($clusterid, $cmd = "index", $arg1 = "", $arg2 = "") {
 	if ($cmd == "index") {
 		$return_arr = ss_grid_features_getnames($clusterid, $arg1);
-		for ($i=0;($i<sizeof($return_arr));$i++) {
+		for ($i=0;($i<cacti_sizeof($return_arr));$i++) {
 			print $return_arr[$i] . "\n";
 		}
 	}elseif ($cmd == "query") {
 		$arr_index = ss_grid_features_getnames($clusterid, $arg1);
 		$arr = ss_grid_features_getinfo($clusterid, $arg1, $arg2);
-		for ($i=0;($i<sizeof($arr_index));$i++) {
+		for ($i=0;($i<cacti_sizeof($arr_index));$i++) {
 			if (isset($arr[$arr_index[$i]])) {
 				print $arr_index[$i] . "!" . $arr[$arr_index[$i]] . "\n";
 			}
@@ -93,7 +93,7 @@ function ss_grid_features_getnames($clusterid) {
 		FROM lic_services_feature
 		ORDER BY feature_name");
 
-	for ($i=0;($i<sizeof($arr));$i++) {
+	for ($i=0;($i<cacti_sizeof($arr));$i++) {
 		$return_arr[$i] = $arr[$i]["featureName"];
 	}
 
@@ -107,7 +107,7 @@ function ss_grid_features_getinfo($clusterid, $info_requested) {
 		$featureNames = db_fetch_assoc("SELECT DISTINCT feature_name AS featureName
 					FROM lic_services_feature
 					ORDER by feature_name");
-		for ($i=0; ($i<sizeof($featureNames)); $i++) {
+		for ($i=0; ($i<cacti_sizeof($featureNames)); $i++) {
 			$return_arr[$featureNames[$i]["featureName"]] = addslashes($featureNames[$i]["featureName"]);
 		}
 

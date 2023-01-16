@@ -219,7 +219,7 @@ function form_save() {
 					if (isset_request_var('header') && get_nfilter_request_var('header') == 'false') {
 						$header = '&header=false';
 					} else {
-						$header = '&header=fasle';
+						$header = '&header=false';
 					}
 				} else {
 					raise_message(2);
@@ -505,7 +505,7 @@ function data_query_sv_check_sequences($type, $snmp_query_graph_id, $field_name)
 		WHERE t.count > 1",
 		array($field_name, $snmp_query_graph_id));
 
-	// report any bad or duplicate sequencs to the log for reporting purposes
+	// report any bad or duplicate sequences to the log for reporting purposes
 	if ($bad_seq > 0) {
 		cacti_log('WARN: Found ' . $bad_seq . " Bad Sequences in $table Table", false, 'WEBUI', POLLER_VERBOSITY_HIGH);
 	}
@@ -566,6 +566,7 @@ function data_query_item_remove_confirm() {
 		<td class='right'>
 			<input type='button' class='ui-button ui-corner-all ui-widget' id='cancel' value='<?php print __esc('Cancel');?>' onClick='$("#cdialog").dialog("close");' name='cancel'>
 			<input type='button' class='ui-button ui-corner-all ui-widget' id='continue' value='<?php print __esc('Continue');?>' name='continue' title='<?php print __esc('Remove Data Query Graph Template');?>'>
+			<input type='hidden' id='snmp_query_graph_id' value='<?php print get_request_var('id');?>'>
 		</td>
 	</tr>
 	<?php
@@ -723,7 +724,7 @@ function data_query_item_edit() {
 											}
 										}
 
-										form_dropdown('dsdt_' . $data_template['id'] . '_' . $data_template_rrd['id'] . '_snmp_field_output',$xml_outputs,'','',$data_template_rrd['snmp_field_name'],'','');?>
+										form_dropdown('dsdt_' . $data_template['id'] . '_' . $data_template_rrd['id'] . '_snmp_field_output',$xml_outputs,'','',empty($data_template_rrd['snmp_field_name'])?$data_template_rrd['data_source_name']:$data_template_rrd['snmp_field_name'],'','');?>
 									</td>
 									<td class='right'>
 										<?php form_checkbox('dsdt_' . $data_template['id'] . '_' . $data_template_rrd['id'] . '_check', $old_value, '', '', '', get_request_var('id'), '', __('If this Graph Template requires the Data Template Data Source to the left, select the correct XML output column and then to enable the mapping either check or toggle here.')); print '<br>';?>
@@ -846,6 +847,13 @@ function data_query_item_edit() {
 					WHERE snmp_query_graph_id = ?
 					AND data_template_id = ?
 					ORDER BY field_name, sequence', array(get_request_var('id'), $data_template['id']));
+
+				$name = db_fetch_cell_prepared('SELECT name
+					FROM data_template
+					WHERE id = ?',
+					array($data_template['id']));
+
+				print "<tr class='tableHeader'><td colspan='4'>" . html_escape($name) . '</td></tr><tr>';
 
 				html_header(array(
 					array('display' => __('Name'), 'align' => 'left'),
@@ -1191,7 +1199,7 @@ function data_query_edit() {
 						$.post('data_queries.php?action=item_remove', {
 							__csrf_magic: csrfMagicToken,
 							snmp_query_id: snmp_query_id,
-							id: snmp_query_graph_id
+							id: $('#snmp_query_graph_id').val()
 						}, function(data) {
 							$('#cdialog').dialog('close');
 							loadPageNoHeader('data_queries.php?action=edit&header=false&id='+snmp_query_id);

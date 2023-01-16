@@ -192,63 +192,68 @@
 </tr>
 <tr class="even">
 <td><a href="Plugin-Hook-API-Ref.html#poller_output">poller_output</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#poller_remote_maint">poller_remote_maint</a></td>
 <td><a href="Plugin-Hook-API-Ref.html#poller_top">poller_top</a></td>
-<td><a href="Plugin-Hook-API-Ref.html#remote_agent">remote_agent</a></td>
 </tr>
 <tr class="odd">
+<td><a href="Plugin-Hook-API-Ref.html#remote_agent">remote_agent</a></td>
 <td><a href="Plugin-Hook-API-Ref.html#replicate_in">replicate_in</a></td>
 <td><a href="Plugin-Hook-API-Ref.html#replicate_out">replicate_out</a></td>
-<td><a href="Plugin-Hook-API-Ref.html#report_filters">report_filters</a></td>
 </tr>
 <tr class="even">
+<td><a href="Plugin-Hook-API-Ref.html#report_filters">report_filters</a></td>
 <td><a href="Plugin-Hook-API-Ref.html#resolve_dependencies">resolve_dependencies</a></td>
 <td><a href="Plugin-Hook-API-Ref.html#rrd_graph_graph_options">rrd_graph_graph_options</a></td>
-<td><a href="Plugin-Hook-API-Ref.html#run_data_query">run_data_query</a></td>
 </tr>
 <tr class="odd">
+<td><a href="Plugin-Hook-API-Ref.html#run_data_query">run_data_query</a></td>
 <td><a href="Plugin-Hook-API-Ref.html#snmpagent_cache_install">snmpagent_cache_install</a></td>
 <td><a href="Plugin-Hook-API-Ref.html#substitute_host_data">substitute_host_data</a></td>
-<td><a href="Plugin-Hook-API-Ref.html#top_graph_header">top_graph_header</a></td>
 </tr>
 <tr class="even">
+<td><a href="Plugin-Hook-API-Ref.html#top_graph_header">top_graph_header</a></td>
 <td><a href="Plugin-Hook-API-Ref.html#top_graph_header_tabs">top_graph_header_tabs</a></td>
 <td><a href="Plugin-Hook-API-Ref.html#top_graph_jquery_function">top_graph_jquery_function</a></td>
-<td><a href="Plugin-Hook-API-Ref.html#top_graph_refresh">top_graph_refresh</a></td>
 </tr>
 <tr class="odd">
+<td><a href="Plugin-Hook-API-Ref.html#top_graph_refresh">top_graph_refresh</a></td>
 <td><a href="Plugin-Hook-API-Ref.html#top_header">top_header</a></td>
 <td><a href="Plugin-Hook-API-Ref.html#tree_after">tree_after</a></td>
-<td><a href="Plugin-Hook-API-Ref.html#tree_view_page_end">tree_view_page_end</a></td>
 </tr>
 <tr class="even">
+<td><a href="Plugin-Hook-API-Ref.html#tree_view_page_end">tree_view_page_end</a></td>
 <td><a href="Plugin-Hook-API-Ref.html#ugroup_tabs">ugroup_tabs</a></td>
 <td><a href="Plugin-Hook-API-Ref.html#update_data_source_title_cache">update_data_source_title_cache</a></td>
-<td><a href="Plugin-Hook-API-Ref.html#user_admin_action">user_admin_action</a></td>
 </tr>
 <tr class="odd">
+<td><a href="Plugin-Hook-API-Ref.html#user_admin_action">user_admin_action</a></td>
 <td><a href="Plugin-Hook-API-Ref.html#user_admin_edit">user_admin_edit</a></td>
 <td><a href="Plugin-Hook-API-Ref.html#user_admin_run_action">user_admin_run_action</a></td>
-<td><a href="Plugin-Hook-API-Ref.html#user_admin_setup_sql_save">user_admin_setup_sql_save</a></td>
 </tr>
 <tr class="even">
+<td><a href="Plugin-Hook-API-Ref.html#user_admin_setup_sql_save">user_admin_setup_sql_save</a></td>
 <td><a href="Plugin-Hook-API-Ref.html#user_admin_tab">user_admin_tab</a></td>
 <td><a href="Plugin-Hook-API-Ref.html#user_admin_user_save">user_admin_user_save</a></td>
-<td><a href="Plugin-Hook-API-Ref.html#user_group_admin_action">user_group_admin_action</a></td>
 </tr>
 <tr class="odd">
+<td><a href="Plugin-Hook-API-Ref.html#user_group_admin_action">user_group_admin_action</a></td>
 <td><a href="Plugin-Hook-API-Ref.html#user_group_admin_edit">user_group_admin_edit</a></td>
 <td><a href="Plugin-Hook-API-Ref.html#user_group_admin_save">user_group_admin_save</a></td>
-<td><a href="Plugin-Hook-API-Ref.html#user_group_admin_setup_sql_save">user_group_admin_setup_sql_save</a></td>
 </tr>
 <tr class="even">
+<td><a href="Plugin-Hook-API-Ref.html#user_group_admin_setup_sql_save">user_group_admin_setup_sql_save</a></td>
 <td><a href="Plugin-Hook-API-Ref.html#user_remove">user_remove</a></td>
 <td><a href="Plugin-Hook-API-Ref.html#utilities_action">utilities_action</a></td>
-<td><a href="Plugin-Hook-API-Ref.html#utilities_array">utilities_array</a></td>
 </tr>
 <tr class="odd">
+<td><a href="Plugin-Hook-API-Ref.html#utilities_array">utilities_array</a></td>
 <td><a href="Plugin-Hook-API-Ref.html#utilities_list">utilities_list</a></td>
 <td><a href="Plugin-Hook-API-Ref.html#utilities_tab">utilities_tab</a></td>
+</tr>
+<tr class="even">
 <td><a href="Plugin-Hook-API-Ref.html#valid_host_fields">valid_host_fields</a></td>
+<td></td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -2118,6 +2123,24 @@
 </tr>
 </tbody>
 </table>
+<h2 id="poller_remote_maint">poller_remote_maint</h2>
+<p>This hook will fire for plugins that need to perform remote maintenance. It will only fire on the Remote Data Collectors.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>poller_maintenance.php</td>
+<td style="text-align: left;">1.2.23</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
 <h2 id="poller_top">poller_top</h2>
 <p>This hook allows you to launch processes concurrently with the Cacti poller for things like THolds fast poller for example.</p>
 <table>
@@ -2210,7 +2233,7 @@
 </tbody>
 </table>
 <h2 id="rrd_graph_graph_options">rrd_graph_graph_options</h2>
-<p>This hook allows you to specify additional options or change parameters regarding graph image rendering. Some of the parameters will be passed to RRDTool.</p>
+<p>This hook allows you to specify additional options or change parameters regarding graph image rendering. Some of the parameters will be passed to RRDtool.</p>
 <table>
 <thead>
 <tr class="header">
@@ -2750,6 +2773,6 @@
 </tbody>
 </table>
 <hr />
-<p>Copyright (c) 2004-2020 The Cacti Group</p>
+<p><copy>Copyright (c) 2004-2022 The Cacti Group</copy></p>
 </body>
 </html>

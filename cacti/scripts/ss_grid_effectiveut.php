@@ -31,10 +31,11 @@ if (!isset($called_by_script_server)) {
 function ss_grid_effectiveut($clusterid = 0) {
 	$sql_where = '';
 	if ($clusterid != 0) {
-		$sql_where = "AND ghr.clusterid = $clusterid";
+		$sql_where = "AND ghr.clusterid = ?";
+		$sql_params = array($clusterid);
 	}
 
-	$effectiveUT = db_fetch_cell("SELECT
+	$effectiveUT = db_fetch_cell_prepared("SELECT
 		SUM(effectiveUtil*totalSlots)/SUM(totalSlots) AS effectiveUtil
 		FROM (
 			SELECT host, GREATEST(memSlotUtil, slotUtil, cpuUtil) AS effectiveUtil, totalSlots
@@ -61,7 +62,7 @@ function ss_grid_effectiveut($clusterid = 0) {
 				) AS results
 				HAVING memSlotUtil IS NOT NULL
 			) AS results2
-		) AS results3;");
+		) AS results3;", $sql_params);
 
 	if (empty($effectiveUT)) {
 		$effectiveUT = 0;

@@ -83,9 +83,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Under each category directory, functions should be broken out into multiple files where applicable. All files must begin with the name of category (ie. its parent directory name). Valid token names are</p>
 <ul>
 <li>auth</li>
-<li>data_input (maybe rename to script)</li>
+<li>automation</li>
+<li>color_template</li>
+<li>data_input</li>
 <li>data_query</li>
 <li>data_source</li>
+<li>data_source_profile</li>
 <li>data_template</li>
 <li>device (rename from host)</li>
 <li>device_template</li>
@@ -96,8 +99,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>package</li>
 <li>plugin</li>
 <li>poller</li>
-<li>preset (colors, cdefs, etc, better than data_preset)</li>
-<li>rra</li>
+<li>preset (colors, cdefs, vdefs, gprints, etc)</li>
 <li>site</li>
 <li>user</li>
 </ul>
@@ -177,8 +179,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </code></pre>
 <h3 id="lib">lib/</h3>
 <p>Functions that must be accessed globally should be stored in the ''lib/'' directory. This is where most of the heavy lifting in Cacti occurs.</p>
-<p>Directly under the <code>lib/</code> directory, the files beginning with <code>api</code> are generic wrappers that are only to be used by third party developers. These files simply include the contents of the various subdirectories under <code>lib/</code> to make developers lives easier. Also under the <code>lib/</code> directory is a directory for each category (graph, device, etc), where functions specific to that category are to be stored. The <code>lib/sys/</code> directory is a special category that is meant to store Cacti internal functions that are not to be made available directly within the API.</p>
-<p>API wrapper for graph-related functions</p>
+<p>Directly under the <code>lib/</code> directory, the files beginning with the <code>api</code> prefix are core Cacti API's that are only to be used by third party developers and should NEVER include a call to a <code>$_REQUEST</code>, <code>$_POST</code>, or <code>$_GET</code> variable.</p>
+<p>Files that have the <code>html</code> prefix, generally invole the rendering of page content, for example the <code>html_form.php</code> library draws forms and <code>html_validate.php</code> includes functions to validate page variables there are other various files in the current cacti <code>lib/</code> directory that will over time be changing with the migration to the next major version of Cacti. So, these rules may change over time.</p>
+<p>Here is the core API for the Cacti <code>graphs.php</code> page, and that deals with the manipulation of <strong>Graphs</strong>.</p>
 <pre class="console"><code>lib/api_graph.php
 </code></pre>
 <h3 id="locales">locales/</h3>
@@ -192,6 +195,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb6-2" title="2">    <span class="kw">require_once</span><span class="ot">(</span><span class="kw">CACTI_BASE_PATH</span> . <span class="st">&#39;/lib/sys/sequence.php&#39;</span><span class="ot">);</span></a>
 <a class="sourceLine" id="cb6-3" title="3">    <span class="kw">require_once</span><span class="ot">(</span><span class="kw">CACTI_BASE_PATH</span> . <span class="st">&#39;/lib/graph/graph_info.php&#39;</span><span class="ot">);</span></a></code></pre></div>
 <hr />
-<p>Copyright (c) 2004-2020 The Cacti Group</p>
+<p><copy>Copyright (c) 2004-2022 The Cacti Group</copy></p>
 </body>
 </html>

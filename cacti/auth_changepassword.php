@@ -89,7 +89,7 @@ if ($user['password_change'] != 'on') {
 }
 
 /* find out if we are logged in as a 'guest user' or not, if we are redirect away from password change */
-if (cacti_sizeof($user) && $user['id'] == get_guest_account()) {
+if (cacti_sizeof($user) && $user['id'] === get_guest_account()) {
 	header('Location: graph_view.php');
 	exit;
 }
@@ -228,7 +228,7 @@ case 'changepassword':
 
 		raise_message('password_success');
 
-		/* ok, at the point the user has been sucessfully authenticated; so we must decide what to do next */
+		/* ok, at the point the user has been successfully authenticated; so we must decide what to do next */
 
 		/* if no console permissions show graphs otherwise, pay attention to user setting */
 		$realm_id    = $user_auth_realm_filenames['index.php'];
@@ -339,7 +339,7 @@ if ($skip_current) {
 							<td class='nowrap'><input type='hidden' id='current' name='current_password' autocomplete='current-password' value=''><?php print $user['username'];?></td>
 <?php } else { ?>
 							<td><?php print __('Current password');?></td>
-							<td class='nowrap'><input type='password' class='ui-state-default ui-corner-all' id='current' name='current_password' autocomplete='current-passowrd' size='20' placeholder='********'></td>
+							<td class='nowrap'><input type='password' class='ui-state-default ui-corner-all' id='current' name='current_password' autocomplete='current-password' size='20' placeholder='********'></td>
 <?php } ?>
 						</tr>
 						<tr>
@@ -376,7 +376,7 @@ if ($skip_current) {
 			$('#password').after('<div id="pass" class="password badpassword fa fa-times" title="<?php print __esc('Password Too Short');?>"></div>');
 			$('.password').tooltip();
 		} else {
-			$.post('auth_changepassword.php?action=checkpass', { password: $('#password').val(), password_confim: $('#password_confirm').val(), __csrf_magic: csrfMagicToken } ).done(function(data) {
+			$.post('auth_changepassword.php?action=checkpass', { password: $('#password').val(), password_confirm: $('#password_confirm').val(), __csrf_magic: csrfMagicToken } ).done(function(data) {
 				if (data == 'ok') {
 					$('#pass').remove();
 					$('#password').after('<div id="pass" class="password goodpassword fa fa-check" title="<?php print __esc('Password Validation Passes');?>"></div>');

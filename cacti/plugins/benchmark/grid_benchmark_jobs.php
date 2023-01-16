@@ -93,7 +93,7 @@ if (isset_request_var('ajaxstats')) {
 	bottom_footer();
 }
 
-function grid_view_get_records(&$sql_where, $apply_limits = TRUE, $rows, &$sql_params) {
+function grid_view_get_records(&$sql_where, $apply_limits = TRUE, $rows = 30, &$sql_params = array()) {
 	benchmark_status_where($sql_where);
 
 	/* cluster id sql where */

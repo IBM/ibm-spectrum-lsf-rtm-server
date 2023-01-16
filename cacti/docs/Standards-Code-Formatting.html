@@ -90,6 +90,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><code>} else {</code>,</li>
 <li>and <code>} elseif {</code></li>
 </ul></li>
+<li><p>Use lower case constants for things like <code>false</code>, <code>true</code>, and <code>null</code>.</p></li>
+<li><p>Use <code>print</code> over <code>echo</code>.</p></li>
 <li><p>Function declarations should include ending braces on the same line as the function. For example:</p>
 <ul>
 <li><code>function name($params ...) {</code></li>
@@ -114,7 +116,7 @@ set tabstop=4
 <h3 id="if-elseif-else-construct">if elseif else Construct</h3>
 <div class="sourceCode" id="cb2"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">if</span> <span class="ot">(</span><span class="kw">$var</span> == <span class="dv">0</span><span class="ot">)</span> {</a>
 <a class="sourceLine" id="cb2-2" title="2">    <span class="kw">$i</span>++<span class="ot">;</span></a>
-<a class="sourceLine" id="cb2-3" title="3">} <span class="kw">else</span> <span class="kw">if</span> <span class="ot">(</span><span class="kw">$var</span> == <span class="dv">1</span><span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb2-3" title="3">} <span class="kw">elseif</span> <span class="ot">(</span><span class="kw">$var</span> == <span class="dv">1</span><span class="ot">)</span> {</a>
 <a class="sourceLine" id="cb2-4" title="4">    <span class="kw">$i</span>--<span class="ot">;</span></a>
 <a class="sourceLine" id="cb2-5" title="5">} <span class="kw">else</span> {</a>
 <a class="sourceLine" id="cb2-6" title="6">    <span class="kw">$i</span> = <span class="dv">0</span><span class="ot">;</span></a>
@@ -123,14 +125,17 @@ set tabstop=4
 <div class="sourceCode" id="cb3"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">switch</span> <span class="ot">(</span><span class="kw">$var</span><span class="ot">)</span> {</a>
 <a class="sourceLine" id="cb3-2" title="2">    <span class="kw">case </span><span class="dv">0</span><span class="ot">:</span></a>
 <a class="sourceLine" id="cb3-3" title="3">        <span class="kw">$var</span> = <span class="dv">1</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb3-4" title="4">        <span class="kw">break</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb3-5" title="5">    <span class="kw">case </span><span class="dv">1</span><span class="ot">:</span></a>
-<a class="sourceLine" id="cb3-6" title="6">        <span class="kw">$var</span> = <span class="dv">2</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb3-7" title="7">        <span class="kw">break</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb3-8" title="8">    <span class="kw">default:</span></a>
-<a class="sourceLine" id="cb3-9" title="9">        <span class="kw">$var</span> = <span class="dv">3</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb3-10" title="10">        <span class="kw">break</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb3-11" title="11">}</a></code></pre></div>
+<a class="sourceLine" id="cb3-4" title="4"></a>
+<a class="sourceLine" id="cb3-5" title="5">        <span class="kw">break</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb3-6" title="6">    <span class="kw">case </span><span class="dv">1</span><span class="ot">:</span></a>
+<a class="sourceLine" id="cb3-7" title="7">        <span class="kw">$var</span> = <span class="dv">2</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb3-8" title="8"></a>
+<a class="sourceLine" id="cb3-9" title="9">        <span class="kw">break</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb3-10" title="10">    <span class="kw">default:</span></a>
+<a class="sourceLine" id="cb3-11" title="11">        <span class="kw">$var</span> = <span class="dv">3</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb3-12" title="12"></a>
+<a class="sourceLine" id="cb3-13" title="13">        <span class="kw">break</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb3-14" title="14">}</a></code></pre></div>
 <h3 id="while-loop">while Loop</h3>
 <div class="sourceCode" id="cb4"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">while</span> <span class="ot">(</span><span class="kw">$i</span> &lt; <span class="dv">10</span><span class="ot">)</span> {</a>
 <a class="sourceLine" id="cb4-2" title="2">    <span class="kw">$i</span>++<span class="ot">;</span></a>
@@ -141,7 +146,7 @@ set tabstop=4
 <a class="sourceLine" id="cb5-3" title="3">}</a></code></pre></div>
 <h3 id="foreach-loop">foreach Loop</h3>
 <div class="sourceCode" id="cb6"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">foreach</span> <span class="ot">(</span><span class="kw">$array</span> <span class="kw">as</span> <span class="kw">$key</span> =&gt; <span class="kw">$value</span><span class="ot">)</span> {</a>
-<a class="sourceLine" id="cb6-2" title="2">    <span class="kw">echo</span> <span class="st">&quot;</span><span class="kw">$key</span><span class="st"> = </span><span class="kw">$value\n</span><span class="st">&quot;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb6-2" title="2">    <span class="kw">print</span> <span class="st">&quot;</span><span class="kw">$key</span><span class="st"> = </span><span class="kw">$value\n</span><span class="st">&quot;</span><span class="ot">;</span></a>
 <a class="sourceLine" id="cb6-3" title="3">}</a></code></pre></div>
 <h2 id="naming">Naming</h2>
 <h3 id="general-function-naming">General Function Naming</h3>
@@ -229,27 +234,62 @@ set tabstop=4
 <a class="sourceLine" id="cb20-3" title="3">}</a></code></pre></div>
 <h3 id="global-variables">Global Variables</h3>
 <p>Certain situations warrant creating a single variable that is to be referenced by multiple functions. Do not rely on PHP's <code>global</code> keyword since it creates the possibility of name space collisions. Instead, create a wrapper function that brings the variable into a global scope and returns a new copy to any function that needs to use it.</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb21-1" title="1"><span class="kw">$graph_unit_exponent_values</span> = <span class="kw">array</span><span class="ot">(</span><span class="st">&#39;-18&#39;</span> =&gt; <span class="st">&#39;a - atto&#39;</span><span class="ot">,</span> <span class="st">&#39;-15&#39;</span> =&gt; <span class="st">&#39;f - femto&#39;</span><span class="ot">,</span> <span class="st">...</span><span class="ot">);</span></a>
-<a class="sourceLine" id="cb21-2" title="2"></a>
-<a class="sourceLine" id="cb21-3" title="3"><span class="kw">function</span> graph_unit_exponent_values_list<span class="ot">()</span> {</a>
-<a class="sourceLine" id="cb21-4" title="4">    <span class="kw">global</span> <span class="kw">$graph_unit_exponent_values</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb21-5" title="5"></a>
-<a class="sourceLine" id="cb21-6" title="6">    <span class="kw">return</span> <span class="kw">$graph_unit_exponent_values</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb21-7" title="7">}</a>
-<a class="sourceLine" id="cb21-8" title="8"></a>
-<a class="sourceLine" id="cb21-9" title="9"><span class="kw">function</span> graph_unit_exponent_values_print<span class="ot">()</span> {</a>
-<a class="sourceLine" id="cb21-10" title="10">    <span class="kw">foreach</span> <span class="ot">(</span>graph_unit_exponent_values_list<span class="ot">()</span> <span class="kw">as</span> <span class="kw">$power</span> =&gt; <span class="kw">$unit</span><span class="ot">)</span> {</a>
-<a class="sourceLine" id="cb21-11" title="11">        <span class="co">// code</span></a>
-<a class="sourceLine" id="cb21-12" title="12">    }</a>
-<a class="sourceLine" id="cb21-13" title="13">}</a></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb21-1" title="1"><span class="kw">$graph_unit_exponent_values</span> = <span class="kw">array</span><span class="ot">(</span></a>
+<a class="sourceLine" id="cb21-2" title="2">  <span class="st">&#39;-18&#39;</span> =&gt; <span class="st">&#39;a - atto&#39;</span><span class="ot">,</span></a>
+<a class="sourceLine" id="cb21-3" title="3">  <span class="st">&#39;-15&#39;</span> =&gt; <span class="st">&#39;f - femto&#39;</span><span class="ot">,</span></a>
+<a class="sourceLine" id="cb21-4" title="4">  <span class="st">...</span></a>
+<a class="sourceLine" id="cb21-5" title="5"><span class="ot">);</span></a>
+<a class="sourceLine" id="cb21-6" title="6"></a>
+<a class="sourceLine" id="cb21-7" title="7"><span class="kw">function</span> graph_unit_exponent_values_list<span class="ot">()</span> {</a>
+<a class="sourceLine" id="cb21-8" title="8">    <span class="kw">global</span> <span class="kw">$graph_unit_exponent_values</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb21-9" title="9"></a>
+<a class="sourceLine" id="cb21-10" title="10">    <span class="kw">return</span> <span class="kw">$graph_unit_exponent_values</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb21-11" title="11">}</a>
+<a class="sourceLine" id="cb21-12" title="12"></a>
+<a class="sourceLine" id="cb21-13" title="13"><span class="kw">function</span> graph_unit_exponent_values_print<span class="ot">()</span> {</a>
+<a class="sourceLine" id="cb21-14" title="14">    <span class="kw">foreach</span> <span class="ot">(</span>graph_unit_exponent_values_list<span class="ot">()</span> <span class="kw">as</span> <span class="kw">$power</span> =&gt; <span class="kw">$unit</span><span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb21-15" title="15">        <span class="co">// code</span></a>
+<a class="sourceLine" id="cb21-16" title="16">    }</a>
+<a class="sourceLine" id="cb21-17" title="17">}</a></code></pre></div>
 <h2 id="references">References</h2>
-<p>Copying around large arrays in PHP can be an expensive operation. Be sure to return or pass arrays by reference when data corruption is not a huge concern. Keep in mind that call time pass by reference is deprecated in PHP.</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb22-1" title="1"><span class="kw">function</span> &amp;big_array_list<span class="ot">()</span> {</a>
+<p>Copying around large arrays in PHP can be an expensive operation. Be sure to return or pass arrays by reference when data corruption is not a huge concern.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb22-1" title="1"><span class="kw">function</span> big_array_process<span class="ot">(</span>&amp;<span class="kw">$big_array</span><span class="ot">)</span> {</a>
 <a class="sourceLine" id="cb22-2" title="2">    <span class="co">// code</span></a>
 <a class="sourceLine" id="cb22-3" title="3">}</a></code></pre></div>
-<div class="sourceCode" id="cb23"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb23-1" title="1"><span class="kw">function</span> big_array_process<span class="ot">(</span>&amp;<span class="kw">$big_array</span><span class="ot">)</span> {</a>
-<a class="sourceLine" id="cb23-2" title="2">    <span class="co">// code</span></a>
-<a class="sourceLine" id="cb23-3" title="3">}</a></code></pre></div>
+<h2 id="database-calls">Database Calls</h2>
+<p>Ensure that you indent your Database calls by a single tab per indentation level and that you break up database calls by the various provisos. A few well defined database queries can be seen in the examples below</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb23-1" title="1"><span class="kw">$devices</span> = db_fetch_assoc_prepared<span class="ot">(</span><span class="st">&#39;SELECT *</span></a>
+<a class="sourceLine" id="cb23-2" title="2"><span class="st">  FROM host</span></a>
+<a class="sourceLine" id="cb23-3" title="3"><span class="st">  WHERE id = ?&#39;</span><span class="ot">,</span></a>
+<a class="sourceLine" id="cb23-4" title="4">  <span class="kw">array</span><span class="ot">(</span><span class="kw">$device_id</span><span class="ot">));</span></a>
+<a class="sourceLine" id="cb23-5" title="5"></a>
+<a class="sourceLine" id="cb23-6" title="6"><span class="kw">$vdefs</span> = db_fetch_assoc<span class="ot">(</span><span class="st">&quot;SELECT rs.*,</span></a>
+<a class="sourceLine" id="cb23-7" title="7"><span class="st">  SUM(CASE WHEN local_graph_id = 0 THEN 1 ELSE 0 END) AS templates,</span></a>
+<a class="sourceLine" id="cb23-8" title="8"><span class="st">  SUM(CASE WHEN local_graph_id &gt; 0 THEN 1 ELSE 0 END) AS graphs</span></a>
+<a class="sourceLine" id="cb23-9" title="9"><span class="st">  FROM (</span></a>
+<a class="sourceLine" id="cb23-10" title="10"><span class="st">    SELECT vd.*, gti.local_graph_id</span></a>
+<a class="sourceLine" id="cb23-11" title="11"><span class="st">    FROM vdef AS vd</span></a>
+<a class="sourceLine" id="cb23-12" title="12"><span class="st">    LEFT JOIN graph_templates_item AS gti</span></a>
+<a class="sourceLine" id="cb23-13" title="13"><span class="st">    ON gti.vdef_id = vd.id</span></a>
+<a class="sourceLine" id="cb23-14" title="14"><span class="st">    GROUP BY vd.id, gti.graph_template_id, gti.local_graph_id</span></a>
+<a class="sourceLine" id="cb23-15" title="15"><span class="st">  ) AS rs</span></a>
+<a class="sourceLine" id="cb23-16" title="16"><span class="st">  </span><span class="kw">$sql_where</span></a>
+<a class="sourceLine" id="cb23-17" title="17"><span class="st">  GROUP BY rs.id</span></a>
+<a class="sourceLine" id="cb23-18" title="18"><span class="st">  </span><span class="kw">$sql_having</span></a>
+<a class="sourceLine" id="cb23-19" title="19"><span class="st">  </span><span class="kw">$sql_order</span></a>
+<a class="sourceLine" id="cb23-20" title="20"><span class="st">  </span><span class="kw">$sql_limit</span><span class="st">&quot;</span><span class="ot">);</span></a></code></pre></div>
+<ol>
+<li><p>Ensure that you use prepared statements as in the first example whenever you can.</p></li>
+<li><p>If you can not use prepared statements, ensure that you properly escape any database SQL WHERE logic properly.</p></li>
+<li><p>Always use the term <code>AS</code> to define an alias.</p></li>
+<li><p>Ensure that your JOINs are either INNER, LEFT, or RIGHT.</p></li>
+<li><p>Ensure that the ON clause uses table aliases, and that each <code>AND</code> or <code>OR</code> expression is logically organized for easy reading and interpretation.</p></li>
+<li><p>In your SQL WHERE and SELECT, where fuctions are involved</p>
+<ol>
+<li>Ensure that there are spaces between parameter</li>
+<li>Ensure operators and variables are separated by spaces</li>
+</ol></li>
+</ol>
 <h2 id="comments">Comments</h2>
 <p>The key to being a respectable coder is to write clear, concise code and to use comments everywhere.</p>
 <h3 id="whole-line-comments">Whole Line Comments</h3>
@@ -259,10 +299,11 @@ set tabstop=4
 <a class="sourceLine" id="cb24-3" title="3">    <span class="co">// code</span></a>
 <a class="sourceLine" id="cb24-4" title="4">}</a></code></pre></div>
 <div class="sourceCode" id="cb25"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb25-1" title="1"><span class="co">/* this is an extra long comment that deserves to be</span></a>
-<a class="sourceLine" id="cb25-2" title="2"><span class="co"> * split up into multiple lines */</span></a>
-<a class="sourceLine" id="cb25-3" title="3"><span class="kw">if</span> <span class="ot">(</span><span class="kw">$i</span> == <span class="dv">0</span><span class="ot">)</span> {</a>
-<a class="sourceLine" id="cb25-4" title="4">    <span class="co">// code</span></a>
-<a class="sourceLine" id="cb25-5" title="5">}</a></code></pre></div>
+<a class="sourceLine" id="cb25-2" title="2"><span class="co"> * split up into multiple lines</span></a>
+<a class="sourceLine" id="cb25-3" title="3"><span class="co"> */</span></a>
+<a class="sourceLine" id="cb25-4" title="4"><span class="kw">if</span> <span class="ot">(</span><span class="kw">$i</span> == <span class="dv">0</span><span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb25-5" title="5">    <span class="co">// code</span></a>
+<a class="sourceLine" id="cb25-6" title="6">}</a></code></pre></div>
 <h3 id="end-of-line-comments">End of Line Comments</h3>
 <p>Shorter comments that follow a line of code should use the familiar <code>//</code> style.</p>
 <div class="sourceCode" id="cb26"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb26-1" title="1"><span class="kw">$var</span> = <span class="dv">0</span><span class="ot">;</span> <span class="co">// assign 0 to $var</span></a></code></pre></div>
@@ -270,7 +311,7 @@ set tabstop=4
 <p>All code related files must contain the following notice at the beginning of the file.</p>
 <div class="sourceCode" id="cb27"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb27-1" title="1"><span class="co">/*</span></a>
 <a class="sourceLine" id="cb27-2" title="2"><span class="co"> +-------------------------------------------------------------------------+</span></a>
-<a class="sourceLine" id="cb27-3" title="3"><span class="co"> | Copyright (C) 2004-2018 The Cacti Group                                 |</span></a>
+<a class="sourceLine" id="cb27-3" title="3"><span class="co"> | Copyright (C) 2004-2022 The Cacti Group                                 |</span></a>
 <a class="sourceLine" id="cb27-4" title="4"><span class="co"> |                                                                         |</span></a>
 <a class="sourceLine" id="cb27-5" title="5"><span class="co"> | This program is free software; you can redistribute it and/or           |</span></a>
 <a class="sourceLine" id="cb27-6" title="6"><span class="co"> | modify it under the terms of the GNU General Public License             |</span></a>
@@ -282,16 +323,11 @@ set tabstop=4
 <a class="sourceLine" id="cb27-12" title="12"><span class="co"> | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |</span></a>
 <a class="sourceLine" id="cb27-13" title="13"><span class="co"> | GNU General Public License for more details.                            |</span></a>
 <a class="sourceLine" id="cb27-14" title="14"><span class="co"> +-------------------------------------------------------------------------+</span></a>
-<a class="sourceLine" id="cb27-15" title="15"><span class="co"> | Cacti: The Complete RRDTool-based Graphing Solution                     |</span></a>
-<a class="sourceLine" id="cb27-16" title="16"><span class="co"> +-------------------------------------------------------------------------+</span></a>
-<a class="sourceLine" id="cb27-17" title="17"><span class="co"> | This code is designed, written, and maintained by the Cacti Group. See  |</span></a>
-<a class="sourceLine" id="cb27-18" title="18"><span class="co"> | about.php and/or the AUTHORS file for specific developer information.   |</span></a>
-<a class="sourceLine" id="cb27-19" title="19"><span class="co"> +-------------------------------------------------------------------------+</span></a>
 <a class="sourceLine" id="cb27-20" title="20"><span class="co"> | http://www.cacti.net/                                                   |</span></a>
 <a class="sourceLine" id="cb27-21" title="21"><span class="co"> +-------------------------------------------------------------------------+</span></a>
 <a class="sourceLine" id="cb27-22" title="22"><span class="co">*/</span></a></code></pre></div>
 <h3 id="function-comments">Function Comments</h3>
-<p>All functions must be preceded by a comment describing the purpose, argument list, and return type of the function. It should be formatted as follow:</p>
+<p>All functions must be preceded by a comment describing the purpose, argument list, and return type of the function. It should be formatted per PHP DocBlock specifications as follow:</p>
 <div class="sourceCode" id="cb28"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb28-1" title="1"><span class="co">/**</span></a>
 <a class="sourceLine" id="cb28-2" title="2"><span class="co"> * Makes a connection to the database server</span></a>
 <a class="sourceLine" id="cb28-3" title="3"><span class="co"> *</span></a>
@@ -305,9 +341,11 @@ set tabstop=4
 <a class="sourceLine" id="cb28-11" title="11"><span class="co"> * </span><span class="an">@param</span><span class="co"> </span><span class="cv">string</span><span class="co"> $db_name the name of the database to connect to</span></a>
 <a class="sourceLine" id="cb28-12" title="12"><span class="co"> * </span><span class="an">@param</span><span class="co"> </span><span class="cv">string</span><span class="co"> $db_type the type of database server to connect to, only &#39;mysql&#39; is currently supported</span></a>
 <a class="sourceLine" id="cb28-13" title="13"><span class="co"> * </span><span class="an">@param</span><span class="co"> </span><span class="cv">int</span><span class="co"> $retries the number a time the server should attempt to connect before failing</span></a>
-<a class="sourceLine" id="cb28-14" title="14"><span class="co"> * </span><span class="an">@return</span><span class="co"> bool true if successful, false otherwise</span></a>
-<a class="sourceLine" id="cb28-15" title="15"><span class="co"> */</span></a></code></pre></div>
+<a class="sourceLine" id="cb28-14" title="14"><span class="co"> *</span></a>
+<a class="sourceLine" id="cb28-15" title="15"><span class="co"> * </span><span class="an">@return</span><span class="co"> bool true if successful, false otherwise</span></a>
+<a class="sourceLine" id="cb28-16" title="16"><span class="co"> */</span></a></code></pre></div>
+<p>Place a space between the <code>@param</code> and <code>@return</code>.</p>
 <hr />
-<p>Copyright (c) 2004-2020 The Cacti Group</p>
+<p><copy>Copyright (c) 2004-2022 The Cacti Group</copy></p>
 </body>
 </html>

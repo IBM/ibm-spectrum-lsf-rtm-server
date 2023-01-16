@@ -16,7 +16,27 @@
 <body>
 <h1 id="variables">Variables</h1>
 <h2 id="graph-variables">Graph Variables</h2>
-<p>The following variables can be used in the Text Format and Value graph item fields. Below is a description of each of these variables.</p>
+<p>Graphs Variables are special use replacement variables used to take information from the following objects and use them in the context of a Cacti Graph:</p>
+<ul>
+<li><strong>Cacti Device</strong> - host information</li>
+<li><strong>Data Query</strong> - input query meta data</li>
+<li><strong>Data Input</strong> - input variables</li>
+<li><strong>Nth Percentile</strong> - formulas</li>
+</ul>
+<p>It also allows you additional one single use replacement variables like:</p>
+<ul>
+<li><strong>Data Source Name</strong> - The name of your Data Source</li>
+<li><strong>Date Time</strong> - The date and time the graph was rendered.</li>
+</ul>
+<p>In the examples below, you will be able to see how to use these values. They can be used in:</p>
+<ol>
+<li>Graph and Graph Template - Titles</li>
+<li>Graph and Graph Template - Comments</li>
+<li>Data Query - Suggested names for Graphs and Data Sources</li>
+<li>Data Source - Min and Max Data Source Limits</li>
+<li>Aggregate Graphs and Templates - Prefixes</li>
+</ol>
+<p>All Graph Variables are enclosed by pipe characters as shown in the examples below.</p>
 <h2 id="datetime">Date/Time</h2>
 <pre class="regex"><code>|date_time|
 </code></pre>
@@ -25,7 +45,8 @@
 <pre class="regex"><code>|data_source_title|
 </code></pre>
 <p>This variable, <code>|data_source_title|</code>, gets replaced with the name of the data source associated with a particular graph item in a graph template. This change allows the creation of generic graph templates (2-variable line graph, 3-variable stack, etc.) which can be reused with large numbers of data sources. See attached examples to understand usage.</p>
-<p><img src="images/data-source-title-template.png" alt="Example of a Graph Template using |data_source_title|" /></p>
+<p><img src="images/graph-variables-data-source-title.png" alt="Example of a Graph Template using |data_source_title|" /></p>
+<p>The example graphs below, show how the output may look, but for a slightly different Case.</p>
 <p><img src="images/data-source-title-example1.png" alt="Example 1 of a Graph making use of |data_source_title|" /></p>
 <p><img src="images/data-source-title-example2.png" alt="Example 2 of a Graph making use of |data_source_title|" /></p>
 <h2 id="data-query-fields">Data Query Fields</h2>
@@ -36,10 +57,16 @@
 </code></pre>
 <pre class="regex"><code>|query_dskPath|
 </code></pre>
+<h2 id="data-input-arguments">Data Input Arguments</h2>
+<pre class="regex"><code>|input_hostname|
+</code></pre>
+<pre class="regex"><code>|input_ip_address|
+</code></pre>
 <h2 id="nth-percentile">Nth Percentile</h2>
 <pre class="regex"><code>|[0-9]:(bits|bytes):[0-9]:(current|total|max|total_peak|all_max_current|all_max_peak|aggregate_max|aggregate_sum|aggregate_current|aggregate):[0-9]|
 </code></pre>
 <p>Nth percentile is often used by hosting providers to bill customers based on their peak traffic usage while ignoring their top (100 - Nth) percent. This way if a customer has a fairly consistent traffic pattern and decides to download a huge file one day, the large spike will be ignored. Common Nth percentile is 95, which would cut off the top 5% of the traffic.</p>
+<p>The Nth Percentile variables, when placed in Graph Comments will be detected and the syntax will be parsed and the reulting numeric value will replace the formula. They are used in both 95th Percentile and Bandwidth Traffic Graphs today.</p>
 <p>In Cacti, Nth percentile works just like any other graph variable. To use this variable you must give it five arguments:</p>
 <h6 id="table-15-1-nth-percentile-argument-description">Table 15-1. Nth Percentile Argument Description</h6>
 <table>
@@ -91,11 +118,11 @@
 </tr>
 <tr class="odd">
 <td>max</td>
-<td>Calculates the Nth percentile based off the selected data source on the graph item which the variable is used, but it is important to note that it selects the higher of the values for each row in data source and then uses the resulting set to calculate the Nth percentile. Example, you have selected a interface data source for traffic_in, this will evaluate traffic_out and traffic_in for that selected data source (RRDTool file) and select the higher of the two values for each row of data. The resulting max values are used to calculate the Nth percentile value. This type requires a selected Data Source Item in the graph item in which it is defined.</td>
+<td>Calculates the Nth percentile based off the selected data source on the graph item which the variable is used, but it is important to note that it selects the higher of the values for each row in data source and then uses the resulting set to calculate the Nth percentile. Example, you have selected a interface data source for traffic_in, this will evaluate traffic_out and traffic_in for that selected data source (RRDtool file) and select the higher of the two values for each row of data. The resulting max values are used to calculate the Nth percentile value. This type requires a selected Data Source Item in the graph item in which it is defined.</td>
 </tr>
 <tr class="even">
 <td>total_peak</td>
-<td>Calculates the Nth percentile based on the max for each data source defined on the graph. Example, the max is taken for each data source defined on the graph, but it's the max of traffic_in or traffic_out for that data source (RRDTool file). The resulting max values are summed and returned.</td>
+<td>Calculates the Nth percentile based on the max for each data source defined on the graph. Example, the max is taken for each data source defined on the graph, but it's the max of traffic_in or traffic_out for that data source (RRDtool file). The resulting max values are summed and returned.</td>
 </tr>
 <tr class="odd">
 <td>all_max_current</td>
@@ -103,7 +130,7 @@
 </tr>
 <tr class="even">
 <td>all_max_peak</td>
-<td>Calculates the Nth percentile by selecting the highest (max) calculated max Nth percentile value for each data source (RRDTool file) selected on the graph. Example, 3 data sources are defined on the graph, for each data source, the max Nth percentile is calculated, and out of the resulting set of values, the highest value is selected and returned.</td>
+<td>Calculates the Nth percentile by selecting the highest (max) calculated max Nth percentile value for each data source (RRDtool file) selected on the graph. Example, 3 data sources are defined on the graph, for each data source, the max Nth percentile is calculated, and out of the resulting set of values, the highest value is selected and returned.</td>
 </tr>
 <tr class="odd">
 <td>aggregate_max</td>
@@ -129,7 +156,7 @@
 <h2 id="bandwidth-summation">Bandwidth Summation</h2>
 <pre class="regex"><code>|sum:([0-9]|auto):(current|total):([0-9]):([0-9]+|auto)|
 </code></pre>
-<p>Bandwidth summation is useful for summing up all values in an RRD file for a given time range. This is typically useful on traffic graphs where you can see a total of all traffic that has gone through an interface in a given time period.</p>
+<p>Bandwidth summation is useful for summing up all values in an RRDfile for a given time range. This is typically useful on traffic graphs where you can see a total of all traffic that has gone through an interface in a given time period.</p>
 <p>In Cacti, bandwidth summation works just like any other graph variable. To use this variable you must give it three arguments:</p>
 <h6 id="table-15-3-bandwidth-summation-argument-description">Table 15-3. Bandwidth Summation Argument Description</h6>
 <table>
@@ -294,7 +321,13 @@
 </tr>
 </tbody>
 </table>
+<h2 id="example-use">Example Use</h2>
+<p>Below you can see the example in the <code>SNMP - Interface Statistics</code> Data Query of how they are used for suggested names.</p>
+<p><img src="images/graph-variables-suggested-names.png" alt="Suggested Names" /></p>
+<p>And in Bandwidth Graph Template.</p>
+<p><img src="images/graph-variables-graph-template.png" alt="Graph Template Bandwidth" /></p>
+<p>In the images above, you can see both the Title of the Graph and the Comments showing the use of the bandwidth replacement variables.</p>
 <hr />
-<p>Copyright (c) 2004-2020 The Cacti Group</p>
+<p><copy>Copyright (c) 2004-2022 The Cacti Group</copy></p>
 </body>
 </html>

@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>Cacti – Installing on CentOS 7</title>
+  <title>Cacti – Installing on CentOS/RHEL/ROCKY</title>
   <style type="text/css">
       code{white-space: pre-wrap;}
       span.smallcaps{font-variant: small-caps;}
@@ -77,14 +77,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <link rel="stylesheet" href="Cacti-Github.css" />
 </head>
 <body>
-<h1 id="installing-on-centos-7">Installing on CentOS 7</h1>
+<h1 id="installing-on-centosrhelrocky">Installing on CentOS/RHEL/ROCKY</h1>
 <h2 id="lamp-linux-apache-mysqlmariadb-php-required-packages">LAMP (Linux, Apache, MySQL/MariaDB, PHP) Required packages</h2>
 <h3 id="web-server-apache">Web Server (Apache)</h3>
 <ol>
-<li><p>Enable Epel repo to enable PHP 7.2 package download</p>
-<pre class="console"><code>yum install &lt;http://rpms.remirepo.net/enterprise/remi-release-7.rpm&gt; -y
+<li><p>Enable Epel repo to enable PHP 7.2 package download ( 7.x and Below)</p>
+<pre class="console"><code>yum install http://rpms.remirepo.net/enterprise/remi-release-7.rpm -y
 yum install yum-utils -y
 yum-config-manager --enable remi-php72
+</code></pre>
+<p>For Centos/RHEL/ROCKY 8+</p>
+<pre class="console"><code>dnf module reset php
+dnf module enable php:8.0
 </code></pre></li>
 <li><p>Install Apache</p>
 <pre class="console"><code>yum install -y httpd
@@ -98,7 +102,7 @@ systemctl enable httpd
 <p>This example configuration assumes you have your own certificates already. You should make sure you change the paths to match your setup.</p>
 <p>Replace <code>YourOwnCertFile.crt</code> and <code>YourOwnCertFile.key</code> with the names of the files holding your certificate (<code>.crt</code>) and private key (<code>.key</code>).</p>
 <pre class="console"><code>#
-# Cacti: An RRD based graphing tool
+# Cacti: An RRDtool based graphing web application
 #
 
 # For security reasons, the Cacti web interface is accessible only to
@@ -138,7 +142,7 @@ systemctl enable httpd
         # Uncomment these if you use mod_security.
         # allow POST of application/x-www-form-urlencoded during install
         #SecRuleRemoveById 960010
-        # permit the specification of the RRDTool paths during install
+        # permit the specification of the RRDtool paths during install
         #SecRuleRemoveById 900011
     &lt;/Directory&gt;
 
@@ -229,19 +233,22 @@ MariaDB [(none)]&gt; create database if not exists cacti;
 Query OK, 1 row affected (0.00 sec)
 </code></pre></li>
 <li><p>Import Cacti database from SQL file</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb15-1" title="1">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">use</span> cacti;</a>
-<a class="sourceLine" id="cb15-2" title="2"><span class="kw">Database</span> changed</a>
-<a class="sourceLine" id="cb15-3" title="3">MariaDB [(cacti)]<span class="op">&gt;</span> <span class="kw">source</span> <span class="op">/</span>var<span class="op">/</span>www<span class="op">/</span>html<span class="op">/</span>cacti<span class="op">/</span>cacti.sql</a></code></pre></div></li>
+<div class="sourceCode" id="cb16"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb16-1" title="1">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">use</span> cacti;</a>
+<a class="sourceLine" id="cb16-2" title="2"><span class="kw">Database</span> changed</a>
+<a class="sourceLine" id="cb16-3" title="3">MariaDB [(cacti)]<span class="op">&gt;</span> <span class="kw">source</span> <span class="op">/</span>var<span class="op">/</span>www<span class="op">/</span>html<span class="op">/</span>cacti<span class="op">/</span>cacti.sql</a></code></pre></div></li>
 <li><p>Grant Cacti username access to Cacti database. Replace <code>your_cacti_username</code> and <code>your_cacti_password</code> with your own details.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb16-1" title="1">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">CREATE</span> <span class="fu">USER</span> <span class="st">&#39;your_cacti_username&#39;</span>@<span class="st">&#39;localhost&#39;</span> <span class="kw">IDENTIFIED</span> <span class="kw">BY</span> <span class="st">&#39;your_cacti_password&#39;</span>;</a>
-<a class="sourceLine" id="cb16-2" title="2"><span class="kw">Query</span> OK, <span class="dv">0</span> <span class="kw">rows</span> affected (<span class="fl">0.00</span> sec)</a>
-<a class="sourceLine" id="cb16-3" title="3">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">GRANT</span> <span class="kw">ALL</span> <span class="kw">PRIVILEGES</span> <span class="kw">ON</span> cacti.<span class="op">*</span> <span class="kw">TO</span> <span class="st">&#39;your_cacti_username&#39;</span>@<span class="st">&#39;localhost&#39;</span>;</a>
-<a class="sourceLine" id="cb16-4" title="4"><span class="kw">Query</span> OK, <span class="dv">0</span> <span class="kw">rows</span> affected (<span class="fl">0.00</span> sec)</a></code></pre></div></li>
-<li><p>Grant cacti username to MySQL timezone table</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb17-1" title="1">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">GRANT</span> <span class="kw">SELECT</span> <span class="kw">ON</span> mysql.time_zone_name <span class="kw">TO</span> <span class="st">&#39;your_cacti_username&#39;</span>@<span class="st">&#39;localhost&#39;</span>;</a>
+<div class="sourceCode" id="cb17"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb17-1" title="1">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">CREATE</span> <span class="fu">USER</span> <span class="st">&#39;your_cacti_username&#39;</span>@<span class="st">&#39;localhost&#39;</span> <span class="kw">IDENTIFIED</span> <span class="kw">BY</span> <span class="st">&#39;your_cacti_password&#39;</span>;</a>
 <a class="sourceLine" id="cb17-2" title="2"><span class="kw">Query</span> OK, <span class="dv">0</span> <span class="kw">rows</span> affected (<span class="fl">0.00</span> sec)</a>
-<a class="sourceLine" id="cb17-3" title="3">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">FLUSH</span> <span class="kw">PRIVILEGES</span>;</a>
+<a class="sourceLine" id="cb17-3" title="3">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">GRANT</span> <span class="kw">ALL</span> <span class="kw">PRIVILEGES</span> <span class="kw">ON</span> cacti.<span class="op">*</span> <span class="kw">TO</span> <span class="st">&#39;your_cacti_username&#39;</span>@<span class="st">&#39;localhost&#39;</span>;</a>
 <a class="sourceLine" id="cb17-4" title="4"><span class="kw">Query</span> OK, <span class="dv">0</span> <span class="kw">rows</span> affected (<span class="fl">0.00</span> sec)</a></code></pre></div></li>
+<li><p>Grant cacti username to MySQL timezone table</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb18-1" title="1">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">GRANT</span> <span class="kw">SELECT</span> <span class="kw">ON</span> mysql.time_zone_name <span class="kw">TO</span> <span class="st">&#39;your_cacti_username&#39;</span>@<span class="st">&#39;localhost&#39;</span>;</a>
+<a class="sourceLine" id="cb18-2" title="2"><span class="kw">Query</span> OK, <span class="dv">0</span> <span class="kw">rows</span> affected (<span class="fl">0.00</span> sec)</a>
+<a class="sourceLine" id="cb18-3" title="3">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">FLUSH</span> <span class="kw">PRIVILEGES</span>;</a>
+<a class="sourceLine" id="cb18-4" title="4"><span class="kw">Query</span> OK, <span class="dv">0</span> <span class="kw">rows</span> affected (<span class="fl">0.00</span> sec)</a></code></pre></div></li>
+<li><p>Save the Database Charset and Collation</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb19-1" title="1">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">ALTER</span> <span class="kw">DATABASE</span> cacti <span class="dt">CHARACTER</span> <span class="kw">SET</span> utf8mb4 COLLATE utf8mb4_unicode_ci;</a>
+<a class="sourceLine" id="cb19-2" title="2">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">FLUSH</span> <span class="kw">PRIVILEGES</span>;</a></code></pre></div></li>
 </ol>
 <h3 id="common-packages">Common packages</h3>
 <h4 id="php">PHP</h4>
@@ -259,9 +266,9 @@ php-xml php-zip
 <pre class="console"><code>date.timezone = Pacific/Auckland
 </code></pre></li>
 </ol>
-<h4 id="rrdtool">RRDTool</h4>
-<p>RRDTool is required to store the data retrieved from devices in <code>.rra</code> files to produce the graphs which are shown within Cacti</p>
-<pre class="console"><code>yum install -y RRDTool
+<h4 id="rrdtool">RRDtool</h4>
+<p>RRDtool is required to store the data retrieved from devices in <code>.rra</code> files to produce the graphs which are shown within Cacti</p>
+<pre class="console"><code>yum install -y rrdtool
 </code></pre>
 <h4 id="snmp">SNMP</h4>
 <p>SNMP is used to query most devices for information.</p>
@@ -280,24 +287,39 @@ mv -v cacti-1.y.z /var/www/html/cacti
 <pre class="console"><code>mv -v /var/www/html/cacti/include/config.php-dist /var/www/html/cacti/include/config.php
 </code></pre></li>
 <li><p>Update <code>database_</code> fields with your own details. This section only applies to the Main Cacti Server</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb24-1" title="1"><span class="kw">$database_type</span>     = <span class="st">&#39;mysql&#39;</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb24-2" title="2"><span class="kw">$database_default</span>  = <span class="st">&#39;your_cacti_database&#39;</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb24-3" title="3"><span class="kw">$database_hostname</span> = <span class="st">&#39;localhost&#39;</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb24-4" title="4"><span class="kw">$database_username</span> = <span class="st">&#39;your_cacti_username&#39;</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb24-5" title="5"><span class="kw">$database_password</span> = <span class="st">&#39;your_cacti_password&#39;</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb24-6" title="6"><span class="kw">$database_port</span>     = <span class="st">&#39;3306&#39;</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb24-7" title="7"><span class="kw">$database_ssl</span>      = <span class="kw">false</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb24-8" title="8"><span class="kw">$database_ssl_key</span>  = <span class="st">&#39;&#39;</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb24-9" title="9"><span class="kw">$database_ssl_cert</span> = <span class="st">&#39;&#39;</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb24-10" title="10"><span class="kw">$database_ssl_ca</span>   = <span class="st">&#39;&#39;</span><span class="ot">;</span></a></code></pre></div></li>
-<li><p>Create your cron task file</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb26-1" title="1"><span class="kw">$database_type</span>     = <span class="st">&#39;mysql&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb26-2" title="2"><span class="kw">$database_default</span>  = <span class="st">&#39;your_cacti_database&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb26-3" title="3"><span class="kw">$database_hostname</span> = <span class="st">&#39;localhost&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb26-4" title="4"><span class="kw">$database_username</span> = <span class="st">&#39;your_cacti_username&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb26-5" title="5"><span class="kw">$database_password</span> = <span class="st">&#39;your_cacti_password&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb26-6" title="6"><span class="kw">$database_port</span>     = <span class="st">&#39;3306&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb26-7" title="7"><span class="kw">$database_ssl</span>      = <span class="kw">false</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb26-8" title="8"><span class="kw">$database_ssl_key</span>  = <span class="st">&#39;&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb26-9" title="9"><span class="kw">$database_ssl_cert</span> = <span class="st">&#39;&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb26-10" title="10"><span class="kw">$database_ssl_ca</span>   = <span class="st">&#39;&#39;</span><span class="ot">;</span></a></code></pre></div></li>
+<li><p>Create your cron task file or systemd units file</p>
+<p>Starting with Cacti 1.2.16, you have the option to use either the legacy Crontab entry, or an optional cactid units file and server to run your Cacti pollers.</p>
+<p>For Crontab use, follow the instructions below:</p>
 <p>Create and edit <code>/etc/cron.d/cacti</code> file. Make sure to setup the correct path to poller.php</p>
 <pre class="console"><code>*/5 * * * * apache php /var/www/html/cacti/poller.php &amp;&gt;/dev/null
-</code></pre></li>
+</code></pre>
+<p>For systemd unit's file install, you will need to modify the included units file to following your install location and desired user and group's to run the Cacti poller as. To complete the task, follow the procedure below:</p>
+<pre class="console"><code>vim /var/www/html/cacti/service/cactid.service (edit the path)
+touch /etc/sysconfig/cactid
+cp -p /var/www/html/cacti/service/cactid.service /etc/systemd/system
+systemctl enable cactid
+systemctl start cactid
+systemctl status cactid
+</code></pre>
+<p>The systemd units file makes managing a highly available Cacti setup a bit more convenient.</p></li>
 </ol>
 <h4 id="spine">Spine</h4>
 <ol>
 <li><p>Install the necessary packages to compile and install spine</p>
+<p>For RHEL/CENTOS/ROCKY 8+, you must enable the powertools repo first before downloading the below packages</p>
+<pre class="console"><code>yum config-manager --set-enabled powertools
+</code></pre>
+<p>For RHEL/CENTOS/ROCKY 7.x and below</p>
 <pre class="console"><code>yum install -y autoconf automake libtool dos2unix help2man \
 openssl-devel mariadb-devel net-snmp-devel
 </code></pre></li>
@@ -350,8 +372,35 @@ DB_Port       3306
 <pre class="console"><code>setenforce 1
 </code></pre></li>
 </ol>
+<h3 id="considerations-when-using-proxies-in-front-of-cacti-cacti-1223">Considerations when using Proxies in front of Cacti (Cacti 1.2.23+)</h3>
+<p>For optimal security, only specify the HTTP headers that are set by your proxy software to prevent unauthorized access. These can be set by editing the following section of config.php</p>
+<pre><code> * Allow the use of Proxy IPs when searching for client
+ * IP to be used
+ *
+ * This can be set to one of the following:
+ *   - false: to use only REMOTE_ADDR
+ *   - true: to use all allowed headers (not advised)
+ *   - array of one or more the following:
+ *      &#39;X-Forwarded-For&#39;,
+ *      &#39;X-Client-IP&#39;,
+ *      &#39;X-Real-IP&#39;,
+ *      &#39;X-ProxyUser-Ip&#39;,
+ *      &#39;CF-Connecting-IP&#39;,
+ *      &#39;True-Client-IP&#39;,
+ *      &#39;HTTP_X_FORWARDED&#39;,
+ *      &#39;HTTP_X_FORWARDED_FOR&#39;,
+ *      &#39;HTTP_X_CLUSTER_CLIENT_IP&#39;,
+ *      &#39;HTTP_FORWARDED_FOR&#39;,
+ *      &#39;HTTP_FORWARDED&#39;,
+ *      &#39;HTTP_CLIENT_IP&#39;,
+ *
+ * NOTE: The following will always be checked:
+ *      &#39;REMOTE_ADDR&#39;,
+ */
+$proxy_headers = null;
+</code></pre>
 <p><strong>Note:</strong> If you installed Cacti out of <code>/var/www/html</code> make sure you fix up all SELinux context and permissions.</p>
 <hr />
-<p>Copyright (c) 2004-2020 The Cacti Group</p>
+<p><copy>Copyright (c) 2004-2022 The Cacti Group</copy></p>
 </body>
 </html>

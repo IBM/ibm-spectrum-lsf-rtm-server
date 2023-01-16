@@ -170,6 +170,10 @@ label {
 	white-space: nowrap;
 }
 
+.wrap {
+	white-space: normal !important;
+}
+
 .top {
 	vertical-align: top;
 }
@@ -1124,6 +1128,10 @@ legend {
 	white-space: nowrap;
 }
 
+.piinstall, .pienable, .pidisable, .piuninstall, .pierror {
+	padding: 0px 3px !important;
+}
+
 .linkEditMain, .linkEditMain:visited, .linkEditMain:active {
 	color: rgba(44,130,29,1);
 	text-decoration: none;
@@ -1291,9 +1299,10 @@ legend {
 .cactiTableTitleRow {
 	float: left;
 	text-align: left;
-	padding: 3px 0px;
-	height: 16px;
-	display: table-column;
+	padding-left: 5px;
+	height: 25px;
+	line-height: 25px;
+	display: block;
 	width: 100%;
 	background: rgba(98,125,77,1);
 	background: -moz-linear-gradient(top, rgba(98,125,77,1) 0%, rgba(31,59,8,1) 100%);
@@ -1307,9 +1316,10 @@ legend {
 .cactiTableTitle {
 	float: left;
 	text-align: left;
-	padding: 3px 0px;
-	height: 18px;
-	display: table-column;
+	padding-left: 5px;
+	height: 25px;
+	line-height: 25px;
+	display: block;
 	width: 70%;
 	background: rgba(98,125,77,1);
 	background: -moz-linear-gradient(top, rgba(98,125,77,1) 0%, rgba(31,59,8,1) 100%);
@@ -1328,11 +1338,12 @@ tr.cactiTableTitle th, tr.cactiTableTitle td{
 
 .cactiTableButton {
 	float: right;
-	padding: 3px 0px;
-	height: 18px;
-	display: table-column;
+	padding: 0px;
+	height: 25px;
+	line-height: 25px;
+	display: block;
 	text-align: right;
-	width: 30%;
+	width: calc(30% - 5px);
 	background: rgba(98,125,77,1);
 	background: -moz-linear-gradient(top, rgba(98,125,77,1) 0%, rgba(31,59,8,1) 100%);
 	background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(98,125,77,1)), color-stop(100%, rgba(31,59,8,1)));
@@ -1354,15 +1365,14 @@ tr.cactiTableTitle th, tr.cactiTableTitle td{
 	padding: 0px;
 	white-space: nowrap;
 	overflow: hidden;
-	vertical-align: middle;
 }
 
 .cactiTableButton i {
 	padding: 0px 8px;
 }
 
-.cactiTableButton span:last-child, .cactiTableTitle span:last-child {
-	padding: 0px 5px;
+.cactiTableButton span:last-child i, .cactiTableTitle span:last-child i {
+	padding: 0px 8px !important;
 }
 
 .cactiTableButton span a, .cactiTableTitle span a {
@@ -1498,7 +1508,7 @@ tr.cactiTableTitle th, tr.cactiTableTitle td{
 
 .formHeaderAnchor {
 	float: right;
-	padding-right: 4px;
+	padding-right: 8px;
 }
 
 .hostInfoHeader {
@@ -1636,7 +1646,7 @@ tr.cactiTableTitle th, tr.cactiTableTitle td{
 	color: snow;
 	vertical-align: middle;
 	text-align: left;
-	font-size: 11px;
+	font-size: 12px;
 	font-weight: normal;
 	padding: 2px;
 }
@@ -1644,7 +1654,7 @@ tr.cactiTableTitle th, tr.cactiTableTitle td{
 .tableHeader th div {
 	display: block;
 	padding-right: 8px;
-	font-size: 11px;
+	font-size: 12px;
 }
 
 .tableSubHeaderColumn, .tableSubHeaderColumnCenter, .tableSubHeaderColumnRight {
@@ -1713,6 +1723,8 @@ tr.cactiTableTitle th, tr.cactiTableTitle td{
 	text-align: center;
 	vertical-align: middle;
 	display: table;
+	line-height: 18px;
+	height: 18px;
 	background: rgba(98,125,77,1);
 	background: -moz-linear-gradient(top, rgba(98,125,77,1) 0%, rgba(31,59,8,1) 100%);
 	background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(98,125,77,1)), color-stop(100%, rgba(31,59,8,1)));
@@ -2195,6 +2207,10 @@ tr.selected a {
 	padding: 0;
 }
 
+#nav a {
+	font-size: 12px;
+}
+
 #nav li ul li a {
 	padding: 2px 4px;
 	background: #ececec;
@@ -2258,7 +2274,6 @@ ul#nav {
 }
 
 .ui-multiselect-header ul {
-	margin-top: 4px;
 	height: 15px;
 	float: left;
 }
@@ -2415,9 +2430,9 @@ tr#realtime td:first-child {
 
 .menu_glyph {
 	font-size: 18px;
-	padding-right: 5px;
-	vertical-align: 10%;
-	float: middle;
+	vertical-align: middle;
+	text-align: left;
+	width: 20px;
 }
 
 .menuitem span {
@@ -2669,3 +2684,12 @@ td.center > table {
 	z-index: 99;
 }
 
+[id*='_edit'] .tableRowGraph:hover {
+     background-color: rgba(0, 200, 0, .1) !important;
+     border-left: 2px solid yellow !important;
+     border-right: 2px solid yellow !important;
+}
+
+.tableRowGraph {
+     border: 2px solid rgba(0,0,0,0);
+}

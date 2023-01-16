@@ -529,7 +529,7 @@ function disku_applications() {
 	form_end();
 }
 
-function disku_get_application_records(&$sql_where, $apply_limits = true, $rows = 20, &$sql_params) {
+function disku_get_application_records(&$sql_where, $apply_limits = true, $rows = 30, &$sql_params = array()) {
 	if (get_request_var('filter') != '') {
 		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . "(application LIKE ?
 			OR vendor LIKE ?)";

@@ -1,4 +1,4 @@
-#!/usr/bin/php -q
+#!/usr/bin/env php
 <?php
 // $Id$
 /*
@@ -29,6 +29,11 @@ require_once($config['base_path'] . '/lib/utility.php');
 
 ini_set('max_execution_time', '0');
 ini_set('memory_limit', '-1');
+
+/* switch to main database for cli's */
+if ($config['poller_id'] > 1) {
+	db_switch_remote_to_main();
+}
 
 /* process calling arguments */
 $parms = $_SERVER['argv'];
@@ -319,7 +324,7 @@ function display_help() {
 	print "By default, this utility will only report on the number of Graphs that will be removed.  If you" . PHP_EOL;
 	print "provide the --force option, the Graphs will actually be removed.  If you use the --list option" . PHP_EOL;
 	print "each of the Graphs to be removed, will be listed.  Options --list and --force are" . PHP_EOL;
-	print "mutulally exclusive." . PHP_EOL . PHP_EOL;
+	print "mutually exclusive." . PHP_EOL . PHP_EOL;
 
 	print "List Options:" . PHP_EOL;
 	print "    --list" . PHP_EOL;

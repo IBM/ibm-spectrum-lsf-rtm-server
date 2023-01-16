@@ -41,7 +41,12 @@ $exclude_tables = array(    "grid_job_interval_stats",
                             "poller_item");
 
 foreach($parms as $parameter) {
-	@list($arg, $value) = @explode("=", $parameter);
+	if (strpos($parameter, '=')) {
+		list($arg, $value) = explode('=', $parameter);
+	} else {
+		$arg = $parameter;
+		$value = '';
+	}
 
 	switch ($arg) {
 	case "-d":
@@ -89,7 +94,7 @@ if (strtolower($file_per_table["Value"]) != "on") {
 
 $tables = db_fetch_assoc("SHOW TABLE STATUS");
 
-if (sizeof($tables)) {
+if (cacti_sizeof($tables)) {
 foreach($tables AS $table) {
 	if ($table["Engine"] == "MyISAM" || ($table["Engine"] == "InnoDB" && $rebuild)) {
 		if (in_array($table['Name'], $exclude_tables)) {

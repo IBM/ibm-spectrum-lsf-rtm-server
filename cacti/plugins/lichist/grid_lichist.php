@@ -78,7 +78,7 @@ function build_query_string() {
 
 /* For running jobs, find all the (potential) license checkouts for that job
 */
-function grid_get_curr_licusage_records(&$sql_where, &$row_count, $apply_limits = TRUE, $row_limit) {
+function grid_get_curr_licusage_records(&$sql_where, &$row_count, $apply_limits = TRUE, $row_limit = 30) {
 	global $job, $lichist_views_columns;
 
 	$jobid      = $job['jobid'];
@@ -94,7 +94,7 @@ function grid_get_curr_licusage_records(&$sql_where, &$row_count, $apply_limits 
 	}
 
 	/* filter sql where */
-	if (!strlen(get_request_var('filter'))) {
+	if (get_request_var('filter') == '') {
 		$sql_where .= (strlen($sql_where) ? " AND":"WHERE") .
 			" hostname= ? AND username= ?" .
 			" AND ((tokens_acquired_date >= ? AND status='start') OR (tokens_acquired_date='0000-00-00 00:00:00' AND status='queued'))";
@@ -140,7 +140,7 @@ function grid_get_curr_licusage_records(&$sql_where, &$row_count, $apply_limits 
 	return $rows;
 }
 
-function grid_get_hist_licusage_records(&$sql_where, &$row_count, $apply_limits = TRUE, $row_limit) {
+function grid_get_hist_licusage_records(&$sql_where, &$row_count, $apply_limits = TRUE, $row_limit = 30) {
 	global $job, $lichist_views_columns;
 
 	$jobid       = $job['jobid'];

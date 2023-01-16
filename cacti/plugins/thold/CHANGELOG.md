@@ -2,9 +2,72 @@
 
 --- develop ---
 
+* feature#497: Show acknowledgment status on Thresholds tab instead of log
+
+* issue#147: Fixed threshold compare negative baseline values.
+
+* issue#535: Support new uptime calculation in Cacti 1.2.19
+
 * issue#540: Change table name from 'plugin_thold_device_template' to 'plugin_thold_host_template' for Pre-1.0 upgrade
 
+* issue#542: Thold uses hardcoded from adress insted of db one
+
+* issue#549: Thold 1.6 breaks on bandwidth utilization
+
+* issue#551: Cacti monitor rate different the threshold read
+
+* issue#555: CMDPHP ERRORS DETECTED - DISABLING PLUGIN 'thold'
+
+* issue#566: Device Notification Options: Subject editing with tags (<NOTES>) not showing
+
+* issue#558: Thold entry displayed moretimes
+
+* issue: Fix issues associated with PHP8.1.2 on transactions.  By default Cacti uses
+  autocommit, so don't use them.
+
+* issue: Fix issues where thold daemon could possibly loose events due to an
+  array chunking issue identified through PHP8.1.2 testing.
+
+* issue#454: Unite last thold value and ds value
+
+* issue#558: Thold entry displayed moretimes
+
+
 --- 1.6.0 ---
+
+* feature: Enhance thold daemon to work more efficiently
+
+* feature: Auto Enable the thold daemon on startup
+
+* feature: Keep track of running daemon processes and scale up/down automatically
+
+* feature: Make the thold daemon process/thread counter a dropdown
+
+* feature: Make the thold daemon children processes persistent
+
+* feature: Make the thold daemon properly pause in cases where the database is offline
+
+* feature: Properly execute signal handling from the parent to the children processes
+
+* feature: Implement thold daemon debugging from the settings page
+
+* feature: Properly implement thold_error_handler
+
+* issue#515: Security[CSRF]: thold.php use the value of the "Referer" header without validation
+
+* issue#517: notification list page formatting not correct
+
+* issue#520: When applying threshold from Devices Page they are not applied.
+
+* issue#522: Incorrect variable name for threshold
+
+* issue#523: Fix misspelled SQL statement
+
+* issue#525: Thold Daemon improperly adjust the thold by it's cdef twice
+
+* issue#527: When removing a threshold, thold should remove daemon data related to it
+
+* issue#529: Undefined index: thold_name in thold_functions.php on line: 3412
 
 * issue#533: thold_data table missed two indexes for fresh installation
 
@@ -16,9 +79,27 @@
 
 * issue#467: The thold cdef processing function does not handle non-numeric data correctly
 
+* issue#474: Create threshold from templates fail with multiple data template ids
+
+* issue#482: Thold and Thold Template missing <DATE> Tab in Help
+
 * issue#492: Thold search filter does not work from Console > Management > Thresholds
 
+* issue#495: THOLD ERROR: RPN Expression is invalid!
+
+* issue#496: Aacknowledgement text does not visible but shows up when you refresh
+
+* issue#498: Return button in Thold templates is broken
+
+* issue#499: In Thold Tab > Device status > ID of device reported simply as 1K if number is above 1023
+
 * feature#469: use thold template name as filename for single export
+
+* feature#481: SNMP event description can be defined individually or template based.
+
+* issue#510: Searching in Notify lists doesnt filter result
+
+* issue#511: Fix missing variable validation
 
 --- 1.5.2 ---
 

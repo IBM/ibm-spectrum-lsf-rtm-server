@@ -19,23 +19,7 @@
  +-------------------------------------------------------------------------+
 */
 
-/* do NOT run this script through a web browser */
-if (!isset($_SERVER['argv'][0]) || isset($_SERVER['REQUEST_METHOD'])  || isset($_SERVER['REMOTE_ADDR'])) {
-	die('<br><strong>This script is only meant to run at the command line.</strong>');
-}
-
-/* We are not talking to the browser */
-$no_http_headers = true;
-
-$dir = dirname(__FILE__);
-chdir($dir);
-
-if (strpos($dir, 'benchmark') !== false) {
-	chdir('../../');
-}
-
-/* Start Initialization Section */
-include(dirname(__FILE__) . '/../../include/global.php');
+include(dirname(__FILE__) . '/../../include/cli_check.php');
 include_once('./plugins/grid/setup.php');
 include_once('./plugins/grid/lib/grid_functions.php');
 include_once('./plugins/benchmark/functions.php');
@@ -48,7 +32,12 @@ $debug = FALSE;
 $force = FALSE;
 
 foreach($parms as $parameter) {
-	@list($arg, $value) = @explode('=', $parameter);
+	if (strpos($parameter, '=')) {
+		list($arg, $value) = explode('=', $parameter);
+	} else {
+		$arg = $parameter;
+		$value = '';
+	}
 
 	switch ($arg) {
 	case '-d':
@@ -302,7 +291,7 @@ function benchmark_add_graphs() {
 
 			// Reindex the Query id
 			echo $php_bin .' -q ' . $path_web . '/cli/poller_reindex_hosts.php -id=' . $result['cacti_host'] . ' -qid=' . $snmp_query_id['id'] . " -d\n";
-			echo trim(passthru($php_bin . ' -q ' . $path_web . '/cli/poller_reindex_hosts.php -id=' . $result['cacti_host'] . ' -qid=' . $snmp_query_id['id'] . ' -d'));
+			passthru($php_bin . ' -q ' . $path_web . '/cli/poller_reindex_hosts.php -id=' . $result['cacti_host'] . ' -qid=' . $snmp_query_id['id'] . ' -d');
 
 			$snmp_query_types = db_fetch_assoc_prepared('SELECT id, name, graph_template_id
 				FROM snmp_query_graph
@@ -407,7 +396,7 @@ function add_data_query_graphs(&$cluster, $graph_template_id, $snmp_query_id, $s
 						" --snmp-value='" . $item . "'";
 
 					echo $command. "\n";
-					echo trim(passthru($command)) . "\n";
+					passthru($command);
 					$graphs++;
 				}
 			}

@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>Cacti – Command Line Scripts</title>
+  <title>Cacti – Command Line Scripts (CLI)</title>
   <style type="text/css">
       code{white-space: pre-wrap;}
       span.smallcaps{font-variant: small-caps;}
@@ -14,41 +14,208 @@
   <link rel="stylesheet" href="Cacti-Github.css" />
 </head>
 <body>
-<h1 id="command-line-scripts">Command Line Scripts</h1>
-<p>Cacti supports a number of command line scripts. You will find them in the <code>./cli</code> directory. As of current, following scripts are supported:</p>
-<pre><code>add_device.php
-add_data_query.php
-add_graph_template.php
-add_graphs.php
-add_perms.php
-add_tree.php
-copy_user.php
-input_whitelist.php
-poller_graphs_reapply_names.php
-poller_output_empty.php
-poller_reindex_hosts.php
-rebuild_poller_cache.php
-</code></pre>
-<p>The following scripts should only be used when recommended in response to an outstanding issue:</p>
-<pre><code>analyze_database.php
-audit_database.php
-convert_tables.php
-install_cacti.php
-md5sum.php
-rebuild_poller_cache.php
-repair_database.php
-repair_graphs.php
-repair_templates.php
-splice_rra.php
-sqltable_to_php.php
-structure_rra_paths.php
-upgrade_database.php
-</code></pre>
-<p>Package maintainers may wish to utilize the CLI methods of install_cacti.php and upgrade_database.php to perform in place installations and upgrades.</p>
+<h1 id="command-line-scripts-cli">Command Line Scripts (CLI)</h1>
+<p>Cacti supports a number of command line scripts. You will find them in the <code>./cli</code> directory. The CLI scripts fall into multiple categories, they include:</p>
+<ul>
+<li><strong>Automation</strong> - Utilities to help automate adding objects to Cacti</li>
+<li><strong>Maintenance</strong> - Utilities to help keep Cacti healthy</li>
+<li><strong>Repair</strong> - Utilities to help with repairing Cacti database components</li>
+<li><strong>Repair/Migration</strong> - Utilities to help with repairing or migrating Cacti components</li>
+<li><strong>Install/Upgrade</strong> - Utilities to help with installing and upgrading Cacti</li>
+</ul>
+<p>In the table below, each of the CLI scripts are categories and explained briefly.</p>
+<h2 id="automation-scripts">Automation Scripts</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Script</th>
+<th>Category</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>add_device.php</td>
+<td>Automation</td>
+<td>Allows adding a Device to Cacti. Most device options are included. Some plugin options may not.</td>
+</tr>
+<tr class="even">
+<td>add_data_query.php</td>
+<td>Automation</td>
+<td>Allows adding a Data Query to Cacti.</td>
+</tr>
+<tr class="odd">
+<td>add_graph_template.php</td>
+<td>Automation</td>
+<td>Allows adding a Graph Template to Cacti.</td>
+</tr>
+<tr class="even">
+<td>add_graphs.php</td>
+<td>Automation</td>
+<td>Allows adding a Graph to Cacti.</td>
+</tr>
+<tr class="odd">
+<td>add_perms.php</td>
+<td>Automation</td>
+<td>Allows adding permissions to Cacti.</td>
+</tr>
+<tr class="even">
+<td>add_tree.php</td>
+<td>Automation</td>
+<td>Allows adding tree's tree branches and objects to Cacti Trees.</td>
+</tr>
+<tr class="odd">
+<td>copy_user.php</td>
+<td>Maintenance</td>
+<td>Allows creating new users from Templates</td>
+</tr>
+</tbody>
+</table>
+<h2 id="maintenance-scripts">Maintenance Scripts</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Script</th>
+<th>Category</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>input_whitelist.php</td>
+<td>Maintenance</td>
+<td>To to onboard new Data Input Methods when using Cacti in a high security environment where new Data Input Methods must always be vetted before enabling for general use.</td>
+</tr>
+<tr class="even">
+<td>poller_graphs_reapply_names.php</td>
+<td>Maintenance</td>
+<td>Allows selecting re-running of Cacti's suggested values engine for Graphs</td>
+</tr>
+<tr class="odd">
+<td>poller_reindex_hosts.php</td>
+<td>Maintenance</td>
+<td>Batch method to re-index Cacti Devices</td>
+</tr>
+<tr class="even">
+<td>analyze_database.php</td>
+<td>Maintenance</td>
+<td>Analyzes all Cacti tables rebuilding their index cardinality. Important to run after having added large numbers of Devices and Graphs to Cacti.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="repair-scripts">Repair Scripts</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Script</th>
+<th>Category</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>poller_output_empty.php</td>
+<td>Repair</td>
+<td>Removes bad entries from Cacti's poller output table.</td>
+</tr>
+<tr class="even">
+<td>rebuild_poller_cache.php</td>
+<td>Repair</td>
+<td>Batch process to re-populate Cacti's poller cache. NOTE: This script can run for a very long time on large systems.</td>
+</tr>
+<tr class="odd">
+<td>repair_database.php</td>
+<td>Repair</td>
+<td>Utility to look for common problems with old Cacti databases where objects were removed while still in use. Also rapairs all tables after a system crash.</td>
+</tr>
+<tr class="even">
+<td>repair_graphs.php</td>
+<td>Repair</td>
+<td>Utility to repair Cacti Graphs whose structure is damaged due to legacy Cacti behavior.</td>
+</tr>
+<tr class="odd">
+<td>repair_templates.php</td>
+<td>Repair</td>
+<td>Utility to repair Cacti Templates whose structure was damaged due to legacy Cacti behavior.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="repairmigration-scripts">Repair/Migration Scripts</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Script</th>
+<th>Category</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>audit_database.php</td>
+<td>Repair/Migration</td>
+<td>Script to audit your Cacti schema, and repair any tables that don't match the stock Cacti schema. It will also upgrade the Cacti schema and run plugin upgrade functions. This is a good migration tool to move database from old versions of Cacti.</td>
+</tr>
+<tr class="even">
+<td>convert_tables.php</td>
+<td>Repair/Migration</td>
+<td>Convert all tables from their current form to the Cacti preferred table type, collation and charset</td>
+</tr>
+<tr class="odd">
+<td>splice_rra.php</td>
+<td>Migration</td>
+<td>Utility that allows two RRDfiles to be merged, and also assists with resampling an old RRDfile to a new RRA configuration, for example moving a Cacti system from 5 minute polling to 1 minute polling.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="installupgrade-scripts">Install/Upgrade Scripts</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Script</th>
+<th>Category</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>import_package.php</td>
+<td>Install/Upgrade</td>
+<td>Import a Cacti package from a tgz file.</td>
+</tr>
+<tr class="even">
+<td>install_cacti.php</td>
+<td>Install/Upgrade</td>
+<td>Script to install Cacti from a raw schema. Used primarily by distribution maintainers.</td>
+</tr>
+<tr class="odd">
+<td>md5sum.php</td>
+<td>Install/Upgrade</td>
+<td>Utility to verify the MD5SUM of a file.</td>
+</tr>
+<tr class="even">
+<td>sqltable_to_php.php</td>
+<td>Install/Upgrade</td>
+<td>Utility for Plugin Developers to create an object for creating tables in plugins.</td>
+</tr>
+<tr class="odd">
+<td>structure_rra_paths.php</td>
+<td>Install/Upgrade</td>
+<td>Utility to convert a system from a flat directory path to a heirarchial one. Important for certain file systems that don't perform well when there are tens or hundreds of thousands of files in a single directory.</td>
+</tr>
+<tr class="even">
+<td>upgrade_database.php</td>
+<td>Install/Upgrade</td>
+<td>Utility to upgrade a Cacti database from a point in time to the current release. Or even rerun the database upgrade from a point in the past to catch up with changes. This script should be used in conjunction with the <code>audit_database.php --repair --upgrade</code> option.</td>
+</tr>
+</tbody>
+</table>
 <blockquote>
-<p><strong>Caution</strong></p>
-<p>In the following examples, several numbers are shown as output from various scripts. They will vary between different installations. So don't bother, if your numbers will vary</p>
+<p><strong>NOTE</strong>: Package maintainers may wish to utilize the CLI methods of install_cacti.php and upgrade_database.php to perform in place installations and upgrades.</p>
 </blockquote>
+<blockquote>
+<p><strong>Caution</strong>: In the following examples, several numbers are shown as output from various scripts. They will vary between different installations. So don't bother, if your numbers will vary.</p>
+</blockquote>
+<p>In the sub-sections below, we will demonstrate the use of a few of these CLI scripts.</p>
 <h2 id="rebuild-poller-cache">Rebuild Poller Cache</h2>
 <p>The poller cache holds all commands that cacti will issue during the polling process in an internal format. It is possible, to review the current contents of the poller cache by visiting <code>System Utilities</code>, <code>View Poller Cache</code>. It is possible to apply filters to this view; it will show up like</p>
 <pre class="console"><code>Localhost - Hard Drive Space    Script Server: /var/www/html/cacti/scripts/ss_host_disk.php ss_host_disk 127.0.0.1 1 1:161:500:somesecret:::::: get total 6
@@ -795,7 +962,7 @@ id      sort method                     name
 1       Manual Ordering (No Sorting)    Default Tree
 </code></pre>
 <h3 id="list-nodes">List Nodes</h3>
-<p>Listing all existend node of a given tree is done by</p>
+<p>Listing all existed node of a given tree is done by</p>
 <pre class="console"><code>shell&gt;php -q add_tree.php --list-nodes --tree-id=1
 
 Known Tree Nodes:
@@ -975,6 +1142,6 @@ Known Host Graphs: (id, name, template)
 </code></pre>
 <p><code>--user-id=4</code> must specify an existing users. Else, an error message will be printed. As <code>--item-type=graph</code> is given, <code>--item-id=1</code> must specify a valid graph. Again, if no graph template with this specific id exists, an error message will be printed. No output is produced on successful operations.</p>
 <hr />
-<p>Copyright (c) 2004-2020 The Cacti Group</p>
+<p><copy>Copyright (c) 2004-2022 The Cacti Group</copy></p>
 </body>
 </html>

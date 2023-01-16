@@ -38,7 +38,12 @@ $hlimit      = false;
 $replication = false;
 
 foreach($parms as $parameter) {
-	@list($arg, $value) = @explode('=', $parameter);
+	if (strpos($parameter, '=')) {
+		list($arg, $value) = explode('=', $parameter);
+	} else {
+		$arg = $parameter;
+		$value = '';
+	}
 
 	switch ($arg) {
 	case '-f':
@@ -154,25 +159,30 @@ partition_log('NOTE: Restoring RTM Partitioned Tables!!', false, 'GRID');
 
 grid_restore_cacti_db_partitions($rephosts, $force, $tables, $partitions, $hlimit);
 
-function db_binlog_enabled() {
-	$enabled = db_fetch_row('SHOW GLOBAL VARIABLES LIKE "log_bin"');
+// For legacy Cacti behavior
+if (!function_exists('db_binlog_enabled')) {
+	function db_binlog_enabled() {
+		$enabled = db_fetch_row('SHOW GLOBAL VARIABLES LIKE "log_bin"');
 
-	if (cacti_sizeof($enabled)) {
-		if (strtolower($enabled['Value']) == 'on' || $enabled['Value'] == 1) {
-			return true;
+		if (cacti_sizeof($enabled)) {
+			if (strtolower($enabled['Value']) == 'on' || $enabled['Value'] == 1) {
+				return true;
+			}
 		}
-	}
 
-	return false;
+		return false;
+	}
 }
 
-function db_get_active_replicas() {
-	return array_rekey(
-		db_fetch_assoc("SELECT SUBSTRING_INDEX(HOST, ':', 1) AS host
-			FROM information_schema.processlist
-			WHERE command = 'Binlog Dump'"),
-		'host', 'host'
-	);
+if (!function_exists('db_get_active_replicas')) {
+	function db_get_active_replicas() {
+		return array_rekey(
+			db_fetch_assoc("SELECT SUBSTRING_INDEX(HOST, ':', 1) AS host
+				FROM information_schema.processlist
+				WHERE command = 'Binlog Dump'"),
+			'host', 'host'
+		);
+	}
 }
 
 function grid_get_partition_number($t) {
@@ -193,7 +203,7 @@ function grid_get_table_name($t) {
 	return implode('_', $parts);
 }
 
-function grid_restore_cacti_db_partitions($rephosts, $force = false, $tables = 'all', $partitions = 'all', $hlimit) {
+function grid_restore_cacti_db_partitions($rephosts, $force = false, $tables = 'all', $partitions = 'all', $hlimit = false) {
 	global $database_type, $database_default, $database_hostname;
 	global $database_username, $database_password, $database_retries, $debug;
 	global $database_port, $database_ssl, $database_ssl_key, $database_ssl_cert, $database_ssl_ca;

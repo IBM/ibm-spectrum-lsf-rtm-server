@@ -31,7 +31,18 @@ function rtm_custom_logout(){
 	$page_title = __("Logout of") . " " . $product_name;
 
 	/* Check to see if we are using Web Basic Auth */
-	if (get_request_var('action') == 'timeout') {
+
+	if (get_request_var('action') == 'timeout' || get_request_var('action') == 'disabled' || get_request_var('action') == 'remote') {
+		if (get_request_var('action') == 'timeout') {
+			$message = __('You have been logged out of %s due to a session timeout.', $product_name);
+		} elseif (get_request_var('action') == 'disabled') {
+			$message = __('You have been logged out of %s due to an account suspension.', $product_name);
+		} elseif (get_request_var('action') == 'remove') {
+			$message = __('You have been logged out of %s due to a Remote Data Collector state change', $product_name);
+		} else {
+			$message = '';
+		}
+
 		print "<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN' 'http://www.w3.org/TR/html4/loose.dtd'>\n";
 		print "<html>\n";
 		print "<head>\n";
@@ -44,42 +55,7 @@ function rtm_custom_logout(){
 				<div class='cactiLogoutLogo'></div>
 				<legend>" . __('Automatic Logout') . "</legend>
 				<div class='logoutTitle'>
-					<p>" . __('You have been logged out of %s due to a session timeout.', $product_name) . "</p>
-					<p>" . __('Please close your browser or %sLogin Again%s', '[<a href="index.php">', '</a>]') . "</p>
-				</div>
-				<div class='logoutErrors'></div>
-			</div>
-		</div>";
-		rtm_div_version_info();
-		print "<div class='logoutRight'></div>
-		<script type='text/javascript'>
-			if (typeof myRefresh != 'undefined') {
-				clearTimeout(myRefresh);
-			}
-			$(function() {
-				$('.logoutLeft').css('width',parseInt($(window).width()*0.33)+'px');
-				$('.logoutRight').css('width',parseInt($(window).width()*0.33)+'px');"
-			. rtm_div_version_adjust() .
-			"});
-		</script>";
-		include_once($config['include_path'] . '/global_session.php');
-		print "</body>
-		</html>\n";
-	} elseif (get_request_var('action') == 'disabled') {
-
-		print "<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN' 'http://www.w3.org/TR/html4/loose.dtd'>\n";
-		print "<html>\n";
-		print "<head>\n";
-		html_common_header($page_title);
-		print "</head>\n";
-		print "<body class='logoutBody'>
-		<div class='logoutLeft'></div>
-		<div class='logoutCenter'>
-			<div class='logoutArea'>
-				<div class='cactiLogoutLogo cactiLoginSuspend'></div>
-				<legend>" . __('Automatic Logout') . "</legend>
-				<div class='logoutTitle'>
-					<p>" . __('You have been logged out of %s due to an account suspension.', $product_name) . "</p>
+					<p>" . $message . "</p>
 					<p>" . __('Please close your browser or %sLogin Again%s', '[<a href="index.php">', '</a>]') . "</p>
 				</div>
 				<div class='logoutErrors'></div>

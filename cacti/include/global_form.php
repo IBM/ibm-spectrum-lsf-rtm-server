@@ -136,17 +136,61 @@ $fields_snmp_item = array(
 		'size' => '12'
 		),
 	);
+
 $fields_snmp_item_with_oids = $fields_snmp_item + array(
 	'max_oids' => array(
-		'method' => 'textbox',
-		'friendly_name' => __("Maximum OIDs Per Get Request"),
-		'description' => __('Specified the number of OIDs that can be obtained in a single SNMP Get request.'),
+		'method' => 'drop_array',
+		'friendly_name' => __('Maximum OIDs Per Get Request'),
+		'description' => __('The number of SNMP OIDs that can be obtained in a single SNMP Get request.'),
 		'value' => '|arg1:max_oids|',
-		'max_length' => '8',
 		'default' => read_config_option('max_get_size'),
-		'size' => '12'
-		),
-	);
+		'array' => array(
+			1  => __('%d OID', 1),
+			2  => __('%d OID\'s', 2),
+			3  => __('%d OID\'s', 3),
+			4  => __('%d OID\'s', 4),
+			5  => __('%d OID\'s', 5),
+			10 => __('%d OID\'s', 10),
+			15 => __('%d OID\'s', 15),
+			20 => __('%d OID\'s', 20),
+			25 => __('%d OID\'s', 25),
+			30 => __('%d OID\'s', 30),
+			35 => __('%d OID\'s', 35),
+			40 => __('%d OID\'s', 40),
+			45 => __('%d OID\'s', 45),
+			50 => __('%d OID\'s', 50),
+			55 => __('%d OID\'s', 55),
+			60 => __('%d OID\'s', 60)
+		)
+	),
+	'bulk_walk_size' => array(
+		'method'        => 'drop_array',
+		'friendly_name' => __('Bulk Walk Maximum Repetitions'),
+		'description'   => __('For SNMPv2 and SNMPv3 Devices, the SNMP Bulk Walk max-repetitions size. The default is to \'Auto Detect on Re-Index\'. For very large switches, high performance servers, Jumbo Frame Networks or for high latency WAN connections, increasing this value may increase poller performance. More data is packed into a single SNMP packet which can reduce data query run time. However, some devices may completely refuse to respond to packets with a max-repetition size which is set too large. This can be especially true for lower-powered IoT type devices or smaller embedded IT appliances. Special attention to the overall network path MTU should also be considered since setting a value which is too high could lead to packet fragmentation.'),
+		'value'         => '|arg1:bulk_walk_size|',
+		'default'       => '-1',
+		'array' => array(
+			-1 => __('Auto Detect on Re-Index'),
+			0  => __('Auto Detect/Set on first Re-Index'),
+			1  => __('%d Repitition', 1),
+			2  => __('%d Repetitions', 2),
+			3  => __('%d Repetitions', 3),
+			4  => __('%d Repetitions', 4),
+			5  => __('%d Repetitions', 5),
+			10 => __('%d Repetitions', 10),
+			15 => __('%d Repetitions', 15),
+			20 => __('%d Repetitions', 20),
+			25 => __('%d Repetitions', 25),
+			30 => __('%d Repetitions', 30),
+			35 => __('%d Repetitions', 35),
+			40 => __('%d Repetitions', 40),
+			45 => __('%d Repetitions', 45),
+			50 => __('%d Repetitions', 50),
+			55 => __('%d Repetitions', 55),
+			60 => __('%d Repetitions', 60)
+		)
+	)
+);
 
 $fields_snmp_item_with_retry = $fields_snmp_item_with_oids + array(
 	'snmp_retries' => array(
@@ -574,7 +618,7 @@ $struct_data_source_item = array(
 		'method' => 'textbox',
 		'max_length' => '19',
 		'size' => '30',
-		'default' => '',
+		'default' => 'ds',
 		'description' => __('Choose unique name to represent this piece of data inside of the RRDfile.')
 		),
 	'rrd_minimum' => array(
@@ -590,7 +634,7 @@ $struct_data_source_item = array(
 		'method' => 'textbox',
 		'max_length' => '30',
 		'size' => '20',
-		'default' => '0',
+		'default' => 'U',
 		'description' => __('The maximum value of data that is allowed to be collected.')
 		),
 	'data_source_type_id' => array(
@@ -841,7 +885,7 @@ $struct_graph = array(
 	'right_axis_format' => array(
 		'friendly_name' => __('Right Axis Format (--right-axis-format &lt;format&gt;)'),
 		'method' => 'drop_sql',
-		'sql' => 'SELECT id, name FROM graph_templates_gprint ORDER BY name',
+		'sql' => 'SELECT id, name FROM graph_templates_gprint WHERE gprint_text NOT LIKE "%\%s%" ORDER BY name',
 		'default' => '',
 		'none_value' => __('None'),
 		'description' => __('By default, the format of the axis labels gets determined automatically.  If you want to do this yourself, use this option with the same %lf arguments you know from the PRINT and GPRINT commands.'),
@@ -1039,7 +1083,11 @@ $struct_graph_item = array(
 		),
 	'sequence' => array(
 		'friendly_name' => __('Sequence'),
-		'method' => 'view'
+		'method' => 'textbox',
+		'max_length' => '4',
+		'default' => '',
+		'size' => '4',
+		'description' => __('The dash-offset parameter specifies an offset into the pattern at which the stroke begins.'),
 		)
 	);
 
@@ -1058,6 +1106,14 @@ $fields_graph_template_template_edit = array(
 		'friendly_name' => __('Multiple Instances'),
 		'description' => __('Check this checkbox if there can be more than one Graph of this type per Device.'),
 		'value' => '|arg1:multiple|',
+		'default' => '',
+		'form_id' => false
+		),
+	'test_source' => array(
+		'method' => 'checkbox',
+		'friendly_name' => __('Test Data Sources'),
+		'description' => __('Check this checkbox if you wish to test the Data Sources prior to their creation.  With Test Data Sources enabled, if the Data Source does not return valid data, the Graph will not be created.  This setting is important if you wish to have a more generic Device Template that can include more Graph Templates that can be selectively applied depending on the characteristics of the Device itself.  Note: If you have a long running script as a Data Source, the time to create Graphs will be increased.'),
+		'value' => '|arg1:test_source|',
 		'default' => '',
 		'form_id' => false
 		),
@@ -1285,6 +1341,14 @@ $fields_host_template_edit = array(
 		'value' => '|arg1:name|',
 		'max_length' => '255',
 		'size' => '80'
+		),
+	'class' => array(
+		'method' => 'drop_array',
+		'friendly_name' => __('Class'),
+		'description' => __('A suitable Class for the Device Template.'),
+		'value' => '|arg1:class|',
+		'array' => $device_classes,
+		'default' => ''
 		),
 	'id' => array(
 		'method' => 'hidden_zero',
@@ -1614,32 +1678,14 @@ $fields_template_import = array(
 	'import_file' => array(
 		'friendly_name' => __('Import Template from Local File'),
 		'description' => __('If the XML file containing template data is located on your local machine, select it here.'),
+		'accept' => '.xml',
 		'method' => 'file'
-		),
-	'import_text' => array(
-		'method' => 'hidden',
-		'friendly_name' => __('Import Template from Text'),
-		'description' => __('If you have the XML file containing template data as text, you can paste it into this box to import it.'),
-		'value' => '',
-		'default' => '',
-		'textarea_rows' => '10',
-		'textarea_cols' => '50',
-		'class' => 'textAreaNotes'
-		),
-	'preview_only' => array(
-		'friendly_name' => __('Preview Import Only'),
-		'method' => 'checkbox',
-		'description' => __('If checked, Cacti will not import the template, but rather compare the imported Template to the existing Template data.  If you are acceptable of the change, you can them import.'),
-		'value' => '',
-		'default' => 'on'
-		),
-	'remove_orphans' => array(
-		'friendly_name' => __('Remove Orphaned Graph Items'),
-		'method' => 'checkbox',
-		'description' => __('If checked, Cacti will delete any Graph Items from both the Graph Template and associated Graphs that are not included in the imported Graph Template.'),
-		'value' => '',
-		'default' => ''
-		),
+	),
+	'data_header' => array(
+		'friendly_name' => __('Data Source Overrides', 'package'),
+		'collapsible' => 'true',
+		'method' => 'spacer',
+	),
 	'import_data_source_profile' => array(
 		'friendly_name' => __('Data Source Profile'),
 		'method' => 'drop_sql',
@@ -1648,80 +1694,122 @@ $fields_template_import = array(
 		'none_value' => __('Create New from Template'),
 		'value' => '',
 		'default' => '1'
-		),
-	);
+	),
+	'graph_header' => array(
+		'friendly_name' => __('Graph/Data Template Overrides', 'package'),
+		'collapsible' => 'true',
+		'method' => 'spacer',
+	),
+	'remove_orphans' => array(
+		'friendly_name' => __('Remove Orphaned Graph Items'),
+		'method' => 'checkbox',
+		'description' => __('If checked, Cacti will delete any Graph Items from both the Graph Template and associated Graphs that are not included in the imported Graph Template.'),
+		'value' => '',
+		'default' => ''
+	),
+	'replace_svalues' => array(
+		'friendly_name' => __('Replace Data Query Suggested Value Patterns'),
+		'method' => 'checkbox',
+		'description' => __('Replace Data Source and Graph Template Suggested Value Records for Data Queries.  Graphs and Data Sources will take on new names after either a Data Query Reindex or by using the forced Replace Suggested Values process.'),
+		'value' => '',
+		'default' => ''
+	),
+	'image_format' => array(
+		'friendly_name' => __('Graph Template Image Format', 'package'),
+		'description' => __('The Image Format to be used when importing or updating Graph Templates.', 'package'),
+		'method' => 'drop_array',
+		'default' => read_config_option('default_image_format'),
+		'array' => $image_types,
+	),
+	'graph_height' => array(
+		'friendly_name' => __('Graph Template Height', 'pagkage'),
+		'description' => __('The Height to be used when importing or updating Graph Templates.', 'package'),
+		'method' => 'textbox',
+		'default' => read_config_option('default_graph_height'),
+		'size' => '5',
+		'max_length' => '5'
+	),
+	'graph_width' => array(
+		'friendly_name' => __('Graph Template Width', 'package'),
+		'description' => __('The Width to be used when importing or updating Graph Templates.', 'package'),
+		'method' => 'textbox',
+		'default' => read_config_option('default_graph_width'),
+		'size' => '5',
+		'max_length' => '5'
+	)
+);
 
-	$fields_manager_edit = array(
-		'host_header' => array(
-			'method' => 'spacer',
-			'friendly_name' => __('General SNMP Entity Options'),
-			'collapsible' => 'true'
-			),
-		'description' => array(
-			'method' => 'textbox',
-			'friendly_name' => __('Description'),
-			'description' => __('Give this SNMP entity a meaningful description.'),
-			'value' => '|arg1:description|',
-			'max_length' => '250',
-			'size' => 80
-			),
-		'hostname' => array(
-			'method' => 'textbox',
-			'friendly_name' => __('Hostname'),
-			'description' => __('Fully qualified hostname or IP address for this device.'),
-			'value' => '|arg1:hostname|',
-			'max_length' => '250',
-			'size' => 80
-			),
-		'disabled' => array(
-			'method' => 'checkbox',
-			'friendly_name' => __('Disable SNMP Notification Receiver'),
-			'description' => __('Check this box if you temporary do not want to send SNMP notifications to this host.'),
-			'value' => '|arg1:disabled|',
-			'default' => '',
-			'form_id' => false
-			),
-		'max_log_size' => array(
-			'method' => 'drop_array',
-			'friendly_name' => __('Maximum Log Size'),
-			'description' => __('Maximum number of day\'s notification log entries for this receiver need to be stored.'),
-			'value' => '|arg1:max_log_size|',
-			'default' => 31,
-			'array' => array_combine( range(1,31), range(1,31) )
-			),
-		'snmp_options_header' => array(
-			'method' => 'spacer',
-			'friendly_name' => __('SNMP Options'),
-			'collapsible' => 'true'
-			),
-		) + $fields_snmp_item + array(
-		'snmp_message_type' => array(
-			'friendly_name' => __('SNMP Message Type'),
-			'description' => __('SNMP traps are always unacknowledged. To send out acknowledged SNMP notifications, formally called "INFORMS", SNMPv2 or above will be required.'),
-			'method' => 'drop_array',
-			'value' => '|arg1:snmp_message_type|',
-			'default' => '1',
-			'array' => array(1 => 'NOTICATIONS', 2 => 'INFORMS')
-			),
-		'addition_header' => array(
-			'method' => 'spacer',
-			'friendly_name' => __('Additional Options'),
-			'collapsible' => 'true'
-			),
-		'notes' => array(
-			'method' => 'textarea',
-			'friendly_name' => __('Notes'),
-			'description' => __('Enter notes to this host.'),
-			'class' => 'textAreaNotes',
-			'value' => '|arg1:notes|',
-			'textarea_rows' => '5',
-			'textarea_cols' => '50'
-			),
-		'id' => array(
-			'method' => 'hidden_zero',
-			'value' => '|arg1:id|'
-			)
-	);
+$fields_manager_edit = array(
+	'host_header' => array(
+		'method' => 'spacer',
+		'friendly_name' => __('General SNMP Entity Options'),
+		'collapsible' => 'true'
+	),
+	'description' => array(
+		'method' => 'textbox',
+		'friendly_name' => __('Description'),
+		'description' => __('Give this SNMP entity a meaningful description.'),
+		'value' => '|arg1:description|',
+		'max_length' => '250',
+		'size' => 80
+	),
+	'hostname' => array(
+		'method' => 'textbox',
+		'friendly_name' => __('Hostname'),
+		'description' => __('Fully qualified hostname or IP address for this device.'),
+		'value' => '|arg1:hostname|',
+		'max_length' => '250',
+		'size' => 80
+	),
+	'disabled' => array(
+		'method' => 'checkbox',
+		'friendly_name' => __('Disable SNMP Notification Receiver'),
+		'description' => __('Check this box if you temporary do not want to send SNMP notifications to this host.'),
+		'value' => '|arg1:disabled|',
+		'default' => '',
+		'form_id' => false
+	),
+	'max_log_size' => array(
+		'method' => 'drop_array',
+		'friendly_name' => __('Maximum Log Size'),
+		'description' => __('Maximum number of day\'s notification log entries for this receiver need to be stored.'),
+		'value' => '|arg1:max_log_size|',
+		'default' => 31,
+		'array' => array_combine( range(1,31), range(1,31) )
+	),
+	'snmp_options_header' => array(
+		'method' => 'spacer',
+		'friendly_name' => __('SNMP Options'),
+		'collapsible' => 'true'
+	)
+) + $fields_snmp_item + array(
+	'snmp_message_type' => array(
+		'friendly_name' => __('SNMP Message Type'),
+		'description' => __('SNMP traps are always unacknowledged. To send out acknowledged SNMP notifications, formally called "INFORMS", SNMPv2 or above will be required.'),
+		'method' => 'drop_array',
+		'value' => '|arg1:snmp_message_type|',
+		'default' => '1',
+		'array' => array(1 => 'NOTIFICATIONS', 2 => 'INFORMS')
+	),
+	'addition_header' => array(
+		'method' => 'spacer',
+		'friendly_name' => __('Additional Options'),
+		'collapsible' => 'true'
+	),
+	'notes' => array(
+		'method' => 'textarea',
+		'friendly_name' => __('Notes'),
+		'description' => __('Enter notes to this host.'),
+		'class' => 'textAreaNotes',
+		'value' => '|arg1:notes|',
+		'textarea_rows' => '5',
+		'textarea_cols' => '50'
+	),
+	'id' => array(
+		'method' => 'hidden_zero',
+		'value' => '|arg1:id|'
+	)
+);
 
 # ------------------------------------------------------------
 # Main Aggregate Parameters

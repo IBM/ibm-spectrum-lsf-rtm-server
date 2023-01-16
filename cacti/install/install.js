@@ -1,4 +1,22 @@
 // $Id$
+/*
+  +-------------------------------------------------------------------------+
+  | Copyright (C) 2004-2022 The Cacti Group                                 |
+  |                                                                         |
+  | This program is free software; you can redistribute it and/or           |
+  | modify it under the terms of the GNU General Public License             |
+  | as published by the Free Software Foundation; either version 2          |
+  | of the License, or (at your option) any later version.                  |
+  |                                                                         |
+  | This program is distributed in the hope that it will be useful,         |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
+  | GNU General Public License for more details.                            |
+  +-------------------------------------------------------------------------+
+  | http://www.cacti.net/                                                   |
+  +-------------------------------------------------------------------------+
+*/
+
 /***********************************************************
  * The STEP_ constants are defined in the following files: *
  *                                                         *
@@ -31,8 +49,9 @@ const STEP_TEST_REMOTE = -4;
 
 const DB_STATUS_ERROR = 0;
 const DB_STATUS_WARNING = 1;
-const DB_STATUS_SUCCESS = 2;
-const DB_STATUS_SKIPPED = 3;
+const DB_STATUS_RESTART = 2;
+const DB_STATUS_SUCCESS = 3;
+const DB_STATUS_SKIPPED = 4;
 
 const FIELDS_WELCOME = {
 	accept:                { type: 'checkbox', name: 'Eula'               },
@@ -283,6 +302,8 @@ function collapseHeadings(headingStates) {
 				fa_icon = 'fa fa-thumbs-down cactiInstallSqlFailure';
 			} else if (enabled == DB_STATUS_WARNING) {
 				fa_icon = 'fa fa-exclamation-triangle cactiInstallSqlWarning';
+			} else if (enabled == DB_STATUS_RESTART) {
+				fa_icon = 'fa fa-exclamation-triangle cactiInstallSqlWarning';
 			} else if (enabled == DB_STATUS_SUCCESS) {
 				fa_icon = 'fa fa-thumbs-up cactiInstallSqlSuccess';
 				toggleHeader(element, false);
@@ -382,6 +403,7 @@ function processStepWelcome(StepData) {
 }
 
 function processStepCheckDependencies(StepData) {
+console.log(StepData);
 	collapseHeadings(StepData.Sections);
 }
 

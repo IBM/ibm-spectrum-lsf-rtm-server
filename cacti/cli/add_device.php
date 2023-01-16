@@ -1,4 +1,4 @@
-#!/usr/bin/php -q
+#!/usr/bin/env php
 <?php
 // $Id$
 /*
@@ -30,6 +30,11 @@ require_once($config['base_path'] . '/lib/poller.php');
 require_once($config['base_path'] . '/lib/snmp.php');
 require_once($config['base_path'] . '/lib/template.php');
 require_once($config['base_path'] . '/lib/utility.php');
+
+/* switch to main database for cli's */
+if ($config['poller_id'] > 1) {
+	db_switch_remote_to_main();
+}
 
 /* process calling arguments */
 $parms = $_SERVER['argv'];
@@ -66,6 +71,7 @@ if (cacti_sizeof($parms)) {
 	$ping_timeout   = read_config_option('ping_timeout');
 	$ping_retries   = read_config_option('ping_retries');
 	$max_oids       = read_config_option('max_get_size');
+	$bulk_walk_size = -1;
 	$proxy          = false;
 	$device_threads = read_config_option('device_threads');;
 
@@ -186,7 +192,7 @@ if (cacti_sizeof($parms)) {
 		case '--avail':
 			switch($value) {
 			case 'none':
-				$avail = '0'; /* tried to use AVAIL_NONE, but then preg_match failes on validation, sigh */
+				$avail = '0'; /* tried to use AVAIL_NONE, but then preg_match fails on validation, sigh */
 
 				break;
 			case 'ping':
@@ -263,6 +269,15 @@ if (cacti_sizeof($parms)) {
 			}
 
 			break;
+		case '--bulk_walk':
+			if (is_numeric($value) && $value >= -1 && $value != 0) {
+				$bulk_walk_size = $value;
+			} else {
+				print "ERROR: Invalid Bulk Walk Size: ($value)\n\n";
+				display_help();
+				exit(1);
+			}
+
 		case '--version':
 		case '-V':
 		case '-v':
@@ -355,7 +370,7 @@ if (cacti_sizeof($parms)) {
 				$fail = true;
 			}
 		} elseif ($phost['snmp_version'] != $snmp_ver) {
-			// assumeing a proxy
+			// assuming a proxy
 		} elseif ($phost['snmp_version'] == '3' && $snmp_ver == '3') {
 			$changed = 0;
 			$changed += ($phost['snmp_username'] != $username ? 1:0);
@@ -441,7 +456,7 @@ if (cacti_sizeof($parms)) {
 		$ping_port, $ping_timeout, $ping_retries, $notes,
 		$snmp_auth_protocol, $snmp_priv_passphrase,
 		$snmp_priv_protocol, $snmp_context, $snmp_engine_id, $max_oids, $device_threads,
-		$poller_id, $site_id, $external_id, $location);
+		$poller_id, $site_id, $external_id, $location, $bulk_walk_size);
 
 	if (is_error_message()) {
 		print "ERROR: Failed to add this device\n";
@@ -500,6 +515,7 @@ function display_help() {
 	print "    --context      '', snmp context for snmpv3\n";
 	print "    --engineid     '', snmp engineid for snmpv3\n";
 	print "    --max_oids     10, 1-60, the number of OIDs that can be obtained in a single SNMP Get request\n\n";
+	print "    --bulk_walk    -1, 1-60, the bulk walk chunk size that will be used for bulk walks.  Use -1 for auto-tune.\n\n";
 	print "List Options:\n";
 	print "    --list-host-templates\n";
 	print "    --list-communities\n";

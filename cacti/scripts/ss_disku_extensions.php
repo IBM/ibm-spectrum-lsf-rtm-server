@@ -31,14 +31,14 @@ function ss_disku_extensions($cmd = 'index', $arg1 = '', $arg2 = '') {
 	if ($cmd == 'index') {
 		$return_arr = ss_disku_extensions_getnames();
 
-		for ($i=0;($i<sizeof($return_arr));$i++) {
+		for ($i=0;($i<cacti_sizeof($return_arr));$i++) {
 			print $return_arr[$i] . "\n";
 		}
 	} elseif ($cmd == 'query') {
 		$arr_index = ss_disku_extensions_getnames();
 		$arr = ss_disku_extensions_getinfo($arg1);
 
-		for ($i=0;($i<sizeof($arr_index));$i++) {
+		for ($i=0;($i<cacti_sizeof($arr_index));$i++) {
 			if (isset($arr[$arr_index[$i]])) {
 				print $arr_index[$i] . '!' . $arr[$arr_index[$i]] . "\n";
 			}
@@ -83,7 +83,7 @@ function ss_disku_extensions_getnames() {
 		GROUP BY r.extension
 		ORDER BY primaryKey');
 
-	for ($i=0;($i<sizeof($arr));$i++) {
+	for ($i=0;($i<cacti_sizeof($arr));$i++) {
 		$item = str_replace('!', '.', $arr[$i]['primaryKey']);
 		$return_arr[$i] = trim($item);
 	}
@@ -112,7 +112,7 @@ function ss_disku_extensions_getinfo($info_requested) {
 			ORDER BY qry_index');
 	}
 
-	for ($i=0;($i<sizeof($arr));$i++) {
+	for ($i=0;($i<cacti_sizeof($arr));$i++) {
 		$index = str_replace('!', '.', $arr[$i]['qry_index']);
 		$value = str_replace('!', '.', $arr[$i]['qry_value']);
 		$return_arr[$index] = trim(addslashes($value));

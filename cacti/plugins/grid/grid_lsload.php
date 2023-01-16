@@ -78,7 +78,7 @@ function get_custom_elim_columns() {
 	}
 }
 
-function grid_view_get_load_records(&$sql_where, $apply_limits = true, $rows, &$sql_params) {
+function grid_view_get_load_records(&$sql_where, $apply_limits = true, $rows = 30, &$sql_params = array()) {
 	/* user id sql where */
 	if (get_request_var('clusterid') != '0') {
 		$sql_where .= 'WHERE grid_load.clusterid=?';

@@ -1236,7 +1236,7 @@ function show_charts() {
 	}
 }
 
-function show_cluster_health($export=false, &$header, &$data, &$others) {
+function show_cluster_health($export=false, &$header = array(), &$data = '', &$others = '') {
 	global $config;
 
 	$start = microtime(true);
@@ -1501,7 +1501,7 @@ function heuristics_get_limit_suffix(&$stats) {
 	return $suffix;
 }
 
-function show_license_checkouts($export=false, &$header, &$stats, &$others) {
+function show_license_checkouts($export=false, &$header = array(), &$stats = '', &$others = '') {
 	global $config;
 
 	$start = microtime(true);
@@ -1707,7 +1707,7 @@ function heuristics_excluded_reasons() {
 	return db_fetch_cell_prepared($sql, array(get_request_var('user_iq')));
 }
 
-function show_pending_reasons($export=false, &$header, &$stats, &$others) {
+function show_pending_reasons($export=false, &$header = array(), &$stats = '', &$others = '') {
 	global $config;
 
 	$start = microtime(true);
@@ -1863,7 +1863,7 @@ function format_reason_heur($row) {
 	}
 }
 
-function show_exit_stats($export=false, &$header, &$stats, &$others) {
+function show_exit_stats($export=false, &$header = array(), &$stats = '', &$others = '') {
 	global $config;
 
 	$start = microtime(true);
@@ -1985,7 +1985,7 @@ function form_selectable_cluster($heuristics_num_clusters, $clustername, $id = 0
 	}
 }
 
-function show_daily_stats($export=false, &$header, &$data, &$others) {
+function show_daily_stats($export=false, &$header = array(), &$data = '', &$others = '') {
 	global $config;
 	$sql_params = array();
 
@@ -2254,7 +2254,7 @@ function show_daily_stats($export=false, &$header, &$data, &$others) {
 	return json_encode(array('panel' => $panel, 'output' => $output));
 }
 
-function show_cluster_stats($export=false, &$header, &$data, &$other_data) {
+function show_cluster_stats($export=false, &$header = array(), &$data = '', &$other_data = '') {
 	global $config;
 	$sql_params = array();
 
@@ -2643,7 +2643,7 @@ function heuristics_get_limit($add_one_more = true) {
 	return $limit;
 }
 
-function show_queue_stats($export=false, &$header, &$data, &$others) {
+function show_queue_stats($export=false, &$header = array(), &$data = '', &$others = '') {
 	global $heuristics_severities;
 	$sql_params = array();
 
@@ -2873,7 +2873,7 @@ function heuristics_trim_project($project, $chars = 20) {
 
 		$parts = explode($delim, $project);
 
-		if (sizeof($parts) > $levels) {
+		if (cacti_sizeof($parts) > $levels) {
 			$project = implode($delim, array_slice($parts, 0, $levels));
 
 			if (strlen($project) > $chars) {
@@ -3455,7 +3455,7 @@ function get_estimate(&$record, $ahead, &$others) {
 	$p     = $record['projectName'];
 	$cq    = $record['clustername'] . '|' . $q . '|' . $p;
 	$cpu   = $record['reqCpus'];
-	$ahead = number_format_i18n((float)$ahead);
+	$ahead = ($ahead != 'NA' && $ahead != 'FCFS' && !empty($ahead) ? number_format_i18n((float)$ahead):0);
 
 	// Method1: Velocity Based Estimate
 	$fivm_tp     = $record['tput5MIN'] * 12;
@@ -4106,6 +4106,8 @@ function build_heuristics_db_union($sql_where, $add_columns, $timespan) {
 function today_pie() {
 	global $config;
 
+	heuristics_process_input_variables();
+
 	$start = microtime(true);
 
 	// Handle Time Ranges
@@ -4216,6 +4218,8 @@ function today_pie() {
 
 function today_sum_time_pie() {
 	$start = microtime(true);
+
+	heuristics_process_input_variables();
 
 	$time       = time() - get_request_var('timespan');
 	$dend_time  = date('m-d H:i', $time);
@@ -4584,6 +4588,8 @@ function draw_trend_chart() {
 function draw_memory_histogram() {
 	global $config;
 
+	heuristics_process_input_variables();
+
 	$start = microtime(true);
 
 	// Handle Time Ranges
@@ -4770,6 +4776,8 @@ function draw_free_memory_slots() {
 function draw_runtime() {
 	global $config, $heuristics_runtimes;
 
+	heuristics_process_input_variables();
+
 	$start = microtime(true);
 
 	// Handle Time Ranges
@@ -4802,6 +4810,8 @@ function draw_runtime() {
 					$sql .= ($id >=2 ? ', ':'') . ' SUM(CASE WHEN ' . substr(trim($data['sql']), 4) . " THEN 1 ELSE 0 END) AS C$id";
 				}
 			}
+		} else {
+			$sql .= ' COUNT(*) AS C0 ';
 		}
 
 		$grid_jobs_finished = build_heuristics_db_union($sql_where, array('run_time'), get_nfilter_request_var('timespan'));

@@ -311,7 +311,7 @@ function disku_filter() {
 	<?php
 }
 
-function get_disku_filesystems(&$sql_where, $apply_limits = TRUE, $rows = 20, &$sql_params) {
+function get_disku_filesystems(&$sql_where, $apply_limits = TRUE, $rows = 20, &$sql_params = array()) {
 	if (isset_request_var('filter') && get_request_var('filter') != '') {
 		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . "(mountPoint LIKE ? OR device LIKE ?)";
 		$sql_params[] = '%'. get_request_var('filter') . '%';

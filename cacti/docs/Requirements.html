@@ -82,7 +82,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li><p>Web Server that supports PHP e.g. Apache, Nginx, or IIS</p></li>
 <li><p>Build environment when using spine (gcc, automake, autoconf, libtool, help2man)</p></li>
-<li><p>RRDTool 1.3 or greater, 1.5+ recommended</p></li>
+<li><p>RRDtool 1.3 or greater, 1.5+ recommended</p></li>
 <li><p>PHP 5.4 or greater, 5.5+ recommended</p>
 <ul>
 <li><p>Required modules:</p>
@@ -119,7 +119,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>then you must leave headroom for user connections, which will change depending on the number of concurrent login accounts.</p></li>
 <li><p><strong>max_heap_table_size &gt;= 5</strong></p>
 <p>If using the Cacti Performance Booster and choosing a memory storage engine, you have to be careful to flush your Performance Booster buffer before the system runs out of memory table space. This is done two ways, first reducing the size of your output column to just the right size. This column is in the tables poller_output, and poller_output_boost.</p>
-<p>The second thing you can do is allocate more memory to memory tables with a recommended value of 10% of system memory, but if you are using SSD disk drives, or have a smaller system, you may ignore this recommendation or choose a different storage engine. You may see the expected consumption of the Performance Booster tables under Console -&gt; System Utilities -&gt; View Boost Status.</p></li>
+<p>The second thing you can do is allocate more memory to memory tables with a recommended value of 10% of system memory, but if you are using SSD disk drives, or have a smaller system, you may ignore this recommendation or choose a different storage engine. You may see the expected consumption of the Performance Booster tables under Console -&gt; System Utilities -&gt; View Boost Status.</p>
+<p>NOTE: If you are using a recent version of MariaDB or MySQL, using memory tables is no longer a requirement. You may choose to continue to use memory tables to spare your NVMe or SSD drives excessive use wear. However, outside of that, it is no longer a requirement. As such, the value of the <strong>max_heap_table_size</strong> is not as important as in previous releases. Additionally, if you are using Galera replication with Cacti, all your tables must be in InnoDB format. So, the only feature in MariaDB or MySQL becomes temporary table space which may not be dependent on the <strong>max_heap_table_size</strong>.</p></li>
 <li><p><strong>table_cache &gt;= 200</strong></p>
 <p>Keeping the table cache larger means less file open/close operations when using innodb_file_per_table.</p></li>
 <li><p><strong>max_allowed_packet &gt;= 16777216</strong></p>
@@ -158,7 +159,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><p>Newer MySQL/MariaDB software are using <a href="https://dev.mysql.com/doc/refman/8.0/en/sql-mode.html">strict modes</a> and it can cause unexpected problems when importing dumps of Cacti databases from older systems, like <strong>Can't create table <code>cacti</code>.<code>poller_output_boost</code> (errno: 140 "Wrong create options")</strong>.</p>
 <p>You have more possibilities:</p>
 <ul>
-<li><p>disable appropriate strict mode - not recomended</p></li>
+<li><p>disable appropriate strict mode - not recommended</p></li>
 <li><p>change mysqldump file - remove <strong>ROW_FORMAT=FIXED</strong> from table definition</p></li>
 <li><p>before mysqldump run query: <strong>ALTER TABLE <code>poller_output_boost</code> ROW_FORMAT=DYNAMIC;</strong></p></li>
 </ul></li>
@@ -179,6 +180,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
  innodb_large_prefix = 1
 </code></pre>
 <hr />
-<p>Copyright (c) 2004-2020 The Cacti Group</p>
+<p><copy>Copyright (c) 2004-2022 The Cacti Group</copy></p>
 </body>
 </html>

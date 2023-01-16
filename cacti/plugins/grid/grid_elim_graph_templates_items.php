@@ -530,7 +530,7 @@ function elim_draw_edit_control($field_name, &$field_array, $resource_not_exist)
 
 		break;
 	case 'template_drop_array':
-		print "<em>" . html_escape($field_array["array"]{$field_array["value"]}) . "</em>";
+		print "<em>" . html_escape($field_array["array"][$field_array["value"]]) . "</em>";
 
 		form_hidden_box($field_name, $field_array["value"], "");
 
@@ -568,7 +568,7 @@ function elim_draw_edit_control($field_name, &$field_array, $resource_not_exist)
 }
 
 /* draw form dropdown extra for blank option of resource name when the old resource is disapeared from mysql*/
-function elim_form_dropdown($form_name, $form_data, $column_display, $column_id, $form_previous_value, $form_none_entry, $form_default_value, $class = "", $on_change = "",$resource_not_exist) {
+function elim_form_dropdown($form_name, $form_data, $column_display, $column_id, $form_previous_value, $form_none_entry, $form_default_value, $class = "", $on_change = "",$resource_not_exist = '') {
 	if ($form_previous_value == "") {
 		$form_previous_value = $form_default_value;
 	}

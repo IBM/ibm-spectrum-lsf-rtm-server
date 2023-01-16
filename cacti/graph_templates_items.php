@@ -31,6 +31,40 @@ switch (get_request_var('action')) {
 		form_save();
 
 		break;
+	case 'ajax_data_sources':
+		$data_template_id  = get_filter_request_var('data_template_id');
+		$task_item_id      = get_filter_request_var('task_item_id');
+		$orig_task_item_id = get_filter_request_var('_task_item_id');
+
+		$data_sources = db_fetch_assoc_prepared("SELECT dtr.id,
+			CONCAT_WS('', dt.name,' - ',' (', dtr.data_source_name,')') AS name
+			FROM data_template_rrd AS dtr
+			INNER JOIN data_template AS dt
+			ON dtr.data_template_id = dt.id
+			WHERE dtr.local_data_id = 0
+			AND (dtr.data_template_id = ? OR dtr.id = ?)
+			ORDER BY dt.name, dtr.data_source_name",
+			array($data_template_id, $task_item_id));
+
+		$output = '';
+
+		if (cacti_sizeof($data_sources)) {
+			foreach($data_sources as $ds) {
+				if ($orig_task_item_id == $ds['id']) {
+					$output .= '<option value="' . $ds['id'] . '" selected>' . html_escape($ds['name']) . '</option>';
+				} elseif ($task_item_id == $ds['id']) {
+					$output .= '<option value="' . $ds['id'] . '" selected>' . html_escape($ds['name']) . '</option>';
+				} else {
+					$output .= '<option value="' . $ds['id'] . '">' . html_escape($ds['name']) . '</option>';
+				}
+			}
+		} else {
+			$output .= '<option value="0">' . __('None') . '</option>';
+		}
+
+		print $output;
+
+		break;
 	case 'item_remove':
 		get_filter_request_var('graph_template_id');
 
@@ -155,6 +189,18 @@ function form_save() {
 				$sequence = get_sequence($sequence, 'sequence', 'graph_templates_item', 'graph_template_id=' . get_request_var('graph_template_id') . ' AND local_graph_id=0');
 			}
 
+			$task_item_changed = true;;
+			if (get_request_var('graph_template_item_id') > 0) {
+				$task_item_id = db_fetch_cell_prepared('SELECT task_item_id
+					FROM graph_templates_item
+					WHERE id = ?',
+					array(get_request_var('graph_template_item_id')));
+
+				if (get_nfilter_request_var('task_item_id') == get_nfilter_request_var('_task_item_id')) {
+					$task_item_changed = false;
+				}
+			}
+
 			$save['id']                = get_request_var('graph_template_item_id');
 			$save['hash']              = get_hash_graph_template(get_request_var('graph_template_item_id'), 'graph_template_item');
 			$save['graph_template_id'] = get_request_var('graph_template_id');
@@ -172,19 +218,20 @@ function form_save() {
 
 			if (isset_request_var('line_width') || isset($item['line_width'])) {
 				$save['line_width']    = form_input_validate((isset($item['line_width']) ? $item['line_width'] : get_nfilter_request_var('line_width')), 'line_width', '(^[0-9]+[\.,0-9]+$|^[0-9]+$)', true, 3);
-			}else { # make sure to transfer old LINEx style into line_width on save
+			} else {
+				// make sure to transfer old LINEx style into line_width on save
 				switch ($save['graph_type_id']) {
-				case GRAPH_ITEM_TYPE_LINE1:
-					$save['line_width'] = 1;
-					break;
-				case GRAPH_ITEM_TYPE_LINE2:
-					$save['line_width'] = 2;
-					break;
-				case GRAPH_ITEM_TYPE_LINE3:
-					$save['line_width'] = 3;
-					break;
-				default:
-					$save['line_width'] = 0;
+					case GRAPH_ITEM_TYPE_LINE1:
+						$save['line_width'] = 1;
+						break;
+					case GRAPH_ITEM_TYPE_LINE2:
+						$save['line_width'] = 2;
+						break;
+					case GRAPH_ITEM_TYPE_LINE3:
+						$save['line_width'] = 3;
+						break;
+					default:
+						$save['line_width'] = 0;
 				}
 			}
 
@@ -269,7 +316,7 @@ function form_save() {
 						}
 					}
 
-					push_out_graph_item($graph_template_item_id);
+					push_out_graph_item($graph_template_item_id, $task_item_changed);
 
 					if (isset($orig_data_source_to_input[get_nfilter_request_var('task_item_id')])) {
 						/* make sure all current graphs using this graph input are aware of this change */
@@ -325,7 +372,7 @@ function item_movedown() {
 	}
 
 	if (!isempty_request_var('graph_template_id')) {
-		resequence_graphs(get_request_var('graph_template_id'), -1);
+		resequence_graphs_simple(get_request_var('graph_template_id'));
 	}
 }
 
@@ -357,7 +404,7 @@ function item_moveup() {
 	}
 
 	if (!isempty_request_var('graph_template_id')) {
-		resequence_graphs(get_request_var('graph_template_id'), -1);
+		resequence_graphs_simple(get_request_var('graph_template_id'));
 	}
 }
 
@@ -396,7 +443,56 @@ function item_edit() {
 	/* ================= input validation ================= */
 	get_filter_request_var('id');
 	get_filter_request_var('graph_template_id');
+	get_filter_request_var('data_template_id');
 	/* ==================================================== */
+
+	/* ================= input validation and session storage ================= */
+	$filters = array(
+		'data_template_id' => array(
+			'filter' => FILTER_VALIDATE_INT,
+			'pageset' => true,
+			'default' => '0'
+		),
+	);
+
+	validate_store_request_vars($filters, 'sess_gti_' . get_filter_request_var('graph_template_id'));
+	/* ================= input validation ================= */
+
+	if (get_request_var('graph_template_id') > 0 || isset_request_var('id')) {
+		$sql_where  = '';
+		$sql_params = array();
+
+		if (get_request_var('id') > 0) {
+			$sql_where .= ' AND gti.id = ?';
+			$sql_params[] = get_request_var('id');
+		}
+
+		if (get_request_var('graph_template_id') > 0) {
+			$sql_where .= ' AND gti.graph_template_id = ?';
+			$sql_params[] = get_request_var('graph_template_id');
+		}
+
+		$data_templates = array_rekey(
+			db_fetch_assoc_prepared("SELECT DISTINCT dtr.data_template_id
+				FROM data_template_rrd AS dtr
+				INNER JOIN graph_templates_item AS gti
+				ON dtr.id = gti.task_item_id
+				WHERE dtr.local_data_id = 0
+				$sql_where
+				ORDER BY dtr.data_template_id",
+				$sql_params),
+			'data_template_id', 'data_template_id'
+		);
+
+		if (cacti_sizeof($data_templates)) {
+			if (!isset($data_templates[get_request_var('data_template_id')])) {
+				foreach($data_templates as $dt) {
+					set_request_var('data_template_id', $dt);
+					break;
+				}
+			}
+		}
+	}
 
 	form_start('graph_templates_items.php', 'graph_items');
 
@@ -427,25 +523,48 @@ function item_edit() {
 		}
 	}
 
+	if (isset_request_var('data_template_id')) {
+		$sql_where = ' AND dtr.data_template_id = ' . get_filter_request_var('data_template_id');
+	} else {
+		$sql_where = '';
+	}
+
+	$data_template_helper = array(
+		'data_template_id' => array(
+			'friendly_name' => __('Data Template Filter'),
+			'method' => 'drop_sql',
+			'sql' => 'SELECT id, name FROM data_template ORDER BY name',
+			'default' => '0',
+			'value' => (isset_request_var('data_template_id') ? get_filter_request_var('data_template_id'):'0'),
+			'none_value' => __('Any'),
+			'description' => __('This filter will limit the Data Sources visible in the Data Source dropdown.')
+		)
+	);
+
 	/* modifications to the default graph items array */
-	$struct_graph_item['task_item_id']['sql'] = "SELECT
-		CONCAT_WS('',data_template.name,' - ',' (',data_template_rrd.data_source_name,')') AS name,
-		data_template_rrd.id
-		FROM (data_template_data,data_template_rrd,data_template)
-		WHERE data_template_rrd.data_template_id=data_template.id
-		AND data_template_data.data_template_id=data_template.id
-		AND data_template_data.local_data_id=0
-		AND data_template_rrd.local_data_id=0
-		ORDER BY data_template.name,data_template_rrd.data_source_name";
+	$struct_graph_item['task_item_id']['sql'] = "SELECT dtr.id,
+		CONCAT_WS('', dt.name,' - ',' (', dtr.data_source_name,')') AS name
+		FROM data_template_rrd AS dtr
+		INNER JOIN data_template AS dt
+		ON dtr.data_template_id = dt.id
+		WHERE dtr.local_data_id = 0
+		$sql_where
+		ORDER BY dt.name, dtr.data_source_name";
+
+	$mystruct_graph_item = array_merge($data_template_helper, $struct_graph_item);
 
 	$form_array = array();
 
-	foreach ($struct_graph_item as $field_name => $field_array) {
-		$form_array += array($field_name => $struct_graph_item[$field_name]);
+	foreach ($mystruct_graph_item as $field_name => $field_array) {
+		$form_array += array($field_name => $mystruct_graph_item[$field_name]);
 
-		$form_array[$field_name]['value'] = (isset($template_item) ? $template_item[$field_name] : '');
-		$form_array[$field_name]['form_id'] = (isset($template_item) ? $template_item['id'] : '0');
-
+		if ($field_name != 'data_template_id') {
+			$form_array[$field_name]['value']   = (isset($template_item) ? $template_item[$field_name] : '');
+			$form_array[$field_name]['form_id'] = (isset($template_item) ? $template_item['id'] : '0');
+		} else {
+			$form_array[$field_name]['value']   = get_request_var('data_template_id');
+			$form_array[$field_name]['form_id'] = (isset($template_item) ? $template_item['id'] : '0');
+		}
 	}
 
 	draw_edit_form(
@@ -479,17 +598,32 @@ function item_edit() {
 			}
 		});
 
+		$('#data_template_id').change(function() {
+			$.get(urlPath+'graph_templates_items.php'+
+				'?action=ajax_data_sources'+
+				'&data_template_id='+$('#data_template_id').val()+
+				'&task_item_id='+$('#task_item_id').val()+
+				'&_task_item_id='+$('#_task_item_id').val(), function(data) {
+
+				$('#task_item_id').empty().append(data);
+
+				if ($('#task_item_id').selectmenu('instance')) {
+					$('#task_item_id').selectmenu('refresh');
+				}
+			});
+		});
+
 		setRowVisibility();
 		$('#graph_type_id').change(function(data) {
 			setRowVisibility();
 		});
 	});
 
-	/*
-	columns - task_item_id color_id alpha graph_type_id consolidation_function_id cdef_id value gprint_id text_format hard_return
-
-	graph_type_ids - 1 - Comment 2 - HRule 3 - Vrule 4 - Line1 5 - Line2 6 - Line3 7 - Area 8 - Stack 9 - Gprint 10 - Legend
-	*/
+	/**
+	 * columns - task_item_id color_id alpha graph_type_id consolidation_function_id cdef_id value gprint_id text_format hard_return
+	 *
+	 * graph_type_ids - 1 - Comment 2 - HRule 3 - Vrule 4 - Line1 5 - Line2 6 - Line3 7 - Area 8 - Stack 9 - Gprint 10 - Legend
+	 */
 
 	function changeColorId() {
 		$('#alpha').prop('disabled', true);
@@ -509,6 +643,7 @@ function item_edit() {
 	function setRowVisibility() {
 		switch($('#graph_type_id').val()) {
 		case '1': // COMMENT
+			$('#row_data_template_id').show();
 			$('#row_task_item_id').show();
 			$('#row_color_id').hide();
 			$('#row_line_width').hide();
@@ -526,6 +661,7 @@ function item_edit() {
 			$('#row_hard_return').show();
 			break;
 		case '2': // HRULE
+			$('#row_data_template_id').show();
 			$('#row_task_item_id').show();
 			$('#row_color_id').show();
 			$('#row_line_width').hide();
@@ -543,6 +679,7 @@ function item_edit() {
 			$('#row_hard_return').show();
 			break;
 		case '3': // VRULE
+			$('#row_data_template_id').hide();
 			$('#row_task_item_id').hide();
 			$('#row_color_id').show();
 			$('#row_line_width').hide();
@@ -562,6 +699,7 @@ function item_edit() {
 		case '4': // LINE1
 		case '5': // LINE2
 		case '6': // LINE3
+			$('#row_data_template_id').show();
 			$('#row_task_item_id').show();
 			$('#row_color_id').show();
 			$('#row_line_width').show();
@@ -572,13 +710,14 @@ function item_edit() {
 			$('#row_alpha').show();
 			$('#row_consolidation_function_id').show();
 			$('#row_cdef_id').show();
-			$('#row_vdef_id').hide();
+			$('#row_vdef_id').show();
 			$('#row_value').hide();
 			$('#row_gprint_id').hide();
 			$('#row_text_format').show();
 			$('#row_hard_return').show();
 			break;
 		case '20': // LINE:STACK
+			$('#row_data_template_id').show();
 			$('#row_task_item_id').show();
 			$('#row_color_id').show();
 			$('#row_line_width').show();
@@ -589,7 +728,7 @@ function item_edit() {
 			$('#row_alpha').show();
 			$('#row_consolidation_function_id').show();
 			$('#row_cdef_id').show();
-			$('#row_vdef_id').hide();
+			$('#row_vdef_id').show();
 			$('#row_value').hide();
 			$('#row_gprint_id').hide();
 			$('#row_text_format').show();
@@ -597,6 +736,7 @@ function item_edit() {
 			break;
 		case '7': // AREA
 		case '8': // STACK
+			$('#row_data_template_id').show();
 			$('#row_task_item_id').show();
 			$('#row_color_id').show();
 			$('#row_line_width').hide();
@@ -607,7 +747,7 @@ function item_edit() {
 			$('#row_alpha').show();
 			$('#row_consolidation_function_id').show();
 			$('#row_cdef_id').show();
-			$('#row_vdef_id').hide();
+			$('#row_vdef_id').show();
 			$('#row_value').hide();
 			$('#row_gprint_id').hide();
 			$('#row_text_format').show();
@@ -618,6 +758,7 @@ function item_edit() {
 		case '12': // GPRINT:MIN
 		case '13': // GPRINT:MIN
 		case '14': // GPRINT:AVERAGE
+			$('#row_data_template_id').show();
 			$('#row_task_item_id').show();
 			$('#row_color_id').hide();
 			$('#row_line_width').hide();
@@ -636,6 +777,7 @@ function item_edit() {
 			break;
 		case '15': // LEGEND
 		case '10': // LEGEND
+			$('#row_data_template_id').show();
 			$('#row_task_item_id').show();
 			$('#row_color_id').hide();
 			$('#row_line_width').hide();
@@ -653,6 +795,7 @@ function item_edit() {
 			$('#row_hard_return').hide();
 			break;
 		case '30': // TICK
+			$('#row_data_template_id').show();
 			$('#row_task_item_id').show();
 			$('#row_color_id').show();
 			$('#row_line_width').hide();
@@ -670,6 +813,7 @@ function item_edit() {
 			$('#row_hard_return').show();
 			break;
 		case '40': // TEXTALIGN
+			$('#row_data_template_id').hide();
 			$('#row_task_item_id').hide();
 			$('#row_color_id').hide();
 			$('#row_line_width').hide();
@@ -692,6 +836,6 @@ function item_edit() {
 	}
 
 	</script>
-<?php
-
+	<?php
 }
+

@@ -74,7 +74,7 @@ if (isset_request_var('export')) {
 	lic_view_dstats();
 }
 
-function get_dstat_records(&$table_name, $apply_limits = true, $row_limit = '30', &$total_rows) {
+function get_dstat_records(&$table_name, $apply_limits = true, $row_limit = '30', &$total_rows = 0) {
 	global $grid_efficiency_sql_ranges;
 
 	$sql_where = '';

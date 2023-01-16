@@ -35,7 +35,12 @@ $count = -1;  /* database connection threshold */
 $maxQueryTime = -1; /* kill any process older than $maxQueryTime no matter the info and command*/
 
 foreach($parms as $parameter) {
-	@list($arg, $value) = @explode('=', $parameter);
+	if (strpos($parameter, '=')) {
+		list($arg, $value) = explode('=', $parameter);
+	} else {
+		$arg = $parameter;
+		$value = '';
+	}
 
 	switch ($arg) {
 	case '-d':

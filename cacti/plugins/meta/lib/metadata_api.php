@@ -297,7 +297,7 @@ function get_object_metadata_conf($object_type) {
  * @$apply_limits Should limits be applied to the SQL query?
  * @$row_limit If so, what is the limit on the number of rows?
  */
-function get_metadata_row_count(&$sql_where, $object_type, $apply_limits = true, $row_limit) {
+function get_metadata_row_count(&$sql_where, $object_type, $apply_limits = true, $row_limit = 30) {
 	$sql = 'SELECT count(*) FROM grid_metadata WHERE object_type = ' . db_qstr($object_type);
 
 	if (strlen($sql_where)) {
@@ -1247,7 +1247,7 @@ function validate_queue_group($queue_group_row_data, $row_headers) {
 	return true;
 }
 
-function read_metadata($type = 'user', $object_id, $column) {
+function read_metadata($type = 'user', $object_id = '', $column = '') {
 	static $cachedata = array();
 
 	if (isset($cachedata[$type][$object_id][$column]['data'])) {
@@ -1262,7 +1262,7 @@ function read_metadata($type = 'user', $object_id, $column) {
 	}
 }
 
-function read_metadata_count($type = 'user', $object_id, $clusterid=0) {
+function read_metadata_count($type = 'user', $object_id = '', $clusterid = 0) {
 	static $cachedata = array();
 	static $cachedata_cluster = array();
 	if($clusterid > 0){

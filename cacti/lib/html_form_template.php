@@ -34,8 +34,9 @@
 function draw_nontemplated_fields_graph($graph_template_id, &$values_array, $field_name_format = '|field|', $header_title = '', $alternate_colors = true, $include_hidden_fields = true, $snmp_query_graph_id = 0) {
 	global $struct_graph;
 
-	$form_array = array();
-	$draw_any_items = false;
+	$form_array       = array();
+	$draw_any_items   = false;
+	$num_fields_drawn = 0;
 
 	/* fetch information about the graph template */
 	$graph_template = db_fetch_row_prepared('SELECT *
@@ -70,11 +71,12 @@ function draw_nontemplated_fields_graph($graph_template_id, &$values_array, $fie
 				unset($form_array[$form_field_name]);
 			}
 		} else {
-			if (($draw_any_items == false) && ($header_title != '')) {
-				print "<div class='tableHeader'><div class='tableSubHeaderColumn'>$header_title</div></div>\n";
+			if ($draw_any_items == false && $header_title != '') {
+				print "<div class='tableHeader'><div class='tableSubHeaderColumn'>$header_title</div></div>";
 			}
 
 			$draw_any_items = true;
+			$num_fields_drawn++;
 		}
 	}
 
@@ -85,14 +87,16 @@ function draw_nontemplated_fields_graph($graph_template_id, &$values_array, $fie
 		$form_config_array = array('no_form_tag' => true, 'force_row_color' => true);
 	}
 
-	draw_edit_form(
-		array(
-			'config' => $form_config_array,
-			'fields' => $form_array
+	if (cacti_sizeof($form_array)) {
+		draw_edit_form(
+			array(
+				'config' => $form_config_array,
+				'fields' => $form_array
 			)
 		);
+	}
 
-	return (isset($form_array) ? cacti_sizeof($form_array) : 0);
+	return $num_fields_drawn;
 }
 
 /* draw_nontemplated_fields_graph_item - draws a form that consists of all non-templated graph item fields
@@ -108,8 +112,8 @@ function draw_nontemplated_fields_graph($graph_template_id, &$values_array, $fie
 function draw_nontemplated_fields_graph_item($graph_template_id, $local_graph_id, $field_name_format = '|field|_|id|', $header_title = '', $alternate_colors = true, $locked = 'false') {
 	global $struct_graph_item;
 
-	$form_array = array();
-	$draw_any_items = false;
+	$draw_any_items   = false;
+	$num_fields_drawn = 0;
 
 	/* fetch information about the graph template */
 	$input_item_list = db_fetch_assoc_prepared('SELECT *
@@ -148,6 +152,8 @@ function draw_nontemplated_fields_graph_item($graph_template_id, $local_graph_id
 
 	if (cacti_sizeof($input_item_list)) {
 		foreach ($input_item_list as $item) {
+			$form_array = array();
+
 			if (!empty($local_graph_id)) {
 				$current_def_value = db_fetch_row_prepared('SELECT gti.' . $item['column_name'] . ', gti.id
 					FROM graph_templates_item AS gti
@@ -173,8 +179,10 @@ function draw_nontemplated_fields_graph_item($graph_template_id, $local_graph_id
 			$form_field_name = str_replace('|id|', $item['id'], $form_field_name);
 
 			if (get_selected_theme() != 'classic') {
-				$struct_graph_item[$item['column_name']]['id'] = $current_def_value[$item['column_name']];
-				$struct_graph_item['task_item_id']['action']   = 'ajax_graph_items' . (isset($host_id) ? '&host_id=' . $host_id:'') . '&rrd_id=' . $current_def_value[$item['column_name']];
+				if (cacti_sizeof($current_def_value)) {
+					$struct_graph_item[$item['column_name']]['id'] = $current_def_value[$item['column_name']];
+					$struct_graph_item['task_item_id']['action']   = 'ajax_graph_items' . (isset($host_id) ? '&host_id=' . $host_id:'') . '&rrd_id=' . $current_def_value[$item['column_name']];
+				}
 			}
 
 			$form_array += array($form_field_name => $struct_graph_item[$item['column_name']]);
@@ -184,6 +192,8 @@ function draw_nontemplated_fields_graph_item($graph_template_id, $local_graph_id
 
 			if (isset($current_def_value[$item['column_name']])) {
 				$form_array[$form_field_name]['value'] = $current_def_value[$item['column_name']];
+			} else {
+				$form_array[$form_field_name]['value'] = '';
 			}
 
 			if ($locked == 'true') {
@@ -222,35 +232,36 @@ function draw_nontemplated_fields_graph_item($graph_template_id, $local_graph_id
 
 			/* if we are drawing the graph input list in the pre-graph stage we should omit the data
 			source fields because they are basically meaningless at this point */
-			if ((empty($local_graph_id)) && ($item['column_name'] == 'task_item_id')) {
+			if (empty($local_graph_id) && $item['column_name'] == 'task_item_id') {
 				unset($form_array[$form_field_name]);
 			} else {
-				if (($draw_any_items == false) && ($header_title != '')) {
+				if ($draw_any_items == false && $header_title != '') {
 					print "<div class='tableHeader'><div class='tableSubHeaderColumn'>$header_title</div></div>\n";
 				}
 
 				$draw_any_items = true;
+				$num_fields_drawn++;
+			}
+
+			/* setup form options */
+			if ($alternate_colors == true) {
+				$form_config_array = array('no_form_tag' => true);
+			} else {
+				$form_config_array = array('no_form_tag' => true, 'force_row_color' => true);
+			}
+
+			if (cacti_sizeof($form_array)) {
+				draw_edit_form(
+					array(
+						'config' => $form_config_array,
+						'fields' => $form_array
+					)
+				);
 			}
 		}
 	}
 
-	/* setup form options */
-	if ($alternate_colors == true) {
-		$form_config_array = array('no_form_tag' => true);
-	} else {
-		$form_config_array = array('no_form_tag' => true, 'force_row_color' => true);
-	}
-
-	if (cacti_sizeof($input_item_list)) {
-		draw_edit_form(
-			array(
-				'config' => $form_config_array,
-				'fields' => $form_array
-			)
-		);
-	}
-
-	return (isset($form_array) ? cacti_sizeof($form_array) : 0);
+	return $num_fields_drawn;
 }
 
 /* draw_nontemplated_fields_data_source - draws a form that consists of all non-templated data source fields
@@ -270,8 +281,9 @@ function draw_nontemplated_fields_graph_item($graph_template_id, $local_graph_id
 function draw_nontemplated_fields_data_source($data_template_id, $local_data_id, &$values_array, $field_name_format = '|field|', $header_title = '', $alternate_colors = true, $include_hidden_fields = true, $snmp_query_graph_id = 0) {
 	global $struct_data_source;
 
-	$form_array = array();
-	$draw_any_items = false;
+	$form_array       = array();
+	$draw_any_items   = false;
+	$num_fields_drawn = 0;
 
 	/* fetch information about the data template */
 	$data_template = db_fetch_row_prepared('SELECT *
@@ -313,11 +325,12 @@ function draw_nontemplated_fields_data_source($data_template_id, $local_data_id,
 				unset($form_array[$form_field_name]);
 			}
 		} else {
-			if (($draw_any_items == false) && ($header_title != '')) {
+			if ($draw_any_items == false && $header_title != '') {
 				print "<div class='tableHeader'><div class='tableSubHeaderColumn'>$header_title</div></div>\n";
 			}
 
 			$draw_any_items = true;
+			$num_fields_drawn++;
 		}
 	}
 
@@ -328,14 +341,16 @@ function draw_nontemplated_fields_data_source($data_template_id, $local_data_id,
 		$form_config_array = array('no_form_tag' => true, 'force_row_color' => true);
 	}
 
-	draw_edit_form(
-		array(
-			'config' => $form_config_array,
-			'fields' => $form_array
-		)
-	);
+	if (cacti_sizeof($form_array)) {
+		draw_edit_form(
+			array(
+				'config' => $form_config_array,
+				'fields' => $form_array
+			)
+		);
+	}
 
-	return (isset($form_array) ? cacti_sizeof($form_array) : 0);
+	return $num_fields_drawn;
 }
 
 /* draw_nontemplated_fields_data_source_item - draws a form that consists of all non-templated data source
@@ -357,22 +372,18 @@ function draw_nontemplated_fields_data_source($data_template_id, $local_data_id,
 function draw_nontemplated_fields_data_source_item($data_template_id, &$values_array, $field_name_format = '|field_id|', $header_title = '', $draw_title_for_each_item = true, $alternate_colors = true, $include_hidden_fields = true, $snmp_query_graph_id = 0) {
 	global $struct_data_source_item;
 
-	$draw_any_items = false;
+	$form_array       = array();
+	$draw_any_items   = false;
 	$num_fields_drawn = 0;
-
-	/* setup form options */
-	if ($alternate_colors == true) {
-		$form_config_array = array('no_form_tag' => true);
-	} else {
-		$form_config_array = array('no_form_tag' => true, 'force_row_color' => true);
-	}
 
 	if (cacti_sizeof($values_array)) {
 		foreach ($values_array as $rrd) {
 			$form_array = array();
 
-			/* if the user specifies a title, we only want to draw that. if not, we should create our
-			own title for each data source item */
+			/**
+			 * if the user specifies a title, we only want to draw that. if not, we should create our
+			 * own title for each data source item
+			 */
 			if ($draw_title_for_each_item == true) {
 				$draw_any_items = false;
 			}
@@ -416,13 +427,14 @@ function draw_nontemplated_fields_data_source_item($data_template_id, &$values_a
 						unset($form_array[$form_field_name]);
 					}
 				} else {
-					if (($draw_any_items == false) && ($draw_title_for_each_item == false) && ($header_title != '')) {
+					if ($draw_any_items == false && $draw_title_for_each_item == false && $header_title != '') {
 						print "<div class='tableHeader'><div class='tableSubHeaderColumn'>$header_title</div></div>\n";
-					} elseif (($draw_any_items == false) && ($draw_title_for_each_item == true) && ($header_title != '')) {
+					} elseif ($draw_any_items == false && $draw_title_for_each_item == true && $header_title != '') {
 						print "<div class='tableHeader'><div class='tableSubHeaderColumn'>$header_title [" . html_escape($rrd['data_source_name']) . "]</div></div>\n";
 					}
 
 					$draw_any_items = true;
+					$num_fields_drawn++;
 
 					/* if the 'Output field' appears here among the non-templated fields, the
 					   valid choices for the drop-down box must be fetched from the associated
@@ -444,14 +456,21 @@ function draw_nontemplated_fields_data_source_item($data_template_id, &$values_a
 				}
 			}
 
-			draw_edit_form(
-				array(
-					'config' => $form_config_array,
-					'fields' => $form_array
-				)
-			);
+			/* setup form options */
+			if ($alternate_colors == true) {
+				$form_config_array = array('no_form_tag' => true);
+			} else {
+				$form_config_array = array('no_form_tag' => true, 'force_row_color' => true);
+			}
 
-			$num_fields_drawn += cacti_sizeof($form_array);
+			if (cacti_sizeof($form_array)) {
+				draw_edit_form(
+					array(
+						'config' => $form_config_array,
+						'fields' => $form_array
+					)
+				);
+			}
 		}
 	}
 
@@ -475,6 +494,9 @@ function draw_nontemplated_fields_data_source_item($data_template_id, &$values_a
 function draw_nontemplated_fields_custom_data($data_template_data_id, $field_name_format = '|field|',
 	$header_title = '', $alternate_colors = true, $include_hidden_fields = true, $snmp_query_id = 0) {
 
+	$draw_any_items   = false;
+	$num_fields_drawn = 0;
+
 	$data = db_fetch_row_prepared('SELECT id, data_input_id, data_template_id, name, local_data_id
 		FROM data_template_data
 		WHERE id = ?',
@@ -493,8 +515,6 @@ function draw_nontemplated_fields_custom_data($data_template_data_id, $field_nam
 		AND local_data_id = 0',
 		array($data['data_template_id']));
 
-	$draw_any_items = false;
-
 	/* get each INPUT field for this data input source */
 	$fields = db_fetch_assoc_prepared('SELECT *
 		FROM data_input_fields
@@ -504,7 +524,6 @@ function draw_nontemplated_fields_custom_data($data_template_data_id, $field_nam
 		array($data['data_input_id']));
 
 	/* loop through each field found */
-	$i = 0;
 	if (cacti_sizeof($fields)) {
 		foreach ($fields as $field) {
 			$data_input_data = db_fetch_row_prepared('SELECT *
@@ -549,11 +568,11 @@ function draw_nontemplated_fields_custom_data($data_template_data_id, $field_nam
 					form_hidden_box($form_field_name, $old_value, '');
 				}
 			} else {
-				if (($draw_any_items == false) && ($header_title != '')) {
+				if ($draw_any_items == false && $header_title != '') {
 					print "<div class='tableHeader' style='width:100%'><div class='tableSubHeaderColumn'>$header_title</div></div>\n";
 				}
 
-				print "<div class='formRow " . ($alternate_colors ? ($i % 2 ? 'even':'odd'): 'odd') . "'>\n";
+				print "<div class='formRow " . ($alternate_colors ? ($num_fields_drawn % 2 ? 'even':'odd'): 'odd') . "'>\n";
 
 				print "<div class='formColumnLeft'><div class='formFieldName'>" . html_escape($field['name']) . "</div></div>\n";
 				print "<div class='formColumnRight'>";
@@ -564,12 +583,12 @@ function draw_nontemplated_fields_custom_data($data_template_data_id, $field_nam
 				print "</div>\n";
 
 				$draw_any_items = true;
-				$i++;
+				$num_fields_drawn++;
 			}
 		}
 	}
 
-	return $i;
+	return $num_fields_drawn;
 }
 
 /* draw_custom_data_row - draws a single row representing 'custom data' for a single data input field.

@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>Cacti – How to determine a Cacti template version</title>
+  <title>Cacti – How To Determine a Cacti Template Version</title>
   <style type="text/css">
       code{white-space: pre-wrap;}
       span.smallcaps{font-variant: small-caps;}
@@ -77,7 +77,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <link rel="stylesheet" href="Cacti-Github.css" />
 </head>
 <body>
-<h1 id="how-to-determine-a-cacti-template-version">How to determine a Cacti template version</h1>
+<h1 id="how-to-determine-a-cacti-template-version">How To Determine a Cacti Template Version</h1>
 <p>Users are often bewildered when they are unable to import templates found on the forum and presented with the error, <strong>Error: XML: Hash version does not exist</strong>. Cacti prevents templates that have been exported on new versions back to older versions for compatibility. Quickly looking inside a XML template, it's not very clear how to determine what version it was created on. There IS a reason to the madness -- the hash!</p>
 <p>Take the following example: <code>&lt;hash_04**0018**258d1c9487a6c58dd804f4a012007664&gt;</code> The first 2 digits are the type of the template. The next 4 digits are the Cacti version it was created on. The next 32 digits are a random number.</p>
 <h2 id="list-of-versions">List of Versions</h2>
@@ -109,6 +109,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb1-26" title="26"><span class="st">&quot;0.8.8a&quot;</span> =&gt; <span class="st">&quot;0024&quot;</span></a></code></pre></div>
 <p>For the example above, this template was exported with Cacti 0.8.7d.</p>
 <hr />
-<p>Copyright (c) 2004-2020 The Cacti Group</p>
+<p><copy>Copyright (c) 2004-2022 The Cacti Group</copy></p>
 </body>
 </html>

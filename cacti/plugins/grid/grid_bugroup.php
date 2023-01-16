@@ -28,7 +28,7 @@ $title = __('IBM Spectrum LSF RTM - Batch User Group Statistics', 'grid');
 
 grid_view_ugroups();
 
-function grid_get_ugroup_records($userGroup, &$sql_where, $method, $apply_limits = true, $rows, &$sql_params) {
+function grid_get_ugroup_records($userGroup, &$sql_where, $method, $apply_limits = true, $rows = 30, &$sql_params = array()) {
 	if ($method == 'jobmap') {
 		$sql_where = "WHERE ugs.userGroup = $userGroup";
 	} else {

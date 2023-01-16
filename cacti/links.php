@@ -126,7 +126,7 @@ default:
 }
 
 function form_actions() {
-	global $actions;
+	global $link_actions;
 
 	/* ================= input validation ================= */
 	get_filter_request_var('drp_action');
@@ -179,7 +179,7 @@ function form_actions() {
 
 	form_start('links.php');
 
-	html_start_box($actions[get_request_var_post('drp_action')], '60%', '', '3', 'center', '');
+	html_start_box($link_actions[get_request_var_post('drp_action')], '60%', '', '3', 'center', '');
 
 	if (isset($pages) && cacti_sizeof($pages)) {
 		if (get_request_var('drp_action') == '3') { // Enable Pages
@@ -598,7 +598,7 @@ function edit_page() {
 				$('#row_consolenewsection').hide();
 			} else {
 				$('#row_consolesection').show();
-				setConsoleNewSectionVisibity();
+				setConsoleNewSectionVisibility();
 			}
 		}).change();
 
@@ -609,11 +609,11 @@ function edit_page() {
 		// if you change the section, make the 'new' textbox reflect it
 		// if you change it to 'new', then clear the textbox, and jump to it
 		$('#consolesection').change(function() {
-			setConsoleNewSectionVisibity();
+			setConsoleNewSectionVisibility();
 		}).change();
 	});
 
-	function setConsoleNewSectionVisibity() {
+	function setConsoleNewSectionVisibility() {
 		if ($('#consolesection').val() == '__NEW__') {
 			$('#row_consolenewsection').show();
 			$('#consolenewsection').focus();

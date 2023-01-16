@@ -1,8 +1,68 @@
 ## ChangeLog
 
+--- develop ---
+
+* issue#185: Wrong column specification on cleanup query
+
+* issue#186: Wrong connection in functions.php
+
+* issue#189: Issues with undefined variable in traditional table maintenance
+
+* issue#193: Fix command execution
+
+* issue#196: Undefined variable $ignore
+
+* issue#205: function syslog_strip_incoming_domains($uniqueID)
+
+* feature: Provide better messaging if the Data Collector is in offline mode
+
+--- 4.0 ---
+
+* issue: Removal of partition issues incorrect message
+
+* issue: Make the syslog processing routine more readable
+
+* issue: Fix oversight in database connection handling around default values identified in PHP 8.1.2 testing
+
+* issue#65: MySQL failures due to large amount of syslog data
+
+* issue#108: Add Body Text to Alert email
+
+* issue#135: Syslog plugin will break remote collectors if DB is not present
+
+* issue#146: Support Email address distribution lists
+
+* issue#151: Syslog 3.1 has a hardcoded path for sh which causes issues running other scripts
+
+* issue#160: PHP 8 Support
+
+* issue#166: Allow Syslog to pass hostname for the threshold type reporting
+
+* feature#181: For Regex Message Processing Rules test the regex at save time and inform user if it's syntactically correct
+
+* feature: Support a local Syslog config file when Syslog is designed to work independently from the main Cacti server.
+
+* feature: Support the replication of the main Cacti Syslog rules to Remote Data Collectors
+
+* feature: Support process interlocking using the Cacti process registration functions
+
+* feature: Support both system and host level re-alert cycles and command execution
+
+* feature: Support using the Thold notification lists if Thold is installed on the system
+
+* feature: Support using Cacti Format CSS files to construct Alert and Report messages.
+
 --- 3.2 ---
 
+* issue#114: Message Column missing
+
+* issue#154: When removing a rule, wrong database connection is used
+
+* issue#155: Wrong database connection is used resulting in missing table errors
+
 * issue#159: Sync 'syslog' schema cross Traditional/Partitioned mode to avoid audit issue
+
+* issue#161: Message colum does not follow RFC 5424
 
 --- 3.1 ---
 
