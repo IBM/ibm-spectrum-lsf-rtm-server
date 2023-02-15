@@ -1,0 +1,594 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-02-10 13:23-0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: applications.php:34 hostgroups.php:34 hosts.php:37 jobgroups.php:34
+#: licprojects.php:34 licprojfeat.php:34 pools.php:34 pools_slas.php:34
+#: projects.php:33 queues.php:34 shared.php:34 shares.php:34 slas.php:34
+#: usergroups.php:34 users.php:34
+msgid "Delete"
+msgstr ""
+
+#: functions.php:173
+msgid "User Graph Management"
+msgstr ""
+
+#: functions.php:221 functions.php:1591
+msgid "User"
+msgstr ""
+
+#: functions.php:226
+msgid "User Shell"
+msgstr ""
+
+#: functions.php:231 functions.php:314 functions.php:410 functions.php:570
+#: functions.php:669 functions.php:760 functions.php:851 functions.php:942
+#: functions.php:1035 functions.php:1114 functions.php:1188 functions.php:1267
+#: functions.php:1383 hosts.php:606
+msgid "Cluster Name"
+msgstr ""
+
+#: functions.php:236 functions.php:319 functions.php:415 functions.php:575
+#: functions.php:674 functions.php:765 functions.php:856 functions.php:947
+#: functions.php:1040 functions.php:1119 functions.php:1193 functions.php:1272
+#: functions.php:1388 hosts.php:611
+msgid "Cluster Status"
+msgstr ""
+
+#: functions.php:241 functions.php:324 functions.php:420 functions.php:580
+#: functions.php:679 functions.php:770 functions.php:861 functions.php:952
+#: functions.php:1045 functions.php:1124 functions.php:1198 functions.php:1277
+#: functions.php:1393
+msgid "Cluster ID"
+msgstr ""
+
+#: functions.php:246 functions.php:335 functions.php:431 functions.php:507
+#: functions.php:590 functions.php:689 functions.php:780 functions.php:871
+#: functions.php:962 functions.php:1055 functions.php:1129 functions.php:1203
+#: functions.php:1287 functions.php:1403
+msgid "Graphs"
+msgstr ""
+
+#: functions.php:251
+msgid "Graphs ID's"
+msgstr ""
+
+#: functions.php:256 functions.php:340 functions.php:436 functions.php:512
+#: functions.php:595 functions.php:694 functions.php:785 functions.php:876
+#: functions.php:967 functions.php:1060 functions.php:1134 functions.php:1208
+#: functions.php:1292 functions.php:1408
+msgid "Last Updated"
+msgstr ""
+
+#: functions.php:264
+msgid "Project Graph Management"
+msgstr ""
+
+#: functions.php:309
+msgid "Project Name"
+msgstr ""
+
+#: functions.php:329
+msgid "Official"
+msgstr ""
+
+#: functions.php:330
+msgid ""
+"For Project Graphs, you may track Official Projects using the MetaData "
+"plugin.  See the README.md for details"
+msgstr ""
+
+#: functions.php:348
+msgid "License Project Graph Management"
+msgstr ""
+
+#: functions.php:405
+msgid "License Project Name"
+msgstr ""
+
+#: functions.php:425 functions.php:501 hosts.php:465
+msgid "Current"
+msgstr ""
+
+#: functions.php:426 functions.php:502
+msgid ""
+"For License Project Graphs, you may track Current License Projects from the "
+"License Scheduler plugin to Cacti."
+msgstr ""
+
+#: functions.php:444
+msgid "License Project Feature Graph Management"
+msgstr ""
+
+#: functions.php:496
+msgid "Feature Name"
+msgstr ""
+
+#: functions.php:520
+msgid "Queue Graph Management"
+msgstr ""
+
+#: functions.php:565 functions.php:1378
+msgid "Queue Name"
+msgstr ""
+
+#: functions.php:585 functions.php:684 functions.php:775 functions.php:866
+#: functions.php:957 functions.php:1050 functions.php:1282 functions.php:1398
+msgid "Exists"
+msgstr ""
+
+#: functions.php:603
+msgid "Shared Resource Graph Management"
+msgstr ""
+
+#: functions.php:664
+msgid "Resource Name"
+msgstr ""
+
+#: functions.php:702
+msgid "Service Level Agreement Graph Management"
+msgstr ""
+
+#: functions.php:755 functions.php:846
+msgid "Service Level Agreement"
+msgstr ""
+
+#: functions.php:793
+msgid "Guarantee Pool Graph Management"
+msgstr ""
+
+#: functions.php:884
+msgid "Guarantee Pools / Service Level Agreement Graph Management"
+msgstr ""
+
+#: functions.php:937
+msgid "Pool/SLA"
+msgstr ""
+
+#: functions.php:975
+msgid "Host Group Graph Management"
+msgstr ""
+
+#: functions.php:1030
+msgid "Host Group Name"
+msgstr ""
+
+#: functions.php:1068
+msgid "Job Group Graph Management"
+msgstr ""
+
+#: functions.php:1109
+msgid "Job Group Name"
+msgstr ""
+
+#: functions.php:1142
+msgid "Application Graph Management"
+msgstr ""
+
+#: functions.php:1183
+msgid "Application Name"
+msgstr ""
+
+#: functions.php:1216
+msgid "User Group Graph Management"
+msgstr ""
+
+#: functions.php:1262
+msgid "User Group Name"
+msgstr ""
+
+#: functions.php:1300
+msgid "Fairshare Graph Management"
+msgstr ""
+
+#: functions.php:1373
+msgid "Share Account Path"
+msgstr ""
+
+#: functions.php:1453 hosts.php:388 hosts.php:422
+msgid "Search"
+msgstr ""
+
+#: functions.php:1459 hosts.php:432
+msgid "Cluster"
+msgstr ""
+
+#: functions.php:1463 hosts.php:436 hosts.php:453 hosts.php:464
+msgid "All"
+msgstr ""
+
+#: functions.php:1478 hosts.php:408
+msgid "Records"
+msgstr ""
+
+#: functions.php:1493 hosts.php:422
+msgid "Go"
+msgstr ""
+
+#: functions.php:1493
+msgid "Search for Alert"
+msgstr ""
+
+#: functions.php:1494 hosts.php:425
+msgid "Clear"
+msgstr ""
+
+#: functions.php:1494 hosts.php:425
+msgid "Clear Filters"
+msgstr ""
+
+#: functions.php:1537 functions.php:2066
+msgid "Not Found"
+msgstr ""
+
+#: functions.php:1556
+msgid "No User"
+msgstr ""
+
+#: functions.php:1560
+msgid "Removed"
+msgstr ""
+
+#: functions.php:1571
+#, php-format
+msgid "No %s Graphs Found"
+msgstr ""
+
+#: functions.php:1595
+msgid "Project"
+msgstr ""
+
+#: functions.php:1599 setup.php:124
+msgid "License Project"
+msgstr ""
+
+#: functions.php:1603
+msgid "License Project Feature"
+msgstr ""
+
+#: functions.php:1607
+msgid "Queue"
+msgstr ""
+
+#: functions.php:1611 setup.php:121
+msgid "Shared Resources"
+msgstr ""
+
+#: functions.php:1615
+msgid "Service Level Agreements"
+msgstr ""
+
+#: functions.php:1619
+msgid "Guarantee Pools"
+msgstr ""
+
+#: functions.php:1623
+msgid "Guarantee Pools/Service Level Agreements"
+msgstr ""
+
+#: functions.php:1627
+msgid "Host Group"
+msgstr ""
+
+#: functions.php:1631
+msgid "Job Group"
+msgstr ""
+
+#: functions.php:1635
+msgid "Application"
+msgstr ""
+
+#: functions.php:1639
+msgid "User Group"
+msgstr ""
+
+#: functions.php:1643
+msgid "Fairshare Trees"
+msgstr ""
+
+#: functions.php:1974
+msgid "You must select at least one Item to Remove."
+msgstr ""
+
+#: functions.php:1980
+#, php-format
+msgid "Object Name: '%s' of Type: '%s' from Cluster: '%s' with Graph IDs: '%s'"
+msgstr ""
+
+#: functions.php:1982
+#, php-format
+msgid "Object Name: '%s' of Type: '%s' from Cluster: '%s'"
+msgstr ""
+
+#: functions.php:1986
+msgid "Remove Graphs"
+msgstr ""
+
+#: functions.php:1990
+msgid "Click 'Continue' to remove the objects below and their Graphs from RTM"
+msgstr ""
+
+#: functions.php:1997 hosts.php:231
+msgid "Continue"
+msgstr ""
+
+#: functions.php:2006
+msgid "Cancel"
+msgstr ""
+
+#: functions.php:2006 hosts.php:239
+msgid "Return"
+msgstr ""
+
+#: functions.php:2035
+msgid "Disabled"
+msgstr ""
+
+#: functions.php:2038
+msgid "Up"
+msgstr ""
+
+#: functions.php:2041
+msgid "Jobs Down"
+msgstr ""
+
+#: functions.php:2045
+msgid "Down"
+msgstr ""
+
+#: functions.php:2048
+msgid "Diminished"
+msgstr ""
+
+#: functions.php:2051
+msgid "Admin Down"
+msgstr ""
+
+#: functions.php:2054
+msgid "Maintenance"
+msgstr ""
+
+#: functions.php:2057 hosts.php:403
+msgid "Unknown"
+msgstr ""
+
+#: functions.php:2060
+msgid "View Collector Status"
+msgstr ""
+
+#: functions.php:2066
+msgid "Cluster Not Found"
+msgstr ""
+
+#: hosts.php:214
+msgid "Click 'Continue' to Delete the following hosts."
+msgstr ""
+
+#: hosts.php:218
+msgid "Disable All Cacti Hosts. Preserving Legacy Graphs and Data Soures."
+msgstr ""
+
+#: hosts.php:219
+msgid "Delete All Cacti Hosts. Removing Legacy Graphs and Data Sources"
+msgstr ""
+
+#: hosts.php:394 hosts.php:616
+msgid "Host Type"
+msgstr ""
+
+#: hosts.php:398
+msgid "All Clients"
+msgstr ""
+
+#: hosts.php:399
+msgid "Fixed Clients"
+msgstr ""
+
+#: hosts.php:400
+msgid "Float Clients"
+msgstr ""
+
+#: hosts.php:401
+msgid "Servers"
+msgstr ""
+
+#: hosts.php:449
+msgid "Integrated"
+msgstr ""
+
+#: hosts.php:454
+msgid "Fully Integrated"
+msgstr ""
+
+#: hosts.php:455
+msgid "Not in LSF"
+msgstr ""
+
+#: hosts.php:456
+msgid "Not in RTM"
+msgstr ""
+
+#: hosts.php:460 hosts.php:636
+msgid "Last Seen"
+msgstr ""
+
+#: hosts.php:466
+#, php-format
+msgid "%d Week"
+msgstr ""
+
+#: hosts.php:467
+#, php-format
+msgid "%d Month"
+msgstr ""
+
+#: hosts.php:530
+msgid "Host Graph Management"
+msgstr ""
+
+#: hosts.php:601
+msgid "Host Name"
+msgstr ""
+
+#: hosts.php:621
+msgid "Host Model"
+msgstr ""
+
+#: hosts.php:626
+msgid "Host License"
+msgstr ""
+
+#: hosts.php:631
+msgid "First Seen"
+msgstr ""
+
+#: hosts.php:643 setup.php:112
+msgid "Hosts"
+msgstr ""
+
+#: hosts.php:665 hosts.php:682
+msgid "Fixed Client"
+msgstr ""
+
+#: hosts.php:665 hosts.php:682
+msgid "Float Client"
+msgstr ""
+
+#: hosts.php:680 hosts.php:681
+msgid "Auto Detect"
+msgstr ""
+
+#: hosts.php:690
+msgid "No Hosts Defined"
+msgstr ""
+
+#: setup.php:36
+msgid "LSF Graph Management"
+msgstr ""
+
+#: setup.php:100 setup.php:109 setup.php:110 setup.php:111 setup.php:112
+#: setup.php:113 setup.php:114 setup.php:115 setup.php:116 setup.php:117
+#: setup.php:118 setup.php:119 setup.php:120 setup.php:121
+msgid "Cluster Graphs"
+msgstr ""
+
+#: setup.php:101 setup.php:124 setup.php:125
+msgid "Lic Sched Graphs"
+msgstr ""
+
+#: setup.php:107
+msgid "Clusters"
+msgstr ""
+
+#: setup.php:109
+msgid "Applications"
+msgstr ""
+
+#: setup.php:110
+msgid "Queues"
+msgstr ""
+
+#: setup.php:111
+msgid "Queue Shares"
+msgstr ""
+
+#: setup.php:113
+msgid "Host Groups"
+msgstr ""
+
+#: setup.php:114 setup.php:233
+msgid "Job Groups"
+msgstr ""
+
+#: setup.php:115
+msgid "Projects"
+msgstr ""
+
+#: setup.php:116
+msgid "Users"
+msgstr ""
+
+#: setup.php:117
+msgid "User Groups"
+msgstr ""
+
+#: setup.php:118
+msgid "SLA's"
+msgstr ""
+
+#: setup.php:119
+msgid "Pools"
+msgstr ""
+
+#: setup.php:120
+msgid "Pools/SLA's"
+msgstr ""
+
+#: setup.php:125
+msgid "License Features"
+msgstr ""
+
+#: setup.php:132
+msgid "LSF Administration"
+msgstr ""
+
+#: setup.php:142
+msgid "Project Manager"
+msgstr ""
+
+#: setup.php:149 setup.php:170 setup.php:191 setup.php:212 setup.php:240
+#: setup.php:254 setup.php:275 setup.php:296 setup.php:317 setup.php:338
+msgid "(edit)"
+msgstr ""
+
+#: setup.php:156 setup.php:177 setup.php:198 setup.php:219 setup.php:226
+#: setup.php:261 setup.php:282 setup.php:303 setup.php:324 setup.php:345
+msgid "(actions)"
+msgstr ""
+
+#: setup.php:163
+msgid "License Projects"
+msgstr ""
+
+#: setup.php:184
+msgid "License Project Features"
+msgstr ""
+
+#: setup.php:205
+msgid "Queue Manager"
+msgstr ""
+
+#: setup.php:247
+msgid "Host Manager"
+msgstr ""
+
+#: setup.php:268
+msgid "Host Group Manager"
+msgstr ""
+
+#: setup.php:289
+msgid "Application Manager"
+msgstr ""
+
+#: setup.php:310
+msgid "User Manager"
+msgstr ""
+
+#: setup.php:331
+msgid "Shared Resources Manager"
+msgstr ""
