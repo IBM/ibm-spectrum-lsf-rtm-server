@@ -1,8 +1,8 @@
 <?php
-// $Id$
+// $Id: 35df8ed0ed814fbd9f79efb2ef7dd37333b0e9f5 $
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2022                                          |
+ | Copyright IBM Corp. 2006, 2022-2023                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -436,10 +436,13 @@ function grid_view_get_dstat_records(&$sql_where, &$group_by, &$table_name, $app
 		} else {
 			$total_rows = 1;
 		}
+
 		$sql_query .= ' '. $sql_order;
+
 		if ($apply_limits) {
 			$sql_query .= ' LIMIT ' . ($rows*(get_request_var('page')-1)) . ',' . $rows;
 		}
+
 		return db_fetch_assoc_prepared($sql_query, $sql_params);
 	} else {
 		$total_rows = 0;
@@ -575,47 +578,29 @@ function dailyStatsFilter() {
 			document.onkeypress = stopRKey;
 
 			function applyFilterChangePDTS() {
-				strURL = 'grid_dailystats.php?ajaxstats=1&predefined_timespan=' + $('#predefined_timespan').val();
+				strURL = 'grid_dailystats.php?header=false&ajaxstats=1&predefined_timespan=' + $('#predefined_timespan').val();
 				strURL = strURL + '&predefined_timeshift=' + $('#predefined_timeshift').val();
-				$('#status').show();
-				$.get(strURL, function(data) {
-					$('#stats_content').html(data);
-					$('#status').hide();
-					applySkin();
-					applySkinRTM();
-				});
+				loadPageNoHeader(strURL);
 			}
 
 			function moveRight() {
-				strURL = 'grid_dailystats.php?ajaxstats=1&move_right_x=1';
+				strURL = 'grid_dailystats.php?header=false&ajaxstats=1&move_right_x=1';
 				strURL += '&date1=' + $('#date1').val();
 				strURL += '&date2=' + $('#date2').val();
 				strURL += '&predefined_timeshift=' + $('#predefined_timeshift').val();
-				$('#status').show();
-				$.get(strURL, function(data) {
-					$('#stats_content').html(data);
-					$('#status').hide();
-					applySkin();
-					applySkinRTM();
-				});
+				loadPageNoHeader(strURL);
 			}
 
 			function moveLeft() {
-				strURL = 'grid_dailystats.php?ajaxstats=1&move_left_x=1';
+				strURL = 'grid_dailystats.php?header=false&ajaxstats=1&move_left_x=1';
 				strURL += '&date1=' + $('#date1').val();
 				strURL += '&date2=' + $('#date2').val();
 				strURL += '&predefined_timeshift=' + $('#predefined_timeshift').val();
-				$('#status').show();
-				$.get(strURL, function(data) {
-					$('#stats_content').html(data);
-					$('#status').hide();
-					applySkin();
-					applySkinRTM();
-				});
+				loadPageNoHeader(strURL);
 			}
 
 			function applyFilter() {
-				strURL = 'grid_dailystats.php?ajaxstats=1&clusterid=' + $('#clusterid').val();
+				strURL = 'grid_dailystats.php?header=false&ajaxstats=1&clusterid=' + $('#clusterid').val();
 				strURL = strURL + '&stat=' + $('#stat').val();
 				strURL = strURL + '&rows=' + $('#rows').val();
 				strURL = strURL + '&job_user=' + $('#job_user').val();
@@ -634,24 +619,12 @@ function dailyStatsFilter() {
 				}
 				strURL = strURL + '&summarize=' + $('#summarize').is(':checked');
 				strURL = strURL + '&predefined_timeshift=' + $('#predefined_timeshift').val();
-				$('#status').show();
-				$.get(strURL, function(data) {
-					$('#stats_content').html(data);
-					$('#status').hide();
-					applySkin();
-					applySkinRTM();
-				});
+				loadPageNoHeader(strURL);
 			}
 
 			function clearFilterChange() {
-				strURL = 'grid_dailystats.php?ajaxstats=1&clear=1';
-				$('#status').show();
-				$.get(strURL, function(data) {
-					$('#stats_content').html(data);
-					$('#status').hide();
-					applySkin();
-					applySkinRTM();
-				});
+				strURL = 'grid_dailystats.php?header=false&ajaxstats=1&clear=1';
+				loadPageNoHeader(strURL);
 			}
 
 			function exportToCSV(objForm) {
@@ -772,7 +745,9 @@ function dailyStatsFilter() {
 							<option value='0'<?php if (get_request_var('clusterid') == '0') {?> selected<?php }?>>All</option>
 							<option value='-1'<?php if (get_request_var('clusterid') == '-1') {?> selected<?php }?>>N/A</option>
 							<?php
-							$clusters = grid_get_clusterlist();
+							$clusters = db_fetch_assoc('SELECT clusterid, clustername
+								FROM grid_clusters
+								ORDER BY clustername');
 
 							if (cacti_sizeof($clusters)) {
 								foreach ($clusters as $cluster) {
@@ -1081,7 +1056,7 @@ function grid_view_dstats() {
 
 	print "<div id='stats_content'>";
 
-	html_start_box(__('Daily Statistics Filters', 'grid') . "</span><span id='message'></span>&nbsp;<div id='status' class='fa fa-spin fa-sync deviceUp' style='margin:0px;padding:0px;vertical-align:-10%'></div>", '100%', '', '3', 'center', '');
+	html_start_box(__('Daily Statistics Filters', 'grid') . "</span><span id='message'></span>", '100%', '', '3', 'center', '');
 	dailyStatsFilter();
 	html_end_box();
 
@@ -1090,12 +1065,9 @@ function grid_view_dstats() {
 	?>
 	<script type='text/javascript'>
 	$(function() {
-		$('#main').show();
-		$.get('grid_dailystats.php?ajaxstats=1', function(data) {
-			$('#stats_content').html(data);
-			$('#status').hide();
-			applySkin();
-			applySkinRTM();
+		Pace.track(function() {
+			var strURL = 'grid_dailystats.php?header=false&ajaxstats=1';
+			loadPageNoHeader(strURL);
 		});
 	});
 	</script>
@@ -1131,7 +1103,7 @@ function grid_view_dstats_ajax() {
 		$units = htmlspecialchars(' (Time in ' . ucfirst(get_request_var('units')) . ')');
 	}
 
-	html_start_box(__('Daily Statistics Filters', 'grid') . "</span><span id='message'></span>&nbsp;<div id='status' class='fa fa-spin fa-sync deviceUp' style='margin:0px;padding:0px;vertical-align:-10%'></div>", '100%', '', '3', 'center', '');
+	html_start_box(__('Daily Statistics Filters', 'grid') . "</span><span id='message'></span>", '100%', '', '3', 'center', '');
 	dailyStatsFilter();
 	html_end_box();
 
@@ -1152,7 +1124,7 @@ function grid_view_dstats_ajax() {
 
 	print $nav;
 
-	html_header_sort($display_text, get_request_var('sort_column'), get_request_var('sort_direction'), false);
+	html_header_sort($display_text, get_request_var('sort_column'), get_request_var('sort_direction'), false, 'grid_dailystats.php?ajaxstats=true', 'main');
 
 	$i = 0;
 
@@ -1275,12 +1247,12 @@ function dstat_display_time($value, $units = 'auto') {
 
 function build_dstat_display_array() {
 	$display_text = array();
-	$display_text['nosort1'] = array(
+	$display_text['nosort'] = array(
 			'display' => __('Actions', 'grid'),
 			'sort'    => 'ASC'
 	);
 	if (get_request_var('clusterid') != '-1') {
-		$display_text['nosort2'] = array(
+		$display_text['clustername'] = array(
 			'display' => __('Cluster Name', 'grid'),
 			'sort'    => 'ASC'
 		);
