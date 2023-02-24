@@ -2537,6 +2537,7 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 						/* obtain a list of tables to backup */
 						$temp_tables      = db_fetch_assoc("SHOW TABLES");
 						$tables_to_backup = '';
+						$tables_to_backup_struct = '';
 						/* flag to backup database success or failure */
 						$backup_database_success = true;
 						/* get the backup method */
@@ -2547,6 +2548,11 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 						}
 						if (cacti_sizeof($temp_tables)) {
 							foreach ($temp_tables as $table) {
+								//Ignore temp table that is end with a timestamp string.
+								if (!preg_match("/_\d{10}$/", $table['Tables_in_' . $database_default])) {
+									$tables_to_backup_struct .= ($tables_to_backup_struct != '' ? ' ':'') . $table['Tables_in_' . $database_default];
+								}
+
 								$backup = true;
 								switch ($table['Tables_in_' . $database_default]) {
 									// Grid Tables
@@ -2659,6 +2665,9 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 											$backup = false;
 										}
 									}
+									if (preg_match("/^grid_heuristics_user_history_today_/", $table["Tables_in_" . $database_default])) {
+										$backup = false;
+									}
 									if ($backup) {
 										$tables_to_backup .= ($tables_to_backup != '' ? ' ':'') . $table['Tables_in_' . $database_default];
 									}
@@ -2705,6 +2714,7 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 								' --port='     . cacti_escapeshellarg($database_port)     .
 								' -d -f'       .
 								' '            . cacti_escapeshellarg($database_default)  .
+								' '            . $tables_to_backup_struct .
 								' > '          . $backup_file_cacti_struct;
 							$result = grid_shell_exec($backup_command, $stdoutput, $stderror);
 							if ($result) {
