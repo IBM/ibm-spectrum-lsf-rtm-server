@@ -2539,6 +2539,7 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 						/* obtain a list of tables to backup */
 						$temp_tables      = db_fetch_assoc("SHOW TABLES");
 						$tables_to_backup = '';
+						$tables_to_backup_struct = '';
 						/* flag to backup database success or failure */
 						$backup_database_success = true;
 						/* get the backup method */
@@ -2549,6 +2550,11 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 						}
 						if (cacti_sizeof($temp_tables)) {
 							foreach ($temp_tables as $table) {
+								//Ignore temp table that is end with a timestamp string.
+								if (!preg_match("/_\d{10}$/", $table['Tables_in_' . $database_default])) {
+									$tables_to_backup_struct .= ($tables_to_backup_struct != '' ? ' ':'') . $table['Tables_in_' . $database_default];
+								}
+
 								$backup = true;
 								switch ($table['Tables_in_' . $database_default]) {
 									// Grid Tables
@@ -2661,6 +2667,9 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 											$backup = false;
 										}
 									}
+									if (preg_match("/^grid_heuristics_user_history_today_/", $table["Tables_in_" . $database_default])) {
+										$backup = false;
+									}
 									if ($backup) {
 										$tables_to_backup .= ($tables_to_backup != '' ? ' ':'') . $table['Tables_in_' . $database_default];
 									}
@@ -2676,20 +2685,49 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 							} else {
 								$mysqldmp = 'mysqldump';
 							}
-							$is_cluster = db_fetch_row("SHOW VARIABLES LIKE 'log_bin'");
-							if (cacti_sizeof($is_cluster) && $is_cluster['Value'] == 'ON'){
-								$is_cluster = true;
+							$is_cluster_log_bin = db_fetch_row("SHOW VARIABLES LIKE 'log_bin'");
+							//$is_cluster_wsrep_on = db_fetch_row("SHOW VARIABLES LIKE 'wsrep_on'");
+							if (cacti_sizeof($is_cluster_log_bin) && $is_cluster_log_bin['Value'] == 'ON'){
+								$is_cluster_log_bin = true;
 							} else {
-								$is_cluster = false;
+								$is_cluster_log_bin = false;
+							}
+							$is_cluster_grants = db_fetch_row("SHOW GRANTS FOR CURRENT_USER");
+							$is_cluster_grant_reload = false;
+							$is_cluster_grant_super = false;
+							$is_cluster_grant_binlog_monitor = false;
+							$is_cluster_grant_replication_client = false;
+
+							foreach ($is_cluster_grants as $fname => $grant) {
+								if (strpos($grant, 'RELOAD') !== false) {
+									$is_cluster_grant_reload = true;
+								}
+								if (strpos($grant, 'SUPER') !== false) {
+									$is_cluster_grant_super = true;
+								}
+								if (strpos($grant, 'BINLOG MONITOR') !== false) {
+									$is_cluster_grant_binlog_monitor = true;
+								}
+								if (strpos($grant, 'REPLICATION CLIENT') !== false) {
+									$is_cluster_grant_replication_client = true;
+								}
+							}
+							if ($is_cluster_log_bin && $is_cluster_grant_reload
+									&& ($is_cluster_grant_super || $is_cluster_grant_binlog_monitor || $is_cluster_grant_replication_client)) {
+								$can_dump_master_data = true;
+							} else {
+								$can_dump_master_data = true;
 							}
 
 							$start_return = mysql_dump_no_passwd_check(cacti_escapeshellarg($database_username), cacti_escapeshellarg($database_password));
 							$backup_command = cacti_escapeshellcmd($mysqldmp) .
 								($start_return ? " --defaults-extra-file='$start_return'" : ' --user='     . cacti_escapeshellarg($database_username) .  ' --password=' . cacti_escapeshellarg($database_password)) .
-								($is_cluster ? ' --master-data' : '' ) .
+								($can_dump_master_data ? ' --master-data' : '' ) .
 								' --lock-tables=false' .
 								' --host='     . cacti_escapeshellarg($database_hostname) .
 								' --port='     . cacti_escapeshellarg($database_port) .
+								($database_hostname == 'localhost' ? ' --protocol=socket' : '' ) .
+								' -f'       .
 								' '            . cacti_escapeshellarg($database_default)  .
 								' '            . $tables_to_backup .
 								' > '          . $backup_file_cacti;
@@ -2705,8 +2743,10 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 								' --lock-tables=false'         .
 								' --host='     . cacti_escapeshellarg($database_hostname) .
 								' --port='     . cacti_escapeshellarg($database_port)     .
+								($database_hostname == 'localhost' ? ' --protocol=socket' : '' ) .
 								' -d -f'       .
 								' '            . cacti_escapeshellarg($database_default)  .
+								' '            . $tables_to_backup_struct .
 								' > '          . $backup_file_cacti_struct;
 							$result = grid_shell_exec($backup_command, $stdoutput, $stderror);
 							if ($result) {
@@ -5180,7 +5220,7 @@ function move_records_into_finished_table() {
 	$efficiency_window    = read_config_option('grid_efficiency_window');
 	$refresh_query        = "";
 	$current_time         = time();
-	$prev_time            = db_fetch_cell("SELECT `value` FROM settings WHERE `name` = 'poller_lastrun'", false);
+	$prev_time            = db_fetch_cell("SELECT MAX(`value`) FROM settings WHERE `name` LIKE 'poller_lastrun%'", false);
 	if (empty($prev_time)) {
 		$prev_time      = $current_time - 300;
 		$interval_time  = 300;

@@ -329,7 +329,9 @@ function backup_data($backup_path) {
 			' --port='     . cacti_escapeshellarg($database_port) .
 			' --user='     . cacti_escapeshellarg($database_username) .
 			' --password=' . cacti_escapeshellarg($database_password) .
+			($database_hostname == 'localhost' ? ' --protocol=socket' : '' ) .
 			' --no-create-info'                 .
+			' -f'       .
 			' '            . cacti_escapeshellarg($database_default)  .
 			' '            . $tables_to_backup  .
 			' > '          . cacti_escapeshellarg($backup_file_cacti_data);
@@ -506,6 +508,8 @@ function backup_RTM($backup_path) {
 			' --port='     . cacti_escapeshellarg($database_port) .
 			' --user='     . cacti_escapeshellarg($database_username) .
 			' --password=' . cacti_escapeshellarg($database_password) .
+			($database_hostname == 'localhost' ? ' --protocol=socket' : '' ) .
+			' -f'       .
 			' '            . cacti_escapeshellarg($database_default)  .
 			' '            . $tables_to_backup  .
 			' > '          . cacti_escapeshellarg($backup_file_cacti);
@@ -525,7 +529,8 @@ function backup_RTM($backup_path) {
 			' --port='     . cacti_escapeshellarg($database_port) .
 			' --user='     . cacti_escapeshellarg($database_username) .
 			' --password=' . cacti_escapeshellarg($database_password) .
-			' -d'          .
+			($database_hostname == 'localhost' ? ' --protocol=socket' : '' ) .
+			' -d -f'          .
 			' '            . cacti_escapeshellarg($database_default)  .
 			' > '          . cacti_escapeshellarg($backup_file_cacti_struct);
 

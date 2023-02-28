@@ -150,6 +150,7 @@ function grid_backup_cacti_db_partition($poller = true, $force = false, $backup_
 							' --host='     . cacti_escapeshellarg($database_hostname) .
 							' --port='     . cacti_escapeshellarg($database_port)     .
 							($start_return ? '' : ' --user='     . cacti_escapeshellarg($database_username) .  ' --password=' . cacti_escapeshellarg($database_password)) .
+							($database_hostname == 'localhost' ? ' --protocol=socket' : '' ) .
 							' '            . cacti_escapeshellarg($database_default)  .
 							' '            . $t .
 							' > '          . cacti_escapeshellarg($tmp_backup_dir . '/' . $t . '.sql');

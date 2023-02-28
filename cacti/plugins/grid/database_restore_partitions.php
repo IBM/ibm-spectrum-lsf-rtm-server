@@ -466,6 +466,7 @@ function grid_restore_partitioned_table($file_name, $table_name, $hostname, $rep
 		' --port='     . cacti_escapeshellarg($database_port)     .
 		' --user='     . cacti_escapeshellarg($database_username) .
 		' --password=' . cacti_escapeshellarg($database_password) .
+		($database_hostname == 'localhost' ? ' --protocol=socket' : '' ) .
 		($replication ? ' --init-command="SET @@global.read_only=0;SET @@session.sql_log_bin=0"':'') .
 		' '            . cacti_escapeshellarg($database_default)  .
 		' < '          . cacti_escapeshellarg($file_name);
