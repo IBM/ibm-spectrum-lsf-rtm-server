@@ -733,7 +733,7 @@ function gridalarms_thold_graph_actions_url($data) {
 
 		if ($thold_data['gridadmin_action_level'] != ''
 			&& $thold_data['lastread'] != '-' && $thold_data['lastread'] != '' && $thold_data['lastread'] > 0) {
-			$data['actions_url'] .= '<a class="hyperLink" title="' . __('View Breached Items', 'gridalarms') . '" href="' . html_escape($config['url_path'] . '/plugins/thold/thold_graph.php?action=breached&id=' . $thold_data['id']) . '"><img alt="" src="' . $config['url_path'] . '/plugins/gridalarms/images/view_alarm_details.gif' . '"></a>';
+			$data['actions_url'] .= '<a class="hyperLink" title="' . __('View Breached Items', 'gridalarms') . '" href="' . html_escape($config['url_path'] . 'plugins/thold/thold_graph.php?action=breached&id=' . $thold_data['id']) . '"><img alt="" src="' . $config['url_path'] . 'plugins/gridalarms/images/view_alarm_details.gif' . '"></a>';
 		}
 	}
 

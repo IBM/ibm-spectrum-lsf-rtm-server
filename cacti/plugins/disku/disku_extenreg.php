@@ -1196,7 +1196,7 @@ function disku_extenreg() {
 			form_alternate_row('line' . $id);
 
 			if (isset($graph_select)) {
-				print "<td><a class='pic' href='" . html_escape($config['url_path'] . 'graph_view.php?' . $graph_select) . "'><img src='" . $config['url_path'] . "/plugins/disku/images/view_graphs.gif' title='" . __esc('View User Graphs', 'disku') . "'></a></td>";
+				print "<td><a class='pic' href='" . html_escape($config['url_path'] . 'graph_view.php?' . $graph_select) . "'><img src='" . $config['url_path'] . "plugins/disku/images/view_graphs.gif' title='" . __esc('View User Graphs', 'disku') . "'></a></td>";
 			} else{
 				print "<td></td>";
 			}

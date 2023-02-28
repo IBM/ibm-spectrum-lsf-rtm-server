@@ -2194,7 +2194,7 @@ function summary_alarm_log() {
 			} else if ($row['type'] == 1) {
 				form_selectable_cell(filter_value($row['message'], '', $config['url_path'] . 'plugins/syslog/syslog.php?id=' . $row['type_id'] . '&tab=current'), $i);
 			} else if ($row['type'] == 2) {
-				form_selectable_cell(filter_value($row['message'], '', $config['url_path'] . '/plugins/gridalarms/gridalarms_alarm.php?tab=alarms&state=3'), $i);
+				form_selectable_cell(filter_value($row['message'], '', $config['url_path'] . 'plugins/gridalarms/gridalarms_alarm.php?tab=alarms&state=3'), $i);
 			} else if ($row['type'] == 3) {
 				form_selectable_cell(html_escape($row['message']), $i);
 			}

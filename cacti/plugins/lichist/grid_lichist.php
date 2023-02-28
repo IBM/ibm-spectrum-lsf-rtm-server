@@ -638,7 +638,7 @@ function grid_view_hist_licusage() {
 			<td><?php print (strlen(get_request_var('filter')) ? preg_replace("/" . "(" . preg_quote(get_request_var('filter')) . ")" . "/" . "i", "<span style='background-color: #F8D93D;'>\\1</span>", $lic["feature_name"]):$lic["feature_name"]);?></td>
 			<td><?php print $lic["feature_version"];?></td>
 			<td><?php print $lic["username"];?></td>
-			<td><a class='hyper' href='<?php print $config['url_path'] . '/plugins/grid/grid_bzen.php?query=1&clusterid=' . $job['clusterid'] . '&exec_host=' . $lic['hostname'] . '&date1=' . $job['start_time'] . '&date2=' . $job['end_time'];?>'><?php print $lic["hostname"];?></a></td>
+			<td><a class='hyper' href='<?php print $config['url_path'] . 'plugins/grid/grid_bzen.php?query=1&clusterid=' . $job['clusterid'] . '&exec_host=' . $lic['hostname'] . '&date1=' . $job['start_time'] . '&date2=' . $job['end_time'];?>'><?php print $lic["hostname"];?></a></td>
 			<td><?php print $lic["chkoutid"];?></td>
 			<td><?php print $lic["tokens_acquired"];?></td>
 			<td><?php print $lic["tokens_acquired_date"];?></td>

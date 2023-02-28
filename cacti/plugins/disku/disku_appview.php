@@ -235,7 +235,7 @@ function disku_appview() {
 			form_alternate_row();
 
 			if (isset($graph_select)) {
-				print "<td style='width:10px;'><a class='pic' href='" . html_escape($config['url_path'] . 'graph_view.php?' . $graph_select) . "'><img src='" . $config['url_path'] . "/plugins/disku/images/view_graphs.gif' alt='' title='" . __esc('View User Graphs', 'disku'). "'></a></td>";
+				print "<td style='width:10px;'><a class='pic' href='" . html_escape($config['url_path'] . 'graph_view.php?' . $graph_select) . "'><img src='" . $config['url_path'] . "plugins/disku/images/view_graphs.gif' alt='' title='" . __esc('View User Graphs', 'disku'). "'></a></td>";
 			} else {
 				print "<td style='width:10px;'>" . "" . "</td>";
 			}

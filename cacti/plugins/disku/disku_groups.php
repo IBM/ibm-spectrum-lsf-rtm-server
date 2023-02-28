@@ -272,12 +272,12 @@ function disku_groups() {
 			form_alternate_row();
 
 			if (isset($graph_select)) {
-				print "<td width='10'><a class='pic' href='" . html_escape($config['url_path'] . 'graph_view.php?' . $graph_select) . "'><img src='" . $config['url_path'] . "/plugins/disku/images/view_graphs.gif' alt='' title='" . __esc('View Group Graphs', 'disku'). "'></a>";
+				print "<td width='10'><a class='pic' href='" . html_escape($config['url_path'] . 'graph_view.php?' . $graph_select) . "'><img src='" . $config['url_path'] . "plugins/disku/images/view_graphs.gif' alt='' title='" . __esc('View Group Graphs', 'disku'). "'></a>";
 			} else {
 				print "<td width='10'>";
 			}
 
-			print "<a class='pic' href='" . html_escape('disku_users.php?query=1&group_id=' . $g['groupid']) . "'><img src='" . $config['url_path'] . "/plugins/disku/images/view_users.gif' alt='' title='" . __esc('View Group Members', 'disku') . "'></a></td>";
+			print "<a class='pic' href='" . html_escape('disku_users.php?query=1&group_id=' . $g['groupid']) . "'><img src='" . $config['url_path'] . "plugins/disku/images/view_users.gif' alt='' title='" . __esc('View Group Members', 'disku') . "'></a></td>";
 
 			print '<td><b>'               . html_escape($g['group'])                 . '</b></td>';
 			print "<td class='right'><b>" . number_format_i18n($g['groupid'])        . '</b></td>';
