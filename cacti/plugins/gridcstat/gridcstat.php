@@ -930,7 +930,7 @@ function display_daily_stats($type, $ajax = false) {
 		$page = 1;
 	}
 
-	$stats = gridcstat_view_get_cstat_records($sql_where, $group_by, $table_name, $type, $page, $row_limit, $sort_column, $sort_direction);
+	$stats = gridcstat_view_get_cstat_records($sql_where, $group_by, $table_name, $sort_column, $sort_direction, $type, $page, $row_limit);
 
 	if (read_config_option('grid_partitioning_enable') == '') {
 		$rows_query_string = "SELECT COUNT(interval_end)
