@@ -1,8 +1,9 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
  | (C) Copyright International Business Machines Corp, 2006-2022.          |
- | Portions Copyright (C) 2004-2022 The Cacti Group                        |
+ | Portions Copyright (C) 2004-2023 The Cacti Group                        |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -256,7 +257,7 @@ function api_grid_host_remove($host, $clusterid) {
     Manage Hosts Functions
    --------------------- */
 
-function grid_get_host_records(&$sql_where, &$sql_join, $apply_limits = true, $rows) {
+function grid_get_host_records(&$sql_where, &$sql_join, $apply_limits = true, $rows = 30) {
 	$sql_order = get_order_string();
 
 	if (get_request_var('integrated') != '2') {
@@ -701,4 +702,3 @@ function grid_manage_hosts() {
 
 	form_end();
 }
-
