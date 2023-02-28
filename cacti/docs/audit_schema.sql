@@ -2229,7 +2229,7 @@ INSERT INTO `table_columns` VALUES ('grid_queues',5,'nice','int(10) unsigned','N
 INSERT INTO `table_columns` VALUES ('grid_queues',6,'status','varchar(20)','NO','MUL','','');
 INSERT INTO `table_columns` VALUES ('grid_queues',7,'reason','varchar(20)','NO','MUL','','');
 INSERT INTO `table_columns` VALUES ('grid_queues',8,'numslots','int(10) unsigned','NO','','0','');
-INSERT INTO `table_columns` VALUES ('grid_queues',9,'maxjobs','varchar(5)','NO','','','');
+INSERT INTO `table_columns` VALUES ('grid_queues',9,'maxjobs','varchar(10)','NO','','','');
 INSERT INTO `table_columns` VALUES ('grid_queues',10,'userJobLimit','varchar(20)','NO','','','');
 INSERT INTO `table_columns` VALUES ('grid_queues',11,'procJobLimit','varchar(5)','NO','','','');
 INSERT INTO `table_columns` VALUES ('grid_queues',12,'hostJobLimit','varchar(5)','NO','','','');

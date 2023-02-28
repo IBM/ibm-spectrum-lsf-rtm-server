@@ -1798,7 +1798,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'status', 'type' => 'varchar(20)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'reason', 'type' => 'varchar(20)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'numslots', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'maxjobs', 'type' => 'varchar(5)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'maxjobs', 'type' => 'varchar(10)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'userJobLimit', 'type' => 'varchar(20)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'procJobLimit', 'type' => 'varchar(5)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'hostJobLimit', 'type' => 'varchar(5)', 'NULL' => false, 'default' => '');

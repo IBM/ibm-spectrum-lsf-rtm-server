@@ -5027,7 +5027,7 @@ CREATE TABLE `grid_queues` (
   `status` varchar(20) NOT NULL DEFAULT '',
   `reason` varchar(20) NOT NULL DEFAULT '',
   `numslots` int(10) unsigned NOT NULL DEFAULT '0',
-  `maxjobs` varchar(5) NOT NULL DEFAULT '',
+  `maxjobs` varchar(10) NOT NULL DEFAULT '',
   `userJobLimit` varchar(20) NOT NULL DEFAULT '',
   `procJobLimit` varchar(5) NOT NULL DEFAULT '',
   `hostJobLimit` varchar(5) NOT NULL DEFAULT '',

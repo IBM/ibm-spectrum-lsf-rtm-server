@@ -1209,7 +1209,7 @@ CREATE TABLE `grid_queues` (
   `status` varchar(20) NOT NULL default '',
   `reason` varchar(20) NOT NULL default '',
   `numslots` int(10) unsigned NOT NULL default '0',
-  `maxjobs` varchar(5) NOT NULL default '',
+  `maxjobs` varchar(10) NOT NULL default '',
   `userJobLimit` varchar(20) NOT NULL default '',
   `procJobLimit` varchar(5) NOT NULL default '',
   `hostJobLimit` varchar(5) NOT NULL default '',
