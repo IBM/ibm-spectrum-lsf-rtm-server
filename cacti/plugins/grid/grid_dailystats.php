@@ -2,7 +2,7 @@
 // $Id: 35df8ed0ed814fbd9f79efb2ef7dd37333b0e9f5 $
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2022-2023                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -89,7 +89,7 @@ if (isset_request_var('export')) {
 	grid_view_dstats();
 }
 
-function grid_view_get_dstat_records(&$sql_where, &$group_by, &$table_name, $apply_limits = true, $rows = '30', &$total_rows) {
+function grid_view_get_dstat_records(&$sql_where, &$group_by, &$table_name, $apply_limits = true, $rows = 30, &$total_rows) {
 	global $grid_efficiency_sql_ranges;
 	$sql_params = array();
 
