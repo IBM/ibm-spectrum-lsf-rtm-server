@@ -683,6 +683,17 @@ function form_save() {
 		$save['script_data']      = str_replace('"','\'',$save['script_data']);
 
 		if (!is_error_message()) {
+			//Clean metrics cache when expression is modified/saved;
+			if (!isempty_request_var('id')) {
+				$expr_id = get_request_var('id');
+				$expression_old = get_expression_by_id($expr_id);
+				if (isset($_SESSION['sess_ga_expr']['expr_' . $expr_id])
+					&& ($expression_old['db_table'] != $save['db_table']
+						|| $expression_old['sql_query'] != $save['sql_query'])) {
+					unset($_SESSION['sess_ga_expr']['expr_' . $expr_id]);
+				}
+			}
+
 			$expression_id = sql_save($save, 'gridalarms_expression');
 			$alarm_id      = get_request_var('alarm_id');
 
@@ -886,7 +897,7 @@ function form_save() {
 				$id = push_out_template_to_alarm($_POST, 0);
 				template_propagation ("gridalarms_alarm", (isset($id) ? $id:get_request_var('id')));
 			}
-		} else {											//at first create a instance based on a chosen template
+		} else {//at first create a instance based on a chosen template
 			if (isset_request_var('base_time_display')) {
 				if ( strtotime(get_request_var('base_time_display'))=== false ) {
 					raise_message('gridalarms_invalid_timestamp');
@@ -935,6 +946,14 @@ function form_save() {
 
 			//push_out_template_to_alarm($_POST, get_request_var('template_id'), true);
 			template_propagation ('gridalarms_alarm', get_request_var('id'));
+			
+			$expr_id = db_fetch_cell_prepared('SELECT expression_id
+							FROM gridalarms_alarm
+							WHERE id = ?',
+							array(get_request_var('id')));
+			if (isset($_SESSION['sess_ga_expr']['expr_' . $expr_id])) {
+				unset($_SESSION['sess_ga_expr']['expr_' . $expr_id]);
+			}
 
 			raise_message('gridalarms_alarm_save_totemp');
 		} else {												// keep template disabled, post
@@ -2445,7 +2464,7 @@ function gridalarms_metric_edit() {
 
 function get_metrics_for_alarm_form() {
 	if (isset_request_var('expression_id') && trim(get_request_var('expression_id')) != '') {
-		$expression_metrics = get_metrics_from_expression_by_id(get_request_var('expression_id'));
+		$expression_metrics = get_metrics_from_cache_by_expression_id(get_request_var('expression_id'));
 
 		foreach($expression_metrics as $metric) {
 			print "<option value='" . $metric . "'>" . $metric . "</option>\n";
@@ -3091,6 +3110,16 @@ function get_users_list($id, $type = 'alarm', &$users_custom_list = '', &$users_
 function draw_detailed_edit() {
 }
 
+function get_metrics_from_cache_by_expression_id($expression_id) {
+	if (isset($_SESSION['sess_ga_expr']['expr_' . $expression_id])){
+		$expression_metrics = $_SESSION['sess_ga_expr']['expr_' . $expression_id];
+	} else {
+		$expression_metrics = get_template_metrics_from_expression_by_id($expression_id);
+		$_SESSION['sess_ga_expr']['expr_' . $expression_id] = $expression_metrics;
+	}
+	return $expression_metrics;
+}
+
 function edit_general_actions() {
 	global $config, $gridalarms_types, $alarm_types, $aggregation, $repeatarray, $alertarray, $timearray, $frequencies, $gridalarms_severities;
 
@@ -3098,9 +3127,24 @@ function edit_general_actions() {
 	$users_list        = '';
 	$send_notification_array = array();
 
+	//Initial alarm-expr-metrics in session
+	if (!isset($_SESSION['sess_ga_expr'])){
+		$_SESSION['sess_ga_expr'] = array();
+	}
+
 	if (!isempty_request_var('id')) {
 		$alarm = get_alarm_by_id(get_request_var('id'));
 		get_users_list(get_filter_request_var('id'), 'alarm', $users_custom_list, $users_list, $send_notification_array);
+
+		//Initial alarm-expr-metrics in session
+		if (!empty($alarm['expression_id'])
+			&& (!isset($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'], 'gridalarms_alarm.php') !== false
+				|| strpos($_SERVER['HTTP_REFERER'], 'grid_alarmdb.php') !== false)){
+			$expr_id = $alarm['expression_id'];
+			if (isset($_SESSION['sess_ga_expr']['expr_' . $expr_id])){
+				unset($_SESSION['sess_ga_expr']['expr_' . $expr_id]);
+			}
+		}
 	} else {
 		// TODO: This is a security issue
 		$alarm = $_POST;
@@ -3137,17 +3181,19 @@ function edit_general_actions() {
 	}
 
 	/* set to expression id if defined, otherwise, leave unset */
+	$expression_id      = '';
+	$expression_metrics = array();
+	$expression_desc    = '';
+	$expression_ds      = -1;
 	if (!empty($alarm['expression_id'])) {
 		$expression_id   = $alarm['expression_id'];
 		$expression      = get_expression_by_id($alarm['expression_id']);
 		$expression_desc = $expression['name'];
 		$expression_ds   = $expression['ds_type'];
-		$expression_metrics = get_metrics_from_expression_by_id($expression_id);
-	} else {
-		$expression_id      = '';
-		$expression_metrics = array();
-		$expression_desc    = '';
-		$expression_ds      = -1;
+		//Query metrics for 'non-Script-DS'(PDB#235497) under 'General' tab
+		if($expression_ds != 2 && get_request_var('tab') == 'general'){
+			$expression_metrics = get_metrics_from_cache_by_expression_id($expression_id);
+		}
 	}
 
 	if (isset($alarm['notify_cluster_admin']) && $alarm['notify_cluster_admin'] == 1) {
@@ -3800,13 +3846,7 @@ function layout_item_edit($new = false) {
 			'column_name', 'column_name'
 		);
 
-		$expression = get_expression_by_alarm_id(get_request_var('id'));
-
-		if ($expression['ds_type'] == 0) {
-			$available_columns = get_table_columns($expression['db_table']);
-		} else {
-			$available_columns = get_columns_from_sql($expression['sql_query'], 'alarm', get_request_var('id'));
-		}
+		$available_columns = get_metrics_from_expression_by_alarm_id(get_request_var('id'));
 
 		if (isset($available_columns['clusterid'])) {
 			$available_columns['clustername'] = 'clustername';

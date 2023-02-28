@@ -2560,6 +2560,13 @@ function get_template_metrics_from_expression_by_id($id) {
 	}
 }
 
+function get_template_metrics_from_expression_by_alarm_id($id) {
+	$alarm = get_template_by_id($id);
+	if (cacti_sizeof($alarm)) {
+		return get_template_metrics_from_expression_by_id($alarm['expression_id']);
+	}
+}
+
 function get_template_expressions() {
 	return db_fetch_assoc('SELECT * FROM gridalarms_template_expression');
 }
@@ -2682,6 +2689,13 @@ function get_metrics_from_expression_by_id($id) {
 		return get_table_columns($expression['db_table']);
 	} elseif ($expression['ds_type'] == '1') {
 		return get_columns_from_sql($expression['sql_query'], 'alarm', $id);
+	}
+}
+
+function get_metrics_from_expression_by_alarm_id($id) {
+	$alarm = get_alarm_by_id($id);
+	if (cacti_sizeof($alarm)) {
+		return get_metrics_from_expression_by_id($alarm['expression_id']);
 	}
 }
 
