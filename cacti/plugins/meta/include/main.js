@@ -10,7 +10,9 @@ function openDialog(event, meta_id){
 				event: "mouseover"
 			});
 			$("#metadialog").siblings("div.ui-dialog-titlebar").remove();
-			$("#metadialog").dialog("open");
+			if ($('#metadiaglog').dialog('instance')) {
+				$("#metadialog").dialog("open");
+			}
 		}
 	});
 	$("#metadialog").dialog("option", "position", {
@@ -24,6 +26,8 @@ function openDialog(event, meta_id){
 
 function closeDialog() {
 	if (metashown != 1) {
-		$("#metadialog").dialog("close");
+		if ($('#metadiaglog').dialog('instance')) {
+			$("#metadialog").dialog("close");
+		}
 	}
 }
