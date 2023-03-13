@@ -614,11 +614,11 @@ function gridalarms_thold_gridcontrol_exec($save) {
 			$curl_output = exec_curl($action_level, $json_output); //pass to advocate for processing
 
 			if ($curl_output['http_code'] == 400) {
-				cacti_log('Event trigger: Thold Unable to invoke command: ' . $cmd . ' due to http_code = 400', true, 'GRIDALARMS');
+				cacti_log('Event trigger: Thold Unable to invoke command: ' . $cmd . ' due to http_code = 400', true, 'GRIDALERTS');
 			} elseif ($curl_output['http_code'] == 500) {
-				cacti_log('Event trigger: Thold Unable to invoke command: ' . $cmd . ' due to http_code = 500', true, 'GRIDALARMS');
+				cacti_log('Event trigger: Thold Unable to invoke command: ' . $cmd . ' due to http_code = 500', true, 'GRIDALERTS');
 			} else {
-				cacti_log('Event trigger (' . $breach_level . "): Thold invoking event command: " . $cmd, true, 'GRIDALARMS');
+				cacti_log('Event trigger (' . $breach_level . "): Thold invoking event command: " . $cmd, true, 'GRIDALERTS');
 			}
 		}
 	}
@@ -642,7 +642,7 @@ function gridalarms_fetch_breached_info($local_data_id){
 		$length    = explode(' ', $full_path);
 
 		if (!file_exists($length[0])) {
-			cacti_log('WARNING: Unable to fetch breached items.  Script \'' . $length[0] . '\' does not exist.', false, 'GRIDALARMS');
+			cacti_log('WARNING: Unable to fetch breached items.  Script \'' . $length[0] . '\' does not exist.', false, 'GRIDALERTS');
 		}
 
 		if (strlen($length[0]) && file_exists($length[0])) {

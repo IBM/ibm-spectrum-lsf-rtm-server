@@ -216,7 +216,7 @@ function alarm_mail($to, $from, $subject, $message, $textonly = false) {
     );
 
 	if (strlen($error)) {
-		cacti_log('ERROR: Sending Email Failed.  Error was ' . $error, true, 'gridalarms');
+		cacti_log('ERROR: Sending Email Failed.  Error was ' . $error, true, 'GRIDALERTS');
 
 		return $error;
 	}
@@ -2462,11 +2462,11 @@ function get_gridalarms_template_expression_string($expression_id) {
 			/* string value append quotes */
 			if ($item['type'] == 5) {
 				$gridalarms_expression_string .= "'" . trim($item['value'], '"\'') . "'";
-cacti_log("Value '" . $item['value'] . "', Final '" . $gridalarms_expression_string . "'");
+				cacti_log("DEBUG: Value '" . $item['value'] . "', Final '" . $gridalarms_expression_string . "'", false, 'GRIDALERTS', POLLER_VERBOSITY_DEBUG);
 			} elseif ($item['type'] == 3) {
 				$metric = get_template_metric($item['value']);
 				$gridalarms_expression_string .= $metric['name'];
-cacti_log("PValue '" . $item['value'] . "', Final '" . $gridalarms_expression_string . "'");
+				cacti_log("DEBUG: PValue '" . $item['value'] . "', Final '" . $gridalarms_expression_string . "'", false, 'GRIDALERTS', POLLER_VERBOSITY_DEBUG);
 			} elseif ($item['type'] == 7) {
 				switch($item['value']) {
 					case 'clusterid':
@@ -2478,13 +2478,13 @@ cacti_log("PValue '" . $item['value'] . "', Final '" . $gridalarms_expression_st
 						break;
 				}
 			} else {
-cacti_log("EValue '" . $item['value'] . "', Final '" . $gridalarms_expression_string . "'");
+				cacti_log("DEBUG: EValue '" . $item['value'] . "', Final '" . $gridalarms_expression_string . "'", false, 'GRIDALERTS', POLLER_VERBOSITY_DEBUG);
 				$gridalarms_expression_string .= $item['value'];
 			}
 			$i++;
 		}
 	}
-cacti_log($gridalarms_expression_string);
+	cacti_log("DEBUG: gridalarms_expression_string: $gridalarms_expression_string", false, 'GRIDALERTS', POLLER_VERBOSITY_DEBUG);
 
 	return $gridalarms_expression_string;
 }
@@ -6518,8 +6518,8 @@ function template_propagation($type, $id) {
 
 		$template_expression_id = $gridalarms_template['expression_id'];
 
-		//cacti_log('DEBUG: template_id=' . $template_id .' instance_id=' . $instance_id);
-		//cacti_log('DEBUG: template_expression_id=' . $template_expression_id . ' instance_expression_id=' . $instance_expression_id);
+		cacti_log('DEBUG: template_id=' . $template_id .' instance_id=' . $instance_id, false, 'GRIDALERTS', POLLER_VERBOSITY_DEBUG);
+		cacti_log('DEBUG: template_expression_id=' . $template_expression_id . ' instance_expression_id=' . $instance_expression_id, false, 'GRIDALERTS', POLLER_VERBOSITY_DEBUG);
 
 		foreach ($struct_gridalarms_template_prop as $field_name) {
 			$gridalarms_alarm[$field_name] = $gridalarms_template[$field_name];
