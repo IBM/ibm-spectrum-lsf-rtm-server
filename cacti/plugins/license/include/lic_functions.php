@@ -1841,6 +1841,8 @@ function lic_purge_event($start_time, $last_maint_start) {
 		db_execute('OPTIMIZE TABLE lic_daily_stats');
 		lic_debug('Optimizing the lic_daily_stats_traffic table.');
 		db_execute('OPTIMIZE TABLE lic_daily_stats_traffic');
+		lic_debug('Optimizing the lic_services_feature_details table.');
+		db_execute('OPTIMIZE TABLE lic_services_feature_details');
 
 		/* put RTM in maintenance mode */
 		grid_end_maintenance_mode('OPTIMIZE_LIC');
