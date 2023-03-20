@@ -10246,22 +10246,25 @@ function getlsfconf($master_host, $master_port, $enable_ego, $strict_checking, $
 
 	$json_decode_content_response = json_decode($content_response,true);
 
-	$rsp_content = (array)$json_decode_content_response['rsp'];
-	if (!isset($json_decode_content_response) || !isset($rsp_content[0]['status_code'])) {
-		debug_log_insert('gridadmin', $content_response);
-		return '';
+	if (isset($json_decode_content_response) && isset($json_decode_content_response['rsp'])) {
+		$rsp_content = (array)$json_decode_content_response['rsp'];
+		if (isset($rsp_content[0])) {
+			if (isset($rsp_content[0]['status_code'])) {
+				$status_code = $rsp_content[0]['status_code'];
+				$status_message = $rsp_content[0]['status_message'];
+				if ($status_code != 0) {
+					debug_log_insert('gridadmin', $status_message);
+					return '';
+				}
+				if (isset($rsp_content[0]['LSF_CONFDIR'])) {
+					$lsf_confdir = $rsp_content[0]['LSF_CONFDIR'];
+					return $lsf_confdir;
+				}
+			}
+		}
 	}
-
-	$status_code = $rsp_content[0]['status_code'];
-	$status_message = $rsp_content[0]['status_message'];
-	$lsf_confdir = $rsp_content[0]['LSF_CONFDIR'];
-
-	if ($status_code != 0) {
-		debug_log_insert('gridadmin', $status_message);
-		return '';
-	}
-
-	return $lsf_confdir;
+	debug_log_insert('gridadmin', $content_response);
+	return '';
 }
 
 function exec_curl($action_level, $output) {
