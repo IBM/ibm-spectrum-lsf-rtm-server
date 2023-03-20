@@ -188,7 +188,9 @@ function plugin_gridalarms_upgrade() {
 
 	gridalarms_setup_new_tables();
 	//From Pre-9.1 to 9.1, upgrade process is background
-	rtm_plugin_upgrade_ga($gridalarms_version, $gridalarms_current_version, 'gridalarms');
+	if (isset($gridalarms_version)) {
+		rtm_plugin_upgrade_ga($gridalarms_version, $gridalarms_current_version, 'gridalarms');
+	}
 }
 
 function plugin_gridalarms_uninstall(){
