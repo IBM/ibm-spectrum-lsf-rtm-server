@@ -10602,21 +10602,49 @@ function get_jobs_query($table_name, $apply_limits = true, &$jobsquery, &$rowsqu
 		}
 	}
 
-	if (get_request_var('filter') != '') {
-		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ');
-
-		if ((isset_request_var('jcolumn') && get_request_var('jcolumn') == '-1') || !isset_request_var('jcolumn')) {
-            $sql_where .= " (" .
-				"$table_name.jobname LIKE '%"        . get_request_var('filter') . "%' OR " .
-				"$table_name.projectName LIKE '%"    . get_request_var('filter') . "%' OR " .
-				"$table_name.cwd LIKE '%"            . get_request_var('filter') . "%' OR " .
-				"$table_name.command LIKE '%"        . get_request_var('filter') . "%' OR " .
-				"$table_name.licenseProject LIKE '%" . get_request_var('filter') . "%' OR " .
-				"$table_name.jobGroup LIKE '%"       . get_request_var('filter') . "%' OR " .
-				"$table_name.jobid LIKE '%"          . get_request_var('filter') . "%')";
+	/* search filter sql where */
+	//if (!strlen(get_request_var('filter'))) {
+		/* Show all items */
+	/*
+   	} else {
+		if (strlen($sql_where)) {
+			$sql_where .= " AND ($table_name.jobname LIKE '%" . get_request_var('filter') . "%' OR
+								$table_name.projectName LIKE '%" . get_request_var('filter') . "%' OR
+								$table_name.licenseProject LIKE '%" . get_request_var('filter') . "%' OR
+								$table_name.jobGroup LIKE '%" . get_request_var('filter') . "%' OR
+								$table_name.jobid LIKE '%" . get_request_var('filter') . "%')";
 		} else {
-			$sql_where .= " ($table_name." . get_request_var('jcolumn') . " LIKE '%" . get_request_var('filter') . "%')";
+			$sql_where  = "WHERE ($table_name.jobname LIKE '%" . get_request_var('filter') . "%' OR
+								$table_name.projectName LIKE '%" . get_request_var('filter') . "%' OR
+								$table_name.licenseProject LIKE '%" . get_request_var('filter') . "%' OR
+								$table_name.jobGroup LIKE '%" . get_request_var('filter') . "%' OR
+								$table_name.jobid LIKE '%" . get_request_var('filter') . "%')";
 		}
+	}
+  */
+  if (!strlen(get_request_var('filter'))) {
+		/* Show all items */
+	} else {
+		if (strlen($sql_where)) {
+			$sql_where .= ' AND ';
+		} else {
+			$sql_where  = 'WHERE ';
+		}
+
+		/*
+		if (isset_request_var('exactly_match') && (get_request_var('exactly_match') == 'true' || get_request_var('exactly_match') == 'on')) {
+			$sql_where_proj = "$table_name.projectName = '" . get_request_var('filter') . "'";
+		} else {
+			$sql_where_proj = "$table_name.projectName LIKE '%" . get_request_var('filter') . "%'";
+		}
+		*/
+
+		$sql_where_proj = "$table_name.projectName LIKE '%" . get_request_var('filter') . "%'";
+		$sql_where .= " ($table_name.jobname LIKE '%" . get_request_var('filter') . "%' OR
+			$sql_where_proj OR
+			$table_name.licenseProject LIKE '%" . get_request_var('filter') . "%' OR
+			$table_name.jobGroup LIKE '%" . get_request_var('filter') . "%' OR
+			$table_name.jobid LIKE '%" . get_request_var('filter') . "%')";
 	}
 
 	/* host group sql where */
