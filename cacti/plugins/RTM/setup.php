@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2022                                          |
+ | Copyright IBM Corp. 2006, 2023                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -51,7 +51,7 @@ function rtm_page_head() {
 		var brandName='" . __('IBM Spectrum') . "';
 		var brandNameBold='" . __('IBM <b>Spectrum</b>') . "';
 		var productName='" . __('LSF RTM 10.2.0.14') . "';
-		var copyRight='" . __('© Copyright International Business Machines Corp. 1992, 2022. US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp. Portions Copyright © 2004, 2022 The Cacti Group, Inc.') . "';
+		var copyRight='" . __('© Copyright International Business Machines Corp. 1992, 2023. US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp. Portions Copyright © 2004, 2023 The Cacti Group, Inc.') . "';
 		</script>";
 }
 

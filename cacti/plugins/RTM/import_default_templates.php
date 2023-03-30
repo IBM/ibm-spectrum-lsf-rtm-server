@@ -3,8 +3,8 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2022 The Cacti Group                                 |
- | Copyright IBM Corp. 2006, 2022                                          |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
+ | Copyright IBM Corp. 2006, 2023                                          |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
