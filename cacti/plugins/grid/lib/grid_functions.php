@@ -12989,7 +12989,7 @@ function grid_view_job_detail($job_page = 'grid_bjobs.php') {
 				$sql_params[] = date("Y-m-d H:i:s", get_request_var('submit_time'));
 				$sql_params[] = get_request_var('clusterid');
 
-				$sql_query_finished = "SELECT processes, exec_host
+				$sql_query_finished = "SELECT processes, exec_host, isborrowed
 					FROM grid_jobs_jobhosts_finished
 					WHERE jobid=?
 					AND indexid=?
