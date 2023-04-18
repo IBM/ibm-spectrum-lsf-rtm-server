@@ -26,11 +26,11 @@
 
 ----[ Before Get Start
 
-     Import DSLS/LM-X Poller definition by:
+    Import DSLS/LM-X Poller definition by:
        #mysql cacti < <RTM_TOP>/rtm/lic/etc/pluggable/lm_install.sql
 
-	 Configure DSLS/LM-X command path (<path_to_dsls> or <path_to_lm-x>) by:
-	   - RTM_Web->Console-> Management->Managers->(Click DSLS or LM-X)
+    Configure DSLS/LM-X command path (<path_to_dsls> or <path_to_lm-x>) by:
+	   - RTM_Web->Console->License Services->Managers->(Click DSLS or LM-X)
 	     ->(Edit)License Manager Binary Path->Save
        - Or copy DSLS command 'DSLicSrv into RTM_TOP/dsls/bin,
           copy LM-X command 'lmxendutil' into RTM_TOP/lmx/bin/.
