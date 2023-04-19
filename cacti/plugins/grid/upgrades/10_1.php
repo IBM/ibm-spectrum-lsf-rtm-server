@@ -63,7 +63,7 @@ function upgrade_to_10_1() {
 	add_columns("gridalarms_alarm", $column_arr);
 
 	//Drop grid_jobs_memperf table #73689
-	$drop_tables=db_fetch_assoc("SELECT CONCAT_WS('_v',table_name,partition) AS drop_table
+	$drop_tables=db_fetch_assoc("SELECT CONCAT_WS('_v',table_name,`partition`) AS drop_table
 							FROM grid_table_partitions WHERE table_name='grid_jobs_memperf'");
 	if (cacti_sizeof($drop_tables)) {
 		foreach($drop_tables AS $drop_table) {

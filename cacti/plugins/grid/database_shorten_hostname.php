@@ -141,7 +141,7 @@ function substr_index_table_partitions($table_name, $columns, $partition_id='') 
 	$sql_where= " WHERE table_name=?";
 	$sql_params[] = $table_name;
 	if (!empty($partition_id)) {
-		$sql_where.= " AND partition=?";
+		$sql_where.= " AND `partition`=?";
 		$sql_params[] = $partition_id;
 	}
 

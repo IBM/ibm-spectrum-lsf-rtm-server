@@ -89,7 +89,7 @@ if ($exec) {
 	print 'NOTE: Checking and removing duplicate job records.' . PHP_EOL;
 }
 
-$tables = db_fetch_assoc('SELECT table_name, partition
+$tables = db_fetch_assoc('SELECT table_name, `partition`
 	FROM grid_table_partitions
 	WHERE table_name="grid_jobs_finished"
 	ORDER BY max_time ASC');
