@@ -2415,7 +2415,7 @@ function grid_config_settings () {
 		),
 		'grid_graph_purge_static' => array(
 			'friendly_name' => __('Queue, Host Group and Application Purge Frequency', 'grid'),
-			'description' => __('How long after a Queue, Host Group or Application is removed from the system, do you wish to have the corresponding graphs removed?', 'grid'),
+			'description' => __('After a Queue, Host Group, or Application from LSF is removed or has not been used, the amount of time to wait before removing the corresponding graphs.', 'grid'),
 			'method' => 'drop_array',
 			'default' => '-1',
 			'array' => array(
