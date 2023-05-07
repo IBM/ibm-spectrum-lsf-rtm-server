@@ -4626,6 +4626,11 @@ function grid_config_settings () {
 				'method' => 'checkbox',
 				'default' => ''
 				),
+			'export_dependCond' => array(
+				'friendly_name' => __('Dependencies', 'grid'),
+				'method' => 'checkbox',
+				'default' => ''
+				),
 			'export_jobperf_header' => array(
 				'friendly_name' => __('Job Performance', 'grid'),
 				'method' => 'spacer',

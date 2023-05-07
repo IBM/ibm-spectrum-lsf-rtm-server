@@ -1772,7 +1772,7 @@ function perform_grid_db_maint($start_time, $optimize = false) {
 		cacti_log("NOTE: The last date for Job Records will be '$summary_retention_date'", true, 'GRID');
 
 		if (read_config_option('grid_partitioning_enable') == '') {
-			if (strlen($max_date)) {
+			if (rtm_strlen($max_date)) {
 				while (1) {
 					grid_debug("Deleting <= '$delete_size' Records from grid_jobs_finished");
 					$deleted_rows = db_fetch_assoc_prepared("SELECT clusterid, jobid,
@@ -2716,7 +2716,7 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 									&& ($is_cluster_grant_super || $is_cluster_grant_binlog_monitor || $is_cluster_grant_replication_client)) {
 								$can_dump_master_data = true;
 							} else {
-								$can_dump_master_data = true;
+								$can_dump_master_data = false;
 							}
 
 							$start_return = mysql_dump_no_passwd_check(cacti_escapeshellarg($database_username), cacti_escapeshellarg($database_password));
@@ -15387,6 +15387,9 @@ function grid_job_export_display_array() {
 	if (read_grid_config_option('export_gpueffectiveresreq') == 'on') {
 		$display_array[] .= 'gpuEffectiveResreq';
 	}
+	if (read_grid_config_option('export_dependCond') == 'on') {
+		$display_array[] .= 'dependCond';
+	}
 
 	foreach ($display_array as $row) {
 		$new[$row] = $row;
@@ -15628,6 +15631,9 @@ function grid_jobs_build_export_row($job, &$queue_nice_levels) {
 	}
 	if (read_grid_config_option('export_gpueffectiveresreq') == 'on') {
 		$xport_row .= ',"' . $job['gpuEffectiveResreq'] . '"';
+	}
+	if (read_grid_config_option('export_dependCond') == 'on') {
+		$xport_row .= ',"' . $job['dependCond'] . '"';
 	}
 
 	return $xport_row;
