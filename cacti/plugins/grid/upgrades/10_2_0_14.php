@@ -36,6 +36,16 @@ function upgrade_to_10_2_0_14() {
 	$data['primary'] = array('queuename','clusterid');
 	db_update_table('grid_queues', $data);
 
+	$data = array();
+	$data['columns'][] = array('name' => 'resource_name', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '');
+	$data['primary'] = array('clusterid','hostname','resource_name');
+	db_update_table('grid_host_threshold', $data);
+
+	$data = array();
+	$data['columns'][] = array('name' => 'resource_name', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '');
+	$data['primary'] = array('clusterid','resource_name');
+	db_update_table('grid_sharedresources', $data);
+
 	//update version for other plugins that file touched, and no much DB change
 	db_execute("UPDATE plugin_config SET version='10.2.0.14' WHERE directory IN ('RTM', 'benchmark', 'disku', 'gridalarms', 'gridblstat', 'gridcstat', 'gridpend', 'heuristics', 'license', 'lichist', 'meta')");
 }

@@ -705,7 +705,7 @@ CREATE TABLE `grid_host_threshold` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
   `hostname` varchar(64) NOT NULL DEFAULT '',
-  `resource_name` varchar(20) NOT NULL DEFAULT '',
+  `resource_name` varchar(40) NOT NULL DEFAULT '',
   `loadSched` double NOT NULL DEFAULT '0',
   `loadStop` double NOT NULL DEFAULT '0',
   `busySched` int(11) NOT NULL DEFAULT '0',
@@ -2061,7 +2061,7 @@ CREATE TABLE `grid_settings` (
 DROP TABLE IF EXISTS `grid_sharedresources`;
 CREATE TABLE `grid_sharedresources` (
   `clusterid` int(10) unsigned NOT NULL,
-  `resource_name` varchar(20) NOT NULL,
+  `resource_name` varchar(40) NOT NULL,
   `description` varchar(128) NOT NULL,
   `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`resource_name`) USING HASH,

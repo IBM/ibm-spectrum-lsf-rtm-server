@@ -1455,7 +1455,7 @@ INSERT INTO `table_columns` VALUES ('grid_host_closure_lockids',3,'last_seen','t
 INSERT INTO `table_columns` VALUES ('grid_host_threshold',1,'id','bigint(20) unsigned','NO','MUL',NULL,'auto_increment');
 INSERT INTO `table_columns` VALUES ('grid_host_threshold',2,'clusterid','int(10) unsigned','NO','PRI','0','');
 INSERT INTO `table_columns` VALUES ('grid_host_threshold',3,'hostname','varchar(64)','NO','PRI','','');
-INSERT INTO `table_columns` VALUES ('grid_host_threshold',4,'resource_name','varchar(20)','NO','PRI','','');
+INSERT INTO `table_columns` VALUES ('grid_host_threshold',4,'resource_name','varchar(40)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('grid_host_threshold',5,'loadSched','double','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_host_threshold',6,'loadStop','double','NO','','0','');
 INSERT INTO `table_columns` VALUES ('grid_host_threshold',7,'busySched','int(11)','NO','','0','');
@@ -2421,7 +2421,7 @@ INSERT INTO `table_columns` VALUES ('grid_settings',1,'user_id','smallint(8) uns
 INSERT INTO `table_columns` VALUES ('grid_settings',2,'name','varchar(50)','NO','PRI','','');
 INSERT INTO `table_columns` VALUES ('grid_settings',3,'value','varchar(1024)','NO','','','');
 INSERT INTO `table_columns` VALUES ('grid_sharedresources',1,'clusterid','int(10) unsigned','NO','PRI',NULL,'');
-INSERT INTO `table_columns` VALUES ('grid_sharedresources',2,'resource_name','varchar(20)','NO','PRI',NULL,'');
+INSERT INTO `table_columns` VALUES ('grid_sharedresources',2,'resource_name','varchar(40)','NO','PRI',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_sharedresources',3,'description','varchar(128)','NO','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_sharedresources',4,'present','tinyint(3) unsigned','NO','','1','');
 INSERT INTO `table_columns` VALUES ('grid_summary',1,'clusterid','int(10) unsigned','NO','PRI',NULL,'');
