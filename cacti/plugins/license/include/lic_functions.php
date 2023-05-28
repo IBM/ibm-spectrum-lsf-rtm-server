@@ -1610,7 +1610,7 @@ function lic_update_license_daily_stats($current_time) {
 	db_execute("CREATE TABLE IF NOT EXISTS `$interim_table` (
 		`service_id` int(10) unsigned NOT NULL DEFAULT '0',
 		`feature` varchar(50) NOT NULL DEFAULT '',
-		`user` varchar(40) NOT NULL DEFAULT '',
+		`user` varchar(60) NOT NULL DEFAULT '',
 		`host` varchar(64) NOT NULL DEFAULT '',
 		`action` varchar(20) NOT NULL DEFAULT '',
 		`count` int(10) unsigned NOT NULL DEFAULT '0',

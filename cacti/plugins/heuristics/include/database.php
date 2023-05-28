@@ -84,7 +84,7 @@ function heuristics_setup_table_new() {
 	$data['columns'][] = array('name' => 'custom', 'type' => 'varchar(128)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'projectName', 'type' => 'varchar(64)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'reqCpus', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '1');
-	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'numPEND', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);
 	$data['columns'][] = array('name' => 'numRUN', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);
 	$data['columns'][] = array('name' => 'numSUSP', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);
@@ -106,7 +106,7 @@ function heuristics_setup_table_new() {
 	$data['columns'][] = array('name' => 'custom', 'type' => 'varchar(128)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'projectName', 'type' => 'varchar(64)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'reqCpus', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '1');
-	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'numPEND', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);
 	$data['columns'][] = array('name' => 'numRUN', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);
 	$data['columns'][] = array('name' => 'numSUSP', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);
@@ -128,7 +128,7 @@ function heuristics_setup_table_new() {
 	$data['columns'][] = array('name' => 'custom', 'type' => 'varchar(128)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'projectName', 'type' => 'varchar(64)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'reqCpus', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '1');
-	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'numPEND', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);
 	$data['columns'][] = array('name' => 'numRUN', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);
 	$data['columns'][] = array('name' => 'numSUSP', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);

@@ -81,9 +81,9 @@ function upgrade_to_10_2_0_13() {
 
 	db_execute("ALTER TABLE grid_queues_shares MODIFY COLUMN run_time bigint unsigned NOT NULL;");
 	
-	db_execute("ALTER TABLE grid_jobs MODIFY COLUMN userGroup varchar(256) NOT NULL;");
-	db_execute("ALTER TABLE grid_jobs_finished MODIFY COLUMN userGroup varchar(256) NOT NULL;");
-	db_execute("ALTER TABLE grid_user_group_stats MODIFY COLUMN userGroup varchar(256) NOT NULL;");
+	db_execute("ALTER TABLE grid_jobs MODIFY COLUMN userGroup varchar(60) NOT NULL;");
+	db_execute("ALTER TABLE grid_jobs_finished MODIFY COLUMN userGroup varchar(60) NOT NULL;");
+	db_execute("ALTER TABLE grid_user_group_stats MODIFY COLUMN userGroup varchar(60) NOT NULL;");
 	//update version for other plugins that file touched, and no much DB change
 	db_execute("UPDATE plugin_config SET version='10.2.0.13' WHERE directory IN ('benchmark', 'gridcstat', 'gridpend', 'lichist', 'RTM')");
 }

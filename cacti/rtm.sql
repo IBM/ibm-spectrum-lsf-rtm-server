@@ -2167,8 +2167,8 @@ CREATE TABLE `grid_arrays` (
   `stat` int(10) unsigned NOT NULL DEFAULT '0',
   `jType` int(10) unsigned NOT NULL DEFAULT '0',
   `jName` varchar(128) NOT NULL DEFAULT '',
-  `user` varchar(45) NOT NULL DEFAULT '',
-  `userGroup` varchar(256) DEFAULT '',
+  `user` varchar(60) NOT NULL DEFAULT '',
+  `userGroup` varchar(60) DEFAULT '',
   `queue` varchar(60) NOT NULL DEFAULT '',
   `projectName` varchar(45) NOT NULL DEFAULT '0',
   `numJobs` int(10) unsigned NOT NULL DEFAULT '0',
@@ -2216,8 +2216,8 @@ CREATE TABLE `grid_arrays_finished` (
   `stat` int(10) unsigned NOT NULL DEFAULT '0',
   `jType` int(10) unsigned NOT NULL DEFAULT '0',
   `jName` varchar(128) NOT NULL DEFAULT '',
-  `user` varchar(45) NOT NULL DEFAULT '',
-  `userGroup` varchar(256) DEFAULT '',
+  `user` varchar(60) NOT NULL DEFAULT '',
+  `userGroup` varchar(60) DEFAULT '',
   `queue` varchar(60) NOT NULL DEFAULT '',
   `projectName` varchar(45) NOT NULL DEFAULT '0',
   `numJobs` int(10) unsigned NOT NULL DEFAULT '0',
@@ -2483,7 +2483,7 @@ CREATE TABLE `grid_blstat_tasks` (
   `feature` varchar(64) NOT NULL,
   `project` varchar(64) NOT NULL,
   `host` varchar(64) NOT NULL,
-  `user` varchar(20) NOT NULL,
+  `user` varchar(60) NOT NULL,
   `stat` varchar(10) NOT NULL,
   `tid` int(10) unsigned NOT NULL,
   `connect_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -2514,7 +2514,7 @@ CREATE TABLE `grid_blstat_users` (
   `indexid` int(10) unsigned NOT NULL,
   `cluster` varchar(20) NOT NULL,
   `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `user` varchar(40) NOT NULL,
+  `user` varchar(60) NOT NULL,
   `host` varchar(64) NOT NULL,
   `project` varchar(64) NOT NULL,
   `start_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -2670,9 +2670,9 @@ CREATE TABLE `grid_clusters_benchmarks` (
   `warn_time` int(10) unsigned DEFAULT '10',
   `alert_time` int(10) unsigned DEFAULT '20',
   `clusterid` mediumint(8) NOT NULL,
-  `username` varchar(100) NOT NULL,
+  `username` varchar(60) NOT NULL,
   `queue` varchar(60) NOT NULL,
-  `user_group` varchar(100) DEFAULT NULL,
+  `user_group` varchar(60) DEFAULT NULL,
   `project` varchar(64) DEFAULT NULL,
   `res_req` varchar(255) DEFAULT NULL,
   `command` varchar(100) NOT NULL,
@@ -3310,7 +3310,7 @@ CREATE TABLE `grid_heuristics_user_history_today` (
   `custom` varchar(128) NOT NULL DEFAULT '',
   `projectName` varchar(64) NOT NULL,
   `reqCpus` int(10) unsigned NOT NULL DEFAULT '1',
-  `user` varchar(40) NOT NULL,
+  `user` varchar(60) NOT NULL,
   `numPEND` int(10) unsigned NOT NULL,
   `numRUN` int(10) unsigned NOT NULL,
   `numSUSP` int(10) unsigned NOT NULL,
@@ -3338,7 +3338,7 @@ CREATE TABLE `grid_heuristics_user_history_yesterday` (
   `custom` varchar(128) NOT NULL DEFAULT '',
   `projectName` varchar(64) NOT NULL,
   `reqCpus` int(10) unsigned NOT NULL DEFAULT '1',
-  `user` varchar(40) NOT NULL,
+  `user` varchar(60) NOT NULL,
   `numPEND` int(10) unsigned NOT NULL,
   `numRUN` int(10) unsigned NOT NULL,
   `numSUSP` int(10) unsigned NOT NULL,
@@ -3366,7 +3366,7 @@ CREATE TABLE `grid_heuristics_user_stats` (
   `custom` varchar(128) NOT NULL DEFAULT '',
   `projectName` varchar(64) NOT NULL,
   `reqCpus` int(10) unsigned NOT NULL DEFAULT '1',
-  `user` varchar(40) NOT NULL,
+  `user` varchar(60) NOT NULL,
   `numPEND` int(10) unsigned NOT NULL,
   `numRUN` int(10) unsigned NOT NULL,
   `numSUSP` int(10) unsigned NOT NULL,
@@ -3771,7 +3771,7 @@ DROP TABLE IF EXISTS `grid_job_daily_stats`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_job_daily_stats` (
   `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `user` varchar(45) NOT NULL DEFAULT '',
+  `user` varchar(60) NOT NULL DEFAULT '',
   `stat` varchar(45) NOT NULL DEFAULT '',
   `queue` varchar(60) NOT NULL DEFAULT '',
   `app` varchar(40) NOT NULL DEFAULT '',
@@ -3814,7 +3814,7 @@ DROP TABLE IF EXISTS `grid_job_daily_user_stats`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_job_daily_user_stats` (
   `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `user` varchar(45) NOT NULL DEFAULT '',
+  `user` varchar(60) NOT NULL DEFAULT '',
   `wall_time` bigint(20) unsigned NOT NULL DEFAULT '0',
   `total_wall_time` bigint(20) unsigned NOT NULL DEFAULT '0',
   `cpu_time` bigint(20) unsigned NOT NULL DEFAULT '0',
@@ -3841,7 +3841,7 @@ DROP TABLE IF EXISTS `grid_job_daily_usergroup_stats`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_job_daily_usergroup_stats` (
   `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `usergroup` varchar(45) NOT NULL DEFAULT '',
+  `usergroup` varchar(60) NOT NULL DEFAULT '',
   `wall_time` bigint(20) unsigned NOT NULL DEFAULT '0',
   `total_wall_time` bigint(20) unsigned NOT NULL DEFAULT '0',
   `cpu_time` bigint(20) unsigned NOT NULL DEFAULT '0',
@@ -3868,7 +3868,7 @@ DROP TABLE IF EXISTS `grid_job_interval_stats`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_job_interval_stats` (
   `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `user` varchar(45) NOT NULL DEFAULT '',
+  `user` varchar(60) NOT NULL DEFAULT '',
   `stat` varchar(45) NOT NULL DEFAULT '',
   `queue` varchar(60) NOT NULL DEFAULT '',
   `app` varchar(40) NOT NULL DEFAULT '',
@@ -3919,7 +3919,7 @@ CREATE TABLE `grid_jobs` (
   `options2` int(10) unsigned NOT NULL DEFAULT '0',
   `options3` int(10) unsigned NOT NULL DEFAULT '0',
   `options4` int(10) unsigned NOT NULL DEFAULT '0',
-  `user` varchar(40) NOT NULL DEFAULT '',
+  `user` varchar(60) NOT NULL DEFAULT '',
   `stat` varchar(10) NOT NULL DEFAULT '',
   `prev_stat` varchar(10) NOT NULL DEFAULT '',
   `stat_changes` int(10) unsigned NOT NULL DEFAULT '0',
@@ -3939,7 +3939,7 @@ CREATE TABLE `grid_jobs` (
   `exitInfo` int(10) NOT NULL DEFAULT '0',
   `postExecCmd` varchar(255) NOT NULL DEFAULT '',
   `app` varchar(40) NOT NULL DEFAULT '',
-  `execUsername` varchar(40) NOT NULL DEFAULT '',
+  `execUsername` varchar(60) NOT NULL DEFAULT '',
   `mailUser` varchar(512) DEFAULT NULL,
   `jobname` varchar(128) DEFAULT NULL,
   `jobPriority` int(10) unsigned NOT NULL DEFAULT '0',
@@ -4011,7 +4011,7 @@ CREATE TABLE `grid_jobs` (
   `job_start_logged` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `job_end_logged` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `job_scan_logged` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `userGroup` varchar(256) NOT NULL,
+  `userGroup` varchar(60) NOT NULL,
   `jobDescription` varchar(512) DEFAULT '',
   `combinedResreq` varchar(512) DEFAULT '',
   `effectiveResreq` varchar(512) DEFAULT '',
@@ -4108,7 +4108,7 @@ CREATE TABLE `grid_jobs_finished` (
   `options2` int(10) unsigned NOT NULL DEFAULT '0',
   `options3` int(10) unsigned NOT NULL DEFAULT '0',
   `options4` int(10) unsigned NOT NULL DEFAULT '0',
-  `user` varchar(40) NOT NULL DEFAULT '',
+  `user` varchar(60) NOT NULL DEFAULT '',
   `stat` varchar(10) NOT NULL DEFAULT '',
   `prev_stat` varchar(10) NOT NULL DEFAULT '',
   `stat_changes` int(10) unsigned NOT NULL DEFAULT '0',
@@ -4128,7 +4128,7 @@ CREATE TABLE `grid_jobs_finished` (
   `exitInfo` int(10) NOT NULL DEFAULT '0',
   `postExecCmd` varchar(255) NOT NULL DEFAULT '',
   `app` varchar(40) NOT NULL DEFAULT '',
-  `execUsername` varchar(40) NOT NULL DEFAULT '',
+  `execUsername` varchar(60) NOT NULL DEFAULT '',
   `mailUser` varchar(512) DEFAULT NULL,
   `jobname` varchar(128) DEFAULT NULL,
   `jobPriority` int(10) unsigned NOT NULL DEFAULT '0',
@@ -4200,7 +4200,7 @@ CREATE TABLE `grid_jobs_finished` (
   `job_start_logged` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `job_end_logged` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `job_scan_logged` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `userGroup` varchar(256) NOT NULL,
+  `userGroup` varchar(60) NOT NULL,
   `jobDescription` varchar(512) DEFAULT '',
   `combinedResreq` varchar(512) DEFAULT '',
   `effectiveResreq` varchar(512) DEFAULT '',
@@ -4414,7 +4414,7 @@ CREATE TABLE `grid_jobs_pendhist_daily` (
   `stat` varchar(5) NOT NULL,
   `projectName` varchar(60) NOT NULL,
   `queue` varchar(40) NOT NULL,
-  `user` varchar(40) NOT NULL,
+  `user` varchar(60) NOT NULL,
   `total_pend` int(10) unsigned NOT NULL,
   `total_slots` int(10) unsigned NOT NULL,
   `year_day` int(10) NOT NULL DEFAULT '2011001',
@@ -4443,7 +4443,7 @@ CREATE TABLE `grid_jobs_pendhist_hourly` (
   `stat` varchar(5) NOT NULL,
   `projectName` varchar(60) NOT NULL,
   `queue` varchar(40) NOT NULL,
-  `user` varchar(40) NOT NULL,
+  `user` varchar(60) NOT NULL,
   `total_pend` int(10) unsigned NOT NULL,
   `total_slots` int(10) unsigned NOT NULL,
   `date_recorded` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -4472,7 +4472,7 @@ CREATE TABLE `grid_jobs_pendhist_yesterday` (
   `stat` varchar(5) NOT NULL,
   `projectName` varchar(60) NOT NULL,
   `queue` varchar(40) NOT NULL,
-  `user` varchar(40) NOT NULL,
+  `user` varchar(60) NOT NULL,
   `total_pend` int(10) unsigned NOT NULL,
   `total_slots` int(10) unsigned NOT NULL,
   `date_recorded` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -4748,7 +4748,7 @@ DROP TABLE IF EXISTS `grid_jobs_users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_jobs_users` (
-  `user` varchar(40) NOT NULL DEFAULT '',
+  `user` varchar(60) NOT NULL DEFAULT '',
   `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
   `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`user`,`clusterid`)
@@ -5238,7 +5238,7 @@ DROP TABLE IF EXISTS `grid_queues_users`;
 CREATE TABLE `grid_queues_users` (
   `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
   `queue` varchar(60) NOT NULL DEFAULT '',
-  `user` varchar(45) NOT NULL DEFAULT '',
+  `user` varchar(60) NOT NULL DEFAULT '',
   `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`queue`,`user`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -5524,8 +5524,8 @@ DROP TABLE IF EXISTS `grid_user_group_members`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_user_group_members` (
   `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `groupname` varchar(45) NOT NULL DEFAULT '0',
-  `username` varchar(40) NOT NULL DEFAULT '0',
+  `groupname` varchar(60) NOT NULL DEFAULT '0',
+  `username` varchar(60) NOT NULL DEFAULT '0',
   `shares` int(10) unsigned NOT NULL DEFAULT '1',
   `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`clusterid`,`groupname`,`username`),
@@ -5543,7 +5543,7 @@ DROP TABLE IF EXISTS `grid_user_group_stats`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_user_group_stats` (
   `clusterid` int(10) unsigned NOT NULL,
-  `userGroup` varchar(256) NOT NULL,
+  `userGroup` varchar(60) NOT NULL,
   `numRUN` int(10) unsigned NOT NULL DEFAULT '0',
   `numPEND` int(10) unsigned NOT NULL DEFAULT '0',
   `numJOBS` int(10) unsigned NOT NULL DEFAULT '0',
@@ -6378,7 +6378,7 @@ DROP TABLE IF EXISTS `lic_daily_stats`;
 CREATE TABLE `lic_daily_stats` (
   `service_id` int(10) unsigned NOT NULL DEFAULT '0',
   `feature` varchar(50) NOT NULL DEFAULT '',
-  `user` varchar(40) NOT NULL DEFAULT '',
+  `user` varchar(60) NOT NULL DEFAULT '',
   `host` varchar(64) NOT NULL DEFAULT '',
   `action` varchar(20) NOT NULL DEFAULT '',
   `count` int(10) unsigned NOT NULL DEFAULT '0',
@@ -6411,7 +6411,7 @@ DROP TABLE IF EXISTS `lic_daily_stats_today`;
 CREATE TABLE `lic_daily_stats_today` (
   `service_id` int(10) unsigned NOT NULL DEFAULT '0',
   `feature` varchar(50) NOT NULL DEFAULT '',
-  `user` varchar(40) NOT NULL DEFAULT '',
+  `user` varchar(60) NOT NULL DEFAULT '',
   `host` varchar(64) NOT NULL DEFAULT '',
   `action` varchar(20) NOT NULL DEFAULT '',
   `count` int(10) unsigned NOT NULL DEFAULT '0',
@@ -6444,7 +6444,7 @@ DROP TABLE IF EXISTS `lic_daily_stats_traffic`;
 CREATE TABLE `lic_daily_stats_traffic` (
   `service_id` int(10) unsigned NOT NULL,
   `feature` varchar(50) NOT NULL,
-  `user` varchar(40) NOT NULL,
+  `user` varchar(60) NOT NULL,
   `host` varchar(64) NOT NULL,
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`service_id`,`feature`,`user`,`host`),
@@ -6514,7 +6514,7 @@ CREATE TABLE `lic_interval_stats` (
   `seq` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `service_id` int(10) unsigned NOT NULL DEFAULT '0',
   `feature` varchar(50) NOT NULL DEFAULT '',
-  `user` varchar(40) NOT NULL DEFAULT '',
+  `user` varchar(60) NOT NULL DEFAULT '',
   `host` varchar(64) NOT NULL DEFAULT '',
   `action` varchar(20) NOT NULL DEFAULT '',
   `count` int(10) unsigned NOT NULL DEFAULT '0',
@@ -6560,8 +6560,8 @@ DROP TABLE IF EXISTS `lic_ldap_groups`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lic_ldap_groups` (
-  `group` varchar(40) NOT NULL,
-  `user` varchar(20) NOT NULL,
+  `group` varchar(60) NOT NULL,
+  `user` varchar(60) NOT NULL,
   `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`group`,`user`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Stores LDAP Group Information';
@@ -6749,8 +6749,8 @@ CREATE TABLE `lic_services_feature_details` (
   `feature_name` varchar(50) NOT NULL DEFAULT '0',
   `subfeature` varchar(50) NOT NULL DEFAULT '',
   `feature_version` varchar(50) NOT NULL DEFAULT '',
-  `username` varchar(40) NOT NULL DEFAULT '',
-  `groupname` varchar(50) NOT NULL DEFAULT '',
+  `username` varchar(60) NOT NULL DEFAULT '',
+  `groupname` varchar(60) NOT NULL DEFAULT '',
   `hostname` varchar(64) NOT NULL DEFAULT '',
   `chkoutid` varchar(20) NOT NULL DEFAULT '',
   `restype` int(10) unsigned NOT NULL DEFAULT '0',
@@ -6782,8 +6782,8 @@ CREATE TABLE `lic_services_feature_history` (
   `feature_name` varchar(50) NOT NULL DEFAULT '0',
   `subfeature` varchar(50) NOT NULL DEFAULT '',
   `feature_version` varchar(50) NOT NULL DEFAULT '',
-  `username` varchar(40) NOT NULL DEFAULT '',
-  `groupname` varchar(50) NOT NULL DEFAULT '',
+  `username` varchar(60) NOT NULL DEFAULT '',
+  `groupname` varchar(60) NOT NULL DEFAULT '',
   `hostname` varchar(64) NOT NULL DEFAULT '',
   `chkoutid` varchar(20) NOT NULL DEFAULT '',
   `restype` int(10) unsigned NOT NULL DEFAULT '0',
@@ -7008,8 +7008,8 @@ DROP TABLE IF EXISTS `lic_services_options_user_groups`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lic_services_options_user_groups` (
   `service_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `group` varchar(64) NOT NULL DEFAULT '',
-  `user` varchar(40) NOT NULL DEFAULT '',
+  `group` varchar(60) NOT NULL DEFAULT '',
+  `user` varchar(60) NOT NULL DEFAULT '',
   `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`service_id`,`group`,`user`),
   KEY `group` (`group`),
@@ -7040,7 +7040,7 @@ DROP TABLE IF EXISTS `lic_users_winsp`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lic_users_winsp` (
-  `user` varchar(40) NOT NULL DEFAULT '',
+  `user` varchar(60) NOT NULL DEFAULT '',
   PRIMARY KEY (`user`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -8533,7 +8533,7 @@ DROP TABLE IF EXISTS `thold_data`;
 CREATE TABLE `thold_data` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `name` varchar(150) DEFAULT '',
-  `name_cache` varchar(100) DEFAULT '',
+  `name_cache` varchar(150) DEFAULT '',
   `local_data_id` int(10) NOT NULL DEFAULT '0',
   `data_template_rrd_id` int(10) NOT NULL DEFAULT '0',
   `local_graph_id` int(10) NOT NULL DEFAULT '0',

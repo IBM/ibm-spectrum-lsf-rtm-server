@@ -79,7 +79,7 @@ function lichist_setup_table_new () {
   		`feature_name` varchar(50) NOT NULL DEFAULT '0',
   		`subfeature` varchar(50) NOT NULL DEFAULT '',
   		`feature_version` varchar(50) NOT NULL DEFAULT '',
-  		`username` varchar(40) NOT NULL DEFAULT '',
+  		`username` varchar(60) NOT NULL DEFAULT '',
   		`groupname` varchar(50) NOT NULL DEFAULT '',
   		`hostname` varchar(64) NOT NULL DEFAULT '',
   		`chkoutid` varchar(20) NOT NULL DEFAULT '',

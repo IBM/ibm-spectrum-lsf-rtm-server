@@ -56,7 +56,7 @@ DROP TABLE IF EXISTS `lic_daily_stats`;
 CREATE TABLE `lic_daily_stats` (
   `service_id` int(10) unsigned NOT NULL DEFAULT '0',
   `feature` varchar(50) NOT NULL DEFAULT '',
-  `user` varchar(40) NOT NULL DEFAULT '',
+  `user` varchar(60) NOT NULL DEFAULT '',
   `host` varchar(64) NOT NULL DEFAULT '',
   `action` varchar(20) NOT NULL DEFAULT '',
   `count` int(10) unsigned NOT NULL DEFAULT '0',
@@ -82,7 +82,7 @@ DROP TABLE IF EXISTS `lic_daily_stats_today`;
 CREATE TABLE `lic_daily_stats_today` (
   `service_id` int(10) unsigned NOT NULL DEFAULT '0',
   `feature` varchar(50) NOT NULL DEFAULT '',
-  `user` varchar(40) NOT NULL DEFAULT '',
+  `user` varchar(60) NOT NULL DEFAULT '',
   `host` varchar(64) NOT NULL DEFAULT '',
   `action` varchar(20) NOT NULL DEFAULT '',
   `count` int(10) unsigned NOT NULL DEFAULT '0',
@@ -113,7 +113,7 @@ DROP TABLE IF EXISTS `lic_daily_stats_traffic`;
 CREATE TABLE `lic_daily_stats_traffic` (
   `service_id` int(10) unsigned NOT NULL,
   `feature` varchar(50) NOT NULL,
-  `user` varchar(40) NOT NULL,
+  `user` varchar(60) NOT NULL,
   `host` varchar(64) NOT NULL,
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`service_id`,`feature`,`user`,`host`),
@@ -152,7 +152,7 @@ CREATE TABLE `lic_interval_stats` (
   `seq` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `service_id` int(10) unsigned NOT NULL DEFAULT '0',
   `feature` varchar(50) NOT NULL DEFAULT '',
-  `user` varchar(40) NOT NULL DEFAULT '',
+  `user` varchar(60) NOT NULL DEFAULT '',
   `host` varchar(64) NOT NULL DEFAULT '',
   `action` varchar(20) NOT NULL DEFAULT '',
   `count` int(10) unsigned NOT NULL DEFAULT '0',
@@ -328,8 +328,8 @@ CREATE TABLE `lic_services_feature_details` (
   `feature_name` varchar(50) NOT NULL DEFAULT '0',
   `subfeature` varchar(50) NOT NULL DEFAULT '',
   `feature_version` varchar(50) NOT NULL DEFAULT '',
-  `username` varchar(40) NOT NULL DEFAULT '',
-  `groupname` varchar(50) NOT NULL DEFAULT '',
+  `username` varchar(60) NOT NULL DEFAULT '',
+  `groupname` varchar(60) NOT NULL DEFAULT '',
   `hostname` varchar(64) NOT NULL DEFAULT '',
   `chkoutid` varchar(20) NOT NULL DEFAULT '',
   `restype` int(10) unsigned NOT NULL DEFAULT '0',
@@ -506,7 +506,7 @@ DROP TABLE IF EXISTS `lic_services_options_user_groups`;
 CREATE TABLE `lic_services_options_user_groups` (
   `service_id` int(10) unsigned NOT NULL DEFAULT '0',
   `group` varchar(64) NOT NULL DEFAULT '',
-  `user` varchar(40) NOT NULL DEFAULT '',
+  `user` varchar(60) NOT NULL DEFAULT '',
   `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`service_id`,`group`,`user`),
   KEY `group` (`group`),
@@ -546,8 +546,8 @@ CREATE TABLE `lic_ldap_to_flex_groups` (
 
 DROP TABLE IF EXISTS `lic_ldap_groups`;
 CREATE TABLE `lic_ldap_groups` (
-  `group` varchar(40) NOT NULL,
-  `user` varchar(20) NOT NULL,
+  `group` varchar(60) NOT NULL,
+  `user` varchar(60) NOT NULL,
   `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`group`,`user`)
 ) ENGINE=MyISAM COMMENT='Stores LDAP Group Information' DEFAULT CHARSET=latin1;
@@ -559,7 +559,7 @@ CREATE TABLE `lic_ldap_groups` (
 
 DROP TABLE IF EXISTS `lic_users_winsp`;
 CREATE TABLE `lic_users_winsp` (
-  `user` varchar(40) NOT NULL DEFAULT '',
+  `user` varchar(60) NOT NULL DEFAULT '',
   PRIMARY KEY (`user`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

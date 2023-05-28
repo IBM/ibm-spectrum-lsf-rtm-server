@@ -48,7 +48,7 @@ function license_setup_database() {
 	$data = array();
 	$data['columns'][] = array('name' => 'service_id', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'feature', 'type' => 'varchar(50)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'host', 'type' => 'varchar(64)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'action', 'type' => 'varchar(20)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'count', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
@@ -75,7 +75,7 @@ function license_setup_database() {
 	$data = array();
 	$data['columns'][] = array('name' => 'service_id', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);
 	$data['columns'][] = array('name' => 'feature', 'type' => 'varchar(50)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'host', 'type' => 'varchar(64)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'last_updated', 'type' => 'timestamp', 'NULL' => false, 'default' => 'CURRENT_TIMESTAMP', 'on_update' => 'CURRENT_TIMESTAMP');
 	$data['primary'] = 'service_id`,`feature`,`user`,`host';
@@ -91,7 +91,7 @@ function license_setup_database() {
 	$data = array();
 	$data['columns'][] = array('name' => 'service_id', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'feature', 'type' => 'varchar(50)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'host', 'type' => 'varchar(64)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'action', 'type' => 'varchar(20)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'count', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
@@ -231,8 +231,8 @@ function license_setup_database() {
 	$data['columns'][] = array('name' => 'feature_name', 'type' => 'varchar(50)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'subfeature', 'type' => 'varchar(50)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'feature_version', 'type' => 'varchar(50)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'username', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'groupname', 'type' => 'varchar(50)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'username', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'groupname', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'hostname', 'type' => 'varchar(64)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'chkoutid', 'type' => 'varchar(20)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'restype', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
@@ -287,7 +287,7 @@ function license_setup_database() {
 	api_plugin_db_table_create ('license', 'lic_settings', $data);
 
 	$data = array();
-	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
 	$data['primary'] = 'user';
 	$data['type'] = 'InnoDB';
 	$data['comment'] = '';

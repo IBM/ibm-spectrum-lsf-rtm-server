@@ -71,8 +71,8 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'stat', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'jType', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'jName', 'type' => 'varchar(128)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(45)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'userGroup', 'type' => 'varchar(45)', 'NULL' => true, 'default' => '');
+	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'userGroup', 'type' => 'varchar(60)', 'NULL' => true, 'default' => '');
 	$data['columns'][] = array('name' => 'queue', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'projectName', 'type' => 'varchar(45)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'numJobs', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
@@ -120,8 +120,8 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'stat', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'jType', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'jName', 'type' => 'varchar(128)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(45)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'userGroup', 'type' => 'varchar(45)', 'NULL' => true, 'default' => '');
+	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'userGroup', 'type' => 'varchar(60)', 'NULL' => true, 'default' => '');
 	$data['columns'][] = array('name' => 'queue', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'projectName', 'type' => 'varchar(45)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'numJobs', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
@@ -891,7 +891,7 @@ function grid_create_tables() {
 
 	$data = array();
 	$data['columns'][] = array('name' => 'clusterid', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(45)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'stat', 'type' => 'varchar(45)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'queue', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'app', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '');
@@ -938,7 +938,7 @@ function grid_create_tables() {
 
 	$data = array();
 	$data['columns'][] = array('name' => 'clusterid', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(45)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'stat', 'type' => 'varchar(45)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'queue', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'app', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '');
@@ -993,7 +993,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'options2', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'options3', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'options4', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'stat', 'type' => 'varchar(10)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'prev_stat', 'type' => 'varchar(10)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'stat_changes', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
@@ -1013,8 +1013,8 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'exitInfo', 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'postExecCmd', 'type' => 'varchar(255)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'app', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'execUsername', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'mailUser', 'type' => 'varchar(40)', 'NULL' => true, 'default' => '');
+	$data['columns'][] = array('name' => 'execUsername', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'mailUser', 'type' => 'varchar(512)', 'NULL' => true, 'default' => '');
 	$data['columns'][] = array('name' => 'jobname', 'type' => 'varchar(128)', 'NULL' => true, 'default' => '');
 	$data['columns'][] = array('name' => 'jobPriority', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'jobPid', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
@@ -1085,7 +1085,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'job_start_logged', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'job_end_logged', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'job_scan_logged', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'userGroup', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'userGroup', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'jobDescription', 'type' => 'varchar(512)', 'NULL' => true, 'default' => '');
 	$data['columns'][] = array('name' => 'combinedResreq', 'type' => 'varchar(512)', 'NULL' => true, 'default' => '');
 	$data['columns'][] = array('name' => 'effectiveResreq', 'type' => 'varchar(512)', 'NULL' => true, 'default' => '');
@@ -1190,7 +1190,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'options2', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'options3', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'options4', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'stat', 'type' => 'varchar(10)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'prev_stat', 'type' => 'varchar(10)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'stat_changes', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
@@ -1210,8 +1210,8 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'exitInfo', 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'postExecCmd', 'type' => 'varchar(255)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'app', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'execUsername', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'mailUser', 'type' => 'varchar(40)', 'NULL' => true, 'default' => '');
+	$data['columns'][] = array('name' => 'execUsername', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'mailUser', 'type' => 'varchar(512)', 'NULL' => true, 'default' => '');
 	$data['columns'][] = array('name' => 'jobname', 'type' => 'varchar(128)', 'NULL' => true, 'default' => '');
 	$data['columns'][] = array('name' => 'jobPriority', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'jobPid', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
@@ -1282,7 +1282,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'job_start_logged', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'job_end_logged', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'job_scan_logged', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'userGroup', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'userGroup', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'jobDescription', 'type' => 'varchar(512)', 'NULL' => true, 'default' => '');
 	$data['columns'][] = array('name' => 'combinedResreq', 'type' => 'varchar(512)', 'NULL' => true, 'default' => '');
 	$data['columns'][] = array('name' => 'effectiveResreq', 'type' => 'varchar(512)', 'NULL' => true, 'default' => '');
@@ -1640,7 +1640,7 @@ function grid_create_tables() {
 	api_plugin_db_table_create ('grid', 'grid_jobs_stats', $data);
 
 	$data = array();
-	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'clusterid', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'user`,`clusterid';
@@ -2014,7 +2014,7 @@ function grid_create_tables() {
 	$data = array();
 	$data['columns'][] = array('name' => 'clusterid', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'queue', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(45)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'user', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'clusterid`,`queue`,`user';
 	$data['type'] = 'InnoDB';
@@ -2254,8 +2254,8 @@ function grid_create_tables() {
 
 	$data = array();
 	$data['columns'][] = array('name' => 'clusterid', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'groupname', 'type' => 'varchar(45)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'username', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'groupname', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'username', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'shares', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '1');
 	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
 	$data['primary'] = 'clusterid`,`groupname`,`username';
@@ -2267,7 +2267,7 @@ function grid_create_tables() {
 
 	$data = array();
 	$data['columns'][] = array('name' => 'clusterid', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false);
-	$data['columns'][] = array('name' => 'userGroup', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'userGroup', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'numRUN', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'numPEND', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'numJOBS', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');

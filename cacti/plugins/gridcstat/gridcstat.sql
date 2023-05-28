@@ -3,7 +3,7 @@
 --
 CREATE TABLE  `grid_job_daily_user_stats` (
   `clusterid` int(10) unsigned NOT NULL default '0',
-  `user` varchar(45) NOT NULL default '',
+  `user` varchar(60) NOT NULL default '',
   `wall_time` bigint(20) unsigned NOT NULL default '0',
   `total_wall_time` bigint(20) unsigned NOT NULL default '0',
   `cpu_time` bigint(20) unsigned NOT NULL default '0',
@@ -22,7 +22,7 @@ CREATE TABLE  `grid_job_daily_user_stats` (
 
 CREATE TABLE  `grid_job_daily_usergroup_stats` (
   `clusterid` int(10) unsigned NOT NULL default '0',
-  `usergroup` varchar(45) NOT NULL default '',
+  `usergroup` varchar(60) NOT NULL default '',
   `wall_time` bigint(20) unsigned NOT NULL default '0',
   `total_wall_time` bigint(20) unsigned NOT NULL default '0',
   `cpu_time` bigint(20) unsigned NOT NULL default '0',

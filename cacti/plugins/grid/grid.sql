@@ -62,8 +62,8 @@ CREATE TABLE `grid_arrays` (
   `stat` int(10) unsigned NOT NULL default '0',
   `jType` int(10) unsigned NOT NULL default '0',
   `jName` varchar(128) NOT NULL default '',
-  `user` varchar(45) NOT NULL default '',
-  `userGroup` varchar(45) default '',
+  `user` varchar(60) NOT NULL default '',
+  `userGroup` varchar(60) default '',
   `queue` varchar(45) NOT NULL default '',
   `projectName` varchar(45) NOT NULL default '0',
   `numJobs` int(10) unsigned NOT NULL default '0',
@@ -108,8 +108,8 @@ CREATE TABLE `grid_arrays_finished` (
   `stat` int(10) unsigned NOT NULL default '0',
   `jType` int(10) unsigned NOT NULL default '0',
   `jName` varchar(128) NOT NULL default '',
-  `user` varchar(45) NOT NULL default '',
-  `userGroup` varchar(45) default '',
+  `user` varchar(60) NOT NULL default '',
+  `userGroup` varchar(60) default '',
   `queue` varchar(45) NOT NULL default '',
   `projectName` varchar(45) NOT NULL default '0',
   `numJobs` int(10) unsigned NOT NULL default '0',
@@ -476,7 +476,7 @@ KEY `resource_name` (`resource_name`)) ENGINE=MEMORY;
 DROP TABLE IF EXISTS `grid_job_daily_stats`;
 CREATE TABLE `grid_job_daily_stats` (
   `clusterid` int(10) unsigned NOT NULL default '0',
-  `user` varchar(45) NOT NULL default '',
+  `user` varchar(60) NOT NULL default '',
   `stat` varchar(45) NOT NULL default '',
   `queue` varchar(45) NOT NULL default '',
   `from_host` varchar(64) NOT NULL default '',
@@ -510,7 +510,7 @@ CREATE TABLE `grid_job_daily_stats` (
 DROP TABLE IF EXISTS `grid_job_interval_stats`;
 CREATE TABLE `grid_job_interval_stats` (
   `clusterid` int(10) unsigned NOT NULL default '0',
-  `user` varchar(45) NOT NULL default '',
+  `user` varchar(60) NOT NULL default '',
   `stat` varchar(45) NOT NULL default '',
   `queue` varchar(60) NOT NULL default '',
   `from_host` varchar(64) NOT NULL default '',
@@ -551,7 +551,7 @@ CREATE TABLE `grid_jobs` (
   `options` int(10) unsigned NOT NULL default '0',
   `options2` int(10) unsigned NOT NULL default '0',
   `options3` int(10) unsigned NOT NULL default '0',
-  `user` varchar(40) NOT NULL default '',
+  `user` varchar(60) NOT NULL default '',
   `stat` varchar(10) NOT NULL default '',
   `prev_stat` varchar(10) NOT NULL default '',
   `stat_changes` int(10) unsigned NOT NULL default '0',
@@ -571,8 +571,8 @@ CREATE TABLE `grid_jobs` (
   `exitInfo` int(10) NOT NULL default '0',
   `postExecCmd` varchar(255) NOT NULL default '',
   `app` varchar(40) NOT NULL default '',
-  `execUsername` varchar(40) NOT NULL default '',
-  `mailUser` varchar(40) default NULL,
+  `execUsername` varchar(60) NOT NULL default '',
+  `mailUser` varchar(512) default NULL,
   `jobname` varchar(128) default NULL,
   `jobPriority` int(10) unsigned NOT NULL default '0',
   `jobPid` int(10) unsigned NOT NULL default '0',
@@ -637,7 +637,7 @@ CREATE TABLE `grid_jobs` (
   `job_start_logged` tinyint(3) unsigned NOT NULL default '0',
   `job_end_logged` tinyint(3) unsigned NOT NULL default '0',
   `job_scan_logged` tinyint(3) unsigned NOT NULL default '0',
-  `userGroup` varchar(256) NOT NULL,
+  `userGroup` varchar(60) NOT NULL,
   `jobDescription` varchar(512) default '',
   `combinedResreq` varchar(512) default '',
   `effectiveResreq` varchar(512) default '',
@@ -1036,7 +1036,7 @@ CREATE TABLE `grid_jobs_stats` (
 
 DROP TABLE IF EXISTS `grid_jobs_users`;
 CREATE TABLE `grid_jobs_users` (
-  `user` varchar(40) NOT NULL default '',
+  `user` varchar(60) NOT NULL default '',
   `clusterid` int(10) unsigned NOT NULL default '0',
   `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`user`,`clusterid`)
@@ -1331,7 +1331,7 @@ DROP TABLE IF EXISTS `grid_queues_shares`;
 CREATE TABLE `grid_queues_shares` (
   `clusterid` int(10) unsigned NOT NULL,
   `queue` varchar(50) NOT NULL,
-  `user_or_group` varchar(45) NOT NULL,
+  `user_or_group` varchar(60) NOT NULL,
   `shareAcctPath` varchar(191) NOT NULL default '',
   `shares` int(10) unsigned NOT NULL,
   `priority` double NOT NULL,
@@ -1387,7 +1387,7 @@ DROP TABLE IF EXISTS `grid_queues_users`;
 CREATE TABLE `grid_queues_users` (
   `clusterid` int(10) unsigned NOT NULL default '0',
   `queue` varchar(45) NOT NULL default '',
-  `user` varchar(45) NOT NULL default '',
+  `user` varchar(60) NOT NULL default '',
   `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`clusterid`,`queue`,`user`)
 ) ENGINE=MEMORY;
@@ -1400,7 +1400,7 @@ DROP TABLE IF EXISTS `grid_queues_users_stats`;
 CREATE TABLE `grid_queues_users_stats` (
   `clusterid` int(10) unsigned NOT NULL,
   `queue` varchar(45) NOT NULL,
-  `user_or_group` varchar(45) NOT NULL,
+  `user_or_group` varchar(60) NOT NULL,
   `nojobs` int(10) unsigned NOT NULL,
   `pendjobs` int(10) unsigned NOT NULL,
   `runjobs` int(10) unsigned NOT NULL,
@@ -1570,7 +1570,7 @@ DROP TABLE IF EXISTS `grid_user_group_members`;
 CREATE TABLE `grid_user_group_members` (
   `clusterid` int(10) unsigned NOT NULL default '0',
   `groupname` varchar(45) NOT NULL default '0',
-  `username` varchar(40) NOT NULL default '0',
+  `username` varchar(60) NOT NULL default '0',
   `shares` int(10) unsigned NOT NULL default '1',
   `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`clusterid`,`groupname`,`username`),
@@ -1585,7 +1585,7 @@ CREATE TABLE `grid_user_group_members` (
 DROP TABLE IF EXISTS `grid_user_group_stats`;
 CREATE TABLE `grid_user_group_stats` (
   `clusterid` int(10) unsigned NOT NULL,
-  `userGroup` varchar(256) NOT NULL,
+  `userGroup` varchar(60) NOT NULL,
   `numRUN` int(10) unsigned NOT NULL default '0',
   `numPEND` int(10) unsigned NOT NULL default '0',
   `numJOBS` int(10) unsigned NOT NULL default '0',
@@ -1608,7 +1608,7 @@ CREATE TABLE `grid_user_group_stats` (
 DROP TABLE IF EXISTS `grid_users_or_groups`;
 CREATE TABLE `grid_users_or_groups` (
   `clusterid` int(10) unsigned NOT NULL default '0',
-  `user_or_group` varchar(45) NOT NULL default '',
+  `user_or_group` varchar(60) NOT NULL default '',
   `type` char(1) NOT NULL default '',
   `procJobLimit` double NOT NULL default '0',
   `maxJobs` int(10) unsigned NOT NULL default '0',
@@ -1862,7 +1862,7 @@ DROP TABLE IF EXISTS `grid_service_class_groups`;
 CREATE TABLE  `grid_service_class_groups` (
   `clusterid` int(10) unsigned NOT NULL,
   `name` varchar(60) NOT NULL,
-  `user_or_group` varchar(40) NOT NULL,
+  `user_or_group` varchar(60) NOT NULL,
   `present` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY  (`clusterid`,`name`,`user_or_group`)
 ) ENGINE=MEMORY COMMENT='User or User Groups Permitted to Use Service Class';
