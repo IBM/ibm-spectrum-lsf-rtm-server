@@ -1811,7 +1811,7 @@ DROP TABLE IF EXISTS `graph_template_input_defs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `graph_template_input_defs` (
-  `graph_template_input_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `graph_template_input_id` int(10) unsigned NOT NULL DEFAULT '0',
   `graph_template_item_id` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`graph_template_input_id`,`graph_template_item_id`)
 ) ENGINE=InnoDB COMMENT='Stores the relationship for what graph items are associated';

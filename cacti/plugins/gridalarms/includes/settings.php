@@ -128,6 +128,9 @@ function gridalarms_config_settings() {
 
 	if (isset($temp)) {
 		$settings['alerts'] = array_merge($temp, $settings['alerts']);
+
+		$settings['alerts']['thold_disable_all']['friendly_name'] = __('Disable All Thresholds and Alerts', 'gridalarms');
+		$settings['alerts']['thold_disable_all']['description'] = __('Checking this box will disable Alerting on all Thresholds and Grid Alerts.  This can be used when it is necessary to perform maintenance on your network and/or data centers.', 'gridalarms');
 	}
 }
 
