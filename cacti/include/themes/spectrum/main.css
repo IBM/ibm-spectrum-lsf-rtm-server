@@ -1305,8 +1305,9 @@ legend {
 }
 
 .cactiTableButton.debug {
-	background: transparent;
+	background: transparent !important;
 	float: right;
+	height: 20px;
 	padding: 0px;
 	padding-bottom:3px;
 	margin-right: -5px;

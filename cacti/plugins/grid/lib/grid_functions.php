@@ -10322,12 +10322,16 @@ function session_auth() {
 	curl_setopt($ch, CURLOPT_POSTFIELDS, 'json=' . $output);
 	$out = curl_exec($ch);
 
-	$json_decode_content_response = json_decode($out,true);
-
-//	print_r($json_decode_content_response);
-	$rsp_content = $json_decode_content_response['rsp'];
-
-	return $rsp_content['key'];
+	if(!empty($out)) {
+		$json_decode_content_response = json_decode($out,true);
+		$rsp_content = $json_decode_content_response['rsp'];
+		return $rsp_content['key'];
+	} else {
+		$errno   = curl_errno($ch);
+		$errmsg  = curl_error($ch);
+		cacti_log('DEBUG: Connect advocate service fail with errno["' . $errno . '"], errmsg["' . $errmsg . '"]', false, 'ADVOCATE', POLLER_VERBOSITY_DEBUG);
+	}
+	return '';
 }
 
 /* substitute_cluster_data - takes a string and substitutes all host variables contained in it
