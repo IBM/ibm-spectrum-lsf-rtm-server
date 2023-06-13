@@ -780,7 +780,7 @@ function rrdtool_function_update($update_cache_array, $rrdtool_pipe = false) {
 		if (is_array($rrd_fields['times']) && cacti_sizeof($rrd_fields['times'])) {
 			/* create the rrd if one does not already exist */
 			if (read_config_option('storage_location') > 0) {
-				$file_exists = rrdtool_execute("file_exists $rrd_path" , true, RRDTOOL_OUTPUT_BOOLEAN, $rrdtool_pipe, 'POLLER');
+				$file_exists = rrdtool_execute("file_exists $rrd_path", true, RRDTOOL_OUTPUT_BOOLEAN, $rrdtool_pipe, 'POLLER');
 			} else {
 				$file_exists = file_exists($rrd_path);
 			}
@@ -793,6 +793,16 @@ function rrdtool_function_update($update_cache_array, $rrdtool_pipe = false) {
 				$create_rrd_file = true;
 			}
 
+			$unused_data_source_names = array_rekey(
+				db_fetch_assoc_prepared('SELECT DISTINCT dtr.data_source_name, dtr.data_source_name
+					FROM data_template_rrd AS dtr
+					LEFT JOIN graph_templates_item AS gti
+					ON dtr.id = gti.task_item_id
+					WHERE dtr.local_data_id = ? AND gti.task_item_id IS NULL',
+					array($rrd_fields['local_data_id'])),
+				'data_source_name', 'data_source_name'
+			);
+
 			foreach ($rrd_fields['times'] as $update_time => $field_array) {
 				if (empty($update_time)) {
 					/* default the rrdupdate time to now */
@@ -804,9 +814,13 @@ function rrdtool_function_update($update_cache_array, $rrdtool_pipe = false) {
 				$rrd_update_template = '';
 
 				foreach ($field_array as $field_name => $value) {
+					if (cacti_sizeof($unused_data_source_names) && isset($unused_data_source_names[$field_name])) {
+						continue;
+					}
+
 					if ($rrd_update_template != '') {
 						$rrd_update_template .= ':';
-						$rrd_update_values .= ':';
+						$rrd_update_values   .= ':';
 					}
 
 					$rrd_update_template .= $field_name;
@@ -819,10 +833,14 @@ function rrdtool_function_update($update_cache_array, $rrdtool_pipe = false) {
 					$rrd_update_values .= $value;
 				}
 
-				if (cacti_version_compare(get_rrdtool_version(),'1.5','>=')) {
-					$update_options='--skip-past-updates';
+				if (cacti_version_compare(get_rrdtool_version(), '1.5', '>=')) {
+					$update_options = '--skip-past-updates';
 				} else {
-					$update_options='';
+					$update_options = '';
+				}
+
+				if (isset($rrd_fields['template']) && $rrd_update_template == '') {
+					$rrd_update_template = $rrd_fields['template'];
 				}
 
 				rrdtool_execute("update $rrd_path $update_options --template $rrd_update_template $rrd_update_values", true, RRDTOOL_OUTPUT_STDOUT, $rrdtool_pipe, 'POLLER');
@@ -976,8 +994,10 @@ function rrdtool_function_fetch($local_data_id, $start_time, $end_time, $resolut
 						if ($show_unknown) {
 							$fetch_array['values'][$index][$timestamp] = 'U';
 						}
-					} else {
-						$fetch_array['values'][$index][$timestamp] = $number + 0;
+					} elseif (is_numeric($number)) {
+						$fetch_array['values'][$index][$timestamp] = $number;
+					} elseif ($show_unknown) {
+						$fetch_array['values'][$index][$timestamp] = 'U';
 					}
 				}
 			}

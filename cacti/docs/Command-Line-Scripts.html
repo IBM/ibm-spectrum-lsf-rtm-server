@@ -236,7 +236,7 @@ Localhost - mtaReceivedVolume   SNMP Version: 1, Community: somesecret, OID: .1.
 <p>There are several circumstances, that may result in the poller cache being out of sync. An example would be a change of the name of a script used in a <code>Data Input Method</code>. This change is <em>not</em> automatically propagated to the poller cache. It is required, to run <code>php -q rebuild poller_cache.php</code> manually.</p>
 <p>Calling the script with the parameter <code>--help</code> yields</p>
 <pre class="console"><code>shell&gt;php -q rebuild_poller_cache.php --help
-Cacti Rebuild Poller Cache Script 1.0, Copyright 2004-2018 - The Cacti Group
+Cacti Rebuild Poller Cache Script 1.0, Copyright 2004-2023 - The Cacti Group
 
 usage: rebuild_poller_cache.php [-d] [-h] [--help] [-v] [--version]
 
@@ -294,7 +294,7 @@ shell&gt;
 <p>If the method is set to <code>Verify All Fields</code>, all indexes of the data source are checked for changes. This is of particular interest e.g. in cases, where the index is non-numeric (e.g. a MAC address). It should be noted that in the 1.0 and 1.1 releases, this method was found to be broken and has been corrected since 1.2.</p>
 <p>If you feel the need for manual re-indexing, you may run it from CLI. Calling the script with the parameter <code>--help</code> yields</p>
 <pre class="console"><code>shell&gt;php -q poller_reindex_hosts.php --help
-Cacti Reindex Host Script 1.2, Copyright 2004-2018 - The Cacti Group
+Cacti Reindex Host Script 1.2, Copyright 2004-2023 - The Cacti Group
 
 usage: poller_reindex_hosts.php --id=[host_id|All] [--qid=[ID|All]] [--host-descr=[description]]
                            [-d] [-h] [--help] [-v] [--version]
@@ -344,7 +344,7 @@ DEBUG: Data query number &#39;1&#39; host: &#39;2&#39; SNMP Query Id: &#39;1&#39
 <p>During normal poller operation, all retrieved results are intermediately stored in the table named poller_output After execution of cmd.php or Spine, this table holds all results. The poller.php finally issues all rrdtool update operations. Thus, after polling has completed, the table should be empty.</p>
 <p>Conditions may arise, where the table is not (completely) emptied. The most often known issue is lack of php memory. In those cases, the table is bigger than the php memory size, thus not all items are handled correctly. If that issue occurs, you may save all pending updates <em>after increasing PHP memory appropriately</em> by running this very script. Calling the script with the parameter <code>--help</code> yields</p>
 <pre class="console"><code>shell&gt;php -q poller_output_empty.php --help
-Cacti Empty Poller Output Table Script 1.0, Copyright 2004-2018 - The Cacti Group
+Cacti Empty Poller Output Table Script 1.0, Copyright 2004-2023 - The Cacti Group
 
 usage: poller_output_empty.php [-h] [--help] [-v] [--version]
 
@@ -386,7 +386,7 @@ shell&gt;
 <h2 id="reapply-suggested-names-to-graphs">Reapply Suggested Names to Graphs</h2>
 <p>For a general understanding of suggested names used with data queries, please see ?. Be aware, that changes to the <code>Suggested Names</code> section of a data query will not automatically be propagated to all existing graphs. This is, where poller_graphs_reapply_names.php drops in. Calling the script with the parameter <code>--help</code> yields</p>
 <pre class="console"><code>shell&gt;php -q poller_graphs_reapply_names.php --help
-Cacti Reapply Graph Names Script 1.0, Copyright 2004-2018 - The Cacti Group
+Cacti Reapply Graph Names Script 1.0, Copyright 2004-2023 - The Cacti Group
 
 usage: poller_graphs_reapply_names.php -id=[host_id|All][host_id1|host_id2|...] [-s=[search_string] [-d] [-h] [--help] [-v] [--version]
 
@@ -418,7 +418,7 @@ DEBUG: Graph Rename Done for Graph &#39;Localhost - Used Space - /boot&#39;
 <p>For use and understanding the limitation of this script, it is of importance to read <a href="User-Management.html">User Management</a></p>
 <p>Calling the script with the parameter <code>--help</code> yields</p>
 <pre class="console"><code>shell&gt;php -q copy_user.php --help
-Cacti Copy User Utility, Version 1.2.0, Copyright (C) 2004-2018 The Cacti Group
+Cacti Copy User Utility, Version 1.2.0, Copyright (C) 2004-2023 The Cacti Group
 usage: copy_cacti_user.php &lt;template user&gt; &lt;new user&gt;
 
 A utility to copy on local Cacti user and their settings to a new one.
@@ -476,7 +476,7 @@ User copied...
 <h2 id="add-a-new-device">Add a New Device</h2>
 <p>While it is an easy task to add a new device from the panels, this would be a tedious task for creating dozens of hundreds of devices in one turn. This is, where the script <code>add_device.php</code> comes in. First, let's have a look at the whole list of features it provides. Calling the script with the parameter <code>--help</code> yields</p>
 <pre class="console"><code>shell&gt;php -q add_device.php --help
-Add Device Script 1.0, Copyright 2004-2018 - The Cacti Group
+Add Device Script 1.0, Copyright 2004-2023 - The Cacti Group
 
 A simple command line utility to add a device in Cacti
 
@@ -576,7 +576,7 @@ Success - new device-id: (11)
 <p>Nevertheless, it is sometimes suitable to manually associate a certain data query with a single host only without changing any host template. This is, where the script <code>add_data_query.php</code> comes in. First, let's have a look at the whole list of features it provides. Calling the script with the parameter <code>--help</code> yields</p>
 <pre class="console"><code>shell&gt;php -q add_data_query.php --help
 
-Add Data Query Script 1.0, Copyright 2004-2018 - The Cacti Group
+Add Data Query Script 1.0, Copyright 2004-2023 - The Cacti Group
 
 A simple command line utility to add a data query to an existing device in Cacti
 
@@ -628,7 +628,7 @@ Success - Host (11: router.mydomain.com) data query (1: SNMP - Interface Statist
 <p>Nevertheless, it is sometimes suitable to manually associate a certain graph template with a single host only without changing any host template. This is, where the script <code>add_graph_template.php</code> comes in. First, let's have a look at the whole list of features it provides. Calling the script with the parameter <code>--help</code> yields</p>
 <pre class="console"><code>shell&gt;php -q add_graph_template.php --help
 
-Add Graph Template Script 1.0, Copyright 2004-2018 - The Cacti Group
+Add Graph Template Script 1.0, Copyright 2004-2023 - The Cacti Group
 
 A simple command line utility to associate a graph template with a host in Cacti
 
@@ -676,7 +676,7 @@ Success: Graph Template associated for host: (11: router) - graph-template: (7: 
 <h2 id="add-a-new-graph">Add a New Graph</h2>
 <p>You won't stop now as you've just created a device from cli. Surely, the task of setting up graphs is the next step. This is done using <code>add_graphs.php</code>. Calling the script with the parameter <code>--help</code> yields</p>
 <pre class="console"><code>shell&gt;php -q add_graphs.php
-Add Graphs Script 1.2, Copyright 2008 - The Cacti Group
+Add Graphs Script 1.2, Copyright 2008 - 2023 The Cacti Group
 
 A simple command line utility to add graphs in Cacti
 
@@ -907,7 +907,7 @@ Graph Added - graph-id: (40) - data-source-id: (65)
 <p>Now, that we've created some nice graphs, they should be put the graph trees. This is done using <code>add_tree.php</code>. As you will notice soon, it is possible to even add header items, hosts and graphs to a tree as well as adding a new tree itself. But let us first see the help output. Calling the script with the parameter <code>--help</code> yields</p>
 <pre class="console"><code>shell&gt;php -q add_tree.php --help
 
-Add Tree Script 1.0, Copyright 2004-2018 - The Cacti Group
+Add Tree Script 1.0, Copyright 2004-2023 - The Cacti Group
 
 A simple command line utility to add objects to a tree in Cacti
 
@@ -1060,7 +1060,7 @@ Added Node node-id: (28)
 <p>This script is used to specify special graph permissions to users. The list of parameters is displayed as usual when calling the script with the parameter <code>--help</code></p>
 <pre class="console"><code>shell&gt;php -q add_perms.php --help
 
-Add Permissions Script 1.0, Copyright 2004-2018 - The Cacti Group
+Add Permissions Script 1.0, Copyright 2004-2023 - The Cacti Group
 
 A simple command line utility to add permissions to tree items in Cacti
 
@@ -1142,6 +1142,6 @@ Known Host Graphs: (id, name, template)
 </code></pre>
 <p><code>--user-id=4</code> must specify an existing users. Else, an error message will be printed. As <code>--item-type=graph</code> is given, <code>--item-id=1</code> must specify a valid graph. Again, if no graph template with this specific id exists, an error message will be printed. No output is produced on successful operations.</p>
 <hr />
-<p><copy>Copyright (c) 2004-2022 The Cacti Group</copy></p>
+<p><copy>Copyright (c) 2004-2023 The Cacti Group</copy></p>
 </body>
 </html>

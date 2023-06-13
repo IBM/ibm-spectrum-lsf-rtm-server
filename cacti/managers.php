@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2022 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -930,7 +930,7 @@ function form_actions(){
 			get_filter_request_var('id');
 			/* ==================================================== */
 
-			$selected_items = unserialize(stripslashes(get_nfilter_request_var('selected_items')));
+			$selected_items = unserialize(stripslashes(get_nfilter_request_var('selected_items')), array('allowed_classes' => false));
 
 			if ($selected_items !== false) {
 				if (get_nfilter_request_var('drp_action') == '1') { // disable
@@ -1031,8 +1031,11 @@ function form_actions(){
 				if (strstr($key, 'chk_')) {
 					/* grep mib and notification name */
 					$row_id = substr($key, 4);
+
 					list($mib, $name) = explode('__', $row_id);
+
 					$list .= '<li>' . html_escape($name) . ' (' . html_escape($mib) .')</li>';
+
 					$selected_items[$mib][$name] = 1;
 				}
 			}

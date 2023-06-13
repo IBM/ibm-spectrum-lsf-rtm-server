@@ -689,9 +689,10 @@ function boost_process_poller_output($local_data_id, $rrdtool_pipe = '') {
 	/* install the boost error handler */
 	set_error_handler('boost_error_handler');
 
-	/* acquire lock in order to prevent race conditions */
-	while (!db_fetch_cell("SELECT GET_LOCK('boost.single_ds.$local_data_id', 1)")) {
-		usleep(50000);
+	if (cacti_version_compare(get_rrdtool_version(), '1.5', '<')) {
+		while (!db_fetch_cell("SELECT GET_LOCK('boost.single_ds.$local_data_id', 1)")) {
+			usleep(50000);
+		}
 	}
 
 	$data_ids_to_get = read_config_option('boost_rrd_update_max_records_per_select');
@@ -779,7 +780,9 @@ function boost_process_poller_output($local_data_id, $rrdtool_pipe = '') {
 
 	boost_timer('delete', BOOST_TIMER_END);
 
-	db_execute("SELECT RELEASE_LOCK('boost.single_ds.$local_data_id')");
+	if (cacti_version_compare(get_rrdtool_version(), '1.5', '<')) {
+		db_execute("SELECT RELEASE_LOCK('boost.single_ds.$local_data_id')");
+	}
 
 	/* log memory */
 	if ($get_memory) {
@@ -896,16 +899,20 @@ function boost_process_poller_output($local_data_id, $rrdtool_pipe = '') {
 				$outlen += strlen($output);
 				$vals_in_buffer++;
 			} elseif ($value != '') {
-				/* break out multiple value output to an array */
-				$values = explode(' ', $value);
+				$values = preg_split('/\s+/', $value);
 
 				if (!$multi_vals_set) {
-					$rrd_field_names = array_rekey(db_fetch_assoc_prepared('SELECT
-						data_template_rrd.data_source_name,
-						data_input_fields.data_name
-						FROM (data_template_rrd, data_input_fields)
-						WHERE data_template_rrd.data_input_field_id = data_input_fields.id
-						AND data_template_rrd.local_data_id = ?', array($item['local_data_id'])), 'data_name', 'data_source_name');
+					$rrd_field_names = array_rekey(
+						db_fetch_assoc_prepared('SELECT DISTINCT dtr.data_source_name, dif.data_name
+							FROM graph_templates_item AS gti
+							INNER JOIN data_template_rrd AS dtr
+							ON gti.task_item_id = dtr.id
+							INNER JOIN data_input_fields AS dif
+							ON dtr.data_input_field_id = dif.id
+							WHERE dtr.local_data_id = ?',
+							array($item['local_data_id'])),
+						'data_name', 'data_source_name'
+					);
 
 					$rrd_tmpl = '';
 				}
@@ -913,9 +920,11 @@ function boost_process_poller_output($local_data_id, $rrdtool_pipe = '') {
 				$first_tmpl = true;
 				$multi_ok   = false;
 
-				for ($i=0; $i<cacti_count($values); $i++) {
-					if (preg_match("/^([a-zA-Z0-9_\.-]+):([eE0-9Uu\+\.-]+)$/", $values[$i], $matches)) {
-						if (isset($rrd_field_names[$matches[1]])) {
+				if (cacti_sizeof($values)) {
+					foreach($values as $value) {
+						$matches = explode(':', $value);
+
+						if (isset($rrd_field_names[$matches[0]])) {
 							$multi_ok = true;
 
 							if (!$multi_vals_set) {
@@ -923,16 +932,16 @@ function boost_process_poller_output($local_data_id, $rrdtool_pipe = '') {
 									$rrd_tmpl .= ':';
 								}
 
-								$rrd_tmpl  .= $rrd_field_names[$matches[1]];
+								$rrd_tmpl  .= $rrd_field_names[$matches[0]];
 								$first_tmpl = false;
 							}
 
-							if (is_numeric($matches[2]) || ($matches[2] == 'U')) {
-								$output  = ':' . $matches[2];
+							if (is_numeric($matches[1]) || ($matches[1] == 'U')) {
+								$output  = ':' . $matches[1];
 								$outbuf .= $output;
 								$outlen += strlen($output);
-							} elseif ((function_exists('is_hexadecimal')) && (is_hexadecimal($matches[2]))) {
-								$output  = ':' . hexdec($matches[2]);
+							} elseif ((function_exists('is_hexadecimal')) && (is_hexadecimal($matches[1]))) {
+								$output  = ':' . hexdec($matches[1]);
 								$outbuf .= $output;
 								$outlen += strlen($output);
 							} else {
@@ -1052,13 +1061,16 @@ function boost_get_rrd_filename_and_template($local_data_id) {
 	$ds_null      = array();
 	$ds_nnull     = array();
 
-	$ds_names = db_fetch_assoc_prepared("SELECT data_source_name, rrd_name, rrd_path
+	$ds_names = db_fetch_assoc_prepared("SELECT DISTINCT data_source_name, rrd_name, rrd_path
 		FROM data_template_rrd AS dtr
+		INNER JOIN graph_templates_item AS gti
+		ON gti.task_item_id = dtr.id
 		INNER JOIN poller_item AS pi
-		ON (pi.local_data_id = dtr.local_data_id
-		AND (pi.rrd_name = dtr.data_source_name OR pi.rrd_name = ''))
+		ON pi.local_data_id = dtr.local_data_id
+		AND (pi.rrd_name = dtr.data_source_name OR pi.rrd_name = '')
 		WHERE dtr.local_data_id = ?
-		ORDER BY data_source_name ASC", array($local_data_id));
+		ORDER BY data_source_name ASC",
+		array($local_data_id));
 
 	if (cacti_sizeof($ds_names)) {
 		foreach($ds_names as $ds_name) {
@@ -1311,9 +1323,9 @@ function boost_rrdtool_function_update($local_data_id, $rrd_path, $rrd_update_te
 	}
 
 	if (cacti_version_compare(get_rrdtool_version(), '1.5', '>=')) {
-		$update_options='--skip-past-updates';
+		$update_options = '--skip-past-updates';
 	} else {
-		$update_options='';
+		$update_options = '';
 	}
 
 	if ($valid_entry) {
@@ -1323,6 +1335,7 @@ function boost_rrdtool_function_update($local_data_id, $rrd_path, $rrd_update_te
 			cacti_log("update $rrd_path $update_options $rrd_update_values", false, 'BOOST', POLLER_VERBOSITY_MEDIUM);
 			rrdtool_execute("update $rrd_path $update_options $rrd_update_values", false, RRDTOOL_OUTPUT_STDOUT, $rrdtool_pipe, 'BOOST');
 		}
+
 		return 'OK';
 	}
 }

@@ -41,7 +41,7 @@ if (file_exists(dirname(__FILE__) . '/config.php')) {
 	die('config.php file not detected.');
 }
 
-define('COPYRIGHT_YEARS', '2006-2022');
+define('COPYRIGHT_YEARS', '2006-2023');
 
 include_once(dirname(__FILE__) . '/../lib/database.php');
 include_once(dirname(__FILE__) . '/../lib/functions.php');

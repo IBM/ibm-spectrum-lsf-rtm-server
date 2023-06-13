@@ -226,6 +226,8 @@ function get_site_locations() {
 		FROM host
 		WHERE site_id = ?
 		AND location LIKE ?
+		AND location != ""
+		AND location IS NOT NULL
 		ORDER BY location',
 		array($site_id, "%$term%"));
 
@@ -233,6 +235,11 @@ function get_site_locations() {
 		foreach($locations as $l) {
 			$return[] = array('label' => $l['location'], 'value' => $l['location'], 'id' => $l['location']);
 		}
+	}
+
+	if (!cacti_sizeof($return)) {
+		$return[] = array('label' => html_escape($term), 'value' => html_escape($term), 'id' => html_escape($term));
+		$return[] = array('label' => __('None'), 'value' => '', 'id' => __('None'));
 	}
 
 	print json_encode($return);

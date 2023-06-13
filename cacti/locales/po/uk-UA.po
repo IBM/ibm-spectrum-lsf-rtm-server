@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Cacti 1.2.23\n"
 "Report-Msgid-Bugs-To: developers@cacti.net\n"
-"POT-Creation-Date: 2023-01-02 14:47+0000\n"
+"POT-Creation-Date: 2022-12-17 15:36-0500\n"
 "PO-Revision-Date: 2022-11-26 01:05+0000\n"
 "Last-Translator: Rostyslav Haitkulov <info@ubilling.net.ua>\n"
 "Language-Team: Ukrainian <http://translate.cacti.net/projects/cacti/core-v1-2-x/uk/>\n"
@@ -18,77 +18,53 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.8.1\n"
 
-#: about.php:29 include/global_arrays.php:2605 lib/html.php:2512
+#: about.php:29 include/global_arrays.php:2605 lib/html.php:2491
 msgid "About Cacti"
 msgstr "Про Cacti"
 
 #: about.php:42
-#, fuzzy
-msgid "Cacti is designed to be a complete graphing solution based on the RRDtool Time Series Database (TSDB) and Graphing solution. Its goal is to make the Network Administrator's job easier by taking care of all the important details necessary to create meaningful Graphs."
+msgid "Cacti is designed to be a complete graphing solution based on the RRDtool's framework. Its goal is to make a network administrator's job easier by taking care of all the necessary details necessary to create meaningful graphs."
 msgstr "Cacti розроблено як повне графічне рішення на основі фреймворку RRDtool. Його мета — полегшити роботу адміністратора мережі, подбавши про всі необхідні деталі, необхідні для створення значущих графіків."
 
 #: about.php:44
-#, fuzzy, php-format
-msgid "Please see the official %sCacti website%s for information on how to use Cacti, get support, and updates."
+#, php-format
+msgid "Please see the official %sCacti website%s for information, support, and updates."
 msgstr "Відвідайте офіційний %sвеб-сайт Cacti%s, щоб отримати інформацію, підтримку та оновлення."
 
-#: about.php:48
-#, fuzzy
-msgid "Active Developers"
+#: about.php:46
+msgid "Cacti Developers"
 msgstr "Розробники кактусів"
 
-#: about.php:49
-msgid "Developers working on Cacti, its Architecture, Documentation and Future Releases."
-msgstr ""
-
-#: about.php:61
-#, fuzzy
-msgid "Honorable Mentions"
-msgstr "Розділ меню консолі"
-
-#: about.php:62
-msgid "Contributors to Docuemntation, QA, Packaging, the Forums and our YouTube page."
-msgstr ""
-
-#: about.php:72
-#, fuzzy
-msgid "Emeritus Members"
-msgstr "Член групи"
-
-#: about.php:73
-msgid "Members of the original Cacti Group that have since moved on in their careers.  We continue to wish them the best."
-msgstr ""
-
-#: about.php:83
+#: about.php:59
 msgid "Thanks"
 msgstr "Дякуємо"
 
-#: about.php:86
+#: about.php:62
 #, php-format
 msgid "A very special thanks to %sTobi Oetiker%s, the creator of %sRRDtool%s and the very popular %sMRTG%s."
 msgstr "Особлива подяка %sТобі Етікеру%s, творцю %sRRDtool%s і дуже популярних %sMRTG%s."
 
-#: about.php:89
+#: about.php:65
 msgid "The users of Cacti"
 msgstr "Користувачі Cacti"
 
-#: about.php:90
+#: about.php:66
 msgid "Especially anyone who has taken the time to create an issue report, or otherwise help fix a Cacti related problems. Also to anyone who has contributed to supporting Cacti."
 msgstr "Особливо для тих, хто знайшов час, щоб створити звіт про проблему або іншим чином допомогти вирішити проблеми, пов’язані з Cacti. Також усім, хто зробив внесок у підтримку Cacti."
 
-#: about.php:95
+#: about.php:71
 msgid "License"
 msgstr "Ліцензія"
 
-#: about.php:97
+#: about.php:73
 msgid "Cacti is licensed under the GNU GPL:"
 msgstr "Cacti ліцензовано під GNU GPL:"
 
-#: about.php:99 lib/installer.php:1696
+#: about.php:75 lib/installer.php:1696
 msgid "This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version."
 msgstr "Ця програма є вільним програмним забезпеченням; Ви можете розповсюджувати її та/або змінювати згідно умов GNU General Public License, опублікованої Free Software Foundation; 2-ї версії ліцензії (або ж, на ваш вибір), будь-якої пізнішої версії."
 
-#: about.php:101
+#: about.php:77
 msgid "This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details."
 msgstr "Ця програма розповсюджується з надією, що вона буде корисною, але БЕЗ ЖОДНИХ ГАРАНТІЙ; навіть без неявних гарантій ПРИДАТНОСТІ ДЛЯ ПРОДАЖУ чи ПРИДАТНОСТІ ДЛЯ КОНКРЕТНОЇ МЕТИ. Додаткову інформацію дивіться в ліцензії GNU General Public License."
 
@@ -105,7 +81,7 @@ msgstr "Ця програма розповсюджується з надією, 
 #: graphs.php:46 host.php:41 host_templates.php:35 host_templates.php:506
 #: host_templates.php:563 include/global_arrays.php:1631
 #: include/global_settings.php:248 lib/api_automation.php:1327
-#: lib/api_automation.php:1389 lib/api_automation.php:1457 lib/html.php:1295
+#: lib/api_automation.php:1389 lib/api_automation.php:1457 lib/html.php:1274
 #: lib/html_form.php:1273 lib/html_reports.php:1751 links.php:28
 #: managers.php:28 pollers.php:33 sites.php:28 tree.php:1609 tree.php:1762
 #: tree.php:1822 tree.php:1843 user_admin.php:28 user_domains.php:30
@@ -170,7 +146,7 @@ msgstr "Натисніть \"Продовжити\" для видалення н
 #: host.php:470 host.php:484 host.php:498 host.php:507 host.php:536
 #: host.php:548 host_templates.php:271 host_templates.php:285
 #: host_templates.php:296 host_templates.php:345 host_templates.php:408
-#: lib/clog_webapi.php:228 lib/html.php:2546 lib/html_form.php:1272
+#: lib/clog_webapi.php:228 lib/html.php:2525 lib/html_form.php:1272
 #: lib/html_form.php:1284 lib/html_form.php:1295 links.php:197 links.php:206
 #: links.php:215 managers.php:1004 managers.php:1062 plugins.php:670
 #: pollers.php:559 pollers.php:568 pollers.php:577 pollers.php:586
@@ -207,7 +183,7 @@ msgstr "Відміна"
 #: host.php:452 host.php:461 host.php:470 host.php:484 host.php:498
 #: host.php:507 host.php:536 host.php:548 host_templates.php:271
 #: host_templates.php:285 host_templates.php:296 host_templates.php:346
-#: host_templates.php:409 lib/clog_webapi.php:229 lib/html.php:2545
+#: host_templates.php:409 lib/clog_webapi.php:229 lib/html.php:2524
 #: lib/html_reports.php:499 links.php:197 links.php:206 links.php:215
 #: managers.php:1004 managers.php:1062 pollers.php:559 pollers.php:568
 #: pollers.php:577 pollers.php:586 pollers.php:595 sites.php:382 sites.php:392
@@ -374,7 +350,7 @@ msgstr "Подробиці"
 msgid "Items"
 msgstr "Елементи"
 
-#: aggregate_graphs.php:677 aggregate_graphs.php:683 lib/html.php:1993
+#: aggregate_graphs.php:677 aggregate_graphs.php:683 lib/html.php:1972
 #: lib/html_reports.php:1381
 msgid "Preview"
 msgstr "Перегляд"
@@ -467,7 +443,7 @@ msgstr "Графи відповідності"
 #: graph_view.php:621 graphs.php:2043 graphs_new.php:457 host.php:1621
 #: host_templates.php:727 lib/api_automation.php:140 lib/api_automation.php:473
 #: lib/api_automation.php:707 lib/api_automation.php:1066
-#: lib/clog_webapi.php:604 lib/html.php:266 lib/html_filter.php:63
+#: lib/clog_webapi.php:604 lib/html.php:245 lib/html_filter.php:63
 #: lib/html_graph.php:203 lib/html_reports.php:1836 lib/html_tree.php:136
 #: lib/html_tree.php:982 links.php:310 managers.php:149 managers.php:493
 #: managers.php:725 plugins.php:459 pollers.php:879 rrdcheck.php:226
@@ -489,8 +465,8 @@ msgstr "Пошук"
 #: data_sources.php:1777 graph_view.php:485 graph_view.php:680
 #: graph_view.php:729 graphs.php:2060 graphs.php:2224 host.php:1732
 #: include/global_arrays.php:975 include/global_arrays.php:1207
-#: include/global_arrays.php:1991 lib/api_automation.php:283 lib/html.php:1707
-#: lib/html.php:1709 lib/html.php:1787 lib/html_graph.php:209
+#: include/global_arrays.php:1991 lib/api_automation.php:283 lib/html.php:1686
+#: lib/html.php:1688 lib/html.php:1766 lib/html_graph.php:209
 #: lib/html_tree.php:1037 lib/html_tree.php:1366 tree.php:839 tree.php:2274
 #: user_admin.php:877 user_admin.php:1144 user_admin.php:2539
 #: user_group_admin.php:874 user_group_admin.php:1028 user_group_admin.php:2292
@@ -539,7 +515,7 @@ msgstr "Частина агрегату"
 #: graph_view.php:629 graphs.php:2034 graphs_new.php:446 host.php:1611
 #: host_templates.php:770 lib/api_automation.php:195 lib/api_automation.php:464
 #: lib/api_automation.php:729 lib/api_automation.php:1121
-#: lib/clog_webapi.php:529 lib/html.php:1559 lib/html_filter.php:80
+#: lib/clog_webapi.php:529 lib/html.php:1538 lib/html_filter.php:80
 #: lib/html_graph.php:190 lib/html_reports.php:1867 lib/html_tree.php:1024
 #: links.php:330 managers.php:171 managers.php:515 managers.php:745
 #: plugins.php:495 pollers.php:924 sites.php:521 tree.php:2150
@@ -658,7 +634,7 @@ msgstr "Ні"
 #: host_templates.php:918 include/global_settings.php:501
 #: include/global_settings.php:858 include/global_settings.php:1877
 #: lib/api_automation.php:1438 lib/installer.php:1890 lib/installer.php:1918
-#: lib/installer.php:3497 links.php:404 tree.php:2307 tree.php:2308
+#: lib/installer.php:3490 links.php:404 tree.php:2307 tree.php:2308
 #: user_admin.php:2246 user_domains.php:767 user_domains.php:771
 #: user_group_admin.php:2020 vdef.php:909
 msgid "Yes"
@@ -696,7 +672,7 @@ msgstr "Шаблон"
 #: lib/api_automation.php:168 lib/api_automation.php:429
 #: lib/api_automation.php:446 lib/api_automation.php:1076
 #: lib/api_automation.php:1094 lib/auth.php:3108 lib/auth.php:3150
-#: lib/html.php:2071 lib/html.php:2094 lib/html.php:2132
+#: lib/html.php:2050 lib/html.php:2073 lib/html.php:2111
 #: lib/html_reports.php:877 lib/html_reports.php:881 lib/html_reports.php:996
 #: lib/html_reports.php:1006 lib/html_reports.php:1846 managers.php:482
 #: managers.php:735 user_admin.php:2521 user_admin.php:2738
@@ -728,13 +704,13 @@ msgstr "Будь-який"
 #: lib/api_automation.php:151 lib/api_automation.php:430
 #: lib/api_automation.php:447 lib/api_automation.php:589
 #: lib/api_automation.php:1077 lib/auth.php:3111 lib/auth.php:3153
-#: lib/auth.php:3192 lib/html.php:226 lib/html.php:2072 lib/html.php:2092
-#: lib/html.php:2133 lib/html_form.php:331 lib/html_reports.php:888
+#: lib/auth.php:3192 lib/html.php:205 lib/html.php:2051 lib/html.php:2071
+#: lib/html.php:2112 lib/html_form.php:331 lib/html_reports.php:888
 #: lib/html_reports.php:892 lib/html_reports.php:922 lib/html_reports.php:996
 #: lib/html_reports.php:1002 lib/html_reports.php:1006
 #: lib/html_reports.php:1014 lib/html_reports.php:1025
 #: lib/html_reports.php:1045 lib/html_reports.php:1299
-#: lib/html_reports.php:1304 lib/html_reports.php:1309 package_import.php:647
+#: lib/html_reports.php:1304 lib/html_reports.php:1309 package_import.php:637
 #: settings.php:527 settings.php:549 settings.php:577 templates_import.php:326
 #: templates_import.php:358 user_admin.php:2522 user_admin.php:2739
 #: user_group_admin.php:2275 user_group_admin.php:2395 utilities.php:2026
@@ -883,7 +859,7 @@ msgid "Cannot be reused for %d password changes"
 msgstr "Не можна повторно використовувати для %d змін пароля"
 
 #: auth_changepassword.php:315 auth_changepassword.php:322
-#: include/global_form.php:1567 lib/functions.php:3636 lib/html.php:2481
+#: include/global_form.php:1567 lib/functions.php:3635 lib/html.php:2460
 msgid "Change Password"
 msgstr "Змінити пароль"
 
@@ -896,7 +872,7 @@ msgid "Please enter your new Cacti password."
 msgstr "Будь ласка, введіть свій новий пароль Cacti."
 
 #: auth_changepassword.php:342 auth_login.php:306 auth_login.php:309
-#: include/global_settings.php:1786 lib/functions.php:5257
+#: include/global_settings.php:1786 lib/functions.php:5256
 msgid "Username"
 msgstr "Ім'я користувача"
 
@@ -976,7 +952,7 @@ msgstr "Вхід в Аккаунт"
 msgid "Enter your Username and Password below"
 msgstr "Введіть своє ім'я користувача та пароль нижче"
 
-#: auth_login.php:314 include/global_form.php:1534 lib/functions.php:5258
+#: auth_login.php:314 include/global_form.php:1534 lib/functions.php:5257
 msgid "Password"
 msgstr "Пароль"
 
@@ -1004,7 +980,7 @@ msgstr "Вхід"
 
 #: auth_profile.php:76 include/global_settings.php:38
 #: include/global_settings.php:1167 include/global_settings.php:1470
-#: lib/html.php:2494 managers.php:39 user_admin.php:1830
+#: lib/html.php:2473 managers.php:39 user_admin.php:1830
 #: user_group_admin.php:1712
 msgid "General"
 msgstr "Загальні"
@@ -1014,18 +990,18 @@ msgid "User Account Details"
 msgstr "Деталі облікового запису користувача"
 
 #: auth_profile.php:300 include/global_arrays.php:839
-#: include/global_settings.php:2688 lib/html.php:1953 lib/html.php:1975
-#: lib/html.php:2475
+#: include/global_settings.php:2688 lib/html.php:1932 lib/html.php:1954
+#: lib/html.php:2454
 msgid "Tree View"
 msgstr "Ієрархічний вигляд"
 
-#: auth_profile.php:304 include/global_arrays.php:840 lib/html.php:1960
-#: lib/html.php:1984 lib/html.php:2476
+#: auth_profile.php:304 include/global_arrays.php:840 lib/html.php:1939
+#: lib/html.php:1963 lib/html.php:2455
 msgid "List View"
 msgstr "Відобразити списком"
 
-#: auth_profile.php:308 include/global_arrays.php:841 lib/html.php:1967
-#: lib/html.php:2477
+#: auth_profile.php:308 include/global_arrays.php:841 lib/html.php:1946
+#: lib/html.php:2456
 msgid "Preview View"
 msgstr "Попередній перегляд"
 
@@ -1235,7 +1211,7 @@ msgstr "SNMP"
 #: lib/api_automation.php:280 lib/api_automation.php:573
 #: lib/api_automation.php:1090 lib/api_automation.php:1221
 #: lib/html_reports.php:1842 lib/installer.php:1810 managers.php:218
-#: package_import.php:492 package_import.php:577 plugins.php:465
+#: package_import.php:492 package_import.php:567 plugins.php:465
 #: plugins.php:588 pollers.php:1013 templates_import.php:224
 #: templates_import.php:263 user_admin.php:1144 user_group_admin.php:1028
 #: utilities.php:2066
@@ -1288,8 +1264,8 @@ msgstr "Очистити виявлені пристрої"
 #: automation_snmp.php:563 automation_snmp.php:564 automation_snmp.php:565
 #: automation_snmp.php:566 automation_snmp.php:567 automation_snmp.php:568
 #: data_debug.php:624 data_source_profiles.php:73 host.php:1811
-#: lib/functions.php:5603 lib/functions.php:5607 lib/html.php:1182
-#: lib/html.php:1248 lib/html_reports.php:1632 lib/html_reports.php:1658
+#: lib/functions.php:5602 lib/functions.php:5606 lib/html.php:1161
+#: lib/html.php:1227 lib/html_reports.php:1632 lib/html_reports.php:1658
 #: lib/html_reports.php:1729 lib/html_reports.php:1730
 #: lib/html_reports.php:1731 plugins.php:732 pollers.php:1121
 #: user_admin.php:2240 utilities.php:738 utilities.php:1180 utilities.php:2602
@@ -1440,7 +1416,7 @@ msgstr "Увімкнути"
 #: include/global_settings.php:1595 include/global_settings.php:1608
 #: include/global_settings.php:1633 include/global_settings.php:1647
 #: include/global_settings.php:1737 include/global_settings.php:2501
-#: lib/api_automation.php:170 lib/api_automation.php:1096 lib/html.php:2571
+#: lib/api_automation.php:170 lib/api_automation.php:1096 lib/html.php:2550
 #: lib/html_reports.php:1848 lib/html_reports.php:1986 lib/html_utility.php:920
 #: links.php:500 managers.php:243 managers.php:598 pollers.php:48
 #: user_admin.php:1011 user_domains.php:412 user_group_admin.php:695
@@ -2266,7 +2242,7 @@ msgstr "Версія"
 msgid "Community"
 msgstr "Спільнота"
 
-#: automation_snmp.php:536 lib/functions.php:5253
+#: automation_snmp.php:536 lib/functions.php:5252
 msgid "Port"
 msgstr "Порт"
 
@@ -2323,7 +2299,7 @@ msgstr "жоден"
 #: automation_snmp.php:573 automation_templates.php:524 cdef.php:612
 #: color_templates.php:111 data_queries.php:790 data_queries.php:897
 #: lib/api_automation.php:1314 lib/api_automation.php:1376
-#: lib/api_automation.php:1444 lib/html.php:1280 lib/html_reports.php:1744
+#: lib/api_automation.php:1444 lib/html.php:1259 lib/html_reports.php:1744
 #: lib/html_reports.php:1746 tree.php:2292 tree.php:2299 vdef.php:611
 msgid "Move Down"
 msgstr "Перемістити вниз"
@@ -2331,7 +2307,7 @@ msgstr "Перемістити вниз"
 #: automation_snmp.php:579 automation_templates.php:530 cdef.php:618
 #: color_templates.php:117 data_queries.php:795 data_queries.php:902
 #: lib/api_automation.php:1320 lib/api_automation.php:1382
-#: lib/api_automation.php:1450 lib/html.php:1286 lib/html_reports.php:1746
+#: lib/api_automation.php:1450 lib/html.php:1265 lib/html_reports.php:1746
 #: lib/html_reports.php:1748 tree.php:2296 tree.php:2300 vdef.php:617
 msgid "Move Up"
 msgstr "Переміщення вгору"
@@ -2443,7 +2419,7 @@ msgstr "Шаблони автоматизації [новий]"
 msgid "Device Automation Templates"
 msgstr "Шаблони автоматизації пристроїв"
 
-#: automation_templates.php:491 data_sources.php:1667 package_import.php:574
+#: automation_templates.php:491 data_sources.php:1667 package_import.php:564
 #: templates_import.php:260 user_admin.php:1291 user_group_admin.php:1173
 msgid "Template Name"
 msgstr "Ім'я шаблону"
@@ -2507,7 +2483,7 @@ msgstr "Критерії створення дерева"
 msgid "Change Leaf Type"
 msgstr "Змінити тип листа"
 
-#: automation_tree_rules.php:706 lib/installer.php:3692 utilities.php:2597
+#: automation_tree_rules.php:706 lib/installer.php:3679 utilities.php:2597
 #: utilities.php:2598 utilities.php:2601 utilities.php:2602
 msgid "WARNING:"
 msgstr "УВАГА:"
@@ -2554,8 +2530,8 @@ msgstr "КОРІНЬ"
 msgid "No Tree Rules Found"
 msgstr "Правил дерева не знайдено"
 
-#: cactid.php:44 help.php:38 lib/functions.php:5878 lib/functions.php:5941
-#: lib/functions.php:6551 poller.php:369 poller.php:498 poller.php:546
+#: cactid.php:44 help.php:38 lib/functions.php:5877 lib/functions.php:5940
+#: lib/functions.php:6550 poller.php:369 poller.php:498 poller.php:546
 #: poller.php:562 poller.php:704 poller.php:803 poller_automation.php:53
 #: poller_boost.php:313
 msgid "Cacti System Warning"
@@ -2704,6 +2680,10 @@ msgstr "Кількість шаблонів графіків, які викор�
 #: cdef.php:909
 msgid "No CDEFs"
 msgstr "Без CDEF"
+
+#: clog.php:34 clog_user.php:33
+msgid "FATAL: YOU DO NOT HAVE ACCESS TO THIS AREA OF CACTI"
+msgstr "ФАТАЛЬНО: ВИ НЕМАЄТЕ ДОСТУПУ ДО ЦІЄЇ ОБЛАСТІ КАКТУСІВ"
 
 #: color.php:170
 msgid "Unnamed Color"
@@ -2855,13 +2835,13 @@ msgid "Color Item"
 msgstr "Колір предмета"
 
 #: color_templates.php:94 lib/api_aggregate.php:1798 lib/api_aggregate.php:1801
-#: lib/api_aggregate.php:1806 lib/html.php:1204 lib/html_reports.php:1735
+#: lib/api_aggregate.php:1806 lib/html.php:1183 lib/html_reports.php:1735
 #, php-format
 msgid "Item # %d"
 msgstr "Пункт № %d"
 
 #: color_templates.php:133 graph_templates_inputs.php:235
-#: lib/api_aggregate.php:1858 lib/html.php:1305
+#: lib/api_aggregate.php:1858 lib/html.php:1284
 msgid "No Items"
 msgstr "Немає предметів"
 
@@ -3013,7 +2993,7 @@ msgstr "Ремонт джерела даних отримав недійсний
 #: data_debug.php:443 data_debug.php:877 data_queries.php:713
 #: data_sources.php:1013 data_templates.php:678 graphs_items.php:466
 #: include/global_arrays.php:987 include/global_form.php:970
-#: lib/api_aggregate.php:1712 lib/html.php:1160 rrdcheck.php:158
+#: lib/api_aggregate.php:1712 lib/html.php:1139 rrdcheck.php:158
 msgid "Data Source"
 msgstr "Джерело даних"
 
@@ -3021,7 +3001,7 @@ msgstr "Джерело даних"
 msgid "The Data Source to Debug"
 msgstr "Джерело даних для налагодження"
 
-#: data_debug.php:448 lib/html.php:2498 utilities.php:1031 utilities.php:1150
+#: data_debug.php:448 lib/html.php:2477 utilities.php:1031 utilities.php:1150
 msgid "User"
 msgstr "Користувач"
 
@@ -3046,7 +3026,7 @@ msgid "The Status of the Data Source Debug Check."
 msgstr "Статус перевірки налагодження джерела даних."
 
 #: data_debug.php:471 lib/installer.php:2255 lib/installer.php:2287
-#: package_import.php:546
+#: package_import.php:537
 msgid "Writable"
 msgstr "Записуване"
 
@@ -3292,14 +3272,14 @@ msgid "Run checks on currently filtered Data Sources and preserve other results"
 msgstr "Виконайте перевірки відфільтрованих джерел даних і збережіть інші результати"
 
 #: data_debug.php:1062 data_sources.php:1417 data_templates.php:1045
-#: lib/html.php:2507
+#: lib/html.php:2486
 msgid "Profile"
 msgstr "Профіль"
 
 #: data_debug.php:1066 data_debug.php:1082 data_debug.php:1093
 #: data_sources.php:1421 data_sources.php:1438 data_templates.php:1049
 #: graphs.php:2053 graphs_new.php:424 host.php:1588 host_templates.php:737
-#: lib/clog_webapi.php:545 lib/html.php:225 lib/html_reports.php:977
+#: lib/clog_webapi.php:545 lib/html.php:204 lib/html_reports.php:977
 #: lib/html_reports.php:2073 plugins.php:469 settings.php:526 settings.php:548
 #: settings.php:576 tree.php:836 user_admin.php:2143 utilities.php:1035
 #: utilities.php:1446
@@ -3570,7 +3550,7 @@ msgid "Suggested Value"
 msgstr "Запропоноване значення"
 
 #: data_queries.php:834 data_queries.php:942 host.php:840 host.php:983
-#: host_templates.php:536 host_templates.php:590 lib/html.php:67
+#: host_templates.php:536 host_templates.php:590 lib/html.php:63
 #: lib/html_filter.php:55
 msgid "Add"
 msgstr "Додати"
@@ -3765,7 +3745,7 @@ msgid "Steps"
 msgstr "Кроки"
 
 #: data_source_profiles.php:639 graphs_new.php:463 include/global_form.php:298
-#: lib/html.php:550 lib/html_filter.php:72 lib/installer.php:2572
+#: lib/html.php:529 lib/html_filter.php:72 lib/installer.php:2572
 #: lib/rrd.php:3090 utilities.php:866 utilities.php:1779
 msgid "Rows"
 msgstr "Рядки"
@@ -4109,8 +4089,8 @@ msgstr "Назва цього шаблону даних. Будь ласка, з
 #: data_sources.php:950 graph_view.php:743 graphs.php:1589
 #: include/global_arrays.php:936 include/global_arrays.php:985
 #: include/global_arrays.php:1667 include/global_arrays.php:1836
-#: lib/api_automation.php:425 lib/functions.php:5252 lib/html.php:2067
-#: lib/html.php:2099 lib/html_reports.php:1009 utilities.php:1870
+#: lib/api_automation.php:425 lib/functions.php:5251 lib/html.php:2046
+#: lib/html.php:2078 lib/html_reports.php:1009 utilities.php:1870
 msgid "Device"
 msgstr "Пристрій"
 
@@ -4139,8 +4119,8 @@ msgstr "Спеціальні дані"
 msgid "Data Source Item %s"
 msgstr "Елемент джерела даних %s"
 
-#: data_sources.php:1106 data_templates.php:770 package_import.php:548
-#: package_import.php:607 templates_import.php:290
+#: data_sources.php:1106 data_templates.php:770 package_import.php:539
+#: package_import.php:597 templates_import.php:290
 msgid "New"
 msgstr "Новий"
 
@@ -4453,7 +4433,7 @@ msgstr "ГРАФІК НЕ ІСНУЄ"
 msgid "Viewing Graph"
 msgstr "Перегляд графіка"
 
-#: graph.php:134 lib/html.php:487
+#: graph.php:134 lib/html.php:466
 msgid "Graph Details, Zooming and Debugging Utilities"
 msgstr "Деталі графіка, утиліти масштабування та налагодження"
 
@@ -4461,15 +4441,15 @@ msgstr "Деталі графіка, утиліти масштабування �
 msgid "CSV Export"
 msgstr "Експорт CSV"
 
-#: graph.php:139 graph.php:408 lib/html.php:505
+#: graph.php:139 graph.php:408 lib/html.php:484
 msgid "Edit Graph Template"
 msgstr "Редагувати шаблон графіка"
 
-#: graph.php:144 lib/html.php:511 lib/html.php:513
+#: graph.php:144 lib/html.php:490 lib/html.php:492
 msgid "Click to view just this Graph in Real-time"
 msgstr "Натисніть, щоб переглянути лише цей графік у реальному часі"
 
-#: graph.php:266 lib/html.php:2472
+#: graph.php:266 lib/html.php:2451
 msgid "Utility View"
 msgstr "Перегляд службових програм"
 
@@ -4752,13 +4732,13 @@ msgstr "Додати до звіту"
 msgid "Report"
 msgstr "Повідомити"
 
-#: graph_view.php:646 lib/html.php:211 lib/html.php:216 lib/html_graph.php:157
+#: graph_view.php:646 lib/html.php:190 lib/html.php:195 lib/html_graph.php:157
 #: lib/html_tree.php:992
 msgid "All Graphs & Templates"
 msgstr "Усі графіки та шаблони"
 
 #: graph_view.php:647 include/global_arrays.php:2887 lib/graphs.php:58
-#: lib/graphs.php:67 lib/html.php:219 lib/html_graph.php:158
+#: lib/graphs.php:67 lib/html.php:198 lib/html_graph.php:158
 #: lib/html_tree.php:993
 msgid "Not Templated"
 msgstr "Без шаблону"
@@ -4809,12 +4789,12 @@ msgstr "Режим попереднього перегляду"
 msgid "Add Selected Graphs to Report"
 msgstr "Додайте вибрані графіки до звіту"
 
-#: graph_view.php:972 lib/html.php:2543
+#: graph_view.php:972 lib/html.php:2522
 msgid "Ok"
 msgstr "Ok"
 
 #: graph_xport.php:120 graph_xport.php:158 include/global_form.php:1824
-#: include/global_form.php:2092 lib/html.php:1850 links.php:381
+#: include/global_form.php:2092 lib/html.php:1829 links.php:381
 msgid "Title"
 msgstr "Назва"
 
@@ -5128,7 +5108,7 @@ msgstr "Нові графіки для [всіх пристроїв]"
 msgid "New Graphs for None Host Type"
 msgstr "Нові графіки для жодного типу хоста"
 
-#: graphs_new.php:385 lib/html.php:2470
+#: graphs_new.php:385 lib/html.php:2449
 msgid "Filter Settings Saved"
 msgstr "Налаштування фільтра збережено"
 
@@ -5162,12 +5142,12 @@ msgstr "(Виберіть тип графіка для створення)"
 msgid "Create"
 msgstr "Створити"
 
-#: graphs_new.php:566 graphs_new.php:864 lib/html.php:1032 user_admin.php:1502
+#: graphs_new.php:566 graphs_new.php:864 lib/html.php:1011 user_admin.php:1502
 #: user_group_admin.php:1382
 msgid "Select All"
 msgstr "Вибрати все"
 
-#: graphs_new.php:566 graphs_new.php:864 lib/html.php:933 lib/html.php:1032
+#: graphs_new.php:566 graphs_new.php:864 lib/html.php:912 lib/html.php:1011
 msgid "Select All Rows"
 msgstr "Виберіть Усі рядки"
 
@@ -5463,7 +5443,7 @@ msgstr "Додайте шаблон графіка на пристрій"
 msgid "Data Query Debug Information"
 msgstr "Інформація про налагодження запиту даних"
 
-#: host.php:860 lib/functions.php:4251 tree.php:1725 tree.php:1799
+#: host.php:860 lib/functions.php:4250 tree.php:1725 tree.php:1799
 #: tree.php:1907 user_admin.php:29 user_group_admin.php:31
 msgid "Copy"
 msgstr "Копіювати"
@@ -5503,7 +5483,7 @@ msgstr " [Елементів: %d, рядків: %d]"
 msgid "Fail"
 msgstr "Невдача"
 
-#: host.php:944 lib/functions.php:5267 lib/functions.php:5272
+#: host.php:944 lib/functions.php:5266 lib/functions.php:5271
 msgid "Success"
 msgstr "Успіх"
 
@@ -5559,7 +5539,7 @@ msgstr "SNMP GetNext"
 msgid "Undefined"
 msgstr "Невизначено"
 
-#: host.php:1528 include/global_settings.php:601 lib/html.php:2128
+#: host.php:1528 include/global_settings.php:601 lib/html.php:2107
 #: lib/html_reports.php:990
 msgid "Site"
 msgstr "Сайт"
@@ -5573,14 +5553,14 @@ msgid "Not Up"
 msgstr "Не вгору"
 
 #: host.php:1637 lib/api_automation.php:174 lib/api_automation.php:1100
-#: lib/html.php:81 lib/html_utility.php:927 pollers.php:49
+#: lib/html_utility.php:927 pollers.php:49
 msgid "Recovering"
 msgstr "Відновлюється"
 
 #: host.php:1638 lib/api_automation.php:175 lib/api_automation.php:1101
 #: lib/auth.php:2375 lib/html_utility.php:936 lib/import.php:319
-#: lib/plugins.php:1260 lib/plugins.php:1261 lib/rrd.php:3061 lib/rrd.php:3073
-#: package_import.php:550 utilities.php:211 utilities.php:212
+#: lib/plugins.php:1258 lib/plugins.php:1259 lib/rrd.php:3061 lib/rrd.php:3073
+#: package_import.php:541 utilities.php:211 utilities.php:212
 #: utilities.php:2598
 msgid "Unknown"
 msgstr "Невідомо"
@@ -5807,16 +5787,16 @@ msgstr "ФАТАЛЬНО: Ви повинні увійти в систему, щ
 msgid "Login Again"
 msgstr "Увійти ще раз"
 
-#: include/auth.php:272 lib/functions.php:6922 permission_denied.php:45
+#: include/auth.php:272 lib/functions.php:6921 permission_denied.php:45
 #: permission_denied.php:52
 msgid "Permission Denied"
 msgstr "У дозволі Відмовлено"
 
-#: include/auth.php:273 lib/functions.php:6923 permission_denied.php:54
+#: include/auth.php:273 lib/functions.php:6922 permission_denied.php:54
 msgid "If you feel that this is an error. Please contact your Cacti Administrator."
 msgstr "Якщо ви вважаєте, що це помилка. Будь ласка, зверніться до свого адміністратора Cacti."
 
-#: include/auth.php:273 lib/functions.php:6923 permission_denied.php:54
+#: include/auth.php:273 lib/functions.php:6922 permission_denied.php:54
 msgid "You are not permitted to access this section of Cacti."
 msgstr "Ви не маєте доступу до цього розділу Cacti."
 
@@ -5831,15 +5811,6 @@ msgstr "Лише адміністратори Cacti з привілеєм вст
 #: include/auth.php:277
 msgid "There is an Installation or Upgrade in progress."
 msgstr "Виконується інсталяція або оновлення."
-
-#: include/global.php:555
-#, fuzzy
-msgid "The Main Data Collector has returned to an Online Status"
-msgstr "Востаннє цей збірник даних повністю синхронізувався з основним сайтом Cacti."
-
-#: include/global.php:559
-msgid "The Main Data Collector has gone to an Offline or Recovering Status"
-msgstr ""
 
 #: include/global_arrays.php:143
 msgid "Save Successful."
@@ -6274,7 +6245,7 @@ msgstr "Зправа"
 msgid "Justified"
 msgstr "Виправдано"
 
-#: include/global_arrays.php:587 lib/html.php:2569
+#: include/global_arrays.php:587 lib/html.php:2548
 msgid "Center"
 msgstr "Центр"
 
@@ -6570,7 +6541,7 @@ msgstr "Заголовок"
 
 #: include/global_arrays.php:935 include/global_arrays.php:986
 #: include/global_arrays.php:1666 include/global_arrays.php:1835
-#: lib/html.php:2558
+#: lib/html.php:2537
 msgid "Graph"
 msgstr "Графік"
 
@@ -6724,12 +6695,12 @@ msgid "Export Templates"
 msgstr "Експортувати шаблони"
 
 #: include/global_arrays.php:1011 include/global_arrays.php:1033
-#: include/global_arrays.php:1051 lib/plugins.php:1215
+#: include/global_arrays.php:1051 lib/plugins.php:1213
 msgid "Configuration"
 msgstr "Конфігурація"
 
 #: include/global_arrays.php:1012 include/global_arrays.php:1034
-#: lib/html.php:2263 lib/html.php:2573
+#: lib/html.php:2242 lib/html.php:2552
 msgid "Settings"
 msgstr "Налаштування"
 
@@ -6942,7 +6913,7 @@ msgstr "Загальне управління"
 msgid "System Administration"
 msgstr "Системне адміністрування"
 
-#: include/global_arrays.php:1332 lib/html.php:1164
+#: include/global_arrays.php:1332 lib/html.php:1143
 msgid "CDEF"
 msgstr "CDEF"
 
@@ -6959,7 +6930,7 @@ msgid "Data Input Field"
 msgstr "Поле введення даних"
 
 #: include/global_arrays.php:1338 include/global_form.php:593
-#: include/global_form.php:1694 package_import.php:823
+#: include/global_form.php:1694 package_import.php:813
 msgid "Data Source Profile"
 msgstr "Профіль джерела даних"
 
@@ -6975,7 +6946,7 @@ msgstr "Елемент шаблону графіка"
 msgid "Graph Template Input"
 msgstr "Введення шаблону графіка"
 
-#: include/global_arrays.php:1345 lib/html.php:1165
+#: include/global_arrays.php:1345 lib/html.php:1144
 msgid "VDEF"
 msgstr "VDEF"
 
@@ -7716,6 +7687,7 @@ msgstr "[УВАГА]"
 
 #: include/global_arrays.php:1972
 #, fuzzy
+#| msgid "Restricted"
 msgid "[Restart]"
 msgstr "Обмежено"
 
@@ -7740,7 +7712,7 @@ msgid "List Mode"
 msgstr "Режими списку"
 
 #: include/global_arrays.php:2041 include/global_arrays.php:2047
-#: lib/functions.php:3843 lib/html.php:1698 lib/html.php:1775 lib/html.php:2491
+#: lib/functions.php:3842 lib/html.php:1677 lib/html.php:1754 lib/html.php:2470
 #: links.php:344 user_admin.php:1551 user_group_admin.php:1433
 msgid "Console"
 msgstr "Консоль"
@@ -7883,7 +7855,7 @@ msgid "Export Results"
 msgstr "Результати експорту"
 
 #: include/global_arrays.php:2641 include/global_arrays.php:2671
-#: lib/html.php:1719 lib/html.php:1721 lib/html.php:1800
+#: lib/html.php:1698 lib/html.php:1700 lib/html.php:1779
 msgid "Reporting"
 msgstr "Звітність"
 
@@ -8311,7 +8283,7 @@ msgid "The script/source used to gather data for this data source."
 msgstr "Сценарій/джерело, що використовується для збору даних для цього джерела даних."
 
 #: include/global_form.php:595 include/global_form.php:1696
-#: package_import.php:825
+#: package_import.php:815
 msgid "Select the Data Source Profile.  The Data Source Profile controls polling interval, the data aggregation, and retention policy for the resulting Data Sources."
 msgstr "Виберіть профіль джерела даних. Профіль джерела даних контролює інтервал опитування, агрегацію даних і політику збереження для кінцевих джерел даних."
 
@@ -8660,7 +8632,7 @@ msgstr "Напрямок легенди (--legend-direction=&lt;direction&gt;)"
 msgid "Place the legend items in the given vertical order."
 msgstr "Розмістіть елементи легенди у заданому вертикальному порядку."
 
-#: include/global_form.php:963 lib/api_aggregate.php:1713 lib/html.php:1161
+#: include/global_form.php:963 lib/api_aggregate.php:1713 lib/html.php:1140
 msgid "Graph Item Type"
 msgstr "Тип елемента графіка"
 
@@ -9050,27 +9022,27 @@ msgstr "Імпорт шаблону з локального файлу"
 msgid "If the XML file containing template data is located on your local machine, select it here."
 msgstr "Якщо XML-файл із даними шаблону знаходиться на вашому локальному комп’ютері, виберіть його тут."
 
-#: include/global_form.php:1689 package_import.php:818
+#: include/global_form.php:1689 package_import.php:808
 msgid "Data Source Overrides"
 msgstr "Перевизначення джерела даних"
 
-#: include/global_form.php:1698 package_import.php:827
+#: include/global_form.php:1698 package_import.php:817
 msgid "Create New from Template"
 msgstr "Створити новий із шаблону"
 
-#: include/global_form.php:1703 package_import.php:832
+#: include/global_form.php:1703 package_import.php:822
 msgid "Graph/Data Template Overrides"
 msgstr "Перевизначення шаблону графіка/даних"
 
-#: include/global_form.php:1708 package_import.php:837
+#: include/global_form.php:1708 package_import.php:827
 msgid "Remove Orphaned Graph Items"
 msgstr "Видаліть загублені елементи графіка"
 
-#: include/global_form.php:1710 package_import.php:839
+#: include/global_form.php:1710 package_import.php:829
 msgid "If checked, Cacti will delete any Graph Items from both the Graph Template and associated Graphs that are not included in the imported Graph Template."
 msgstr "Якщо позначено, Cacti видаляє будь-які елементи графіка як із шаблону графіка, так і з пов’язаних графіків, які не включено до імпортованого шаблону графіка."
 
-#: include/global_form.php:1715 package_import.php:844
+#: include/global_form.php:1715 package_import.php:834
 msgid "Replace Data Query Suggested Value Patterns"
 msgstr "Замінити запит даних Запропоновані шаблони значень"
 
@@ -9079,29 +9051,29 @@ msgid "Replace Data Source and Graph Template Suggested Value Records for Data Q
 msgstr "Замініть джерело даних і запропоновані записи значень шаблону графіка для запитів даних. Графіки та джерела даних отримають нові назви після переіндексації запиту даних або використання процесу примусової заміни запропонованих значень."
 
 #: include/global_form.php:1722 include/global_settings.php:563
-#: package_import.php:851
+#: package_import.php:841
 msgid "Graph Template Image Format"
 msgstr "Формат зображення шаблону графіка"
 
-#: include/global_form.php:1723 package_import.php:852
+#: include/global_form.php:1723 package_import.php:842
 msgid "The Image Format to be used when importing or updating Graph Templates."
 msgstr "Формат зображення, який буде використовуватися під час імпортування або оновлення шаблонів графіків."
 
 #: include/global_form.php:1729 include/global_settings.php:570
-#: package_import.php:859
+#: package_import.php:849
 msgid "Graph Template Height"
 msgstr "Висота шаблону графіка"
 
-#: include/global_form.php:1730 package_import.php:860
+#: include/global_form.php:1730 package_import.php:850
 msgid "The Height to be used when importing or updating Graph Templates."
 msgstr "Висота, яка використовуватиметься під час імпортування або оновлення шаблонів графіків."
 
 #: include/global_form.php:1737 include/global_settings.php:578
-#: package_import.php:868
+#: package_import.php:858
 msgid "Graph Template Width"
 msgstr "Ширина шаблону графіка"
 
-#: include/global_form.php:1738 package_import.php:869
+#: include/global_form.php:1738 package_import.php:859
 msgid "The Width to be used when importing or updating Graph Templates."
 msgstr "Ширина, яка буде використовуватися під час імпортування або оновлення шаблонів графіків."
 
@@ -9400,7 +9372,7 @@ msgstr "Дані"
 msgid "Visual"
 msgstr "Візуальний"
 
-#: include/global_settings.php:44 lib/functions.php:5256 lib/functions.php:5261
+#: include/global_settings.php:44 lib/functions.php:5255 lib/functions.php:5260
 msgid "Authentication"
 msgstr "Аутентифікація"
 
@@ -9436,11 +9408,11 @@ msgstr "Графічні шрифти"
 msgid "PHP Mail() Function"
 msgstr "Функція PHP Mail()."
 
-#: include/global_settings.php:85 lib/functions.php:5239
+#: include/global_settings.php:85 lib/functions.php:5238
 msgid "Sendmail"
 msgstr "Sendmail"
 
-#: include/global_settings.php:86 lib/functions.php:5244
+#: include/global_settings.php:86 lib/functions.php:5243
 msgid "SMTP"
 msgstr "SMTP"
 
@@ -9796,7 +9768,7 @@ msgstr "Якщо встановлено значення «Простий», г�
 msgid "Simple"
 msgstr "Простий"
 
-#: include/global_settings.php:438 lib/html.php:2560
+#: include/global_settings.php:438 lib/html.php:2539
 msgid "Advanced"
 msgstr "Розширені"
 
@@ -10167,7 +10139,7 @@ msgid "Theme Settings"
 msgstr "Налаштування теми"
 
 #: include/global_settings.php:834 include/global_settings.php:1044
-#: include/global_settings.php:2536 lib/html.php:2508
+#: include/global_settings.php:2536 lib/html.php:2487
 msgid "Theme"
 msgstr "Тема"
 
@@ -10655,6 +10627,7 @@ msgstr ""
 
 #: include/global_settings.php:1314
 #, fuzzy
+#| msgid "Re-Index Device"
 msgid "Re-Index All Device Schedule"
 msgstr "Переіндексувати пристрій"
 
@@ -10668,6 +10641,7 @@ msgstr ""
 
 #: include/global_settings.php:1322
 #, fuzzy
+#| msgid "Monthly on Day"
 msgid "Monthly on Sunady"
 msgstr "Щомісяця в день"
 
@@ -11268,7 +11242,7 @@ msgstr "Це скільки символів буде дозволено пер�
 msgid "Sendmail Options"
 msgstr "Параметри Sendmail"
 
-#: include/global_settings.php:1907 lib/functions.php:5239
+#: include/global_settings.php:1907 lib/functions.php:5238
 msgid "Sendmail Path"
 msgstr "Шлях Sendmail"
 
@@ -11570,6 +11544,7 @@ msgstr "Перевірка файлу RRD"
 
 #: include/global_settings.php:2224
 #, fuzzy
+#| msgid "Enable RRDfile check"
 msgid "Enable RRDfile Check"
 msgstr "Увімкнути перевірку RRDfile"
 
@@ -11579,6 +11554,7 @@ msgstr "Чи слід увімкнути перевірку RRDfile для ці�
 
 #: include/global_settings.php:2230
 #, fuzzy
+#| msgid "Number of RRDfile check Processes"
 msgid "Number of RRDfile Check Processes"
 msgstr "Кількість процесів перевірки файлів RRD"
 
@@ -11610,7 +11586,7 @@ msgstr "Проксі-сервер RRDtool"
 msgid "Structured RRDfile Paths"
 msgstr "Структуровані шляхи RRDfile"
 
-#: include/global_settings.php:2285 lib/functions.php:5228
+#: include/global_settings.php:2285 lib/functions.php:5227
 msgid "Method"
 msgstr "Метод"
 
@@ -11719,7 +11695,7 @@ msgstr "Стандартне відхилення"
 msgid "Variance Based w/Outliers Removed"
 msgstr "На основі дисперсії з вилученими викидами"
 
-#: include/global_settings.php:2386 lib/html.php:2223
+#: include/global_settings.php:2386 lib/html.php:2202
 msgid "Replacement Method"
 msgstr "Спосіб заміни"
 
@@ -11727,15 +11703,15 @@ msgstr "Спосіб заміни"
 msgid "There are three replacement methods.  The first method replaces the spike with the average of the data source in question.  The second method replaces the spike with a 'NaN'.  The last replaces the spike with the last known good value found."
 msgstr "Є три способи заміни. Перший метод замінює сплеск на середнє значення відповідного джерела даних. Другий метод замінює шип на «NaN». Останнє замінює сплеск на останнє відоме знайдене хороше значення."
 
-#: include/global_settings.php:2391 lib/html.php:2219
+#: include/global_settings.php:2391 lib/html.php:2198
 msgid "Average"
 msgstr "Середній"
 
-#: include/global_settings.php:2392 lib/html.php:2220
+#: include/global_settings.php:2392 lib/html.php:2199
 msgid "NaN's"
 msgstr "NaN"
 
-#: include/global_settings.php:2393 lib/html.php:2221
+#: include/global_settings.php:2393 lib/html.php:2200
 msgid "Last Known Good"
 msgstr "Остання відома хороша"
 
@@ -11758,7 +11734,7 @@ msgstr "Будь-яке значення, яке на стільки станд�
 msgid "%d Standard Deviations"
 msgstr "%d Стандартні відхилення"
 
-#: include/global_settings.php:2418 lib/html.php:2235
+#: include/global_settings.php:2418 lib/html.php:2214
 msgid "Variance Percentage"
 msgstr "Відсоток дисперсії"
 
@@ -12173,11 +12149,11 @@ msgstr "<a href=\"%s\">Створюйте графіки</a> для ваших �
 msgid "<a href=\"%s\">View</a> your new graphs"
 msgstr "<a href=\"%s\">Перегляньте</a> свої нові графіки"
 
-#: index.php:82 lib/html.php:79
+#: index.php:82
 msgid "Offline"
 msgstr "Офлайн"
 
-#: index.php:82 lib/html.php:83
+#: index.php:82
 msgid "Online"
 msgstr "Онлайн"
 
@@ -12273,15 +12249,15 @@ msgstr "Натисніть «Повернутися», щоб повернути
 msgid "The Graphs chosen for the Aggregate Graph do not use Graph Templates.  Aggregate does not support creating Aggregate Graphs from non-templated graphs."
 msgstr "Графіки, вибрані для сукупного графіка, не використовують шаблони графіків. Aggregate не підтримує створення агрегатних графіків із нешаблонних графіків."
 
-#: lib/api_aggregate.php:1711 lib/html.php:1158
+#: lib/api_aggregate.php:1711 lib/html.php:1137
 msgid "Graph Item"
 msgstr "Елемент графіка"
 
-#: lib/api_aggregate.php:1714 lib/html.php:1162
+#: lib/api_aggregate.php:1714 lib/html.php:1141
 msgid "CF Type"
 msgstr "Тип CF"
 
-#: lib/api_aggregate.php:1715 lib/html.php:1167
+#: lib/api_aggregate.php:1715 lib/html.php:1146
 msgid "Item Color"
 msgstr "Колір предмета"
 
@@ -12506,8 +12482,8 @@ msgstr "Розташування:"
 msgid "Contact:"
 msgstr "Контакти:"
 
-#: lib/api_device.php:1581 lib/functions.php:5270 lib/functions.php:5272
-#: lib/functions.php:5276
+#: lib/api_device.php:1581 lib/functions.php:5269 lib/functions.php:5271
+#: lib/functions.php:5275
 msgid "Ping Results"
 msgstr "Результати ping"
 
@@ -13056,11 +13032,13 @@ msgstr "Індекс знайдено за OID: '%s' значення: '%s'"
 
 #: lib/data_query.php:903
 #, fuzzy, php-format
+#| msgid "Filtering list of indexes @ '%s' Index Count: %s"
 msgid "List of indexes filtered by value @ '%s' Index Count: %s"
 msgstr "Список фільтрації індексів @ '%s' Кількість індексів: %s"
 
 #: lib/data_query.php:907
 #, fuzzy, php-format
+#| msgid "Filtered Index found at OID: '%s' value: '%s'"
 msgid "Filtered Index by value found at OID: '%s' value: '%s'"
 msgstr "Відфільтрований індекс знайдено за OID: '%s' значення: '%s'"
 
@@ -13262,167 +13240,167 @@ msgstr "Збереження налаштувань у збірнику дани
 msgid "Settings save to Data Collector %d Failed."
 msgstr "Налаштування не вдалося зберегти в Data Collector %d."
 
-#: lib/functions.php:919 lib/functions.php:1010
+#: lib/functions.php:918 lib/functions.php:1009
 msgid "Message Not Found."
 msgstr "Повідомлення не знайдено."
 
-#: lib/functions.php:1406
+#: lib/functions.php:1405
 #, php-format
 msgid "Error %s is not readable"
 msgstr "Помилка %s не читається"
 
-#: lib/functions.php:3614
+#: lib/functions.php:3613
 msgid "Logged in a Guest"
 msgstr "Увійшли як гість"
 
-#: lib/functions.php:3614 lib/functions.php:3630
+#: lib/functions.php:3613 lib/functions.php:3629
 msgid "Logged in as"
 msgstr "Ви увійшли як"
 
-#: lib/functions.php:3614
+#: lib/functions.php:3613
 msgid "Login as Regular User"
 msgstr "Увійдіть як звичайний користувач"
 
-#: lib/functions.php:3614
+#: lib/functions.php:3613
 msgid "guest"
 msgstr "гість"
 
-#: lib/functions.php:3617 lib/functions.php:3640 lib/html.php:2497
+#: lib/functions.php:3616 lib/functions.php:3639 lib/html.php:2476
 msgid "User Community"
 msgstr "Спільнота користувачів"
 
-#: lib/functions.php:3618 lib/functions.php:3641 lib/html.php:2499
+#: lib/functions.php:3617 lib/functions.php:3640 lib/html.php:2478
 #: lib/utility.php:1235
 msgid "Documentation"
 msgstr "Документація"
 
-#: lib/functions.php:3633
+#: lib/functions.php:3632
 #, php-format
 msgid "Logged in as %s"
 msgstr "Ви увійшли як %s"
 
-#: lib/functions.php:3635 lib/html.php:2478
+#: lib/functions.php:3634 lib/html.php:2457
 msgid "Edit Profile"
 msgstr "Редагувати профіль"
 
-#: lib/functions.php:3645 lib/html.php:2482
+#: lib/functions.php:3644 lib/html.php:2461
 msgid "Logout"
 msgstr "Вийти"
 
-#: lib/functions.php:3790
+#: lib/functions.php:3789
 msgid "Leaf"
 msgstr "листок"
 
-#: lib/functions.php:3810 lib/html_tree.php:663 lib/html_tree.php:699
+#: lib/functions.php:3809 lib/html_tree.php:663 lib/html_tree.php:699
 #: lib/html_tree.php:928 lib/html_tree.php:936 lib/html_tree.php:1510
 msgid "Non Query Based"
 msgstr "Не на основі запитів"
 
-#: lib/functions.php:3846
+#: lib/functions.php:3845
 #, php-format
 msgid "Link %s"
 msgstr "Посилання %s"
 
-#: lib/functions.php:4870
+#: lib/functions.php:4869
 msgid "Mailer Error: No recipient address set!!<br>If using the <i>Test Mail</i> link, please set the <b>Alert e-mail</b> setting."
 msgstr "Помилка поштової програми: не встановлено адресу одержувача!!<br> Якщо ви використовуєте посилання <i>Test Mail</i> , будь ласка, установіть налаштування <b>електронної пошти для сповіщень</b> ."
 
-#: lib/functions.php:5203
+#: lib/functions.php:5202
 #, php-format
 msgid "Authentication failed: %s"
 msgstr "Помилка автентифікації: %s"
 
-#: lib/functions.php:5207
+#: lib/functions.php:5206
 #, php-format
 msgid "HELO failed: %s"
 msgstr "Помилка HELO: %s"
 
-#: lib/functions.php:5210
+#: lib/functions.php:5209
 #, php-format
 msgid "Connect failed: %s"
 msgstr "Помилка підключення: %s"
 
-#: lib/functions.php:5213
+#: lib/functions.php:5212
 msgid "SMTP error: "
 msgstr "Помилка SMTP:"
 
-#: lib/functions.php:5226
+#: lib/functions.php:5225
 msgid "This is a test message generated from Cacti.  This message was sent to test the configuration of your Mail Settings."
 msgstr "Це тестове повідомлення, створене Cacti. Це повідомлення було надіслано, щоб перевірити конфігурацію ваших налаштувань пошти."
 
-#: lib/functions.php:5227
+#: lib/functions.php:5226
 msgid "Your email settings are currently set as follows"
 msgstr "Ваші налаштування електронної пошти наразі налаштовані таким чином"
 
-#: lib/functions.php:5230
+#: lib/functions.php:5229
 msgid "Checking Configuration...<br>"
 msgstr "Перевірка конфігурації...<br>"
 
-#: lib/functions.php:5237
+#: lib/functions.php:5236
 msgid "PHP's Mailer Class"
 msgstr "Поштовий клас PHP"
 
-#: lib/functions.php:5243
+#: lib/functions.php:5242
 msgid "Method: SMTP"
 msgstr "Метод: SMTP"
 
-#: lib/functions.php:5258
+#: lib/functions.php:5257
 msgid "Not Shown for Security Reasons"
 msgstr "Не показано з міркувань безпеки"
 
-#: lib/functions.php:5259
+#: lib/functions.php:5258
 msgid "Security"
 msgstr "Безпека"
 
-#: lib/functions.php:5267
+#: lib/functions.php:5266
 msgid "Ping Results:"
 msgstr "Результати ping:"
 
-#: lib/functions.php:5276
+#: lib/functions.php:5275
 msgid "Bypassed"
 msgstr "Обійшли"
 
-#: lib/functions.php:5284
+#: lib/functions.php:5283
 msgid "Creating Message Text..."
 msgstr "Створення тексту повідомлення..."
 
-#: lib/functions.php:5287
+#: lib/functions.php:5286
 msgid "Sending Message..."
 msgstr "Надсилання повідомлення..."
 
-#: lib/functions.php:5291
+#: lib/functions.php:5290
 msgid "Cacti Test Message"
 msgstr "Тестове повідомлення кактусів"
 
-#: lib/functions.php:5293
+#: lib/functions.php:5292
 msgid "Success!"
 msgstr "Успішно!"
 
-#: lib/functions.php:5296
+#: lib/functions.php:5295
 msgid "Message Not Sent due to ping failure."
 msgstr "Повідомлення не надіслано через помилку ping."
 
-#: lib/functions.php:5878 lib/functions.php:5941
+#: lib/functions.php:5877 lib/functions.php:5940
 #, php-format
 msgid "Cacti disabled plugin %s due to the following error: %s!  See the Cacti logfile for more details."
 msgstr "Cacti вимкнено плагін %s через таку помилку: %s! Додаткову інформацію див. у файлі журналу Cacti."
 
-#: lib/functions.php:6335 lib/functions.php:6337
+#: lib/functions.php:6334 lib/functions.php:6336
 #, php-format
 msgid "- Beta %s"
 msgstr "- Бета %s"
 
-#: lib/functions.php:6335
+#: lib/functions.php:6334
 #, php-format
 msgid "Version %s %s"
 msgstr "Версія %s %s"
 
-#: lib/functions.php:6337
+#: lib/functions.php:6336
 #, php-format
 msgid "%s %s"
 msgstr "%s %s"
 
-#: lib/functions.php:6551
+#: lib/functions.php:6550
 #, php-format
 msgid "WARNING:  Key Cacti Include File %s missing.  Please locate and replace this file"
 msgstr ""
@@ -13439,457 +13417,452 @@ msgstr "Не застосовується"
 msgid "Damaged Graph"
 msgstr "Пошкоджений графік"
 
-#: lib/html.php:76
-#, fuzzy
-msgid "Remote Server"
-msgstr "Видалити StdDev"
-
-#: lib/html.php:125
+#: lib/html.php:104
 msgid "Get Page Help"
 msgstr "Отримайте довідку щодо сторінки"
 
-#: lib/html.php:213 settings.php:567
+#: lib/html.php:192 settings.php:567
 msgid "Templates Selected"
 msgstr "Вибрані шаблони"
 
-#: lib/html.php:267 settings.php:535 settings.php:557 settings.php:608
+#: lib/html.php:246 settings.php:535 settings.php:557 settings.php:608
 msgid "Enter keyword"
 msgstr "Пошук..."
 
-#: lib/html.php:421 lib/reports.php:1517 lib/reports.php:1521
+#: lib/html.php:400 lib/reports.php:1517 lib/reports.php:1521
 msgid "Data Query:"
 msgstr "Запит даних:"
 
-#: lib/html.php:488
+#: lib/html.php:467
 msgid "CSV Export of Graph Data"
 msgstr "Експорт даних графіків у CSV"
 
-#: lib/html.php:489 lib/html.php:2469
+#: lib/html.php:468 lib/html.php:2448
 msgid "Time Graph View"
 msgstr "Перегляд графіка часу"
 
-#: lib/html.php:498
+#: lib/html.php:477
 msgid "Edit Device"
 msgstr "Редагувати пристрій"
 
-#: lib/html.php:518
+#: lib/html.php:497
 msgid "Kill Spikes in Graphs"
 msgstr "Знищення спайків у графіках"
 
-#: lib/html.php:563 lib/html.php:592 lib/installer.php:1559
+#: lib/html.php:542 lib/html.php:571 lib/installer.php:1559
 msgid "Previous"
 msgstr "Попередній"
 
-#: lib/html.php:566
+#: lib/html.php:545
 #, php-format
 msgid "%d to %d of %s [ %s ]"
 msgstr "%d до %d з %s [ %s ]"
 
-#: lib/html.php:569 lib/html.php:598 lib/installer.php:1558
+#: lib/html.php:548 lib/html.php:577 lib/installer.php:1558
 msgid "Next"
 msgstr "Далі"
 
-#: lib/html.php:576
+#: lib/html.php:555
 #, php-format
 msgid "All %d %s"
 msgstr "Усі %d %s"
 
-#: lib/html.php:595
+#: lib/html.php:574
 #, php-format
 msgid "Current Page: %s"
 msgstr "Поточна сторінка: %s"
 
-#: lib/html.php:611
+#: lib/html.php:590
 #, php-format
 msgid "No %s Found"
 msgstr "%s не знайдено"
 
-#: lib/html.php:1159
+#: lib/html.php:1138
 msgid "#"
 msgstr "#"
 
-#: lib/html.php:1163
+#: lib/html.php:1142
 msgid "GPrint"
 msgstr "GPrint"
 
-#: lib/html.php:1166
+#: lib/html.php:1145
 msgid "Alpha %"
 msgstr "Альфа %"
 
-#: lib/html.php:1210
+#: lib/html.php:1189
 msgid "No Source"
 msgstr "Немає джерела"
 
-#: lib/html.php:1549
+#: lib/html.php:1528
 msgid "Choose an action"
 msgstr "Виберіть дію"
 
-#: lib/html.php:1559
+#: lib/html.php:1538
 msgid "Execute Action"
 msgstr "Виконати дію"
 
-#: lib/html.php:1728 lib/html.php:1730 lib/html.php:1810 managers.php:41
+#: lib/html.php:1707 lib/html.php:1709 lib/html.php:1789 managers.php:41
 #: managers.php:221
 msgid "Logs"
 msgstr "Логи"
 
-#: lib/html.php:2229
+#: lib/html.php:2208
 msgid "Standard Deviations"
 msgstr "Стандартні відхилення"
 
-#: lib/html.php:2241
+#: lib/html.php:2220
 msgid "Variance Outliers"
 msgstr "Викиди дисперсії"
 
-#: lib/html.php:2247
+#: lib/html.php:2226
 msgid "Kills Per RRA"
 msgstr "Вбивства за RRA"
 
-#: lib/html.php:2253
+#: lib/html.php:2232
 msgid "Remove StdDev"
 msgstr "Видалити StdDev"
 
-#: lib/html.php:2254
+#: lib/html.php:2233
 msgid "Remove Variance"
 msgstr "Видалити дисперсію"
 
-#: lib/html.php:2255
+#: lib/html.php:2234
 msgid "Gap Fill Range"
 msgstr "Діапазон заповнення зазору"
 
-#: lib/html.php:2256
+#: lib/html.php:2235
 msgid "Float Range"
 msgstr "Плаваючий діапазон"
 
-#: lib/html.php:2258
+#: lib/html.php:2237
 msgid "Dry Run StdDev"
 msgstr "Dry Run StdDev"
 
-#: lib/html.php:2259
+#: lib/html.php:2238
 msgid "Dry Run Variance"
 msgstr "Дисперсія сухого ходу"
 
-#: lib/html.php:2260
+#: lib/html.php:2239
 msgid "Dry Run Gap Fill Range"
 msgstr "Діапазон заповнення зазорів у сухому режимі"
 
-#: lib/html.php:2261
+#: lib/html.php:2240
 msgid "Dry Run Float Range"
 msgstr "Dry Run Float Range"
 
-#: lib/html.php:2465
+#: lib/html.php:2444
 msgid "Allow or limit the table columns to extend beyond the current windows limits."
 msgstr "Дозвольте або обмежте, щоб стовпці таблиці виходили за межі поточних обмежень вікон."
 
-#: lib/html.php:2466 lib/html_filter.php:65
+#: lib/html.php:2445 lib/html_filter.php:65
 msgid "Enter a search term"
 msgstr "Введіть пошуковий термін"
 
-#: lib/html.php:2467
+#: lib/html.php:2446
 msgid "Enter a regular expression"
 msgstr "Введіть регулярний вираз"
 
-#: lib/html.php:2468
+#: lib/html.php:2447
 msgid "No file selected"
 msgstr "Файл не вибрано"
 
-#: lib/html.php:2471 lib/html.php:2514
+#: lib/html.php:2450 lib/html.php:2493
 msgid "SpikeKill Results"
 msgstr "Результати SpikeKill"
 
-#: lib/html.php:2473
+#: lib/html.php:2452
 msgid "Click to view just this Graph in Realtime"
 msgstr "Натисніть, щоб переглянути лише цей графік у реальному часі"
 
-#: lib/html.php:2474
+#: lib/html.php:2453
 msgid "Click again to take this Graph out of Realtime"
 msgstr "Натисніть ще раз, щоб вивести цей графік із реального часу"
 
-#: lib/html.php:2483
+#: lib/html.php:2462
 msgid "Standard Mode"
 msgstr "Стандартний режим"
 
-#: lib/html.php:2484
+#: lib/html.php:2463
 msgid "Compact Mode"
 msgstr "Компактний режим"
 
-#: lib/html.php:2485
+#: lib/html.php:2464
 msgid "Dark Color Mode"
 msgstr "Режим темного кольору"
 
-#: lib/html.php:2486
+#: lib/html.php:2465
 msgid "Light Color Mode"
 msgstr "Режим світлого кольору"
 
-#: lib/html.php:2487
+#: lib/html.php:2466
 msgid "Use System Color"
 msgstr "Використовувати колір системи"
 
-#: lib/html.php:2488
+#: lib/html.php:2467
 msgid "Ignore System Color"
 msgstr "Ігнорувати колір системи"
 
-#: lib/html.php:2489
+#: lib/html.php:2468
 msgid "Help"
 msgstr "Допомога"
 
-#: lib/html.php:2490
+#: lib/html.php:2469
 msgid "Cacti Home"
 msgstr "Домашні кактуси"
 
-#: lib/html.php:2492
+#: lib/html.php:2471
 msgid "Miscellaneous"
 msgstr "Різне"
 
-#: lib/html.php:2493
+#: lib/html.php:2472
 msgid "Dashboards"
 msgstr "Панелі"
 
-#: lib/html.php:2495
+#: lib/html.php:2474
 msgid "Charts"
 msgstr "Діаграми"
 
-#: lib/html.php:2496
+#: lib/html.php:2475
 msgid "Cacti Project Page"
 msgstr "Сторінка проекту Cacti"
 
-#: lib/html.php:2500
+#: lib/html.php:2479
 msgid "Spine"
 msgstr "Хребет"
 
-#: lib/html.php:2501
+#: lib/html.php:2480
 msgid "RRDProxy"
 msgstr "RRDProxy"
 
-#: lib/html.php:2502
+#: lib/html.php:2481
 msgid "Keyboard"
 msgstr "键盘"
 
-#: lib/html.php:2503
+#: lib/html.php:2482
 msgid "Shortcuts"
 msgstr "Ярлики"
 
-#: lib/html.php:2504
+#: lib/html.php:2483
 msgid "Contribute to the Cacti Project"
 msgstr "Внесіть свій внесок у проект Cacti"
 
-#: lib/html.php:2505
+#: lib/html.php:2484
 msgid "Help in Developing"
 msgstr "Допомога в розвитку"
 
-#: lib/html.php:2506
+#: lib/html.php:2485
 msgid "Donation & Sponsoring"
 msgstr "Пожертвування та спонсорство"
 
-#: lib/html.php:2509
+#: lib/html.php:2488
 msgid "Client"
 msgstr "Клієнт"
 
-#: lib/html.php:2510
+#: lib/html.php:2489
 msgid "Help in Translating"
 msgstr "Допомога в перекладі"
 
-#: lib/html.php:2511
+#: lib/html.php:2490
 msgid "Report a bug"
 msgstr "Повідомити про помилку"
 
-#: lib/html.php:2513
+#: lib/html.php:2492
 msgid "Cacti"
 msgstr "кактуси"
 
-#: lib/html.php:2515
+#: lib/html.php:2494
 msgid "Click to Show/Hide Filter"
 msgstr "Натисніть, щоб показати/сховати фільтр"
 
-#: lib/html.php:2516
+#: lib/html.php:2495
 msgid "Clear Current Filter"
 msgstr "Очистити поточний фільтр"
 
-#: lib/html.php:2517
+#: lib/html.php:2496
 msgid "Clipboard"
 msgstr "Буфер Обміну"
 
-#: lib/html.php:2518
+#: lib/html.php:2497
 msgid "Clipboard ID"
 msgstr "Ідентифікатор буфера обміну"
 
-#: lib/html.php:2519
+#: lib/html.php:2498
 msgid "Copy operation is unavailable at this time"
 msgstr "Операція копіювання наразі недоступна"
 
-#: lib/html.php:2520
+#: lib/html.php:2499
 msgid "Failed to find data to copy!"
 msgstr "Не вдалося знайти дані для копіювання!"
 
-#: lib/html.php:2521
+#: lib/html.php:2500
 msgid "Clipboard has been updated"
 msgstr "Буфер обміну оновлено"
 
-#: lib/html.php:2522
+#: lib/html.php:2501
 msgid "Sorry, your clipboard could not be updated at this time"
 msgstr "На жаль, зараз неможливо оновити буфер обміну"
 
-#: lib/html.php:2526
+#: lib/html.php:2505
 msgid "Passphrase length meets 8 character minimum"
 msgstr "Мінімальна довжина пароля – 8 символів"
 
-#: lib/html.php:2527
+#: lib/html.php:2506
 msgid "Passphrase too short"
 msgstr "Парольна фраза занадто коротка"
 
-#: lib/html.php:2528
+#: lib/html.php:2507
 msgid "Passphrase matches but too short"
 msgstr "Пароль збігається, але занадто короткий"
 
-#: lib/html.php:2529
+#: lib/html.php:2508
 msgid "Passphrase too short and not matching"
 msgstr "Пароль закороткий і не відповідає"
 
-#: lib/html.php:2530
+#: lib/html.php:2509
 msgid "Passphrases match"
 msgstr "Парольні фрази збігаються"
 
-#: lib/html.php:2531
+#: lib/html.php:2510
 msgid "Passphrases do not match"
 msgstr "Парольні фрази не збігаються"
 
-#: lib/html.php:2532
+#: lib/html.php:2511
 msgid "Sorry, we could not process your last action."
 msgstr "На жаль, ми не змогли обробити вашу останню дію."
 
-#: lib/html.php:2533
+#: lib/html.php:2512
 msgid "Error:"
 msgstr "Помилка:"
 
-#: lib/html.php:2534
+#: lib/html.php:2513
 msgid "Reason:"
 msgstr "Причина:"
 
-#: lib/html.php:2535
+#: lib/html.php:2514
 msgid "Action failed"
 msgstr "Не вдалося виконати дію"
 
-#: lib/html.php:2536 pollers.php:814
+#: lib/html.php:2515 pollers.php:814
 msgid "Connection Successful"
 msgstr "Підключення успішне"
 
-#: lib/html.php:2537 pollers.php:816
+#: lib/html.php:2516 pollers.php:816
 msgid "Connection Failed"
 msgstr "Підключення не вдалося"
 
-#: lib/html.php:2538
+#: lib/html.php:2517
 msgid "The response to the last action was unexpected."
 msgstr "Реакція на останню акцію була неочікуваною."
 
-#: lib/html.php:2539
+#: lib/html.php:2518
 msgid "Some Actions failed"
 msgstr "Не вдалося виконати деякі дії"
 
-#: lib/html.php:2540
+#: lib/html.php:2519
 msgid "Note, we could not process all your actions.  Details are below."
 msgstr "Зверніть увагу, ми не змогли обробити всі ваші дії. Подробиці нижче."
 
-#: lib/html.php:2541
+#: lib/html.php:2520
 msgid "Operation successful"
 msgstr "Операція успішна"
 
-#: lib/html.php:2542
+#: lib/html.php:2521
 msgid "The Operation was successful.  Details are below."
 msgstr "Операція пройшла успішно. Подробиці нижче."
 
-#: lib/html.php:2544
+#: lib/html.php:2523
 msgid "Pause"
 msgstr "Пауза"
 
-#: lib/html.php:2547
+#: lib/html.php:2526
 msgid "Zoom In"
 msgstr "Приближувати"
 
-#: lib/html.php:2548
+#: lib/html.php:2527
 msgid "Zoom Out"
 msgstr "Віддалити"
 
-#: lib/html.php:2549
+#: lib/html.php:2528
 msgid "Zoom Out Factor"
 msgstr "Фактор зменшення масштабу"
 
-#: lib/html.php:2550
+#: lib/html.php:2529
 msgid "Timestamps"
 msgstr "Мітки часу"
 
-#: lib/html.php:2551
+#: lib/html.php:2530
 msgid "2x"
 msgstr "2x"
 
-#: lib/html.php:2552
+#: lib/html.php:2531
 msgid "4x"
 msgstr "4x"
 
-#: lib/html.php:2553
+#: lib/html.php:2532
 msgid "8x"
 msgstr "8x"
 
-#: lib/html.php:2554
+#: lib/html.php:2533
 msgid "16x"
 msgstr "16x"
 
-#: lib/html.php:2555
+#: lib/html.php:2534
 msgid "32x"
 msgstr "32x"
 
-#: lib/html.php:2556
+#: lib/html.php:2535
 msgid "Zoom Out Positioning"
 msgstr "Зменшення позиціонування"
 
-#: lib/html.php:2557
+#: lib/html.php:2536
 msgid "Zoom Mode"
 msgstr "Режим масштабування"
 
-#: lib/html.php:2559
+#: lib/html.php:2538
 msgid "Quick"
 msgstr "Швидко"
 
-#: lib/html.php:2561
+#: lib/html.php:2540
 msgid "Open in new tab"
 msgstr "Відкрити в новій вкладці"
 
-#: lib/html.php:2562
+#: lib/html.php:2541
 msgid "Save graph"
 msgstr "Зберегти графік"
 
-#: lib/html.php:2563
+#: lib/html.php:2542
 msgid "Copy graph"
 msgstr "Скопіюйте графік"
 
-#: lib/html.php:2564
+#: lib/html.php:2543
 msgid "Copy graph link"
 msgstr "Копіювати посилання на графік"
 
-#: lib/html.php:2565
+#: lib/html.php:2544
 msgid "Always On"
 msgstr "Always On"
 
-#: lib/html.php:2566
+#: lib/html.php:2545
 msgid "Auto"
 msgstr "Авто"
 
-#: lib/html.php:2567
+#: lib/html.php:2546
 msgid "Always Off"
 msgstr "Always Off"
 
-#: lib/html.php:2568
+#: lib/html.php:2547
 msgid "Begin with"
 msgstr "Почніть з"
 
-#: lib/html.php:2570
+#: lib/html.php:2549
 msgid "End with"
 msgstr "Закінчити з"
 
-#: lib/html.php:2572 lib/html_form.php:1303
+#: lib/html.php:2551 lib/html_form.php:1303
 msgid "Close"
 msgstr "Закрити"
 
-#: lib/html.php:2574
+#: lib/html.php:2553
 msgid "3rd Mouse Button"
 msgstr "3-я кнопка миші"
 
@@ -14382,7 +14355,7 @@ msgstr "Події"
 msgid "Send Report"
 msgstr "Надіслати звіт"
 
-#: lib/html_reports.php:1470 lib/import.php:2469 user_admin.php:1848
+#: lib/html_reports.php:1470 lib/import.php:2461 user_admin.php:1848
 msgid "[new]"
 msgstr "[новий]"
 
@@ -14597,7 +14570,7 @@ msgstr "Погана помилка UTF-8!"
 msgid "Bad UTF-8 offset error!"
 msgstr "Неправильна помилка зміщення UTF-8!"
 
-#: lib/html_utility.php:933 lib/installer.php:1851 lib/installer.php:3614
+#: lib/html_utility.php:933 lib/installer.php:1851 lib/installer.php:3601
 msgid "Error"
 msgstr "Помилка"
 
@@ -14626,67 +14599,67 @@ msgstr "не існує"
 msgid "not writable"
 msgstr "не можна записувати"
 
-#: lib/import.php:2177
+#: lib/import.php:2169
 msgid "Unknown Field"
 msgstr "Невідоме поле"
 
-#: lib/import.php:2430
+#: lib/import.php:2422
 msgid "Import Preview Results"
 msgstr "Імпортувати результати попереднього перегляду"
 
-#: lib/import.php:2430
+#: lib/import.php:2422
 msgid "Import Results"
 msgstr "Імпортувати результати"
 
-#: lib/import.php:2434
+#: lib/import.php:2426
 msgid "Cacti would make the following changes if the Package was imported:"
 msgstr "Cacti внесе такі зміни, якщо пакет було імпортовано:"
 
-#: lib/import.php:2436
+#: lib/import.php:2428
 msgid "Cacti has imported the following items for the Package:"
 msgstr "Cacti імпортував такі елементи для пакета:"
 
-#: lib/import.php:2439
+#: lib/import.php:2431
 msgid "Package Files"
 msgstr "Файли пакетів"
 
-#: lib/import.php:2443
+#: lib/import.php:2435
 msgid "[preview] "
 msgstr "[попередній перегляд]"
 
-#: lib/import.php:2448
+#: lib/import.php:2440
 msgid "Cacti would make the following changes if the Template was imported:"
 msgstr "Cacti внесе такі зміни, якщо шаблон буде імпортовано:"
 
-#: lib/import.php:2450
+#: lib/import.php:2442
 msgid "Cacti has imported the following items for the Template:"
 msgstr "Cacti імпортував такі елементи для шаблону:"
 
-#: lib/import.php:2459
+#: lib/import.php:2451
 msgid "[success]"
 msgstr "[успіх]"
 
-#: lib/import.php:2461
+#: lib/import.php:2453
 msgid "[fail]"
 msgstr "[невдача]"
 
-#: lib/import.php:2463
+#: lib/import.php:2455
 msgid "[preview]"
 msgstr "[попередній перегляд]"
 
-#: lib/import.php:2467
+#: lib/import.php:2459
 msgid "[updated]"
 msgstr "[оновлено]"
 
-#: lib/import.php:2471
+#: lib/import.php:2463
 msgid "[unchanged]"
 msgstr "[без змін]"
 
-#: lib/import.php:2507
+#: lib/import.php:2499
 msgid "Found Dependency:"
 msgstr "Знайдено залежність:"
 
-#: lib/import.php:2509
+#: lib/import.php:2501
 msgid "Unmet Dependency:"
 msgstr "Незадоволена залежність:"
 
@@ -14887,7 +14860,7 @@ msgid "Location checks"
 msgstr "Перевірки місця розташування"
 
 #: lib/installer.php:1794 lib/installer.php:1939 lib/installer.php:1943
-#: lib/installer.php:2098 lib/installer.php:2103 lib/installer.php:3711
+#: lib/installer.php:2098 lib/installer.php:2103 lib/installer.php:3698
 msgid "ERROR:"
 msgstr "Помилка:"
 
@@ -15183,7 +15156,7 @@ msgstr "Для віддалених опитувальників дуже важ
 msgid "Required Writable at Install Time Only"
 msgstr "Потрібна можливість запису лише під час встановлення"
 
-#: lib/installer.php:2259 lib/installer.php:2291 package_import.php:544
+#: lib/installer.php:2259 lib/installer.php:2291 package_import.php:535
 msgid "Not Writable"
 msgstr "Неможливо записати"
 
@@ -15691,44 +15664,39 @@ msgstr "Виняток стався під час встановлення: #%s 
 msgid "Installation was started at %s, completed at %s"
 msgstr "Встановлення розпочато о %s, завершено о %s"
 
-#: lib/installer.php:3499
+#: lib/installer.php:3492
 msgid "Both"
 msgstr "Обидва"
 
-#: lib/installer.php:3499
+#: lib/installer.php:3492
 #, php-format
 msgid "No - %s"
 msgstr "Ні - %s"
 
-#: lib/installer.php:3504
-#, fuzzy, php-format
-msgid "%s - N/A"
-msgstr "%s – Ні"
-
-#: lib/installer.php:3504 lib/installer.php:3506
-msgid "Web"
-msgstr "Веб"
-
-#: lib/installer.php:3506 lib/installer.php:3509
+#: lib/installer.php:3494 lib/installer.php:3496
 #, php-format
 msgid "%s - No"
 msgstr "%s – Ні"
 
-#: lib/installer.php:3509
+#: lib/installer.php:3494
+msgid "Web"
+msgstr "Веб"
+
+#: lib/installer.php:3496
 msgid "Cli"
 msgstr "Клі"
 
-#: lib/installer.php:3514
+#: lib/installer.php:3501
 #, php-format
 msgid "Setting PHP Option %s = %s"
 msgstr "Налаштування параметра PHP %s = %s"
 
-#: lib/installer.php:3520
+#: lib/installer.php:3507
 #, php-format
 msgid "Failed to set PHP option %s, is %s (should be %s)"
 msgstr "Не вдалося встановити параметр PHP %s, це %s (має бути %s)"
 
-#: lib/installer.php:3539
+#: lib/installer.php:3526
 msgid "No Remote Data Collectors found for full synchronization"
 msgstr "Не знайдено віддалених збирачів даних для повної синхронізації"
 
@@ -15881,34 +15849,34 @@ msgstr "TCP ping тайм-аут"
 msgid "Ping not performed due to setting."
 msgstr "Пінг не виконано через налаштування."
 
-#: lib/plugins.php:658
+#: lib/plugins.php:656
 #, php-format
 msgid "%s Version %s or above is required for %s. "
 msgstr "%s Для %s потрібна версія %s або вище."
 
-#: lib/plugins.php:662
+#: lib/plugins.php:660
 #, php-format
 msgid "%s is required for %s, and it is not installed. "
 msgstr "%s потрібен для %s, і його не встановлено."
 
-#: lib/plugins.php:685
+#: lib/plugins.php:683
 msgid "Plugin cannot be installed."
 msgstr "Неможливо встановити плагін."
 
-#: lib/plugins.php:1215 lib/plugins.php:1222 plugins.php:479 plugins.php:560
+#: lib/plugins.php:1213 lib/plugins.php:1220 plugins.php:479 plugins.php:560
 msgid "Plugins"
 msgstr "Плагіни"
 
-#: lib/plugins.php:1234 lib/plugins.php:1240
+#: lib/plugins.php:1232 lib/plugins.php:1238
 #, php-format
 msgid "Requires: Cacti >= %s"
 msgstr "Потрібні: Кактуси >= %s"
 
-#: lib/plugins.php:1237
+#: lib/plugins.php:1235
 msgid "Legacy Plugin"
 msgstr "Застарілий плагін"
 
-#: lib/plugins.php:1262
+#: lib/plugins.php:1260
 msgid "Not Stated"
 msgstr "Не зазначено"
 
@@ -16343,22 +16311,22 @@ msgstr "Рекомендоване значення"
 msgid "Comments"
 msgstr "Коментарі"
 
-#: lib/utility.php:1807
+#: lib/utility.php:1805
 #, php-format
 msgid "PHP %s is the minimum version"
 msgstr "PHP %s є мінімальною версією"
 
-#: lib/utility.php:1809
+#: lib/utility.php:1807
 #, php-format
 msgid "A minimum of %s memory limit"
 msgstr "Мінімальний обсяг пам’яті: %s"
 
-#: lib/utility.php:1811
+#: lib/utility.php:1809
 #, php-format
 msgid "A minimum of %s m execution time"
 msgstr "Мінімальний час виконання: %s хв"
 
-#: lib/utility.php:1813
+#: lib/utility.php:1811
 msgid "A valid timezone that matches MySQL and the system"
 msgstr "Дійсний часовий пояс, який відповідає MySQL і системі"
 
@@ -16519,33 +16487,28 @@ msgstr "Зовнішні посилання [редагувати: %s]"
 msgid "External Links [new]"
 msgstr "Зовнішні посилання [нове]"
 
-#: logout.php:50
-msgid "You have been logged out of Cacti due to a session timeout."
-msgstr "Ви вийшли з Cacti через тайм-аут сеансу."
-
 #: logout.php:52
-msgid "You have been logged out of Cacti due to an account suspension."
-msgstr "Ви вийшли з Cacti через призупинення облікового запису."
-
-#: logout.php:54
-#, fuzzy
-msgid "You have been logged out of Cacti due to a Remote Data Collector state change"
-msgstr "Ви вийшли з Cacti через тайм-аут сеансу."
-
-#: logout.php:62
 msgid "Logout of Cacti"
 msgstr "Вийти з Cacti"
 
-#: logout.php:69
+#: logout.php:59
 msgid "Automatic Logout"
 msgstr "Автоматичний вихід"
 
-#: logout.php:72
+#: logout.php:62
+msgid "You have been logged out of Cacti due to a session timeout."
+msgstr "Ви вийшли з Cacti через тайм-аут сеансу."
+
+#: logout.php:63
+msgid "You have been logged out of Cacti due to an account suspension."
+msgstr "Ви вийшли з Cacti через призупинення облікового запису."
+
+#: logout.php:64
 #, php-format
 msgid "Please close your browser or %sLogin Again%s"
 msgstr "Закрийте браузер або %sувійдіть знову%s"
 
-#: logout.php:76 utilities.php:835
+#: logout.php:68 utilities.php:835
 #, php-format
 msgid "Version %s"
 msgstr "Версія %s"
@@ -16757,59 +16720,59 @@ msgstr "Пакет"
 msgid "Filename"
 msgstr "Назва файлу"
 
-#: package_import.php:540 package_import.php:638 templates_import.php:349
+#: package_import.php:531 package_import.php:628 templates_import.php:349
 msgid "Differences"
 msgstr "відмінності"
 
-#: package_import.php:542 package_import.php:609 templates_import.php:292
+#: package_import.php:533 package_import.php:599 templates_import.php:292
 msgid "Unchanged"
 msgstr "Без змін"
 
-#: package_import.php:567
+#: package_import.php:557
 msgid "Import Package Templates [ None selected imports all, Check to import selectively ]"
 msgstr "Імпортувати шаблони пакетів [Не вибрано, імпортується все, установіть прапорець, щоб імпортувати вибірково]"
 
-#: package_import.php:571 templates_import.php:257
+#: package_import.php:561 templates_import.php:257
 msgid "Template Type"
 msgstr "Тип шаблону"
 
-#: package_import.php:580 templates_import.php:269
+#: package_import.php:570 templates_import.php:269
 msgid "Changes/Diffferences"
 msgstr "Зміни/Відмінності"
 
-#: package_import.php:605 templates_import.php:288
+#: package_import.php:595 templates_import.php:288
 msgid "Updated"
 msgstr "Оновлено"
 
-#: package_import.php:642 templates_import.php:353
+#: package_import.php:632 templates_import.php:353
 msgid "Orphans"
 msgstr "Сироти"
 
-#: package_import.php:695
+#: package_import.php:685
 msgid "File Differences for: "
 msgstr "Відмінності файлів для:"
 
-#: package_import.php:802
+#: package_import.php:792
 msgid "Local Package Import File"
 msgstr "Файл імпорту локального пакета"
 
-#: package_import.php:803
+#: package_import.php:793
 msgid "The *.xml.gz file located on your Local machine to Upload and Import."
 msgstr "Файл *.xml.gz, розташований на вашому локальному комп’ютері для завантаження та імпорту."
 
-#: package_import.php:808
+#: package_import.php:798
 msgid "Automatically Trust Signer"
 msgstr "Автоматично довіряти підписувачу"
 
-#: package_import.php:810
+#: package_import.php:800
 msgid "If checked, Cacti will automatically Trust the Signer for this and any future Packages by that author."
 msgstr "Якщо позначено, Cacti автоматично довірятимуть підписувачу для цього та будь-яких майбутніх пакетів цього автора."
 
-#: package_import.php:846
+#: package_import.php:836
 msgid "Replace Data Source and Graph Template Suggested Value Records.  Graphs and Data Sources will take on new names after either a Data Query Reindex or by using the forced Replace Suggested Values process."
 msgstr "Замініть джерело даних і запропоновані записи про значення шаблону графіка. Графіки та джерела даних отримають нові назви після переіндексації запиту даних або використання процесу примусової заміни запропонованих значень."
 
-#: package_import.php:917
+#: package_import.php:907
 msgid "Package Import"
 msgstr "Імпорт пакета"
 
@@ -17407,6 +17370,7 @@ msgstr "Опис хоста"
 
 #: rrdcheck.php:162
 #, fuzzy
+#| msgid "Valid Data"
 msgid "Local Data ID"
 msgstr "Дійсні дані"
 
@@ -19800,6 +19764,3 @@ msgstr "Немає VDEF"
 
 #~ msgid "DS"
 #~ msgstr "DS"
-
-#~ msgid "FATAL: YOU DO NOT HAVE ACCESS TO THIS AREA OF CACTI"
-#~ msgstr "ФАТАЛЬНО: ВИ НЕМАЄТЕ ДОСТУПУ ДО ЦІЄЇ ОБЛАСТІ КАКТУСІВ"

@@ -40,7 +40,7 @@
 			}
 			return result.toLowerCase();
 		},
-
+		
 		_keycode = {
 			isPrint: function(keycode) {
 				return keycode == 32						// spacebar
@@ -49,7 +49,7 @@
 					|| (keycode >= 96 && keycode <= 111)	// numpad keys
 					|| (keycode >= 186 && keycode < 192)	// ;=,-./` (in order)
 					|| (keycode >= 219 && keycode < 222);	// [\]' (in order)
-			},
+			},			
 			isHex: function(keycode) {
 				return (keycode >= 48 && keycode <= 57)		// number keys
 					|| (keycode >= 96 && keycode <= 105)	// numpad keys
@@ -352,22 +352,22 @@
 						}
 		,	'#HEXA':	function(color, that) {
 							return that._formatColor('#rxgxbxax', color);
-						}
+						}						
 		,	'#HEXA4':	function(color, that) {
 							var hexa4 = $.colorpicker.writers.HEXA4(color, that);
 							return hexa4 === false? false : '#'+hexa4;
-						}
+						}						
 		,	'HEXA':	function(color, that) {
 							return that._formatColor('rxgxbxax', color);
-						}
+						}		
 		,	'HEXA4':		function(color, that) {
 							var a = Math.round(color.getAlpha() * 255);
-
+						
 							if ((a >>> 4) === (a &= 0xf)) {
 								return $.colorpicker.writers.HEX3(color, that)+a.toString(16);
 							}
 							return false;
-						}
+						}						
 		,	'RGB':		function(color, that) {
 							return color.getAlpha() >= 1
 									? that._formatColor('rgb(rd,gd,bd)', color)
@@ -644,7 +644,7 @@
 					$(document).off('mouseup', _mouseup);
 					$(document).off('mousemove', _mousemove);
 					part.on('mousedown', _mousedown);
-
+					
 					inst._callback('stop');
 				};
 
@@ -752,8 +752,8 @@
 						} else if (typeof set[event.which] !== 'undefined') {
 							inst.color.setChannel(x_channel_map[inst.mode], 1 - set[event.which]);
 							inst.color.setChannel(y_channel_map[inst.mode], set[event.which]);
-							inst._change(false);
-						}
+							inst._change(false);							
+						}					
 				};
 
 				_html = function () {
@@ -770,15 +770,15 @@
 
 					part.on('mousedown', _mousedown);
 					part.on('keydown', _keydown);
-
-					// cache
+					
+					// cache					
 					layers[1]	= $('.ui-colorpicker-map-layer-1', part);
 					layers[2]	= $('.ui-colorpicker-map-layer-2', part);
 					layers.a	= $('.ui-colorpicker-map-layer-alpha', part);
 					layers.p	= $('.ui-colorpicker-map-layer-pointer', part);
 					width		= layers.p.width();
 					height		= layers.p.height();
-
+					
 					pointer		= $('.ui-colorpicker-map-pointer', part);
 				};
 
@@ -818,7 +818,7 @@
 							layers[2].css({'background-position': '0 ' + (-step * 9) + 'px', 'opacity': ''}).show();
 							break;
 					}
-
+					
 					that.repaint();
 				};
 
@@ -918,8 +918,8 @@
 					$(document).off('mouseup', _mouseup);
 					$(document).off('mousemove', _mousemove);
 					part.on('mousedown', _mousedown);
-
-					inst._callback('stop');
+					
+					inst._callback('stop');					
 				};
 
 				_mousemove = function (event) {
@@ -969,7 +969,7 @@
 
 					inst._change(false);
 				};
-
+				
 				_keydown = function(event) {
 					var change = {
 							38: 1,
@@ -995,8 +995,8 @@
 						inst._change(false);
 					} else if (typeof set[event.which] !== 'undefined') {
 						inst.color.setChannel(inst.mode, set[event.which]);
-						inst._change(false);
-					}
+						inst._change(false);							
+					}					
 				};
 
 				_html = function () {
@@ -1021,8 +1021,8 @@
 
 					part.on('mousedown', _mousedown);
 					part.on('keydown', _keydown);
-
-					// cache
+					
+					// cache				
 					layers[1]	= $('.ui-colorpicker-bar-layer-1', part);
 					layers[2]	= $('.ui-colorpicker-bar-layer-2', part);
 					layers[3]	= $('.ui-colorpicker-bar-layer-3', part);
@@ -1031,11 +1031,11 @@
 					layers.ab	= $('.ui-colorpicker-bar-layer-alphabar', part);
 					layers.p	= $('.ui-colorpicker-bar-layer-pointer', part);
 					width		= layers.p.width();
-					height		= layers.p.height();
-
+					height		= layers.p.height();		
+					
 					pointer		= $('.ui-colorpicker-bar-pointer', part);
 				};
-
+				
 				this.update = function () {
 					var step = ((inst.options.part.bar.size || 256) * 65 / 64);
 
@@ -1106,7 +1106,7 @@
 							layers[4].hide();
 							break;
 					}
-
+					
 					that.repaint();
 				};
 
@@ -1248,7 +1248,7 @@
 						inst.mode = $(this).val();
 						inst._updateAllParts();
 					});
-
+					
 					inputs.h = $('.ui-colorpicker-hsv-h .ui-colorpicker-number', part);
 					inputs.s = $('.ui-colorpicker-hsv-s .ui-colorpicker-number', part);
 					inputs.v = $('.ui-colorpicker-hsv-v .ui-colorpicker-number', part);
@@ -1308,7 +1308,7 @@
 						inst.mode = $(this).val();
 						inst._updateAllParts();
 					});
-
+					
 					inputs.r = $('.ui-colorpicker-rgb-r .ui-colorpicker-number', part);
 					inputs.g = $('.ui-colorpicker-rgb-g .ui-colorpicker-number', part);
 					inputs.b = $('.ui-colorpicker-rgb-b .ui-colorpicker-number', part);
@@ -1365,7 +1365,7 @@
 					var data = 0;
 
 					part = $(html()).appendTo($('.ui-colorpicker-lab-container', inst.dialog));
-
+					
 					inputs.l = $('.ui-colorpicker-lab-l .ui-colorpicker-number', part);
 					inputs.a = $('.ui-colorpicker-lab-a .ui-colorpicker-number', part);
 					inputs.b = $('.ui-colorpicker-lab-b .ui-colorpicker-number', part);
@@ -1388,7 +1388,7 @@
 				};
 
 				this.update = this.repaint;
-
+				
 				this.disable = function (disable) {
 					$(':input', part).prop('disabled', disable);
 				};
@@ -1413,12 +1413,12 @@
 
 				this.init = function () {
 					part = $(html()).appendTo($('.ui-colorpicker-cmyk-container', inst.dialog));
-
+					
 					inputs.c = $('.ui-colorpicker-cmyk-c .ui-colorpicker-number', part);
 					inputs.m = $('.ui-colorpicker-cmyk-m .ui-colorpicker-number', part);
 					inputs.y = $('.ui-colorpicker-cmyk-y .ui-colorpicker-number', part);
 					inputs.k = $('.ui-colorpicker-cmyk-k .ui-colorpicker-number', part);
-
+					
 					$('.ui-colorpicker-number', part).on('input change keyup', function (event) {
 						inst.color.setCMYK(
 							parseInt(inputs.c.val(), 10) / 100,
@@ -1466,7 +1466,7 @@
 						inst.mode = $(this).val();
 						inst._updateAllParts();
 					});
-
+					
 					input = $('.ui-colorpicker-a .ui-colorpicker-number', part);
 
 					$('.ui-colorpicker-number', part).on('input change keyup', function () {
@@ -1485,7 +1485,7 @@
 				this.repaint = function () {
 					input.val(Math.round(inst.color.getAlpha() * 100));
 				};
-
+				
 				this.disable = function (disable) {
 					$(':input', part).prop('disabled', disable);
 				};
@@ -1520,7 +1520,7 @@
 								(c & 0xFF) / 255
 							);
 						}
-
+						
 						return new $.colorpicker.Color();
 					},
 					html = function () {
@@ -1541,7 +1541,7 @@
 					inputs.color = $('.ui-colorpicker-hex-input', part);
 					inputs.alpha = $('.ui-colorpicker-hex-alpha', part);
 
-					inputs.color.on('keydown keyup', function(e) {
+					inputs.color.on('keydown keyup', function(e) {	
 						return e.ctrlKey || e.metaKey || _keycode.isHex(e.which) || !_keycode.isPrint(e.which);
 					});
 
@@ -1561,7 +1561,7 @@
 					inputs.alpha.on('keydown keyup', function(e) {
 						return e.ctrlKey || e.metaKey || _keycode.isHex(e.which) || !_keycode.isPrint(e.which);
 					});
-
+					
 					inputs.alpha.on('change', function () {
 						if (/[^a-fA-F0-9]/.test(inputs.alpha)) {
 							inputs.alpha.val(inputs.alpha.val().replace(/[^a-fA-F0-9]/g, ''));
@@ -2032,10 +2032,10 @@
 					spaces.rgb.b = _clip(b);
 				}
 				this.set = true;
-
+				
 				return this;
 			};
-
+			
 			this.getChannel = function(channel) {
 				switch (channel) {
 					case 'h':
@@ -2050,35 +2050,35 @@
 
 					case 'a':
 						return this.getAlpha();
-				}
-
+				}			
+				
 				return null;
 			};
-
+			
 			this.setChannel = function(channel, value) {
 				switch (channel) {
 					case 'h':
 						return this.setHSV(value, null, null);
-
+						
 					case 's':
 						return this.setHSV(null, value, null);
-
+						
 					case 'v':
 						return this.setHSV(null, null, value);
 
 					case 'r':
 						return this.setRGB(value, null, null);
-
+						
 					case 'g':
 						return this.setRGB(null, value, null);
-
+						
 					case 'b':
 						return this.setRGB(null, null, value);
 
 					case 'a':
 						return this.setAlpha(value);
 				}
-
+				
 				return this;
 			};
 
@@ -2380,7 +2380,7 @@
 			stop:				null,
 			ready:		null
 		},
-
+		
 		_create: function () {
 			var that = this,
 				text;
@@ -2398,7 +2398,7 @@
 			that.button		= null;
 			that.image		= null;
 			that.overlay	= null;
-
+			
 			that.events = {
 				window_resize:			null,
 				document_keydown:		null,
@@ -2426,7 +2426,7 @@
 
 				// showOn click
 				if (/\bclick|all|both\b/.test(that.options.showOn)) {
-					that.element.on('click', function (e) {
+					that.element.on('click', function (e) {						
 						if (that.opened && /\bclick|all|both\b/.test(that.options.hideOn)) {
 							that.close();
 						} else {
@@ -2470,7 +2470,7 @@
 				}
 
 				// showOn alt
-				if (/\balt|all|both\b/.test(that.options.showOn)) {
+				if (/\balt|all|both\b/.test(that.options.showOn)) {					
 					$(that.options.altField).on('click', function () {
 						if (that.opened && /\balt|all|both\b/.test(that.options.hideOn)) {
 							that.close();
@@ -2493,7 +2493,7 @@
 
 			// Disable Widget-style
 			(that.element.is(':disabled') || that.options.disabled) && that.disable();
-
+			
 			// Set callback just before creation ending
 			that._callback('ready');
 
@@ -2526,7 +2526,7 @@
 				part.disable && part.disable(false);
 			});
 		},
-
+		
 		disable: function () {
 			//$.Widget.prototype.disable.call(this);
 			this.element && this.element.prop('disabled', true);
@@ -2569,7 +2569,7 @@
 					}
 				}
 
-				this.options.altAlpha &&
+				this.options.altAlpha && 
 					$(this.options.altField).css('opacity', this.color.set? this.color.getAlpha() : '');
 			}
 		},
@@ -2765,7 +2765,7 @@
 		_effectHide: function(element, callback) {
 			this._effectGeneric(element, 'hide', 'slideUp', 'fadeOut', callback);
 		},
-
+				
 		open: function() {
 			var that = this,
 				offset,
@@ -2778,17 +2778,17 @@
 
 			if (!that.opened) {
 				that._generate();
-
+				
 				if (that.element.is(':hidden')) {
 					element = $('<div/>').insertBefore(that.element);
 				} else {
 					element = that.element;
-				}
-
+				}			
+				
 				if (that.element.is(':hidden')) {
 					element.remove();
 				}
-
+				
 				// Automatically find highest z-index.
 				zIndex = 0;
 				$(that.element[0]).parents().each(function() {
@@ -2813,23 +2813,23 @@
 
 				zIndex += 2;
 				that.dialog.css('z-index', zIndex);
-
+								
 				if (that.options.modal) {
-					that.overlay = $('<div class="ui-widget-overlay"></div>').appendTo('body').css('z-index', zIndex - 1);
+					that.overlay = $('<div class="ui-widget-overlay"></div>').appendTo('body').css('z-index', zIndex - 1);										
 
 					if (that.events.window_resize !== null) {
-						$(window).off('resize', that.events.window_resize);
+						$(window).off('resize', that.events.window_resize);					
 					}
-
+					
 					that.events.window_resize = function() {
 						if (that.overlay) {
 							that.overlay.width($(document).width());
-							that.overlay.height($(document).height());
+							that.overlay.height($(document).height());					
 						}
 					},
-
+															
 					$(window).on('resize', that.events.window_resize);
-					that.events.window_resize();
+					that.events.window_resize();			
 				}
 
 				that._effectShow(this.dialog);
@@ -2848,7 +2848,7 @@
 					};
 				}
 				that.dialog.position(position);
-
+				
 				that.opened = true;
 				that._callback('open');
 
@@ -2865,8 +2865,8 @@
 
 			if (!that.opened) {
 				return;
-			}
-
+			}				
+				
             if (cancel) {
 				that.color = that.currentColor.copy();
                 that._change();
@@ -2878,10 +2878,10 @@
 			that.changed		= false;
 
 			if (that.overlay) {
-				$(window).off('resize', that.events.window_resize);
+				$(window).off('resize', that.events.window_resize);					
 				that.overlay.remove();
 			}
-
+			
 			// tear down the interface
 			that._effectHide(that.dialog, function () {
 				that.dialog.remove();
@@ -2898,25 +2898,25 @@
 			if (that.events.document_click_html !== null) {
 				$(document).off('touchstart click', 'html', that.events.document_click_html);
 			}
-
+			
 			if (that.events.document_keydown !== null) {
 				$(document).off('keydown', that.events.document_keydown);
 			}
-
+			
 			if (that.events.window_resize !== null) {
-				$(window).off('resize', that.events.window_resize);
-			}
-
+				$(window).off('resize', that.events.window_resize);					
+			}			
+			
 			this.element.off();
 
 			if (this.overlay) {
 				this.overlay.remove();
 			}
-
+			
 			if (this.dialog !== null) {
 				this.dialog.remove();
 			}
-
+			
 			if (this.image !== null) {
 				this.image.remove();
 			}
@@ -2982,7 +2982,7 @@
 				}
 			});
 		},
-
+		
 		_change: function (stoppedChanging /* = true */) {
 			// Limit color palette
 			if (this.color.set && this.options.limit && $.colorpicker.limits[this.options.limit]) {
@@ -3057,7 +3057,7 @@
 
 			return $.colorpicker.swatches.html;
 		},
-
+		
 		_eachSwatch: function (callback) {
 			var currentSwatches = this._getSwatches(),
 				name;
@@ -3079,7 +3079,7 @@
 
 			return swatch;
         },
-
+		
 		_parseFormat: function(format, text) {
 			var that = this,
 				typeRegexps = {
@@ -3116,7 +3116,7 @@
 				,	setLAB:		[ 'L', 'A', 'B' ]
 				},
 				channels = [],
-				converters = [],
+				converters = [],						
 				setter = null,
 				color,
 				pattern;
@@ -3149,9 +3149,9 @@
 				if (values) {
 					var args = [],
 						channelIndex;
-
+					
 					values.shift();
-
+									
 					$.each(setterChannels[setter], function(index, channel) {
 						channelIndex = $.inArray(channel, channels);
 						args[index] = converters[channelIndex](values[channelIndex]);
@@ -3161,14 +3161,14 @@
 					color[setter].apply(color, args);
 				}
 			}
-
+			
 			return color;
 		},
 
         _parseColor: function(text) {
             var that = this,
 				color;
-
+		
 			var formats = $.isArray(that.options.colorFormat)
 					? that.options.colorFormat
 					: [ that.options.colorFormat ];
@@ -3179,12 +3179,12 @@
 				} else {
 					color = that._parseFormat(format, text);
 				}
-
+			
 				if (color) {
 					return false;
 				}
 			});
-
+			
 			if (!color) {
 				// fallback; check all registered parsers
 				$.each($.colorpicker.parsers, function(name, parser) {
@@ -3235,7 +3235,7 @@
 			return name;
 		},
 
-		_formatColor: function (formats, color) {
+		_formatColor: function (formats, color) {			
 			var that		= this,
 				text		= null,
 				types		= {	'x':	function(v) {return _intToHex(v * 255);}
@@ -3251,7 +3251,7 @@
 
 			$.each(formats, function(index, format) {
 				if ($.colorpicker.writers[format]) {
-					text = $.colorpicker.writers[format](color, that);
+					text = $.colorpicker.writers[format](color, that);		
 					return (text === false);
 				} else {
 					text = format.replace(/\\?[argbhsvcmykLAB][xdfp]/g, function(m) {
@@ -3263,10 +3263,10 @@
 					return false;
 				}
 			});
-
+			
 			return text;
 		}
 	});
-
+	
 	return $.vanderlee.colorpicker;
 }));

@@ -183,14 +183,17 @@ function process_poller_output_rt($rrdtool_pipe, $poller_id, $interval) {
 
 	/* create/update the rrd files */
 	$results = db_fetch_assoc_prepared('SELECT port.output, port.time, port.local_data_id,
-		poller_item.rrd_path, poller_item.rrd_name, poller_item.rrd_num
-		FROM (poller_output_realtime AS port, poller_item)
-		WHERE (port.local_data_id=poller_item.local_data_id
-		AND port.rrd_name=poller_item.rrd_name)
-		AND port.poller_id = ?',
+		pi.rrd_path, pi.rrd_name, pi.rrd_num, dl.data_template_id
+		FROM poller_output_realtime AS port
+		INNER JOIN poller_item AS pi
+		ON port.local_data_id = pi.local_data_id
+		AND port.rrd_name = pi.rrd_name
+		INNER JOIN data_local AS dl
+		ON dl.id = port.local_data_id
+		WHERE port.poller_id = ?',
 		array($poller_id));
 
-	if (cacti_sizeof($results) > 0) {
+	if (cacti_sizeof($results)) {
 		/* create an array keyed off of each .rrd file */
 		foreach ($results as $item) {
 			$rt_graph_path    = read_config_option('realtime_cache_path') . '/user_' . $poller_id . '_' . $item['local_data_id'] . '.rrd';
@@ -231,29 +234,36 @@ function process_poller_output_rt($rrdtool_pipe, $poller_id, $interval) {
 			$item['rrd_path'] = $rt_graph_path;
 
 			/* cleanup the value */
-			$value            = trim($item['output']);
-			$unix_time        = strtotime($item['time']);
+			$value     = trim($item['output']);
+			$unix_time = strtotime($item['time']);
 
 			$rrd_update_array[$item['rrd_path']]['local_data_id'] = $item['local_data_id'];
 
 			/* single one value output */
 			if ((is_numeric($value)) || ($value == 'U')) {
 				$rrd_update_array[$item['rrd_path']]['times'][$unix_time][$item['rrd_name']] = $value;
-			/* multiple value output */
 			} else {
-				$values = explode(' ', $value);
+				/* multiple value output */
+				$values = preg_split('/\s+/', $value);
 
-				$rrd_field_names = array_rekey(db_fetch_assoc_prepared('SELECT
-					data_template_rrd.data_source_name,
-					data_input_fields.data_name
-					FROM (data_template_rrd,data_input_fields)
-					WHERE data_template_rrd.data_input_field_id=data_input_fields.id
-					AND data_template_rrd.local_data_id = ?', array($item['local_data_id'])), 'data_name', 'data_source_name');
+				$rrd_field_names = array_rekey(
+					db_fetch_assoc_prepared('SELECT DISTINCT dtr.data_source_name, dif.data_name
+						FROM graph_templates_item AS gti
+						INNER JOIN data_template_rrd AS dtr
+						ON gti.task_item_id = dtr.id
+						INNER JOIN data_input_fields AS dif
+						ON dtr.data_input_field_id = dif.id
+						AND dtr.local_data_id = ?',
+						array($item['local_data_id'])),
+					'data_name', 'data_source_name'
+				);
 
-				for ($i=0; $i<cacti_count($values); $i++) {
-					if (preg_match('/^([a-zA-Z0-9_\.-]+):([eE0-9\+\.-]+)$/', $values[$i], $matches)) {
-						if (isset($rrd_field_names[$matches[1]])) {
-							$rrd_update_array[$item['rrd_path']]['times'][$unix_time][$rrd_field_names[$matches[1]]] = $matches[2];
+				if (cacti_sizeof($values)) {
+					foreach($values as $value) {
+						$matches = explode(':', $value);
+
+						if (isset($rrd_field_names[$matches[0]])) {
+							$rrd_update_array[$item['rrd_path']]['times'][$unix_time][$rrd_field_names[$matches[0]]] = $matches[1];
 						}
 					}
 				}

@@ -28,14 +28,14 @@ table {
 	text-align: center;
 	border: 0;
 	width: 100%;
-    border: 3px outset #CCCCCC;
+    border: 3px outset #CCCCCC; 
     padding: 4px;
 	margin: auto;
 }
 
 .title_row {
 	background-color: #EAEAEA;
-    border: 2px double #CCCCCC;
+    border: 2px double #CCCCCC; 
     padding: 3px;
 }
 
@@ -43,7 +43,7 @@ table {
 	background-color: #EAEAEA;
 	font-size: 16pt;
 	text-align: left;
-    border: 2px double #CCCCCC;
+    border: 2px double #CCCCCC; 
     padding: 3px;
 }
 
@@ -71,7 +71,7 @@ table {
 	background-color: #EAEAEA;
 	font-size: 16pt;
 	text-align: left;
-    border: 1px solid #CCCCCC;
+    border: 1px solid #CCCCCC; 
     padding: 0px;
 
 }
@@ -80,7 +80,7 @@ table {
 	background-color: #3F750F;
 	text-align: center;
 	width: 100%;
-    border: 3px ridge #3F750F;
+    border: 3px ridge #3F750F; 
     padding: 4px;
 	margin: auto;
 }

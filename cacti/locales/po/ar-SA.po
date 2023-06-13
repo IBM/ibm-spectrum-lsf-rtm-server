@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: developers@cacti.net\n"
-"POT-Creation-Date: 2023-01-02 14:47+0000\n"
+"POT-Creation-Date: 2022-12-17 15:36-0500\n"
 "PO-Revision-Date: 2022-06-16 20:12-0400\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,77 +18,53 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
 "X-Generator: Poedit 3.1\n"
 
-#: about.php:29 include/global_arrays.php:2605 lib/html.php:2512
+#: about.php:29 include/global_arrays.php:2605 lib/html.php:2491
 msgid "About Cacti"
 msgstr "حول الصبار"
 
 #: about.php:42
-#, fuzzy
-msgid "Cacti is designed to be a complete graphing solution based on the RRDtool Time Series Database (TSDB) and Graphing solution. Its goal is to make the Network Administrator's job easier by taking care of all the important details necessary to create meaningful Graphs."
+msgid "Cacti is designed to be a complete graphing solution based on the RRDtool's framework. Its goal is to make a network administrator's job easier by taking care of all the necessary details necessary to create meaningful graphs."
 msgstr "تم تصميم Cacti ليكون حلًا بيانيًا كاملًا يعتمد على إطار RRDtool. هدفها هو جعل مهمة مسؤول الشبكة أكثر سهولة من خلال الاهتمام بجميع التفاصيل الضرورية اللازمة لإنشاء رسوم بيانية ذات مغزى."
 
 #: about.php:44
 #, fuzzy, php-format
-msgid "Please see the official %sCacti website%s for information on how to use Cacti, get support, and updates."
+msgid "Please see the official %sCacti website%s for information, support, and updates."
 msgstr "يرجى الاطلاع على الموقع٪ sCacti٪ s الرسمي للحصول على المعلومات والدعم والتحديثات."
 
-#: about.php:48
-#, fuzzy
-msgid "Active Developers"
+#: about.php:46
+msgid "Cacti Developers"
 msgstr "مطورين الصبار"
 
-#: about.php:49
-msgid "Developers working on Cacti, its Architecture, Documentation and Future Releases."
-msgstr ""
-
-#: about.php:61
-#, fuzzy
-msgid "Honorable Mentions"
-msgstr "قسم قائمة وحدة التحكم"
-
-#: about.php:62
-msgid "Contributors to Docuemntation, QA, Packaging, the Forums and our YouTube page."
-msgstr ""
-
-#: about.php:72
-#, fuzzy
-msgid "Emeritus Members"
-msgstr "عضو مجموعة"
-
-#: about.php:73
-msgid "Members of the original Cacti Group that have since moved on in their careers.  We continue to wish them the best."
-msgstr ""
-
-#: about.php:83
+#: about.php:59
 msgid "Thanks"
 msgstr "شكرًا جزيلاً"
 
-#: about.php:86
+#: about.php:62
 #, fuzzy, php-format
 msgid "A very special thanks to %sTobi Oetiker%s, the creator of %sRRDtool%s and the very popular %sMRTG%s."
 msgstr "شكر خاص جدًا إلى٪ sTobi Oetiker٪ s ، منشئ٪ sRRDtool٪ s و٪ sMRTG٪ s الشائعة جدًا."
 
-#: about.php:89
+#: about.php:65
 msgid "The users of Cacti"
 msgstr "مستخدمي الصبار"
 
-#: about.php:90
+#: about.php:66
 msgid "Especially anyone who has taken the time to create an issue report, or otherwise help fix a Cacti related problems. Also to anyone who has contributed to supporting Cacti."
 msgstr "خاصةً أي شخص استغرق وقتًا لإنشاء تقرير المشكلة ، أو يساعد في حل مشكلات متعلقة بـ Cacti. أيضا لأي شخص ساهم في دعم الصبار."
 
-#: about.php:95
+#: about.php:71
 msgid "License"
 msgstr "الترخيص"
 
-#: about.php:97
+#: about.php:73
 msgid "Cacti is licensed under the GNU GPL:"
 msgstr "Cacti مرخص تحت GNU GPL:"
 
-#: about.php:99 lib/installer.php:1696
+#: about.php:75 lib/installer.php:1696
 msgid "This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version."
 msgstr "هذا البرنامج هو برنامج مجاني. يمكنك إعادة توزيعها و / أو تعديلها بموجب شروط رخصة جنو العمومية كما نشرتها مؤسسة البرمجيات الحرة ؛ إما الإصدار 2 من الترخيص ، أو (حسب اختيارك) أي إصدار لاحق."
 
-#: about.php:101
+#: about.php:77
 msgid "This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details."
 msgstr "يتم توزيع هذا البرنامج على أمل أن يكون مفيدا ، ولكن دون أي ضمان. دون حتى الضمان الضمني للرواج أو الملاءمة لغرض معين. انظر رخصة جنو العمومية العامة لمزيد من التفاصيل."
 
@@ -105,7 +81,7 @@ msgstr "يتم توزيع هذا البرنامج على أمل أن يكون م
 #: graphs.php:46 host.php:41 host_templates.php:35 host_templates.php:506
 #: host_templates.php:563 include/global_arrays.php:1631
 #: include/global_settings.php:248 lib/api_automation.php:1327
-#: lib/api_automation.php:1389 lib/api_automation.php:1457 lib/html.php:1295
+#: lib/api_automation.php:1389 lib/api_automation.php:1457 lib/html.php:1274
 #: lib/html_form.php:1273 lib/html_reports.php:1751 links.php:28
 #: managers.php:28 pollers.php:33 sites.php:28 tree.php:1609 tree.php:1762
 #: tree.php:1822 tree.php:1843 user_admin.php:28 user_domains.php:30
@@ -170,7 +146,7 @@ msgstr "انقر فوق &quot;متابعة&quot; لحذف الرسم البيا�
 #: host.php:470 host.php:484 host.php:498 host.php:507 host.php:536
 #: host.php:548 host_templates.php:271 host_templates.php:285
 #: host_templates.php:296 host_templates.php:345 host_templates.php:408
-#: lib/clog_webapi.php:228 lib/html.php:2546 lib/html_form.php:1272
+#: lib/clog_webapi.php:228 lib/html.php:2525 lib/html_form.php:1272
 #: lib/html_form.php:1284 lib/html_form.php:1295 links.php:197 links.php:206
 #: links.php:215 managers.php:1004 managers.php:1062 plugins.php:670
 #: pollers.php:559 pollers.php:568 pollers.php:577 pollers.php:586
@@ -207,7 +183,7 @@ msgstr "إلغاء"
 #: host.php:452 host.php:461 host.php:470 host.php:484 host.php:498
 #: host.php:507 host.php:536 host.php:548 host_templates.php:271
 #: host_templates.php:285 host_templates.php:296 host_templates.php:346
-#: host_templates.php:409 lib/clog_webapi.php:229 lib/html.php:2545
+#: host_templates.php:409 lib/clog_webapi.php:229 lib/html.php:2524
 #: lib/html_reports.php:499 links.php:197 links.php:206 links.php:215
 #: managers.php:1004 managers.php:1062 pollers.php:559 pollers.php:568
 #: pollers.php:577 pollers.php:586 pollers.php:595 sites.php:382 sites.php:392
@@ -248,6 +224,7 @@ msgstr "تمثل الرسوم البيانية الإجمالية المحددة
 
 #: aggregate_graphs.php:398
 #, fuzzy
+#| msgid "In order to migrate the Aggregate Graphs below use an Aggregate Template, one must already exist.  Please press 'Return' and then first create your Aggergate Template before retrying."
 msgid "In order to migrate the Aggregate Graphs below use an Aggregate Template, one must already exist.  Please press 'Return' and then first create your Aggregate Template before retrying."
 msgstr "لترحيل الرسوم البيانية الإجمالية أدناه إلى تجميع مستند إلى قالب ، يجب أن تستخدم فقط قالب الرسم البياني. الرجاء الضغط على &quot;العودة&quot; ثم تحديد &quot;الرسم البياني التجميعي&quot; الذي يستخدم نفس قالب الرسم البياني."
 
@@ -375,7 +352,7 @@ msgstr "التفاصيل"
 msgid "Items"
 msgstr "الاعلانات"
 
-#: aggregate_graphs.php:677 aggregate_graphs.php:683 lib/html.php:1993
+#: aggregate_graphs.php:677 aggregate_graphs.php:683 lib/html.php:1972
 #: lib/html_reports.php:1381
 msgid "Preview"
 msgstr "معاينة"
@@ -468,7 +445,7 @@ msgstr "مطابقة الرسوم البيانية"
 #: graph_view.php:621 graphs.php:2043 graphs_new.php:457 host.php:1621
 #: host_templates.php:727 lib/api_automation.php:140 lib/api_automation.php:473
 #: lib/api_automation.php:707 lib/api_automation.php:1066
-#: lib/clog_webapi.php:604 lib/html.php:266 lib/html_filter.php:63
+#: lib/clog_webapi.php:604 lib/html.php:245 lib/html_filter.php:63
 #: lib/html_graph.php:203 lib/html_reports.php:1836 lib/html_tree.php:136
 #: lib/html_tree.php:982 links.php:310 managers.php:149 managers.php:493
 #: managers.php:725 plugins.php:459 pollers.php:879 rrdcheck.php:226
@@ -490,8 +467,8 @@ msgstr "بحث"
 #: data_sources.php:1777 graph_view.php:485 graph_view.php:680
 #: graph_view.php:729 graphs.php:2060 graphs.php:2224 host.php:1732
 #: include/global_arrays.php:975 include/global_arrays.php:1207
-#: include/global_arrays.php:1991 lib/api_automation.php:283 lib/html.php:1707
-#: lib/html.php:1709 lib/html.php:1787 lib/html_graph.php:209
+#: include/global_arrays.php:1991 lib/api_automation.php:283 lib/html.php:1686
+#: lib/html.php:1688 lib/html.php:1766 lib/html_graph.php:209
 #: lib/html_tree.php:1037 lib/html_tree.php:1366 tree.php:839 tree.php:2274
 #: user_admin.php:877 user_admin.php:1144 user_admin.php:2539
 #: user_group_admin.php:874 user_group_admin.php:1028 user_group_admin.php:2292
@@ -540,7 +517,7 @@ msgstr "جزء من التجميع"
 #: graph_view.php:629 graphs.php:2034 graphs_new.php:446 host.php:1611
 #: host_templates.php:770 lib/api_automation.php:195 lib/api_automation.php:464
 #: lib/api_automation.php:729 lib/api_automation.php:1121
-#: lib/clog_webapi.php:529 lib/html.php:1559 lib/html_filter.php:80
+#: lib/clog_webapi.php:529 lib/html.php:1538 lib/html_filter.php:80
 #: lib/html_graph.php:190 lib/html_reports.php:1867 lib/html_tree.php:1024
 #: links.php:330 managers.php:171 managers.php:515 managers.php:745
 #: plugins.php:495 pollers.php:924 sites.php:521 tree.php:2150
@@ -659,7 +636,7 @@ msgstr "لا"
 #: host_templates.php:918 include/global_settings.php:501
 #: include/global_settings.php:858 include/global_settings.php:1877
 #: lib/api_automation.php:1438 lib/installer.php:1890 lib/installer.php:1918
-#: lib/installer.php:3497 links.php:404 tree.php:2307 tree.php:2308
+#: lib/installer.php:3490 links.php:404 tree.php:2307 tree.php:2308
 #: user_admin.php:2246 user_domains.php:767 user_domains.php:771
 #: user_group_admin.php:2020 vdef.php:909
 msgid "Yes"
@@ -697,7 +674,7 @@ msgstr "قالب"
 #: lib/api_automation.php:168 lib/api_automation.php:429
 #: lib/api_automation.php:446 lib/api_automation.php:1076
 #: lib/api_automation.php:1094 lib/auth.php:3108 lib/auth.php:3150
-#: lib/html.php:2071 lib/html.php:2094 lib/html.php:2132
+#: lib/html.php:2050 lib/html.php:2073 lib/html.php:2111
 #: lib/html_reports.php:877 lib/html_reports.php:881 lib/html_reports.php:996
 #: lib/html_reports.php:1006 lib/html_reports.php:1846 managers.php:482
 #: managers.php:735 user_admin.php:2521 user_admin.php:2738
@@ -729,13 +706,13 @@ msgstr "الجميع"
 #: lib/api_automation.php:151 lib/api_automation.php:430
 #: lib/api_automation.php:447 lib/api_automation.php:589
 #: lib/api_automation.php:1077 lib/auth.php:3111 lib/auth.php:3153
-#: lib/auth.php:3192 lib/html.php:226 lib/html.php:2072 lib/html.php:2092
-#: lib/html.php:2133 lib/html_form.php:331 lib/html_reports.php:888
+#: lib/auth.php:3192 lib/html.php:205 lib/html.php:2051 lib/html.php:2071
+#: lib/html.php:2112 lib/html_form.php:331 lib/html_reports.php:888
 #: lib/html_reports.php:892 lib/html_reports.php:922 lib/html_reports.php:996
 #: lib/html_reports.php:1002 lib/html_reports.php:1006
 #: lib/html_reports.php:1014 lib/html_reports.php:1025
 #: lib/html_reports.php:1045 lib/html_reports.php:1299
-#: lib/html_reports.php:1304 lib/html_reports.php:1309 package_import.php:647
+#: lib/html_reports.php:1304 lib/html_reports.php:1309 package_import.php:637
 #: settings.php:527 settings.php:549 settings.php:577 templates_import.php:326
 #: templates_import.php:358 user_admin.php:2522 user_admin.php:2739
 #: user_group_admin.php:2275 user_group_admin.php:2395 utilities.php:2026
@@ -884,7 +861,7 @@ msgid "Cannot be reused for %d password changes"
 msgstr "لا يمكن إعادة استخدامها لـ٪ d تغييرات كلمة المرور"
 
 #: auth_changepassword.php:315 auth_changepassword.php:322
-#: include/global_form.php:1567 lib/functions.php:3636 lib/html.php:2481
+#: include/global_form.php:1567 lib/functions.php:3635 lib/html.php:2460
 msgid "Change Password"
 msgstr "تغيير كلمة المرور"
 
@@ -897,7 +874,7 @@ msgid "Please enter your new Cacti password."
 msgstr "يرجى إدخال كلمة المرور الحالية والخاصة بك <br> كلمة السر الصبار."
 
 #: auth_changepassword.php:342 auth_login.php:306 auth_login.php:309
-#: include/global_settings.php:1786 lib/functions.php:5257
+#: include/global_settings.php:1786 lib/functions.php:5256
 msgid "Username"
 msgstr "اسم المستخدم"
 
@@ -981,7 +958,7 @@ msgstr "تسجيل دخول المستخدم"
 msgid "Enter your Username and Password below"
 msgstr "أدخل اسم المستخدم وكلمة المرور الخاصين بك أدناه"
 
-#: auth_login.php:314 include/global_form.php:1534 lib/functions.php:5258
+#: auth_login.php:314 include/global_form.php:1534 lib/functions.php:5257
 msgid "Password"
 msgstr "كلمة المرور"
 
@@ -1009,7 +986,7 @@ msgstr "تسجيل الدخول"
 
 #: auth_profile.php:76 include/global_settings.php:38
 #: include/global_settings.php:1167 include/global_settings.php:1470
-#: lib/html.php:2494 managers.php:39 user_admin.php:1830
+#: lib/html.php:2473 managers.php:39 user_admin.php:1830
 #: user_group_admin.php:1712
 msgid "General"
 msgstr "عام"
@@ -1019,18 +996,18 @@ msgid "User Account Details"
 msgstr "تفاصيل حساب المستخدم"
 
 #: auth_profile.php:300 include/global_arrays.php:839
-#: include/global_settings.php:2688 lib/html.php:1953 lib/html.php:1975
-#: lib/html.php:2475
+#: include/global_settings.php:2688 lib/html.php:1932 lib/html.php:1954
+#: lib/html.php:2454
 msgid "Tree View"
 msgstr "عرض الشجرة"
 
-#: auth_profile.php:304 include/global_arrays.php:840 lib/html.php:1960
-#: lib/html.php:1984 lib/html.php:2476
+#: auth_profile.php:304 include/global_arrays.php:840 lib/html.php:1939
+#: lib/html.php:1963 lib/html.php:2455
 msgid "List View"
 msgstr "عرض على شكل قائمة"
 
-#: auth_profile.php:308 include/global_arrays.php:841 lib/html.php:1967
-#: lib/html.php:2477
+#: auth_profile.php:308 include/global_arrays.php:841 lib/html.php:1946
+#: lib/html.php:2456
 msgid "Preview View"
 msgstr "معاينة العرض"
 
@@ -1240,7 +1217,7 @@ msgstr "SNMP"
 #: lib/api_automation.php:280 lib/api_automation.php:573
 #: lib/api_automation.php:1090 lib/api_automation.php:1221
 #: lib/html_reports.php:1842 lib/installer.php:1810 managers.php:218
-#: package_import.php:492 package_import.php:577 plugins.php:465
+#: package_import.php:492 package_import.php:567 plugins.php:465
 #: plugins.php:588 pollers.php:1013 templates_import.php:224
 #: templates_import.php:263 user_admin.php:1144 user_group_admin.php:1028
 #: utilities.php:2066
@@ -1293,8 +1270,8 @@ msgstr "أجهزة تطهير اكتشفت"
 #: automation_snmp.php:563 automation_snmp.php:564 automation_snmp.php:565
 #: automation_snmp.php:566 automation_snmp.php:567 automation_snmp.php:568
 #: data_debug.php:624 data_source_profiles.php:73 host.php:1811
-#: lib/functions.php:5603 lib/functions.php:5607 lib/html.php:1182
-#: lib/html.php:1248 lib/html_reports.php:1632 lib/html_reports.php:1658
+#: lib/functions.php:5602 lib/functions.php:5606 lib/html.php:1161
+#: lib/html.php:1227 lib/html_reports.php:1632 lib/html_reports.php:1658
 #: lib/html_reports.php:1729 lib/html_reports.php:1730
 #: lib/html_reports.php:1731 plugins.php:732 pollers.php:1121
 #: user_admin.php:2240 utilities.php:738 utilities.php:1180 utilities.php:2602
@@ -1445,7 +1422,7 @@ msgstr "مفعل"
 #: include/global_settings.php:1595 include/global_settings.php:1608
 #: include/global_settings.php:1633 include/global_settings.php:1647
 #: include/global_settings.php:1737 include/global_settings.php:2501
-#: lib/api_automation.php:170 lib/api_automation.php:1096 lib/html.php:2571
+#: lib/api_automation.php:170 lib/api_automation.php:1096 lib/html.php:2550
 #: lib/html_reports.php:1848 lib/html_reports.php:1986 lib/html_utility.php:920
 #: links.php:500 managers.php:243 managers.php:598 pollers.php:48
 #: user_admin.php:1011 user_domains.php:412 user_group_admin.php:695
@@ -2271,7 +2248,7 @@ msgstr "الإصدار"
 msgid "Community"
 msgstr "القرية/ الحي/ البلدة"
 
-#: automation_snmp.php:536 lib/functions.php:5253
+#: automation_snmp.php:536 lib/functions.php:5252
 msgid "Port"
 msgstr "منفذ"
 
@@ -2328,7 +2305,7 @@ msgstr "لا شيء"
 #: automation_snmp.php:573 automation_templates.php:524 cdef.php:612
 #: color_templates.php:111 data_queries.php:790 data_queries.php:897
 #: lib/api_automation.php:1314 lib/api_automation.php:1376
-#: lib/api_automation.php:1444 lib/html.php:1280 lib/html_reports.php:1744
+#: lib/api_automation.php:1444 lib/html.php:1259 lib/html_reports.php:1744
 #: lib/html_reports.php:1746 tree.php:2292 tree.php:2299 vdef.php:611
 msgid "Move Down"
 msgstr "تحريك للأسفل"
@@ -2336,7 +2313,7 @@ msgstr "تحريك للأسفل"
 #: automation_snmp.php:579 automation_templates.php:530 cdef.php:618
 #: color_templates.php:117 data_queries.php:795 data_queries.php:902
 #: lib/api_automation.php:1320 lib/api_automation.php:1382
-#: lib/api_automation.php:1450 lib/html.php:1286 lib/html_reports.php:1746
+#: lib/api_automation.php:1450 lib/html.php:1265 lib/html_reports.php:1746
 #: lib/html_reports.php:1748 tree.php:2296 tree.php:2300 vdef.php:617
 msgid "Move Up"
 msgstr "تحرك للأعلى"
@@ -2387,6 +2364,7 @@ msgstr "لم يتم العثور على مجموعات خيارات SNMP"
 
 #: automation_templates.php:162
 #, fuzzy
+#| msgid "Click 'Continue' to delete the folling Automation Template(s)."
 msgid "Click 'Continue' to delete the following Automation Template(s)."
 msgstr "انقر فوق &quot;متابعة&quot; لحذف قالب (قوالب) أتمتة fatinging."
 
@@ -2449,7 +2427,7 @@ msgstr "قوالب أتمتة [جديد]"
 msgid "Device Automation Templates"
 msgstr "قوالب أتمتة الجهاز"
 
-#: automation_templates.php:491 data_sources.php:1667 package_import.php:574
+#: automation_templates.php:491 data_sources.php:1667 package_import.php:564
 #: templates_import.php:260 user_admin.php:1291 user_group_admin.php:1173
 msgid "Template Name"
 msgstr "إسم القالب"
@@ -2513,7 +2491,7 @@ msgstr "معايير إنشاء الشجرة"
 msgid "Change Leaf Type"
 msgstr "تغيير نوع ورقة"
 
-#: automation_tree_rules.php:706 lib/installer.php:3692 utilities.php:2597
+#: automation_tree_rules.php:706 lib/installer.php:3679 utilities.php:2597
 #: utilities.php:2598 utilities.php:2601 utilities.php:2602
 msgid "WARNING:"
 msgstr "تحذير:"
@@ -2560,8 +2538,8 @@ msgstr "الجذر"
 msgid "No Tree Rules Found"
 msgstr "لم يتم العثور على قواعد شجرة"
 
-#: cactid.php:44 help.php:38 lib/functions.php:5878 lib/functions.php:5941
-#: lib/functions.php:6551 poller.php:369 poller.php:498 poller.php:546
+#: cactid.php:44 help.php:38 lib/functions.php:5877 lib/functions.php:5940
+#: lib/functions.php:6550 poller.php:369 poller.php:498 poller.php:546
 #: poller.php:562 poller.php:704 poller.php:803 poller_automation.php:53
 #: poller_boost.php:313
 msgid "Cacti System Warning"
@@ -2727,6 +2705,10 @@ msgstr "عدد قوالب الرسوم البيانية باستخدام هذا 
 msgid "No CDEFs"
 msgstr "لا CDEFs"
 
+#: clog.php:34 clog_user.php:33
+msgid "FATAL: YOU DO NOT HAVE ACCESS TO THIS AREA OF CACTI"
+msgstr "FATAL: أنت لا تملك الوصول إلى هذه المنطقة من CACTI"
+
 #: color.php:170
 msgid "Unnamed Color"
 msgstr "لم يذكر اسمه"
@@ -2885,13 +2867,13 @@ msgid "Color Item"
 msgstr "البند اللون"
 
 #: color_templates.php:94 lib/api_aggregate.php:1798 lib/api_aggregate.php:1801
-#: lib/api_aggregate.php:1806 lib/html.php:1204 lib/html_reports.php:1735
+#: lib/api_aggregate.php:1806 lib/html.php:1183 lib/html_reports.php:1735
 #, fuzzy, php-format
 msgid "Item # %d"
 msgstr "البند #٪ د"
 
 #: color_templates.php:133 graph_templates_inputs.php:235
-#: lib/api_aggregate.php:1858 lib/html.php:1305
+#: lib/api_aggregate.php:1858 lib/html.php:1284
 msgid "No Items"
 msgstr "لا عناصر"
 
@@ -2941,6 +2923,8 @@ msgstr[5] ""
 
 #: color_templates.php:259
 #, fuzzy
+#| msgid "Click 'Continue' to Synchronize all Aggregate Graphs with the selected Color Template."
+#| msgid_plural "Click 'Continue' to Syncrhonize all Aggregate Graphs with the selected Color Templates."
 msgid "Click 'Continue' to Synchronize all Aggregate Graphs with the selected Color Template."
 msgid_plural "Click 'Continue' to Synchronize all Aggregate Graphs with the selected Color Templates."
 msgstr[0] "انقر فوق &quot;متابعة&quot; لإنشاء Aggregate Graph من القائمة (الرسوم) المحددة."
@@ -3066,7 +3050,7 @@ msgstr "تلقى إصلاح مصدر البيانات معرف مصدر بيان
 #: data_debug.php:443 data_debug.php:877 data_queries.php:713
 #: data_sources.php:1013 data_templates.php:678 graphs_items.php:466
 #: include/global_arrays.php:987 include/global_form.php:970
-#: lib/api_aggregate.php:1712 lib/html.php:1160 rrdcheck.php:158
+#: lib/api_aggregate.php:1712 lib/html.php:1139 rrdcheck.php:158
 msgid "Data Source"
 msgstr "مصدر البيانات"
 
@@ -3074,7 +3058,7 @@ msgstr "مصدر البيانات"
 msgid "The Data Source to Debug"
 msgstr "مصدر البيانات إلى Debug"
 
-#: data_debug.php:448 lib/html.php:2498 utilities.php:1031 utilities.php:1150
+#: data_debug.php:448 lib/html.php:2477 utilities.php:1031 utilities.php:1150
 msgid "User"
 msgstr "المستخدم"
 
@@ -3099,7 +3083,7 @@ msgid "The Status of the Data Source Debug Check."
 msgstr "حالة التحقق من بيانات مصدر البيانات."
 
 #: data_debug.php:471 lib/installer.php:2255 lib/installer.php:2287
-#: package_import.php:546
+#: package_import.php:537
 msgid "Writable"
 msgstr "قابل للكتابة"
 
@@ -3146,6 +3130,7 @@ msgstr "تحديث RRD"
 
 #: data_debug.php:504
 #, fuzzy
+#| msgid "Determines if the RRDfile has been writted to properly."
 msgid "Determines if the RRDfile has been written to properly."
 msgstr "تحديد ما إذا كان قد تم wrDfile RRED إلى بشكل صحيح."
 
@@ -3346,14 +3331,14 @@ msgid "Run checks on currently filtered Data Sources and preserve other results"
 msgstr ""
 
 #: data_debug.php:1062 data_sources.php:1417 data_templates.php:1045
-#: lib/html.php:2507
+#: lib/html.php:2486
 msgid "Profile"
 msgstr "الملف الشخصي"
 
 #: data_debug.php:1066 data_debug.php:1082 data_debug.php:1093
 #: data_sources.php:1421 data_sources.php:1438 data_templates.php:1049
 #: graphs.php:2053 graphs_new.php:424 host.php:1588 host_templates.php:737
-#: lib/clog_webapi.php:545 lib/html.php:225 lib/html_reports.php:977
+#: lib/clog_webapi.php:545 lib/html.php:204 lib/html_reports.php:977
 #: lib/html_reports.php:2073 plugins.php:469 settings.php:526 settings.php:548
 #: settings.php:576 tree.php:836 user_admin.php:2143 utilities.php:1035
 #: utilities.php:1446
@@ -3640,7 +3625,7 @@ msgid "Suggested Value"
 msgstr "القيمة المقترحة"
 
 #: data_queries.php:834 data_queries.php:942 host.php:840 host.php:983
-#: host_templates.php:536 host_templates.php:590 lib/html.php:67
+#: host_templates.php:536 host_templates.php:590 lib/html.php:63
 #: lib/html_filter.php:55
 msgid "Add"
 msgstr "إضافة"
@@ -3851,7 +3836,7 @@ msgid "Steps"
 msgstr "خطوات"
 
 #: data_source_profiles.php:639 graphs_new.php:463 include/global_form.php:298
-#: lib/html.php:550 lib/html_filter.php:72 lib/installer.php:2572
+#: lib/html.php:529 lib/html_filter.php:72 lib/installer.php:2572
 #: lib/rrd.php:3090 utilities.php:866 utilities.php:1779
 msgid "Rows"
 msgstr "الصفوف"
@@ -4247,8 +4232,8 @@ msgstr "الاسم المعطى لقالب البيانات هذا. يرجى م�
 #: data_sources.php:950 graph_view.php:743 graphs.php:1589
 #: include/global_arrays.php:936 include/global_arrays.php:985
 #: include/global_arrays.php:1667 include/global_arrays.php:1836
-#: lib/api_automation.php:425 lib/functions.php:5252 lib/html.php:2067
-#: lib/html.php:2099 lib/html_reports.php:1009 utilities.php:1870
+#: lib/api_automation.php:425 lib/functions.php:5251 lib/html.php:2046
+#: lib/html.php:2078 lib/html_reports.php:1009 utilities.php:1870
 msgid "Device"
 msgstr "جهاز"
 
@@ -4277,8 +4262,8 @@ msgstr "البيانات المخصصة"
 msgid "Data Source Item %s"
 msgstr "عنصر مصدر البيانات٪ s"
 
-#: data_sources.php:1106 data_templates.php:770 package_import.php:548
-#: package_import.php:607 templates_import.php:290
+#: data_sources.php:1106 data_templates.php:770 package_import.php:539
+#: package_import.php:597 templates_import.php:290
 msgid "New"
 msgstr "جديد"
 
@@ -4332,6 +4317,7 @@ msgstr "اسم مصدر البيانات"
 
 #: data_sources.php:1634
 #, fuzzy
+#| msgid "The name of this Data Source. Generally programtically generated from the Data Template definition."
 msgid "The name of this Data Source. Generally programmatically generated from the Data Template definition."
 msgstr "اسم مصدر البيانات هذا. بشكل عام يتم تكوينها برمجيًا من تعريف قالب البيانات."
 
@@ -4535,6 +4521,7 @@ msgstr "لا توجد قوالب بيانات"
 
 #: gprint_presets.php:148
 #, fuzzy
+#| msgid "Click 'Continue' to delete the folling GPRINT Preset(s)."
 msgid "Click 'Continue' to delete the following GPRINT Preset(s)."
 msgstr "انقر فوق &quot;متابعة&quot; لحذف الإعداد المسبق لـ (إعدادات) GPRINT."
 
@@ -4599,7 +4586,7 @@ msgstr "الرسم البياني غير موجود"
 msgid "Viewing Graph"
 msgstr "عرض الرسم البياني"
 
-#: graph.php:134 lib/html.php:487
+#: graph.php:134 lib/html.php:466
 msgid "Graph Details, Zooming and Debugging Utilities"
 msgstr "تفاصيل الرسم البياني ، وتصغير المرافق وتصحيح الأخطاء"
 
@@ -4607,16 +4594,17 @@ msgstr "تفاصيل الرسم البياني ، وتصغير المرافق و
 msgid "CSV Export"
 msgstr "تصديرCSV"
 
-#: graph.php:139 graph.php:408 lib/html.php:505
+#: graph.php:139 graph.php:408 lib/html.php:484
 #, fuzzy
+#| msgid "Edit Graph Template."
 msgid "Edit Graph Template"
 msgstr "تحرير قالب الرسم البياني."
 
-#: graph.php:144 lib/html.php:511 lib/html.php:513
+#: graph.php:144 lib/html.php:490 lib/html.php:492
 msgid "Click to view just this Graph in Real-time"
 msgstr "انقر لعرض هذا الرسم البياني في الوقت الفعلي"
 
-#: graph.php:266 lib/html.php:2472
+#: graph.php:266 lib/html.php:2451
 msgid "Utility View"
 msgstr "عرض الأداة المساعدة"
 
@@ -4853,6 +4841,7 @@ msgstr "عناصر قالب الرسم البياني [عدل الرسم الب�
 
 #: graph_templates_items.php:538
 #, fuzzy
+#| msgid "Data Template Item"
 msgid "Data Template Filter"
 msgstr "عنصر قالب البيانات"
 
@@ -4905,13 +4894,13 @@ msgstr "أضف إلى تقرير"
 msgid "Report"
 msgstr "تقرير"
 
-#: graph_view.php:646 lib/html.php:211 lib/html.php:216 lib/html_graph.php:157
+#: graph_view.php:646 lib/html.php:190 lib/html.php:195 lib/html_graph.php:157
 #: lib/html_tree.php:992
 msgid "All Graphs & Templates"
 msgstr "جميع الرسوم البيانية والقوالب"
 
 #: graph_view.php:647 include/global_arrays.php:2887 lib/graphs.php:58
-#: lib/graphs.php:67 lib/html.php:219 lib/html_graph.php:158
+#: lib/graphs.php:67 lib/html.php:198 lib/html_graph.php:158
 #: lib/html_tree.php:993
 msgid "Not Templated"
 msgstr "غير معبد"
@@ -4923,6 +4912,7 @@ msgstr "اسم الرسم البياني"
 
 #: graph_view.php:740 graph_view.php:768 graphs.php:2237
 #, fuzzy
+#| msgid "The Title of this Graph.  Generally programatically generated from the Graph Template definition or Suggested Naming rules.  The max length of the Title is controlled under Settings->Visual."
 msgid "The Title of this Graph.  Generally programmatically generated from the Graph Template definition or Suggested Naming rules.  The max length of the Title is controlled under Settings->Visual."
 msgstr "عنوان هذا الرسم البياني. يتم إنشاؤها بشكل عام من خلال تعريف قالب الرسم البياني أو قواعد التسمية المقترحة. يتم التحكم في الحد الأقصى لطول العنوان ضمن إعدادات-&gt; Visual."
 
@@ -4963,12 +4953,12 @@ msgstr "بوضع المعاينة"
 msgid "Add Selected Graphs to Report"
 msgstr "إضافة الرسوم البيانية المحددة لتقرير"
 
-#: graph_view.php:972 lib/html.php:2543
+#: graph_view.php:972 lib/html.php:2522
 msgid "Ok"
 msgstr "أوك"
 
 #: graph_xport.php:120 graph_xport.php:158 include/global_form.php:1824
-#: include/global_form.php:2092 lib/html.php:1850 links.php:381
+#: include/global_form.php:2092 lib/html.php:1829 links.php:381
 msgid "Title"
 msgstr "العنوان"
 
@@ -5228,11 +5218,13 @@ msgstr "إدارة الرسم البياني"
 
 #: graphs.php:2049
 #, fuzzy
+#| msgid "Graph, Data Source"
 msgid "Graph Source"
 msgstr "الرسم البياني ، مصدر البيانات"
 
 #: graphs.php:2054
 #, fuzzy
+#| msgid "Not Templated"
 msgid "Non Templated"
 msgstr "غير معبد"
 
@@ -5284,7 +5276,7 @@ msgstr "رسومات بيانية جديدة لـ [جميع الأجهزة]"
 msgid "New Graphs for None Host Type"
 msgstr "رسومات بيانية جديدة لـ None Host Type"
 
-#: graphs_new.php:385 lib/html.php:2470
+#: graphs_new.php:385 lib/html.php:2449
 msgid "Filter Settings Saved"
 msgstr "تصفية الإعدادات المحفوظة"
 
@@ -5318,12 +5310,12 @@ msgstr "(حدد نوع الرسم البياني لإنشاء)"
 msgid "Create"
 msgstr "أنشأ"
 
-#: graphs_new.php:566 graphs_new.php:864 lib/html.php:1032 user_admin.php:1502
+#: graphs_new.php:566 graphs_new.php:864 lib/html.php:1011 user_admin.php:1502
 #: user_group_admin.php:1382
 msgid "Select All"
 msgstr "حدد الكل"
 
-#: graphs_new.php:566 graphs_new.php:864 lib/html.php:933 lib/html.php:1032
+#: graphs_new.php:566 graphs_new.php:864 lib/html.php:912 lib/html.php:1011
 msgid "Select All Rows"
 msgstr "حدد كل الصفوف"
 
@@ -5624,7 +5616,7 @@ msgstr "إضافة قالب الرسم البياني إلى الجهاز"
 msgid "Data Query Debug Information"
 msgstr "بيانات تصحيح الاستعلام عن البيانات"
 
-#: host.php:860 lib/functions.php:4251 tree.php:1725 tree.php:1799
+#: host.php:860 lib/functions.php:4250 tree.php:1725 tree.php:1799
 #: tree.php:1907 user_admin.php:29 user_group_admin.php:31
 msgid "Copy"
 msgstr "نسخ"
@@ -5664,7 +5656,7 @@ msgstr "[٪ d عناصر ،٪ d صفوف]"
 msgid "Fail"
 msgstr "فشل"
 
-#: host.php:944 lib/functions.php:5267 lib/functions.php:5272
+#: host.php:944 lib/functions.php:5266 lib/functions.php:5271
 msgid "Success"
 msgstr "نجاح"
 
@@ -5720,7 +5712,7 @@ msgstr "SNMP GetNext"
 msgid "Undefined"
 msgstr "غير مُحدد"
 
-#: host.php:1528 include/global_settings.php:601 lib/html.php:2128
+#: host.php:1528 include/global_settings.php:601 lib/html.php:2107
 #: lib/html_reports.php:990
 msgid "Site"
 msgstr "موضع، موقع، مقر"
@@ -5734,14 +5726,14 @@ msgid "Not Up"
 msgstr "لا يصل"
 
 #: host.php:1637 lib/api_automation.php:174 lib/api_automation.php:1100
-#: lib/html.php:81 lib/html_utility.php:927 pollers.php:49
+#: lib/html_utility.php:927 pollers.php:49
 msgid "Recovering"
 msgstr "يستردّ"
 
 #: host.php:1638 lib/api_automation.php:175 lib/api_automation.php:1101
 #: lib/auth.php:2375 lib/html_utility.php:936 lib/import.php:319
-#: lib/plugins.php:1260 lib/plugins.php:1261 lib/rrd.php:3061 lib/rrd.php:3073
-#: package_import.php:550 utilities.php:211 utilities.php:212
+#: lib/plugins.php:1258 lib/plugins.php:1259 lib/rrd.php:3061 lib/rrd.php:3073
+#: package_import.php:541 utilities.php:211 utilities.php:212
 #: utilities.php:2598
 msgid "Unknown"
 msgstr "غير معروف"
@@ -5908,6 +5900,7 @@ msgstr "قوالب الجهاز"
 
 #: host_templates.php:733 host_templates.php:864
 #, fuzzy
+#| msgid "Device Rules"
 msgid "Device Class"
 msgstr "قواعد الجهاز"
 
@@ -5969,16 +5962,16 @@ msgstr "FATAL: يجب تسجيل الدخول للوصول إلى هذه الم�
 msgid "Login Again"
 msgstr "تسجيل الدخول مرة أخرى"
 
-#: include/auth.php:272 lib/functions.php:6922 permission_denied.php:45
+#: include/auth.php:272 lib/functions.php:6921 permission_denied.php:45
 #: permission_denied.php:52
 msgid "Permission Denied"
 msgstr "تم رفض الإذن"
 
-#: include/auth.php:273 lib/functions.php:6923 permission_denied.php:54
+#: include/auth.php:273 lib/functions.php:6922 permission_denied.php:54
 msgid "If you feel that this is an error. Please contact your Cacti Administrator."
 msgstr "إذا كنت تشعر أن هذا خطأ. يرجى الاتصال بمدير Cacti."
 
-#: include/auth.php:273 lib/functions.php:6923 permission_denied.php:54
+#: include/auth.php:273 lib/functions.php:6922 permission_denied.php:54
 msgid "You are not permitted to access this section of Cacti."
 msgstr "لا يسمح لك بالوصول إلى هذا القسم من Cacti."
 
@@ -5993,15 +5986,6 @@ msgstr "يمكن لمسؤولي Cacti فقط مع امتياز تثبيت / تر
 #: include/auth.php:277
 msgid "There is an Installation or Upgrade in progress."
 msgstr "يوجد تثبيت أو ترقية قيد التقدم."
-
-#: include/global.php:555
-#, fuzzy
-msgid "The Main Data Collector has returned to an Online Status"
-msgstr "كانت آخر مرة تمت فيها مزامنة أداة تجميع البيانات هذه مع موقع Cacti الرئيسي."
-
-#: include/global.php:559
-msgid "The Main Data Collector has gone to an Offline or Recovering Status"
-msgstr ""
 
 #: include/global_arrays.php:143
 msgid "Save Successful."
@@ -6185,6 +6169,7 @@ msgstr "إدخال البيانات المحفوظة. يجب عليك تحديث
 
 #: include/global_arrays.php:278
 #, fuzzy
+#| msgid "Data Input Saved.  You must update the Data Templates referencing this Data Input Method before the Data Collectors will start using any new or modified Data Input Input Fields."
 msgid "Data Input Saved.  You must update the Data Templates referencing this Data Input Method before the Data Collectors will start using any new or modified Data Input - Input Fields."
 msgstr "إدخال البيانات المحفوظة. يجب عليك تحديث قوالب البيانات التي تشير إلى طريقة إدخال البيانات هذه قبل أن يبدأ جامع البيانات في استخدام أي حقول إدخال إدخال بيانات جديدة أو معدلة."
 
@@ -6194,6 +6179,7 @@ msgstr "حقل إدخال البيانات المحفوظة. يجب عليك ت�
 
 #: include/global_arrays.php:284
 #, fuzzy
+#| msgid "Data Input Field Saved.  You must update the Data Templates referencing this Data Input Method before the Data Collectors will start using any new or modified Data Input Input Fields."
 msgid "Data Input Field Saved.  You must update the Data Templates referencing this Data Input Method before the Data Collectors will start using any new or modified Data Input - Input Fields."
 msgstr "حقل إدخال البيانات المحفوظة. يجب عليك تحديث قوالب البيانات التي تشير إلى طريقة إدخال البيانات هذه قبل أن يبدأ جامع البيانات في استخدام أي حقول إدخال إدخال بيانات جديدة أو معدلة."
 
@@ -6438,7 +6424,7 @@ msgstr "يمين"
 msgid "Justified"
 msgstr "ضبط"
 
-#: include/global_arrays.php:587 lib/html.php:2569
+#: include/global_arrays.php:587 lib/html.php:2548
 msgid "Center"
 msgstr "وسط"
 
@@ -6735,7 +6721,7 @@ msgstr "رأس"
 
 #: include/global_arrays.php:935 include/global_arrays.php:986
 #: include/global_arrays.php:1666 include/global_arrays.php:1835
-#: lib/html.php:2558
+#: lib/html.php:2537
 msgid "Graph"
 msgstr "الرسم البياني"
 
@@ -6881,6 +6867,7 @@ msgstr "قوالب الاستيراد"
 
 #: include/global_arrays.php:1008 include/global_arrays.php:2635
 #, fuzzy
+#| msgid "Import Templates"
 msgid "Import Packages"
 msgstr "قوالب الاستيراد"
 
@@ -6890,12 +6877,12 @@ msgid "Export Templates"
 msgstr "قوالب التصدير"
 
 #: include/global_arrays.php:1011 include/global_arrays.php:1033
-#: include/global_arrays.php:1051 lib/plugins.php:1215
+#: include/global_arrays.php:1051 lib/plugins.php:1213
 msgid "Configuration"
 msgstr "التكوين"
 
 #: include/global_arrays.php:1012 include/global_arrays.php:1034
-#: lib/html.php:2263 lib/html.php:2573
+#: lib/html.php:2242 lib/html.php:2552
 msgid "Settings"
 msgstr "إعدادات"
 
@@ -6944,16 +6931,19 @@ msgstr ""
 
 #: include/global_arrays.php:1060
 #, fuzzy
+#| msgid "Apply Automation Rules"
 msgid "Application Related"
 msgstr "تطبيق قواعد التشغيل الآلي"
 
 #: include/global_arrays.php:1061
 #, fuzzy
+#| msgid "Cacti Report"
 msgid "Cacti Related"
 msgstr "تقرير الصبار"
 
 #: include/global_arrays.php:1062
 #, fuzzy
+#| msgid "Database Status"
 msgid "Database Related"
 msgstr "قاعدة البيانات"
 
@@ -6963,11 +6953,13 @@ msgstr ""
 
 #: include/global_arrays.php:1064
 #, fuzzy
+#| msgid "Generic Log Level"
 msgid "Generic Device"
 msgstr "مستوى سجل عام"
 
 #: include/global_arrays.php:1065
 #, fuzzy
+#| msgid "Grid Options"
 msgid "HPC/Grid Computing"
 msgstr "خيارات الشبكة"
 
@@ -6989,21 +6981,25 @@ msgstr ""
 
 #: include/global_arrays.php:1070
 #, fuzzy
+#| msgid "Load Balancing"
 msgid "Load Balancer"
 msgstr "تحميل موازنة"
 
 #: include/global_arrays.php:1071
 #, fuzzy
+#| msgid "Network Filters"
 msgid "Network Switch"
 msgstr "مرشحات الشبكة"
 
 #: include/global_arrays.php:1072
 #, fuzzy
+#| msgid "Network Filters"
 msgid "Network Router"
 msgstr "مرشحات الشبكة"
 
 #: include/global_arrays.php:1073
 #, fuzzy
+#| msgid "Network Filters"
 msgid "Network Firewall"
 msgstr "مرشحات الشبكة"
 
@@ -7013,6 +7009,7 @@ msgstr ""
 
 #: include/global_arrays.php:1075
 #, fuzzy
+#| msgid "Select Template"
 msgid "Telco Related"
 msgstr "تحديد قالب"
 
@@ -7118,7 +7115,7 @@ msgstr "الإدارة العامة"
 msgid "System Administration"
 msgstr "إدارة النظام"
 
-#: include/global_arrays.php:1332 lib/html.php:1164
+#: include/global_arrays.php:1332 lib/html.php:1143
 msgid "CDEF"
 msgstr "CDEF"
 
@@ -7135,7 +7132,7 @@ msgid "Data Input Field"
 msgstr "حقل إدخال البيانات"
 
 #: include/global_arrays.php:1338 include/global_form.php:593
-#: include/global_form.php:1694 package_import.php:823
+#: include/global_form.php:1694 package_import.php:813
 msgid "Data Source Profile"
 msgstr "ملف مصدر البيانات"
 
@@ -7151,7 +7148,7 @@ msgstr "البند قالب الرسم البياني"
 msgid "Graph Template Input"
 msgstr "إدخال قالب الرسم البياني"
 
-#: include/global_arrays.php:1345 lib/html.php:1165
+#: include/global_arrays.php:1345 lib/html.php:1144
 msgid "VDEF"
 msgstr "VDEF"
 
@@ -7896,6 +7893,7 @@ msgstr "تحذير:"
 
 #: include/global_arrays.php:1972
 #, fuzzy
+#| msgid "Restricted"
 msgid "[Restart]"
 msgstr "مصدر مقيد "
 
@@ -7920,7 +7918,7 @@ msgid "List Mode"
 msgstr "وضع قائمة"
 
 #: include/global_arrays.php:2041 include/global_arrays.php:2047
-#: lib/functions.php:3843 lib/html.php:1698 lib/html.php:1775 lib/html.php:2491
+#: lib/functions.php:3842 lib/html.php:1677 lib/html.php:1754 lib/html.php:2470
 #: links.php:344 user_admin.php:1551 user_group_admin.php:1433
 msgid "Console"
 msgstr "وحدة التحكم"
@@ -8000,6 +7998,7 @@ msgstr "قائمة الملفات غير المستخدمة"
 
 #: include/global_arrays.php:2425
 #, fuzzy
+#| msgid "Run Check"
 msgid "RRD Check"
 msgstr "تشغيل الاختيار"
 
@@ -8057,6 +8056,7 @@ msgstr "العمل:"
 
 #: include/global_arrays.php:2611
 #, fuzzy
+#| msgid "Cacti Home"
 msgid "Cacti Help"
 msgstr "كاكتي هوم"
 
@@ -8065,7 +8065,7 @@ msgid "Export Results"
 msgstr "تصدير النتائج"
 
 #: include/global_arrays.php:2641 include/global_arrays.php:2671
-#: lib/html.php:1719 lib/html.php:1721 lib/html.php:1800
+#: lib/html.php:1698 lib/html.php:1700 lib/html.php:1779
 msgid "Reporting"
 msgstr "التقارير"
 
@@ -8253,6 +8253,7 @@ msgstr "%d معرف الكائن"
 
 #: include/global_form.php:172
 #, fuzzy
+#| msgid "Bulk Walk Maximum Repititions"
 msgid "Bulk Walk Maximum Repetitions"
 msgstr "أقصى عدد مرات تكرار المشي الجماعي"
 
@@ -8494,7 +8495,7 @@ msgid "The script/source used to gather data for this data source."
 msgstr "البرنامج النصي / المصدر المستخدم لجمع البيانات لمصدر البيانات هذا."
 
 #: include/global_form.php:595 include/global_form.php:1696
-#: package_import.php:825
+#: package_import.php:815
 msgid "Select the Data Source Profile.  The Data Source Profile controls polling interval, the data aggregation, and retention policy for the resulting Data Sources."
 msgstr "حدد ملف تعريف مصدر البيانات. يتحكم ملف تعريف مصدر البيانات في الفاصل الزمني للاستقصاء وتجميع البيانات وسياسة الاستبقاء لمصادر البيانات الناتجة."
 
@@ -8843,7 +8844,7 @@ msgstr "اتجاه الأسطورة (- -legend-direction = &lt;direction&gt;)"
 msgid "Place the legend items in the given vertical order."
 msgstr "ضع عناصر وسيلة الإيضاح في الترتيب الرأسي المحدد."
 
-#: include/global_form.php:963 lib/api_aggregate.php:1713 lib/html.php:1161
+#: include/global_form.php:963 lib/api_aggregate.php:1713 lib/html.php:1140
 msgid "Graph Item Type"
 msgstr "نوع البند البياني"
 
@@ -9086,11 +9087,13 @@ msgstr "اسم مفيد لهذا القالب المضيف."
 
 #: include/global_form.php:1351
 #, fuzzy
+#| msgid "Classic"
 msgid "Class"
 msgstr "كلاسيكي"
 
 #: include/global_form.php:1352
 #, fuzzy
+#| msgid "A useful name for this Template."
 msgid "A suitable Class for the Device Template."
 msgstr "اسم مفيد لهذا القالب."
 
@@ -9235,29 +9238,31 @@ msgstr "استيراد قالب من ملف محلي"
 msgid "If the XML file containing template data is located on your local machine, select it here."
 msgstr "إذا كان ملف XML الذي يحتوي على بيانات القالب موجودًا على جهازك المحلي ، فحدده هنا."
 
-#: include/global_form.php:1689 package_import.php:818
+#: include/global_form.php:1689 package_import.php:808
 #, fuzzy
+#| msgid "Data Source Profiles"
 msgid "Data Source Overrides"
 msgstr "ملفات مصدر البيانات"
 
-#: include/global_form.php:1698 package_import.php:827
+#: include/global_form.php:1698 package_import.php:817
 msgid "Create New from Template"
 msgstr "إنشاء جديد من القالب"
 
-#: include/global_form.php:1703 package_import.php:832
+#: include/global_form.php:1703 package_import.php:822
 #, fuzzy
+#| msgid "Graph Template Options"
 msgid "Graph/Data Template Overrides"
 msgstr "خيارات قالب الرسم البياني"
 
-#: include/global_form.php:1708 package_import.php:837
+#: include/global_form.php:1708 package_import.php:827
 msgid "Remove Orphaned Graph Items"
 msgstr "إزالة عناصر الرسم المعزول"
 
-#: include/global_form.php:1710 package_import.php:839
+#: include/global_form.php:1710 package_import.php:829
 msgid "If checked, Cacti will delete any Graph Items from both the Graph Template and associated Graphs that are not included in the imported Graph Template."
 msgstr "في حالة تحديده ، سيحذف Cacti أي عناصر Graph من كل من نموذج الرسم البياني والرسوم البيانية المرتبطة التي لا يتم تضمينها في قالب الرسم البياني المستورد."
 
-#: include/global_form.php:1715 package_import.php:844
+#: include/global_form.php:1715 package_import.php:834
 msgid "Replace Data Query Suggested Value Patterns"
 msgstr ""
 
@@ -9266,32 +9271,35 @@ msgid "Replace Data Source and Graph Template Suggested Value Records for Data Q
 msgstr ""
 
 #: include/global_form.php:1722 include/global_settings.php:563
-#: package_import.php:851
+#: package_import.php:841
 msgid "Graph Template Image Format"
 msgstr "تنسيق صورة قالب الرسم البياني"
 
-#: include/global_form.php:1723 package_import.php:852
+#: include/global_form.php:1723 package_import.php:842
 #, fuzzy
+#| msgid "The default Image Format to be used for all new Graph Templates."
 msgid "The Image Format to be used when importing or updating Graph Templates."
 msgstr "تنسيق الصورة الافتراضي المطلوب استخدامه لكافة قوالب الرسم البياني الجديدة."
 
 #: include/global_form.php:1729 include/global_settings.php:570
-#: package_import.php:859
+#: package_import.php:849
 msgid "Graph Template Height"
 msgstr "قالب الرسم البياني الارتفاع"
 
-#: include/global_form.php:1730 package_import.php:860
+#: include/global_form.php:1730 package_import.php:850
 #, fuzzy
+#| msgid "The default Graph Width to be used for all new Graph Templates."
 msgid "The Height to be used when importing or updating Graph Templates."
 msgstr "عرض الرسم البياني الافتراضي لاستخدامه لكافة قوالب الرسم البياني الجديدة."
 
 #: include/global_form.php:1737 include/global_settings.php:578
-#: package_import.php:868
+#: package_import.php:858
 msgid "Graph Template Width"
 msgstr "عرض قالب الرسم البياني"
 
-#: include/global_form.php:1738 package_import.php:869
+#: include/global_form.php:1738 package_import.php:859
 #, fuzzy
+#| msgid "The default Graph Width to be used for all new Graph Templates."
 msgid "The Width to be used when importing or updating Graph Templates."
 msgstr "عرض الرسم البياني الافتراضي لاستخدامه لكافة قوالب الرسم البياني الجديدة."
 
@@ -9590,7 +9598,7 @@ msgstr "بيانات"
 msgid "Visual"
 msgstr "بصري، يتعلق بالرؤية. إبصاري – شخص بصري الفطانة"
 
-#: include/global_settings.php:44 lib/functions.php:5256 lib/functions.php:5261
+#: include/global_settings.php:44 lib/functions.php:5255 lib/functions.php:5260
 msgid "Authentication"
 msgstr "المصادقة"
 
@@ -9626,11 +9634,11 @@ msgstr "خطوط الرسم البياني"
 msgid "PHP Mail() Function"
 msgstr "وظيفة PHP Mail ()"
 
-#: include/global_settings.php:85 lib/functions.php:5239
+#: include/global_settings.php:85 lib/functions.php:5238
 msgid "Sendmail"
 msgstr "ارسل بريد"
 
-#: include/global_settings.php:86 lib/functions.php:5244
+#: include/global_settings.php:86 lib/functions.php:5243
 msgid "SMTP"
 msgstr "SMTP"
 
@@ -9906,6 +9914,7 @@ msgstr "يتضمن Cacti دعمًا للعديد من معالجات ترجمة 
 
 #: include/global_settings.php:372
 #, fuzzy
+#| msgid "MySQL - TimeZone Support"
 msgid "Client TimeZone Support"
 msgstr "MySQL - دعم TimeZone"
 
@@ -9951,6 +9960,7 @@ msgstr "إصدار RRDtool الذي قمت بتثبيته."
 
 #: include/global_settings.php:414
 #, fuzzy
+#| msgid "Enable Report"
 msgid "Enable Gradient Support"
 msgstr "تمكين التقرير"
 
@@ -9964,6 +9974,7 @@ msgstr "طريقة ترخيص الرسم البياني"
 
 #: include/global_settings.php:421
 #, fuzzy
+#| msgid "There are two methods for determining a User's Graph Permissions.  The first is 'Permissive'.  Under the 'Permissive' setting, a User only needs access to either the Graph, Device or Graph Template to gain access to the Graphs that apply to them.  Under 'Restrictive', the User must have access to the Graph, the Device, and the Graph Template to gain access to the Graph."
 msgid "There are four methods for determining a User's Graph Permissions.  The first is 'Permissive'.  Under the 'Permissive' setting, a User only needs access to either the Graph, Device or Graph Template to gain access to the Graphs that apply to them.  Under 'Restrictive', the User must have access to the Graph, the Device, and the Graph Template to gain access to the Graph.  These first two methods have scalability problems for very large installs.  So, two additional options are available.  They are 'Device Based', which means if you have access to the Device, you get access to it's Graphs.  And lastly 'Graph Template Based', which means if you have access to the 'Graph Template' you get access to all Device Graphs of that Template."
 msgstr "هناك طريقتان لتحديد أذونات الرسم البياني للمستخدم. الأول هو &quot;Permissive&quot;. تحت الإعداد &quot;Permissive&quot; ، يحتاج المستخدم فقط للوصول إلى إما Graph أو Device أو Graph Template للوصول إلى الرسوم البيانية التي تنطبق عليها. ضمن &quot;تقييد&quot; ، يجب أن يمتلك المستخدم حق الوصول إلى الرسم البياني ، والجهاز ، والقالب البياني للوصول إلى الرسم البياني."
 
@@ -9977,6 +9988,7 @@ msgstr "تقييدي"
 
 #: include/global_settings.php:427
 #, fuzzy
+#| msgid "Device Name"
 msgid "Device Based"
 msgstr "اسم الجهاز"
 
@@ -9992,7 +10004,7 @@ msgstr "في حالة التعيين على Simple ، لا يمكن إنشاء �
 msgid "Simple"
 msgstr "منتج بسيط"
 
-#: include/global_settings.php:438 lib/html.php:2560
+#: include/global_settings.php:438 lib/html.php:2539
 msgid "Advanced"
 msgstr "المتقدمة"
 
@@ -10006,6 +10018,7 @@ msgstr "عند التحديد ، ستظهر التعليمات في النموذ
 
 #: include/global_settings.php:448
 #, fuzzy
+#| msgid "Get Page Help"
 msgid "Local Page Help Only"
 msgstr "احصل على مساعدة"
 
@@ -10079,6 +10092,7 @@ msgstr "مصادر بديلة لأمان المحتوى"
 
 #: include/global_settings.php:506
 #, fuzzy
+#| msgid "Space delmited domain names that will be permitted to be accessed outside of the Web Server itself.  This is important for users choosing to use a CDN, or hosting site.  Sources can includes wildcards for example: *.mydomain.com, or a protocol, for example: https://*.example.com.  These Alternate Sources include Image, CSS and JavaScript types only."
 msgid "Space delimited domain names that will be permitted to be accessed outside of the Web Server itself.  This is important for users choosing to use a CDN, or hosting site.  Sources can includes wildcards for example: *.mydomain.com, or a protocol, for example: https://*.example.com.  These Alternate Sources include Image, CSS and JavaScript types only."
 msgstr "أسماء النطاقات المحددة بالمساحة التي سيسمح بالوصول إليها خارج خادم الويب نفسه. هذا مهم للمستخدمين الذين يختارون استخدام CDN ، أو موقع الاستضافة. يمكن أن تتضمن المصادر أحرف بدل على سبيل المثال: * .mydomain.com ، أو بروتوكول ، على سبيل المثال: https: //*.example.com. تتضمن هذه المصادر البديلة أنواع الصور و CSS و JavaScript فقط."
 
@@ -10140,6 +10154,7 @@ msgstr "تنسيق الصورة الافتراضي المطلوب استخدام
 
 #: include/global_settings.php:571
 #, fuzzy
+#| msgid "The default Graph Width to be used for all new Graph Templates."
 msgid "The default Graph Height to be used for all new Graph Templates."
 msgstr "عرض الرسم البياني الافتراضي لاستخدامه لكافة قوالب الرسم البياني الجديدة."
 
@@ -10366,7 +10381,7 @@ msgid "Theme Settings"
 msgstr "إعدادات الثيم"
 
 #: include/global_settings.php:834 include/global_settings.php:1044
-#: include/global_settings.php:2536 lib/html.php:2508
+#: include/global_settings.php:2536 lib/html.php:2487
 msgid "Theme"
 msgstr "قالب"
 
@@ -10662,6 +10677,7 @@ msgstr "الخط المراد استخدامه لعناصر وحدة الرسم 
 
 #: include/global_settings.php:1115
 #, fuzzy
+#| msgid "User Settings"
 msgid "Business Hours Settings"
 msgstr "إعدادات المستخدم"
 
@@ -10708,6 +10724,7 @@ msgstr ""
 
 #: include/global_settings.php:1156
 #, fuzzy
+#| msgid "Maximum number of rows per page"
 msgid "Maximum number of days to show business hours"
 msgstr "الحد الأقصى لعدد الصفوف في كل صفحة"
 
@@ -10813,6 +10830,7 @@ msgstr "إعادة بناء ذاكرة التخزين المؤقت للمورد"
 
 #: include/global_settings.php:1272
 #, fuzzy
+#| msgid "By default, the main Cacti Data Collector will cache the entire web site and plugins into a Resource Cache.  Then, periodically the Remote Data Collectors will update themeselves with any updates from the main Cacti Data Collector.  This Resource Cache essentially allows Remote Data Collectors to self upgrade.  If you do not wish to use this option, you can disable it using this setting."
 msgid "By default, the main Cacti Data Collector will cache the entire web site and plugins into a Resource Cache.  Then, periodically the Remote Data Collectors will update themselves with any updates from the main Cacti Data Collector.  This Resource Cache essentially allows Remote Data Collectors to self upgrade.  If you do not wish to use this option, you can disable it using this setting."
 msgstr "بشكل افتراضي ، سيقوم Cacti Data Collector الرئيسي بتخزين موقع الويب بالكامل والمكونات الإضافية مؤقتًا في ذاكرة التخزين المؤقت للموارد. بعد ذلك ، سيقوم جامعو البيانات عن بعد بشكل دوري بتحديث أنفسهم بأي تحديثات من Cacti Data Collector. تسمح ذاكرة التخزين المؤقت للمورد هذه بشكل أساسي لمجمعي البيانات عن بُعد بالترقية الذاتية. إذا كنت لا ترغب في استخدام هذا الخيار ، يمكنك تعطيله باستخدام هذا الإعداد."
 
@@ -10858,6 +10876,7 @@ msgstr ""
 
 #: include/global_settings.php:1314
 #, fuzzy
+#| msgid "Re-Index Device"
 msgid "Re-Index All Device Schedule"
 msgstr "طريقة إعادة الفهرسة"
 
@@ -10871,11 +10890,13 @@ msgstr ""
 
 #: include/global_settings.php:1322
 #, fuzzy
+#| msgid "Monthly on Day"
 msgid "Monthly on Sunady"
 msgstr "شهريا في اليوم"
 
 #: include/global_settings.php:1326
 #, fuzzy
+#| msgid "Background Timeout Settings"
 msgid "Background Timeout and Concurrent Process Settings"
 msgstr "إعداد خطوط الأسطورة"
 
@@ -10904,26 +10925,31 @@ msgstr "الحد الأقصى لمقدار الوقت الذي يمكن فيه �
 
 #: include/global_settings.php:1359
 #, fuzzy
+#| msgid "DNS Timeout"
 msgid "RRDfile Check Timeout"
 msgstr "مهلة DNS"
 
 #: include/global_settings.php:1360
 #, fuzzy
+#| msgid "The maximum amount of time a Cacti's Spikekill script can run without generating a timeout error and being killed."
 msgid "The maximum amount of time Cacti's RRDfile check script can run without generating a timeout error and being killed."
 msgstr "أقصى قدر من الوقت يمكن أن يعمل فيه البرنامج النصي Spikekill من Cacti دون إنشاء خطأ انتهاء المهلة والقتل."
 
 #: include/global_settings.php:1374
 #, fuzzy
+#| msgid "Background Commands Timeout"
 msgid "Poller Commands Timeout"
 msgstr "أوامر الخلفية مهلة"
 
 #: include/global_settings.php:1375
 #, fuzzy
+#| msgid "The maximum amount of time Cacti's Background Commands script can run without generating a timeout error and being killed."
 msgid "The maximum amount of time Cacti's Background Commands script can run without generating a timeout error and being killed.  This script will perform tasks such as re-indexing Devices and pruning devices from Remote Data Collectors."
 msgstr "الحد الأقصى لمقدار الوقت الذي يمكن فيه تشغيل البرنامج النصي لأوامر الخلفية في Cacti دون حدوث خطأ انتهاء المهلة والقتل."
 
 #: include/global_settings.php:1387
 #, fuzzy
+#| msgid "Concurrent Processes"
 msgid "Poller Command Concurrent Processes"
 msgstr "العمليات المتزامنة"
 
@@ -11486,7 +11512,7 @@ msgstr "هذا هو عدد الأحرف المسموح بها قبل أن يتم
 msgid "Sendmail Options"
 msgstr "خيارات Sendmail"
 
-#: include/global_settings.php:1907 lib/functions.php:5239
+#: include/global_settings.php:1907 lib/functions.php:5238
 msgid "Sendmail Path"
 msgstr "مسار Sendmail"
 
@@ -11572,6 +11598,7 @@ msgstr "الحد الأقصى لحجم البريد الإلكتروني"
 
 #: include/global_settings.php:1980
 #, fuzzy
+#| msgid "The maximum size of the E-Mail message including all attachements."
 msgid "The maximum size of the E-Mail message including all attachments."
 msgstr "الحد الأقصى لحجم رسالة البريد الإلكتروني بما في ذلك جميع المرفقات."
 
@@ -11693,6 +11720,7 @@ msgstr "أقصى وقت تشغيل Script تحديث RRD"
 
 #: include/global_settings.php:2111
 #, fuzzy
+#| msgid "If the boost poller excceds this runtime, a warning will be placed in the cacti log,"
 msgid "If the boost poller exceeds this runtime, a warning will be placed in the cacti log,"
 msgstr "إذا نجح مُستقبل التعزيز في وقت التشغيل هذا ، فسيتم وضع تحذير في سجل الصبار ،"
 
@@ -11710,6 +11738,7 @@ msgstr "تعزيز سجل التصحيح"
 
 #: include/global_settings.php:2124
 #, fuzzy
+#| msgid "If this field is non-blank, Boost will log RRDupdate output from the boost\tpoller process."
 msgid "If this field is non-blank, Boost will log RRDUpdate output from the boost\tpoller process."
 msgstr "إذا كان هذا الحقل غير فارغ ، فسوف يقوم Boost بتسجيل إخراج RRDupdate من عملية مُلِق التعزيز."
 
@@ -11789,16 +11818,19 @@ msgstr "الحد الأقصى لمقدار ذاكرة Cacti Poller و Data Sourc
 
 #: include/global_settings.php:2219
 #, fuzzy
+#| msgid "RRDfile Cleaner"
 msgid "RRDfile Check"
 msgstr "RRDfile نظافة"
 
 #: include/global_settings.php:2224
 #, fuzzy
+#| msgid "Enable Rule"
 msgid "Enable RRDfile Check"
 msgstr "تمكين القاعدة"
 
 #: include/global_settings.php:2225
 #, fuzzy
+#| msgid "Should Data Source Statistics be collected for this Cacti system?"
 msgid "Should RRDfile check be enabled for this Cacti system?"
 msgstr "هل يجب جمع إحصاءات مصادر البيانات لنظام Cacti هذا؟"
 
@@ -11814,11 +11846,13 @@ msgstr "عدد عمليات التعزيز المتزامنة لاستخدامه
 
 #: include/global_settings.php:2258
 #, fuzzy
+#| msgid "Frequency"
 msgid "Check Frequency"
 msgstr "التكرار"
 
 #: include/global_settings.php:2259
 #, fuzzy
+#| msgid "How frequent should Daily Stats be updated?"
 msgid "How frequent should RRD be checked ?"
 msgstr "ما مدى تكرار تحديث الإحصاءات اليومية؟"
 
@@ -11836,10 +11870,11 @@ msgstr "RRDtool خادم وكيل"
 
 #: include/global_settings.php:2280
 #, fuzzy
+#| msgid "Structured RRD Paths"
 msgid "Structured RRDfile Paths"
 msgstr "مسارات RRD الهيكلية"
 
-#: include/global_settings.php:2285 lib/functions.php:5228
+#: include/global_settings.php:2285 lib/functions.php:5227
 msgid "Method"
 msgstr "طريقة"
 
@@ -11849,6 +11884,7 @@ msgstr ""
 
 #: include/global_settings.php:2290
 #, fuzzy
+#| msgid "Directory Found"
 msgid "Directory Pattern"
 msgstr "دليل وجدت"
 
@@ -11858,6 +11894,7 @@ msgstr ""
 
 #: include/global_settings.php:2295
 #, fuzzy
+#| msgid "Device"
 msgid "Device ID"
 msgstr "جهاز"
 
@@ -11868,6 +11905,7 @@ msgstr "حذف استعلام البيانات"
 
 #: include/global_settings.php:2297
 #, fuzzy
+#| msgid "Device Name"
 msgid "Device Hash/Device ID"
 msgstr "اسم الجهاز"
 
@@ -11952,7 +11990,7 @@ msgstr "الانحراف المعياري"
 msgid "Variance Based w/Outliers Removed"
 msgstr "التباين القائم w / القيم المتطرفة إزالتها"
 
-#: include/global_settings.php:2386 lib/html.php:2223
+#: include/global_settings.php:2386 lib/html.php:2202
 msgid "Replacement Method"
 msgstr "طريقة الاستبدال"
 
@@ -11960,15 +11998,15 @@ msgstr "طريقة الاستبدال"
 msgid "There are three replacement methods.  The first method replaces the spike with the average of the data source in question.  The second method replaces the spike with a 'NaN'.  The last replaces the spike with the last known good value found."
 msgstr "هناك ثلاث طرق بديلة. تحل الطريقة الأولى محل السنبلة بمتوسط مصدر البيانات المعني. الطريقة الثانية تحل محل السنبلة بـ &quot;NaN&quot;. يستبدل الأخير السنبلة بآخر قيمة جيدة معروفة تم العثور عليها."
 
-#: include/global_settings.php:2391 lib/html.php:2219
+#: include/global_settings.php:2391 lib/html.php:2198
 msgid "Average"
 msgstr "جيد"
 
-#: include/global_settings.php:2392 lib/html.php:2220
+#: include/global_settings.php:2392 lib/html.php:2199
 msgid "NaN's"
 msgstr "ونان"
 
-#: include/global_settings.php:2393 lib/html.php:2221
+#: include/global_settings.php:2393 lib/html.php:2200
 msgid "Last Known Good"
 msgstr "آخر جيد معروف"
 
@@ -11991,7 +12029,7 @@ msgstr "سيتم استبعاد أي قيمة تمثل هذه الانحرافا
 msgid "%d Standard Deviations"
 msgstr "٪ d الانحرافات المعيارية"
 
-#: include/global_settings.php:2418 lib/html.php:2235
+#: include/global_settings.php:2418 lib/html.php:2214
 msgid "Variance Percentage"
 msgstr "النسبة المئوية للتغيير"
 
@@ -12099,6 +12137,7 @@ msgstr "ما هو نمط الرسم البياني الذي تريد عرضه ب
 
 #: include/global_settings.php:2550
 #, fuzzy
+#| msgid "MySQL - TimeZone Support"
 msgid "TimeZone Support"
 msgstr "MySQL - دعم TimeZone"
 
@@ -12408,11 +12447,11 @@ msgstr "<a href=\"%s\">إنشاء الرسوم البيانية</a> للأجهز
 msgid "<a href=\"%s\">View</a> your new graphs"
 msgstr "<a href=\"%s\">عرض</a> الرسوم البيانية الجديدة الخاصة بك"
 
-#: index.php:82 lib/html.php:79
+#: index.php:82
 msgid "Offline"
 msgstr "غير متواجد"
 
-#: index.php:82 lib/html.php:83
+#: index.php:82
 msgid "Online"
 msgstr "متواجد"
 
@@ -12447,6 +12486,7 @@ msgstr "بولير جديد"
 
 #: install/install.php:89
 #, fuzzy
+#| msgid "Active/Installed"
 msgid "Cacti Install Help"
 msgstr "نشط / مثبت"
 
@@ -12509,15 +12549,15 @@ msgstr "اضغط على &quot;العودة&quot; للعودة واختيار ا�
 msgid "The Graphs chosen for the Aggregate Graph do not use Graph Templates.  Aggregate does not support creating Aggregate Graphs from non-templated graphs."
 msgstr "الرسوم البيانية المختارة لـ Aggregate Graph لا تستخدم قوالب Graph. لا يدعم التجميع إنشاء الرسومات البيانية للتراكيب من الرسوم البيانية غير المجدولة."
 
-#: lib/api_aggregate.php:1711 lib/html.php:1158
+#: lib/api_aggregate.php:1711 lib/html.php:1137
 msgid "Graph Item"
 msgstr "البند البياني"
 
-#: lib/api_aggregate.php:1714 lib/html.php:1162
+#: lib/api_aggregate.php:1714 lib/html.php:1141
 msgid "CF Type"
 msgstr "نوع CF"
 
-#: lib/api_aggregate.php:1715 lib/html.php:1167
+#: lib/api_aggregate.php:1715 lib/html.php:1146
 msgid "Item Color"
 msgstr "بند اللون"
 
@@ -12531,6 +12571,7 @@ msgstr "تخطي"
 
 #: lib/api_aggregate.php:1795
 #, fuzzy
+#| msgid "Aggregate Items are not modifyable"
 msgid "Aggregate Items are not modifiable"
 msgstr "عناصر التجميع غير قابلة للتعديل"
 
@@ -12743,8 +12784,8 @@ msgstr "موقعك:"
 msgid "Contact:"
 msgstr "بيانتت اتصال"
 
-#: lib/api_device.php:1581 lib/functions.php:5270 lib/functions.php:5272
-#: lib/functions.php:5276
+#: lib/api_device.php:1581 lib/functions.php:5269 lib/functions.php:5271
+#: lib/functions.php:5275
 msgid "Ping Results"
 msgstr "نتائج بينغ"
 
@@ -13038,6 +13079,7 @@ msgstr "الأقدم أولاً"
 
 #: lib/clog_webapi.php:728
 #, fuzzy
+#| msgid "Sync Devices"
 msgid "System Device"
 msgstr "أجهزة المزامنة"
 
@@ -13514,168 +13556,169 @@ msgstr "حفظ الإعدادات إلى Data Collector٪ d فشل."
 msgid "Settings save to Data Collector %d Failed."
 msgstr "حفظ الإعدادات إلى Data Collector٪ d فشل."
 
-#: lib/functions.php:919 lib/functions.php:1010
+#: lib/functions.php:918 lib/functions.php:1009
 msgid "Message Not Found."
 msgstr "الرسالة غير موجودة."
 
-#: lib/functions.php:1406
+#: lib/functions.php:1405
 #, fuzzy, php-format
 msgid "Error %s is not readable"
 msgstr "الخطأ٪ s غير قابل للقراءة"
 
-#: lib/functions.php:3614
+#: lib/functions.php:3613
 #, fuzzy
+#| msgid "Logged in as"
 msgid "Logged in a Guest"
 msgstr "مسجل الدخول بإسم"
 
-#: lib/functions.php:3614 lib/functions.php:3630
+#: lib/functions.php:3613 lib/functions.php:3629
 msgid "Logged in as"
 msgstr "مسجل الدخول بإسم"
 
-#: lib/functions.php:3614
+#: lib/functions.php:3613
 msgid "Login as Regular User"
 msgstr "تسجيل الدخول كمستخدم عادي"
 
-#: lib/functions.php:3614
+#: lib/functions.php:3613
 msgid "guest"
 msgstr "زائر"
 
-#: lib/functions.php:3617 lib/functions.php:3640 lib/html.php:2497
+#: lib/functions.php:3616 lib/functions.php:3639 lib/html.php:2476
 msgid "User Community"
 msgstr "مجتمع المستخدم"
 
-#: lib/functions.php:3618 lib/functions.php:3641 lib/html.php:2499
+#: lib/functions.php:3617 lib/functions.php:3640 lib/html.php:2478
 #: lib/utility.php:1235
 msgid "Documentation"
 msgstr "الوثائق"
 
-#: lib/functions.php:3633
+#: lib/functions.php:3632
 #, php-format
 msgid "Logged in as %s"
 msgstr "مسجل دخول كـ %s"
 
-#: lib/functions.php:3635 lib/html.php:2478
+#: lib/functions.php:3634 lib/html.php:2457
 msgid "Edit Profile"
 msgstr "تحرير الملف الشخصي"
 
-#: lib/functions.php:3645 lib/html.php:2482
+#: lib/functions.php:3644 lib/html.php:2461
 msgid "Logout"
 msgstr "تسجيل خروج"
 
-#: lib/functions.php:3790
+#: lib/functions.php:3789
 msgid "Leaf"
 msgstr "ورقة"
 
-#: lib/functions.php:3810 lib/html_tree.php:663 lib/html_tree.php:699
+#: lib/functions.php:3809 lib/html_tree.php:663 lib/html_tree.php:699
 #: lib/html_tree.php:928 lib/html_tree.php:936 lib/html_tree.php:1510
 msgid "Non Query Based"
 msgstr "غير الاستفسار القائمة"
 
-#: lib/functions.php:3846
+#: lib/functions.php:3845
 #, fuzzy, php-format
 msgid "Link %s"
 msgstr "الرابط٪ s"
 
-#: lib/functions.php:4870
+#: lib/functions.php:4869
 msgid "Mailer Error: No recipient address set!!<br>If using the <i>Test Mail</i> link, please set the <b>Alert e-mail</b> setting."
 msgstr "ميلر خطأ: لا <b>لمعالجة</b> وضع !! <br> إذا كنت تستخدم رابط <i>اختبار البريد</i> ، فيرجى ضبط إعداد <b>البريد الإلكتروني التنبيه</b> ."
 
-#: lib/functions.php:5203
+#: lib/functions.php:5202
 #, fuzzy, php-format
 msgid "Authentication failed: %s"
 msgstr "فشل المصادقة:٪ s"
 
-#: lib/functions.php:5207
+#: lib/functions.php:5206
 #, fuzzy, php-format
 msgid "HELO failed: %s"
 msgstr "فشلت HELO:٪ s"
 
-#: lib/functions.php:5210
+#: lib/functions.php:5209
 #, fuzzy, php-format
 msgid "Connect failed: %s"
 msgstr "فشل الاتصال:٪ s"
 
-#: lib/functions.php:5213
+#: lib/functions.php:5212
 msgid "SMTP error: "
 msgstr "خطأ SMTP:"
 
-#: lib/functions.php:5226
+#: lib/functions.php:5225
 msgid "This is a test message generated from Cacti.  This message was sent to test the configuration of your Mail Settings."
 msgstr "هذه رسالة اختبار تم إنشاؤها من Cacti. تم إرسال هذه الرسالة لاختبار تهيئة إعدادات البريد الخاصة بك."
 
-#: lib/functions.php:5227
+#: lib/functions.php:5226
 msgid "Your email settings are currently set as follows"
 msgstr "يتم ضبط إعدادات بريدك الإلكتروني حاليًا على النحو التالي"
 
-#: lib/functions.php:5230
+#: lib/functions.php:5229
 msgid "Checking Configuration...<br>"
 msgstr "التحقق من التكوين ... <br>"
 
-#: lib/functions.php:5237
+#: lib/functions.php:5236
 msgid "PHP's Mailer Class"
 msgstr "PHP&#39;s Mailer Class"
 
-#: lib/functions.php:5243
+#: lib/functions.php:5242
 msgid "Method: SMTP"
 msgstr "الطريقة: SMTP"
 
-#: lib/functions.php:5258
+#: lib/functions.php:5257
 msgid "Not Shown for Security Reasons"
 msgstr "غير معروض لأسباب أمنية"
 
-#: lib/functions.php:5259
+#: lib/functions.php:5258
 msgid "Security"
 msgstr "الأمان"
 
-#: lib/functions.php:5267
+#: lib/functions.php:5266
 msgid "Ping Results:"
 msgstr "نتائج بينغ:"
 
-#: lib/functions.php:5276
+#: lib/functions.php:5275
 msgid "Bypassed"
 msgstr "تجاوز"
 
-#: lib/functions.php:5284
+#: lib/functions.php:5283
 msgid "Creating Message Text..."
 msgstr "إنشاء نص الرسالة ..."
 
-#: lib/functions.php:5287
+#: lib/functions.php:5286
 msgid "Sending Message..."
 msgstr "إرسال رسالة …"
 
-#: lib/functions.php:5291
+#: lib/functions.php:5290
 msgid "Cacti Test Message"
 msgstr "رسالة اختبار الصبار"
 
-#: lib/functions.php:5293
+#: lib/functions.php:5292
 msgid "Success!"
 msgstr "نجح!"
 
-#: lib/functions.php:5296
+#: lib/functions.php:5295
 msgid "Message Not Sent due to ping failure."
 msgstr "رسالة غير مرسلة بسبب فشل اختبار الاتصال."
 
-#: lib/functions.php:5878 lib/functions.php:5941
+#: lib/functions.php:5877 lib/functions.php:5940
 #, fuzzy, php-format
 msgid "Cacti disabled plugin %s due to the following error: %s!  See the Cacti logfile for more details."
 msgstr "تم تعطيل المكون الإضافي لـ Cacti٪ s بسبب الخطأ التالي:٪ s! انظر ملف السجل Cacti لمزيد من التفاصيل."
 
-#: lib/functions.php:6335 lib/functions.php:6337
+#: lib/functions.php:6334 lib/functions.php:6336
 #, fuzzy, php-format
 msgid "- Beta %s"
 msgstr "-٪ s بيتا"
 
-#: lib/functions.php:6335
+#: lib/functions.php:6334
 #, fuzzy, php-format
 msgid "Version %s %s"
 msgstr "الإصدار٪ s٪ s"
 
-#: lib/functions.php:6337
+#: lib/functions.php:6336
 #, php-format
 msgid "%s %s"
 msgstr "%s %s"
 
-#: lib/functions.php:6551
+#: lib/functions.php:6550
 #, php-format
 msgid "WARNING:  Key Cacti Include File %s missing.  Please locate and replace this file"
 msgstr ""
@@ -13692,466 +13735,463 @@ msgstr "لا تفضيلات"
 msgid "Damaged Graph"
 msgstr "مصدر البيانات ، الرسم البياني"
 
-#: lib/html.php:76
-#, fuzzy
-msgid "Remote Server"
-msgstr "إزالة StdDev"
-
-#: lib/html.php:125
+#: lib/html.php:104
 msgid "Get Page Help"
 msgstr "احصل على مساعدة"
 
-#: lib/html.php:213 settings.php:567
+#: lib/html.php:192 settings.php:567
 msgid "Templates Selected"
 msgstr "قوالب مختارة"
 
-#: lib/html.php:267 settings.php:535 settings.php:557 settings.php:608
+#: lib/html.php:246 settings.php:535 settings.php:557 settings.php:608
 msgid "Enter keyword"
 msgstr "ادخل الكلمة المفتاحية"
 
-#: lib/html.php:421 lib/reports.php:1517 lib/reports.php:1521
+#: lib/html.php:400 lib/reports.php:1517 lib/reports.php:1521
 msgid "Data Query:"
 msgstr "استعلام البيانات:"
 
-#: lib/html.php:488
+#: lib/html.php:467
 msgid "CSV Export of Graph Data"
 msgstr "CSV تصدير بيانات الرسم البياني"
 
-#: lib/html.php:489 lib/html.php:2469
+#: lib/html.php:468 lib/html.php:2448
 msgid "Time Graph View"
 msgstr "عرض الرسم البياني الزمني"
 
-#: lib/html.php:498
+#: lib/html.php:477
 msgid "Edit Device"
 msgstr "تحرير الجهاز"
 
-#: lib/html.php:518
+#: lib/html.php:497
 msgid "Kill Spikes in Graphs"
 msgstr "قتل المسامير في الرسوم البيانية"
 
-#: lib/html.php:563 lib/html.php:592 lib/installer.php:1559
+#: lib/html.php:542 lib/html.php:571 lib/installer.php:1559
 msgid "Previous"
 msgstr "السابق"
 
-#: lib/html.php:566
+#: lib/html.php:545
 #, fuzzy, php-format
 msgid "%d to %d of %s [ %s ]"
 msgstr "٪ d إلى٪ d من٪ s [٪ s]"
 
-#: lib/html.php:569 lib/html.php:598 lib/installer.php:1558
+#: lib/html.php:548 lib/html.php:577 lib/installer.php:1558
 msgid "Next"
 msgstr "التالي"
 
-#: lib/html.php:576
+#: lib/html.php:555
 #, fuzzy, php-format
 msgid "All %d %s"
 msgstr "كل٪ d٪ s"
 
-#: lib/html.php:595
+#: lib/html.php:574
 #, fuzzy, php-format
 msgid "Current Page: %s"
 msgstr "القيمة الحالية"
 
-#: lib/html.php:611
+#: lib/html.php:590
 #, php-format
 msgid "No %s Found"
 msgstr "لم يتمّ العثور على %s"
 
-#: lib/html.php:1159
+#: lib/html.php:1138
 msgid "#"
 msgstr "#"
 
-#: lib/html.php:1163
+#: lib/html.php:1142
 msgid "GPrint"
 msgstr "GPrint"
 
-#: lib/html.php:1166
+#: lib/html.php:1145
 msgid "Alpha %"
 msgstr "ألفا( الحرف الإغريقي الأول ألفا)"
 
-#: lib/html.php:1210
+#: lib/html.php:1189
 msgid "No Source"
 msgstr "المصدر"
 
-#: lib/html.php:1549
+#: lib/html.php:1528
 msgid "Choose an action"
 msgstr "اختيار إجراء"
 
-#: lib/html.php:1559
+#: lib/html.php:1538
 msgid "Execute Action"
 msgstr "تنفيذ العمل"
 
-#: lib/html.php:1728 lib/html.php:1730 lib/html.php:1810 managers.php:41
+#: lib/html.php:1707 lib/html.php:1709 lib/html.php:1789 managers.php:41
 #: managers.php:221
 msgid "Logs"
 msgstr "السجل"
 
-#: lib/html.php:2229
+#: lib/html.php:2208
 msgid "Standard Deviations"
 msgstr "انحرافات معيارية"
 
-#: lib/html.php:2241
+#: lib/html.php:2220
 msgid "Variance Outliers"
 msgstr "الفرق القيم المتطرفة"
 
-#: lib/html.php:2247
+#: lib/html.php:2226
 msgid "Kills Per RRA"
 msgstr "يقتل لكل RRA"
 
-#: lib/html.php:2253
+#: lib/html.php:2232
 msgid "Remove StdDev"
 msgstr "إزالة StdDev"
 
-#: lib/html.php:2254
+#: lib/html.php:2233
 msgid "Remove Variance"
 msgstr "إزالة التباين"
 
-#: lib/html.php:2255
+#: lib/html.php:2234
 msgid "Gap Fill Range"
 msgstr "الفجوة ملء المدى"
 
-#: lib/html.php:2256
+#: lib/html.php:2235
 msgid "Float Range"
 msgstr "طفو المدى"
 
-#: lib/html.php:2258
+#: lib/html.php:2237
 msgid "Dry Run StdDev"
 msgstr "جاف تشغيل StdDev"
 
-#: lib/html.php:2259
+#: lib/html.php:2238
 msgid "Dry Run Variance"
 msgstr "فارق التشغيل الجاف"
 
-#: lib/html.php:2260
+#: lib/html.php:2239
 msgid "Dry Run Gap Fill Range"
 msgstr "جاف المدى الفجوة ملء المدى"
 
-#: lib/html.php:2261
+#: lib/html.php:2240
 msgid "Dry Run Float Range"
 msgstr "المدى الجاف تعويم المدى"
 
-#: lib/html.php:2465
+#: lib/html.php:2444
 msgid "Allow or limit the table columns to extend beyond the current windows limits."
 msgstr "السماح أو الحد من أعمدة الجدول لتتجاوز حدود النوافذ الحالية."
 
-#: lib/html.php:2466 lib/html_filter.php:65
+#: lib/html.php:2445 lib/html_filter.php:65
 msgid "Enter a search term"
 msgstr "أدخل مصطلح البحث"
 
-#: lib/html.php:2467
+#: lib/html.php:2446
 msgid "Enter a regular expression"
 msgstr "أدخل تعبيرًا عاديًا"
 
-#: lib/html.php:2468
+#: lib/html.php:2447
 msgid "No file selected"
 msgstr "لم يتم تحديد الملف"
 
-#: lib/html.php:2471 lib/html.php:2514
+#: lib/html.php:2450 lib/html.php:2493
 msgid "SpikeKill Results"
 msgstr "SpikeKill النتائج"
 
-#: lib/html.php:2473
+#: lib/html.php:2452
 msgid "Click to view just this Graph in Realtime"
 msgstr "انقر لعرض هذا الرسم البياني في الوقت الفعلي"
 
-#: lib/html.php:2474
+#: lib/html.php:2453
 msgid "Click again to take this Graph out of Realtime"
 msgstr "انقر مرة أخرى لأخراج هذا الرسم البياني من الوقت الفعلي"
 
-#: lib/html.php:2483
+#: lib/html.php:2462
 msgid "Standard Mode"
 msgstr "وضع المسح."
 
-#: lib/html.php:2484
+#: lib/html.php:2463
 msgid "Compact Mode"
 msgstr "وضع التكبير"
 
-#: lib/html.php:2485
+#: lib/html.php:2464
 msgid "Dark Color Mode"
 msgstr "لا توجد ألوان"
 
-#: lib/html.php:2486
+#: lib/html.php:2465
 msgid "Light Color Mode"
 msgstr "وضع قائمة"
 
-#: lib/html.php:2487
+#: lib/html.php:2466
 msgid "Use System Color"
 msgstr "بند اللون"
 
-#: lib/html.php:2488
+#: lib/html.php:2467
 msgid "Ignore System Color"
 msgstr "بند اللون"
 
-#: lib/html.php:2489
+#: lib/html.php:2468
 msgid "Help"
 msgstr "مساعدة"
 
-#: lib/html.php:2490
+#: lib/html.php:2469
 msgid "Cacti Home"
 msgstr "كاكتي هوم"
 
-#: lib/html.php:2492
+#: lib/html.php:2471
 msgid "Miscellaneous"
 msgstr "متنوع"
 
-#: lib/html.php:2493
+#: lib/html.php:2472
 #, fuzzy
+#| msgid "Hide Cacti Dashboard"
 msgid "Dashboards"
 msgstr "إخفاء الصبار لوحة القيادة"
 
-#: lib/html.php:2495
+#: lib/html.php:2474
 #, fuzzy
 msgid "Charts"
 msgstr "الرسوم البيانية"
 
-#: lib/html.php:2496
+#: lib/html.php:2475
 msgid "Cacti Project Page"
 msgstr "صفحة مشروع الصبار"
 
-#: lib/html.php:2500
+#: lib/html.php:2479
 #, fuzzy
 msgid "Spine"
 msgstr "المسار إلى ملف التكوين العمود الفقري. افتراضيًا ، في cwd of Spine أو / etc إذا لم يتم تحديدها."
 
-#: lib/html.php:2501
+#: lib/html.php:2480
 #, fuzzy
 msgid "RRDProxy"
 msgstr "RR"
 
-#: lib/html.php:2502
+#: lib/html.php:2481
 msgid "Keyboard"
 msgstr "لوحة المفاتيح"
 
-#: lib/html.php:2503
+#: lib/html.php:2482
 #, fuzzy
 msgid "Shortcuts"
 msgstr "الاختصارات"
 
-#: lib/html.php:2504
+#: lib/html.php:2483
 #, fuzzy
+#| msgid "Rotate the Cacti Log"
 msgid "Contribute to the Cacti Project"
 msgstr "قم بتدوير سجل Cacti"
 
-#: lib/html.php:2505
+#: lib/html.php:2484
 #, fuzzy
 msgid "Help in Developing"
 msgstr "مساعدة في تطوير"
 
-#: lib/html.php:2506
+#: lib/html.php:2485
 #, fuzzy
 msgid "Donation & Sponsoring"
 msgstr "التبرع والرعاية"
 
-#: lib/html.php:2509
+#: lib/html.php:2488
 msgid "Client"
 msgstr "عميل"
 
-#: lib/html.php:2510
+#: lib/html.php:2489
 #, fuzzy
 msgid "Help in Translating"
 msgstr "مساعدة في الترجمة"
 
-#: lib/html.php:2511
+#: lib/html.php:2490
 msgid "Report a bug"
 msgstr "الإبلاغ عن خطأ"
 
-#: lib/html.php:2513
+#: lib/html.php:2492
 msgid "Cacti"
 msgstr "صبار"
 
-#: lib/html.php:2515
+#: lib/html.php:2494
 msgid "Click to Show/Hide Filter"
 msgstr "انقر لعرض / إخفاء التصفية"
 
-#: lib/html.php:2516
+#: lib/html.php:2495
 msgid "Clear Current Filter"
 msgstr "مسح التصفية الحالية"
 
-#: lib/html.php:2517
+#: lib/html.php:2496
 msgid "Clipboard"
 msgstr "حافظة"
 
-#: lib/html.php:2518
+#: lib/html.php:2497
 msgid "Clipboard ID"
 msgstr "معرف الحافظة"
 
-#: lib/html.php:2519
+#: lib/html.php:2498
 msgid "Copy operation is unavailable at this time"
 msgstr "عملية النسخ غير متوفرة في هذا الوقت"
 
-#: lib/html.php:2520
+#: lib/html.php:2499
 msgid "Failed to find data to copy!"
 msgstr "تعذّر العثور على البيانات لنسخها!"
 
-#: lib/html.php:2521
+#: lib/html.php:2500
 msgid "Clipboard has been updated"
 msgstr "تم تحديث الحافظة"
 
-#: lib/html.php:2522
+#: lib/html.php:2501
 msgid "Sorry, your clipboard could not be updated at this time"
 msgstr "عذرًا ، لا يمكن تحديث الحافظة الخاصة بك في هذا الوقت"
 
-#: lib/html.php:2526
+#: lib/html.php:2505
 msgid "Passphrase length meets 8 character minimum"
 msgstr "يصل طول كلمة المرور إلى 8 أحرف كحد أدنى"
 
-#: lib/html.php:2527
+#: lib/html.php:2506
 msgid "Passphrase too short"
 msgstr "عبارة المرور قصيرة جدًا"
 
-#: lib/html.php:2528
+#: lib/html.php:2507
 msgid "Passphrase matches but too short"
 msgstr "عبارة المرور تتطابق ولكنها قصيرة جدًا"
 
-#: lib/html.php:2529
+#: lib/html.php:2508
 msgid "Passphrase too short and not matching"
 msgstr "عبارة المرور قصيرة جدًا وغير متطابقة"
 
-#: lib/html.php:2530
+#: lib/html.php:2509
 msgid "Passphrases match"
 msgstr "مطابقة عبارات المرور"
 
-#: lib/html.php:2531
+#: lib/html.php:2510
 msgid "Passphrases do not match"
 msgstr "عبارات المرور غير متطابقة"
 
-#: lib/html.php:2532
+#: lib/html.php:2511
 msgid "Sorry, we could not process your last action."
 msgstr "عذرًا ، لم نتمكن من معالجة الإجراء الأخير."
 
-#: lib/html.php:2533
+#: lib/html.php:2512
 msgid "Error:"
 msgstr "خطأ:"
 
-#: lib/html.php:2534
+#: lib/html.php:2513
 msgid "Reason:"
 msgstr "السبب:"
 
-#: lib/html.php:2535
+#: lib/html.php:2514
 msgid "Action failed"
 msgstr "العمل: فشل"
 
-#: lib/html.php:2536 pollers.php:814
+#: lib/html.php:2515 pollers.php:814
 msgid "Connection Successful"
 msgstr "تمت العملية بنجاح"
 
-#: lib/html.php:2537 pollers.php:816
+#: lib/html.php:2516 pollers.php:816
 msgid "Connection Failed"
 msgstr "فشل الاتصال"
 
-#: lib/html.php:2538
+#: lib/html.php:2517
 msgid "The response to the last action was unexpected."
 msgstr "كانت الاستجابة للإجراء الأخير غير متوقعة."
 
-#: lib/html.php:2539
+#: lib/html.php:2518
 msgid "Some Actions failed"
 msgstr "فشل بعض الإجراءات"
 
-#: lib/html.php:2540
+#: lib/html.php:2519
 msgid "Note, we could not process all your actions.  Details are below."
 msgstr "لاحظ أننا لم نتمكن من معالجة جميع إجراءاتك. التفاصيل أدناه."
 
-#: lib/html.php:2541
+#: lib/html.php:2520
 msgid "Operation successful"
 msgstr "تمت العملية بنجاح"
 
-#: lib/html.php:2542
+#: lib/html.php:2521
 msgid "The Operation was successful.  Details are below."
 msgstr "كانت العملية ناجحة. التفاصيل أدناه."
 
-#: lib/html.php:2544
+#: lib/html.php:2523
 msgid "Pause"
 msgstr "توقف"
 
-#: lib/html.php:2547
+#: lib/html.php:2526
 msgid "Zoom In"
 msgstr "تصغير"
 
-#: lib/html.php:2548
+#: lib/html.php:2527
 msgid "Zoom Out"
 msgstr "تصغير"
 
-#: lib/html.php:2549
+#: lib/html.php:2528
 msgid "Zoom Out Factor"
 msgstr "Zoom Out Factor"
 
-#: lib/html.php:2550
+#: lib/html.php:2529
 msgid "Timestamps"
 msgstr "ختم زمني"
 
-#: lib/html.php:2551
+#: lib/html.php:2530
 msgid "2x"
 msgstr "2X"
 
-#: lib/html.php:2552
+#: lib/html.php:2531
 msgid "4x"
 msgstr "4X"
 
-#: lib/html.php:2553
+#: lib/html.php:2532
 msgid "8x"
 msgstr "8X"
 
-#: lib/html.php:2554
+#: lib/html.php:2533
 msgid "16x"
 msgstr "16X"
 
-#: lib/html.php:2555
+#: lib/html.php:2534
 msgid "32x"
 msgstr "32X"
 
-#: lib/html.php:2556
+#: lib/html.php:2535
 msgid "Zoom Out Positioning"
 msgstr "تكبير المواقع"
 
-#: lib/html.php:2557
+#: lib/html.php:2536
 msgid "Zoom Mode"
 msgstr "وضع التكبير"
 
-#: lib/html.php:2559
+#: lib/html.php:2538
 msgid "Quick"
 msgstr "سريع. حي. حبلى"
 
-#: lib/html.php:2561
+#: lib/html.php:2540
 msgid "Open in new tab"
 msgstr "فتح في علامة تبويب جديدة"
 
-#: lib/html.php:2562
+#: lib/html.php:2541
 msgid "Save graph"
 msgstr "حفظ الرسم البياني"
 
-#: lib/html.php:2563
+#: lib/html.php:2542
 msgid "Copy graph"
 msgstr "نسخ الرسم البياني"
 
-#: lib/html.php:2564
+#: lib/html.php:2543
 msgid "Copy graph link"
 msgstr "نسخ الرابط الرسم البياني"
 
-#: lib/html.php:2565
+#: lib/html.php:2544
 msgid "Always On"
 msgstr "يعمل دائماً"
 
-#: lib/html.php:2566
+#: lib/html.php:2545
 msgid "Auto"
 msgstr "تلقاءي"
 
-#: lib/html.php:2567
+#: lib/html.php:2546
 msgid "Always Off"
 msgstr "دائما خارج"
 
-#: lib/html.php:2568
+#: lib/html.php:2547
 msgid "Begin with"
 msgstr "إبتدئ ب"
 
-#: lib/html.php:2570
+#: lib/html.php:2549
 msgid "End with"
 msgstr "تاريخ النهاية"
 
-#: lib/html.php:2572 lib/html_form.php:1303
+#: lib/html.php:2551 lib/html_form.php:1303
 msgid "Close"
 msgstr "إغلاق"
 
-#: lib/html.php:2574
+#: lib/html.php:2553
 msgid "3rd Mouse Button"
 msgstr "زر الماوس الثالث"
 
@@ -14651,7 +14691,7 @@ msgstr "الفعاليات"
 msgid "Send Report"
 msgstr "ارسال تبليغ"
 
-#: lib/html_reports.php:1470 lib/import.php:2469 user_admin.php:1848
+#: lib/html_reports.php:1470 lib/import.php:2461 user_admin.php:1848
 msgid "[new]"
 msgstr "[الجديد]"
 
@@ -14662,6 +14702,7 @@ msgstr "التفاصيل"
 
 #: lib/html_reports.php:1531
 #, fuzzy, php-format
+#| msgid "No Report Items"
 msgid "Report Items %s"
 msgstr "لا تقرير البنود"
 
@@ -14868,7 +14909,7 @@ msgstr "خطأ UTF-8 سيء!"
 msgid "Bad UTF-8 offset error!"
 msgstr "سوء UTF-8 خطأ إزاحة!"
 
-#: lib/html_utility.php:933 lib/installer.php:1851 lib/installer.php:3614
+#: lib/html_utility.php:933 lib/installer.php:1851 lib/installer.php:3601
 msgid "Error"
 msgstr "خطأ"
 
@@ -14897,67 +14938,67 @@ msgstr "لا يوجد"
 msgid "not writable"
 msgstr "قابل للكتابة"
 
-#: lib/import.php:2177
+#: lib/import.php:2169
 msgid "Unknown Field"
 msgstr "حقل غير معروف"
 
-#: lib/import.php:2430
+#: lib/import.php:2422
 msgid "Import Preview Results"
 msgstr "استيراد نتائج المعاينة"
 
-#: lib/import.php:2430
+#: lib/import.php:2422
 msgid "Import Results"
 msgstr "نتائج الاستيراد"
 
-#: lib/import.php:2434
+#: lib/import.php:2426
 msgid "Cacti would make the following changes if the Package was imported:"
 msgstr "الصبار سيجعل التغييرات التالية إذا تم استيراد الحزمة:"
 
-#: lib/import.php:2436
+#: lib/import.php:2428
 msgid "Cacti has imported the following items for the Package:"
 msgstr "قامت Cacti باستيراد العناصر التالية للحزمة:"
 
-#: lib/import.php:2439
+#: lib/import.php:2431
 msgid "Package Files"
 msgstr "ملفات الحزمة"
 
-#: lib/import.php:2443
+#: lib/import.php:2435
 msgid "[preview] "
 msgstr "معاينة"
 
-#: lib/import.php:2448
+#: lib/import.php:2440
 msgid "Cacti would make the following changes if the Template was imported:"
 msgstr "الصبار سيجعل التغييرات التالية إذا تم استيراد القالب:"
 
-#: lib/import.php:2450
+#: lib/import.php:2442
 msgid "Cacti has imported the following items for the Template:"
 msgstr "قامت Cacti باستيراد العناصر التالية للقالب:"
 
-#: lib/import.php:2459
+#: lib/import.php:2451
 msgid "[success]"
 msgstr "نجح!"
 
-#: lib/import.php:2461
+#: lib/import.php:2453
 msgid "[fail]"
 msgstr "فشل"
 
-#: lib/import.php:2463
+#: lib/import.php:2455
 msgid "[preview]"
 msgstr "معاينة"
 
-#: lib/import.php:2467
+#: lib/import.php:2459
 msgid "[updated]"
 msgstr "[updated]"
 
-#: lib/import.php:2471
+#: lib/import.php:2463
 msgid "[unchanged]"
 msgstr "[دون تغيير]"
 
-#: lib/import.php:2507
+#: lib/import.php:2499
 msgid "Found Dependency:"
 msgstr "وجدت التبعية:"
 
-#: lib/import.php:2509
+#: lib/import.php:2501
 msgid "Unmet Dependency:"
 msgstr "الإعالة غير الملباة:"
 
@@ -15158,7 +15199,7 @@ msgid "Location checks"
 msgstr "الشيكات الموقع"
 
 #: lib/installer.php:1794 lib/installer.php:1939 lib/installer.php:1943
-#: lib/installer.php:2098 lib/installer.php:2103 lib/installer.php:3711
+#: lib/installer.php:2098 lib/installer.php:2103 lib/installer.php:3698
 msgid "ERROR:"
 msgstr "خطأ:"
 
@@ -15177,6 +15218,7 @@ msgstr "PHP - التوصيات"
 
 #: lib/installer.php:1809
 #, fuzzy
+#| msgid "PHP Recommendations"
 msgid "PHP Recommendations ("
 msgstr "توصيات PHP"
 
@@ -15210,6 +15252,7 @@ msgstr "تحذير"
 
 #: lib/installer.php:1845
 #, fuzzy
+#| msgid "Required"
 msgid "Restart Required"
 msgstr "مطلوب"
 
@@ -15456,7 +15499,7 @@ msgstr "بالنسبة للناخبين عن بعد ، من الأهمية بم�
 msgid "Required Writable at Install Time Only"
 msgstr "مطلوب للكتابة في وقت التثبيت فقط"
 
-#: lib/installer.php:2259 lib/installer.php:2291 package_import.php:544
+#: lib/installer.php:2259 lib/installer.php:2291 package_import.php:535
 msgid "Not Writable"
 msgstr "قابل للكتابة"
 
@@ -15474,6 +15517,7 @@ msgstr "يرجى التأكد من أن خادم الويب لديه حق الو
 
 #: lib/installer.php:2314
 #, fuzzy
+#| msgid "If SELinux is enabled on your server, you can either permenantly disable this, or temporarily disable it and then add the appropriate permissions using the SELinux command-line tools."
 msgid "If SELinux is enabled on your server, you can either permanently disable this, or temporarily disable it and then add the appropriate permissions using the SELinux command-line tools."
 msgstr "إذا تم تمكين SELinux على الخادم الخاص بك ، يمكنك إما تعطيل هذا بشكل عاجل ، أو تعطيله مؤقتًا ثم إضافة الأذونات المناسبة باستخدام أدوات سطر الأوامر SELinux."
 
@@ -15508,11 +15552,13 @@ msgstr "يمكن استغلال طرق إدخال بيانات Cacti التي ت
 
 #: lib/installer.php:2350
 #, fuzzy
+#| msgid "Therefore, several versions ago, Cacti was enhanced to provide Whitelist capabilities on the these types of Data Input Methods.  Though this does secure Cacti more thouroughly, it does increase the amount of work required by the Cacti administrator to import and manage Templates and Packages."
 msgid "Therefore, several versions ago, Cacti was enhanced to provide Whitelist capabilities on the these types of Data Input Methods.  Though this does secure Cacti more thoroughly, it does increase the amount of work required by the Cacti administrator to import and manage Templates and Packages."
 msgstr "لذلك ، منذ عدة إصدارات ، تم تحسين Cacti لتوفير إمكانات القائمة البيضاء على هذه الأنواع من طرق إدخال البيانات. على الرغم من أن هذا يؤمن Cacti بشكل أكثر دقة ، إلا أنه يزيد من حجم العمل المطلوب من قبل مسؤول Cacti لاستيراد القوالب والحزم وإدارتها."
 
 #: lib/installer.php:2351
 #, fuzzy
+#| msgid "The way that the Whitelisting works is that when you first import a Data Input Method, or you re-import a Data Input Method, and the script and or aguments change in any way, the Data Input Method, and all the corresponding Data Sources will be immediatly disabled until the administrator validates that the Data Input Method is valid."
 msgid "The way that the Whitelisting works is that when you first import a Data Input Method, or you re-import a Data Input Method, and the script and or arguments change in any way, the Data Input Method, and all the corresponding Data Sources will be immediatly disabled until the administrator validates that the Data Input Method is valid."
 msgstr "الطريقة التي تعمل بها القائمة البيضاء هي أنه عند استيراد طريقة إدخال البيانات لأول مرة ، أو إعادة استيراد طريقة إدخال البيانات ، ويتغير البرنامج النصي و / أو الوسيطات بأي شكل من الأشكال ، فإن طريقة إدخال البيانات وجميع مصادر البيانات المقابلة سوف يتم تعطيلها بشكل فوري حتى يتحقق المسؤول من صلاحية طريقة إدخال البيانات."
 
@@ -15727,11 +15773,13 @@ msgstr "تم الكشف عن DOWNECTED"
 
 #: lib/installer.php:2639
 #, fuzzy
+#| msgid "YOU MUST MANAUALLY CHANGE THE CACTI DATABASE TO REVERT ANY UPGRADE CHANGES THAT HAVE BEEN MADE.<br/>THE INSTALLER HAS NO METHOD TO DO THIS AUTOMATICALLY FOR YOU"
 msgid "YOU MUST MANUALLY CHANGE THE CACTI DATABASE TO REVERT ANY UPGRADE CHANGES THAT HAVE BEEN MADE.<br/>THE INSTALLER HAS NO METHOD TO DO THIS AUTOMATICALLY FOR YOU"
 msgstr "يجب عليك تغيير قاعدة بيانات Cacti لتغير أي تغييرات في الترقية تم إجراؤها. <br/> THE INSTALLER ليس لديه طريقة للقيام بذلك تلقائيا نيابة عنك"
 
 #: lib/installer.php:2640
 #, fuzzy
+#| msgid "Downgrading should only be performed when absolutely necessary and doing so may break your installlation"
 msgid "Downgrading should only be performed when absolutely necessary and doing so may break your installation"
 msgstr "لا ينبغي أن يتم تنفيذ خفض التصنيف إلا عند الضرورة القصوى ، وقد يؤدي ذلك إلى تعطيل إنشاء موقعك"
 
@@ -15969,45 +16017,41 @@ msgstr "حدث استثناء أثناء التثبيت: #"
 msgid "Installation was started at %s, completed at %s"
 msgstr "تم بدء التثبيت على٪ s ، وقد اكتمل في٪ s"
 
-#: lib/installer.php:3499
+#: lib/installer.php:3492
 msgid "Both"
 msgstr "كلاهما"
 
-#: lib/installer.php:3499
+#: lib/installer.php:3492
 #, fuzzy, php-format
 msgid "No - %s"
 msgstr "%s %s"
 
-#: lib/installer.php:3504
-#, fuzzy, php-format
-msgid "%s - N/A"
-msgstr "%s %s"
-
-#: lib/installer.php:3504 lib/installer.php:3506
-msgid "Web"
-msgstr "شبكة الويب"
-
-#: lib/installer.php:3506 lib/installer.php:3509
+#: lib/installer.php:3494 lib/installer.php:3496
 #, fuzzy, php-format
 msgid "%s - No"
 msgstr "%s %s"
 
-#: lib/installer.php:3509
+#: lib/installer.php:3494
+msgid "Web"
+msgstr "شبكة الويب"
+
+#: lib/installer.php:3496
 msgid "Cli"
 msgstr "كلاسيكي"
 
-#: lib/installer.php:3514
+#: lib/installer.php:3501
 #, fuzzy, php-format
 msgid "Setting PHP Option %s = %s"
 msgstr "تعيين خيار PHP٪ s =٪ s"
 
-#: lib/installer.php:3520
+#: lib/installer.php:3507
 #, fuzzy, php-format
 msgid "Failed to set PHP option %s, is %s (should be %s)"
 msgstr "فشل تعيين خيار PHP٪ s ، هو٪ s (يجب أن يكون٪ s)"
 
-#: lib/installer.php:3539
+#: lib/installer.php:3526
 #, fuzzy
+#| msgid "No Remote Data Collectors found for full syncronization"
 msgid "No Remote Data Collectors found for full synchronization"
 msgstr "لم يتم العثور على مجمّع بيانات (ق) عند محاولة المزامنة"
 
@@ -16161,34 +16205,34 @@ msgstr "انتهت مهلة TCP ping"
 msgid "Ping not performed due to setting."
 msgstr "لم يتم تنفيذ Ping بسبب الإعداد."
 
-#: lib/plugins.php:658
+#: lib/plugins.php:656
 #, fuzzy, php-format
 msgid "%s Version %s or above is required for %s. "
 msgstr "يلزم وجود٪ s من الإصدار٪ s أو أحدث لـ٪ s."
 
-#: lib/plugins.php:662
+#: lib/plugins.php:660
 #, fuzzy, php-format
 msgid "%s is required for %s, and it is not installed. "
 msgstr "مطلوب٪ s لـ٪ s ، ولم يتم تثبيته."
 
-#: lib/plugins.php:685
+#: lib/plugins.php:683
 msgid "Plugin cannot be installed."
 msgstr "لا يمكن تثبيت المكون الإضافي."
 
-#: lib/plugins.php:1215 lib/plugins.php:1222 plugins.php:479 plugins.php:560
+#: lib/plugins.php:1213 lib/plugins.php:1220 plugins.php:479 plugins.php:560
 msgid "Plugins"
 msgstr "الإضافات"
 
-#: lib/plugins.php:1234 lib/plugins.php:1240
+#: lib/plugins.php:1232 lib/plugins.php:1238
 #, fuzzy, php-format
 msgid "Requires: Cacti >= %s"
 msgstr "يتطلب: الصبار&gt; =٪ s"
 
-#: lib/plugins.php:1237
+#: lib/plugins.php:1235
 msgid "Legacy Plugin"
 msgstr "البرنامج المساعد القديم"
 
-#: lib/plugins.php:1262
+#: lib/plugins.php:1260
 msgid "Not Stated"
 msgstr "غير مذكور"
 
@@ -16624,22 +16668,22 @@ msgstr "القيمة الموصى بها"
 msgid "Comments"
 msgstr "التعليقات"
 
-#: lib/utility.php:1807
+#: lib/utility.php:1805
 #, fuzzy, php-format
 msgid "PHP %s is the minimum version"
 msgstr "PHP٪ s هو إصدار mimimum"
 
-#: lib/utility.php:1809
+#: lib/utility.php:1807
 #, fuzzy, php-format
 msgid "A minimum of %s memory limit"
 msgstr "حد لا يقل عن٪ s من ذاكرة MB"
 
-#: lib/utility.php:1811
+#: lib/utility.php:1809
 #, fuzzy, php-format
 msgid "A minimum of %s m execution time"
 msgstr "حد أدنى من٪ sm وقت التنفيذ"
 
-#: lib/utility.php:1813
+#: lib/utility.php:1811
 msgid "A valid timezone that matches MySQL and the system"
 msgstr "منطقة زمنية صالحة تطابق MySQL والنظام"
 
@@ -16800,33 +16844,28 @@ msgstr "روابط خارجية [تحرير:٪ s]"
 msgid "External Links [new]"
 msgstr "روابط خارجية [جديد]"
 
-#: logout.php:50
-msgid "You have been logged out of Cacti due to a session timeout."
-msgstr "لقد تم تسجيل خروجك من Cacti بسبب انتهاء مهلة الجلسة."
-
 #: logout.php:52
-msgid "You have been logged out of Cacti due to an account suspension."
-msgstr "لقد تم تسجيل خروجك من Cacti بسبب انتهاء مهلة الجلسة."
-
-#: logout.php:54
-#, fuzzy
-msgid "You have been logged out of Cacti due to a Remote Data Collector state change"
-msgstr "لقد تم تسجيل خروجك من Cacti بسبب انتهاء مهلة الجلسة."
-
-#: logout.php:62
 msgid "Logout of Cacti"
 msgstr "الخروج من الصبار"
 
-#: logout.php:69
+#: logout.php:59
 msgid "Automatic Logout"
 msgstr "تسجيل الخروج التلقائي"
 
-#: logout.php:72
+#: logout.php:62
+msgid "You have been logged out of Cacti due to a session timeout."
+msgstr "لقد تم تسجيل خروجك من Cacti بسبب انتهاء مهلة الجلسة."
+
+#: logout.php:63
+msgid "You have been logged out of Cacti due to an account suspension."
+msgstr "لقد تم تسجيل خروجك من Cacti بسبب انتهاء مهلة الجلسة."
+
+#: logout.php:64
 #, fuzzy, php-format
 msgid "Please close your browser or %sLogin Again%s"
 msgstr "الرجاء إغلاق المتصفح أو٪ sLogin Again٪ s"
 
-#: logout.php:76 utilities.php:835
+#: logout.php:68 utilities.php:835
 #, php-format
 msgid "Version %s"
 msgstr "الإصدار %s"
@@ -16984,6 +17023,7 @@ msgstr ""
 
 #: package_import.php:198
 #, fuzzy, php-format
+#| msgid "Cacti log purged successfully"
 msgid "The Package %s Imported Successfully"
 msgstr "إزالة سجل Cacti بنجاح"
 
@@ -16995,6 +17035,7 @@ msgstr ""
 #: package_import.php:347 package_import.php:353 package_import.php:409
 #: package_import.php:412
 #, fuzzy
+#| msgid "Error in data query"
 msgid "Error in Package"
 msgstr "خطأ في استعلام البيانات"
 
@@ -17017,6 +17058,7 @@ msgstr ""
 
 #: package_import.php:409
 #, fuzzy
+#| msgid "Package Files"
 msgid "Package XML File Damaged."
 msgstr "ملفات الحزمة"
 
@@ -17034,11 +17076,13 @@ msgstr ""
 
 #: package_import.php:446
 #, fuzzy
+#| msgid "Package Files"
 msgid "Packages Details"
 msgstr "ملفات الحزمة"
 
 #: package_import.php:462
 #, fuzzy
+#| msgid "right"
 msgid "Copyright"
 msgstr "اليمين"
 
@@ -17048,75 +17092,85 @@ msgstr ""
 
 #: package_import.php:486
 #, fuzzy
+#| msgid "Package Files"
 msgid "Package"
 msgstr "ملفات الحزمة"
 
 #: package_import.php:489
 #, fuzzy
+#| msgid "Rename"
 msgid "Filename"
 msgstr "إعادة التسمية"
 
-#: package_import.php:540 package_import.php:638 templates_import.php:349
+#: package_import.php:531 package_import.php:628 templates_import.php:349
 msgid "Differences"
 msgstr ""
 
-#: package_import.php:542 package_import.php:609 templates_import.php:292
+#: package_import.php:533 package_import.php:599 templates_import.php:292
 #, fuzzy
+#| msgid "[unchanged]"
 msgid "Unchanged"
 msgstr "[دون تغيير]"
 
-#: package_import.php:567
+#: package_import.php:557
 msgid "Import Package Templates [ None selected imports all, Check to import selectively ]"
 msgstr ""
 
-#: package_import.php:571 templates_import.php:257
+#: package_import.php:561 templates_import.php:257
 #, fuzzy
+#| msgid "Template Title"
 msgid "Template Type"
 msgstr "عنوان القالب"
 
-#: package_import.php:580 templates_import.php:269
+#: package_import.php:570 templates_import.php:269
 #, fuzzy
+#| msgid "Change Device"
 msgid "Changes/Diffferences"
 msgstr "تغيير الجهاز"
 
-#: package_import.php:605 templates_import.php:288
+#: package_import.php:595 templates_import.php:288
 #, fuzzy
+#| msgid "Update"
 msgid "Updated"
 msgstr "تحديث"
 
-#: package_import.php:642 templates_import.php:353
+#: package_import.php:632 templates_import.php:353
 #, fuzzy
+#| msgid "Orphaned"
 msgid "Orphans"
 msgstr "منفرد"
 
-#: package_import.php:695
+#: package_import.php:685
 msgid "File Differences for: "
 msgstr ""
 
-#: package_import.php:802
+#: package_import.php:792
 #, fuzzy
+#| msgid "Package Files"
 msgid "Local Package Import File"
 msgstr "ملفات الحزمة"
 
-#: package_import.php:803
+#: package_import.php:793
 msgid "The *.xml.gz file located on your Local machine to Upload and Import."
 msgstr ""
 
-#: package_import.php:808
+#: package_import.php:798
 #, fuzzy
+#| msgid "Automatically Add to Cacti"
 msgid "Automatically Trust Signer"
 msgstr "تلقائيا إضافة إلى الصبار"
 
-#: package_import.php:810
+#: package_import.php:800
 msgid "If checked, Cacti will automatically Trust the Signer for this and any future Packages by that author."
 msgstr ""
 
-#: package_import.php:846
+#: package_import.php:836
 msgid "Replace Data Source and Graph Template Suggested Value Records.  Graphs and Data Sources will take on new names after either a Data Query Reindex or by using the forced Replace Suggested Values process."
 msgstr ""
 
-#: package_import.php:917
+#: package_import.php:907
 #, fuzzy
+#| msgid "Import"
 msgid "Package Import"
 msgstr "استيراد"
 
@@ -17295,6 +17349,7 @@ msgstr "البرنامج المساعد غير متوافق"
 
 #: plugins.php:876
 #, fuzzy
+#| msgid "Enable Plugin"
 msgid "Enable Plugin Locally"
 msgstr "تمكين البرنامج المساعد"
 
@@ -17333,6 +17388,7 @@ msgstr "Cacti System Utilities"
 
 #: poller.php:1061
 #, fuzzy
+#| msgid "NOTE: A second Cacti data collector has been added.  Therfore, enabling boost automatically!"
 msgid "NOTE: A second Cacti data collector has been added.  Therefore, enabling boost automatically!"
 msgstr "ملاحظة: تمت إضافة جامع بيانات ثاني Cacti. Therfore ، تمكين التعزيز تلقائيًا!"
 
@@ -17733,6 +17789,7 @@ msgstr "لا توجد جامعي البيانات"
 
 #: rrdcheck.php:35
 #, fuzzy
+#| msgid "Run Check"
 msgid "RRD check"
 msgstr "تشغيل الاختيار"
 
@@ -17742,21 +17799,25 @@ msgstr ""
 
 #: rrdcheck.php:105 utilities.php:2318
 #, fuzzy
+#| msgid "RRDfile Cleaner"
 msgid "RRDfile Checker"
 msgstr "RRDfile نظافة"
 
 #: rrdcheck.php:144
 #, fuzzy
+#| msgid "No Device Templates Found"
 msgid "RRDcheck Problems"
 msgstr "لم يتم العثور على قوالب الأجهزة"
 
 #: rrdcheck.php:154
 #, fuzzy
+#| msgid "Description"
 msgid "Host Description"
 msgstr "الوصف"
 
 #: rrdcheck.php:162
 #, fuzzy
+#| msgid "Valid Data"
 msgid "Local Data ID"
 msgstr "بيانات صالحة"
 
@@ -17770,16 +17831,20 @@ msgstr "تم الحذف"
 
 #: rrdcheck.php:200
 #, fuzzy
+#| msgid "No Device Templates Found"
 msgid "No RRDcheck Problems Found"
 msgstr "لم يتم العثور على قوالب الأجهزة"
 
 #: rrdcheck.php:232
 #, fuzzy
+#| msgctxt "A short textual representation of a month, three letters"
+#| msgid "Aug"
 msgid "Age"
 msgstr "اغسطس"
 
 #: rrdcheck.php:236 rrdcheck.php:237 rrdcheck.php:238
 #, fuzzy, php-format
+#| msgid "%d Hours"
 msgid "%d hours"
 msgstr "%d د ساعات"
 
@@ -17790,6 +17855,7 @@ msgstr ""
 
 #: rrdcheck.php:240 rrdcheck.php:241
 #, fuzzy, php-format
+#| msgid "days"
 msgid "%d days"
 msgstr "أيام"
 
@@ -17814,6 +17880,7 @@ msgstr "واضح"
 
 #: rrdcheck.php:263
 #, fuzzy
+#| msgid "Purge"
 msgctxt "filter: purge"
 msgid "Purge"
 msgstr "شربة، مسهل. يسهل"
@@ -18249,6 +18316,7 @@ msgstr ""
 
 #: templates_import.php:145
 #, fuzzy
+#| msgid "Export Templates"
 msgid "Error in Template"
 msgstr "قوالب التصدير"
 
@@ -18268,11 +18336,13 @@ msgstr ""
 
 #: templates_import.php:221
 #, fuzzy
+#| msgid "Field Name"
 msgid "File Name"
 msgstr "اسم الحقل"
 
 #: templates_import.php:236
 #, fuzzy
+#| msgid "Not Writable"
 msgid "Not Readable"
 msgstr "قابل للكتابة"
 
@@ -18282,6 +18352,7 @@ msgstr ""
 
 #: templates_import.php:266
 #, fuzzy
+#| msgid "Include Dependencies"
 msgid "Dependencies"
 msgstr "تشمل التبعيات"
 
@@ -18607,11 +18678,13 @@ msgstr "نسخ دفعة"
 
 #: user_admin.php:257
 #, fuzzy
+#| msgid "You are not allowed to change your password."
 msgid "You are not allowed to delete the current login account"
 msgstr "غير مسموح لك بتغيير كلمة المرور الخاصة بك."
 
 #: user_admin.php:269
 #, fuzzy
+#| msgid "You are not allowed to change your password."
 msgid "You are not allowed to disable the current login account"
 msgstr "غير مسموح لك بتغيير كلمة المرور الخاصة بك."
 
@@ -18693,11 +18766,13 @@ msgstr "<b>ملاحظة:</b> سياسة الرسم البياني للنظام �
 
 #: user_admin.php:765 user_group_admin.php:755
 #, fuzzy
+#| msgid "<b>Note:</b> System Graph Policy is 'Restrictive' meaning the User must have access to either the Graph or the Device and Graph Template to gain access to the Graph"
 msgid "<b>Note:</b> System Graph Policy is 'Device' meaning the User must have access to the Graph or Device to gain access to the Graph"
 msgstr "<b>ملاحظة:</b> سياسة الرسم البياني للنظام هي &quot;مقيدة&quot; بمعنى أنه يجب أن يمتلك المستخدم حق الوصول إما إلى الرسم البياني أو إلى قالب الجهاز والجرافيك للوصول إلى الرسم البياني"
 
 #: user_admin.php:767 user_group_admin.php:757
 #, fuzzy
+#| msgid "<b>Note:</b> System Graph Policy is 'Permissive' meaning the User must have access to at least one of Graph, Device, or Graph Template to gain access to the Graph"
 msgid "<b>Note:</b> System Graph Policy is 'Graph Template' meaning the User must have access to the Graph or Graph Template to gain access to the Graph"
 msgstr "<b>ملاحظة:</b> سياسة الرسم البياني للنظام هي &#39;Permissive&#39; بمعنى أنه يجب أن يمتلك المستخدم حق الوصول إلى واحد على الأقل من الرسم البياني أو الجهاز أو قالب الرسم البياني للوصول إلى الرسم البياني"
 
@@ -19492,11 +19567,13 @@ msgstr "خوادم PHP"
 
 #: utilities.php:439 utilities.php:441 utilities.php:447 utilities.php:449
 #, fuzzy, php-format
+#| msgid "Current: %s, Min Required: %s"
 msgid "Main Server: Current: %s, Min Required: %s"
 msgstr "الحالي: %s ، الحد الأدنى المطلوب: %s"
 
 #: utilities.php:457 utilities.php:459
 #, fuzzy, php-format
+#| msgid "Current: %s, Min Required: %s"
 msgid "Local Server: Current: %s, Min Required: %s"
 msgstr "الحالي: %s ، الحد الأدنى المطلوب: %s"
 
@@ -19545,6 +19622,7 @@ msgstr ""
 
 #: utilities.php:650 utilities.php:659 utilities.php:665
 #, fuzzy
+#| msgid "Max Poller Memory Allowed:"
 msgid "Max Total Memory Possible"
 msgstr "ماكس بولر الذاكرة المسموح بها:"
 
@@ -19555,6 +19633,7 @@ msgstr ""
 
 #: utilities.php:673 utilities.php:678 utilities.php:706
 #, fuzzy
+#| msgid "Max Poller Memory Allowed:"
 msgid "Max Core Memory Possible"
 msgstr "ماكس بولر الذاكرة المسموح بها:"
 
@@ -20009,6 +20088,7 @@ msgstr "الحد الأقصى للسجلات المقدرة:"
 
 #: utilities.php:2709
 #, fuzzy
+#| msgid "Runtime Statistics"
 msgid "Previous Runtime Statistics"
 msgstr "إحصائيات وقت التشغيل"
 
@@ -20062,11 +20142,13 @@ msgstr ""
 
 #: utilities.php:2766
 #, fuzzy
+#| msgid "Detailed Runtime Timers:"
 msgid "Previous Runtime Timers:"
 msgstr "موقتات وقت التشغيل المفصلة:"
 
 #: utilities.php:2801 utilities.php:2803
 #, fuzzy, php-format
+#| msgid "Procs: "
 msgid "Process: %d"
 msgstr "1 عملية"
 
@@ -20281,104 +20363,43 @@ msgid "No VDEFs"
 msgstr "لا VDEFs"
 
 #, fuzzy
-#~ msgid "Template user id %s does not exist."
-#~ msgstr "معرف مستخدم القالب٪ s غير موجود."
+#~| msgid "DES"
+#~ msgid "DS"
+#~ msgstr "DES"
+
+#~ msgid "When performing joins, if they are below this size, they will be kept in memory and never written to a temporary file."
+#~ msgstr "عند إجراء الصلات ، إذا كانت أقل من هذا الحجم ، فسيتم الاحتفاظ بها في الذاكرة ولن تتم كتابتها أبدًا إلى ملف مؤقت."
+
+#~ msgid "Import Template from Text"
+#~ msgstr "استيراد قالب من النص"
+
+#~ msgid "If you have the XML file containing template data as text, you can paste it into this box to import it."
+#~ msgstr "إذا كان لديك ملف XML يحتوي على بيانات القالب كنص ، فيمكنك لصقه في هذا المربع لاستيراده."
+
+#~ msgid "Preview Import Only"
+#~ msgstr "معاينة الاستيراد فقط"
+
+#~ msgid "If checked, Cacti will not import the template, but rather compare the imported Template to the existing Template data.  If you are acceptable of the change, you can them import."
+#~ msgstr "إذا تم التحديد ، فلن تستورد Cacti القالب ، وإنما تقارن النموذج الذي تم استيراده مع بيانات القالب الحالية. إذا كنت مقبولة من التغيير ، فيمكنك استيرادها."
 
 #, fuzzy
-#~ msgid "Guest user id %s does not exist."
-#~ msgstr "معرف مستخدم الضيف٪ s غير موجود."
+#~ msgid "Resource File: '%s' is missing or not readable.  Make sure you install it before using Data Query: '%s'"
+#~ msgstr "ملف المورد: '٪ s' مفقود أو غير قابل للقراءة. تأكد من تثبيته قبل استخدام استعلام البيانات: '٪ s'"
 
-#~ msgid "User Account Disabled"
-#~ msgstr "حساب المستخدم معطل"
-
-#~ msgid "This account has been locked."
-#~ msgstr "تم قفل هذا الحساب."
-
-#~ msgid "Host:"
-#~ msgstr "المضيف:"
-
-#~ msgid "Select a Graph Template for the host"
-#~ msgstr "حدد قالب الرسم البياني للمضيف"
-
-#~ msgid "Select a Tree Branch to use."
-#~ msgstr "حدد فرع شجرة لاستخدام."
-
-#~ msgid "1 Thread (default)"
-#~ msgstr "موضوع واحد (افتراضي)"
-
-#~ msgid "Error in data query."
-#~ msgstr "خطأ في استعلام البيانات."
-
-#~ msgid "Invalid User Name/Password Please Retype"
-#~ msgstr "اسم المستخدم غير صحيح / كلمة المرور الرجاء إعادة الكتابة"
-
-#~ msgid "Graph:"
-#~ msgstr "3 - الرسم البياني:"
+#~ msgid "The Template Import Failed.  See the cacti.log for more details."
+#~ msgstr "فشل استيراد القالب. راجع cacti.log لمزيد من التفاصيل."
 
 #, fuzzy
-#~ msgid "Items %s"
-#~ msgstr "العناصر"
+#~ msgid "User Membership %s"
+#~ msgstr "عضوية المستخدم٪ s"
+
+#~ msgid "writable"
+#~ msgstr "قابل للكتابة"
 
 #, fuzzy
-#~ msgid "Use the Built In Translator"
-#~ msgstr "استخدم المترجم المدمج"
-
-#~ msgid "Aggreage Graph does not Exist"
-#~ msgstr "اعدادات الرسم الكلي"
-
-#~ msgid "Process %d Runtime:"
-#~ msgstr "عملية %d وقت التشغيل:"
-
-#~ msgid "Never Run"
-#~ msgstr "لايشتغل أبدا"
-
-#, fuzzy
-#~| msgid "No %s Found"
-#~ msgid "No host found"
-#~ msgstr "لم يتمّ العثور على %s"
-
-#, fuzzy
-#~| msgid "Polling Time"
-#~ msgid "Actual polling time"
-#~ msgstr "وقت الاقتراع"
-
-#, fuzzy
-#~| msgid "Polling Time"
-#~ msgid "Avg Polling Time"
-#~ msgstr "وقت الاقتراع"
-
-#, fuzzy
-#~| msgid "Permissions"
-#~ msgid "Permission Name"
-#~ msgstr "الأذونات"
-
-#, fuzzy
-#~| msgid "User Permissions"
-#~ msgid "Database Permissions"
-#~ msgstr "صلاحيات المتدرب"
-
-#~ msgid "Use a separate subfolder for each hosts RRD files.  The naming of the RRDfiles will be &lt;path_cacti&gt;/rra/host_id/local_data_id.rrd."
-#~ msgstr "استخدم مجلد فرعي منفصل لكل ملفات RRD للمضيفين. ستكون تسمية RRDfiles &lt;path_cacti&gt; /rra/host_id/local_data_id.rrd."
-
-#, fuzzy
-#~| msgid "ChangeLog"
-#~ msgid "Change Log [%s]"
-#~ msgstr "1 التغيير"
-
-#, fuzzy
-#~| msgid "Full Name"
-#~ msgid "Full"
-#~ msgstr "الاسم الكامل"
-
-#, fuzzy
-#~| msgid "Verify All"
-#~ msgid "Verify"
-#~ msgstr "تحقق من الكل"
-
-#, fuzzy
-#~| msgid "Enter keyword"
-#~ msgid "Enter your token"
-#~ msgstr "ادخل الكلمة المفتاحية"
+#~| msgid "Deletion Verification"
+#~ msgid "2FA Verification"
+#~ msgstr "التحقق من الحذف"
 
 #, fuzzy
 #~| msgid "Web Basic Authentication"
@@ -20386,43 +20407,101 @@ msgstr "لا VDEFs"
 #~ msgstr "مصادقة الويب الأساسية"
 
 #, fuzzy
-#~| msgid "Deletion Verification"
-#~ msgid "2FA Verification"
-#~ msgstr "التحقق من الحذف"
-
-#~ msgid "writable"
-#~ msgstr "قابل للكتابة"
+#~| msgid "Enter keyword"
+#~ msgid "Enter your token"
+#~ msgstr "ادخل الكلمة المفتاحية"
 
 #, fuzzy
-#~ msgid "User Membership %s"
-#~ msgstr "عضوية المستخدم٪ s"
-
-#~ msgid "The Template Import Failed.  See the cacti.log for more details."
-#~ msgstr "فشل استيراد القالب. راجع cacti.log لمزيد من التفاصيل."
+#~| msgid "Verify All"
+#~ msgid "Verify"
+#~ msgstr "تحقق من الكل"
 
 #, fuzzy
-#~ msgid "Resource File: '%s' is missing or not readable.  Make sure you install it before using Data Query: '%s'"
-#~ msgstr "ملف المورد: '٪ s' مفقود أو غير قابل للقراءة. تأكد من تثبيته قبل استخدام استعلام البيانات: '٪ s'"
-
-#~ msgid "If checked, Cacti will not import the template, but rather compare the imported Template to the existing Template data.  If you are acceptable of the change, you can them import."
-#~ msgstr "إذا تم التحديد ، فلن تستورد Cacti القالب ، وإنما تقارن النموذج الذي تم استيراده مع بيانات القالب الحالية. إذا كنت مقبولة من التغيير ، فيمكنك استيرادها."
-
-#~ msgid "Preview Import Only"
-#~ msgstr "معاينة الاستيراد فقط"
-
-#~ msgid "If you have the XML file containing template data as text, you can paste it into this box to import it."
-#~ msgstr "إذا كان لديك ملف XML يحتوي على بيانات القالب كنص ، فيمكنك لصقه في هذا المربع لاستيراده."
-
-#~ msgid "Import Template from Text"
-#~ msgstr "استيراد قالب من النص"
-
-#~ msgid "When performing joins, if they are below this size, they will be kept in memory and never written to a temporary file."
-#~ msgstr "عند إجراء الصلات ، إذا كانت أقل من هذا الحجم ، فسيتم الاحتفاظ بها في الذاكرة ولن تتم كتابتها أبدًا إلى ملف مؤقت."
+#~| msgid "Full Name"
+#~ msgid "Full"
+#~ msgstr "الاسم الكامل"
 
 #, fuzzy
-#~| msgid "DES"
-#~ msgid "DS"
-#~ msgstr "DES"
+#~| msgid "ChangeLog"
+#~ msgid "Change Log [%s]"
+#~ msgstr "1 التغيير"
 
-#~ msgid "FATAL: YOU DO NOT HAVE ACCESS TO THIS AREA OF CACTI"
-#~ msgstr "FATAL: أنت لا تملك الوصول إلى هذه المنطقة من CACTI"
+#~ msgid "Use a separate subfolder for each hosts RRD files.  The naming of the RRDfiles will be &lt;path_cacti&gt;/rra/host_id/local_data_id.rrd."
+#~ msgstr "استخدم مجلد فرعي منفصل لكل ملفات RRD للمضيفين. ستكون تسمية RRDfiles &lt;path_cacti&gt; /rra/host_id/local_data_id.rrd."
+
+#, fuzzy
+#~| msgid "User Permissions"
+#~ msgid "Database Permissions"
+#~ msgstr "صلاحيات المتدرب"
+
+#, fuzzy
+#~| msgid "Permissions"
+#~ msgid "Permission Name"
+#~ msgstr "الأذونات"
+
+#, fuzzy
+#~| msgid "Polling Time"
+#~ msgid "Avg Polling Time"
+#~ msgstr "وقت الاقتراع"
+
+#, fuzzy
+#~| msgid "Polling Time"
+#~ msgid "Actual polling time"
+#~ msgstr "وقت الاقتراع"
+
+#, fuzzy
+#~| msgid "No %s Found"
+#~ msgid "No host found"
+#~ msgstr "لم يتمّ العثور على %s"
+
+#~ msgid "Never Run"
+#~ msgstr "لايشتغل أبدا"
+
+#~ msgid "Process %d Runtime:"
+#~ msgstr "عملية %d وقت التشغيل:"
+
+#~ msgid "Aggreage Graph does not Exist"
+#~ msgstr "اعدادات الرسم الكلي"
+
+#, fuzzy
+#~ msgid "Use the Built In Translator"
+#~ msgstr "استخدم المترجم المدمج"
+
+#, fuzzy
+#~ msgid "Items %s"
+#~ msgstr "العناصر"
+
+#~ msgid "Graph:"
+#~ msgstr "3 - الرسم البياني:"
+
+#~ msgid "Invalid User Name/Password Please Retype"
+#~ msgstr "اسم المستخدم غير صحيح / كلمة المرور الرجاء إعادة الكتابة"
+
+#~ msgid "Error in data query."
+#~ msgstr "خطأ في استعلام البيانات."
+
+#~ msgid "1 Thread (default)"
+#~ msgstr "موضوع واحد (افتراضي)"
+
+#~ msgid "Select a Tree Branch to use."
+#~ msgstr "حدد فرع شجرة لاستخدام."
+
+#~ msgid "Select a Graph Template for the host"
+#~ msgstr "حدد قالب الرسم البياني للمضيف"
+
+#~ msgid "Host:"
+#~ msgstr "المضيف:"
+
+#~ msgid "This account has been locked."
+#~ msgstr "تم قفل هذا الحساب."
+
+#~ msgid "User Account Disabled"
+#~ msgstr "حساب المستخدم معطل"
+
+#, fuzzy
+#~ msgid "Guest user id %s does not exist."
+#~ msgstr "معرف مستخدم الضيف٪ s غير موجود."
+
+#, fuzzy
+#~ msgid "Template user id %s does not exist."
+#~ msgstr "معرف مستخدم القالب٪ s غير موجود."

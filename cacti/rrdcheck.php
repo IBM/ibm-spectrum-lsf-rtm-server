@@ -88,7 +88,7 @@ function rrdcheck_display_problems() {
 			)
 	);
 
-	validate_store_request_vars($filters, 'sess_rrdc');
+	validate_store_request_vars($filters, 'sess_rrdcr');
 
 	/* ================= input validation and session storage ================= */
 
@@ -193,7 +193,7 @@ function rrdcheck_display_problems() {
 			form_end_row();
 		}
 	} else {
-		print "<tr><td><em>" . __('No RRDcheck Problems Found') . "</em></td></tr>\n";
+		print "<tr><td colspan='5'><em>" . __('No RRDcheck Problems Found') . "</em></td></tr>\n";
 	}
 
 	html_end_box(false);

@@ -57,7 +57,7 @@ class JsFunctionsScanner extends FunctionsScanner
                             }
                             break;
                     }
-
+                    
                     $prev = $char;
                     $char = $next;
                     $pos++;

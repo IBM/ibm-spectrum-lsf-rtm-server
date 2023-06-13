@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2022 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -72,12 +72,12 @@ if (!cacti_sizeof($page)) {
 		} else {
 			print '<div id="content">';
 
-			$file = $config['base_path'] . "/include/content/" . $page['contentfile'];
+			$file = $config['base_path'] . "/include/content/" . str_replace('../', '', $page['contentfile']);
 
 			if (file_exists($file)) {
 				include_once($file);
 			} else {
-				print '<h1>The file \'' . $page['contentfile'] . '\' does not exist!!</h1>';
+				print '<h1>The file \'' . html_escape($page['contentfile']) . '\' does not exist!!</h1>';
 			}
 
 			print '</div>';

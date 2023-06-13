@@ -1041,7 +1041,7 @@ function reports_expand_device(&$report, $item, $device_id, $output, $format_ok,
 		array($device_id));
 
 	if ($description != '') {
-		$title = $title_delimiter . __('Device:') . " $description";
+		$title = $title_delimiter . __('Device:') . " " . html_escape($description);
 		$title_delimiter = ' > ';
 	}
 
@@ -1112,6 +1112,7 @@ function reports_expand_device(&$report, $item, $device_id, $output, $format_ok,
 					}
 				}
 			}
+
 			$outgraphs = array_merge($outgraphs, $graphs);
 		}
 
