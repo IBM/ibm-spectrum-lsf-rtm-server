@@ -1798,11 +1798,13 @@ function get_user_emails($ajobs,$if_admin, $sent_emails='') {
  */
 function gridalarms_check_all_alarms() {
 	global $config;
+
 	// Do not proceed if we have chosen to globally disable all alerts
 	if (read_config_option('thold_disable_all') == 'on') {
 		gridalarms_debug('Grid Alert checking is disabled globally');
-		return;
+		return false;
 	}
+
 	$alarms = db_fetch_assoc('SELECT *
 		FROM gridalarms_alarm
 		WHERE alarm_enabled="on"
@@ -1870,7 +1872,7 @@ function gridalarms_alarm_poller () {
 	$end = microtime(true);
 
 	/* log statistics */
-	$gridalarms_alarm_stats = sprintf('Time:%01.4f Alerts:%s', $end - $start, $alarms);
+	$gridalarms_alarm_stats = sprintf('Time:%01.4f Alerts:%s', $end - $start, ($alarms === false ? 'checking disabled' : $alarms));
 
 	cacti_log('GRIDALERTS STATS: ' . $gridalarms_alarm_stats, false, 'SYSTEM');
 
