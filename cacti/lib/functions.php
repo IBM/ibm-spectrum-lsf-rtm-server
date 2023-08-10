@@ -7333,3 +7333,11 @@ function debounce_run_notification($id, $freqnency = 1200) {
 
 	return false;
 }
+
+function cacti_unserialize($strobj) {
+	if (version_compare(PHP_VERSION, '7.0.0', '>=')) {
+		return unserialize($strobj, array('allowed_classes' => false));
+	} else {
+		return unserialize($strobj);
+	}
+}
