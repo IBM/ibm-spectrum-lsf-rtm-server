@@ -37,9 +37,16 @@ include_once($config['base_path'] . '/plugins/thold/thold_functions.php');
 set_default_action();
 
 if (isset($_SERVER['HTTP_REFERER'])) {
-	if (preg_match('/(data_sources.php|graph_view.php|graph.php)/', $_SERVER['HTTP_REFERER'])) {
-		$_SESSION['data_return'] = $_SERVER['HTTP_REFERER'];
+	if (preg_match('/(data_sources.php|graph_view.php|thold_graph.php|graph.php|thold.php)/', $_SERVER['HTTP_REFERER'])) {
+		if(!preg_match('/thold.php/', $_SERVER['HTTP_REFERER'])
+			|| !preg_match('/action=edit/', $_SERVER['HTTP_REFERER'])) {
+			$_SESSION['data_return'] = $_SERVER['HTTP_REFERER'];
+		}
+	} else {
+		kill_session_var('data_return');
 	}
+} else {
+	kill_session_var('data_return');
 }
 
 if (isset_request_var('drp_action')) {
@@ -442,7 +449,14 @@ function do_actions() {
 			print "<tr><td colspan='2'><p><i>Operator Message:</i><br><textarea class='ui-state-default ui-corner-all' style='width:70%;height:50px;' area-multiline='true' rows='2' id='message' name='message'></textarea></p></td></tr>";
 		}
 
-		$save_html = "<input type='button' class='ui-button ui-corner-all ui-widget' value='" . __esc('Cancel', 'thold') . "' onClick='cactiReturnTo()'>";
+		if (isset($_SESSION['data_return'])) {
+			$returnTo = sanitize_uri($_SESSION['data_return']);
+		} else {
+			$returnTo = $config['url_path'] . 'plugins/thold/thold.php';
+		}
+
+		$save_html = "<input type='button' class='ui-button ui-corner-all ui-widget' value='" . __esc('Cancel', 'thold') . "' onClick='cactiReturnTo($returnTo)'>";
+
 		if (!empty($button)) {
 			$save_html .= "&nbsp;<input type='submit' class='ui-button ui-corner-all ui-widget' value='" . __esc('Continue', 'thold') . "' title='$button'>";
 		}
@@ -2039,7 +2053,7 @@ function thold_edit() {
 
 	html_end_box();
 
-	form_save_button('thold.php' . (!empty($thold_data['id']) ? '?id=' . $thold_data['id']: ''), 'return', 'id');
+	form_save_button(isset($_SESSION['data_return']) ? $_SESSION['data_return'] : 'thold.php' . (!empty($thold_data['id']) ? '?id=' . $thold_data['id']: ''), 'return', 'id');
 
 	?>
 
