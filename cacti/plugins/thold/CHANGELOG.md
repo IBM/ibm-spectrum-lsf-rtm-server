@@ -32,6 +32,7 @@
 
 * issue#558: Thold entry displayed moretimes
 
+* issue#585:  The return Web page is wrong after clicking the "return" button in the "edit threshold"
 
 --- 1.6.0 ---
 
