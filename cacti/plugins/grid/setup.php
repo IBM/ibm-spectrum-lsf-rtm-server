@@ -4383,6 +4383,11 @@ function grid_config_settings () {
 				'method' => 'checkbox',
 				'default' => ''
 				),
+			'show_job_user_priority' => array(
+				'friendly_name' => __('Job Priority (User Priority)', 'grid'),
+				'method' => 'checkbox',
+				'default' => ''
+				),
 			'jobtime_header' => array(
 				'friendly_name' => __('Job Time State Options', 'grid'),
 				'method' => 'spacer',
@@ -4533,6 +4538,16 @@ function grid_config_settings () {
 				'method' => 'checkbox',
 				'default' => ''
 				),
+			'export_job_priority_from_job_detail' => array(
+				'friendly_name' => __('Job Priority', 'grid'),
+				'method' => 'checkbox',
+				'default' => ''
+				),
+			'export_user_priority_from_job_detail' => array(
+				'friendly_name' => __('User Priority', 'grid'),
+				'method' => 'checkbox',
+				'default' => ''
+				),
 			'jobcmdrelated_header' => array(
 				'friendly_name' => __('Job Command Related', 'grid'),
 				'method' => 'spacer',
@@ -4554,6 +4569,11 @@ function grid_config_settings () {
 				),
 			'export_command' => array(
 				'friendly_name' => __('Job Command', 'grid'),
+				'method' => 'checkbox',
+				'default' => ''
+				),
+			'export_working_directory' => array(
+				'friendly_name' => __('Working Directory', 'grid'),
 				'method' => 'checkbox',
 				'default' => ''
 				),
