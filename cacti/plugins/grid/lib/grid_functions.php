@@ -11735,6 +11735,13 @@ function build_jobs_select_list($table, $reference_table, $full = false, $outer 
 				$fields .= ", $table.clusterid as jobclusterid";
 			}
 		}
+		if (array_key_exists('jobPriority', $jcols)) {
+			/* 
+			 * jobPriority has been added to $fields via the "foreach" above.
+			 * Only add userPriority here.
+			 */
+			$fields .= ", $table.userPriority"; 
+		}
 	}
 
 	//$fields = 'DISTINCT ' . $fields;
@@ -14990,6 +14997,13 @@ function build_job_display_array($jobs_page = '') {
 			'dbname'  => 'show_state_changes',
 			'sort'    => 'DESC'
 		),
+		'jobPriority' => array(
+			'display' => __('J(U) Pri', 'grid'),
+			'dbname'  => 'show_job_user_priority',
+			'tip'     => __('Job Priority (User Priority)', 'grid'),
+			'align'	  => 'right',
+			'sort'    => 'ASC',
+		),
 		'nosort0' => array(
 			'display' => __('Nice', 'grid'),
 			'dbname'  => 'show_nice',
@@ -15242,6 +15256,9 @@ function grid_job_export_display_array() {
 	if (read_grid_config_option('export_command') == 'on') {
 		$display_array[] .= 'command';
 	}
+	if (read_grid_config_option('export_working_directory') == 'on') {
+		$display_array[] .= 'cwd';
+	}
 	if (read_grid_config_option('export_error_file') == 'on') {
 		$display_array[] .= 'errFile';
 	}
@@ -15360,6 +15377,12 @@ function grid_job_export_display_array() {
 	if (read_grid_config_option('export_jgroup') == 'on') {
 		$display_array[] .= 'jobGroup';
 	}
+	if (read_grid_config_option('export_job_priority_from_job_detail') == 'on') {
+		$display_array[] .= 'jobPriority';
+	}
+	if (read_grid_config_option('export_user_priority_from_job_detail') == 'on') {
+		$display_array[] .= 'userPriority';
+	}
 
 	$display_array[] .= 'mem_used';
 	$display_array[] .= 'swap_used';
@@ -15464,6 +15487,11 @@ function grid_jobs_build_export_row($job, &$queue_nice_levels) {
 	}
 	if (read_grid_config_option("export_command") == "on") {
 		$cmdstring = $job["command"];
+		$cmdstring = str_replace('"','""',$cmdstring);
+		$xport_row .= $cmdstring . '","';
+	}
+	if (read_grid_config_option("export_working_directory") == "on") {
+		$cmdstring = $job["cwd"];
 		$cmdstring = str_replace('"','""',$cmdstring);
 		$xport_row .= $cmdstring . '","';
 	}
@@ -15604,6 +15632,12 @@ function grid_jobs_build_export_row($job, &$queue_nice_levels) {
 	}
 	if (read_grid_config_option("export_jgroup") == "on") {
 		$xport_row .= $job["jobGroup"] . '","';
+	}
+	if (read_grid_config_option("export_job_priority_from_job_detail") == "on") {
+		$xport_row .= $job["jobPriority"] . '","';
+	}
+	if (read_grid_config_option("export_user_priority_from_job_detail") == "on") {
+		$xport_row .= $job["userPriority"] . '","';
 	}
 
 	$xport_row .= $job["mem_used"] . '","';
@@ -19907,6 +19941,13 @@ function display_job_results($jobs_page, $table_name, $job_results, $rows, $tota
 
 			form_selectable_cell_visible(jc($job, 'stat_changes'), 'show_state_changes', $row_id, 'right');
 
+			$job_user_priority = '-' ;
+			if (isset($job['jobPriority']) && 
+				isset($job['userPriority'])) {
+				$job_user_priority = number_format_i18n($job['jobPriority']) . ' (' . number_format_i18n($job['userPriority']) . ')';
+			}
+			form_selectable_cell_visible($job_user_priority, 'show_job_user_priority', $row_id, 'right');
+	
 			if (isset($queue_nice_levels[$job['clusterid'] . '-' . $job['queue']])) {
 				form_selectable_cell_visible($queue_nice_levels[$job['clusterid'].'-'.$job['queue']], 'show_nice', $row_id, 'right');
 			} else {
