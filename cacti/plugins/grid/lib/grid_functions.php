@@ -12027,10 +12027,12 @@ function grid_get_rrdcfvalue($ds, $cf, $rrdfile, $start, $end) {
 
 			switch($cf) {
 			case 'MAX':
-				return number_format_i18n((float)$max,0,'.','');
+				// `number_format_i18n` does not support changing thousands_separator, so we use `number_format` here.
+				return number_format((float)$max,0,'.','');
 				break;
 			case 'MIN':
-				return number_format_i18n((float)$min,0,'.','');
+				// `number_format_i18n` does not support changing thousands_separator, so we use `number_format` here.
+				return number_format((float)$min,0,'.','');
 				break;
 			case 'AVERAGE':
 				return $total / $samples;
