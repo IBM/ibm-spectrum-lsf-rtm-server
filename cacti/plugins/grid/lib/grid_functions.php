@@ -3734,44 +3734,48 @@ function update_fairshare_tree_information() {
 
 	}
 
-	//update all users running jobs/slots in table grid_queues_shares. users not in temp table will be assigned to null by left join
 	grid_debug("grid_queues_shares users running jobs/slots update");
 
+	$q_start_time = db_fetch_cell("SELECT NOW()");
 	$clusters = db_fetch_assoc("SELECT DISTINCT clusterid FROM grid_clusters WHERE disabled!='on'");
 
+	//Update last_updated=NOW() for all found shareAcctPath
 	if (cacti_sizeof($clusters)) {
 		grid_debug("Processing '" . cacti_sizeof($clusters) . "' Clusters");
 		foreach($clusters as $cluster) {
+			//update all users raw running jobs/slots in table grid_queues_shares.
 			db_execute_prepared("UPDATE grid_queues_shares AS gqs
-				LEFT JOIN $temp_table AS tt
+				INNER JOIN $temp_table AS tt
 				ON tt.clusterid=gqs.clusterid
 				AND gqs.queue=tt.queue
 				AND gqs.shareAcctPath = tt.shareAcctPath
 				AND gqs.user_or_group=tt.user
-				SET gqs.run_jobs = tt.run_jobs, gqs.run_slots = tt.run_slots
+				SET gqs.run_jobs = tt.run_jobs, gqs.run_slots = tt.run_slots, gqs.last_updated = NOW()
 				WHERE gqs.clusterid=?", array($cluster['clusterid']));
 
-			//update all users pending jobs/slots in table grid_queues_shares. users not in temp table will be assigned to null by left join
+			//update all users pending jobs/slots in table grid_queues_shares.
 			grid_debug("grid_queues_shares users pending jobs/slots update");
 
 			if (read_config_option("grid_usergroup_method") == "jobmap") {
+				//For jobmap, update all users pending jobs/slots in table grid_queues_shares, shareAcctPath must end of job.usergroup
 				db_execute_prepared("UPDATE grid_queues_shares AS gqs
-					LEFT JOIN temp_grid_jobs_jobmap AS tt FORCE INDEX (clusterid_queue_user_jobmap)
+					INNER JOIN temp_grid_jobs_jobmap AS tt FORCE INDEX (clusterid_queue_user_jobmap)
 					ON gqs.clusterid=tt.clusterid
 					AND gqs.queue=tt.queue
 					AND gqs.shareAcctPath LIKE CONCAT('%/', tt.usergroup)
 					AND gqs.user_or_group=tt.user
-					SET gqs.pend_jobs = tt.pend_jobs, gqs.pend_slots = tt.pend_slots
+					SET gqs.pend_jobs = tt.pend_jobs, gqs.pend_slots = tt.pend_slots, gqs.last_updated = NOW()
 					WHERE gqs.clusterid=?", array($cluster['clusterid']));
 			} else {
+				//For usermap, update all users pending jobs/slots in table grid_queues_shares, only compare combination of job.queue and job.user
 				db_execute_prepared("UPDATE grid_queues_shares AS gqs
-					LEFT JOIN $temp_table AS tt FORCE INDEX (clusterid_queue_user)
+					INNER JOIN $temp_table AS tt FORCE INDEX (clusterid_queue_user)
 					ON tt.clusterid=gqs.clusterid
 					AND gqs.queue=tt.queue
 					AND gqs.shareAcctPath = tt.shareAcctPath
 					AND tt.shareAcctPath = ''
 					AND gqs.user_or_group=tt.user
-					SET gqs.pend_jobs = tt.pend_jobs, gqs.pend_slots = tt.pend_slots
+					SET gqs.pend_jobs = tt.pend_jobs, gqs.pend_slots = tt.pend_slots, gqs.last_updated = NOW()
 					WHERE gqs.clusterid=?", array($cluster['clusterid']));
 			}
 		}
@@ -3780,11 +3784,18 @@ function update_fairshare_tree_information() {
 	//update group running/pending jobs/slots in table grid_queues_shares
 	$count_total = 0;
 
-	$sql_prefix_group = "INSERT INTO grid_queues_shares (clusterid, queue, shareAcctPath, user_or_group, run_jobs, run_slots, pend_jobs, pend_slots) VALUES ";
-	$sql_suffix_group = " ON DUPLICATE KEY UPDATE run_jobs = VALUES(run_jobs), run_slots = VALUES(run_slots), pend_jobs=VALUES(pend_jobs), pend_slots=VALUES(pend_slots)";
+   //Update last_updated=NOW() for all up-level fairshae container of found shareAcctPath
+	if (read_config_option("grid_usergroup_method") == "jobmap") {
+		$sql_prefix_group = "INSERT INTO grid_queues_shares (clusterid, queue, shareAcctPath, user_or_group, run_jobs, run_slots, last_updated) VALUES ";
+		$sql_suffix_group = " ON DUPLICATE KEY UPDATE run_jobs = VALUES(run_jobs), run_slots = VALUES(run_slots), last_updated=VALUES(last_updated)";
+	} else {
+		$sql_prefix_group = "INSERT INTO grid_queues_shares (clusterid, queue, shareAcctPath, user_or_group, run_jobs, run_slots, pend_jobs, pend_slots, last_updated) VALUES ";
+		$sql_suffix_group = " ON DUPLICATE KEY UPDATE run_jobs = VALUES(run_jobs), run_slots = VALUES(run_slots), pend_jobs=VALUES(pend_jobs), pend_slots=VALUES(pend_slots), last_updated=VALUES(last_updated)";
+	}
 	$sql_group = '';
 	$sql_group_cnt = 0;
 
+	//Get queue share info for all usergroup(leaf-node) of fairshare tree
 	$grid_queue_shares = db_fetch_assoc("SELECT gqs.clusterid, queue, gqs.user_or_group, shareAcctPath,
 		gqs.run_jobs, gqs.run_slots, gqs.pend_jobs, gqs.pend_slots, type
 		FROM grid_queues_shares AS gqs FORCE INDEX (clusterid_user_or_group)
@@ -3807,14 +3818,16 @@ function update_fairshare_tree_information() {
 
 		$pre_run_jobs = empty($grid_queue_share['run_jobs'])? 0 : $grid_queue_share['run_jobs'];
 		$pre_run_slots = empty($grid_queue_share['run_slots'])? 0 : $grid_queue_share['run_slots'];
-		$pre_pend_jobs = empty($grid_queue_share['pend_jobs'])? 0 : $grid_queue_share['pend_jobs'];
-		$pre_pend_slots = empty($grid_queue_share['pend_slots'])? 0 : $grid_queue_share['pend_slots'];
+		if (read_config_option("grid_usergroup_method") == "usermap") {
+			$pre_pend_jobs = empty($grid_queue_share['pend_jobs'])? 0 : $grid_queue_share['pend_jobs'];
+			$pre_pend_slots = empty($grid_queue_share['pend_slots'])? 0 : $grid_queue_share['pend_slots'];
+		}
 
 		//current user_or_group is group name
 		$group = $user_or_group;
 		$charged_group = $share_acct_path . "/" . $user_or_group;
 
-		//get group running jobs/slots
+		//aggregate sub-group and member user running jobs/slots from grid_jobs aggregation table <temp_grid_jobs_aggregation>
 		$result = db_fetch_row_prepared("SELECT SUM(run_jobs) AS run_jobs, SUM(run_slots) AS run_slots
 			FROM $temp_table AS gj
 			WHERE gj.clusterid = ?
@@ -3824,12 +3837,8 @@ function update_fairshare_tree_information() {
 		$run_jobs = empty($result['run_jobs'])? 0 : $result['run_jobs'];
 		$run_slots = empty($result['run_slots'])? 0 : $result['run_slots'];
 
-
-		if (read_config_option("grid_usergroup_method") == "jobmap") {
-			$result['pend_jobs'] = 0;
-			$result['pend_slots'] = 0;
-		} else {
-			//get group pending jobs/slots
+		if (read_config_option("grid_usergroup_method") == "usermap") {
+			//get usergroup pending jobs/slots
 			$result = db_fetch_row_prepared("SELECT SUM(pend_jobs) AS pend_jobs, SUM(pend_slots) AS pend_slots
 				FROM $temp_table AS gj
 				INNER JOIN (
@@ -3846,15 +3855,16 @@ function update_fairshare_tree_information() {
 				AND gj.user=ug.username
 				WHERE gj.clusterid = ?
 				AND gj.queue = ? ", array($clusterid, $group, $clusterid, $queue));
-		}
 
-		$pend_jobs = empty($result['pend_jobs'])? 0 : $result['pend_jobs'];
-		$pend_slots = empty($result['pend_slots'])? 0 : $result['pend_slots'];
-
-		if (!($run_jobs == $pre_run_jobs && $run_slots == $pre_run_slots && $pend_jobs == $pre_pend_jobs && $pend_slots == $pre_pend_slots)) {
-			$sql_group .= ($sql_group_cnt == 0 ? "(":",(") . "'$clusterid', '$queue', '$share_acct_path', '$group', '$run_jobs', '$run_slots', '$pend_jobs', '$pend_slots')";
-			$sql_group_cnt ++;
+			$pend_jobs = empty($result['pend_jobs'])? 0 : $result['pend_jobs'];
+			$pend_slots = empty($result['pend_slots'])? 0 : $result['pend_slots'];
 		}
+		$sql_group .= ($sql_group_cnt == 0 ? "(":",(") . "'$clusterid', '$queue', '$share_acct_path', '$group', '$run_jobs', '$run_slots',";
+		if (read_config_option("grid_usergroup_method") == "usermap") {
+				$sql_group .= " '$pend_jobs', '$pend_slots',";
+		}
+		$sql_group .= " NOW())";
+		$sql_group_cnt ++;
 
 		if ($sql_group_cnt > 0 && $sql_group_cnt % 1000 == 0) {
 			db_execute($sql_prefix_group . $sql_group . $sql_suffix_group);
@@ -3874,6 +3884,18 @@ function update_fairshare_tree_information() {
 
 	//update groups pending jobs/slots when user group aggregation menthod is "job specification"
 	if (read_config_option("grid_usergroup_method") == "jobmap") {
+		db_execute("DROP TABLE IF EXISTS temp_grid_queues_shares_jobmap;");
+		db_execute("CREATE TEMPORARY TABLE temp_grid_queues_shares_jobmap (
+			`clusterid` int(10) unsigned NOT NULL,
+			`queue` varchar(30) NOT NULL default '',
+			`shareAcctPath` varchar(256) default '',
+			`usergroup` varchar(40) NOT NULL default '',
+			`pend_jobs` int(10) unsigned NOT NULL default '0',
+			`pend_slots` int(10) unsigned NOT NULL default '0',
+			PRIMARY KEY  (`clusterid`,`queue`, `shareAcctPath`, `usergroup`),
+			KEY `clusterid_queue_ugroup` (`clusterid`, `queue`, `usergroup`))
+			ENGINE=MEMORY;");
+
 		$pend_jobmap_groups = db_fetch_assoc("SELECT * FROM temp_grid_jobs_jobmap;");
 		grid_debug("jobmap aggregation update groups pending jobs/slots total= " . cacti_sizeof($pend_jobmap_groups));
 
@@ -3887,25 +3909,44 @@ function update_fairshare_tree_information() {
 			$pend_slots = $pend_jobmap_group['pend_slots'];
 
 			//aggregate each user pending jobs/slots to all of its charged user groups
-			$share_acct_path = db_fetch_cell_prepared("SELECT shareAcctPath from grid_queues_shares
+			$share_acct_paths = db_fetch_assoc_prepared("SELECT shareAcctPath from grid_queues_shares
 				WHERE clusterid = ?
 				AND queue = ?
 				AND user_or_group = ?
 				AND shareAcctPath LIKE CONCAT('%/', ?)", array($clusterid, $queue, $user, $usergroup));
 
-			if (empty($share_acct_path)) continue;
+			if (!cacti_sizeof($share_acct_paths))
+				continue;
 
-			$str_groups = str_replace("'',", "", "'" . implode("','", explode("/",$share_acct_path)) . "'");
+			foreach ($share_acct_paths as $share_acct_path) {
+				$str_groups = str_replace("'',", "", "'" . implode("','", explode("/",$share_acct_path['shareAcctPath'])) . "'");
 
-			db_execute_prepared("UPDATE grid_queues_shares
-				SET pend_jobs = IFNULL(pend_jobs,0) + ?, pend_slots = IFNULL(pend_slots,0) + ?
-				WHERE clusterid = ?
-				AND queue = ?
-				AND user_or_group IN ($str_groups);", array($pend_jobs, $pend_slots, $clusterid, $queue));
+				db_execute_prepared("INSERT INTO temp_grid_queues_shares_jobmap (clusterid, queue, shareAcctPath, usergroup, pend_jobs, pend_slots)
+					SELECT clusterid, queue, shareAcctPath, user_or_group, ? AS pend_jobs, ? AS pend_slots FROM grid_queues_shares
+					WHERE clusterid = ? AND queue = ? AND user_or_group IN ($str_groups)
+					ON DUPLICATE KEY UPDATE pend_jobs = temp_grid_queues_shares_jobmap.pend_jobs + VALUES(pend_jobs), pend_slots = temp_grid_queues_shares_jobmap.pend_slots + VALUES(pend_slots)",
+					array($pend_jobs, $pend_slots, $clusterid, $queue));
+				               
+			}
 		}
 		}
 
+		db_execute_prepared("INSERT INTO grid_queues_shares (clusterid, queue, shareAcctPath, user_or_group, pend_jobs, pend_slots, last_updated)
+			SELECT clusterid, queue, shareAcctPath, usergroup, pend_jobs, pend_slots, NOW() AS last_updated
+			FROM temp_grid_queues_shares_jobmap
+			ON DUPLICATE KEY UPDATE pend_jobs=VALUES(pend_jobs), pend_slots=VALUES(pend_slots), last_updated=VALUES(last_updated)");
 	}
+
+	//Reset run/pend jobs/slots for all old fairshare container, limit last_updated for performance
+	$poller_interval = read_config_option('poller_interval');
+	if (empty($poller_interval)) {
+		$poller_interval = 300;
+	}
+	$poller_interval = 10*$poller_interval;
+	db_execute_prepared("UPDATE grid_queues_shares
+		SET run_jobs=0, run_slots=0, pend_jobs = 0, pend_slots = 0
+		WHERE (last_updated > DATE_ADD(?, INTERVAL -$poller_interval SECOND)) AND (last_updated < ?)",
+		array($q_start_time, $q_start_time));
 
 	grid_debug("Fairshare update end." );
 }
@@ -11203,6 +11244,7 @@ function get_jobs_query($table_name, $apply_limits = true, &$jobsquery = '', &$r
 			}
 		} else {
 			if ($timespan_set) {
+				$jobs_sql_where2 = "";
 				if (strlen($jobs_where)) {
 					$jobs_sql_where1 = $jobs_where . " AND (exec_host='" . get_request_var('exec_host') . "' AND grid_jobs.num_nodes <= 1)";
 					if ($non_single_exechost)
@@ -11213,6 +11255,7 @@ function get_jobs_query($table_name, $apply_limits = true, &$jobsquery = '', &$r
 						$jobs_sql_where2  = "WHERE (grid_jobs_jobhosts.exec_host='" . get_request_var('exec_host') . "' AND grid_jobs.num_nodes > 1)";
 				}
 
+				$jobs_finished_sql_where2 = "";
 				if (strlen($jobs_finished_where)) {
 					$jobs_finished_sql_where1 = $jobs_finished_where . " AND (grid_jobs_finished.exec_host='" . get_request_var('exec_host') . "' AND grid_jobs_finished.num_nodes <= 1)";
 					if ($non_single_exechost)
@@ -11254,6 +11297,7 @@ function get_jobs_query($table_name, $apply_limits = true, &$jobsquery = '', &$r
 				}
 				//print "rowsquery11: $rowsquery<br/>";
 			} else {
+				$sql_where2 = "";
 				if (strlen($sql_where)) {
 					$sql_where1 = $sql_where . " AND (exec_host='" . get_request_var('exec_host') . "' AND grid_jobs.num_nodes <= 1)";
 					if ($non_single_exechost)
@@ -11350,6 +11394,7 @@ function get_jobs_query($table_name, $apply_limits = true, &$jobsquery = '', &$r
 				$jobs_query .= " LIMIT " . ($rows*(get_request_var('page') -1)) . "," . $rows;
 			}
 		} else {
+			$sql_where2 = "";
 			if (strlen($sql_where)) {
 				$sql_where1 = $sql_where . " AND (exec_host='" . get_request_var('exec_host') . "' AND grid_jobs.num_nodes <= 1)";
 				if ($non_single_exechost)
@@ -12027,10 +12072,12 @@ function grid_get_rrdcfvalue($ds, $cf, $rrdfile, $start, $end) {
 
 			switch($cf) {
 			case 'MAX':
-				return number_format_i18n((float)$max,0,'.','');
+				// `number_format_i18n` does not support changing thousands_separator, so we use `number_format` here.
+				return number_format((float)$max,0,'.','');
 				break;
 			case 'MIN':
-				return number_format_i18n((float)$min,0,'.','');
+				// `number_format_i18n` does not support changing thousands_separator, so we use `number_format` here.
+				return number_format((float)$min,0,'.','');
 				break;
 			case 'AVERAGE':
 				return $total / $samples;

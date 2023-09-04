@@ -1,6 +1,6 @@
 [info]
 name = grid
-version = 10.2.0.14
+version = 10.2.0.15
 longname = IBM Spectrum LSF RTM Grid Plugin
 author = IBM Corporation
 email =
