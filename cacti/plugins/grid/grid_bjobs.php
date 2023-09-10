@@ -1,8 +1,8 @@
 <?php
-// $Id$
+// $Id: e6fc43074f5156f71d7c37c68338e93b4f264171 $
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2022                                          |
+ | Copyright IBM Corp. 2006, 2022-2023                                     |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -172,166 +172,163 @@ function grid_validate_job_request_variables() {
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '-1'
-			),
+		),
 		'page' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'default' => '1'
-			),
-/*		'predefined_timespan' => array(
-			'filter' => FILTER_VALIDATE_INT,
-			'default' => read_grid_config_option('default_timespan')
-			),
-		'predefined_timeshift' => array(
-			'filter' => FILTER_VALIDATE_INT,
-			'default' => read_grid_config_option('default_timeshift')
-			),
-*/
+		),
 		'efficiency' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '-1'
-			),
+		),
 		'predefined_graph_type' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'default' => '-1'
-			),
+		),
 		'filter' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'sort_column' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => 'start_time',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'sort_direction' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => 'DESC',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'level' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'default' => '-1'
-			),
+		),
 		'reasonid' => array(
 			'filter' => FILTER_CALLBACK,
 			'options' => array('options' => 'sanitize_search_string'),
 			'pageset' => true,
 			'default' => ''
-			),
+		),
 		'usergroup' => array(
 			'filter' => FILTER_CALLBACK,
 			'options' => array('options' => 'sanitize_search_string'),
 			'pageset' => true,
 			'default' => '-1'
-			),
+		),
 		'job_user' => array(
 			'filter' => FILTER_CALLBACK,
 			'options' => array('options' => 'sanitize_search_string'),
 			'pageset' => true,
 			'default' => '-1'
-			),
+		),
 		'status' => array(
 			'filter' => FILTER_CALLBACK,
 			'options' => array('options' => 'sanitize_search_string'),
 			'pageset' => true,
 			'default' => read_grid_config_option('default_job_status'),
-			),
+		),
 		'queue' => array(
 			'filter' => FILTER_CALLBACK,
 			'options' => array('options' => 'sanitize_search_string'),
 			'pageset' => true,
 			'default' => '-1'
-			),
+		),
 		'exec_host' => array(
 			'filter' => FILTER_CALLBACK,
 			'options' => array('options' => 'sanitize_search_string'),
 			'pageset' => true,
 			'default' => '-1'
-			),
+		),
 		'hgroup' => array(
 			'filter' => FILTER_CALLBACK,
 			'options' => array('options' => 'sanitize_search_string'),
 			'pageset' => true,
 			'default' => '-1'
-			),
+		),
 		'sub_host' => array(
 			'filter' => FILTER_CALLBACK,
 			'options' => array('options' => 'sanitize_search_string'),
 			'pageset' => true,
 			'default' => '-1'
-			),
+		),
 		'exception' => array(
 			'filter' => FILTER_CALLBACK,
 			'options' => array('options' => 'sanitize_search_string'),
 			'pageset' => true,
 			'default' => '-1'
-			),
+		),
 		'app' => array(
 			'filter' => FILTER_CALLBACK,
 			'options' => array('options' => 'sanitize_search_string'),
 			'pageset' => true,
 			'default' => '-1'
-			),
+		),
+		'jcolumn' => array(
+			'filter' => FILTER_CALLBACK,
+			'options' => array('options' => 'sanitize_search_string'),
+			'pageset' => true,
+			'default' => '-1'
+		),
 		'jgroup' => array(
 			'filter' => FILTER_CALLBACK,
 			'options' => array('options' => 'sanitize_search_string'),
 			'pageset' => true,
 			'default' => '-1'
-			),
+		),
 		'cluster_tz' => array(
 			'filter' => FILTER_CALLBACK,
 			'options' => array('options' => 'sanitize_search_string'),
 			'pageset' => true,
 			'default' => read_grid_config_option('default_grid_tz')
-			),
+		),
 		'dynamic_updates' => array(
 			'filter' => FILTER_CALLBACK,
 			'options' => array('options' => 'sanitize_search_string'),
 			'pageset' => true,
 			'default' => read_grid_config_option('default_grid_dynamic')
-			),
+		),
 		'jobid' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'default' => '',
 			'pageset' => true
-			),
+		),
 		'resource_str_search_by' => array(
 			'filter' => FILTER_CALLBACK,
 			'options' => array('options' => 'sanitize_search_string'),
 			'pageset' => true,
 			'default' => '1'
-			),
+		),
 		'drp_action' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'end_time' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'start_time' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'submit_time' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'indexid' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'default' => ''
-			)
+		)
 	);
 
 	validate_store_request_vars($filters, 'sess_gbj');
@@ -875,7 +872,17 @@ function jobsFilter() {
 						<?php print __('Search', 'grid');?>
 					</td>
 					<td>
-						<input type='text' id='filter' size='30' value='<?php print html_escape_request_var('filter');?>'>
+						<select id='jcolumn'>
+							<option value='-1' <?php if (get_request_var('jcolumn') == '-1') {?> selected <?php }?>><?php print __('All', 'grid');?></option>
+							<option value='jobname' <?php if (get_request_var('jcolumn') == 'jobname') {?> selected <?php }?>><?php print __('Job Name', 'grid');?></option>
+							<option value='projectName' <?php if (get_request_var('jcolumn') == 'projectName1') {?> selected <?php }?>><?php print __('Project Name', 'grid');?></option>
+							<option value='cwd' <?php if (get_request_var('jcolumn') == 'cwd') {?> selected <?php }?>><?php print __('Working Directory', 'grid');?></option>
+							<option value='licenseProject' <?php if (get_request_var('jcolumn') == 'licenseProject') {?> selected <?php }?>><?php print __('License Project', 'grid');?></option>
+							<option value='jobGroup' <?php if (get_request_var('jcolumn') == 'jobGroup') {?> selected <?php }?>><?php print __('Job Group', 'grid');?></option>
+							<option value='jobid' <?php if (get_request_var('jcolumn') == 'jobid') {?> selected <?php }?>><?php print __('Job ID', 'grid');?></option>
+							<option value='command' <?php if (get_request_var('jcolumn') == 'command') {?> selected <?php }?>><?php print __('Command', 'grid');?></option>
+						</select>
+						<input type='text' id='filter' size='40' value='<?php print html_escape_request_var('filter');?>'>
 					</td>
 					<?php resource_browser(true);?>
 					<td>
@@ -1249,6 +1256,7 @@ function grid_view_jobs() {
 			strURL += '&hgroup=' + encodeURIComponent($('#hgroup').val());
 			strURL += '&efficiency=' + $('#efficiency').val();
 			strURL += '&filter=' + $('#filter').val();
+			strURL += '&jcolumn=' + $('#jcolumn').val();
 			strURL += '&jobid=' + $('#jobid').val();
 			strURL += '&dynamic_updates=' + $('#dynamic_updates').is(':checked');
 			if (typeof $('#resource_str').val() != 'undefined') {
@@ -1261,6 +1269,7 @@ function grid_view_jobs() {
 			strURL += '&predefined_timeshift=' + $('#predefined_timeshift').val();
 			strURL += '&app=' + $('#app').val();
 			strURL += '&jgroup=' + $('#jgroup').val();
+			strURL += '&jcolumn=' + $('#jcolumn').val();
 			if ($('#status').val() == 'PEND') {
 				strURL += '&reasonid=' + $('#reasonid').val();
 				if($('#level').val() == ''){
