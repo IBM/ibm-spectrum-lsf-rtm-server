@@ -84,8 +84,8 @@ foreach($parms as $parameter) {
 
 if ($lic_id > 0) {
 	$options = db_fetch_assoc_prepared("SELECT service_id, server_name, server_portatserver, options_path FROM lic_services
-		WHERE status='3' AND disabled='' AND options_path!='' AND lic_services.service_id=?", array($lic_id));
-}else{
+		WHERE status='3' AND disabled='' AND options_path!='' AND lic_services.service_id = ?", array($lic_id));
+} else {
 	$options = db_fetch_assoc("SELECT service_id, server_name, server_portatserver, options_path FROM lic_services
 		WHERE status='3' AND disabled='' AND options_path!=''");
 }
@@ -115,11 +115,12 @@ if (empty($last_start)) {
 
 /* determine if it's time to start */
 $runme = false;
-db_execute_prepared("REPLACE INTO settings (name,value) VALUES ('lic_options_processing',?)", array($start));
+
+set_config_option('lic_options_processing', $start);
+
 if ($start % 43200 <= $last_start % 43200 || $last_start == $start) {
 	$runme = true;
 }
-
 
 lic_debug('About to enter License Options File Poller Processing ');
 
@@ -138,11 +139,13 @@ if ($runme || $forcerun) {
 
 		if ($lic_id > 0) {
 			lic_process_options($current_date_time, $lic_id);
-		}else{
+		} else {
 			lic_process_options($current_date_time);
 
 			log_ip_ranges();
 		}
+
+		lic_delete_old_options();
 
 		db_execute("DELETE FROM lic_ldap_to_flex_groups WHERE present=0");
 
@@ -152,155 +155,194 @@ if ($runme || $forcerun) {
 	}
 }
 
+function lic_delete_old_options() {
+	db_execute('DELETE FROM lic_services_options_feature WHERE service_id NOT IN (SELECT service_id FROM lic_services)');
+	db_execute('DELETE FROM lic_services_options_feature_type WHERE service_id NOT IN (SELECT service_id FROM lic_services)');
+	db_execute('DELETE FROM lic_services_options_host_groups WHERE service_id NOT IN (SELECT service_id FROM lic_services)');
+	db_execute('DELETE FROM lic_services_options_max WHERE service_id NOT IN (SELECT service_id FROM lic_services)');
+	db_execute('DELETE FROM lic_services_options_global WHERE service_id NOT IN (SELECT service_id FROM lic_services)');
+	db_execute('DELETE FROM lic_services_options_incexcl_all WHERE service_id NOT IN (SELECT service_id FROM lic_services)');
+	db_execute('DELETE FROM lic_services_options_reserve WHERE service_id NOT IN (SELECT service_id FROM lic_services)');
+	db_execute('DELETE FROM lic_services_options_user_groups WHERE service_id NOT IN (SELECT service_id FROM lic_services)');
+}
+
 function lic_process_options($cur_time, $lic_id = 0) {
 	global $if_collect_option, $debug;
 
 	$use_ssh = read_config_option('lic_use_ssh_for_options');
 
 	if ($lic_id > 0) {
-		$options = db_fetch_assoc_prepared("SELECT service_id, server_name, server_portatserver, options_path
+		$options = db_fetch_assoc_prepared("SELECT service_id, server_name,
+			server_portatserver, options_path
 			FROM lic_services
-			WHERE status='3' AND disabled='' AND options_path!='' AND lic_services.service_id=$lic_id", array($lic_id));
+			WHERE status = '3'
+			AND disabled = ''
+			AND options_path != ''
+			AND lic_services.service_id = ?",
+			array($lic_id));
 
-	}else{
-		$options = db_fetch_assoc("SELECT service_id, server_name, server_portatserver, options_path
+	} else {
+		$options = db_fetch_assoc("SELECT service_id, server_name,
+			server_portatserver, options_path
 			FROM lic_services
-			WHERE status='3' AND disabled='' AND options_path!=''");
+			WHERE status = '3'
+			AND disabled = ''
+			AND options_path != ''");
 	}
 
 	if (cacti_sizeof($options)) {
-	foreach($options as $lmgrd) {
-		lic_debug('Processing Service ID: ' . $lmgrd['service_id']);
-		$options_file = $lmgrd['options_path'];
-		$options_files = explode(';', $options_file);
+		foreach($options as $lmgrd) {
+			lic_debug('Processing Service ID: ' . $lmgrd['service_id']);
 
-		$valid_options_file = true;
-		foreach($options_files as $options_file) {
-			$options_file = trim ($options_file);
-			if (empty($options_file)) continue;
+			$options_file = $lmgrd['options_path'];
+			$options_files = explode(';', $options_file);
 
-			lic_debug("Validating Options File '$options_file'");
-			if (file_exists($options_file)) {  // for local options file
-				if (!is_readable($options_file)) {
-					cacti_log("ERROR: '" .$lmgrd["server_name"] ."' - Option File: $options_file is not readable!");
-					$valid_options_file = false;
+			$valid_options_file = true;
+
+			foreach($options_files as $options_file) {
+				$options_file = trim ($options_file);
+
+				if (empty($options_file)) {
 					continue;
 				}
-				if (!filesize($options_file)) {
-					cacti_log("ERROR: '" .$lmgrd["server_name"] ."' - Option File: $options_file is empty!");
-					$valid_options_file = false;
-					continue;
+
+				lic_debug("Validating Options File '$options_file'");
+				if ($debug) {
+					cacti_log("Validating Options File '$options_file'");
 				}
-			} elseif ($use_ssh) { // for remote options file via ssh
-				if ( !cacti_sizeof(get_options_file_ssh($options_file,$lmgrd['server_portatserver'])) ) {
-					cacti_log("ERROR: '" .$lmgrd["server_name"] ."' - Option File: $options_file doesn't exist!");
-					$valid_options_file = false;
-					continue;
-				}
-			} else {
-				cacti_log(sprintf('WARNING: Options File:\'%s\' for Service:\'%s\' does not exist locally and ssh is not enabled', $options_file, $lmgrd['server_portatserver']), false, 'LICENSE');
-			}
-		}
-		if (!$valid_options_file) continue;
 
-		/* set present flags to 0 */
-		db_execute_prepared("UPDATE lic_services_options_feature SET present=0
-			WHERE service_id=?", array($lmgrd['service_id']));
+				if (file_exists($options_file)) {
+					// for local options file
 
-		db_execute_prepared("UPDATE lic_services_options_feature_type SET present=0
-			WHERE service_id=?", array($lmgrd['service_id']));
+					if (!is_readable($options_file)) {
+						cacti_log("ERROR: '" .$lmgrd["server_name"] ."' - Option File: $options_file is not readable!");
+						$valid_options_file = false;
 
-		db_execute_prepared("UPDATE lic_services_options_incexcl_all SET present=0
-			WHERE service_id=?", array($lmgrd['service_id']));
+						continue;
+					}
+					if (!filesize($options_file)) {
+						cacti_log("ERROR: '" .$lmgrd["server_name"] ."' - Option File: $options_file is empty!");
+						$valid_options_file = false;
 
-		db_execute_prepared("UPDATE lic_services_options_global SET present=0
-			WHERE service_id=?", array($lmgrd['service_id']));
-
-		db_execute_prepared("UPDATE lic_services_options_user_groups SET present=0
-			WHERE service_id=?", array($lmgrd['service_id']));
-
-		db_execute_prepared("UPDATE lic_services_options_host_groups SET present=0
-			WHERE service_id=?", array($lmgrd['service_id']));
-
-		db_execute_prepared("UPDATE lic_services_options_max SET present=0
-			WHERE service_id=?", array($lmgrd['service_id']));
-
-		db_execute_prepared("UPDATE lic_services_options_reserve SET present=0
-			WHERE service_id=?", array($lmgrd['service_id']));
-
-
-		// Try to first read the file directly.  Otherwise, use ssh
-		$i = $j = 1;
-		foreach($options_files as $options_file) {
-			$options_file = trim ($options_file);
-			if (empty($options_file)) continue;
-
-			lic_debug("Processing Options File '$options_file', Number $i");
-			$option_file_contents = array();
-			if (file_exists($options_file) && is_readable($options_file)) {
-				$option_file_contents = file($options_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-				$i++;
-			} elseif ($use_ssh) {
-				$option_file_contents = get_options_file_ssh($options_file,$lmgrd['server_portatserver']);
-				$i++;
-			}
-
-			if (cacti_sizeof($option_file_contents)) {
-				lic_load_options_file($lmgrd, $options_file, $option_file_contents);
-			}
-
-			//deal with option in file part only when 'enable_option_in_file_collection' setting is 'on'  (designed for Qcom)
-			if ($if_collect_option == "on") {
-				/* modification to collect custom PER_USER Options, need to change it to a hook function */
-				$infile = $options_file . ".in";
-
-				if (file_exists($infile) && is_readable($infile)) {
-					lic_debug("Processing Options Input File '$infile', Number $j");
-					$infile_contents = file($infile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-					$j++;
+						continue;
+					}
 				} elseif ($use_ssh) {
-					//lic_debug("Falling back to ssh to get license input options path '" . $infile . "'");
-					// Need to fallback to ssh
-					$infile_contents = array();
-				}
+					// for remote options file via ssh
+					if (!cacti_sizeof(get_options_file_ssh($options_file, $lmgrd['server_portatserver'])) ) {
+						cacti_log("ERROR: '" .$lmgrd["server_name"] ."' - Option File: $options_file doesn't exist!");
+						$valid_options_file = false;
 
-				if (cacti_sizeof($infile_contents)) {
-					lic_load_options_in_file($lmgrd, $infile_contents);
+						continue;
+					}
+				} else {
+					cacti_log(sprintf('WARNING: Options File:\'%s\' for Service:\'%s\' does not exist locally and ssh is not enabled', $options_file, $lmgrd['server_portatserver']), false, 'LICENSE');
 				}
 			}
+
+			if (!$valid_options_file) {
+				continue;
+			}
+
+			/* set present flags to 0 */
+			db_execute_prepared("UPDATE lic_services_options_feature SET present=0
+				WHERE service_id = ?", array($lmgrd['service_id']));
+
+			db_execute_prepared("UPDATE lic_services_options_feature_type SET present=0
+				WHERE service_id = ?", array($lmgrd['service_id']));
+
+			db_execute_prepared("UPDATE lic_services_options_incexcl_all SET present=0
+				WHERE service_id = ?", array($lmgrd['service_id']));
+
+			db_execute_prepared("UPDATE lic_services_options_global SET present=0
+				WHERE service_id = ?", array($lmgrd['service_id']));
+
+			db_execute_prepared("UPDATE lic_services_options_user_groups SET present=0
+				WHERE service_id = ?", array($lmgrd['service_id']));
+
+			db_execute_prepared("UPDATE lic_services_options_host_groups SET present=0
+				WHERE service_id = ?", array($lmgrd['service_id']));
+
+			db_execute_prepared("UPDATE lic_services_options_max SET present=0
+				WHERE service_id = ?", array($lmgrd['service_id']));
+
+			db_execute_prepared("UPDATE lic_services_options_reserve SET present=0
+				WHERE service_id = ?", array($lmgrd['service_id']));
+
+			// Try to first read the file directly.  Otherwise, use ssh
+			$i = $j = 1;
+
+			foreach($options_files as $options_file) {
+				$options_file = trim ($options_file);
+
+				if (empty($options_file)) {
+					continue;
+				}
+
+				lic_debug("Processing Options File '$options_file', Number $i");
+				$option_file_contents = array();
+				if (file_exists($options_file) && is_readable($options_file)) {
+					$option_file_contents = file($options_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+					$i++;
+				} elseif ($use_ssh) {
+					$option_file_contents = get_options_file_ssh($options_file,$lmgrd['server_portatserver']);
+					$i++;
+				}
+
+				if (cacti_sizeof($option_file_contents)) {
+					lic_load_options_file($lmgrd, $options_file, $option_file_contents);
+				}
+
+				//deal with option in file part only when 'enable_option_in_file_collection' setting is 'on'  (designed for Qcom)
+				if ($if_collect_option == "on") {
+					/* modification to collect custom PER_USER Options, need to change it to a hook function */
+					$infile = $options_file . ".in";
+
+					if (file_exists($infile) && is_readable($infile)) {
+						lic_debug("Processing Options Input File '$infile', Number $j");
+						$infile_contents = file($infile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+						$j++;
+					} elseif ($use_ssh) {
+						//lic_debug("Falling back to ssh to get license input options path '" . $infile . "'");
+						// Need to fallback to ssh
+						$infile_contents = array();
+					}
+
+					if (cacti_sizeof($infile_contents)) {
+						lic_load_options_in_file($lmgrd, $infile_contents);
+					}
+				}
+			}
+
+			/* delete where present flags set to 0 */
+			db_execute_prepared("DELETE FROM lic_services_options_feature
+				WHERE service_id = ? AND present=0", array($lmgrd['service_id']));
+
+			db_execute_prepared("DELETE FROM lic_services_options_feature_type
+				WHERE service_id = ? AND present=0", array($lmgrd['service_id']));
+
+			db_execute_prepared("DELETE FROM lic_services_options_incexcl_all
+				WHERE service_id = ? AND present=0", array($lmgrd['service_id']));
+
+			db_execute_prepared("DELETE FROM lic_services_options_global
+				WHERE service_id = ? AND present=0", array($lmgrd['service_id']));
+
+			db_execute_prepared("DELETE FROM lic_services_options_user_groups
+				WHERE service_id = ? AND present=0", array($lmgrd['service_id']));
+
+			db_execute_prepared("DELETE FROM lic_services_options_host_groups
+				WHERE service_id = ? AND present=0", array($lmgrd['service_id']));
+
+			db_execute_prepared("DELETE FROM lic_services_options_max
+				WHERE service_id = ? AND present=0", array($lmgrd['service_id']));
+
+			db_execute_prepared("DELETE FROM lic_services_options_reserve
+				WHERE service_id = ? AND present=0", array($lmgrd['service_id']));
+
 		}
-
-		/* delete where present flags set to 0 */
-		db_execute_prepared("DELETE FROM lic_services_options_feature
-			WHERE service_id=? AND present=0", array($lmgrd['service_id']));
-
-		db_execute_prepared("DELETE FROM lic_services_options_feature_type
-			WHERE service_id=? AND present=0", array($lmgrd['service_id']));
-
-		db_execute_prepared("DELETE FROM lic_services_options_incexcl_all
-			WHERE service_id=? AND present=0", array($lmgrd['service_id']));
-
-		db_execute_prepared("DELETE FROM lic_services_options_global
-			WHERE service_id=? AND present=0", array($lmgrd['service_id']));
-
-		db_execute_prepared("DELETE FROM lic_services_options_user_groups
-			WHERE service_id=? AND present=0", array($lmgrd['service_id']));
-
-		db_execute_prepared("DELETE FROM lic_services_options_host_groups
-			WHERE service_id=? AND present=0", array($lmgrd['service_id']));
-
-		db_execute_prepared("DELETE FROM lic_services_options_max
-			WHERE service_id=? AND present=0", array($lmgrd['service_id']));
-
-		db_execute_prepared("DELETE FROM lic_services_options_reserve
-			WHERE service_id=? AND present=0", array($lmgrd['service_id']));
-
-	}
 	}
 }
 
 function lic_load_options_file($lmgrd, $options_file, &$file) {
-	global $cnn_id;
 	global $if_collect_option;
 
 	$max_array = array();
@@ -340,16 +382,16 @@ function lic_load_options_file($lmgrd, $options_file, &$file) {
 				if ($comment != '') {
 					if ($comment == $ncomment) {
 						$comment = '';
-					}else{
+					} else {
 						$comment = $ncomment;
 					}
-				}else{
+				} else {
 					$comment = $ncomment;
 				}
 
 				continue;
 			}
-		}elseif ($line == '' || $line[0] == '#' ) {
+		} elseif ($line == '' || $line[0] == '#' ) {
 			continue;
 		}
 
@@ -369,7 +411,7 @@ function lic_load_options_file($lmgrd, $options_file, &$file) {
 		switch($option) {
 		case 'BORROW_LOWWATER':
 			// set the number of licenses that can not be borrowed
-			$value    = trim($parts[2]);
+			$value = trim($parts[2]);
 
 			$ft_array[$parts[1]]['borrow_lowwater'] = $value;
 			break;
@@ -400,7 +442,11 @@ function lic_load_options_file($lmgrd, $options_file, &$file) {
 			break;
 		case 'EXCLUDEALL':
 			// deny a user access to all features served by this vendor daemon.
-			$inx_array[] = "(" . $lmgrd['service_id'] . ",'" . $parts[0] . "','" . $parts[1] . "','" . $parts[2] . "'," . db_qstr($comment) . ",1)";
+			if (sizeof($parts) == 3) {
+				$inx_array[] = "(" . $lmgrd['service_id'] . ", '" . $parts[0] . "', '" . $parts[1] . "', '" . $parts[2] . "', " . db_qstr($comment) . ", 1)";
+			} elseif (sizeof($parts) == 2) {
+				$inx_array[] = "(" . $lmgrd['service_id'] . ", '" . $parts[0] . "', 'GROUP', '" . $parts[1] . "', " . db_qstr($comment) . ", 1)";
+			}
 			$inx_cnt++;
 
 			break;
@@ -415,7 +461,7 @@ function lic_load_options_file($lmgrd, $options_file, &$file) {
 				if ($user != "\\") {
 					$ugp_array[] = "(" . $lmgrd['service_id'] . ",'" . $group . "','" . $user . "',1)";
 					$ugp_cnt++;
-				}else{
+				} else {
 					$prev     = 'GROUP';
 					$pgroup   = $group;
 					$continue = true;
@@ -440,7 +486,7 @@ function lic_load_options_file($lmgrd, $options_file, &$file) {
 				if ($host != "\\") {
 					$hgp_array[] = "(" . $lmgrd['service_id'] . ",'" . $group . "'," . db_qstr($host) . ",1)";
 					$hgp_cnt++;
-				}else{
+				} else {
 					$prev     = 'HOST_GROUP';
 					$pgroup   = $group;
 					$continue = true;
@@ -478,7 +524,7 @@ function lic_load_options_file($lmgrd, $options_file, &$file) {
 			break;
 		case 'LINGER':
 			// cause licenses to be held by the vendor daemon for a period after the application checks them in or exits.
-			$value    = trim($parts[2]);
+			$value = trim($parts[2]);
 
 			$ft_array[$parts[1]]['linger'] = $value;
 			break;
@@ -496,13 +542,13 @@ function lic_load_options_file($lmgrd, $options_file, &$file) {
 			break;
 		case 'MAX_BORROW_HOURS':
 			// Changes the maximum period a license can be borrowed from that specified in the license certificate for feature.
-			$value    = trim($parts[2]);
+			$value = trim($parts[2]);
 
 			$ft_array[$parts[1]]['max_borrow_hours'] = $value;
 			break;
 		case 'MAX_OVERDRAFT':
 			// limit overdraft usage to less than the amount specified in the license.
-			$value    = trim($parts[2]);
+			$value = trim($parts[2]);
 
 			$ft_array[$parts[1]]['max_overdraft'] = $value;
 			break;
@@ -540,9 +586,14 @@ function lic_load_options_file($lmgrd, $options_file, &$file) {
 			break;
 		case 'TIMEOUT':
 			// specify idle timeout for a feature, returning it to the free pool for use by another user.
-			$value    = trim($parts[2]);
+			$value = trim($parts[2]);
 
-			$ft_array[$parts[1]]['timeout'] = $value;
+			if (!is_numeric($value)) {
+				cacti_log(sprintf('WARNING: Options File:\'%s\', Service:\'%s\'  has invalid TIMEOUT syntax \'%s\'', $options_file, $lmgrd['server_portatserver'], $line), false, 'LICENSE');
+			} else {
+				$ft_array[$parts[1]]['timeout'] = $value;
+			}
+
 			break;
 		case 'TIMEOUTALL':
 			// Set timeout on all features
@@ -614,13 +665,15 @@ function lic_load_options_file($lmgrd, $options_file, &$file) {
 	/* update global settings first */
 	db_execute_prepared("REPLACE INTO lic_services_options_global
 		(service_id,options_path,debug_path,report_path,nolog_in,nolog_out,nolog_denied,nolog_queued,timeoutall,groupcaseinsens,present)
-		VALUES
-		(? , ?, ?, ?, ?, ?, ?, ?, ?, ?,1)",
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)",
 		array($lmgrd['service_id'], $options_file, $debug_path, $report_path, $nolog_in, $nolog_out, $nolog_denied, $nolog_queued, $timeoutall, $groupcaseins));
 
 	/* update the debug log patch in the flex table */
 	if (strlen($debug_path)) {
-		db_execute_prepared("UPDATE lic_services SET file_path=? WHERE service_id=?", array($debug_path, $lmgrd['service_id']));
+		db_execute_prepared("UPDATE lic_services
+			SET file_path = ?
+			WHERE service_id = ?",
+			array($debug_path, $lmgrd['service_id']));
 	}
 
 	if (cacti_sizeof($ugp_array)) {
@@ -675,16 +728,18 @@ function lic_load_options_file($lmgrd, $options_file, &$file) {
 
 		}
 
-		db_execute("INSERT INTO lic_services_options_feature
-			(`service_id`,`feature`,`keyword`,`borrow_lowwater`,`linger`,`max_borrow_hours`,`max_overdraft`,`timeout`,`present`)
-			VALUES " . implode(',', $values) . "
-			ON DUPLICATE KEY UPDATE
-			borrow_lowwater=VALUES(borrow_lowwater),
-			linger=VALUES(linger),
-			max_borrow_hours=VALUES(max_borrow_hours),
-			max_overdraft=VALUES(max_overdraft),
-			timeout=VALUES(timeout),
-			present=1");
+		if (cacti_sizeof($values)) {
+			db_execute("INSERT INTO lic_services_options_feature
+				(`service_id`,`feature`,`keyword`,`borrow_lowwater`,`linger`,`max_borrow_hours`,`max_overdraft`,`timeout`,`present`)
+				VALUES " . implode(',', $values) . "
+				ON DUPLICATE KEY UPDATE
+				borrow_lowwater=VALUES(borrow_lowwater),
+				linger=VALUES(linger),
+				max_borrow_hours=VALUES(max_borrow_hours),
+				max_overdraft=VALUES(max_overdraft),
+				timeout=VALUES(timeout),
+				present=1");
+		}
 	}
 
 	if (cacti_sizeof($ftt_array)) {
@@ -716,7 +771,7 @@ function log_ip_ranges() {
 		$dns_server = read_config_option('lic_host_dns');
 		if ($dns_server == '') {
 			$hosts = shell_exec("host -l $domain | awk '{printf(\"%s %s\\n\",$1,$4)}'");
-		}else{
+		} else {
 			$hosts = shell_exec("host -l $domain $dns_server | awk '{printf(\"%s %s\\n\",$1,$4)}' | grep 'has address'");
 		}
 		$hosts = explode("\n", $hosts);
@@ -775,11 +830,11 @@ function log_lic_statistics($lic_id=0, $from_gui=false) {
 	$cacti_stats = sprintf("Time:%01.4f", round($end-$start,4));
 
 	/* log to the database */
-	db_execute_prepared("REPLACE INTO settings (name,value) VALUES ('stats_lic_flex_options', ?)", array($cacti_stats));
+	set_config_option('stats_lic_flex_options', $cacti_stats);
 
 	/* log to the logfile */
 	if ($lic_id > 0 && $from_gui) {  //this is happening when forcing to update options files from GUI
-		$server_name = " - " . db_fetch_cell_prepared ("SELECT server_name FROM lic_services WHERE service_id=?", array($lic_id));
+		$server_name = " - " . db_fetch_cell_prepared ("SELECT server_name FROM lic_services WHERE service_id = ?", array($lic_id));
 		$output = false;
 	} else {
 		$server_name = "";
@@ -790,11 +845,10 @@ function log_lic_statistics($lic_id=0, $from_gui=false) {
 }
 
 function lic_load_options_in_file($lmgrd, &$file) {
-	global $cnn_id;
-
 	$sql = $sql1  = array();
-	$comment      = '';
-	$commenttag   = read_config_option('lic_options_note_tag');
+
+	$comment    = '';
+	$commenttag = read_config_option('lic_options_note_tag');
 
 	foreach($file as $line) {
 		// Process comments first
@@ -805,20 +859,20 @@ function lic_load_options_in_file($lmgrd, &$file) {
 			if ($comment != '') {
 				if ($comment == $ncomment) {
 					$comment = '';
-				}else{
+				} else {
 					$comment = $ncomment;
 				}
-			}else{
+			} else {
 				$comment = $ncomment;
 			}
 
 			continue;
-		}elseif ($line[0] == '#' || $line == '') {
+		} elseif ($line[0] == '#' || $line == '') {
 			continue;
 		}
 
 		/* find PER_USER entry */
-		if (substr_count($line, 'MAX(')) {
+		if (strpos($line, 'MAX(') !== false && strpos($line, 'OPT_MAX(') === false) {
 			$line = trim($line,'[]% MAX()');
 			$parts = explode(",",str_replace(' ','',str_replace("'",'',$line)));
 			if ($parts[2] == 'USER') {
@@ -837,7 +891,7 @@ function lic_load_options_in_file($lmgrd, &$file) {
 					}
 
 					$sql[]   = "(" . $lmgrd['service_id'] . ",$tokens,'$feature','','PER_USER','$group'," . db_qstr($comment) . ",1)";
-				}elseif (substr_count($parts[3], 'user')) {
+				} elseif (substr_count($parts[3], 'user')) {
 					$tokens = $parts[0];
 					$feature = $parts[1];
 					$mlparts = explode('=',$parts[3]);
@@ -848,9 +902,9 @@ function lic_load_options_in_file($lmgrd, &$file) {
 					$sql[]   = "(" . $lmgrd['service_id'] . ",$tokens,'$feature','','IND_USER','$user'," . db_qstr($comment) . ",1)";
 				}
 			}
-		}elseif (substr_count($line, 'HOST_GROUP(')) {
+		} elseif (substr_count($line, 'HOST_GROUP(')) {
 			continue;
-		}elseif (substr_count($line, 'GROUP(')) {
+		} elseif (substr_count($line, 'GROUP(')) {
 			$line      = trim($line,'[]% GROUP()');
 			$parts     = explode(",",str_replace(' ','',str_replace("'",'',$line)));
 			$flexgroup = $parts[0];
@@ -865,7 +919,7 @@ function lic_load_options_in_file($lmgrd, &$file) {
 				$_SESSION[$ldapgroup] = 1;
 			}
 
-			$sql1[]   = "('" . $ldapgroup . "','" . $flexgroup . "',1)";
+			$sql1[] = "('" . $ldapgroup . "','" . $flexgroup . "',1)";
 		}
 	}
 
@@ -884,7 +938,16 @@ function lic_load_options_in_file($lmgrd, &$file) {
 	}
 }
 
-function store_ldap_group_members($group) {  //need to remove
+function store_ldap_group_members($group) {
+	static $groups = array();
+
+	// Don't process a group more than once
+	if (isset($groups[$group])) {
+		return true;
+	}
+
+	lic_debug(sprintf('Checking for LDAP Group \'%s\' Membership', $group));
+
 	$server  = read_config_option('lic_ldap_server');
 	$base    = read_config_option('lic_ldap_base_dn');
 	$filter  = read_config_option('lic_ldap_filter');
@@ -897,7 +960,10 @@ function store_ldap_group_members($group) {  //need to remove
 
 	if (is_resource($ldapConn)) {
 		$ldapBind = ldap_bind($ldapConn);
-		if (!$ldapBind) return false;
+
+		if (!$ldapBind) {
+			return false;
+		}
 
 		ldap_set_option($ldapConn, LDAP_OPT_PROTOCOL_VERSION, $version);
 
@@ -906,28 +972,28 @@ function store_ldap_group_members($group) {  //need to remove
 		$members = ldap_get_entries($ldapConn,$searchResults);
 
 		if (cacti_sizeof($members)) {
-			db_execute_prepared("UPDATE lic_ldap_groups SET present=0 WHERE `group`=?", array($group));
+			db_execute_prepared("UPDATE lic_ldap_groups SET present=0 WHERE `group` = ?", array($group));
 
 			$first = true;
 			$sql   = array();
 			$cnt   = 1;
 			if (isset($members[0]['member'])) {
-			foreach($members[0]['member'] AS $record) {
-				if ($first) {
-					$first = false;
-				}else{
-					$parts=explode(',',$record);
-					$member=str_replace("uid=","",$parts[0]);
-					$sql[] = "('$group','$member',1)";
-					$cnt++;
-				}
+				foreach($members[0]['member'] AS $record) {
+					if ($first) {
+						$first = false;
+					} else {
+						$parts=explode(',',$record);
+						$member=str_replace("uid=","",$parts[0]);
+						$sql[] = "('$group','$member',1)";
+						$cnt++;
+					}
 
-				if ($cnt % 1000 == 0) {
-					db_execute("INSERT INTO lic_ldap_groups (`group`, user, present) VALUES " . implode(',',$sql) . " ON DUPLICATE KEY UPDATE present=1");
-					$cnt = 1;
-					$sql = array();
+					if ($cnt % 1000 == 0) {
+						db_execute("INSERT INTO lic_ldap_groups (`group`, user, present) VALUES " . implode(',',$sql) . " ON DUPLICATE KEY UPDATE present=1");
+						$cnt = 1;
+						$sql = array();
+					}
 				}
-			}
 			}
 
 			if ($cnt > 1) {
@@ -936,9 +1002,11 @@ function store_ldap_group_members($group) {  //need to remove
 				$sql = array();
 			}
 
-			db_execute_prepared("DELETE FROM lic_ldap_groups WHERE present=0 AND `group`=?", array($group));
+			db_execute_prepared("DELETE FROM lic_ldap_groups WHERE present=0 AND `group` = ?", array($group));
+
+			$groups[$group] = true;
 		}
-	}else{
+	} else {
 		return false;
 	}
 
