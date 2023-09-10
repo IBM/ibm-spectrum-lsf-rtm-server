@@ -1,8 +1,8 @@
 <?php
-// $Id: 9d561380bd21388c2f0f80bf109b4a0bfc4be257 $
+// $Id: e22e26148d17cd9be1bc57b436e7a944954da7f4 $
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2022                                          |
+ | Copyright IBM Corp. 2006, 2022-2023                                     |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -6696,41 +6696,35 @@ function get_group_aggregation_string($level_override = 0) {
 }
 
 function update_user_group_stats() {
-	grid_debug("Updating User Group Stats - Begin");
+	grid_debug('Updating User Group Stats');
 
-	$method = read_config_option("grid_ugroup_group_aggregation");
-	if ($method == "on") {
-		$delim = read_config_option("grid_job_stats_ugroup_delimiter");
+	$method = read_config_option('grid_ugroup_group_aggregation');
+	if ($method == 'on') {
+		$delim = read_config_option('grid_job_stats_ugroup_delimiter');
 		if (($delim=='') || !isset($delim)) {
-			cacti_log("WARNING: Empty User Group Delimiter! User Group aggregation therefore can not Continue", true, "GRID");
+			cacti_log('WARNING: Empty User Group Delimiter! User Group aggregation therefore can not Continue', true, 'GRID');
 			return -1;
 		}
 	}
 
 	/* setup for deletion */
-	db_execute("UPDATE grid_user_group_stats SET present=0 WHERE present=1");
+	db_execute('UPDATE grid_user_group_stats SET present=0 WHERE present=1');
 
 	/* remove blank groups */
-	db_execute("DELETE FROM grid_user_group_stats WHERE userGroup=''");
+	db_execute('DELETE FROM grid_user_group_stats WHERE userGroup = ""');
 
 	$groupMagic = get_ugroup_aggregation_string();
 
-	/* limit the clusters */
-	$clsql = get_cluster_list();
-	if (strlen($clsql)) {
-		$clsql = " AND $clsql";
-	}
-
 	/* format the SQL insert syntax */
-	if (read_config_option("grid_usergroup_method") == "jobmap") {
-		$format = array("clusterid", "userGroup", "numRUN", "numPEND", "numJOBS",
-			"efficiency", "avg_mem", "max_mem", "avg_swap", "max_swap", "total_cpu",
-			"last_updated", "present");
+	if (read_config_option('grid_usergroup_method') == 'jobmap') {
+		$format = array('clusterid', 'userGroup', 'numRUN', 'numPEND', 'numJOBS',
+			'efficiency', 'avg_mem', 'max_mem', 'avg_swap', 'max_swap', 'total_cpu',
+			'last_updated', 'present');
 
-		$duplicate = "ON DUPLICATE KEY UPDATE numRUN=VALUES(numRUN), numPEND=VALUES(numPEND),
+		$duplicate = 'ON DUPLICATE KEY UPDATE numRUN=VALUES(numRUN), numPEND=VALUES(numPEND),
 			numJOBS=VALUES(numJOBS), efficiency=VALUES(efficiency), avg_mem=VALUES(avg_mem),
 			max_mem=VALUES(max_mem), avg_swap=VALUES(avg_swap), max_swap=VALUES(max_swap),
-			total_cpu=VALUES(total_cpu), last_updated=VALUES(last_updated), present=VALUES(present)";
+			total_cpu=VALUES(total_cpu), last_updated=VALUES(last_updated), present=1';
 
 		$records = db_fetch_assoc("SELECT clusterid,
 			(CASE WHEN userGroup='' THEN 'default' ELSE userGroup END) AS userGroup,
@@ -6745,63 +6739,64 @@ function update_user_group_stats() {
 			SUM(cpu_used) as total_cpu,
 			NOW() AS last_updated,
 			'1' as present
-			FROM grid_jobs
-			WHERE stat IN ('RUNNING','PROV', 'USUSP', 'PSUSP', 'SSUSP', 'PEND')
-			$clsql
+			FROM grid_jobs FORCE INDEX (stat)
+			WHERE stat IN ('RUNNING', 'PROV', 'USUSP', 'PSUSP', 'SSUSP', 'PEND')
 			GROUP BY clusterid, userGroup");
-		grid_pump_records($records, "grid_user_group_stats", $format, false, $duplicate);
+
+		grid_pump_records($records, 'grid_user_group_stats', $format, false, $duplicate);
 	} else {
-		$groupMagic = str_replace("userGroup", "grid_user_group_members.groupname", $groupMagic);
+		$groupMagic = str_replace('userGroup', 'gugm.groupname', $groupMagic);
 
 		/* format the SQL insert syntax */
-		$format = array("clusterid", "userGroup", "numRUN", "numPEND", "numJOBS", "efficiency",
-			"avg_mem", "max_mem", "avg_swap", "max_swap", "total_cpu", "last_updated", "present");
+		$format = array('clusterid', 'userGroup', 'numRUN', 'numPEND', 'numJOBS', 'efficiency',
+			'avg_mem', 'max_mem', 'avg_swap', 'max_swap', 'total_cpu', 'last_updated', 'present');
 
-		$duplicate = "ON DUPLICATE KEY UPDATE numRUN=VALUES(numRUN), numPEND=VALUES(numPEND), numJOBS=VALUES(numJOBS),
+		$duplicate = 'ON DUPLICATE KEY UPDATE numRUN=VALUES(numRUN), numPEND=VALUES(numPEND), numJOBS=VALUES(numJOBS),
 			efficiency=VALUES(efficiency), avg_mem=VALUES(avg_mem), max_mem=VALUES(max_mem),
 			avg_swap=VALUES(avg_swap), max_swap=VALUES(max_swap), total_cpu=VALUES(total_cpu),
-			last_updated=VALUES(last_updated), present=1";
+			last_updated=VALUES(last_updated), present=1';
 
 		$records = db_fetch_assoc("SELECT teddy.clusterid,
-			$groupMagic as userGroup,
-			sum(numRUN) AS numRUN,
-			sum(numPEND) AS numPEND,
-			sum(numJOBS) AS numJOBS,
-			avg(avg_efficiency) AS efficiency,
-			avg(avg_mem) AS avg_mem,
-			max(max_mem) AS max_mem,
-			avg(avg_max_swap) AS avg_swap,
-			max(max_max_swap) AS max_swap,
-			sum(total_cpu) AS total_cpu,
+			$groupMagic AS userGroup,
+			SUM(numRUN) AS numRUN,
+			SUM(numPEND) AS numPEND,
+			SUM(numJOBS) AS numJOBS,
+			AVG(avg_efficiency) AS efficiency,
+			AVG(avg_mem) AS avg_mem,
+			MAX(max_mem) AS max_mem,
+			AVG(avg_max_swap) AS avg_swap,
+			MAX(max_max_swap) AS max_swap,
+			SUM(total_cpu) AS total_cpu,
 			NOW() AS last_updated,
 			'1' as present
-			FROM (SELECT
+			FROM grid_user_group_members AS gugm
+			INNER JOIN (
+				SELECT
 				clusterid,
 				user,
-				SUM(CASE WHEN stat IN ('RUNNING','PROV') THEN num_cpus ELSE 0 END) as numRUN,
-				SUM(CASE WHEN stat='PEND' THEN num_cpus ELSE 0 END) as numPEND,
+				SUM(CASE WHEN stat IN ('RUNNING', 'PROV') THEN num_cpus ELSE 0 END) as numRUN,
+				SUM(CASE WHEN stat = 'PEND' THEN num_cpus ELSE 0 END) as numPEND,
 				SUM(num_cpus) as numJOBS,
-				(SUM(CASE WHEN stat IN ('RUNNING','PROV') AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (stime+utime) ELSE 0 END) / SUM(CASE WHEN stat IN ('RUNNING','PROV') AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (run_time*max_allocated_processes) ELSE 0 END)) * 100 as avg_efficiency,
+				(SUM(CASE WHEN stat IN ('RUNNING', 'PROV') AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (stime+utime) ELSE 0 END) / SUM(CASE WHEN stat IN ('RUNNING','PROV') AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (run_time*max_allocated_processes) ELSE 0 END)) * 100 as avg_efficiency,
 				AVG(max_memory) as avg_mem,
 				MAX(max_memory) as max_mem,
 				AVG(max_swap) as avg_max_swap,
 				MAX(max_swap) as max_max_swap,
 				SUM(cpu_used) as total_cpu
-				FROM grid_jobs
+				FROM grid_jobs FORCE INDEX (stat)
 				WHERE stat IN('RUNNING', 'PROV', 'USUSP', 'PSUSP', 'SSUSP', 'PEND')
-				$clsql
-				GROUP BY clusterid, user) as teddy
-			INNER JOIN grid_user_group_members
-			ON (grid_user_group_members.clusterid=teddy.clusterid
-			AND (grid_user_group_members.username=teddy.user))
-			WHERE grid_user_group_members.present = 1
-			GROUP BY grid_user_group_members.clusterid, grid_user_group_members.groupname");
+				GROUP BY clusterid, user
+			) as teddy
+			ON gugm.clusterid = teddy.clusterid
+			AND gugm.username = teddy.user
+			GROUP BY teddy.clusterid, userGroup");
+			//GROUP BY gugm.clusterid, gugm.groupname");
 
-		grid_pump_records($records, "grid_user_group_stats", $format, false, $duplicate);
+		grid_pump_records($records, 'grid_user_group_stats', $format, false, $duplicate);
 	}
 
 	/* remove stale records */
-	db_execute("UPDATE grid_user_group_stats
+	db_execute('UPDATE grid_user_group_stats
 		SET numRUN=0,
 			numPEND=0,
 			numJOBS=0,
@@ -6811,20 +6806,20 @@ function update_user_group_stats() {
 			avg_swap=0,
 			max_swap=0,
 			total_cpu=0
-		WHERE present=0");
+		WHERE present=0');
 
 	/* remove non-compliant user group stats when aggregation is enabled */
-	if (read_config_option("grid_ugroup_group_aggregation") == 'on') {
-		$delim = read_config_option("grid_job_stats_ugroup_delimiter");
-		$count = read_config_option("grid_job_stats_ugroup_level_number");
+	if (read_config_option('grid_ugroup_group_aggregation') == 'on') {
+		$delim = read_config_option('grid_job_stats_ugroup_delimiter');
+		$count = read_config_option('grid_job_stats_ugroup_level_number');
 		//fix #132036
 		if ($count > 0) {
-			db_execute_prepared("DELETE FROM grid_user_group_stats WHERE LENGTH(SUBSTRING_INDEX(userGroup, ?, ?)) < LENGTH(userGroup)", array($delim, $count));
+			db_execute_prepared('DELETE FROM grid_user_group_stats WHERE LENGTH(SUBSTRING_INDEX(userGroup, ?, ?)) < LENGTH(userGroup)', array($delim, $count));
 		}
 	}
 
 	/* log end event */
-	grid_debug("Updating User Group Stats - Complete");
+	grid_debug('Updating User Group Stats', true);
 }
 
 function update_license_projects() {
