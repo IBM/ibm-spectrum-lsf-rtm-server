@@ -75,22 +75,35 @@ function jc(&$job, $column) {
 	}
 }
 
-function grid_debug($message) {
-	global $debug;
+function grid_debug($message, $log_delta = false) {
+    global $debug, $log_trace;
 
-	if (defined('CACTI_DATE_TIME_FORMAT')) {
-		$date = date(CACTI_DATE_TIME_FORMAT);
-	} else {
-		$date = date('Y-m-d H:i:s');
-	}
+    static $log_start = 0;
 
-	if ($debug) {
-		print $date . ' - DEBUG: ' . trim($message) . PHP_EOL;
-	}
+    /* fill in the current date for printing in the log */
+    if (defined('CACTI_DATE_TIME_FORMAT')) {
+        $date = date(CACTI_DATE_TIME_FORMAT);
+    } else {
+        $date = date('Y-m-d H:i:s');
+    }
 
-	if (substr_count($message, 'ERROR:')) {
-		cacti_log($message, false, 'GRID');
-	}
+    if ($debug) {
+        print $date . ' - DEBUG: ' . trim($message) . PHP_EOL;
+    }
+
+    if ($log_delta == false) {
+        $log_start = microtime(true);
+    }
+
+    if ($log_trace && $log_delta) {
+        $delta_time = microtime(true) - $log_start;
+        $message    = sprintf('TRACE Time:%0.2f, %s', $delta_time, $message);
+        $log_start  = microtime(true);
+    }
+
+    if (substr_count($message, 'ERROR:') || ($log_delta && $log_trace)) {
+        cacti_log($message, false, 'GRID');
+    }
 }
 
 /**
