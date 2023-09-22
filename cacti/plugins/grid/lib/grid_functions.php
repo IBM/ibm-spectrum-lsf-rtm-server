@@ -14238,7 +14238,7 @@ print '</tr></table>';
 					<?php print display_job_memory($job['max_memory'],3);?>
 				</td>
 				<td width='16%'>
-					<?php print __('Job Efficiency', 'grid');?>
+					<?php print __('Job Avg Efficiency', 'grid');?>
 				</td>
 				<td width='20%'>
 					<?php print display_job_effic($job["efficiency"], $job["run_time"], 2);?>
@@ -14335,8 +14335,14 @@ print '</tr></table>';
 				<td width='16%'>
 					<?php print __('Max V.Memory Size', 'grid');?>
 				</td>
-				<td colspan='3' width='52%'>
+				<td width='16%'>
 					<?php print display_job_memory($job['max_swap'],3);?>
+				</td>
+				<td width='16%'>
+					<?php print __('Mem Peak Efficiency', 'grid');?>
+				</td>
+				<td width='20%'>
+					<?php print display_job_effic($job["memEfficiency"], $job["run_time"], 2);?>
 				</td>
 			</tr>
 
@@ -14356,6 +14362,29 @@ print '</tr></table>';
 					<?php print ((substr_count($job['end_time'], '0000')) ? "-" : $job['end_time']);?>
 				</td>
 			</tr>
+
+			<?php }
+			if (($job['stat'] != "PEND") || ($job['stat'] != "PSUSP")) {
+				form_alternate_row();?>
+					<td width='16%'>
+						<?php print __('CPU Peak', 'grid');?>
+					</td>
+					<td width='16%'>
+						<?php print $job["cpuPeak"];?>
+					</td>
+					<td width='16%'>
+						<?php print __('CPU Peak Duration', 'grid');?>
+					</td>
+					<td width='16%'>
+						<?php print display_job_time($job["cpuPeakReachedTime"]);?>
+					</td>
+					<td width='16%'>
+						<?php print __('Job Peak Efficiency', 'grid');?>
+					</td>
+					<td width='20%'>
+						<?php print display_job_effic($job["peakEfficiency"], $job["run_time"], 2);?>
+					</td>
+				</tr>
 			<?php }
 
 			if ((isset($job['exceptMask']) && $job['exceptMask'] > 0) || (isset($job['stat']) && isset($job['exitInfo']) && $job['stat'] == "EXIT" && $job['exitInfo'] >= 0)) {

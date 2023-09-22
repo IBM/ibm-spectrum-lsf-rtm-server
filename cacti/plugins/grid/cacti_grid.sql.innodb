@@ -248,7 +248,7 @@ CREATE TABLE `grid_groups` (
   `last_updated` timestamp NOT NULL default CURRENT_TIMESTAMP,
   `present` tinyint(3) unsigned NOT NULL default '1',
   PRIMARY KEY  (`clusterid`,`groupName`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB ROW_FORMAT=DYNAMIC DEFAULT CHARSET=latin1;
 
 --
 -- Table structure for table `grid_hostgroups`
@@ -722,6 +722,10 @@ CREATE TABLE `grid_jobs` (
   `effectivePendingTimeLimit` int(10) unsigned NOT NULL default '0',
   `effectiveEligiblePendingTimeLimit` int(10) unsigned NOT NULL default '0',
   `isLoaningGSLA` tinyint(3) unsigned NOT NULL default '0',
+  `cpuPeak` decimal(9,5) NOT NULL default '0.00000',
+  `peakEfficiency` decimal(9,5) NOT NULL default '0.00000',
+  `memEfficiency` decimal(9,5) NOT NULL default '0.00000',
+  `cpuPeakReachedTime` double NOT NULL default '0',
   `last_updated` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   PRIMARY KEY  (`clusterid`,`jobid`,`indexid`,`submit_time`),
   KEY `submit_time` (`submit_time`),
@@ -774,7 +778,7 @@ CREATE TABLE `grid_jobs` (
   KEY `sla` (`sla`),
   KEY `chargedSAAP` (`chargedSAAP`),
   KEY `exitInfo` (`exitInfo`)
-) ENGINE=InnoDB ROW_FORMAT=DYNAMIC DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
 
 --
 -- Table structure for table `grid_jobs_exec_hosts`
@@ -1038,6 +1042,7 @@ CREATE TABLE `grid_jobs_rusage` (
   `update_time` timestamp NOT NULL default '0000-00-00 00:00:00',
   `utime` float NOT NULL default '0',
   `stime` float NOT NULL default '0',
+  `avgCpuEffi` decimal(9,5) NOT NULL DEFAULT '0.00000',
   `mem` float NOT NULL default '0',
   `swap` float NOT NULL default '0',
   `mem_reserved` float NOT NULL DEFAULT '0',

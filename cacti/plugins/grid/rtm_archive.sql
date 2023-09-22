@@ -286,7 +286,7 @@ CREATE TABLE `grid_jobs_finished` (
   `jobname` varchar(128) DEFAULT NULL,
   `jobPriority` int(10) unsigned NOT NULL DEFAULT '0',
   `jobPid` int(10) unsigned NOT NULL DEFAULT '0',
-  `userPriority` int(11) DEFAULT '0',
+  `userPriority` int(10) DEFAULT '0',
   `projectName` varchar(60) NOT NULL DEFAULT '',
   `parentGroup` varchar(128) NOT NULL DEFAULT '',
   `sla` varchar(60) NOT NULL DEFAULT '',
@@ -364,6 +364,11 @@ CREATE TABLE `grid_jobs_finished` (
   `pendState` int(10) NOT NULL DEFAULT '-1',
   `effectivePendingTimeLimit` int(10) unsigned NOT NULL DEFAULT '0',
   `effectiveEligiblePendingTimeLimit` int(10) unsigned NOT NULL DEFAULT '0',
+  `isLoaningGSLA` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `cpuPeak` decimal(9,5) NOT NULL default '0.00000',
+  `peakEfficiency` decimal(9,5) NOT NULL default '0.00000',
+  `memEfficiency` decimal(9,5) NOT NULL default '0.00000',
+  `cpuPeakReachedTime` double NOT NULL default '0',
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`clusterid`,`jobid`,`indexid`,`submit_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

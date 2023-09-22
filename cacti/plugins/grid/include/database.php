@@ -1096,6 +1096,11 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'pendState', 'type' => 'int(10)', 'NULL' => false, 'default' => '-1');
 	$data['columns'][] = array('name' => 'effectivePendingTimeLimit', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'effectiveEligiblePendingTimeLimit', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'isLoaningGSLA', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'cpuPeak', 'type' => 'decimal(9,5)', 'NULL' => false, 'default' => '0.00000');
+	$data['columns'][] = array('name' => 'peakEfficiency', 'type' => 'decimal(9,5)', 'NULL' => false, 'default' => '0.00000');
+	$data['columns'][] = array('name' => 'memEfficiency', 'type' => 'decimal(9,5)', 'NULL' => false, 'default' => '0.00000');
+	$data['columns'][] = array('name' => 'cpuPeakReachedTime', 'type' => 'double', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'last_updated', 'type' => 'timestamp', 'NULL' => false, 'default' => 'CURRENT_TIMESTAMP', 'on_update' => 'CURRENT_TIMESTAMP');
 	$data['primary'] = 'clusterid`,`jobid`,`indexid`,`submit_time';
 	$data['keys'][] = array('name' => 'submit_time', 'columns' => 'submit_time');
@@ -1170,6 +1175,11 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'rlimit_max_rss', 'unsigned' => true, 'type' => 'float', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'gpuCombinedResreq', 'type' => 'varchar(512)', 'NULL' => true, 'default' => '', 'after' => 'effectiveResreq');
 	$data['columns'][] = array('name' => 'gpuEffectiveResreq', 'type' => 'varchar(512)', 'NULL' => true, 'default' => '', 'after' => 'gpuCombinedResreq');
+	$data['columns'][] = array('name' => 'isLoaningGSLA', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '0', 'after' => 'effectiveEligiblePendingTimeLimit');
+	$data['columns'][] = array('name' => 'cpuPeak', 'type' => 'decimal(9,5)', 'NULL' => false, 'default' => '0.00000', 'after' => 'isLoaningGSLA');
+	$data['columns'][] = array('name' => 'peakEfficiency', 'type' => 'decimal(9,5)', 'NULL' => false, 'default' => '0.00000', 'after' => 'cpuPeak');
+	$data['columns'][] = array('name' => 'memEfficiency', 'type' => 'decimal(9,5)', 'NULL' => false, 'default' => '0.00000', 'after' => 'peakEfficiency');
+	$data['columns'][] = array('name' => 'cpuPeakReachedTime', 'type' => 'double', 'NULL' => false, 'default' => '0', 'after' => 'memEfficiency');
 	$data['primary'] = array('clusterid','jobid','indexid','submit_time');
 	db_update_table('grid_jobs', $data);
 
@@ -1629,6 +1639,12 @@ function grid_create_tables() {
 	$data['type'] = 'InnoDB';
 	$data['charset'] = 'latin1';
 	api_plugin_db_table_create ('grid', 'grid_jobs_rusage', $data);
+
+	$data = array();
+	$data['columns'][] = array('name' => 'avgCpuEffi', 'type' => 'decimal(9,5)', 'NULL' => false, 'default' => '0.00000');
+	$data['primary'] = array('clusterid','jobid','indexid','submit_time','update_time');
+	$data['type']  = 'InnoDB';
+	db_update_table('grid_jobs_rusage', $data);
 
 	$data = array();
 	$data['columns'][] = array('name' => 'stat', 'type' => 'varchar(10)', 'NULL' => false, 'default' => '');

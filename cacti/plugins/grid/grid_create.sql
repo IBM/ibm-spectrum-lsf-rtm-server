@@ -404,87 +404,15 @@ CREATE TABLE `grid_elim_templates` (
   `hash` char(32) NOT NULL DEFAULT '',
   `name` char(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
-  KEY `name` (`name`(191))
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Contains each ELIM graph template name.';
+  KEY `name` (`name`)
+) ENGINE=InnoDB ROW_FORMAT=DYNAMIC COMMENT='Contains each ELIM graph template name.' DEFAULT CHARSET=latin1;
 
 --
 -- Table structure for table `grid_elim_templates_graph`
 --
 
 DROP TABLE IF EXISTS `grid_elim_templates_graph`;
-CREATE TABLE `grid_elim_templates_graph` (
-  `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `local_graph_template_graph_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `local_graph_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `graph_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `t_image_format_id` char(2) DEFAULT '',
-  `image_format_id` tinyint(1) NOT NULL DEFAULT '0',
-  `t_title` char(2) DEFAULT '',
-  `title` varchar(255) NOT NULL DEFAULT '',
-  `title_cache` varchar(255) NOT NULL DEFAULT '',
-  `t_height` char(2) DEFAULT '',
-  `height` mediumint(8) NOT NULL DEFAULT '0',
-  `t_width` char(2) DEFAULT '',
-  `width` mediumint(8) NOT NULL DEFAULT '0',
-  `t_upper_limit` char(2) DEFAULT '',
-  `upper_limit` varchar(20) NOT NULL DEFAULT '0',
-  `t_lower_limit` char(2) DEFAULT '',
-  `lower_limit` varchar(20) NOT NULL DEFAULT '0',
-  `t_vertical_label` char(2) DEFAULT '',
-  `vertical_label` varchar(200) DEFAULT NULL,
-  `t_slope_mode` char(2) DEFAULT '',
-  `slope_mode` char(2) DEFAULT 'on',
-  `t_auto_scale` char(2) DEFAULT '',
-  `auto_scale` char(2) DEFAULT NULL,
-  `t_auto_scale_opts` char(2) DEFAULT '',
-  `auto_scale_opts` tinyint(1) NOT NULL DEFAULT '0',
-  `t_auto_scale_log` char(2) DEFAULT '',
-  `auto_scale_log` char(2) DEFAULT NULL,
-  `t_scale_log_units` char(2) DEFAULT '',
-  `scale_log_units` char(2) DEFAULT NULL,
-  `t_auto_scale_rigid` char(2) DEFAULT '',
-  `auto_scale_rigid` char(2) DEFAULT NULL,
-  `t_auto_padding` char(2) DEFAULT '',
-  `auto_padding` char(2) DEFAULT NULL,
-  `t_base_value` char(2) DEFAULT '',
-  `base_value` mediumint(8) NOT NULL DEFAULT '0',
-  `t_grouping` char(2) DEFAULT '',
-  `grouping` char(2) NOT NULL DEFAULT '',
-  `t_unit_value` char(2) DEFAULT '',
-  `unit_value` varchar(20) DEFAULT NULL,
-  `t_unit_exponent_value` char(2) DEFAULT '',
-  `unit_exponent_value` varchar(5) NOT NULL DEFAULT '',
-  `t_alt_y_grid` char(2) DEFAULT '',
-  `alt_y_grid` char(2) DEFAULT NULL,
-  `t_right_axis` char(2) DEFAULT '',
-  `right_axis` varchar(20) DEFAULT NULL,
-  `t_right_axis_label` char(2) DEFAULT '',
-  `right_axis_label` varchar(200) DEFAULT NULL,
-  `t_right_axis_format` char(2) DEFAULT '',
-  `right_axis_format` mediumint(8) DEFAULT NULL,
-  `t_right_axis_formatter` char(2) DEFAULT '',
-  `right_axis_formatter` varchar(10) DEFAULT NULL,
-  `t_left_axis_formatter` char(2) DEFAULT '',
-  `left_axis_formatter` varchar(10) DEFAULT NULL,
-  `t_no_gridfit` char(2) DEFAULT '',
-  `no_gridfit` char(2) DEFAULT NULL,
-  `t_unit_length` char(2) DEFAULT '',
-  `unit_length` varchar(10) DEFAULT NULL,
-  `t_tab_width` char(2) DEFAULT '',
-  `tab_width` varchar(20) DEFAULT '30',
-  `t_dynamic_labels` char(2) DEFAULT '',
-  `dynamic_labels` char(2) DEFAULT NULL,
-  `t_force_rules_legend` char(2) DEFAULT '',
-  `force_rules_legend` char(2) DEFAULT NULL,
-  `t_legend_position` char(2) DEFAULT '',
-  `legend_position` varchar(10) DEFAULT NULL,
-  `t_legend_direction` char(2) DEFAULT '',
-  `legend_direction` varchar(10) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `local_graph_id` (`local_graph_id`),
-  KEY `graph_template_id` (`graph_template_id`),
-  KEY `title_cache` (`title_cache`(191))
-) ENGINE=InnoDB COMMENT='Stores the actual graph data.';
+CREATE TABLE `grid_elim_templates_graph` LIKE  graph_templates_graph;
 
 --
 -- Table structure for table `grid_elim_templates_graph_map`
@@ -570,8 +498,8 @@ CREATE TABLE `grid_groups` (
   `total_cpu` bigint(20) unsigned NOT NULL DEFAULT '0',
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
-  PRIMARY KEY (`clusterid`,`groupName`(191))
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`clusterid`,`groupName`)
+) ENGINE=InnoDB ROW_FORMAT=DYNAMIC DEFAULT CHARSET=latin1;
 
 --
 -- Table structure for table `grid_guarantee_pool`
@@ -1121,7 +1049,7 @@ CREATE TABLE `grid_jobs` (
   `ususp_time` int(10) unsigned NOT NULL DEFAULT '0',
   `ssusp_time` int(10) unsigned NOT NULL DEFAULT '0',
   `unkwn_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `prov_time` int(10) unsigned NOT NULL DEFAULT '0',
+  `prov_time`  int(10) unsigned NOT NULL DEFAULT '0',
   `acJobWaitTime` int(10) unsigned NOT NULL DEFAULT '0',
   `hostSpec` varchar(40) DEFAULT NULL,
   `rlimit_max_cpu` int(10) unsigned NOT NULL DEFAULT '0',
@@ -1146,8 +1074,13 @@ CREATE TABLE `grid_jobs` (
   `pendState` int(10) NOT NULL DEFAULT '-1',
   `effectivePendingTimeLimit` int(10) unsigned NOT NULL DEFAULT '0',
   `effectiveEligiblePendingTimeLimit` int(10) unsigned NOT NULL DEFAULT '0',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`clusterid`,`jobid`,`indexid`,`submit_time`),
+  `isLoaningGSLA` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `cpuPeak` decimal(9,5) NOT NULL DEFAULT '0.00000',
+  `peakEfficiency` decimal(9,5) NOT NULL DEFAULT '0.00000',
+  `memEfficiency` decimal(9,5) NOT NULL DEFAULT '0.00000',
+  `cpuPeakReachedTime` double NOT NULL DEFAULT '0',
+  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+  PRIMARY KEY  (`clusterid`,`jobid`,`indexid`,`submit_time`),
   KEY `submit_time` (`submit_time`),
   KEY `projectName` (`projectName`),
   KEY `start_time` (`start_time`),
@@ -1194,7 +1127,7 @@ CREATE TABLE `grid_jobs` (
   KEY `stat_last_updated` (`stat`, `last_updated`),
   KEY `last_updated` (`last_updated`),
   KEY `licenseProject` (`licenseProject`),
-  KEY `jobGroup` (`jobGroup`(191)),
+  KEY `jobGroup` (`jobGroup`),
   KEY `sla` (`sla`),
   KEY `chargedSAAP` (`chargedSAAP`),
   KEY `exitInfo` (`exitInfo`)
@@ -1532,6 +1465,7 @@ CREATE TABLE `grid_jobs_rusage` (
   `update_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `utime` float NOT NULL DEFAULT '0',
   `stime` float NOT NULL DEFAULT '0',
+  `avgCpuEffi` decimal(9,5) NOT NULL DEFAULT '0.00000',
   `mem` float NOT NULL DEFAULT '0',
   `swap` float NOT NULL DEFAULT '0',
   `mem_reserved` float NOT NULL DEFAULT '0',
@@ -1887,10 +1821,10 @@ CREATE TABLE `grid_queues_shares` (
   `relative_share` double DEFAULT NULL,
   `slot_share` int(10) unsigned DEFAULT NULL,
   `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
-  PRIMARY KEY (`clusterid`,`queue`,`user_or_group`,`shareAcctPath`(191)) USING HASH,
+  PRIMARY KEY (`clusterid`,`queue`,`user_or_group`,`shareAcctPath`) USING HASH,
   KEY `clusterid_user_or_group` (`clusterid`,`user_or_group`),
   KEY `user_or_group` (`user_or_group`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB ROW_FORMAT=DYNAMIC DEFAULT CHARSET=latin1;
 
 --
 -- Table structure for table `grid_queues_stats`
