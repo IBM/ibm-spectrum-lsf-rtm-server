@@ -15169,6 +15169,7 @@ function build_job_display_array($jobs_page = '') {
 		),
 		'num_gpus' => array(
 			'display' => __('Num GPUs', 'grid'),
+			'tip' => __('If this job is running on an NVIDIA MIG (Multi-Instance GPU), shows the number of MIG devices.', 'grid'),
 			'dbname'  => 'show_gpus',
 			'align'	  => 'right',
 			'sort'    => 'DESC'
