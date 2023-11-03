@@ -5326,7 +5326,7 @@ function move_records_into_finished_table() {
 			SUM(CASE WHEN stat IN ('PEND', 'PSUSP') THEN maxNumProcessors ELSE 0 END) AS 'pendjobs',
 			SUM(CASE WHEN stat IN ('RUNNING','PROV') THEN num_cpus ELSE 0 END) AS 'runjobs',
 			SUM(CASE WHEN stat IN ('SSUSP', 'USUSP') THEN num_cpus ELSE 0 END) AS 'suspjobs',
-			AVG(CASE WHEN stat='RUNNING' THEN efficiency ELSE 0 END) AS 'efficiency',
+			AVG(CASE WHEN stat='RUNNING' THEN efficiency ELSE NULL END) AS 'efficiency',
 			'1' as present
 			FROM grid_jobs
 			WHERE job_end_logged=0
