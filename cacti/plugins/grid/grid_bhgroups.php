@@ -573,6 +573,8 @@ function grid_view_bhg() {
 
 			form_alternate_row();
 
+			$groupName = urlencode($groupName);
+
                         $action_url = "<a class='pic' href='". html_escape($config['url_path'] . 'plugins/grid/grid_bhosts.php' .
                                 '?reset=1' .
                                 '&clusterid=' . $bhg['clusterid'] .
