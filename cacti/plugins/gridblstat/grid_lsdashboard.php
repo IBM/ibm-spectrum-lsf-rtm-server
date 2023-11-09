@@ -3114,20 +3114,25 @@ function grid_view_zen() {
 		$lic_ids = array();
 
 		$fwhere = '';
+		$f_params = array();
 		$lidwhere = '';
+		$lid_params = array();
 		if (!isempty_request_var('lsid')) {
-			$fwhere = ' WHERE lsid = ' . get_request_var('lsid');
-			$lidwhere = 'lsid = ' . get_request_var('lsid') . ' AND ';
+			$fwhere = ' WHERE lsid = ?';
+			$f_params[] = get_request_var('lsid');
+			$lidwhere = 'lsid = ? AND ';
+			$lid_params[] = get_request_var('lsid');
 		}
 
 		if (!isempty_request_var('feature')) {
-			$fwhere .= (strlen($fwhere)? ' AND':' WHERE') . ' feature = ' . db_qstr(get_request_var('feature'));
+			$fwhere .= (strlen($fwhere)? ' AND':' WHERE') . ' feature = ?';
+			$f_params[] = get_request_var('feature');
 		}
 
 		$service_domains = array_rekey(
-			db_fetch_assoc("SELECT service_domain
+			db_fetch_assoc_prepared("SELECT service_domain
 				FROM grid_blstat
-				$fwhere"),
+				$fwhere", $f_params),
 			'service_domain', 'service_domain'
 		);
 
@@ -3141,10 +3146,10 @@ function grid_view_zen() {
 
 		if (cacti_sizeof($service_domains)) {
 			$lic_ids = array_rekey(
-				db_fetch_assoc("SELECT lic_id
+				db_fetch_assoc_prepared("SELECT lic_id
 					FROM grid_blstat_service_domains
 					WHERE
-					$lidwhere service_domain IN('" . implode("','", $service_domains) . "')"),
+					$lidwhere service_domain IN('" . implode("','", $service_domains) . "')", $lid_params),
 				'lic_id', 'lic_id'
 			);
 		}
@@ -3158,26 +3163,34 @@ function grid_view_zen() {
 		}
 
 		$task_where = '';
+		$task_params = array();
 		$main_where = '';
+		$main_params = array();
+		$bs_params = array();
 
 		if (!isempty_request_var('lsid')) {
-			$task_where = 'WHERE lsid = ' . get_request_var('lsid');
-			$bs_where = 'WHERE lsid = ' . get_request_var('lsid') . ' AND present = 1';
+			$task_where = 'WHERE lsid = ?';
+			$task_params[] = get_request_var('lsid');
+			$bs_where = 'WHERE lsid = ? AND present = 1';
+			$bs_params[] = get_request_var('lsid');
 		} else {
 			set_request_var('lsid', 0);
 			$bs_where = 'WHERE present = 1';
 		}
 
 		if (!isempty_request_var('feature')) {
-			$task_where .= (strlen($task_where) ? ' AND ':'WHERE ') . 'feature=' . db_qstr(get_request_var('feature'));
-			$main_where  = 'WHERE feature=' . db_qstr(get_request_var('feature'));
+			$task_where .= (strlen($task_where) ? ' AND ':'WHERE ') . 'feature=?';
+			$task_params[] = get_request_var('feature');
+			$main_where  = 'WHERE feature=?';
+			$main_params[] = get_request_var('feature');
 		}
 
 		if (!isempty_request_var('region')) {
-			$main_where .= (strlen($task_where) ? ' AND ':'WHERE ') . "region LIKE '%" . get_request_var('region') . "%'";
+			$main_where .= (strlen($task_where) ? ' AND ':'WHERE ') . "region LIKE ?";
+			$main_params[] = '%' . get_request_var('region') . '%';
 		}
 
-		$details = db_fetch_row("SELECT region, feature, lic_feature, service_id, type,
+		$details = db_fetch_row_prepared("SELECT region, feature, GROUP_CONCAT(lic_feature) AS lic_feature, service_id, type,
 			inuse, reserve, free, demand, ttokens, others,
 			SUM(feature_max_licenses) AS maxavail,
 			SUM(feature_inuse_licenses) AS flexuse,
@@ -3220,7 +3233,7 @@ function grid_view_zen() {
 			ON fu.feature_name=fm.lic_feature
 			$on_clause
 			$main_where
-			GROUP BY region, feature, type, others");
+			GROUP BY region, feature, type, others", array_merge($task_params, $bs_params, $bs_params, $main_params));
 	}
 
 	if (get_request_var('feature') == '') {
@@ -3503,7 +3516,7 @@ function grid_view_zen() {
 					RIGHT JOIN lic_services_feature_details AS fu
 					ON fu.username = bu.user
 					AND fu.hostname = bu.host
-					WHERE fu.feature_name = ?
+					WHERE fu.feature_name IN ('" . implode("','", explode(',', $details['lic_feature'])) . "')
 					AND service_id IN(SELECT lic_id FROM grid_blstat_service_domains WHERE lsid = ?)
 					AND bu.jobid IS NULL
 				) AS recordset
@@ -3517,7 +3530,7 @@ function grid_view_zen() {
 					RIGHT JOIN lic_services_feature_details AS fu
 					ON fu.username = bu.user
 					AND fu.hostname = bu.host
-					WHERE fu.feature_name = ?
+					WHERE fu.feature_name IN ('" . implode("','", explode(',', $details['lic_feature'])) . "')
 					AND service_id IN(SELECT lic_id FROM grid_blstat_service_domains WHERE lsid = ?)
 					AND bu.jobid IS NULL
 					GROUP BY fu.username
@@ -3528,9 +3541,7 @@ function grid_view_zen() {
 				$sql_order
 				$sql_limit",
 				array(
-					$details['lic_feature'],
 					get_request_var('lsid'),
-					$details['lic_feature'],
 					get_request_var('lsid'),
 					read_config_option('grid_blstat_exception_time')
 				)
@@ -3582,7 +3593,7 @@ function grid_view_zen() {
 								FROM grid_blstat_users AS bu
 								RIGHT JOIN lic_services_feature_details AS fu
 								ON fu.username=bu.user AND fu.hostname=bu.host
-								WHERE fu.feature_name = ?
+								WHERE fu.feature_name IN (\'' . implode("','", explode(',', $details['lic_feature'])) . '\')
 								AND service_id IN(
 									SELECT lic_id
 									FROM grid_blstat_service_domains
@@ -3595,7 +3606,6 @@ function grid_view_zen() {
 							GROUP BY clustername, recordset.username
 							ORDER BY duration DESC, tokens DESC',
 							array(
-								$details['lic_feature'],
 								get_request_var('lsid'),
 								$v['username'],
 								read_config_option('grid_blstat_exception_time')
@@ -3772,7 +3782,7 @@ function grid_view_zen() {
 				$clusters = get_region_clusters(get_request_var('region'));
 				$ls_count = get_ls_count();
 
-				if (cacti_sizeof($clusters) && ls_count > 1) {
+				if (cacti_sizeof($clusters) && $ls_count > 1) {
 					$clwhere = 'AND gj.clusterid IN(' . implode(',', $clusters) . ')';
 				} else {
 					$clwhere = '';
@@ -3921,7 +3931,7 @@ function grid_view_zen() {
 					fu.tokens_acquired AS tokens,
 					UNIX_TIMESTAMP()-UNIX_TIMESTAMP(tokens_acquired_date) AS duration
 					FROM lic_services_feature_details AS fu
-					WHERE fu.feature_name = ?
+					WHERE fu.feature_name IN ('" . implode("','", explode(',', $details['lic_feature'])) . "')
 					AND service_id IN (
 						SELECT lic_id
 						FROM grid_blstat_service_domains
@@ -3936,7 +3946,7 @@ function grid_view_zen() {
 					fu.username,
 					SUM(fu.tokens_acquired) AS maxtokens
 					FROM lic_services_feature_details AS fu
-					WHERE fu.feature_name = ?
+					WHERE fu.feature_name IN ('" . implode("','", explode(',', $details['lic_feature'])) . "')
 					AND service_id IN (
 						SELECT lic_id
 						FROM grid_blstat_service_domains
@@ -3949,9 +3959,7 @@ function grid_view_zen() {
 				$sql_order
 				$sql_limit",
 				array(
-					$details['lic_feature'],
 					get_request_var('lsid'),
-					$details['lic_feature'],
 					get_request_var('lsid')
 				)
 			);
@@ -4002,7 +4010,7 @@ function grid_view_zen() {
 								FROM grid_blstat_users AS bu
 								RIGHT JOIN lic_services_feature_details AS fu
 								ON fu.username = bu.user AND fu.hostname=bu.host
-								WHERE fu.feature_name = ?
+								WHERE fu.feature_name IN (\'' . implode("','", explode(',', $details['lic_feature'])) . '\')
 								AND service_id IN (
 									SELECT lic_id
 									FROM grid_blstat_service_domains
@@ -4016,7 +4024,6 @@ function grid_view_zen() {
 							GROUP BY clustername, recordset.username
 							ORDER BY duration DESC, tokens DESC',
 							array(
-								$details['lic_feature'],
 								get_request_var('lsid'),
 								 $v['username'],
 								read_config_option('grid_blstat_exception_time')
@@ -4354,8 +4361,7 @@ function grid_get_checkouts(&$sql_where, $apply_limits = true, $rows = 30, &$tot
 	}
 
 	if (get_request_var('ffeature') != '') {
-		$sql_where .= ($sql_where != '' ? ' AND':'WHERE') . ' feature_name=?';
-		$sql_params[] = get_request_var('ffeature');
+		$sql_where .= ($sql_where != '' ? ' AND':'WHERE') . ' feature_name IN (\'' . implode("','", explode(',', get_request_var('ffeature'))) . '\')';
 	}
 
 	if (get_request_var('region') != '') {

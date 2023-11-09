@@ -333,11 +333,11 @@ function get_flex_paths_path($feature, $service_domains) {
 				WHERE snmp_index IN (
 				SELECT CONCAT(lic_services_feature_use.service_id, '-', feature_name, '-', vendor_daemon) AS feature_name
 				FROM lic_services_feature_use
-				WHERE feature_name = ?
+				WHERE feature_name IN ('" . implode("','", explode(',', $feature)) . "')
 				AND service_id IN (" . implode(',', $lic_ids) . "))
 				AND dl.host_id IN (" . implode(',', $host_ids) . ")
 				AND gti.graph_template_id = ?",
-				array($feature, get_graph_template_id('620954e227a1972dd9de72b7b9edddd2')));
+				array(get_graph_template_id('620954e227a1972dd9de72b7b9edddd2')));
 		}
 	}
 
@@ -353,9 +353,10 @@ function get_flex_paths_path($feature, $service_domains) {
 }
 
 function get_flex_feature($bld_feature) {
-	return db_fetch_cell_prepared('SELECT lic_feature
+	return db_fetch_cell_prepared('SELECT GROUP_CONCAT(lic_feature)
 		FROM grid_blstat_feature_map
-		WHERE bld_feature = ?',
+		WHERE bld_feature = ?
+		GROUP BY bld_feature',
 		array($bld_feature));
 }
 

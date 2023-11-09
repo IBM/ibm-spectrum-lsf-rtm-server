@@ -18220,7 +18220,7 @@ function show_view_master() {
 			form_selectable_cell_visible(display_ls($load['ls']),      'show_cluster_master_host_logins', $load['clusterid'], 'right');
 			form_selectable_cell_visible(display_hours($load['it']),   'show_cluster_master_host_idle_time', $load['clusterid'], 'right');
 			form_selectable_cell_visible(display_memory($load['tmp']), 'show_cluster_master_host_temp', $load['clusterid'], 'right');
-			form_selectable_cell_visible(display_memory($load['tmp']), 'show_cluster_master_host_mem', $load['clusterid'], 'right');
+			form_selectable_cell_visible(display_memory($load['mem']), 'show_cluster_master_host_mem', $load['clusterid'], 'right');
 			form_end_row();
 
 			$limit_count++;
