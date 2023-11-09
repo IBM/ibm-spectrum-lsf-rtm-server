@@ -2159,6 +2159,28 @@ function perform_grid_db_maint($start_time, $optimize = false) {
 			set_config_option('run_partition_optimization', $new_partition_tables_1);
 		}
 
+        //issue 510
+        if(!api_plugin_is_enabled("heuristics")){
+            $optimize_args = '';
+            if (read_config_option('run_optimization') > 0) {
+                 $optimize_args .= '--ntables ';
+            }
+
+            $new_partition_tables = read_config_option('run_partition_optimization');
+
+            if (!empty($new_partition_tables)) {
+                 $optimize_args .= "--otables=$new_partition_tables ";
+            }
+
+            if (!empty($optimize_args)) {
+                 $path_rtm_top=grid_get_path_rtm_top();
+                 $cmd = read_config_option('path_php_binary') . " $path_rtm_top/cacti/plugins/grid/database_optimization.php $optimize_args >/dev/null &";
+                 cacti_log('OPTIMIZE cmd: ' . $cmd ,true,'SYSTEM');
+                 exec ($cmd);
+            }
+
+         }
+
 		if (read_config_option('gridmemvio_enabled') == 'on') {
 			$php_binary_path = read_config_option('path_php_binary');
 			exec_background($php_binary_path, dirname(__FILE__) . '/../poller_memvio_notify.php');
@@ -15169,7 +15191,7 @@ function build_job_display_array($jobs_page = '') {
 		),
 		'num_gpus' => array(
 			'display' => __('Num GPUs', 'grid'),
-			'tip' => __('If this job is running on an NVIDIA MIG (Multi-Instance GPU), shows the number of MIG devices.', 'grid'),
+			'tip'     => __('If this job is running on an NVIDIA MIG (Multi-Instance GPU), shows the number of MIG devices.', 'grid'),
 			'dbname'  => 'show_gpus',
 			'align'	  => 'right',
 			'sort'    => 'DESC'
