@@ -171,6 +171,10 @@ span[class^="fa glyph_tab-link"]:before {
 	content: "\f1cd" !important;
 }
 
+.glyph_tab-ibmcloud:before {
+	content: "\f0c2" !important;
+}
+
 .nowrap {
 	white-space: nowrap;
 }
@@ -1874,7 +1878,7 @@ div#gtabs {
 
 .usertabs {
 	float: right !important;
-	width: 60px;
+	width: 90px;
 	white-space: nowrap;
 	z-index: 2;
 }
