@@ -93,6 +93,7 @@ function themeReady() {
 		$('.menuHr').remove();
 		$('<div class="maintabs usertabs">'
 			+'<nav><ul>'
+				+'<li><a id="menu-user-cloud" aria-label="LSF On IBM Cloud" title="LSF On IBM Cloud" href="https://ibm.biz/LSFonIBMCloud" target="_blank" rel="noopener noreferrer"><i class="fa fa-cloud"></i></a></li>'
 				+'<li><a id="menu-user-help" class="usertabs-submenu" href="#"><i class="fa fa-question"></i></a></li>'
 				+'<li class="action-icon-user"><a class="pic" href="#"><i class="fa fa-user"></i></a></li>'
 			+'</ul></nav>'
