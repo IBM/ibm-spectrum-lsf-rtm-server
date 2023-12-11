@@ -736,7 +736,7 @@ function get_cluster_tree_nodes($clustername) {
 
 	if (cacti_sizeof($ctrees)) {
 		foreach($ctrees as $key => $cluster) {
-			if (trim($cluster) == trim($clustername)) {
+			if (strcasecmp(trim($cluster), trim($clustername)) == 0) {
 				$nodeid = $key;
 				break;
 			}
