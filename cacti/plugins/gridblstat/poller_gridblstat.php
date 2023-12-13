@@ -426,7 +426,7 @@ function gridblstat_check_blstat($log = false, $collector = array()) {
 				}
 			}
 		}
-		//db_execute_prepared("DELETE FROM grid_blstat_service_domains WHERE present=0 AND lsid=?", array($lsid));
+		db_execute_prepared("DELETE FROM grid_blstat_service_domains WHERE present=0 AND lsid=?", array($lsid));
 	}
 
 	/* get the flex mapping names */
@@ -468,7 +468,7 @@ function gridblstat_check_blstat($log = false, $collector = array()) {
 				}
 			}
 		}
-		//db_execute_prepared("DELETE FROM grid_blstat_feature_map WHERE present=0 AND lsid=?", array($lsid));
+		db_execute_prepared("DELETE FROM grid_blstat_feature_map WHERE present=0 AND lsid=?", array($lsid));
 	}
 
 	/* get the feature use */
@@ -1086,7 +1086,7 @@ function gridblstat_check_blstat($log = false, $collector = array()) {
 			$sql_suffix = " ON DUPLICATE KEY UPDATE stat=VALUES(stat), pgid=VALUES(pgid), cpu_time=VALUES(cpu_time), memory=VALUES(memory), swap=VALUES(swap), cpu_idle=VALUES(cpu_idle), present=1";
 			gridblstat_write_buffer($sql_prefix, $sql_suffix, $bltasks_array);
 
-			//db_execute_prepared("DELETE FROM grid_blstat_tasks WHERE present=0 AND lsid=?", array($lsid));
+			db_execute_prepared("DELETE FROM grid_blstat_tasks WHERE present=0 AND lsid=?", array($lsid));
 		} else {
 		}
 	}
@@ -1102,8 +1102,8 @@ function gridblstat_check_blstat($log = false, $collector = array()) {
 		// db_execute("DELETE FROM grid_blstat_cluster_use WHERE present=0 AND lsid=$lsid");
 		db_execute_prepared("UPDATE grid_blstat_cluster_use SET present=0 WHERE lsid=? AND present=1 AND last_updated<?", array($lsid, $db_start_time));
 	}
-	//db_execute_prepared("DELETE FROM grid_blstat_distribution WHERE present=0 AND lsid=?", array($lsid));
-	//db_execute_prepared("DELETE FROM grid_blstat_users WHERE present=0 AND lsid=?", array($lsid));
+	db_execute_prepared("DELETE FROM grid_blstat_distribution WHERE present=0 AND lsid=?", array($lsid));
+	db_execute_prepared("DELETE FROM grid_blstat_users WHERE present=0 AND lsid=?", array($lsid));
 	db_execute_prepared("UPDATE grid_blstat_collectors SET blstat_lastrun=NOW() WHERE lsid=?", array($lsid));
 
 	/* record the end time */
