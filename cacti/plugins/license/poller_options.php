@@ -93,6 +93,7 @@ if ($lic_id > 0) {
 
 if (!cacti_sizeof($options)) {
 	lic_debug('NO options file found, exit.');
+	lic_delete_old_options();
 	exit;
 }
 
@@ -156,14 +157,14 @@ if ($runme || $forcerun) {
 }
 
 function lic_delete_old_options() {
-	db_execute('DELETE FROM lic_services_options_feature WHERE service_id NOT IN (SELECT service_id FROM lic_services)');
-	db_execute('DELETE FROM lic_services_options_feature_type WHERE service_id NOT IN (SELECT service_id FROM lic_services)');
-	db_execute('DELETE FROM lic_services_options_host_groups WHERE service_id NOT IN (SELECT service_id FROM lic_services)');
-	db_execute('DELETE FROM lic_services_options_max WHERE service_id NOT IN (SELECT service_id FROM lic_services)');
-	db_execute('DELETE FROM lic_services_options_global WHERE service_id NOT IN (SELECT service_id FROM lic_services)');
-	db_execute('DELETE FROM lic_services_options_incexcl_all WHERE service_id NOT IN (SELECT service_id FROM lic_services)');
-	db_execute('DELETE FROM lic_services_options_reserve WHERE service_id NOT IN (SELECT service_id FROM lic_services)');
-	db_execute('DELETE FROM lic_services_options_user_groups WHERE service_id NOT IN (SELECT service_id FROM lic_services)');
+	db_execute('DELETE FROM lic_services_options_feature WHERE service_id NOT IN (SELECT service_id FROM lic_services WHERE options_path != \'\')');
+	db_execute('DELETE FROM lic_services_options_feature_type WHERE service_id NOT IN (SELECT service_id FROM lic_services WHERE options_path != \'\')');
+	db_execute('DELETE FROM lic_services_options_host_groups WHERE service_id NOT IN (SELECT service_id FROM lic_services WHERE options_path != \'\')');
+	db_execute('DELETE FROM lic_services_options_max WHERE service_id NOT IN (SELECT service_id FROM lic_services WHERE options_path != \'\')');
+	db_execute('DELETE FROM lic_services_options_global WHERE service_id NOT IN (SELECT service_id FROM lic_services WHERE options_path != \'\')');
+	db_execute('DELETE FROM lic_services_options_incexcl_all WHERE service_id NOT IN (SELECT service_id FROM lic_services WHERE options_path != \'\')');
+	db_execute('DELETE FROM lic_services_options_reserve WHERE service_id NOT IN (SELECT service_id FROM lic_services WHERE options_path != \'\')');
+	db_execute('DELETE FROM lic_services_options_user_groups WHERE service_id NOT IN (SELECT service_id FROM lic_services WHERE options_path != \'\')');
 }
 
 function lic_process_options($cur_time, $lic_id = 0) {
