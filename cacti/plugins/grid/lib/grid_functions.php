@@ -5940,7 +5940,7 @@ function gridmemvio_notify_users() {
 					/* replace tags in main message */
 
 					$tag_array = array(
-						"<CLUSTERNAME>"   => $cc["clustername"],
+						"<CLUSTERNAME>"   => $last_cluster_details["clustername"],
 						"<OVERSHOOT>"     => ($overshoot * 100) . " %",
 						"<UNDERSHOOT>"    => ($undershoot * 100) . " %",
 						"<OVERFILTER>"    => $over_filter,
@@ -5977,13 +5977,13 @@ function gridmemvio_notify_users() {
 							if (read_config_option("gridalarm_user_map") == 2) {
 								$column_name = read_config_option("gridalarm_metadata_user_email_map");
 								if (isset($column_name)) {
-									$email_meta = db_fetch_cell_prepared("SELECT " .$column_name . " FROM grid_metadata WHERE object_id=? AND object_type='user' AND cluster_id=?" , array($user, $cc['clusterid']));
+									$email_meta = db_fetch_cell_prepared("SELECT " .$column_name . " FROM grid_metadata WHERE object_id=? AND object_type='user' AND cluster_id=?" , array($user, $last_cluster_details['clusterid']));
 									if (!empty($email_meta)) {
 										$email .= $email_meta;
 									}
 								}
-							} elseif ($cc['email_domain'] != "") {
-								$email .= (strlen($email) ? ", ":"") . $user . "@" . $cc["email_domain"];
+							} elseif ($last_cluster_details['email_domain'] != "") {
+								$email .= (strlen($email) ? ", ":"") . $user . "@" . $last_cluster_details["email_domain"];
 							} else {
 								$email .= (strlen($email) ? ", ":"") . $user;
 							}
@@ -6006,6 +6006,7 @@ function gridmemvio_notify_users() {
 					$outstr2 = "";
 					$outmessage = "";
 					$rank         = 1;
+					$users = array();
 				} else {
 					$users        = array();
 					$last_cluster = $record["clusterid"];
