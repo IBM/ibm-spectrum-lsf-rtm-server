@@ -123,49 +123,6 @@ function form_save() {
 	}
 }
 
-function duplicate_host_template($_host_template_id, $host_template_title) {
-	global $fields_host_template_edit;
-
-	$host_template              = db_fetch_row_prepared('SELECT * FROM host_template WHERE id = ?', array($_host_template_id));
-	$host_template_graphs       = db_fetch_assoc_prepared('SELECT * FROM host_template_graph WHERE host_template_id = ?', array($_host_template_id));
-	$host_template_data_queries = db_fetch_assoc_prepared('SELECT * FROM host_template_snmp_query WHERE host_template_id = ?', array($_host_template_id));
-
-	/* substitute the title variable */
-	$host_template['name'] = str_replace('<template_title>', $host_template['name'], $host_template_title);
-
-	/* create new entry: host_template */
-	$save['id']   = 0;
-	$save['hash'] = get_hash_host_template(0);
-
-	foreach ($fields_host_template_edit as $field => $array) {
-		if (!preg_match('/^hidden/', $array['method'])) {
-			$save[$field] = $host_template[$field];
-		}
-	}
-
-	$host_template_id = sql_save($save, 'host_template');
-
-	/* create new entry(s): host_template_graph */
-	if (cacti_sizeof($host_template_graphs)) {
-		foreach ($host_template_graphs as $host_template_graph) {
-			db_execute_prepared('INSERT INTO host_template_graph
-				(host_template_id,graph_template_id)
-				VALUES (?, ?)',
-				array($host_template_id, $host_template_graph['graph_template_id']));
-		}
-	}
-
-	/* create new entry(s): host_template_snmp_query */
-	if (cacti_sizeof($host_template_data_queries)) {
-		foreach ($host_template_data_queries as $host_template_data_query) {
-			db_execute_prepared('INSERT INTO host_template_snmp_query
-				(host_template_id,snmp_query_id)
-				VALUES (?, ?)',
-				array($host_template_id, $host_template_data_query['snmp_query_id']));
-		}
-	}
-}
-
 /* ------------------------
     The "actions" function
    ------------------------ */
@@ -219,7 +176,7 @@ function form_actions() {
 				db_execute('UPDATE host SET host_template_id = 0 WHERE deleted = "" AND ' . array_to_sql_or($selected_items, 'host_template_id'));
 			} elseif (get_nfilter_request_var('drp_action') == '2') { // duplicate
 				for ($i=0;($i<cacti_count($selected_items));$i++) {
-					duplicate_host_template($selected_items[$i], get_nfilter_request_var('title_format'));
+					api_duplicate_device_template($selected_items[$i], get_nfilter_request_var('title_format'));
 				}
 			} elseif (get_nfilter_request_var('drp_action') == '3') { // sync
 				for ($i=0;($i<cacti_count($selected_items));$i++) {
@@ -807,20 +764,18 @@ function template() {
 	html_end_box();
 
 	/* form the 'where' clause for our main sql query */
+	$sql_where = '';
+
 	if (get_request_var('filter') != '') {
-		$sql_where = 'WHERE (host_template.name LIKE ' . db_qstr('%' . get_request_var('filter') . '%') . ')';
-	} else {
-		$sql_where = '';
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . '(host_template.name LIKE ' . db_qstr('%' . get_request_var('filter') . '%') . ')';
 	}
 
 	if (get_request_var('class') != '-1') {
-		$sql_where = 'WHERE (host_template.class = ' . db_qstr(get_request_var('class')) . ')';
-	} else {
-		$sql_where = '';
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . '(host_template.class = ' . db_qstr(get_request_var('class')) . ')';
 	}
 
 	if (get_request_var('has_hosts') == 'true') {
-		$sql_having = 'HAVING hosts>0';
+		$sql_having = 'HAVING hosts > 0';
 	} else {
 		$sql_having = '';
 	}

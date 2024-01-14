@@ -124,9 +124,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><p>There should always be a space following a comma and before/after an operator.</p></li>
 </ul>
 <h3 id="example-of-single-line-sql">Example of single line SQL</h3>
-<h6 id="before-formatting">Before formatting</h6>
+<h4 id="before-formatting">Before formatting</h4>
 <div class="sourceCode" id="cb4"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">$templates</span> = db_fetch_assoc<span class="ot">(</span><span class="st">&#39;SELECT DISTINCT gt.id, gt.name FROM graph_templates AS gt INNER JOIN graph_templates_graph AS gtg ON gt.id = gtg.graph_template_id INNER JOIN graph_templates_item AS gti ON gtg.graph_template_id=gti.graph_template_id INNER JOIN data_template_rrd AS dtr ON gti.task_item_id=dtr.id INNER JOIN data_template_data AS dtd ON dtd.data_template_id=dtr.data_template_id AND dtd.local_data_id = 0 WHERE gtg.local_graph_id=0 AND dtr.local_data_id = 0 AND dtd.local_data_id = 0 AND dtd.data_input_id in (2,11,12) ORDER BY gt.name;&#39;</span></a></code></pre></div>
-<h6 id="corrected-formatting-with-prepared-usage">Corrected formatting with prepared usage</h6>
+<h4 id="corrected-formatting-with-prepared-usage">Corrected formatting with prepared usage</h4>
 <div class="sourceCode" id="cb5"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">$templates</span> = db_fetch_assoc_prepared<span class="ot">(</span><span class="st">&#39;SELECT DISTINCT gt.id, gt.name</span></a>
 <a class="sourceLine" id="cb5-2" title="2"><span class="st">    FROM graph_templates AS gt</span></a>
 <a class="sourceLine" id="cb5-3" title="3"><span class="st">    INNER JOIN graph_templates_graph AS gtg</span></a>
@@ -145,16 +145,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb5-16" title="16"><span class="st">    ORDER BY gt.name&#39;</span><span class="ot">,</span></a>
 <a class="sourceLine" id="cb5-17" title="17">    <span class="kw">array</span><span class="ot">(</span><span class="dv">2</span><span class="ot">,</span><span class="dv">11</span><span class="ot">,</span><span class="dv">12</span><span class="ot">));</span></a></code></pre></div>
 <h3 id="example-of-implicit-join">Example of implicit join</h3>
-<h6 id="before-formatting-1">Before formatting</h6>
+<h4 id="before-formatting-1">Before formatting</h4>
 <div class="sourceCode" id="cb6"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">$user_realms</span> = db_fetch_assoc<span class="ot">(</span><span class="st">&#39;SELECT ua.id, uar.realm_id</span></a>
 <a class="sourceLine" id="cb6-2" title="2"><span class="st">    FROM user_auth ua, user_auth_realms uar</span></a>
 <a class="sourceLine" id="cb6-3" title="3"><span class="st">    WHERE ua.id = uar.user_id&#39;</span><span class="ot">);</span></a></code></pre></div>
-<h6 id="corrected-formatting">Corrected formatting</h6>
+<h4 id="corrected-formatting">Corrected formatting</h4>
 <div class="sourceCode" id="cb7"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb7-1" title="1"><span class="kw">$user_realms</span> = db_fetch_assoc<span class="ot">(</span><span class="st">&#39;SELECT ua.id, uar.realm_id</span></a>
 <a class="sourceLine" id="cb7-2" title="2"><span class="st">    FROM user_auth ua</span></a>
 <a class="sourceLine" id="cb7-3" title="3"><span class="st">    INNER JOIN user_auth_realms uar</span></a>
 <a class="sourceLine" id="cb7-4" title="4"><span class="st">    ON ua.id = uar.user_id&#39;</span><span class="ot">);</span></a></code></pre></div>
 <hr />
-<p><copy>Copyright (c) 2004-2023 The Cacti Group</copy></p>
+<p>Copyright (c) 2004-2023 The Cacti Group</p>
 </body>
 </html>

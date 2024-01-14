@@ -41,7 +41,12 @@ function get_rrdfiles($thread_id = 1, $max_threads = 1) {
 		ON dtr.id = gti.task_item_id
 		INNER JOIN data_source_profiles AS dsp
 		ON dtd.data_source_profile_id = dsp.id
-		WHERE dtd.local_data_id != 0
+		LEFT JOIN graph_local AS gl
+		ON gl.id = gti.local_graph_id
+		LEFT JOIN host as h
+		ON h.id = gl.host_id
+		WHERE dtd.local_data_id != 0 
+		AND h.disabled != "on"
 		GROUP BY dtd.local_data_id',
 		array($config['rra_path']));
 
@@ -150,7 +155,7 @@ function do_rrdcheck($thread_id = 1) {
 			$file = $rrdval['data_source_path'];
 
 			if ($use_proxy) {
-				$file_exists = rrdtool_execute("file_exists $file", true, RRDTOOL_OUTPUT_BOOLEAN, false, 'rrdcheck');
+				$file_exists = rrdtool_execute("file_exists $file", true, RRDTOOL_OUTPUT_BOOLEAN, false, 'RRDCHECK');
 			} else {
 				clearstatcache();
 				$file_exists = file_exists($file);
@@ -201,7 +206,7 @@ function do_rrdcheck($thread_id = 1) {
 				}
 
 				if ($use_proxy) {
-					$output = rrdtool_execute("info $file", false, RRDTOOL_OUTPUT_STDOUT, false, 'rrdcheck');
+					$output = rrdtool_execute("info $file", false, RRDTOOL_OUTPUT_STDOUT, false, 'RRDCHECK');
 				} else {
 					$output = rrdcheck_rrdtool_execute("info $file", $pipes);
 				}
@@ -355,7 +360,7 @@ function do_rrdcheck($thread_id = 1) {
 				$one_hour_limit = ($duration - 3600) / $step;
 
 				if ($use_proxy) {
-					$info_array = rrdtool_execute("fetch $file LAST -s $pstart -e $pend ", false, RRDTOOL_OUTPUT_STDOUT, false, 'rrdcheck');
+					$info_array = rrdtool_execute("fetch $file LAST -s $pstart -e $pend ", false, RRDTOOL_OUTPUT_STDOUT, false, 'RRDCHECK');
 				} else {
 					$info_array = rrdcheck_rrdtool_execute("fetch $file LAST -s $pstart -e $pend", $pipes);
 				}
@@ -502,7 +507,7 @@ function do_rrdcheck($thread_id = 1) {
 						}
 					}
 				} else {
-					cacti_log("WARNING: RRDcheck - no rrd data returned - '$file'", false, 'rrdcheck');
+					cacti_log("WARNING: RRDcheck - no rrd data returned - '$file'", false, 'RRDCHECK');
 				}
 			} else {	// rrdfile does not exist
 				db_execute_prepared ('INSERT INTO rrdcheck
@@ -687,7 +692,7 @@ function rrdcheck_error_handler($errno, $errmsg, $filename, $linenum, $vars = []
 		if (substr_count($errmsg, 'Only variables')) return;
 
 		/* log the error to the Cacti log */
-		cacti_log('PROGERR: ' . $err, false, 'rrdcheck');
+		cacti_log('PROGERR: ' . $err, false, 'RRDCHECK');
 	}
 
 	return;
@@ -707,7 +712,7 @@ function rrdcheck_boost_bottom() {
 		include_once($config['base_path'] . '/lib/rrd.php');
 
 		/* run the daily stats. log to database to prevent secondary runs */
-		set_config_option('rrdcheck_last_run_time', date('Y-m-d G:i:s', time()));
+		set_config_option('rrdcheck_last_run_time', time());
 
 		/* run the daily stats */
 		rrdcheck_launch_children('bmaster');

@@ -1,5 +1,7 @@
-
 #!/usr/bin/python3
+#
+# $Id$
+#
 
 #### Created by Sean Mancini sean@seanmancini.com www.seanmancini.com
 ### usage enter  /opt/cacti-syslog-connector.py --hostname $aA --alert "$Fz" --priority 6 --facility 2  in you SNMPTT EXEC config line

@@ -82,7 +82,7 @@ if (isset_request_var('error')) {
 		print json_encode(
 			array(
 				'status'   => 'Success',
-				'location' => $config['url_path'] . '/docs/' . $page
+				'location' => $config['url_path'] . 'docs/' . $page
 			)
 		);
 	} else {

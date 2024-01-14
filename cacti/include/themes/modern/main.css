@@ -1,4 +1,22 @@
 /* $Id$ */
+/*
+ +-------------------------------------------------------------------------+
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
+ |                                                                         |
+ | This program is free software; you can redistribute it and/or           |
+ | modify it under the terms of the GNU General Public License             |
+ | as published by the Free Software Foundation; either version 2          |
+ | of the License, or (at your option) any later version.                  |
+ |                                                                         |
+ | This program is distributed in the hope that it will be useful,         |
+ | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
+ | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | http://www.cacti.net/                                                   |
+ +-------------------------------------------------------------------------+
+*/
+
 /* main styles */
 
 ::-webkit-scrollbar {
@@ -583,22 +601,25 @@ label {
 	background: none repeat scroll 0 0 #F5F5F5;
 	border: none;
 	box-shadow: 0 0 1px rgba(0, 0, 0, 0.1);
+	height: 20px;
 }
 
 .odd td, .even td, .even-alternate td, .selectable td {
-	padding: 3px;
+	padding-left: 3px;
 }
 
 .even {
 	background: none repeat scroll 0 0 #E5E5E5;
 	border: none;
 	box-shadow: 0 0 1px rgba(0, 0, 0, 0.1);
+	height: 20px;
 }
 
 .even-alternate {
 	background: none repeat scroll 0 0 #E7E9F2;
 	border: none;
 	box-shadow: 0 0 1px rgba(0, 0, 0, 0.1);
+	height: 20px;
 }
 
 .saveRow {
@@ -847,7 +868,7 @@ ul#breadcrumbs {
 	clear: both;
 	width: 100%;
 	vertical-align: top;
-	padding-top: 56px;
+	padding-top: 62px;
 }
 
 .cactiTreeNavigationArea {
@@ -1077,7 +1098,7 @@ legend {
 
 .cactiGraphContentArea {
 	height: 100vh;
-	padding-top: 10px;
+	padding-top: 5px;
 	padding-right: 5px;
 	padding-left: 5px;
 	display: none;
@@ -1098,7 +1119,7 @@ legend {
 }
 
 .cactiConsoleContentArea {
-	padding-top: 10px;
+	padding-top: 5px;
 	padding-right: 5px;
 	padding-left: 5px;
 	vertical-align: top;
@@ -1693,12 +1714,8 @@ tr.cactiTableTitle th, tr.cactiTableTitle td{
 }
 
 .tableRow {
-	line-height: 20px;
-}
-
-.tableRowGraph td {
-	padding: 3px 0px;
-	vertical-align: top;
+    border: 2px solid rgba(0,0,0,0);
+	min-height: 25px;
 }
 
 .image_table {
@@ -1888,6 +1905,7 @@ tr.cactiTableTitle th, tr.cactiTableTitle td{
 	height: 14px !important;
 	vertical-align: middle;
 	text-decoration: none !important;
+	padding-right: 7px !important;
 }
 
 .deleteMarker:hover {
@@ -1899,6 +1917,7 @@ tr.cactiTableTitle th, tr.cactiTableTitle td{
 	height: 14px !important;
 	vertical-align: middle;
 	text-decoration: none !important;
+	padding-right: 7px !important;
 }
 
 .deleteMarkerDisabled:hover {
@@ -1921,7 +1940,7 @@ tr.cactiTableTitle th, tr.cactiTableTitle td{
 
 .moveArrowNone {
 	display: inline-block;
-	width: 11.75px;
+	width: 14.75px;
 }
 
 .action, .shiftArrow, .calendar {
@@ -2224,8 +2243,8 @@ tr.selected a {
 
 ul#nav {
 	list-style: none;
-	padding: 0;
-	padding-top: 4px;
+	padding: 0px;
+	padding-top: 0px;
 	width: 100%;
 }
 
@@ -2254,7 +2273,8 @@ ul#nav {
 }
 
 .clogStats td, .clogDebug td, .clogSQL td, .clogWarning td, .clogError td, .clogLimit td {
-	padding: 3px;
+	padding: 2px;
+	height: 20px;
 }
 
 @media print {
@@ -2691,5 +2711,10 @@ td.center > table {
 }
 
 .tableRowGraph {
-     border: 2px solid rgba(0,0,0,0);
+	border: 2px solid rgba(0,0,0,0);
+	min-height: 20px;
+}
+
+.tableRowGraph td {
+    padding-left: 3px;
 }

@@ -306,7 +306,7 @@ function plugin_installed($plugin) {
 }
 
 function repair_database($run = true) {
-	global $altersopt;
+	global $altersopt, $database_default;
 
 	$alters = report_audit_results(false);
 
@@ -317,14 +317,20 @@ function repair_database($run = true) {
 		foreach($alters as $table => $changes) {
 			$tblinfo = db_fetch_row_prepared('SELECT ENGINE, SUBSTRING_INDEX(TABLE_COLLATION, "_", 1) AS COLLATION
 				FROM information_schema.tables
-				WHERE TABLE_SCHEMA="cacti"
+				WHERE TABLE_SCHEMA = ?
 				AND TABLE_NAME = ?',
-				array($table));
+				array($database_default, $table));
+
+			if (isset($tblinfo['COLLATION'])) {
+				$collation = $tblinfo['COLLATION'];
+			} else {
+				$collation = 'utf8mb4';
+			}
 
 			if ($tblinfo['ENGINE'] == 'MyISAM') {
-				$suffix = ",\n   ENGINE=InnoDB ROW_FORMAT=Dynamic CHARSET=" . $tblinfo['COLLATION'];
+				$suffix = ",\n   ENGINE=InnoDB ROW_FORMAT=Dynamic CHARSET=" . $collation;
 			} else {
-				$suffix = ",\n   ROW_FORMAT=Dynamic CHARSET=" . $tblinfo['COLLATION'];
+				$suffix = ",\n   ROW_FORMAT=Dynamic CHARSET=" . $collation;
 			}
 
 			$sql = 'ALTER TABLE `' . $table . "`\n   " . implode(",\n   ", $changes) . $suffix . ';';
@@ -495,25 +501,21 @@ function report_audit_results($output = true) {
 
 								/* work around MySQL 8.x simplified int columns */
 								if (strpos($dbc[$dbcol], 'int(') !== false) {
-									// Get the integer first
-									$parts = explode('(', $dbc[$dbcol]);
-									$adbccol = $parts[0];
-
-									// Get attributes next
-									$parts = explode(' ', $parts[1], 2);
-									if (isset($parts[1])) {
-										$adbccol .= ' ' . $parts[1];
-									}
-
-									$adbccol = trim($adbccol);
+									$adbccol = preg_replace('/\([^(]*\d{1,2}\)/', '', $dbc[$dbcol]);
 								} else {
 									$adbccol = $dbc[$dbcol];
+								}
+
+								if (strpos($c[$col], 'int(') !== false) {
+									$accol = preg_replace('/\([^(]*\d{1,2}\)/', '', $c[$col]);
+								} else {
+									$accol = $c[$col];
 								}
 
 								/* Work Around for MySQL 8 */
 								$c[$col] = trim(str_replace('DEFAULT_GENERATED', '', $c[$col]));
 
-								if (($c[$col] != $dbc[$dbcol] && $c[$col] != $adbccol) && $c[$col] != 'mediumtext') {
+								if (($c[$col] != $dbc[$dbcol] && $accol != $adbccol) && $c[$col] != 'mediumtext') {
 									if ($output) {
 										if ($col != 'Key') {
 											print PHP_EOL . 'ERROR Col: \'' . $c['Field'] . '\', Attribute \'' . $col . '\' invalid. Should be: \'' . $dbc[$dbcol] . '\', Is: \'' . $c[$col] . '\'';

@@ -19,26 +19,73 @@
 <p><img src="images/data-source-profiles.png" alt="Data Source Profiles" /></p>
 <p><img src="images/data-source-profiles-edit1.png" alt="Data Source Profiles Edit" /></p>
 <p>The following values are for the disk usage per Data source for the respective data profile</p>
-<h3 id="30-second-polling">30 second polling</h3>
-<p>Daily 48kb</p>
-<p>Weekly 43kb</p>
-<p>Monthly 46kb</p>
-<p>Yearly 140kb</p>
-<h3 id="1-minute-polling">1 minute polling</h3>
-<p>Daily 93kb / data source</p>
-<p>Weekly 45kb / data source</p>
-<p>Monthly 47kb /datasource</p>
-<p>Yearly 140KB/data source</p>
-<h3 id="5-minute-polling">5 minute polling</h3>
-<p>Daily 19kb / data source</p>
-<p>Weekly 22kb / data source</p>
-<p>Monthly 25kb / data source</p>
-<p>Yearly 26kb / data source</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: right;">polling time</th>
+<th>type</th>
+<th style="text-align: right;">size per ds</th>
+<th style="text-align: right;">polling time</th>
+<th>type</th>
+<th style="text-align: right;">size per ds</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">30 second</td>
+<td>Daily</td>
+<td style="text-align: right;">48kb</td>
+<td style="text-align: right;">30 second</td>
+<td>Weekly</td>
+<td style="text-align: right;">43kb</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">30 second</td>
+<td>Monthly</td>
+<td style="text-align: right;">46kb</td>
+<td style="text-align: right;">30 second</td>
+<td>Yearly</td>
+<td style="text-align: right;">140kb</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1 minute</td>
+<td>Daily</td>
+<td style="text-align: right;">93kb</td>
+<td style="text-align: right;">1 minute</td>
+<td>Weekly</td>
+<td style="text-align: right;">45kb</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1 minute</td>
+<td>Monthly</td>
+<td style="text-align: right;">47kb</td>
+<td style="text-align: right;">1 minute</td>
+<td>Yearly</td>
+<td style="text-align: right;">140kb</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5 minute</td>
+<td>Daily</td>
+<td style="text-align: right;">19kb</td>
+<td style="text-align: right;">5 minute</td>
+<td>Weekly</td>
+<td style="text-align: right;">22kb</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">5 minute</td>
+<td>Monthly</td>
+<td style="text-align: right;">25kb</td>
+<td style="text-align: right;">5 minute</td>
+<td>Yearly</td>
+<td style="text-align: right;">26kb</td>
+</tr>
+</tbody>
+</table>
 <p><img src="images/data-source-profiles-edit2.png" alt="Data Source Profiles RRA Edit" /></p>
-<h3 id="changing-data-profile-averages">Changing data profile averages</h3>
+<h2 id="changing-data-profile-averages">Changing data profile averages</h2>
 <p>The Cacti GUI allows you to change the averages on a specific Data source profile some setups require a higher resolution of data and you may want to change the averaging to keep the most data this will come with a cost of storage due to the bigger sized RRDfile</p>
 <p>To do this follow these steps</p>
-<h4 id="method-1---new-system-without-any-hosts">Method 1 - New system without any hosts</h4>
+<h3 id="method-1---new-system-without-any-hosts">Method 1 - New system without any hosts</h3>
 <ol>
 <li><p>Login to Cacti</p></li>
 <li><p>Click on Presets &gt;&gt; Data Profiles</p></li>
@@ -48,16 +95,19 @@
 <li><p>You will need to edit the Rows amount to match the data retention you want to set after this period the data will be averaged out to the monthly graph</p></li>
 <li><p>Save config and generate graphs</p></li>
 </ol>
-<h4 id="method-2---existing-devices-on-system">Method 2 - Existing device(s) on system</h4>
+<h3 id="method-2---existing-devices-on-system">Method 2 - Existing device(s) on system</h3>
 <p>This is a more data destructive route and it will depend on your situation. If you have graphs already on cacti you will not be able to use Method 1. An option if you do not care about the graphs is to either remove the graphs via the gui or run the following script <code>/cli/php remove_graphs.php with the --all</code> function.</p>
 <p>This will REMOVE ALL THE GRAPHS and you can then follow the steps outlined in Method 1 to change the profile how you like</p>
-<h3 id="data-profile-rows-calculation">Data profile Rows Calculation</h3>
+<h2 id="data-profile-rows-calculation">Data profile Rows Calculation</h2>
 <p>The rows calculation take in to account the following</p>
-<p>Rows = Aggregate level * hours</p>
-<p>Example</p>
+<pre class="console"><code>Rows = Aggregate level \* hours
+</code></pre>
+<blockquote>
+<p><strong>Example</strong></p>
 <p>1 Minute aggregate level storing for 3 days ( 72 hours)</p>
 <p>(Aggregate level)60 * 72 ( 72 hours) = 4,320</p>
+</blockquote>
 <hr />
-<p><copy>Copyright (c) 2004-2023 The Cacti Group</copy></p>
+<p>Copyright (c) 2004-2023 The Cacti Group</p>
 </body>
 </html>

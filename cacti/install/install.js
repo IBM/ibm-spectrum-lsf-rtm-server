@@ -199,7 +199,7 @@ function getFieldData(fields, fieldData) {
 				}
 
 				$('input[name^="' + prefix + '"]').each(function(index,element) {
-					fieldData[element.id] =$(element).is(':checked');
+					fieldData[element.id] = $(element).is(':checked');
 				});
 			}
 		} else {
@@ -369,7 +369,7 @@ function processStepWelcome(StepData) {
 
 				$( "<span>", {
 					style: item.element.attr( "data-style" ),
-					"class": "flag-icon flag-icon-squared " + item.element.attr( "data-class" )
+					"class": "fi fis " + item.element.attr( "data-class" )
 				}).appendTo( wrapper );
 
 				return li.append( wrapper ).appendTo( ul );
@@ -718,6 +718,13 @@ function performStep(installStep, suppressRefresh, forceReload) {
 				processStepComplete(data.Step, data.StepData);
 			}
 
+			$('input[id^="chk_template"]').each(function() {
+				if ($(this).is(':checked')) {
+					console.log('checked');
+					$(this).closest('tr').addClass('selected');
+				}
+			});
+
 			$(function () {
 				var focusedElement;
 				$(document).on('focus', 'input', function () {
@@ -752,6 +759,8 @@ function performStep(installStep, suppressRefresh, forceReload) {
 						}
 					}
 				}
+
+				applySelectorVisibilityAndActions();
 			});
 		})
 		.fail(function(data) {

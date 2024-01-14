@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2007-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -393,8 +393,8 @@ function get_stats_records(&$sql_where, &$sql_groupby, $rows) {
 	/* form the 'where' clause for our main sql query */
 	if (!isempty_request_var('rfilter')) {
 		$sql_where .= ($sql_where == '' ? 'WHERE ' : ' AND ') .
-			'sh.host RLIKE "'       . get_request_var('rfilter') . '"
-			OR spr.program RLIKE "' . get_request_var('rfilter') . '"';
+			"sh.host RLIKE '"       . get_request_var('rfilter') . "'
+			OR spr.program RLIKE '" . get_request_var('rfilter') . "'";
 	}
 
 	if (get_request_var('host') == '-2') {
@@ -674,7 +674,7 @@ function syslog_stats_filter() {
 }
 
 /** function syslog_request_validation()
- *  This is a generic funtion for this page that makes sure that
+ *  This is a generic function for this page that makes sure that
  *  we have a good request.  We want to protect against people who
  *  like to create issues with Cacti.
 */
@@ -924,9 +924,9 @@ function get_syslog_messages(&$sql_where, $rows, $tab) {
 
 	if (!isempty_request_var('rfilter')) {
 		if ($tab == 'syslog') {
-			$sql_where .= ($sql_where == '' ? 'WHERE ' : ' AND ') . 'message RLIKE "' . get_request_var('rfilter') . '"';
+			$sql_where .= ($sql_where == '' ? 'WHERE ' : ' AND ') . "message RLIKE '" . get_request_var('rfilter') . "'";
 		} else {
-			$sql_where .= ($sql_where == '' ? 'WHERE ' : ' AND ') . 'logmsg RLIKE "' . get_request_var('rfilter') . '"';
+			$sql_where .= ($sql_where == '' ? 'WHERE ' : ' AND ') . "logmsg RLIKE '" . get_request_var('rfilter') . "'";
 		}
 	}
 
@@ -1081,7 +1081,7 @@ function syslog_filter($sql_where, $tab) {
 
 		$('#host').multiselect({
 			menuHeight: $(window).height()*.7,
-			menuWidth: '210',
+			menuWidth: '220',
 			linkInfo: faIcons,
 			noneSelectedText: '<?php print __('Select Device(s)', 'syslog');?>',
 			selectedText: function(numChecked, numTotal, checkedItems) {
@@ -1520,10 +1520,7 @@ function syslog_filter($sql_where, $tab) {
 
 								if (cacti_sizeof($hosts)) {
 									foreach ($hosts as $host) {
-										if (!is_ipaddress($host['host'])) {
-											$parts = explode('.', $host['host']);
-											$host['host'] = $parts[0];
-										}
+										$host['host'] = syslog_strip_domain($host['host']);
 
 										if (!empty($host['id'])) {
 											$class = get_device_leaf_class($host['id']);
@@ -1532,6 +1529,7 @@ function syslog_filter($sql_where, $tab) {
 										}
 
 										print "<option class='$class' value='" . $host['host_id'] . "'";
+
 										if (cacti_sizeof($selected)) {
 											if (in_array($host['host_id'], $selected)) {
 												print ' selected';
@@ -1653,8 +1651,34 @@ function syslog_filter($sql_where, $tab) {
 	<?php html_end_box(false);
 }
 
-/** function syslog_syslog_legend()
- *  This function displays the foreground and background colors for the syslog syslog legend
+/**
+ * function syslog_strip_domain()
+ *
+ * Simple function to strip the domain for a hostname
+ *
+ * @param string hostname
+ */
+function syslog_strip_domain($hostname) {
+	if (strpos($hostname, '.') === false) {
+		return $hostname;
+	} elseif (filter_var($hostname, FILTER_VALIDATE_IP)) {
+		return $hostname;
+	} else {
+		$parts = explode('.', $hostname);
+		foreach($parts as $part) {
+			if (is_numeric($part)) {
+				return $hostname;
+			}
+		}
+
+		return $parts[0];
+	}
+}
+
+/**
+ * function syslog_syslog_legend()
+ *
+ * This function displays the foreground and background colors for the syslog syslog legend
 */
 function syslog_syslog_legend() {
 	global $disabled_color, $notmon_color, $database_default;
@@ -1935,7 +1959,7 @@ function save_settings() {
 
 	foreach($variables as $v) {
 		if (isset_request_var($v)) {
-			// Accomdate predefined
+			// Accommodate predefined
 			if (strpos($v, 'predefined') !== false) {
 				$v = str_replace('predefined_', 'default_', $v);
 				set_user_setting($v, get_request_var($v));

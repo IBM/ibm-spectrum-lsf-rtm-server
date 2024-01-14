@@ -217,19 +217,26 @@ function get_site_locations() {
 	$term    = get_nfilter_request_var('term');
 	$host_id = $_SESSION['cur_device_id'];
 
-	$site_id = db_fetch_cell_prepared('SELECT site_id
-		FROM host
-		WHERE id = ?',
-		array($host_id));
+	$args  = ["%$term%"];
+	$where = '';
 
-	$locations = db_fetch_assoc_prepared('SELECT DISTINCT location
+	if (read_config_option('site_location_filter') && $_SESSION['cur_device_id']) {
+		$site_id = db_fetch_cell_prepared('SELECT site_id
+			FROM host
+			WHERE id = ?',
+			array($host_id));
+		$args []= $site_id;
+		$where = 'AND site_id = ?';
+	}
+
+	$locations = db_fetch_assoc_prepared("SELECT DISTINCT location
 		FROM host
-		WHERE site_id = ?
-		AND location LIKE ?
-		AND location != ""
+		WHERE location LIKE ?
+		AND location != ''
 		AND location IS NOT NULL
-		ORDER BY location',
-		array($site_id, "%$term%"));
+		$where
+		ORDER BY location",
+		$args);
 
 	if (cacti_sizeof($locations)) {
 		foreach($locations as $l) {
@@ -288,7 +295,7 @@ function form_save() {
    ------------------------ */
 
 function form_actions() {
-	global $device_actions, $fields_host_edit;
+	global $device_actions, $device_change_fields, $fields_host_edit;
 
 	/* ================= input validation ================= */
 	get_filter_request_var('drp_action', FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => '/^([a-zA-Z0-9_]+)$/')));
@@ -409,15 +416,7 @@ function form_actions() {
 			$form_array = array();
 
 			foreach ($fields_host_edit as $field_name => $field_array) {
-				if ((preg_match('/^snmp_/', $field_name)) ||
-					(preg_match('/^ping_/', $field_name)) ||
-					($field_name == 'poller_id') ||
-					($field_name == 'site_id') ||
-					($field_name == 'host_template_id') ||
-					($field_name == 'availability_method') ||
-					($field_name == 'device_threads') ||
-					($field_name == 'location') ||
-					($field_name == 'max_oids')) {
+				if (api_device_change_field_match($field_name)) {
 					$form_array += array($field_name => $fields_host_edit[$field_name]);
 
 					$form_array[$field_name]['value'] = '';
@@ -1257,6 +1256,7 @@ function device_javascript() {
 		});
 
 		$('[id^="verbose"]').click(function(data) {
+			$(this).addClass('fa-spin');
 			var strURL = 'host.php?action=query_verbose&id='+$(this).attr('data-id')+'&host_id='+$('#id').val()+'&nostate=true';
 			loadPageNoHeader(strURL, true);
 		});
@@ -1475,7 +1475,7 @@ function get_device_records(&$total_rows, $rows) {
 	$sql_order = get_order_string();
 	$sql_limit = 'LIMIT ' . ($rows*(get_request_var('page')-1)) . ',' . $rows;
 
-	$sql_query = "SELECT host.*, graphs, data_sources,
+	$sql_query = "SELECT host.*, gl.graphs, dl.data_sources,
 		CAST(IF(availability_method = 0, '0',
 			IF(status_event_count > 0 AND status IN (1, 2), status_event_count*$poller_interval,
 			IF(UNIX_TIMESTAMP(status_rec_date) < 943916400 AND status IN (0, 3), total_polls*$poller_interval,
@@ -1816,6 +1816,14 @@ function host() {
 
 			$graphs_url      = $config['url_path'] . 'graphs.php?reset=1&host_id=' . $host['id'];
 			$data_source_url = $config['url_path'] . 'data_sources.php?reset=1&host_id=' . $host['id'];
+
+			if (empty($host['graphs'])) {
+				$host['graphs'] = 0;
+			}
+
+			if (empty($host['data_sources'])) {
+				$host['data_sources'] = 0;
+			}
 
 			form_alternate_row('line' . $host['id'], true);
 			form_selectable_cell(filter_value($host['description'], get_request_var('filter'), 'host.php?action=edit&id=' . $host['id']), $host['id']);

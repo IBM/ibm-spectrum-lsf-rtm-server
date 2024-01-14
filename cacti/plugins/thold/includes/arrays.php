@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2006-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -26,6 +26,27 @@ $thold_log_retention = array(
 	'124' => __('%d Months', 4, 'thold'),
 	'186' => __('%d Months', 6, 'thold'),
 	'365' => __('%d Year', 1, 'thold')
+);
+
+$thold_timespans = array(
+	3600      => __('From %d Hour Ago', 1),
+	7200      => __('From %d Hours Ago', 2),
+	14400     => __('From %d Hours Ago', 4),
+	21600     => __('From %d Hours Ago', 6),
+	43200     => __('From %d Hours Ago', 12),
+	86400     => __('From %d Day Ago', 1),
+	172800    => __('From %d Days Ago', 2),
+	345600    => __('From %d Days Ago', 4),
+	604800    => __('From %d Week Ago', 1),
+	1209600   => __('From %d Weeks Ago', 2),
+	1814400   => __('From %d Weeks Ago', 3),
+	2618784   => __('From %d Month Ago', 1),
+	5237568   => __('From %d Months Ago', 2),
+	7856352   => __('From %d Months Ago', 3),
+	10475136  => __('From %d Months Ago', 4),
+	15712704  => __('From %d Months Ago', 6),
+	31536000  => __('From %d Year Ago', 1),
+	63072000  => __('From %d Years Ago', 2)
 );
 
 $thold_host_states = array(
@@ -87,7 +108,7 @@ $thold_log_states = array(
 	'5' => array(
 		'index' => 'restoral',
 		'display' => __('Notify - Restoral', 'thold'),
-		'display_short' => __('Retoral', 'thold'),
+		'display_short' => __('Restoral', 'thold'),
 		'class' => 'tholdRestoralNotify'
 	),
 	'1' => array(
@@ -160,7 +181,7 @@ $thold_status_list = array(
 	'8' => array(
 		'index' => 'acknowledgment',
 		'display' => __('Acknowledgment', 'thold'),
-		'classs' => 'tholdAcknowledgment'
+		'class' => 'tholdAcknowledgment'
 	)
 );
 
@@ -480,6 +501,17 @@ $thold_types = array (
 	2 => __('Time Based', 'thold')
 );
 
+$bl_types = array(
+	0 => __('%% Deviation Min/Max [TIP]', 'thold'),
+	1 => __('%% Deviation CF [TIP]', 'thold'),
+	2 => __('Absolute Val Min/Max [TIP]', 'thold'),
+	3 => __('Absolute Val of CF [TIP]', 'thold'),
+	4 => __('%% Deviation Avg [AOT]', 'thold'),
+	5 => __('%% Deviation Avg of CF [AOT]', 'thold'),
+	6 => __('Absolute Val Avg [AOT]', 'thold'),
+	7 => __('Absolute Val Avg of CF [AOT]', 'thold'),
+);
+
 $data_types = array (
 	0 => __('Exact Value', 'thold'),
 	1 => __('CDEF', 'thold'),
@@ -502,6 +534,80 @@ $thold_actions = array(
 $thold_template_actions = array(
 	1 => __('Export', 'thold'),
 	2 => __('Delete', 'thold'),
+	4 => __('Enable', 'thold'),
+	5 => __('Disable', 'thold'),
 	3 => __('Reapply Suggested Names', 'thold')
 );
 
+$thold_notification_topics = array(
+	'thold_mail'       => __('Threshold Mail', 'thold'),
+	'thold_dhost_mail' => __('Down Host Mail', 'thold'),
+	'thold_uhost_mail' => __('Up Host Mail', 'thold'),
+	'thold_cmd'        => __('Threshold Cmd', 'thold'),
+	'thold_dhost_cmd'  => __('Down Host Cmd', 'thold'),
+	'thold_uhost_cmd'  => __('Up Host Cmd', 'thold')
+);
+
+$thold_units_convert_array = array(
+	'thold_hi',
+	'thold_low',
+	'time_hi',
+	'time_low',
+	'thold_warning_hi',
+	'thold_warning_low',
+	'time_warning_hi',
+	'time_warning_low',
+	'bl_pct_down',
+	'bl_pct_up'
+);
+
+$thold_decimal_digits = array(
+	-1 => __('Auto', 'thold'),
+	0  => __('0 Digits', 'thold'),
+	1  => __('1 Digit', 'thold'),
+	2  => __('%d Digits', 2, 'thold'),
+	3  => __('%d Digits', 3, 'thold'),
+	4  => __('%d Digits', 4, 'thold'),
+	5  => __('%d Digits', 5, 'thold'),
+	6  => __('%d Digits', 6, 'thold'),
+	7  => __('%d Digits', 7, 'thold'),
+	8  => __('%d Digits', 8, 'thold'),
+	9  => __('%d Digits', 9, 'thold'),
+	10 => __('%d Digits', 10, 'thold'),
+);
+
+/**
+ * Notification Pause Settings come in three varieties
+ *
+ * 1 - Global number of notifications
+ * 2 - X% from a Site
+ * 3 - X% globally
+ *
+ */
+$devices_down     = array(10,30,50,100,1000,2000,3000);
+$percentiles_down = array(10,20,30,40,50);
+
+$notification_pause_values[-1] = __('Disabled', 'thold');
+
+foreach($devices_down as $d) {
+	$notification_pause_values["$d|eg"] = __('> %d Devices', $d, 'thold');
+}
+
+foreach($percentiles_down as $p) {
+	$notification_pause_values["$p|peg"] = __('> %d%%% of Devices Globally', $p, 'thold');
+}
+
+foreach($devices_down as $d) {
+	$notification_pause_values["$d|es"] = __('> %d Devices in a Site', $d, 'thold');
+}
+
+foreach($percentiles_down as $p) {
+	$notification_pause_values["$p|pes"] = __('> %d%%% of Devices in a Site', $p, 'thold');
+}
+
+$notification_delay_values = array(
+	5  => __('%d Minutes', '5', 'thold'),
+	10 => __('%d Minutes', '10', 'thold'),
+	15 => __('%d Minutes', '15', 'thold'),
+	20 => __('%d Minutes', '20', 'thold')
+);

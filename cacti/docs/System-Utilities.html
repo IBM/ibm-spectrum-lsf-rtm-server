@@ -25,7 +25,7 @@
 </ul>
 <p><img src="images/system-utilities.png" alt="System Utilities" />.</p>
 <p>Some of the most important tools are listed below</p>
-<h3 id="rebuild-poller-cache">Rebuild poller cache</h3>
+<h2 id="rebuild-poller-cache">Rebuild poller cache</h2>
 <p>The Poller Cache will be re-generated if you select this option. Use this option only in the event of a database crash if you are experiencing issues after the crash and have already run the database repair tools. Alternatively, if you are having problems with a specific Device, simply re-save that Device to rebuild its Poller Cache. There is also a command line interface equivalent to this command that is recommended for large systems. NOTE: On large systems, this command may take several minutes to hours to complete and therefore should not be run from the Cacti UI. You can simply run 'php -q cli/rebuild_poller_cache.php --help' at the command line for more information.</p>
 <h3 id="technical-support">Technical support</h3>
 <p>Cacti technical support page. Used by developers and technical support persons to assist with issues in Cacti. Includes checks for common configuration issues. There is also built-in checks that help you tune your Cacti installation.</p>
@@ -33,7 +33,7 @@
 <p><img src="images/system-utilities-poller.png" alt="System Utilities" />.</p>
 <p>You will also see all of the system variables such as allocated php memory as well as mysql variables.</p>
 <p><img src="images/system-utilities-db.png" alt="System Utilities" /></p>
-<p>Any Variable appearing in red indicates a subpar setting and should be looked. the recomendations are dynamic in that they change when more system resources are detected so if you upgrade your server hardware be sure to check back to this page to get the most out of your new hardware.</p>
+<p>Any Variable appearing in red indicates a subpar setting and should be looked. the recommendations are dynamic in that they change when more system resources are detected so if you upgrade your server hardware be sure to check back to this page to get the most out of your new hardware.</p>
 <h3 id="rrd-cleaner">RRD cleaner</h3>
 <p><code>Console &gt; utilities &gt; System Utilities &gt; RRDfile Cleaner</code></p>
 <p>When you delete Data Sources from Cacti, the corresponding RRDfiles are not removed automatically. Use this utility to facilitate the removal of these old files.</p>
@@ -75,6 +75,6 @@
 <p>You are able to view the system log via the System utilities page this will show the RAW log this slightly differs from the view log tab as the device names will show the device ID rather than the Device name this is the same view as you reading the log in the OS</p>
 <p><img src="images/system-utilities-viewclog.png" alt="System Utilities" /></p>
 <hr />
-<p><copy>Copyright (c) 2004-2023 The Cacti Group</copy></p>
+<p>Copyright (c) 2004-2023 The Cacti Group</p>
 </body>
 </html>

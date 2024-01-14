@@ -798,11 +798,12 @@ while ($poller_runs_completed < $poller_runs) {
 					}
 				}
 			}
+
+			if ($poller_id == 1) {
+				rrd_close($rrdtool_pipe);
+			}
 		}
 
-		if ($poller_id == 1) {
-			rrd_close($rrdtool_pipe);
-		}
 
 		// process poller commands
 		$commands = db_fetch_cell_prepared('SELECT ' . SQL_NO_CACHE . ' COUNT(*)
@@ -886,8 +887,8 @@ while ($poller_runs_completed < $poller_runs) {
 				ON h.id = pi.host_id ' . $sql_where);
 		}
 	} else {
-		cacti_log('WARNING: Cacti Polling Cycle Exceeded Poller Interval by ' . ($loop_end-$loop_start-$poller_interval) . ' seconds', true, 'POLLER', $level);
-                admin_email(__('Cacti System Warning'), __('WARNING: Cacti Polling Cycle Exceeded Poller Interval by ' . ($loop_end-$loop_start-$poller_interval) . ' seconds', true, 'POLLER', $level));
+		cacti_log('WARNING: Cacti Polling Cycle Exceeded Poller Interval by ' . round($loop_end-$loop_start-$poller_interval, 2) . ' seconds', true, 'POLLER', $level);
+		admin_email(__('Cacti System Warning'), __('WARNING: Cacti Polling Cycle Exceeded Poller Interval by ' . round($loop_end-$loop_start-$poller_interval, 2) . ' seconds', true, 'POLLER', $level));
 	}
 
 	if (!$logged) {

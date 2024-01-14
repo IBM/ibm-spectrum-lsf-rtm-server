@@ -511,7 +511,7 @@ function graphs() {
 		}
 
 		load_current_session_value('page' . get_request_var('graph_type'), 'sess_grn_page' . get_request_var('graph_type'), '1');
-	}else if (get_request_var('graph_type') == -2) {
+	} else if (get_request_var('graph_type') == -2) {
 		foreach($snmp_queries as $query) {
 			/* validate the page filter */
 			if (isset_request_var('page' . $query['id'])) {
@@ -525,7 +525,7 @@ function graphs() {
 	$script = "<script type='text/javascript'>\nvar created_graphs = new Array();\n";
 
 	if (get_request_var('graph_type') < 0) {
-		html_start_box(__('New Graph Template'), '', '100%', '', '3', 'center', '');
+		html_start_box(__('New Graph Template'), '100%', '', '3', 'center', '');
 
 		$available_graph_templates = db_fetch_assoc_prepared('SELECT gt.id, gt.name
 			FROM graph_templates AS gt
@@ -770,9 +770,9 @@ function graphs() {
 						if (isset($xml_array['index_order_type'])) {
 							if ($xml_array['index_order_type'] == 'numeric') {
 								$sql_order = 'ORDER BY CAST(snmp_index AS unsigned)';
-							}else if ($xml_array['index_order_type'] == 'alphabetic') {
+							} else if ($xml_array['index_order_type'] == 'alphabetic') {
 								$sql_order = 'ORDER BY snmp_index';
-							}else if ($xml_array['index_order_type'] == 'natural') {
+							} else if ($xml_array['index_order_type'] == 'natural') {
 								$sql_order = 'ORDER BY INET_ATON(snmp_index)';
 							} else {
 								$sql_order = '';
@@ -981,8 +981,24 @@ function graphs() {
 		form_hidden_box('host_template_id', $host['host_template_id'], '0');
 	}
 
-	if (isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'graphs_new') === false) {
-		set_request_var('returnto', basename($_SERVER['HTTP_REFERER']));
+	if (isset($_SERVER['HTTP_REFERER']) && $_SERVER['HTTP_REFERER'] != '') {
+		$referer_url = parse_url($_SERVER['HTTP_REFERER']);
+
+		if ($_SERVER['SERVER_NAME'] != $referer_url['host']) {
+			/* Potential security exploit 1 */
+			set_request_var('returnto', 'host.php');
+		} elseif (strpos($_SERVER['HTTP_REFERER'], 'graphs_new') === false) {
+			set_request_var('returnto', basename($_SERVER['HTTP_REFERER']));
+		} else {
+			set_request_var('returnto', 'host.php');
+		}
+	} elseif (isset_request_var('returnto') && get_nfilter_request_var('returnto') != '') {
+		$returnto_url = parse_url(get_nfilter_request_var('returnto'));
+
+		if ($_SERVER['SERVER_NAME'] != $returnto_url['host']) {
+			/* Potential security exploit 2 */
+			set_request_var('returnto', 'host.php');
+		}
 	}
 
 	load_current_session_value('returnto', 'sess_grn_returnto', '');

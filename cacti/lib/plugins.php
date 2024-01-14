@@ -69,16 +69,22 @@ function api_plugin_hook($name) {
 
 	if (!empty($result)) {
 		foreach ($result as $hdata) {
-			if (!in_array($hdata['name'], $plugins_integrated, true)) {
-				if (file_exists($config['base_path'] . '/plugins/' . $hdata['name'] . '/' . $hdata['file'])) {
-					include_once($config['base_path'] . '/plugins/' . $hdata['name'] . '/' . $hdata['file']);
+			$plugin_name = $hdata['name'];
+
+			if (!in_array($plugin_name, $plugins_integrated, true)) {
+				$plugin_func = $hdata['function'];
+				$plugin_file = $hdata['file'];
+				$full_path   = $config['base_path'] . '/plugins/' . $plugin_name . '/' . $plugin_file;
+				$debounce    = 'mpf_' . $plugin_name . '_' . $plugin_func;
+
+				if (file_exists($full_path)) {
+					include_once($full_path);
 				}
 
-				$function = $hdata['function'];
-				if (function_exists($function)) {
-					api_plugin_run_plugin_hook($name, $hdata['name'], $function, $args);
-				} else {
-					cacti_log(sprintf('WARNING: Function does not exist %s with function %s' . PHP_EOL, $name, $hdata['function']), false, 'PLUGIN', POLLER_VERBOSITY_MEDIUM);
+				if (function_exists($plugin_func)) {
+					api_plugin_run_plugin_hook($name, $plugin_name, $plugin_func, $args);
+				} else if (debounce_run_notification($debounce)) {
+					cacti_log(sprintf('WARNING: Function "%s" does not exist in %s/%s for hook "%s"' . PHP_EOL, $plugin_func, $plugin_name, $plugin_file, $name), false, 'PLUGIN', POLLER_VERBOSITY_MEDIUM);
 				}
 			}
 		}
@@ -717,6 +723,12 @@ function api_plugin_install($plugin) {
 
 		$author  = $info['author'];
 		$version = $info['version'];
+	} elseif (strpos($plugin, 'plugin_') !== false) {
+		raise_message('directory_error', __('The Plugin directory \'%s\' needs to be renamed to remove \'plugin_\' from the name before it can be installed.', $plugin), MESSAGE_LEVEL_ERROR);
+		return false;
+	} else {
+		raise_message('version_error', __('The Plugin in the directory \'%s\' does not include an version function \'%s()\'.  This function must exist for the plugin to be installed.', $plugin, $function), MESSAGE_LEVEL_ERROR);
+		return false;
 	}
 
 	db_execute_prepared('INSERT INTO plugin_config
@@ -741,6 +753,9 @@ function api_plugin_install($plugin) {
 				WHERE directory = ?',
 				array($plugin));
 		}
+	} else {
+		raise_message('install_error', __('The Plugin in the directory \'%s\' does not include an install function \'%s()\'.  This function must exist for the plugin to be installed.', $plugin, $function), MESSAGE_LEVEL_ERROR);
+		return false;
 	}
 
 	api_plugin_replicate_config();

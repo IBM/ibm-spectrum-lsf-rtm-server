@@ -21,7 +21,7 @@
 <p>Spikekill is a tool used to remove spikes in a graph. Spikes can appear in a graph after a device reboots, or when you switch from 32-bit to 64-bit interface counters on a device. Spikekill works by statistically analyzing the data contained inside an RRDfile, and overwriting specific data points. It offers 4 methods by which to analyze the data and selectively overwrite data points:</p>
 <ol>
 <li><p><em>Standard Deviation</em></p>
-<p>Calulates the <a href="https://en.wikipedia.org/wiki/Standard_deviation">standard deviation</a> of the data, and overwrites data points that are <em>N</em> times higher than the standard deviation.</p></li>
+<p>Calculates the <a href="https://en.wikipedia.org/wiki/Standard_deviation">standard deviation</a> of the data, and overwrites data points that are <em>N</em> times higher than the standard deviation.</p></li>
 <li><p><em>Variance Average</em></p>
 <p>Calculates the average value of the data, and overwrites data points that are <em>N</em> percent higher than the average.</p></li>
 <li><p><em>GapFill</em></p>
@@ -76,6 +76,6 @@
 <p>Spikekill will cease overwriting data points for any individual RRA when it has reached the value of <em>Kills Per RRA</em>, counting all DSes of that RRA together. It will then begin the process again on the next RRA.</p>
 <p>This means that for any given RRA, older spikes will always be overwritten before newer spikes. However, newer spikes in one RRA can still be overwritten before older spikes in a different RRA, since the thresholds are different per RRA:DS pair.</p>
 <hr />
-<p><copy>Copyright (c) 2004-2023 The Cacti Group</copy></p>
+<p>Copyright (c) 2004-2023 The Cacti Group</p>
 </body>
 </html>

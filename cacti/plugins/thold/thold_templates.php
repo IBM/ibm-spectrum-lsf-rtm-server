@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2006-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -21,6 +21,7 @@
 chdir('../../');
 
 include_once('./include/auth.php');
+include_once($config['base_path'] . '/lib/reports.php');
 include_once($config['base_path'] . '/plugins/thold/thold_functions.php');
 include_once($config['base_path'] . '/plugins/thold/includes/arrays.php');
 include_once($config['base_path'] . '/lib/xml.php');
@@ -40,6 +41,15 @@ if (isset_request_var('import')) {
 switch ($action) {
 	case 'add':
 		template_add();
+
+		break;
+	case 'add_tt':
+		template_add_host_to_template();
+
+		break;
+	case 'tt_remove':
+		template_remove_host_from_template();
+
 		break;
 	case 'save':
 		if (isset_request_var('save_component_import')) {
@@ -47,8 +57,8 @@ switch ($action) {
 		} elseif (isset_request_var('save') && get_nfilter_request_var('save') == 'edit') {
 			template_save_edit();
 		}
-		break;
 
+		break;
 	case 'import':
 		top_header();
 		import();
@@ -128,7 +138,7 @@ function do_actions() {
 								array($id));
 
 							db_execute_prepared("UPDATE thold_data
-								SET thold_template_id = '', template_enabled = ''
+								SET thold_template_id = '', template_enabled = 'off'
 								WHERE thold_template_id = ?",
 								array($id));
 						}
@@ -154,7 +164,7 @@ function do_actions() {
 										array($thold_id));
 
 									/* check if thold templated */
-									if ($thold['template_enabled'] == "on") {
+									if ($thold['template_enabled'] == 'on') {
 										$template = db_fetch_row_prepared('SELECT *
 											FROM thold_template
 											WHERE id = ?',
@@ -187,6 +197,28 @@ function do_actions() {
 
 					if (cacti_sizeof($message)) {
 						thold_raise_message(implode('<br>', $message), MESSAGE_LEVEL_ERROR);
+					}
+
+					break;
+				case 4: // Enable
+					foreach ($selected_items as $thold_id) {
+						db_execute_prepared('UPDATE thold_template
+							SET thold_enabled = "on"
+							WHERE id = ?',
+							array($thold_id));
+
+						thold_template_enable($thold_id);
+					}
+
+					break;
+				case 5: // Disable
+					foreach ($selected_items as $thold_id) {
+						db_execute_prepared('UPDATE thold_template
+							SET thold_enabled = "off"
+							WHERE id = ?',
+							array($thold_id));
+
+						thold_template_disable($thold_id);
 					}
 
 					break;
@@ -248,6 +280,14 @@ function do_actions() {
 				$message = __('Click \'Continue\' to Reapply Suggested Names to Thresholds of the following Threshold Template(s).', 'thold');
 				$button = __esc('Reapply Suggested Names to Template(s)', 'thold');
 				break;
+			case 4:
+				$message = __('Click \'Continue\' to Enable the selected Template(s) and Threshold(s).', 'thold');
+				$button = __esc('Enable Template(s)', 'thold');
+				break;
+			case 5:
+				$message = __('Click \'Continue\' to Disable the selected Template(s) and Threshold(s).', 'thold');
+				$button = __esc('Disable Template(s)', 'thold');
+				break;
 			default:
 				$message = __('Invalid action detected, can not proceed', 'thold');
 				$button = '';
@@ -287,6 +327,25 @@ function do_actions() {
 	bottom_footer();
 
 	exit;
+}
+
+function template_remove_host_from_template() {
+	$host_id = get_filter_request_var('host_id');
+	$thold_template_id = get_filter_request_var('thold_template_id');
+
+	db_execute_prepared('DELETE FROM plugin_thold_host
+		WHERE host_id = ?
+		AND thold_template_id = ?',
+		array($host_id, $thold_template_id));
+}
+
+function template_add_host_to_template() {
+	$host_id = get_filter_request_var('host_id');
+	$thold_template_id = get_filter_request_var('thold_template_id');
+
+	db_execute_prepared('REPLACE INTO plugin_thold_host
+		(host_id, thold_template_id) VALUES (?, ?)',
+		array($host_id, $thold_template_id));
 }
 
 function template_export() {
@@ -493,11 +552,7 @@ function template_add() {
 			$('#go').button().click(function() {
 				strURL = $('#tholdform').attr('action');
 				json   = $('input, select').serializeObject();
-				$.post(strURL, json).done(function(data) {
-					$('#main').html(data);
-					applySkin();
-					window.scrollTo(0, 0);
-				});
+				loadPageUsingPost(strURL, json);
 			});
 		});
 
@@ -563,6 +618,12 @@ function template_add() {
 		if ($id) {
 			plugin_thold_log_changes($id, 'modified_template', $save);
 
+			if ($save['thold_enabled'] == 'off') {
+				thold_template_disable($id);
+			} else {
+				thold_template_enable($id);
+			}
+
 			header("Location: thold_templates.php?action=edit&id=$id&header=false");
 			exit;
 		} else {
@@ -574,15 +635,27 @@ function template_add() {
 	}
 }
 
+function thold_template_disable($id) {
+	db_execute_prepared('UPDATE thold_data
+		SET thold_enabled = "off"
+		WHERE thold_template_id = ?
+		AND template_enabled = "on"',
+		array($id));
+}
+
+function thold_template_enable($id) {
+	db_execute_prepared('UPDATE thold_data
+		SET thold_enabled = "on"
+		WHERE thold_template_id = ?
+		AND template_enabled = "on"',
+		array($id));
+}
+
 function template_save_edit() {
 	/* ================= input validation ================= */
 	get_filter_request_var('id');
 	get_filter_request_var('thold_type');
-	get_filter_request_var('thold_hi', FILTER_VALIDATE_FLOAT);
-	get_filter_request_var('thold_low', FILTER_VALIDATE_FLOAT);
 	get_filter_request_var('thold_fail_trigger');
-	get_filter_request_var('time_hi', FILTER_VALIDATE_FLOAT);
-	get_filter_request_var('time_low', FILTER_VALIDATE_FLOAT);
 	get_filter_request_var('time_fail_trigger');
 	get_filter_request_var('time_fail_length');
 	get_filter_request_var('reset_ack');
@@ -590,16 +663,11 @@ function template_save_edit() {
 	get_filter_request_var('syslog_priority');
 	get_filter_request_var('syslog_facility');
 	get_filter_request_var('thold_warning_type');
-	get_filter_request_var('thold_warning_hi', FILTER_VALIDATE_FLOAT);
-	get_filter_request_var('thold_warning_low', FILTER_VALIDATE_FLOAT);
 	get_filter_request_var('thold_warning_fail_trigger');
-	get_filter_request_var('time_warning_hi', FILTER_VALIDATE_FLOAT);
-	get_filter_request_var('time_warning_low', FILTER_VALIDATE_FLOAT);
 	get_filter_request_var('time_warning_fail_trigger');
 	get_filter_request_var('time_warning_fail_length');
+	get_filter_request_var('bl_type');
 	get_filter_request_var('bl_ref_time_range');
-	get_filter_request_var('bl_pct_down', FILTER_VALIDATE_FLOAT);
-	get_filter_request_var('bl_pct_up', FILTER_VALIDATE_FLOAT);
 	get_filter_request_var('bl_fail_trigger');
 	get_filter_request_var('repeat_alert');
 	get_filter_request_var('data_type');
@@ -663,13 +731,13 @@ function template_save_edit() {
 	$save['restored_alert'] = isset_request_var('restored_alert') ? 'on' : '';
 
 	// High / Low
-	$save['thold_hi']           = get_nfilter_request_var('thold_hi');
-	$save['thold_low']          = get_nfilter_request_var('thold_low');
+	$save['thold_hi']           = trim_round_request_var('thold_hi', 4, 'thold_hi');
+	$save['thold_low']          = trim_round_request_var('thold_low', 4, 'thold_low');
 	$save['thold_fail_trigger'] = get_nfilter_request_var('thold_fail_trigger');
 
 	// Time Based
-	$save['time_hi']            = get_nfilter_request_var('time_hi');
-	$save['time_low']           = get_nfilter_request_var('time_low');
+	$save['time_hi']            = trim_round_request_var('time_hi', 4, 'time_hi');
+	$save['time_low']           = trim_round_request_var('time_low', 4, 'time_low');
 	$save['time_fail_trigger']  = get_nfilter_request_var('time_fail_trigger');
 	$save['time_fail_length']   = get_nfilter_request_var('time_fail_length');
 
@@ -685,13 +753,13 @@ function template_save_edit() {
 	}
 
 	// High / Low Warnings
-	$save['thold_warning_hi']           = get_nfilter_request_var('thold_warning_hi');
-	$save['thold_warning_low']          = get_nfilter_request_var('thold_warning_low');
+	$save['thold_warning_hi']           = trim_round_request_var('thold_warning_hi', 4, 'thold_warning_hi');
+	$save['thold_warning_low']          = trim_round_request_var('thold_warning_low', 4, 'thold_warning_low');
 	$save['thold_warning_fail_trigger'] = get_nfilter_request_var('thold_warning_fail_trigger');
 
 	// Time Based Warnings
-	$save['time_warning_hi']            = get_nfilter_request_var('time_warning_hi');
-	$save['time_warning_low']           = get_nfilter_request_var('time_warning_low');
+	$save['time_warning_hi']            = trim_round_request_var('time_warning_hi', 4, 'time_warning_hi');
+	$save['time_warning_low']           = trim_round_request_var('time_warning_low', 4, 'time_warning_low');
 	$save['time_warning_fail_trigger']  = get_nfilter_request_var('time_warning_fail_trigger');
 	$save['time_warning_fail_length']   = get_nfilter_request_var('time_warning_fail_length');
 
@@ -716,6 +784,11 @@ function template_save_edit() {
 	$save['trigger_cmd_low']  = get_nfilter_request_var('trigger_cmd_low');
 	$save['trigger_cmd_norm'] = get_nfilter_request_var('trigger_cmd_norm');
 
+	// Email Subject
+	$save['email_subject']          = get_nfilter_request_var('email_subject');
+	$save['email_subject_warn']     = get_nfilter_request_var('email_subject_warn');
+	$save['email_subject_restoral'] = get_nfilter_request_var('email_subject_restoral');
+
 	// Email Body
 	$save['email_body']          = get_nfilter_request_var('email_body');
 	$save['email_body_warn']     = get_nfilter_request_var('email_body_warn');
@@ -724,6 +797,7 @@ function template_save_edit() {
 	// HRULE Display
 	$save['thold_hrule_warning'] = get_nfilter_request_var('thold_hrule_warning');
 	$save['thold_hrule_alert']   = get_nfilter_request_var('thold_hrule_alert');
+	$save['skipscale']           = isset_request_var('skipscale') ? 'on':'';
 
 	// Baseline settings
 	if (isset_request_var('bl_ref_time_range') && get_nfilter_request_var('bl_ref_time_range') != '') {
@@ -737,8 +811,10 @@ function template_save_edit() {
 		}
 	}
 
-	$save['bl_pct_down'] = get_nfilter_request_var('bl_pct_down');
-	$save['bl_pct_up']   = get_nfilter_request_var('bl_pct_up');
+	$save['bl_type']     = get_nfilter_request_var('bl_type');
+	$save['bl_cf']       = get_nfilter_request_var('bl_cf');
+	$save['bl_pct_down'] = trim_round_request_var('bl_pct_down', 4, 'bl_pct_down');
+	$save['bl_pct_up']   = trim_round_request_var('bl_pct_up', 4, 'bl_pct_up');
 
 	if (isset_request_var('bl_fail_trigger') && get_nfilter_request_var('bl_fail_trigger') != '') {
 		$save['bl_fail_trigger'] = get_nfilter_request_var('bl_fail_trigger');
@@ -764,9 +840,9 @@ function template_save_edit() {
 
 	// SNMP Notification
 	if (isset_request_var('snmp_event_category')) {
-		$save['snmp_event_category'] = get_nfilter_request_var('snmp_event_category');
+		$save['snmp_event_category']    = get_nfilter_request_var('snmp_event_category');
 		$save['snmp_event_description'] = get_nfilter_request_var('snmp_event_description');
-		$save['snmp_event_severity'] = get_nfilter_request_var('snmp_event_severity');
+		$save['snmp_event_severity']    = get_nfilter_request_var('snmp_event_severity');
 	}
 
 	if (isset_request_var('snmp_event_warning_severity')) {
@@ -785,15 +861,19 @@ function template_save_edit() {
 	$save['notify_alert']         = get_nfilter_request_var('notify_alert');
 
 	// Data Manipulation
-	$save['data_type']  = get_nfilter_request_var('data_type');
-	$save['cdef']       = get_nfilter_request_var('cdef');
-	$save['percent_ds'] = get_nfilter_request_var('percent_ds');
-	$save['expression'] = get_nfilter_request_var('expression');
-	$save['upper_ds']   = get_nfilter_request_var('upper_ds');
-	$save['show_units']  = isset_request_var('show_units') ? 'on' : 'off';
+	$save['data_type']    = get_nfilter_request_var('data_type');
+	$save['cdef']         = get_nfilter_request_var('cdef');
+	$save['percent_ds']   = get_nfilter_request_var('percent_ds');
+	$save['expression']   = get_nfilter_request_var('expression');
+	$save['upper_ds']     = get_nfilter_request_var('upper_ds');
+	$save['show_units']   = isset_request_var('show_units') ? 'on' : 'off';
+	$save['units_suffix'] = get_nfilter_request_var('units_suffix');
+	$save['decimals']     = get_nfilter_request_var('decimals');
 
 	// Other
-	$save['notes'] = get_nfilter_request_var('notes');
+	$save['notes']          = get_nfilter_request_var('notes');
+	$save['format_file']    = get_nfilter_request_var('format_file');
+	$save['graph_timespan'] = get_nfilter_request_var('graph_timespan');
 
 	// Allow other plugins to modify thrshold contents
 	$save = api_plugin_hook_function('thold_template_edit_save_thold', $save);
@@ -812,6 +892,12 @@ function template_save_edit() {
 
 			thold_template_update_thresholds($id);
 
+			if ($save['thold_enabled'] == 'off') {
+				thold_template_disable($id);
+			} else {
+				thold_template_enable($id);
+			}
+
 			plugin_thold_log_changes($id, 'modified_template', $save);
 		} else {
 			raise_message(2);
@@ -829,7 +915,7 @@ function template_save_edit() {
 }
 
 function template_edit() {
-	global $config;
+	global $config, $graph_timespans;
 
 	/* ================= input validation ================= */
 	get_filter_request_var('id');
@@ -841,6 +927,12 @@ function template_edit() {
 		FROM thold_template
 		WHERE id = ?',
 		array($id));
+
+	if (!cacti_sizeof($thold_data)) {
+		raise_message('template_not_found', __('The Threshold Template requested can not be found', 'thold'), MESSAGE_LEVEL_ERROR);
+		header('Location: thold_templates.php');
+		exit;
+	}
 
 	$temp = db_fetch_row_prepared('SELECT id, name
 		FROM data_template
@@ -985,7 +1077,7 @@ function template_edit() {
 		}
 	}
 
-	$datasources = '<br>' . __esc('Data Sources: %s', implode(', ', $dsname), 'thold');
+	$datasources = '<br>' . __('Data Sources: %s', implode(', ', $dsname), 'thold');
 
 	$email_body = read_config_option('thold_enable_per_thold_body');
 
@@ -993,6 +1085,21 @@ function template_edit() {
 		$acknowledgment = ($thold_data['reset_ack'] == 'on' ? 'reset_ack': ($thold_data['persist_ack'] == 'on' ? 'persist_ack':'none'));
 	} else {
 		$acknowledgment = 'none';
+	}
+
+	foreach($graph_timespans as $index => $span) {
+		if ($index >= 20) {
+			unset($graph_timespans[$index]);
+		}
+	}
+
+	$formats = reports_get_format_files();
+
+	/* convert raw units to display units */
+	if (cacti_sizeof($thold_data)) {
+		foreach($thold_units_convert_array as $variable) {
+			$thold_data[$variable] = thold_raw_to_display($thold_data[$variable]);
+		}
 	}
 
 	$form_array = array(
@@ -1048,7 +1155,7 @@ function template_edit() {
 			'none_value' => __('None', 'thold'),
 			'default' => '0',
 			'value' => isset($thold_data['thold_hrule_warning']) ? $thold_data['thold_hrule_warning'] : '0'
-			),
+		),
 		'thold_hrule_alert' => array(
 			'friendly_name' => __('Alert HRULE Color', 'thold'),
 			'description' => __('Please choose a Color for the Graph HRULE for the Alert Thresholds.  Choose \'None\' for No HRULE.  Note: This features is supported for Data Manipulation types \'Exact Value\' and \'Percentage\' only at this time.', 'thold'),
@@ -1056,21 +1163,36 @@ function template_edit() {
 			'none_value' => __('None', 'thold'),
 			'default' => '0',
 			'value' => isset($thold_data['thold_hrule_alert']) ? $thold_data['thold_hrule_alert'] : '0'
-			),
+		),
+		'graph_timespan' => array(
+			'friendly_name' => __('Graph Timespan'),
+			'method' => 'drop_array',
+			'default' => GT_LAST_DAY,
+			'description' => __('The Graph End time will be set at the time of triggering.  The Graph Start time will be the End Time minus the Graph Timespan.'),
+			'array' => $graph_timespans,
+			'value' => '|arg1:graph_timespan|'
+		),
+		'skipscale' => array(
+			'friendly_name' => __('Skip Scaling on HRULEs', 'thold'),
+			'method' => 'checkbox',
+			'default' => '',
+			'description' => __('If Checked, the Scale on the Graph will not be impacted by either the Alert or Warning HRULEs.', 'thold'),
+			'value' => isset($thold_data['skipscale']) ? $thold_data['skipscale'] : ''
+		),
 		'exempt' => array(
 			'friendly_name' => __('Weekend Exemption', 'thold'),
 			'description' => __('If this is checked, this Threshold will not alert on weekends.', 'thold'),
 			'method' => 'checkbox',
 			'default' => '',
 			'value' => isset($thold_data['exempt']) ? $thold_data['exempt'] : ''
-			),
+		),
 		'restored_alert' => array(
 			'friendly_name' => __('Disable Restoration Email', 'thold'),
 			'description' => __('If this is checked, Threshold will not send an alert when the Threshold has returned to normal status.', 'thold'),
 			'method' => 'checkbox',
 			'default' => '',
 			'value' => isset($thold_data['restored_alert']) ? $thold_data['restored_alert'] : ''
-			),
+		),
 		'acknowledgment' => array(
 			'friendly_name' => __('Acknowledgment Options'),
 			'description' => __('There are three Acknowledgment levels that control how you must respond to a Threshold breach condition.  They are:<br><br><ul><li><i>None Required</i> - When you select this option, no Acknowledgment is required for a Threshold breach.</li><li><i>Suspendible Notification</i> - With this option, once you Acknowledge or Suspend Notifications on the Threshold, you will no longer receive notifications while it is breached.  You may subsequently, Resume Notifications while its breached.</li><li><i>Persistent Acknowledgment</i> - With this option, even after the Threshold has returned to normal, you must Acknowledge the Threshold and provide an optional Operator Message.</li></ul>'),
@@ -1112,6 +1234,7 @@ function template_edit() {
 		'thold_warning_header' => array(
 			'friendly_name' => __('Warning - High / Low Settings', 'thold'),
 			'method' => 'spacer',
+			'description' => __("Numeric values for High and Low Thresholds can include the following suffixes for numbers greater than 1 to 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y', and for numbers less than 1 'm', 'u', 'p', 'f'.", 'thold')
 		),
 		'thold_warning_hi' => array(
 			'friendly_name' => __('High Threshold', 'thold'),
@@ -1139,6 +1262,7 @@ function template_edit() {
 		'thold_header' => array(
 			'friendly_name' => __('Alert - High / Low Settings', 'thold'),
 			'method' => 'spacer',
+			'description' => __("Numeric values for High and Low Thresholds can include the following suffixes for numbers greater than 1 to 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y', and for numbers less than 1 'm', 'u', 'p', 'f'.", 'thold')
 		),
 		'thold_hi' => array(
 			'friendly_name' => __('High Threshold', 'thold'),
@@ -1166,6 +1290,7 @@ function template_edit() {
 		'time_warning_header' => array(
 			'friendly_name' => __('Warning - Time Based Settings', 'thold'),
 			'method' => 'spacer',
+			'description' => __("Numeric values for High and Low Thresholds can include the following suffixes for numbers greater than 1 to 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y', and for numbers less than 1 'm', 'u', 'p', 'f'.", 'thold')
 		),
 		'time_warning_hi' => array(
 			'friendly_name' => __('High Threshold', 'thold'),
@@ -1202,6 +1327,7 @@ function template_edit() {
 		'time_header' => array(
 			'friendly_name' => __('Alert - Time Based Settings', 'thold'),
 			'method' => 'spacer',
+			'description' => __("Numeric values for High and Low Thresholds can include the following suffixes for numbers greater than 1 to 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y', and for numbers less than 1 'm', 'u', 'p', 'f'.", 'thold')
 		),
 		'time_hi' => array(
 			'friendly_name' => __('High Threshold', 'thold'),
@@ -1237,32 +1363,52 @@ function template_edit() {
 		'baseline_header' => array(
 			'friendly_name' => __('Baseline Monitoring', 'thold'),
 			'method' => 'spacer',
+			'description' => __("Numeric values for High and Low Thresholds can include the following suffixes for numbers greater than 1 to 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y', and for numbers less than 1 'm', 'u', 'p', 'f'.", 'thold')
+		),
+		'bl_type' => array(
+			'friendly_name' => __('Type', 'thold'),
+			'method' => 'drop_array',
+			'array' => $bl_types,
+			'description' => __('The type of Baseline.  [TIP] is the Time in Past, [AOT] is the Average over Time.  Percentage Deviation is a percentage value from the historical value.  Absolute Value is a deviation either above or below the Baseline over that historical value.  For the [TIP] Baseline Types, the MIN, MAX, AVG, and LAST will come from no more than a one day time period at that point in time.', 'thold'),
+			'value' => isset($thold_data['bl_type']) ? $thold_data['bl_type'] : 0
+		),
+		'bl_cf' => array(
+			'friendly_name' => __('Consolidation Function', 'thold'),
+			'method' => 'drop_array',
+			'array' => array(
+				'AVG'  => __('Average', 'thold'),
+				'MIN'  => __('Minimum', 'thold'),
+				'MAX'  => __('Maximum', 'thold'),
+				'LAST' => __('Last', 'thold'),
+			),
+			'description' => __('The Consolidation function to use for the Baseline Type value calculation.', 'thold'),
+			'value' => isset($thold_data['bl_cf']) ? $thold_data['bl_cf'] : 'AVG'
 		),
 		'bl_ref_time_range' => array(
-			'friendly_name' => __('Time reference in the past', 'thold'),
+			'friendly_name' => __('Time Range', 'thold'),
 			'method' => 'drop_array',
-			'array' => $reference_types,
-			'description' => __('Specifies the point in the past (based on rrd resolution) that will be used as a reference', 'thold'),
+			'array' => $thold_timespans,
+			'description' => __('Specifies the point in the past (based on rrd resolution) that will be used as a reference or the duration to use for the Floating Average when using the Floating Average type Threshold', 'thold'),
 			'value' => isset($thold_data['bl_ref_time_range']) ? $thold_data['bl_ref_time_range'] : read_config_option('alert_bl_timerange_def')
 		),
 		'bl_pct_up' => array(
-			'friendly_name' => __('Baseline Deviation UP', 'thold'),
+			'friendly_name' => __('Deviation UP', 'thold'),
 			'method' => 'textbox',
-			'max_length' => 3,
+			'max_length' => 12,
 			'size' => 15,
-			'description' => __('Specifies allowed deviation in percentage for the upper bound Threshold. If not set, upper bound Threshold will not be checked at all.', 'thold'),
+			'description' => __('Specifies allowed deviation for the upper bound Threshold. If not set, upper bound Threshold will not be checked at all.  The unit of measure is an absolute values for \'Absolute Value\' Type, and a Percentable for both \'%% Deviation\' and \'%% Floating Average\'', 'thold'),
 			'value' => isset($thold_data['bl_pct_up']) ? $thold_data['bl_pct_up'] : read_config_option('alert_bl_percent_def')
 		),
 		'bl_pct_down' => array(
-			'friendly_name' => __('Baseline Deviation DOWN', 'thold'),
+			'friendly_name' => __('Deviation DOWN', 'thold'),
 			'method' => 'textbox',
-			'max_length' => 3,
+			'max_length' => 12,
 			'size' => 15,
-			'description' => __('Specifies allowed deviation in percentage for the lower bound Threshold. If not set, lower bound Threshold will not be checked at all.', 'thold'),
+			'description' => __('Specifies allowed deviation for the lower bound Threshold. If not set, lower bound Threshold will not be checked at all.  The unit of measure is an absolute values for \'Absolute Value\' Type, and a Percentable for both \'%% Deviation\' and \'%% Floating Average\'', 'thold'),
 			'value' => isset($thold_data['bl_pct_down']) ? $thold_data['bl_pct_down'] : read_config_option('alert_bl_percent_def')
 		),
 		'bl_fail_trigger' => array(
-			'friendly_name' => __('Baseline Trigger Count', 'thold'),
+			'friendly_name' => __('Trigger Count', 'thold'),
 			'method' => 'textbox',
 			'max_length' => 3,
 			'size' => 15,
@@ -1303,7 +1449,7 @@ function template_edit() {
 			'textarea_rows' => 5,
 			'textarea_cols' => 80,
 			'default' => '',
-			'description' => __esc('An RPN Expression is an RRDtool Compatible RPN Expression.  Syntax includes all functions below in addition to both Device and Data Query replacement expressions such as <span style="color:blue;">|query_ifSpeed|</span>.  To use a Data Source in the RPN Expression, you must use the syntax: <span style="color:blue;">|ds:dsname|</span>.  For example, <span style="color:blue;">|ds:traffic_in|</span> will get the current value of the traffic_in Data Source for the RRDfile(s) associated with the Graph. Any Data Source for a Graph can be included.<br>Math Operators: <span style="color:blue;">+, -, /, *, &#37;, ^</span><br>Functions: <span style="color:blue;">SIN, COS, TAN, ATAN, SQRT, FLOOR, CEIL, DEG2RAD, RAD2DEG, ABS, EXP, LOG, ATAN, ADNAN</span><br>Flow Operators: <span style="color:blue;">UN, ISINF, IF, LT, LE, GT, GE, EQ, NE</span><br>Comparison Functions: <span style="color:blue;">MAX, MIN, INF, NEGINF, NAN, UNKN, COUNT, PREV</span>%s %s', $replacements, $datasources, 'thold'),
+			'description' => __('An RPN Expression is an RRDtool Compatible RPN Expression.  Syntax includes all functions below in addition to both Device and Data Query replacement expressions such as <span style="color:blue;">|query_ifSpeed|</span>.  To use a Data Source in the RPN Expression, you must use the syntax: <span style="color:blue;">|ds:dsname|</span>.  For example, <span style="color:blue;">|ds:traffic_in|</span> will get the current value of the traffic_in Data Source for the RRDfile(s) associated with the Graph. Any Data Source for a Graph can be included.<br>Math Operators: <span style="color:blue;">+, -, /, *, &#37;, ^</span><br>Functions: <span style="color:blue;">SIN, COS, TAN, ATAN, SQRT, FLOOR, CEIL, DEG2RAD, RAD2DEG, ABS, EXP, LOG, ATAN, ADNAN</span><br>Flow Operators: <span style="color:blue;">UN, ISINF, IF, LT, LE, GT, GE, EQ, NE</span><br>Comparison Functions: <span style="color:blue;">MAX, MIN, INF, NEGINF, NAN, UNKN, COUNT, PREV</span>%s %s', $replacements, $datasources, 'thold'),
 			'value' => isset($thold_data['expression']) ? $thold_data['expression'] : ''
 		),
 		'upper_ds' => array(
@@ -1321,10 +1467,36 @@ function template_edit() {
 			'description' => __('Display units for very large or small numbers.', 'thold'),
 			'value' => isset($thold_data['show_units']) ? $thold_data['show_units'] : ''
 		),
+		'units_suffix' => array(
+			'friendly_name' => __('Force Units Suffix', 'thold'),
+			'method' => 'textbox',
+			'default' => '',
+			'max_length' => 10,
+			'size' => 10,
+			'description' => __('If you wish to display a forced unit suffix on the various Threshold pages and Notifications, enter it here.  The size is limited to no more than 10 characters.', 'thold'),
+			'value' => isset($thold_data['units_suffix']) ? $thold_data['units_suffix'] : ''
+		),
+		'decimals' => array(
+			'friendly_name' => __('Decimal Digits to Display', 'thold'),
+			'method' => 'drop_array',
+			'default' => 'NULL',
+			'description' => __('The number of decimal digits to display for Threshold and Current Values.  The default is auto or 2.', 'thold'),
+			'value' => isset($thold_data['decimals']) ? $thold_data['decimals'] : 0,
+			'array' => $thold_decimal_digits,
+		),
 		'notify_header' => array(
 			'friendly_name' => __('Notification Settings', 'thold'),
 			'collapsible' => 'true',
 			'method' => 'spacer',
+		),
+		'email_subject' => array(
+			'friendly_name' => __('Alert Email Subject', 'thold'),
+			'method' => ($email_body == 'on' ? 'textbox':'hidden'),
+			'default' => '',
+			'size' => 80,
+			'max_length' => 128,
+			'description' => __('This is the Email subject that will be displayed in the Email (128 Char MAX).  Leave blank for the default.  There are several common replacement tags that may be used in include:<br>&#060PHASE&#062 &#060THRESHOLDVALUE&#062 &#060CURRENTVALUE&#062 &#060THRESHOLDNAME&#062 &#060DSNAME&#062 &#060BREACHUP&#062 &#060REALERT&#062 &#60HOSTNAME&#62', 'thold'),
+			'value' => isset($thold_data['email_subject']) ? $thold_data['email_subject'] : ''
 		),
 		'email_body' => array(
 			'friendly_name' => __('Alert Email Body', 'thold'),
@@ -1335,8 +1507,17 @@ function template_edit() {
 			'description' => __('This is the message that will be displayed at the top of all Threshold Alerts (1024 Char MAX).  HTML is allowed, but will be removed for text only emails.  There are several common replacement tags that may be used in include:<br>eg. &#060DESCRIPTION&#062 &#060HOSTNAME&#062 &#060TIME&#062 &#060DATE&#062 &#060URL&#062 &#060GRAPHID&#062 &#060CURRENTVALUE&#062 &#060THRESHOLDNAME&#062 &#060DSNAME&#062 &#060SUBJECT&#062 &#060GRAPH&#062 &#060HI&#062 &#060LOW&#062 &#060DURATION&#062 &#060TRIGGER&#062 &#060DETAILS_URL&#062 &#060DATE_RFC822&#062 &#060BREACHED_ITEMS&#062', 'thold'),
 			'value' => isset($thold_data['email_body']) ? $thold_data['email_body'] : ''
 		),
+		'email_subject_warn' => array(
+			'friendly_name' => __('Warning Subject', 'thold'),
+			'method' => ($email_body == 'on' ? 'textbox':'hidden'),
+			'default' => '',
+			'size' => 80,
+			'max_length' => 128,
+			'description' => __('This is the Warning subject that will be displayed in the Email (128 Char MAX).  Leave blank for the default.  There are several common replacement tags that may be used in include:<br>&#060PHASE&#062 &#060THRESHOLDVALUE&#062 &#060CURRENTVALUE&#062 &#060THRESHOLDNAME&#062 &#060DSNAME&#062 &#060BREACHUP&#062 &#060REALERT&#062 &#60HOSTNAME&#62', 'thold'),
+			'value' => isset($thold_data['email_subject']) ? $thold_data['email_subject'] : ''
+		),
 		'email_body_warn' => array(
-			'friendly_name' => __('Warning Email Body', 'thold'),
+			'friendly_name' => __('Warning Body', 'thold'),
 			'method' => ($email_body == 'on' ? 'textarea':'hidden'),
 			'textarea_rows' => 3,
 			'textarea_cols' => 50,
@@ -1344,8 +1525,17 @@ function template_edit() {
 			'description' => __('This is the message that will be displayed at the top of all Threshold Warnings (1024 Char MAX).  HTML is allowed, but will be removed for text only emails.  There are several common replacement tags that may be used in include:<br>eg. &#060DESCRIPTION&#062 &#060HOSTNAME&#062 &#060TIME&#062 &#060DATE&#062 &#060URL&#062 &#060GRAPHID&#062 &#060CURRENTVALUE&#062 &#060THRESHOLDNAME&#062 &#060DSNAME&#062 &#060SUBJECT&#062 &#060GRAPH&#062 &#060HI&#062 &#060LOW&#062 &#060DURATION&#062 &#060TRIGGER&#062 &#060DETAILS_URL&#062 &#060DATE_RFC822&#062 &#060BREACHED_ITEMS&#062', 'thold'),
 			'value' => isset($thold_data['email_body_warn']) ? $thold_data['email_body_warn'] : ''
 		),
+		'email_subject_restoral' => array(
+			'friendly_name' => __('Restoral Subject', 'thold'),
+			'method' => ($email_body == 'on' ? 'textbox':'hidden'),
+			'default' => '',
+			'size' => 80,
+			'max_length' => 128,
+			'description' => __('This is the Email subject that will be displayed in the Email after a Restoral to Normal (128 Char MAX).  Leave blank for the default.  There are several common replacement tags that may be used in include:<br>&#060PHASE&#062 &#060THRESHOLDVALUE&#062 &#060CURRENTVALUE&#062 &#060THRESHOLDNAME&#062 &#060DSNAME&#062 &#060BREACHUP&#062 &#060REALERT&#062 &#60HOSTNAME&#62', 'thold'),
+			'value' => isset($thold_data['email_subject_restoral']) ? $thold_data['email_subject_restoral'] : ''
+		),
 		'email_body_restoral' => array(
-			'friendly_name' => __('Restoral Email Body', 'thold'),
+			'friendly_name' => __('Restoral Body', 'thold'),
 			'method' => ($email_body == 'on' ? 'textarea':'hidden'),
 			'textarea_rows' => 3,
 			'textarea_cols' => 50,
@@ -1375,7 +1565,15 @@ function template_edit() {
 			'value' => isset($thold_data['notify_alert']) ? $thold_data['notify_alert'] : '',
 			'none_value' => __('None', 'thold'),
 			'sql' => 'SELECT id, name FROM plugin_notification_lists ORDER BY name'
-		)
+		),
+		'format_file' => array(
+			'friendly_name' => __('Style/Format File', 'thold'),
+			'method' => 'drop_array',
+			'default' => 'default.format',
+			'description' => __('Choose the custom html wrapper and CSS file to use.  This file contains both html and CSS to wrap around your report.  If it contains more than simply CSS, you need to place a special <REPORT> tag inside of the file.  This format tag will be replaced by the report content.  These files are located in the \'formats\' directory.', 'thold'),
+			'value' => '|arg1:format_file|',
+			'array' => $formats,
+		),
 	);
 
 	if (read_config_option('thold_alert_snmp') == 'on') {
@@ -1434,6 +1632,7 @@ function template_edit() {
 				'description' => __('This is a listing of accounts that will be notified when this Threshold is breached.<br><br><br><br>', 'thold'),
 				'array' => $send_notification_array,
 				'sql' => $sql,
+				'value' => isset($thold_data['notify_accounts']) ? $thold_data['notify_accounts'] : ''
 			),
 			'notify_extra' => array(
 				'friendly_name' => __('Alert Emails', 'thold'),
@@ -1598,7 +1797,7 @@ function template_edit() {
 	draw_edit_form(
 		array(
 			'config' => array('no_form_tag' => true),
-			'fields' => inject_form_variables($form_array, sizeof($thold_data) ? $thold_data : array())
+			'fields' => inject_form_variables($form_array, cacti_sizeof($thold_data) ? $thold_data : array())
 		)
 	);
 
@@ -1678,10 +1877,16 @@ function template_edit() {
 	function thold_toggle_baseline(status) {
 		if (status == '') {
 			$('#row_baseline_header, #row_bl_ref_time_range').show();
-			$('#row_bl_pct_up, #row_bl_pct_down, #row_bl_fail_trigger').show();
+			$('#row_bl_type, #row_bl_pct_up, #row_bl_pct_down, #row_bl_fail_trigger').show();
+
+			if ($('#bl_type').val() == 1 || $('#bl_type').val() == 3 || $('#bl_type').val() == 5) {
+				$('#row_bl_cf').show();
+			} else {
+				$('#row_bl_cf').hide();
+			}
 		} else {
 			$('#row_baseline_header, #row_bl_ref_time_range').hide();
-			$('#row_bl_pct_up, #row_bl_pct_down, #row_bl_fail_trigger').hide();
+			$('#row_bl_type, #row_bl_cf, #row_bl_pct_up, #row_bl_pct_down, #row_bl_fail_trigger').hide();
 		}
 	}
 
@@ -1702,6 +1907,10 @@ function template_edit() {
 	$(function() {
 		changeTholdType();
 		changeDataType();
+
+		$('#bl_type').on('change', function() {
+			thold_toggle_baseline('');
+		});
 
 		if ($('#notify_accounts option').length == 0) {
 			$('#row_notify_accounts').hide();
@@ -1855,7 +2064,7 @@ function template_request_validation() {
 }
 
 function templates() {
-	global $config, $thold_template_actions, $item_rows, $thold_types;
+	global $config, $thold_template_actions, $item_rows, $thold_types, $bl_types;
 
 	template_request_validation();
 
@@ -1971,6 +2180,11 @@ function templates() {
 			'sort' => 'ASC',
 			'align' => 'left'
 		),
+		'thold_enabled' => array(
+			'display' => __('Enabled', 'thold'),
+			'sort' => 'ASC',
+			'align' => 'left'
+		),
 		'id' => array(
 			'display' => __('ID', 'thold'),
 			'sort' => 'ASC',
@@ -1989,6 +2203,7 @@ function templates() {
 		'thold_type' => array(
 			'display' => __('Type', 'thold'),
 			'sort' => 'ASC',
+			'tip' => __('The Threshold Type.  For Baseline Types: [TIP] refers to the Time In the Past with MIN, MAX, AVG, and LAST from no more than a day in time from that period.  [AOT] refers to the Average over the entire Time period.  If there is a colon followed by MIN, MAX, AVG, LAST, the Value came from that Consolidation Function.', 'thold'),
 			'align' => 'left'
 		),
 		'data_source_name' => array(
@@ -2074,10 +2289,19 @@ function templates() {
 
 			form_alternate_row('line' . $template['id']);
 			form_selectable_cell('<a class="linkEditMain" href="' . html_escape('thold_templates.php?action=edit&id=' . $template['id']) . '">' . $name  . '</a>', $template['id']);
+			form_selectable_cell($template['thold_enabled'] == 'on' ? __('Yes', 'thold'):__('No', 'thold'), $template['id']);
 			form_selectable_cell($template['id'], $template['id'], '', 'right');
 			form_selectable_cell('<a class="linkEditMain" href="' . html_escape('thold.php?reset=1&thold_template_id=' . $template['id']) . '">' . $template['thresholds']  . '</a>', $template['id'], '', 'right');
 			form_selectable_cell(filter_value($template['data_template_name'], get_request_var('filter')), $template['id']);
-			form_selectable_cell($thold_types[$template['thold_type']], $template['id'], '', 'left');
+
+			if ($template['thold_type'] != 1) {
+				form_selectable_cell($thold_types[$template['thold_type']], $template['id']);
+			} else {
+				$bl_type = get_bl_type($template['bl_type'], $template['bl_cf']);
+				form_selectable_cell($bl_type, $template['id']);
+			}
+
+//			form_selectable_cell($thold_types[$template['thold_type']], $template['id'], '', 'left');
 			form_selectable_cell($template['data_source_name'], $template['id'], '', 'left');
 			form_selectable_cell($value_hi . ' / ' . $value_warning_hi, $template['id'], '', 'center');
 			form_selectable_cell($value_lo . ' / ' . $value_warning_lo, $template['id'], '', 'center');
@@ -2160,7 +2384,7 @@ function import() {
 }
 
 function validate_upload() {
-	/* check file tranfer if used */
+	/* check file transfer if used */
 	if (isset($_FILES['import_file'])) {
 		/* check for errors first */
 		if ($_FILES['import_file']['error'] != 0) {
@@ -2260,14 +2484,10 @@ function thold_form_end($ajax = true) {
 			$('#<?php print $form_id;?>').submit(function(event) {
 				if ($('#drp_action').val() != '1') {
 					event.preventDefault();
-					strURL = '<?php print $form_action;?>';
+					strURL  = '<?php print $form_action;?>';
 					strURL += (strURL.indexOf('?') >= 0 ? '&':'?') + 'header=false';
 					json =  $('#<?php print $form_id;?>').serializeObject();
-					$.post(strURL, json).done(function(data) {
-						$('#main').html(data);
-						applySkin();
-						window.scrollTo(0, 0);
-					});
+					loadPageUsingPost(strURL, json);
 				}
 			});
 		});

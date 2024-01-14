@@ -168,7 +168,7 @@ $fields_snmp_item_with_oids = $fields_snmp_item + array(
 		'friendly_name' => __('Bulk Walk Maximum Repetitions'),
 		'description'   => __('For SNMPv2 and SNMPv3 Devices, the SNMP Bulk Walk max-repetitions size. The default is to \'Auto Detect on Re-Index\'. For very large switches, high performance servers, Jumbo Frame Networks or for high latency WAN connections, increasing this value may increase poller performance. More data is packed into a single SNMP packet which can reduce data query run time. However, some devices may completely refuse to respond to packets with a max-repetition size which is set too large. This can be especially true for lower-powered IoT type devices or smaller embedded IT appliances. Special attention to the overall network path MTU should also be considered since setting a value which is too high could lead to packet fragmentation.'),
 		'value'         => '|arg1:bulk_walk_size|',
-		'default'       => '-1',
+		'default'       => '0',
 		'array' => array(
 			-1 => __('Auto Detect on Re-Index'),
 			0  => __('Auto Detect/Set on first Re-Index'),
@@ -1682,7 +1682,7 @@ $fields_template_import = array(
 		'method' => 'file'
 	),
 	'data_header' => array(
-		'friendly_name' => __('Data Source Overrides', 'package'),
+		'friendly_name' => __('Data Source Overrides'),
 		'collapsible' => 'true',
 		'method' => 'spacer',
 	),
@@ -1696,7 +1696,7 @@ $fields_template_import = array(
 		'default' => '1'
 	),
 	'graph_header' => array(
-		'friendly_name' => __('Graph/Data Template Overrides', 'package'),
+		'friendly_name' => __('Graph/Data Template Overrides'),
 		'collapsible' => 'true',
 		'method' => 'spacer',
 	),
@@ -1715,23 +1715,23 @@ $fields_template_import = array(
 		'default' => ''
 	),
 	'image_format' => array(
-		'friendly_name' => __('Graph Template Image Format', 'package'),
-		'description' => __('The Image Format to be used when importing or updating Graph Templates.', 'package'),
+		'friendly_name' => __('Graph Template Image Format'),
+		'description' => __('The Image Format to be used when importing or updating Graph Templates.'),
 		'method' => 'drop_array',
 		'default' => read_config_option('default_image_format'),
 		'array' => $image_types,
 	),
 	'graph_height' => array(
 		'friendly_name' => __('Graph Template Height', 'pagkage'),
-		'description' => __('The Height to be used when importing or updating Graph Templates.', 'package'),
+		'description' => __('The Height to be used when importing or updating Graph Templates.'),
 		'method' => 'textbox',
 		'default' => read_config_option('default_graph_height'),
 		'size' => '5',
 		'max_length' => '5'
 	),
 	'graph_width' => array(
-		'friendly_name' => __('Graph Template Width', 'package'),
-		'description' => __('The Width to be used when importing or updating Graph Templates.', 'package'),
+		'friendly_name' => __('Graph Template Width'),
+		'description' => __('The Width to be used when importing or updating Graph Templates.'),
 		'method' => 'textbox',
 		'default' => read_config_option('default_graph_width'),
 		'size' => '5',

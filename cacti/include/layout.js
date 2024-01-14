@@ -279,7 +279,13 @@ $.fn.textWidth = function(text){
  *  without any wrapping. */
 $.fn.textBoxWidth = function() {
 	var org = $(this);
-	var html = $('<span style="display:none;white-space:nowrap;position:absolute;width:auto;left:-9999px">' + (org.val() || org.text()) + '</span>');
+	if (org.val()) {
+		var text = encodeURIComponent(org.val());
+	} else {
+		var text = encodeURIComponent(org.text());
+	}
+
+	var html = $('<span style="display:none;white-space:nowrap;position:absolute;width:auto;left:-9999px">' + text + '</span>');
 	html.css('font-family', org.css('font-family'));
 	html.css('font-weight', org.css('font-weight'));
 	html.css('font-size',   org.css('font-size'));
@@ -824,10 +830,11 @@ function applySkin() {
 			var element = $(this);
 
 			if (element.is('div')) {
-				var text = $(this).find('span').html();
+				var text = DOMPurify.sanitize($(this).find('span').html());
 			} else if (element.is('span') || element.is('a')) {
-				var text = $(this).prop('title');
+				var text = DOMPurify.sanitize($(this).prop('title'));
 			}
+
 			return text;
 		}
 	});
@@ -905,6 +912,45 @@ function setupButtonStyle() {
 	if ($('input#go').length) {
 		$('input#go').addClass('ui-state-active');
 	}
+}
+
+function raiseMessage(title, header, detail, level) {
+	var origErrorReasonTitle    = errorReasonTitle;
+	var origErrorOnPage         = errorOnPage;
+	var origMixedReasonTitle    = mixedReasonTitle;
+	var origMixedOnPage         = mixedOnPage;
+	var origSessionMessageTitle = sessionMessageTitle;
+	var origSessionMessageSave  = sessionMessageSave;
+	var origSessionMessage      = sessionMessage;
+
+	sessionMessage.message = detail;
+	sessionMessage.level   = level;
+
+	if (level == MESSAGE_LEVEL_ERROR) {
+		errorReasonTitle  = title;
+		errorOnPage       = header;
+	} else if (level == MESSAGE_LEVEL_MIXED) {
+		mixedOnPage       = header;
+		mixedReasonTitle  = title;
+	} else {
+		sessionMessageTitle = title;
+		sessionMessageSave  = header;
+	}
+
+	displayMessages();
+
+	if (level == MESSAGE_LEVEL_ERROR) {
+		errorReasonTitle  = origErrorReasonTitle;
+		errorOnPage       = origErrorOnPage;
+	} else if (level == MESSAGE_LEVEL_MIXED) {
+		mixedOnPage      = origMixedOnPage;
+		mixedReasonTitle = origMixedReasonTitle;
+	} else {
+		sessionMessageTitle = origSessionMessageTitle;
+		sessionMessageSave  = origSessionMessageSave;
+	}
+
+	sessionMessage = origSessionMessage;
 }
 
 function displayMessages() {
@@ -2862,6 +2908,8 @@ function appendHeaderSuppression(url) {
 		url += (url.indexOf('?') > 0 ? '&header=false':'?header=false');
 	}
 
+	url = url.replace('?&', '?').replace('&&', '&');
+
 	return url;
 }
 
@@ -3380,13 +3428,25 @@ function saveGraphFilter(section) {
 }
 
 function applyGraphFilter() {
-	var href = appendHeaderSuppression(graphPage+'?action='+pageAction+
-		'&rfilter=' + base64_encode($('#rfilter').val())+
-		(typeof $('#host_id').val() != 'undefined' ? '&host_id='+$('#host_id').val():'')+
-		'&columns='+$('#columns').val()+
-		'&graphs='+$('#graphs').val()+
-		'&graph_template_id='+$('#graph_template_id').val()+
-		'&thumbnails='+$('#thumbnails').is(':checked'));
+	statePushed = false;
+
+	var href = appendHeaderSuppression(graphPage+'?action='+pageAction +
+		'&rfilter=' + base64_encode($('#rfilter').val()) +
+		(typeof $('#host_id').val() != 'undefined' ? '&host_id=' + $('#host_id').val():'') +
+		'&columns=' + $('#columns').val() +
+		'&graphs='  + $('#graphs').val() +
+		'&graph_template_id=' + $('#graph_template_id').val() +
+		'&thumbnails=' + $('#thumbnails').is(':checked'));
+
+	/* replace myHref parameter for address bar update */
+	var urlParts  = myHref.split('?');
+	var urlParams = new URLSearchParams(urlParts[1]);
+
+	urlParams.set('rfilter', base64_encode($('#rfilter').val()));
+	if (typeof $('#host_id').val() != 'undefined') {
+		urlParams.set('host_id', $('#host_id').val());
+	}
+	myHref = urlParts[0]+ '?' + urlParams.toString();
 
 	closeDateFilters();
 
@@ -4142,7 +4202,7 @@ $.widget('custom.languageselect', $.ui.selectmenu, {
 
 		$('<span>', {
 			style: item.element.attr('data-style') + ';float:right',
-			'class': 'right flag-icon flag-icon-squared ' + item.element.attr('data-class')
+			'class': 'right fi fis ' + item.element.attr('data-class')
 		}).appendTo(wrapper);
 
 		return li.append(wrapper).appendTo(ul);
@@ -4509,6 +4569,7 @@ function setSNMP() {
 			$('#row_snmp_port').hide();
 			$('#row_snmp_timeout').hide();
 			$('#row_max_oids').hide();
+			$('#row_bulk_walk_size').hide();
 
 			if ($('#row_snmp_engine_id')) {
 				$('#row_snmp_engine_id').hide();
@@ -4534,6 +4595,7 @@ function setSNMP() {
 			$('#row_snmp_port').show();
 			$('#row_snmp_timeout').show();
 			$('#row_max_oids').show();
+			$('#row_bulk_walk_size').show();
 
 			if ($('#row_snmp_engine_id')) {
 				$('#row_snmp_engine_id').hide();
@@ -4558,6 +4620,7 @@ function setSNMP() {
 			$('#row_snmp_port').show();
 			$('#row_snmp_timeout').show();
 			$('#row_max_oids').show();
+			$('#row_bulk_walk_size').show();
 
 			if ($('#row_snmp_engine_id')) {
 				$('#row_snmp_engine_id').show();

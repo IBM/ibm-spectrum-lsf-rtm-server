@@ -24,7 +24,8 @@ include_once('./lib/poller.php');
 include_once('./lib/utility.php');
 
 $dq_actions = array(
-	1 => __('Delete')
+	1 => __('Delete'),
+	2 => __('Duplicate')
 );
 
 /* set default action */
@@ -354,7 +355,13 @@ function form_actions() {
 				for ($i=0;($i<cacti_count($selected_items));$i++) {
 					 data_query_remove($selected_items[$i]);
 				}
+			} elseif (get_nfilter_request_var('drp_action') == '2') { /* duplicate */
+				for ($i=0;($i<cacti_count($selected_items));$i++) {
+					 data_query_duplicate($selected_items[$i], get_nfilter_request_var('name_format'));
+				}
 			}
+		} else {
+			raise_message(40);
 		}
 
 		header('Location: data_queries.php?header=false');
@@ -391,17 +398,29 @@ function form_actions() {
 
 	if (isset($dq_array) && cacti_sizeof($dq_array)) {
 		if (get_nfilter_request_var('drp_action') == '1') { /* delete */
-			$graphs = array();
-
 			print "<tr>
 				<td class='textArea' class='odd'>
-					<p>" . __n('Click \'Continue\' to delete the following Data Query.', 'Click \'Continue\' to delete following Data Queries.', cacti_sizeof($dq_array)) . "</p>
+					<p>" . __n('Click \'Continue\' to Delete the following Data Query.', 'Click \'Continue\' to Delete following Data Queries.', cacti_sizeof($dq_array)) . "</p>
 					<div class='itemlist'><ul>$dq_list</ul></div>
 				</td>
-			</tr>\n";
-		}
+			</tr>";
 
-		$save_html = "<input type='button' class='ui-button ui-corner-all ui-widget' value='" . __esc('Cancel') . "' onClick='cactiReturnTo()'>&nbsp;<input type='submit' class='ui-button ui-corner-all ui-widget' value='" . __esc('Continue') . "' title='" . __n('Delete Data Query', 'Delete Data Query', cacti_sizeof($dq_array)) . "'>";
+			$save_html = "<input type='button' class='ui-button ui-corner-all ui-widget' value='" . __esc('Cancel') . "' onClick='cactiReturnTo()'>&nbsp;<input type='submit' class='ui-button ui-corner-all ui-widget' value='" . __esc('Continue') . "' title='" . __n('Delete Data Query', 'Delete Data Queries', cacti_sizeof($dq_array)) . "'>";
+		} elseif (get_nfilter_request_var('drp_action') == '2') { /* duplicatie */
+			print "<tr>
+				<td class='textArea' class='odd'>
+					<p>" . __n('Click \'Continue\' to duplicate the following Data Query.', 'Click \'Continue\' to duplicate following Data Queries.', cacti_sizeof($dq_array)) . "</p>
+					<div class='itemlist'><ul>$dq_list</ul></div>
+					<p><strong>" . __('Name Format:'). "</strong><br>";
+
+			form_text_box('name_format', '<dataquery_name> (1)', '', '255', '30', 'text');
+
+			print "</p>
+                </td>
+            </tr>";
+
+			$save_html = "<input type='button' class='ui-button ui-corner-all ui-widget' value='" . __esc('Cancel') . "' onClick='cactiReturnTo()'>&nbsp;<input type='submit' class='ui-button ui-corner-all ui-widget' value='" . __esc('Continue') . "' title='" . __n('Duplicate Data Query', 'Duplicate Data Queries', cacti_sizeof($dq_array)) . "'>";
+		}
 	} else {
 		raise_message(40);
 		header('Location: data_queries.php?header=false');
@@ -1074,7 +1093,17 @@ function data_query_edit() {
 	/* ==================================================== */
 
 	if (!isempty_request_var('id')) {
-		$snmp_query = db_fetch_row_prepared('SELECT * FROM snmp_query WHERE id = ?', array(get_request_var('id')));
+		$snmp_query = db_fetch_row_prepared('SELECT *
+			FROM snmp_query WHERE
+			id = ?',
+			array(get_request_var('id')));
+
+		if (!cacti_sizeof($snmp_query)) {
+			raise_message('data_query_missing', __('The Data Query ID [%s] that you are trying to Edit does not exist.  Please run the repair_database.php CLI script to resolve this database issue.', get_request_var('id')), MESSAGE_LEVEL_ERROR);
+			header('Location: data_queries.php');
+			exit;
+		}
+
 		$header_label = __esc('Data Queries [edit: %s]', $snmp_query['name']);
 	} else {
 		$header_label = __('Data Queries [new]');
@@ -1419,7 +1448,7 @@ function data_query() {
 	$i = 0;
 	if (cacti_sizeof($snmp_queries)) {
 		foreach ($snmp_queries as $snmp_query) {
-			if ($snmp_query['graphs'] == 0 && $snmp_query['templates'] == 0) {
+			if ($snmp_query['graphs'] == 0) {
 				$disabled = false;
 			} else {
 				$disabled = true;

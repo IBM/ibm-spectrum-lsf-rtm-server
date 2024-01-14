@@ -163,6 +163,8 @@ switch ($type) {
 
 rrdcheck_debug('Polling Ending');
 
+set_config_option('rrdcheck_last_run_time', time());
+
 if (!$forcerun) {
 	unregister_process('rrdcheck', $type, $thread_id);
 }
@@ -188,7 +190,7 @@ function rrdcheck_master_handler($forcerun) {
 		rrdcheck_debug('Skipping Periodic Rollup - Boost will handle the Periodic Roll-up Cycle');
 	} else {
 		if ($run_interval == 'boost') {
-			cacti_log("WARNING: RRDcheck interval set to 'boost' and boost not enabled, reseting to default of 4 hours", false, 'rrdcheck');
+			cacti_log("WARNING: RRDcheck interval set to 'boost' and boost not enabled, reseting to default of 4 hours", false, 'RRDCHECK');
 
 			set_config_option('rrdcheck_interval', 240);
 
@@ -198,12 +200,11 @@ function rrdcheck_master_handler($forcerun) {
 		// determine if it's time to determine hourly averages
 		if (empty($last_run)) {
 			// since the poller has never run before, let's fake it out
-			set_config_option('rrdcheck_last_run_time', date('Y-m-d G:i:s', $current_time));
+			set_config_option('rrdcheck_last_run_time', ($current_time - 86400));
 		}
 
 		// if it's time to check, do so now
-		if ((!empty($last_run) && ((strtotime($last_run) + ($run_interval * 60)) < $current_time)) || $forcerun) {
-			set_config_option('rrdcheck_last_run_time', date('Y-m-d G:i:s', $current_time));
+		if ((!empty($last_run) && (($last_run + ($run_interval * 60)) < $current_time)) || $forcerun) {
 
 			rrdcheck_launch_children($type);
 
@@ -263,7 +264,7 @@ function sig_handler($signo) {
 	switch ($signo) {
 		case SIGTERM:
 		case SIGINT:
-			cacti_log('WARNING: rrdcheck Poller terminated by user', false, 'rrdcheck');
+			cacti_log('WARNING: rrdcheck Poller terminated by user', false, 'RRDCHECK');
 
 			/* tell the main poller that we are done */
 			if ($type == 'master') {

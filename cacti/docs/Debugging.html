@@ -153,7 +153,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Now check all your crontab, especially <code>/etc/crontab</code> and crontab of users root and cactiuser. Leave only one poller entry for all of them. Personally, I've chosen <code>/etc/cron.d/cacti</code> to avoid problems when updating RPM's. Most often, you won't remember this item when updating lots of RPM's, so I felt more secure to put it here. And I've made some slight modifications, see</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb16-1" title="1"><span class="ex">shell</span><span class="op">&gt;</span> vi /etc/cron.d/cacti</a></code></pre></div>
 <div class="sourceCode" id="cb17"><pre class="sourceCode ini"><code class="sourceCode ini"><a class="sourceLine" id="cb17-1" title="1"><span class="dt">*/5 * * * *     cactiuser       /usr/bin/php -q /var/www/html/cacti/poller.php &gt; /var/local/log/poller.log 2&gt;&amp;1</span></a></code></pre></div>
-<p>This will produce a file <code>/var/local/log/poller.log</code>, which includes some additional informations from each poller's run, such as RRDtool errors. It occupies only some few bytes and will be overwritten each time.</p>
+<p>This will produce a file <code>/var/local/log/poller.log</code>, which includes some additional information from each poller's run, such as RRDtool errors. It occupies only some few bytes and will be overwritten each time.</p>
 <p>If you're using the crontab of user "cactiuser" instead, this will look like</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb18-1" title="1"><span class="ex">shell</span><span class="op">&gt;</span> crontab -e -u cactiuser</a></code></pre></div>
 <div class="sourceCode" id="cb19"><pre class="sourceCode ini"><code class="sourceCode ini"><a class="sourceLine" id="cb19-1" title="1"><span class="dt">*/5 * * * *     /usr/bin/php -q /var/www/html/cacti/poller.php &gt; /var/local/log/poller.log 2&gt;&amp;1</span></a></code></pre></div>
@@ -161,6 +161,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Pay attention to custom scripts. It is required, that external commands called from there are in the <code>$PATH</code> of the cactiuser running the poller. It is therefor recommended to provide <code>/full/path/to/external/command</code></p>
 <p>User "criggie" reported an issue with running smartctl. It was complaining "you are not root" so a quick <code>chmod +s</code> on the script fixed that problem.</p>
 <hr />
-<p><copy>Copyright (c) 2004-2023 The Cacti Group</copy></p>
+<p>Copyright (c) 2004-2023 The Cacti Group</p>
 </body>
 </html>

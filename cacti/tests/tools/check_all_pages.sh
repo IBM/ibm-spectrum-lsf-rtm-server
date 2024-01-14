@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #  +-------------------------------------------------------------------------+
-#  | Copyright (C) 2004-2022 The Cacti Group                                 |
+#  | Copyright (C) 2004-2023 The Cacti Group                                 |
 #  |                                                                         |
 #  | This program is free software; you can redistribute it and/or           |
 #  | modify it under the terms of the GNU General Public License             |
@@ -25,6 +25,14 @@
 # each link is tried. I mean to add checks for new CVE's (at least those that I
 # can trigger with wget) as well.
 # ------------------------------------------------------------------------------
+
+# Uncomment for debugging
+set -x
+
+# On a hunch
+sudo systemctl restart apache2
+sudo systemctl status apache2
+sudo systemctl stop firewalld
 
 echo "---------------------------------------------------------------------"
 echo "NOTE: Check all Pages Script Starting"
@@ -224,7 +232,7 @@ save_log_files() {
 			cp -f "$logFile1" "${logBase}/wget_error.log"
 		fi
 
-		chmod a+r "${logBase}/*.log"
+		chmod a+r -R "${logBase}/"
 
 		if [ $DEBUG -eq 1 ];then
 			echo "DEBUG: Dumping ${CACTI_LOG}"
@@ -361,7 +369,7 @@ magic=$(grep "name='__csrf_magic' value=" "{$tmpFile1}" | sed "s/.*__csrf_magic'
 postData="action=login&login_username=${WAUSER}&login_password=${WAPASS}&__csrf_magic=${magic}"
 
 echo "NOTE: Logging into the Cacti User Interface"
-wget -q $loadSaveCookie --post-data="${postData}" --output-document="${tmpFile2}" "${WEBHOST}"/index.php
+wget $loadSaveCookie --post-data="${postData}" --output-document="${tmpFile2}" "${WEBHOST}"/index.php
 
 # ------------------------------------------------------------------------------
 # Now loop over all the available links (but don't log out and don't delete or

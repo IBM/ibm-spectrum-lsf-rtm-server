@@ -304,6 +304,58 @@ $secpass_tooltip .= $secpass_body;
 
 $selectedTheme = get_selected_theme();
 
+if (isset_request_var('ref')) {
+	$ref_parts   = parse_url(get_nfilter_request_var('ref'));
+	$valid       = true;
+
+	if (isset($ref_parts['user']) || isset($ref_parts['pass'])) {
+		$valid = false;
+	} elseif (!isset($ref_parts['host'])) {
+		$value = true;
+	} elseif (isset($ref_parts['host'])) {
+		$server_addr = $_SERVER['SERVER_ADDR'];
+		if (!filter_var($_SERVER['SERVER_NAME'], FILTER_VALIDATE_IP)) {
+			$server_info = dns_get_record($_SERVER['SERVER_NAME'], DNS_ANY);
+			$server_ref  = gethostbyname($ref_parts['host']);
+
+			if ($server_ref != $server_addr) {
+				$valid = false;
+			}
+
+			if (!$valid && sizeof($server_info)) {
+				foreach($server_info as $record) {
+					if (isset($record['host']) && $record['host'] == $server_ref) {
+						$valid = true;
+						break;
+					} elseif (isset($record['target']) && $record['target'] == $server_ref) {
+						$valid = true;
+						break;
+					} elseif (isset($record['id']) && $record['ip'] == $server_addr) {
+						$valid = true;
+						break;
+					}
+				}
+			}
+		} else {
+			$server_ip   = gethostbyname($_SERVER['SERVER_NAME']);
+			$server_ref  = gethostbyname($ref_parts['host']);
+			if ($server_ip == $server_ref) {
+				$valid = true;
+			}
+		}
+	} else {
+		$valid = false;
+	}
+
+	if (!$valid) {
+		cacti_log('WARNING: User attempted to access Cacti from unkonwn URL', false, 'AUTH');
+
+		raise_message('problems_with_page', __('There are problems with the Change Password page.  Contact your Cacti administrator right away.'), MESSAGE_LEVEL_ERROR);
+		header('Location:index.php');
+		exit;
+	}
+}
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -360,7 +412,7 @@ if ($skip_current) {
 			</form>
 			<div class='loginErrors'><?php print $errorMessage ?></div>
 		</div>
-		<div class='versionInfo'><?php __('Version %1$s | %2$s', $version, COPYRIGHT_YEARS_SHORT); ?></div>
+		<div class='versionInfo'><?php __('Version %s | %s', $version, COPYRIGHT_YEARS_SHORT); ?></div>
 	</div>
 	<div class='loginRight'></div>
 	<script type='text/javascript'>

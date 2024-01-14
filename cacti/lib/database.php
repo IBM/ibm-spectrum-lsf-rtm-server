@@ -139,12 +139,18 @@ function db_connect_real($device, $user, $pass, $db_name, $db_type = 'mysql', $p
 			if (strpos($ver, 'MariaDB') !== false) {
 				$srv = 'MariaDB';
 				$ver  = str_replace('-MariaDB', '', $ver);
+				$required_modes[] = 'NO_ENGINE_SUBSTITUTION';
 			} else {
 				$srv = 'MySQL';
-			}
 
-			if (version_compare('8.0.0', $ver, '<=')) {
-				$bad_modes[] = 'NO_AUTO_CREATE_USER';
+				if (version_compare('8.0.0', $ver, '<=')) {
+					$bad_modes[] = 'NO_AUTO_CREATE_USER';
+					$required_modes[] = 'NO_ENGINE_SUBSTITUTION';
+				}
+
+				if (version_compare('8.1.0', $ver, '<=')) {
+					$bad_modes[] = 'NO_ENGINE_SUBSTITUTION';
+				}
 			}
 
 			// Get rid of bad modes
@@ -159,7 +165,6 @@ function db_connect_real($device, $user, $pass, $db_name, $db_type = 'mysql', $p
 
 			// Add Required modes
 			$required_modes[] = 'ALLOW_INVALID_DATES';
-			$required_modes[] = 'NO_ENGINE_SUBSTITUTION';
 
 			foreach($required_modes as $mode) {
 				if (array_search($mode, $new_modes) === false) {
@@ -218,10 +223,25 @@ function db_connect_real($device, $user, $pass, $db_name, $db_type = 'mysql', $p
 	return false;
 }
 
-function db_check_reconnect($db_conn = false) {
+/**
+ * db_check_reconnect - Check the database connection.  If the connection is gone
+ *  attempt to reconnect, otherwise return the connection
+ *
+ * @param bool|object  The connection to check
+ * @param bool         Wether or not to log the connection check
+ *
+ * @return bool        The database true is the database is connected else false
+ */
+function db_check_reconnect($db_conn = false, $log = true) {
 	global $config, $database_details;
 
-	include($config['base_path'] . '/include/config.php');
+	if (file_exists($config['base_path'] . '/include/config.php')) {
+		include($config['base_path'] . '/include/config.php');
+	} else {
+		global $database_hostname, $database_username, $database_password, $database_default;
+		global $database_type, $database_port, $database_retries;
+		global $database_ssl, $database_ssl_key, $database_ssl_cert, $database_ssl_ca;
+	}
 
 	if (cacti_sizeof($database_details) && $db_conn !== false) {
 		foreach($database_details as $det) {
@@ -257,12 +277,14 @@ function db_check_reconnect($db_conn = false) {
 	}
 
 	if ($version === false) {
-		syslog(LOG_ALERT, 'CACTI: Database Connection went away.  Attempting to reconnect!');
+		if ($log) {
+			syslog(LOG_ALERT, 'CACTI: Database Connection went away.  Attempting to reconnect!');
+		}
 
 		db_close();
 
 		// Connect to the database server
-		db_connect_real(
+		$cnn_id = db_connect_real(
 			$database_hostname,
 			$database_username,
 			$database_password,
@@ -275,6 +297,14 @@ function db_check_reconnect($db_conn = false) {
 			$database_ssl_cert,
 			$database_ssl_ca
 		);
+
+		if ($cnn_id !== false) {
+			return true;
+		} else {
+			return false;
+		}
+	} else {
+		return true;
 	}
 }
 
@@ -1781,8 +1811,11 @@ function sql_save($array_items, $table_name, $key_cols = 'id', $autoinc = true, 
 				}
 			} elseif (empty($value)) {
 				$array_items[$key] = 0;
-			} else {
+			} elseif (is_numeric($value)) {
 				$array_items[$key] = $value;
+			} else {
+				cacti_log('ERROR: Column: ' . $key . ' contains and invald value: ' . $value, false, 'DBCALL');
+				$array_items[$key] = 0;
 			}
 		} else {
 			$array_items[$key] = db_qstr($value);

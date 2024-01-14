@@ -475,14 +475,17 @@ function variable_nth_percentile(&$regexp_match_array, &$graph, &$graph_item, &$
 				break;
 			case 'aggregate_peak':
 			case 'aggregate_max':
+			case 'aggregate_sum_peak':
 				if (cacti_sizeof($local_data_array)) {
 					$nth_cache = nth_percentile($local_data_array, $graph_start, $graph_end, $percentile, 0, true);
 				}
 
 				break;
 			case 'aggregate_current':
-				$local_data_array = array();
-				if (!empty($graph_item['data_source_name'])) {
+			case 'aggregate_current_peak':
+				if ($graph_item['data_source_name'] != '') {
+					$local_data_array = array();
+
 					foreach ($graph_items as $graph_element) {
 						if ($graph_item['data_source_name'] == $graph_element['data_source_name'] &&
 							!empty($graph_element['data_template_rrd_id']) &&
@@ -493,8 +496,14 @@ function variable_nth_percentile(&$regexp_match_array, &$graph, &$graph_item, &$
 						}
 					}
 
-					if (cacti_sizeof($local_data_array)) {
-						$nth_cache = nth_percentile($local_data_array, $graph_start, $graph_end, $percentile);
+					if ($type == 'aggregate_current') {
+						if (cacti_sizeof($local_data_array)) {
+							$nth_cache = nth_percentile($local_data_array, $graph_start, $graph_end, $percentile);
+						}
+					} else {
+						if (cacti_sizeof($local_data_array)) {
+							$nth_cache = nth_percentile($local_data_array, $graph_start, $graph_end, $percentile, 0, true);
+						}
 					}
 				}
 
@@ -517,6 +526,7 @@ function variable_nth_percentile(&$regexp_match_array, &$graph, &$graph_item, &$
 		case 'total':          // Total of the current data source name
 		case 'total_peak':
 		case 'aggregate_sum':
+		case 'aggregate_sum_peak':
 			if (!empty($nth_cache['nth_percentile_sum'])) {
 				$nth = $nth_cache['nth_percentile_sum'];
 				$nth = ($bytebit == 'bits') ? $nth * 8 : $nth;
@@ -528,6 +538,7 @@ function variable_nth_percentile(&$regexp_match_array, &$graph, &$graph_item, &$
 		case 'all_max_peak':
 		case 'aggregate_max':
 		case 'aggregate_peak':
+		case 'aggregate_current_peak':
 		case 'max':
 			if (!empty($nth_cache['nth_percentile_maximum'])) {
 				$nth = $nth_cache['nth_percentile_maximum'];

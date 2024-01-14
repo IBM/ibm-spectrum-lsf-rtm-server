@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2006-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -22,157 +22,12 @@ function thold_poller_bottom() {
 	global $config, $database_type, $database_default, $database_hostname;
 	global $database_username, $database_password, $database_port, $database_ssl;
 
-	include_once($config['base_path'] . '/plugins/thold/thold_functions.php');
-
-	if (read_config_option('thold_empty_if_speed_default') == '') {
-		set_config_option('thold_empty_if_speed_default', '10000');
-		$empty_value = read_config_option('thold_empty_if_speed_default', true);
-	}
-
-	// Force upgrade the database if there is a problem
-	if (!db_column_exists('thold_data', 'name_cache')) {
-		include_once($config['base_path'] . '/plugins/thold/includes/database.php');
-		thold_upgrade_database(true);
-	}
-
-	/* record the start time */
-	$start = microtime(true);
-
-	if (read_config_option('thold_daemon_enable') == '') {
-		/* perform all thold checks */
-		$tholds = thold_check_all_thresholds();
-		$nhosts = thold_update_host_status();
-
-		thold_cleanup_log();
-
-		if (read_config_option('remote_storage_method') == 1) {
-			$total_hosts = db_fetch_cell_prepared('SELECT count(*)
-				FROM host
-				WHERE disabled=""
-				AND poller_id = ?',
-				array($config['poller_id']));
-
-			$down_hosts = db_fetch_cell_prepared('SELECT count(*)
-				FROM host
-				WHERE status=1
-				AND disabled=""
-				AND poller_id = ?',
-				array($config['poller_id']));
-		} else {
-			$total_hosts = db_fetch_cell('SELECT count(*)
-				FROM host
-				WHERE disabled=""');
-
-			$down_hosts = db_fetch_cell('SELECT count(*)
-				FROM host
-				WHERE status=1
-				AND disabled=""');
-		}
-
-		thold_prune_old_data();
-
-		/* record the end time */
-		$end = microtime(true);
-
-		/* log statistics */
-		$thold_stats = sprintf('Time:%01.4f Tholds:%d TotalDevices:%d DownDevices:%d NewDownDevices:%d', $end - $start, $tholds, $total_hosts, $down_hosts, $nhosts);
-
-		cacti_log('THOLD STATS: ' . $thold_stats, false, 'SYSTEM');
-
-		set_config_option('stats_thold', $thold_stats);
+	$command_string = cacti_escapeshellcmd(read_config_option('path_php_binary'));
+	$file_path      = $config['base_path'] . '/plugins/thold/poller_thold.php';
+	if (file_exists($file_path)) {
+		exec_background($command_string, $file_path);
 	} else {
-		/* collect some stats */
-		$now = microtime(true);
-
-		/* get the last update from the daemon */
-		$heartbeat       = read_config_option('thold_daemon_heartbeat');
-		$poller_interval = read_config_option('poller_interval');
-		$curtime         = time();
-		$frequency       = read_config_option('thold_daemon_dead_notification');
-
-		if ($frequency > 0) {
-			if (empty($heartbeat)) {
-				$last_notification = read_config_option('thold_daemon_down_notify_time');
-
-				if ($curtime - $last_notification > $frequency) {
-					admin_email('Thold Daemon Not Started', 'WARNING: You have elected to use the Thold Daemon, but it appears not to be running.  Please correct this right away');
-					set_config_option('thold_daemon_down_notify_time', $curtime);
-				}
-			} elseif ($now - $heartbeat > 3 * $poller_interval) {
-				$last_notification = read_config_option('thold_daemon_down_notify_time');
-
-				if ($curtime - $last_notification > $frequency) {
-					admin_email('Thold Daemon Down', 'WARNING: You have elected to use the Thold Daemon, but it appears have stopped running.  Please correct this right away');
-					set_config_option('thold_daemon_down_notify_time', $curtime);
-				}
-			}
-		}
-
-		$threads = read_config_option('thold_max_concurrent_processes');
-
-		/* begin transaction for repeatable read isolation level */
-		$db_conn = db_connect_real($database_hostname, $database_username, $database_password, $database_default, $database_type, $database_port, $database_ssl);
-
-		if (read_config_option('remote_storage_method') == 1) {
-			/* host_status processed by thold server */
-			$nhosts = thold_update_host_status();
-
-			thold_cleanup_log();
-
-			$total_hosts = db_fetch_cell_prepared('SELECT count(*)
-				FROM host
-				WHERE disabled = ""
-				AND poller_id = ?',
-				array($config['poller_id']));
-
-			$down_hosts = db_fetch_cell_prepared('SELECT count(*)
-				FROM host
-				WHERE status = 1
-				AND disabled = ""
-				AND poller_id = ?',
-				array($config['poller_id']));
-
-			$thresholds = db_fetch_cell_prepared('SELECT COUNT(*)
-				FROM thold_data
-				INNER JOIN host
-				ON host.id = thold_data.host_id
-				WHERE poller_id = ?
-				AND disabled = ""',
-				array($config['poller_id']));
-		} else {
-			/* host_status processed by thold server */
-			$nhosts = thold_update_host_status();
-
-			thold_cleanup_log();
-
-			$total_hosts = db_fetch_cell('SELECT count(*)
-				FROM host
-				WHERE disabled=""');
-
-			$down_hosts = db_fetch_cell('SELECT count(*)
-				FROM host
-				WHERE status = 1
-				AND disabled = ""');
-
-			$thresholds = db_fetch_cell('SELECT COUNT(*)
-				FROM thold_data
-				INNER JOIN host
-				ON host.id = thold_data.host_id
-				WHERE disabled = ""');
-		}
-
-		thold_prune_old_data();
-
-		/* record the end time */
-		$end = microtime(true);
-
-		/* log statistics */
-		$thold_stats = sprintf('TotalTime:%0.3f TotalDevices:%u DownDevices:%u NewDownDevices:%u Threads:%u Thresholds:%u',
-			$end - $start, $total_hosts, $down_hosts, $nhosts, $threads, $thresholds);
-
-		cacti_log('THOLD POLLER STATS: ' . $thold_stats, false, 'SYSTEM');
-
-		set_config_option('stats_thold_' . $config['poller_id'], $thold_stats);
+		cacti_log('FATAL: The Threshold Processing Script \'poller_thold.php\' is missing', false, 'THOLD');
 	}
 }
 
@@ -244,8 +99,10 @@ function thold_poller_output(&$rrd_update_array) {
 				}
 
 				if (cacti_sizeof($thold_items)) {
-					/* cache required polling data. prefer bulk inserts for
-					 * performance reasons - start with chunks of 1000 items */
+					/**
+					 * cache required polling data. prefer bulk inserts for
+					 * performance reasons - start with chunks of 1000 items
+					 */
 					$sql_max_inserts = 1000;
 					$thold_items     = array_chunk($thold_items, $sql_max_inserts);
 
@@ -287,6 +144,7 @@ function thold_poller_output(&$rrd_update_array) {
 
 	if (cacti_sizeof($tholds)) {
 		$sql = array();
+
 		foreach ($tholds as $thold_data) {
 			thold_debug("Checking Threshold: Name: '" . $thold_data['thold_name'] . "', Graph: '" . $thold_data['local_graph_id'] . "'");
 
@@ -353,18 +211,19 @@ function thold_poller_output(&$rrd_update_array) {
 
 		if (cacti_sizeof($sql)) {
 			$chunks = array_chunk($sql, 400);
+
 			foreach ($chunks as $c) {
 				db_execute('INSERT INTO thold_data
 					(id, tcheck, lastread, lasttime, oldvalue)
 					VALUES ' . implode(', ', $c) . '
 					ON DUPLICATE KEY UPDATE
-						tcheck=VALUES(tcheck),
-						lastread=VALUES(lastread),
-						lasttime=VALUES(lasttime),
-						oldvalue=VALUES(oldvalue)');
+						tcheck = VALUES(tcheck),
+						lastread = VALUES(lastread),
+						lasttime = VALUES(lasttime),
+						oldvalue = VALUES(oldvalue)');
 			}
 
-			/* accomodate deleted tholds */
+			/* accommodate deleted tholds */
 			db_execute('DELETE FROM thold_data WHERE local_data_id = 0');
 
 			if (db_affected_rows() > 0) {
@@ -390,42 +249,70 @@ function thold_check_all_thresholds() {
 
 	include($config['base_path'] . '/plugins/thold/includes/arrays.php');
 	include_once($config['base_path'] . '/plugins/thold/thold_functions.php');
+	include_once($config['base_path'] . '/lib/time.php');
 
 	if (read_config_option('remote_storage_method') == 1) {
 		if ($config['poller_id'] == 1) {
 			$sql_query = "SELECT td.*, h.hostname,
-				h.description, h.notes AS dnotes, h.snmp_engine_id
+				h.description, h.site_id, h.location, h.notes AS dnotes, h.snmp_engine_id
 				FROM thold_data AS td
 				LEFT JOIN host AS h
 				ON h.id = td.host_id
 				LEFT JOIN data_template_rrd AS dtr
 				ON dtr.id = td.data_template_rrd_id
-				WHERE td.thold_enabled = 'on'
-				AND (h.poller_id = 1 OR h.poller_id IS NULL)
+				WHERE thold_per_enabled = 'on'
+				AND (
+					thold_template_id = 0
+					OR (
+						thold_template_id > 0
+						AND (
+							template_enabled = 'off' OR (template_enabled = 'on' AND thold_enabled = 'on')
+						)
+					)
+				)
+				AND h.poller_id = 1 OR h.poller_id IS NULL
 				AND td.tcheck = 1
 				AND h.status = 3";
 		} else {
 			$sql_query = "SELECT td.*, h.hostname,
-				h.description, h.notes AS dnotes, h.snmp_engine_id
+				h.description, h.site_id, h.location, h.notes AS dnotes, h.snmp_engine_id
 				FROM thold_data AS td
 				LEFT JOIN host AS h
 				ON h.id = td.host_id
 				LEFT JOIN data_template_rrd AS dtr
 				ON dtr.id = td.data_template_rrd_id
-				WHERE td.thold_enabled = 'on'
-				AND h.poller_id = " . $config['poller_id'] . "
+				WHERE h.poller_id = " . $config['poller_id'] . "
+				AND thold_per_enabled = 'on'
+				AND (
+					thold_template_id = 0
+					OR (
+						thold_template_id > 0
+						AND (
+							template_enabled = 'off' OR (template_enabled = 'on' AND thold_enabled = 'on')
+						)
+					)
+				)
 				AND td.tcheck = 1
 				AND h.status = 3";
 		}
 	} else {
 		$sql_query = "SELECT td.*, h.hostname,
-			h.description, h.notes AS dnotes, h.snmp_engine_id
+			h.description, h.site_id, h.location, h.notes AS dnotes, h.snmp_engine_id
 			FROM thold_data AS td
 			LEFT JOIN data_template_rrd AS dtr
 			ON dtr.id = td.data_template_rrd_id
 			LEFT JOIN host as h
 			ON td.host_id = h.id
-			WHERE td.thold_enabled = 'on'
+			WHERE thold_per_enabled = 'on'
+			AND (
+				thold_template_id = 0
+				OR (
+					thold_template_id > 0
+					AND (
+						template_enabled = 'off' OR (template_enabled = 'on' AND thold_enabled = 'on')
+					)
+				)
+			)
 			AND td.tcheck = 1
 			AND h.status = 3";
 	}
@@ -481,6 +368,8 @@ function thold_update_host_status() {
 
 	$ping_failure_count = read_config_option('ping_failure_count');
 
+	$queue = read_config_option('thold_notification_queue');
+
 	// Lets find hosts that were down, but are now back up
 	if (read_config_option('remote_storage_method') == 1) {
 		$failed = db_fetch_assoc_prepared('SELECT *
@@ -496,16 +385,12 @@ function thold_update_host_status() {
 		foreach ($failed as $fh) {
 			$alert_email = read_config_option('alert_email');
 
-			if (api_plugin_is_enabled('maint')) {
-				if (plugin_maint_check_cacti_host($fh['host_id'])) {
-					continue;
-				}
-			}
-
 			$host = db_fetch_row_prepared('SELECT *
 				FROM host
 				WHERE id = ?',
 				array($fh['host_id']));
+
+			$notify_list_id = 0;
 
 			if (!sizeof($host)) {
 				db_execute_prepared('DELETE
@@ -592,117 +477,144 @@ function thold_update_host_status() {
 					$subject = __('Devices Notice: <DESCRIPTION> (<HOSTNAME>) returned from DOWN state', 'thold');
 				}
 
-				$subject = str_replace('<HOSTNAME>', $host['hostname'], $subject);
-				$subject = str_replace('<DESCRIPTION>', $host['description'], $subject);
-				$subject = str_replace('<DOWN/UP>', 'UP', $subject);
-				$subject = str_replace('<NOTES>', $host['notes'], $subject);
+				$site = db_fetch_cell_prepared('SELECT name FROM sites WHERE id = ?', array($host['site_id']));
+				if ($site == '') {
+					$site = 'Unspecified';
+				}
+
+				$subject = thold_str_replace('<HOSTNAME>', $host['hostname'], $subject);
+				$subject = thold_str_replace('<DESCRIPTION>', $host['description'], $subject);
+				$subject = thold_str_replace('<SITE>', $site, $subject);
+				$subject = thold_str_replace('<LOCATION>', $host['location'], $subject);
+				$subject = thold_str_replace('<DOWN/UP>', 'UP', $subject);
+				$subject = thold_str_replace('<NOTES>', $host['notes'], $subject);
 				$subject = strip_tags($subject);
 
 				$msg = read_config_option('thold_up_text');
 				if ($msg == '') {
-					$msg = __('<br>System <DESCRIPTION> (<HOSTNAME>) status: <DOWN/UP><br><br>Current ping response: <CUR_TIME> ms<br>Average system response : <AVG_TIME> ms<br>System availability: <AVAILABILITY><br>Total Checks Since Clear: <TOT_POLL><br>Total Failed Checks: <FAIL_POLL><br>Last Date Checked UP: <LAST_FAIL><br>Devices Previously DOWN for: <DOWNTIME><br><br>SNMP Info:<br>Name - <SNMP_HOSTNAME><br>Location - <SNMP_LOCATION><br>Uptime - <UPTIMETEXT> (<UPTIME> ms)<br>System - <SNMP_SYSTEM><br><br>NOTE: <NOTES>', 'thold');
+					$msg = __('<br>System <DESCRIPTION> (<HOSTNAME>) status: <DOWN/UP><br><br>Site: <SITE><br>Location: <LOCATION><br>Current ping response: <CUR_TIME> ms<br>Average system response : <AVG_TIME> ms<br>System availability: <AVAILABILITY><br>Total Checks Since Clear: <TOT_POLL><br>Total Failed Checks: <FAIL_POLL><br>Last Date Checked UP: <LAST_FAIL><br>Devices Previously DOWN for: <DOWNTIME><br><br>SNMP Info:<br>Name - <SNMP_HOSTNAME><br>Location - <SNMP_LOCATION><br>Uptime - <UPTIMETEXT> (<UPTIME> ms)<br>System - <SNMP_SYSTEM><br><br>NOTE: <NOTES>', 'thold');
 				}
 
-				$msg = str_replace('<SUBJECT>', $subject, $msg);
-				$msg = str_replace('<HOSTNAME>', $host['hostname'], $msg);
-				$msg = str_replace('<HOST_ID>', $host['id'], $msg);
-				$msg = str_replace('<DESCRIPTION>', $host['description'], $msg);
-				$msg = str_replace('<UPTIME>', $snmp_uptime, $msg);
-				$msg = str_replace('<UPTIMETEXT>', $uptimelong, $msg);
+				$msg = thold_str_replace('<SUBJECT>', $subject, $msg);
+				$msg = thold_str_replace('<HOSTNAME>', $host['hostname'], $msg);
+				$msg = thold_str_replace('<HOST_ID>', $host['id'], $msg);
+				$msg = thold_str_replace('<DESCRIPTION>', $host['description'], $msg);
+				$msg = thold_str_replace('<SITE>', $site, $msg);
+				$msg = thold_str_replace('<LOCATION>', $host['location'], $msg);
+				$msg = thold_str_replace('<UPTIME>', $snmp_uptime, $msg);
+				$msg = thold_str_replace('<UPTIMETEXT>', $uptimelong, $msg);
 
-				$msg = str_replace('<TIME>', time(), $msg);
-				$msg = str_replace('<DATE>', date(CACTI_DATE_TIME_FORMAT), $msg);
-				$msg = str_replace('<DATE_RFC822>', date(DATE_RFC822), $msg);
+				$msg = thold_str_replace('<TIME>', time(), $msg);
+				$msg = thold_str_replace('<DATE>', date(CACTI_DATE_TIME_FORMAT), $msg);
+				$msg = thold_str_replace('<DATE_RFC822>', date(DATE_RFC822), $msg);
 
-				$msg = str_replace('<DOWNTIME>', $downtimemsg, $msg);
-				$msg = str_replace('<MESSAGE>', '', $msg);
-				$msg = str_replace('<DOWN/UP>', 'UP', $msg);
+				$msg = thold_str_replace('<DOWNTIME>', $downtimemsg, $msg);
+				$msg = thold_str_replace('<MESSAGE>', '', $msg);
+				$msg = thold_str_replace('<DOWN/UP>', 'UP', $msg);
 
-				$msg = str_replace('<SNMP_HOSTNAME>', $snmp_hostname, $msg);
-				$msg = str_replace('<SNMP_LOCATION>', $snmp_location, $msg);
-				$msg = str_replace('<SNMP_CONTACT>', $snmp_contact, $msg);
-				$msg = str_replace('<SNMP_SYSTEM>', html_split_string($snmp_system), $msg);
-				$msg = str_replace('<LAST_FAIL>', $host['status_fail_date'], $msg);
-				$msg = str_replace('<AVAILABILITY>', number_format_i18n(($host['availability']), 2) . ' %', $msg);
-				$msg = str_replace('<TOT_POLL>', number_format_i18n($host['total_polls']), $msg);
-				$msg = str_replace('<FAIL_POLL>', number_format_i18n($host['failed_polls']), $msg);
-				$msg = str_replace('<CUR_TIME>', number_format_i18n(($host['cur_time']), 2), $msg);
-				$msg = str_replace('<AVG_TIME>', number_format_i18n(($host['avg_time']), 2), $msg);
-				$msg = str_replace('<NOTES>', $host['notes'], $msg);
-				$msg = str_replace("\n", '<br>', $msg);
+				$msg = thold_str_replace('<SNMP_HOSTNAME>', $snmp_hostname, $msg);
+				$msg = thold_str_replace('<SNMP_LOCATION>', $snmp_location, $msg);
+				$msg = thold_str_replace('<SNMP_CONTACT>', $snmp_contact, $msg);
+				$msg = thold_str_replace('<SNMP_SYSTEM>', html_split_string($snmp_system), $msg);
+				$msg = thold_str_replace('<LAST_FAIL>', $host['status_fail_date'], $msg);
+				$msg = thold_str_replace('<AVAILABILITY>', number_format_i18n(($host['availability']), 2) . ' %', $msg);
+				$msg = thold_str_replace('<TOT_POLL>', number_format_i18n($host['total_polls']), $msg);
+				$msg = thold_str_replace('<FAIL_POLL>', number_format_i18n($host['failed_polls']), $msg);
+				$msg = thold_str_replace('<CUR_TIME>', number_format_i18n(($host['cur_time']), 2), $msg);
+				$msg = thold_str_replace('<AVG_TIME>', number_format_i18n(($host['avg_time']), 2), $msg);
+				$msg = thold_str_replace('<NOTES>', $host['notes'], $msg);
+				$msg = thold_str_replace("\n", '<br>', $msg);
 
-				switch ($host['thold_send_email']) {
-					case '0': // Disabled
-						$alert_email = '';
-						break;
-					case '1': // Global List
-						break;
-					case '2': // Devices List Only
-						$alert_email = get_thold_notification_emails($host['thold_host_email']);
-						break;
-					case '3': // Global and Devices List
-						$alert_email = $alert_email . ',' . get_thold_notification_emails($host['thold_host_email']);
-						break;
-				}
+				if (api_plugin_is_enabled('maint') && plugin_maint_check_cacti_host($host['id'])) {
+					cacti_log('WARNING: Device[' . $host['id'] . '] Hostname[' . $host['hostname'] . '] is recovering! Only logging, maint device', true, 'THOLD');
+				} else {
+					switch ($host['thold_send_email']) {
+						case '0': // Disabled
+							$alert_email = '';
+							break;
+						case '1': // Global List
+							break;
+						case '2': // Devices List Only
+							$alert_email    = get_thold_notification_emails($host['thold_host_email']);
+							$notify_list_id = $host['thold_host_email'];
+							break;
+						case '3': // Global and Devices List
+							$alert_email    = $alert_email . ',' . get_thold_notification_emails($host['thold_host_email']);
+							$notify_list_id = $host['thold_host_email'];
+							break;
+					}
 
-				api_plugin_hook_function(
-					'thold_device_recovering',
-					array(
-						'device'  => $host,
-						'subject' => $subject,
-						'message' => $msg,
-						'email' => $alert_email
-					)
-				);
+					api_plugin_hook_function(
+						'thold_device_recovering',
+						array(
+							'device'  => $host,
+							'subject' => $subject,
+							'message' => $msg,
+							'email'   => $alert_email
+						)
+					);
 
-				cacti_log('WARNING: Device[' . $host['id'] . '] Hostname[' . $host['hostname'] . '] is recovering!', true, 'THOLD');
+					cacti_log('WARNING: Device[' . $host['id'] . '] Hostname[' . $host['hostname'] . '] is recovering!', true, 'THOLD');
 
-				if ($alert_email == '' && $host['thold_send_email'] > 0) {
-					cacti_log('WARNING: Device[' . $host['id'] . '] Hostname[' . $host['hostname'] . '] can not send a Device recovering email for \'' . $host['description'] . '\' since the \'Alert Email\' setting is not set for Device!', true, 'THOLD');
-				} elseif ($host['thold_send_email'] == '0') {
-					cacti_log('NOTE: Device[' . $host['id'] . '] Hostname[' . $host['hostname'] . '] did not send a Device recovering email for \'' . $host['description'] . '\', disabled per Device setting!', true, 'THOLD');
-				} elseif ($alert_email != '') {
-					thold_mail($alert_email, '', $subject, $msg, '');
-				}
+					if ($alert_email == '' && $host['thold_send_email'] > 0) {
+						cacti_log('WARNING: Device[' . $host['id'] . '] Hostname[' . $host['hostname'] . '] can not send a Device recovering email for \'' . $host['description'] . '\' since the \'Alert Email\' setting is not set for Device!', true, 'THOLD');
+					} elseif ($host['thold_send_email'] == '0') {
+						cacti_log('NOTE: Device[' . $host['id'] . '] Hostname[' . $host['hostname'] . '] did not send a Device recovering email for \'' . $host['description'] . '\', disabled per Device setting!', true, 'THOLD');
+					} elseif ($alert_email != '') {
+						thold_mail($alert_email, '', '', $subject, $msg, '', '', $notify_list_id, $host, '', 7, 'thold_uhost_mail');
+					}
 
-				$command = read_config_option('thold_device_command');
+					$command = read_config_option('thold_device_command');
 
-				if ($command != '') {
-					putenv('THOLD_SUBJECT='      . $subject);
-					putenv('THOLD_HOSTNAME='      . $host['hostname']);
-					putenv('THOLD_HOST_ID='       . $host['id']);
-					putenv('THOLD_DESCRIPTION='   . $host['description']);
-					putenv('THOLD_TIME='          . time());
-					putenv('THOLD_DATE='          . date(CACTI_DATE_TIME_FORMAT));
-					putenv('THOLD_DATE_RFC822='   . date(DATE_RFC822));
+					if ($command != '') {
+						thold_putenv('THOLD_SUBJECT='      . $subject, true);
+						thold_putenv('THOLD_HOSTNAME='      . $host['hostname']);
+						thold_putenv('THOLD_HOST_ID='       . $host['id']);
+						thold_putenv('THOLD_DESCRIPTION='   . $host['description']);
+						thold_putenv('THOLD_SITE='          . $site);
+						thold_putenv('THOLD_LOCATION='      . $host['location']);
+						thold_putenv('THOLD_TIME='          . time());
+						thold_putenv('THOLD_DATE='          . date(CACTI_DATE_TIME_FORMAT));
+						thold_putenv('THOLD_DATE_RFC822='   . date(DATE_RFC822));
 
-					putenv('THOLD_UPTIME='        . $snmp_uptime);
-					putenv('THOLD_UPTIMETEXT='    . $uptimelong);
-					putenv('THOLD_DOWNTIME='      . $downtimemsg);
-					putenv('THOLD_MESSAGE='       . '');
-					putenv('THOLD_DOWNUP='        . 'UP');
+						thold_putenv('THOLD_UPTIME='        . $snmp_uptime);
+						thold_putenv('THOLD_UPTIMETEXT='    . $uptimelong);
+						thold_putenv('THOLD_DOWNTIME='      . $downtimemsg);
+						thold_putenv('THOLD_MESSAGE='       . '');
+						thold_putenv('THOLD_DOWNUP='        . 'UP');
 
-					putenv('THOLD_SNMP_HOSTNAME=' . $snmp_hostname);
-					putenv('THOLD_SNMP_LOCATION=' . $snmp_location);
-					putenv('THOLD_SNMP_CONTACT='  . $snmp_contact);
-					putenv('THOLD_SNMP_SYSTEM='   . $snmp_system);
-					putenv('THOLD_LAST_FAIL='     . $host['status_fail_date']);
-					putenv('THOLD_AVAILABILITY='  . $host['availability']);
-					putenv('THOLD_TOT_POLL='      . $host['total_polls']);
-					putenv('THOLD_FAIL_POLL='     . $host['failed_polls']);
-					putenv('THOLD_CUR_TIME='      . $host['cur_time']);
-					putenv('THOLD_AVG_TIME='      . $host['avg_time']);
-					putenv('THOLD_NOTES='         . $host['notes']);
+						thold_putenv('THOLD_SNMP_HOSTNAME=' . $snmp_hostname);
+						thold_putenv('THOLD_SNMP_LOCATION=' . $snmp_location);
+						thold_putenv('THOLD_SNMP_CONTACT='  . $snmp_contact);
+						thold_putenv('THOLD_SNMP_SYSTEM='   . $snmp_system);
+						thold_putenv('THOLD_LAST_FAIL='     . $host['status_fail_date']);
+						thold_putenv('THOLD_AVAILABILITY='  . $host['availability']);
+						thold_putenv('THOLD_TOT_POLL='      . $host['total_polls']);
+						thold_putenv('THOLD_FAIL_POLL='     . $host['failed_polls']);
+						thold_putenv('THOLD_CUR_TIME='      . $host['cur_time']);
+						thold_putenv('THOLD_AVG_TIME='      . $host['avg_time']);
+						$environment = thold_putenv('THOLD_NOTES=' . $host['notes']);
 
-					if (file_exists($command) && is_executable($command)) {
-						$output = array();
-						$return = 0;
+						if (file_exists($command) && is_executable($command)) {
+							$output = array();
+							$return = 0;
 
-						exec($command, $output, $return);
+							if ($queue == '') {
+								exec($command, $output, $return);
 
-						cacti_log('Device Up Command for Device[' . $host['id'] . '] Command[' . $command . '] ExitStatus[' . $return . '] Output[' . implode(' ', $output) . ']', false, 'THOLD');
-					} else {
-						cacti_log('WARNING: Device Up Command for Device[' . $host['id'] . '] Command[' . $command . '] Is either Not found or Not executable!', false, 'THOLD');
+								cacti_log('Device Up Command for Device[' . $host['id'] . '] Command[' . $command . '] ExitStatus[' . $return . '] Output[' . implode(' ', $output) . ']', false, 'THOLD');
+							} else {
+								$data = array(
+									'command'     => $command,
+									'data'        => $host,
+									'environment' => $environment
+								);
+
+								thold_notification_add('thold_uhost_cmd', $data, 'id', $notify_list_id, $host);
+							}
+						} else {
+							cacti_log('WARNING: Device Up Command for Device[' . $host['id'] . '] Command[' . $command . '] Is either Not found or Not executable!', false, 'THOLD');
+						}
 					}
 				}
 			}
@@ -713,7 +625,8 @@ function thold_update_host_status() {
 	if (read_config_option('remote_storage_method') == 1) {
 		$hosts = db_fetch_assoc_prepared('SELECT *
 			FROM host
-			WHERE disabled=""
+			WHERE disabled = ""
+			AND availability_method > 0
 			AND status = ?
 			AND status_event_count = IF(thold_failure_count > 0, thold_failure_count, ?)
 			AND poller_id = ?',
@@ -721,137 +634,161 @@ function thold_update_host_status() {
 	} else {
 		$hosts = db_fetch_assoc_prepared('SELECT *
 			FROM host
-			WHERE disabled=""
+			WHERE disabled = ""
+			AND availability_method > 0
 			AND status = ?
 			AND status_event_count = IF(thold_failure_count > 0, thold_failure_count, ?)',
 			array(HOST_DOWN, $ping_failure_count));
 	}
 
-	$total_hosts = sizeof($hosts);
+	$total_hosts = cacti_sizeof($hosts);
 	if ($total_hosts) {
 		foreach ($hosts as $host) {
+			$notify_list_id = 0;
+
 			$alert_email = read_config_option('alert_email');
 
-			if (api_plugin_is_enabled('maint')) {
-				if (plugin_maint_check_cacti_host($host['id'])) {
-					continue;
+			if (api_plugin_is_enabled('maint') && plugin_maint_check_cacti_host($host['id']) ) {
+				cacti_log('WARNING: Device[' . $host['id'] . '] Hostname[' . $host['hostname'] . '] is DOWN. Only logging, maint device', true, 'THOLD');
+			} else {
+				$downtimemsg = get_timeinstate($host);
+
+				$subject = read_config_option('thold_down_subject');
+				if ($subject == '') {
+					$subject = __('Devices Error: <DESCRIPTION> (<HOSTNAME>) is DOWN', 'thold');
 				}
-			}
 
-			$downtimemsg = get_timeinstate($host);
+				$site = db_fetch_cell_prepared('SELECT name FROM sites WHERE id = ?', array($host['site_id']));
+				if ($site == '') {
+					$site = 'Unspecified';
+				}
 
-			$subject = read_config_option('thold_down_subject');
-			if ($subject == '') {
-				$subject = __('Devices Error: <DESCRIPTION> (<HOSTNAME>) is DOWN', 'thold');
-			}
+				$subject = thold_str_replace('<HOSTNAME>', $host['hostname'], $subject);
+				$subject = thold_str_replace('<DESCRIPTION>', $host['description'], $subject);
+				$subject = thold_str_replace('<SITE>', $site, $subject);
+				$subject = thold_str_replace('<LOCATION>', $host['location'], $subject);
+				$subject = thold_str_replace('<DOWN/UP>', __('DOWN', 'thold'), $subject);
+				$subject = thold_str_replace('<DOWNTIME>', $downtimemsg, $subject);
+				$subject = thold_str_replace('<NOTES>', $host['notes'], $subject);
+				$subject = strip_tags($subject);
 
-			$subject = str_replace('<HOSTNAME>', $host['hostname'], $subject);
-			$subject = str_replace('<DESCRIPTION>', $host['description'], $subject);
-			$subject = str_replace('<DOWN/UP>', __('DOWN', 'thold'), $subject);
-			$subject = str_replace('<DOWNTIME>', $downtimemsg, $subject);
-			$subject = str_replace('<NOTES>', $host['notes'], $subject);
-			$subject = strip_tags($subject);
+				$msg = read_config_option('thold_down_text');
+				if ($msg == '') {
+					$msg = __('System Error : <DESCRIPTION> (<HOSTNAME>) is <DOWN/UP><br>Site: <SITE><br>Location: <LOCATION><br>Reason: <MESSAGE><br><br>Average system response : <AVG_TIME> ms<br>System availability: <AVAILABILITY><br>Total Checks Since Clear: <TOT_POLL><br>Total Failed Checks: <FAIL_POLL><br>Last Date Checked DOWN : <LAST_FAIL><br>Devices Previously UP for: <DOWNTIME><br>NOTE: <NOTES>', 'thold');
+				}
 
-			$msg = read_config_option('thold_down_text');
-			if ($msg == '') {
-				$msg = __('System Error : <DESCRIPTION> (<HOSTNAME>) is <DOWN/UP><br>Reason: <MESSAGE><br><br>Average system response : <AVG_TIME> ms<br>System availability: <AVAILABILITY><br>Total Checks Since Clear: <TOT_POLL><br>Total Failed Checks: <FAIL_POLL><br>Last Date Checked DOWN : <LAST_FAIL><br>Devices Previously UP for: <DOWNTIME><br>NOTE: <NOTES>', 'thold');
-			}
+				$msg = thold_str_replace('<SUBJECT>', $subject, $msg);
+				$msg = thold_str_replace('<HOSTNAME>', $host['hostname'], $msg);
+				$msg = thold_str_replace('<HOST_ID>', $host['id'], $msg);
+				$msg = thold_str_replace('<DESCRIPTION>', $host['description'], $msg);
+				$msg = thold_str_replace('<SITE>', $site, $msg);
+				$msg = thold_str_replace('<LOCATION>', $host['location'], $msg);
+				$msg = thold_str_replace('<UPTIME>', '', $msg);
+				$msg = thold_str_replace('<DOWNTIME>', $downtimemsg, $msg);
+				$msg = thold_str_replace('<MESSAGE>', $host['status_last_error'], $msg);
+				$msg = thold_str_replace('<DOWN/UP>', __('DOWN', 'thold'), $msg);
+				$msg = thold_str_replace('<SNMP_HOSTNAME>', '', $msg);
+				$msg = thold_str_replace('<SNMP_LOCATION>', '', $msg);
+				$msg = thold_str_replace('<SNMP_CONTACT>', '', $msg);
+				$msg = thold_str_replace('<SNMP_SYSTEM>', '', $msg);
+				$msg = thold_str_replace('<LAST_FAIL>', $host['status_fail_date'], $msg);
+				$msg = thold_str_replace('<AVAILABILITY>', round(($host['availability']), 2) . ' %', $msg);
+				$msg = thold_str_replace('<CUR_TIME>', round(($host['cur_time']), 2), $msg);
+				$msg = thold_str_replace('<TOT_POLL>', $host['total_polls'], $msg);
+				$msg = thold_str_replace('<FAIL_POLL>', $host['failed_polls'], $msg);
+				$msg = thold_str_replace('<AVG_TIME>', round(($host['avg_time']), 2), $msg);
+				$msg = thold_str_replace('<NOTES>', $host['notes'], $msg);
+				$msg = thold_str_replace('<TIME>', time(), $msg);
+				$msg = thold_str_replace('<DATE>', date(CACTI_DATE_TIME_FORMAT), $msg);
+				$msg = thold_str_replace('<DATE_RFC822>', date(DATE_RFC822), $msg);
+				$msg = thold_str_replace("\n", '<br>', $msg);
 
-			$msg = str_replace('<SUBJECT>', $subject, $msg);
-			$msg = str_replace('<HOSTNAME>', $host['hostname'], $msg);
-			$msg = str_replace('<HOST_ID>', $host['id'], $msg);
-			$msg = str_replace('<DESCRIPTION>', $host['description'], $msg);
-			$msg = str_replace('<UPTIME>', '', $msg);
-			$msg = str_replace('<DOWNTIME>', $downtimemsg, $msg);
-			$msg = str_replace('<MESSAGE>', $host['status_last_error'], $msg);
-			$msg = str_replace('<DOWN/UP>', __('DOWN', 'thold'), $msg);
-			$msg = str_replace('<SNMP_HOSTNAME>', '', $msg);
-			$msg = str_replace('<SNMP_LOCATION>', '', $msg);
-			$msg = str_replace('<SNMP_CONTACT>', '', $msg);
-			$msg = str_replace('<SNMP_SYSTEM>', '', $msg);
-			$msg = str_replace('<LAST_FAIL>', $host['status_fail_date'], $msg);
-			$msg = str_replace('<AVAILABILITY>', round(($host['availability']), 2) . ' %', $msg);
-			$msg = str_replace('<CUR_TIME>', round(($host['cur_time']), 2), $msg);
-			$msg = str_replace('<TOT_POLL>', $host['total_polls'], $msg);
-			$msg = str_replace('<FAIL_POLL>', $host['failed_polls'], $msg);
-			$msg = str_replace('<AVG_TIME>', round(($host['avg_time']), 2), $msg);
-			$msg = str_replace('<NOTES>', $host['notes'], $msg);
-			$msg = str_replace('<TIME>', time(), $msg);
-			$msg = str_replace('<DATE>', date(CACTI_DATE_TIME_FORMAT), $msg);
-			$msg = str_replace('<DATE_RFC822>', date(DATE_RFC822), $msg);
-			$msg = str_replace("\n", '<br>', $msg);
+				switch ($host['thold_send_email']) {
+					case '0': // Disabled
+						$alert_email = '';
+						break;
+					case '1': // Global List
+						break;
+					case '2': // Devices List Only
+						$alert_email    = get_thold_notification_emails($host['thold_host_email']);
+						$notify_list_id = $host['thold_host_email'];
+						break;
+					case '3': // Global and Devices List
+						$alert_email    = $alert_email . ',' . get_thold_notification_emails($host['thold_host_email']);
+						$notify_list_id = $host['thold_host_email'];
+						break;
+				}
 
-			switch ($host['thold_send_email']) {
-				case '0': // Disabled
-					$alert_email = '';
-					break;
-				case '1': // Global List
-					break;
-				case '2': // Devices List Only
-					$alert_email = get_thold_notification_emails($host['thold_host_email']);
-					break;
-				case '3': // Global and Devices List
-					$alert_email = $alert_email . ',' . get_thold_notification_emails($host['thold_host_email']);
-					break;
-			}
+				api_plugin_hook_function(
+					'thold_device_down',
+					array(
+						'device'  => $host,
+						'subject' => $subject,
+						'message' => $msg,
+						'email'   => $alert_email
+					)
+				);
 
-			api_plugin_hook_function(
-				'thold_device_down',
-				array(
-					'device'  => $host,
-					'subject' => $subject,
-					'message' => $msg,
-					'email' => $alert_email
-				)
-			);
+				cacti_log('WARNING: Device[' . $host['id'] . '] Hostname[' . $host['hostname'] . '] is down!', true, 'THOLD');
 
-			cacti_log('WARNING: Device[' . $host['id'] . '] Hostname[' . $host['hostname'] . '] is down!', true, 'THOLD');
+				if ($alert_email == '' && $host['thold_send_email'] > 0) {
+					cacti_log('WARNING: Device[' . $host['id'] . '] Hostname[' . $host['hostname'] . '] can not send a Device down email for \'' . $host['description'] . '\' since the \'Alert Email\' setting is not set for Device!', true, 'THOLD');
+				} elseif ($host['thold_send_email'] == '0') {
+					cacti_log('NOTE: Device[' . $host['id'] . '] Hostname[' . $host['hostname'] . '] did not send a Device down email for \'' . $host['description'] . '\', disabled per Device setting!', true, 'THOLD');
+				} elseif ($alert_email != '') {
+					thold_mail($alert_email, '', '', $subject, $msg, '', '', $notify_list_id, $host, '', 7, 'thold_dhost_mail');
+				}
 
-			if ($alert_email == '' && $host['thold_send_email'] > 0) {
-				cacti_log('WARNING: Device[' . $host['id'] . '] Hostname[' . $host['hostname'] . '] can not send a Device down email for \'' . $host['description'] . '\' since the \'Alert Email\' setting is not set for Device!', true, 'THOLD');
-			} elseif ($host['thold_send_email'] == '0') {
-				cacti_log('NOTE: Device[' . $host['id'] . '] Hostname[' . $host['hostname'] . '] did not send a Device down email for \'' . $host['description'] . '\', disabled per Device setting!', true, 'THOLD');
-			} elseif ($alert_email != '') {
-				thold_mail($alert_email, '', $subject, $msg, '');
-			}
+				$command = read_config_option('thold_device_command');
 
-			$command = read_config_option('thold_device_command');
+				if ($command != '') {
+					thold_putenv('THOLD_SUBJECT='      . $subject);
+					thold_putenv('THOLD_HOSTNAME='      . $host['hostname']);
+					thold_putenv('THOLD_HOST_ID='       . $host['id']);
+					thold_putenv('THOLD_DESCRIPTION='   . $host['description']);
+					thold_putenv('THOLD_SITE='          . $site);
+					thold_putenv('THOLD_LOCATION='      . $host['location']);
+					thold_putenv('THOLD_TIME='          . time());
+					thold_putenv('THOLD_DATE='          . date(CACTI_DATE_TIME_FORMAT));
+					thold_putenv('THOLD_DATE_RFC822='   . date(DATE_RFC822));
 
-			if ($command != '') {
-				putenv('THOLD_SUBJECT='      . $subject);
-				putenv('THOLD_HOSTNAME='      . $host['hostname']);
-				putenv('THOLD_HOST_ID='       . $host['id']);
-				putenv('THOLD_DESCRIPTION='   . $host['description']);
-				putenv('THOLD_TIME='          . time());
-				putenv('THOLD_DATE='          . date(CACTI_DATE_TIME_FORMAT));
-				putenv('THOLD_DATE_RFC822='   . date(DATE_RFC822));
+					thold_putenv('THOLD_UPTIME=');
+					thold_putenv('THOLD_DOWNTIME='      . $downtimemsg);
+					thold_putenv('THOLD_MESSAGE='       . $host['status_last_error']);
+					thold_putenv('THOLD_DOWNUP='        . 'DOWN');
 
-				putenv('THOLD_UPTIME=');
-				putenv('THOLD_DOWNTIME='      . $downtimemsg);
-				putenv('THOLD_MESSAGE='       . $host['status_last_error']);
-				putenv('THOLD_DOWNUP='        . 'DOWN');
+					thold_putenv('THOLD_SNMP_HOSTNAME=' . $host['snmp_sysName']);
+					thold_putenv('THOLD_SNMP_LOCATION=' . $host['snmp_sysLocation']);
+					thold_putenv('THOLD_SNMP_CONTACT='  . $host['snmp_sysContact']);
+					thold_putenv('THOLD_SNMP_SYSTEM=');
+					thold_putenv('THOLD_LAST_FAIL='     . $host['status_fail_date']);
+					thold_putenv('THOLD_AVAILABILITY='  . $host['availability']);
+					thold_putenv('THOLD_TOT_POLL='      . $host['total_polls']);
+					thold_putenv('THOLD_FAIL_POLL='     . $host['failed_polls']);
+					thold_putenv('THOLD_CUR_TIME='      . $host['cur_time']);
+					thold_putenv('THOLD_AVG_TIME='      . $host['avg_time']);
+					$environment = thold_putenv('THOLD_NOTES=' . $host['notes']);
 
-				putenv('THOLD_SNMP_HOSTNAME=' . $host['snmp_sysName']);
-				putenv('THOLD_SNMP_LOCATION=' . $host['snmp_sysLocation']);
-				putenv('THOLD_SNMP_CONTACT='  . $host['snmp_sysContact']);
-				putenv('THOLD_SNMP_SYSTEM=');
-				putenv('THOLD_LAST_FAIL='     . $host['status_fail_date']);
-				putenv('THOLD_AVAILABILITY='  . $host['availability']);
-				putenv('THOLD_TOT_POLL='      . $host['total_polls']);
-				putenv('THOLD_FAIL_POLL='     . $host['failed_polls']);
-				putenv('THOLD_CUR_TIME='      . $host['cur_time']);
-				putenv('THOLD_AVG_TIME='      . $host['avg_time']);
-				putenv('THOLD_NOTES='         . $host['notes']);
+					if (file_exists($command) && is_executable($command)) {
+						$output = array();
+						$return = 0;
 
-				if (file_exists($command) && is_executable($command)) {
-					$output = array();
-					$return = 0;
+						if ($queue == '') {
+							exec($command, $output, $return);
 
-					exec($command, $output, $return);
+							cacti_log('Device Down Command for Device[' . $host['id'] . '] Command[' . $command . '] ExitStatus[' . $return . '] Output[' . implode(' ', $output) . ']', false, 'THOLD');
+						} else {
+							$data = array(
+								'command'     => $command,
+								'data'        => $host,
+								'environment' => $environment
+							);
 
-					cacti_log('Device Down Command for Device[' . $host['id'] . '] Command[' . $command . '] ExitStatus[' . $return . '] Output[' . implode(' ', $output) . ']', false, 'THOLD');
-				} else {
-					cacti_log('WARNING: Device Down Command for Device[' . $host['id'] . '] Command[' . $command . '] Is either Not found or Not executable!', false, 'THOLD');
+							thold_notification_add('thold_dhost_cmd', $data, 'id', $notify_list_id, $host);
+						}
+					} else {
+						cacti_log('WARNING: Device Down Command for Device[' . $host['id'] . '] Command[' . $command . '] Is either Not found or Not executable!', false, 'THOLD');
+					}
 				}
 			}
 		}
@@ -864,7 +801,7 @@ function thold_update_host_status() {
 			WHERE poller_id = ?',
 			array($config['poller_id']));
 
-		$hosts = db_fetch_assoc_prepared('SELECT id, status
+		$hosts = db_fetch_assoc_prepared('SELECT id, status, hostname
 			FROM host
 			WHERE disabled = ""
 			AND poller_id = ?
@@ -876,7 +813,7 @@ function thold_update_host_status() {
 	} else {
 		db_execute('TRUNCATE plugin_thold_host_failed');
 
-		$hosts = db_fetch_assoc_prepared('SELECT id, status
+		$hosts = db_fetch_assoc_prepared('SELECT id, status, hostname
 			FROM host
 			WHERE disabled = ""
 			AND ((status != ? AND status != ?)
@@ -892,9 +829,6 @@ function thold_update_host_status() {
 		foreach ($hosts as $host) {
 			//hosts in recovery status record only if they was in failed status
 			if (($host['status'] != HOST_RECOVERING) OR ($host['status'] == HOST_RECOVERING AND (array_search($host['id'], array_column($failed, 'host_id')) !== false))) {
-				if (api_plugin_is_enabled('maint') && plugin_maint_check_cacti_host($host['id'])) {
-					continue;
-				}
 
 				$failed_ids .= ($failed_ids != '' ? '), (':'(') . $host['id'];
 			}

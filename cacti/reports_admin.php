@@ -25,6 +25,11 @@ include_once($config['library_path'] . '/html_reports.php');
 include_once($config['library_path'] . '/timespan_settings.php');
 
 get_filter_request_var('id');
+get_filter_request_var('tree_id');
+get_filter_request_var('site_id');
+get_filter_request_var('host_id');
+get_filter_request_var('host_template_id');
+get_filter_request_var('graph_template_id');
 get_filter_request_var('tab', FILTER_CALLBACK, array('options' => 'sanitize_search_string'));
 
 /* set a longer execution time for large reports */
@@ -57,7 +62,7 @@ switch (get_request_var('action')) {
 
 		break;
 	case 'ajax_get_branches':
-		print reports_get_branch_select(get_request_var('tree_id'));
+		print reports_get_branch_select(get_filter_request_var('tree_id'));
 
 		break;
 	case 'ajax_hosts':

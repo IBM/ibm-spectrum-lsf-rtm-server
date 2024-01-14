@@ -90,7 +90,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li><p>Run Command Prompt as administrator and backup database.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb1-1" title="1"><span class="ex">shell</span><span class="op">&gt;</span> cd Documents</a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="ex">shell</span><span class="op">&gt;</span> <span class="st">&quot;\Program Files\MySQL\MySQL Server 5.7\bin\mysqldump.exe&quot;</span> -uroot -p -l --add-drop-table cacti <span class="op">&gt;</span> cacti-version-YYYYMMDD.sql</a></code></pre></div></li>
+<a class="sourceLine" id="cb1-2" title="2"><span class="ex">shell</span><span class="op">&gt;</span> <span class="st">&quot;\Program Files\MySQL\MySQL Server 5.7\bin\mysqldump.exe&quot;</span> -uroot -p -l</a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="ex">--add-drop-table</span> cacti <span class="op">&gt;</span> cacti-version-YYYYMMDD.sql</a></code></pre></div></li>
 <li><p>Backup the old Cacti directory.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb2-1" title="1"><span class="ex">shell</span><span class="op">&gt;</span> cd \inetpub\wwwroot</a>
 <a class="sourceLine" id="cb2-2" title="2"><span class="ex">shell</span><span class="op">&gt;</span> robocopy cacti cacti-version-YYYYMMDD /s /b /copyall</a></code></pre></div></li>
@@ -132,6 +133,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 </ol>
 <hr />
-<p><copy>Copyright (c) 2004-2023 The Cacti Group</copy></p>
+<p>Copyright (c) 2004-2023 The Cacti Group</p>
 </body>
 </html>

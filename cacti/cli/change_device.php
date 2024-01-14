@@ -50,7 +50,7 @@ $quietMode            = false;
 $overrides = array();
 foreach($parms as $parameter) {
 	if (strpos($parameter, '=')) {
-		list($arg, $value) = explode('=', $parameter);
+		list($arg, $value) = explode('=', $parameter, 2);
 	} else {
 		$arg = $parameter;
 		$value = '';
@@ -82,7 +82,7 @@ foreach($parms as $parameter) {
 			break;
 
 		case '--community':
-			$overrides['community'] = trim($value);
+			$overrides['snmp_community'] = trim($value);
 			break;
 
 		case '--version':

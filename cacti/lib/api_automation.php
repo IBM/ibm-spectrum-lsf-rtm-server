@@ -2314,6 +2314,7 @@ function automation_graph_automation_eligible($graph_template_id) {
 				AND dtd.local_data_id = 0
 				AND dif.input_output = "in"
 				AND dif.type_code = ""
+				AND dif.allow_nulls = ""
 				AND did.t_value = "on"
 				AND did.value = ""',
 				array($dtd['id']));
@@ -3701,7 +3702,7 @@ function api_automation_is_time_to_start($network_id) {
 	case '5':
 		$next = calculateNextStart($net, $now);
 
-		db_execute_prepared('UPDATE analytics_report_templates
+		db_execute_prepared('UPDATE automation_networks
 			SET next_start = ?
 			WHERE id = ?',
 			array(date('Y-m-d H:i', $next), $network_id));

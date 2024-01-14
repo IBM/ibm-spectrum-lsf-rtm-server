@@ -25,7 +25,6 @@
    include/config.php for user configurable settings.
 
 */
-
 /* load cacti version from file */
 $cacti_version_file = dirname(__FILE__) . '/cacti_version';
 
@@ -92,7 +91,7 @@ if (isset($config['cacti_version'])) {
 }
 
 /* Should we allow proxy ip headers? */
-$config['proxy_headers'] = (isset($proxy_headers) ? $proxy_headers : null);
+$config['proxy_headers'] = (isset($proxy_headers) ? $proxy_headers : []);
 
 /* Set the poller_id */
 if (isset($poller_id)) {
@@ -233,6 +232,7 @@ if ($config['cacti_server_os'] == 'win32') {
 	$config['base_path']    = preg_replace("/(.*)[\/]include/", "\\1", dirname(__FILE__));
 	$config['library_path'] = preg_replace("/(.*[\/])include/", "\\1lib", dirname(__FILE__));
 }
+
 $config['include_path'] = dirname(__FILE__);
 $config['rra_path'] = $config['base_path'] . '/rra';
 
@@ -251,6 +251,22 @@ if (!isset($resource_path)) {
 
 if (isset($input_whitelist)) {
 	$config['input_whitelist'] = $input_whitelist;
+}
+
+if (isset($i18n_handler)) {
+	$config['i18n_language_handler'] = $i18n_handler;
+}
+
+if (isset($i18n_force_language)) {
+	$config['i18n_force_language'] = $i18n_force_language;
+}
+
+if (isset($i18n_log)) {
+	$config['i18n_log'] = $i18n_log;
+}
+
+if (isset($i18n_text_log)) {
+	$config['i18n_text_log'] = $i18n_text_log;
 }
 
 /* include base modules */
@@ -609,4 +625,3 @@ api_plugin_hook('config_insert');
 
 /* set config cacti_version for plugins */
 $config['cacti_version'] = CACTI_VERSION;
-

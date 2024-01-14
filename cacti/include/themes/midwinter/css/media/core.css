@@ -943,7 +943,7 @@ ul#breadcrumbs {
 }
 
 .cactiLogo {
-    background: transparent url('./../../images/cacti_logo.svg') no-repeat 30px;
+    background: transparent;
     display:none;
     cursor: pointer;
     padding-bottom: 140px;
@@ -970,7 +970,7 @@ ul#breadcrumbs {
 .cactiLoginLogo, .cactiLogoutLogo {
     position: relative;
     float: left;
-    background: transparent;
+    background: var(--text-color-highlight-a);
     border-radius: 50%;
     border: 1px solid var(--box-shadow-color);
     width: 50px;

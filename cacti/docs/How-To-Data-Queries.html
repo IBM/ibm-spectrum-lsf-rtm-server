@@ -207,11 +207,11 @@ UDP-MIB::udpOutDatagrams.0 = Counter32: 64471
 + Inserting index data for field &#39;Index&#39; [value=&#39;0&#39;]
 </code></pre>
 <h2 id="a-note-on-textual-snmp-mibs-and-spine">A note on Textual SNMP MIBS and SPINE</h2>
-<p>Please be aware the SPINE does not parse out textual Mibs. This means that if you were to use an OID that contained a string reference rather than numerical this will cause Graphs to fail as they will not be generated due to spine not reciving a value at each poll</p>
+<p>Please be aware the SPINE does not parse out textual Mibs. This means that if you were to use an OID that contained a string reference rather than numerical this will cause Graphs to fail as they will not be generated due to spine not receiving a value at each poll</p>
 <p>Example of a bad OID reference for spine:</p>
 <pre class="shell"><code>interfaces.mib.1.1.1.1.1
 </code></pre>
 <hr />
-<p><copy>Copyright (c) 2004-2023 The Cacti Group</copy></p>
+<p>Copyright (c) 2004-2023 The Cacti Group</p>
 </body>
 </html>

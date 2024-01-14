@@ -25,59 +25,7 @@
 
 DELIMITER //
 
-DROP FUNCTION IF EXISTS NOAUTOCREATENEEDED//
-CREATE FUNCTION NOAUTOCREATENEEDED()
-RETURNS BOOL
-READS SQL DATA
-DETERMINISTIC
-BEGIN
-
-DECLARE ret BOOL;
-DECLARE ismaria BOOL;
-
-DECLARE majv INT;
-DECLARE medv INT;
-DECLARE minv INT;
-
-DECLARE realversion VARCHAR(16);
-
-DECLARE majn INT;
-DECLARE medn INT;
-DECLARE minn INT;
-
-SET ret = TRUE;
-
-
-SELECT LOCATE('MariaDB', @@version) > 0 INTO ismaria;
-
-IF ismaria THEN
-        -- MariaDB version NO_AUTO_CREATE_USER started to be default
-        SET majn = 10;
-        SET medn = 1;
-        SET minn = 7;
-ELSE
-        -- MySQL version it started to be default (8.0.11)
-        SET majn = 8;
-        SET medn = 0;
-        SET minn = 11;
-END IF;
-
-SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(@@VERSION, '.', 3),'-',1) INTO realversion;
-SELECT CONVERT(SUBSTRING_INDEX(realversion, '.', 1), SIGNED INTEGER) INTO majv;
-SELECT CONVERT(SUBSTRING_INDEX(SUBSTRING_INDEX(realversion, '.', 2), '.', -1), SIGNED INTEGER) INTO medv;
-SELECT CONVERT(SUBSTRING_INDEX(SUBSTRING_INDEX(realversion, '.', 3), '.', -1), SIGNED INTEGER) INTO minv;
-
-IF majv >= majn AND medv >= medn AND minv >= minn THEN
-        SET ret = FALSE;
-END IF;
-
-RETURN ret;
-END //
-
-DELIMITER ;
-
 SET @sqlmode= "";
-SELECT IF(NOAUTOCREATENEEDED(), 'NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION', 'NO_ENGINE_SUBSTITUTION') INTO @sqlmode;
 SET SESSION sql_mode = @sqlmode;
 
 --
@@ -490,8 +438,6 @@ CREATE TABLE `automation_templates` (
 --
 -- Dumping data for table `automation_templates`
 --
-
-INSERT INTO `automation_templates` VALUES (1,3,2,'Linux','','',2),(2,1,2,'HP ETHERNET','','',1);
 
 --
 -- Table structure for table `automation_tree_rule_items`
@@ -2459,8 +2405,8 @@ CREATE TABLE `reports_items` (
 --
 
 CREATE TABLE settings (
-  name varchar(50) NOT NULL default '',
-  value varchar(2048) NOT NULL default '',
+  name varchar(75) NOT NULL default '',
+  value varchar(4096) NOT NULL default '',
   PRIMARY KEY (name)
 ) ENGINE=InnoDB ROW_FORMAT=Dynamic;
 
@@ -2477,15 +2423,14 @@ INSERT INTO settings VALUES ('selected_theme', 'modern');
 
 CREATE TABLE settings_user (
   user_id smallint(8) unsigned NOT NULL default '0',
-  name varchar(50) NOT NULL default '',
-  value varchar(2048) NOT NULL default '',
+  name varchar(75) NOT NULL default '',
+  value varchar(4096) NOT NULL default '',
   PRIMARY KEY (user_id, name)
 ) ENGINE=InnoDB ROW_FORMAT=Dynamic;
 
 --
 -- Dumping data for table `settings_user`
 --
-
 
 --
 -- Table structure for table `settings_user_group`

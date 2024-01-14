@@ -19,33 +19,11 @@
  +-------------------------------------------------------------------------+
 */
 
-/* work with both Cacti 1.x and Cacti 0.8.x */
-if (file_exists(__DIR__ . '/../include/cli_check.php')) {
-	require(__DIR__ . '/../include/cli_check.php');
-} elseif (file_exists(__DIR__ . '/../include/global.php')) {
-	/* do NOT run this script through a web browser */
-	if (!isset($_SERVER['argv'][0]) || isset($_SERVER['REQUEST_METHOD'])  || isset($_SERVER['REMOTE_ADDR'])) {
-		die('<br>This script is only meant to run at the command line.');
-	}
-
-	$no_http_headers = true;
-
-	require(__DIR__ . '/../include/global.php');
-} else {
-	print "FATAL: Can not initialize the Cacti API" . PHP_EOL;
-	exit(1);
-}
+require(__DIR__ . '/../include/cli_check.php');
 
 if ($config['poller_id'] > 1) {
 	print "FATAL: This utility is designed for the main Data Collector only" . PHP_EOL;
 	exit(1);
-}
-
-// For legacy Cacti behavior
-if (!function_exists('cacti_sizeof')) {
-	function cacti_sizeof($object) {
-		return ($object === false || !is_array($object)) ? 0 : sizeof($object);
-	}
 }
 
 if (!function_exists('get_cacti_cli_version')) {
@@ -104,7 +82,7 @@ array_shift($parms);
 if (cacti_sizeof($parms)) {
 	foreach($parms as $parameter) {
 		if (strpos($parameter, '=')) {
-			list($arg, $value) = explode('=', $parameter);
+			list($arg, $value) = explode('=', $parameter, 2);
 		} else {
 			$arg = $parameter;
 			$value = '';
@@ -868,7 +846,7 @@ function preProcessXML(&$output) {
 					$row = strpos($line, '<row>');
 
 					if ($row > 0) {
-						$date = trim(substr($line,$comment_start+30,11));
+						$date = trim(substr($line,strpos($line,'/')+1,11));
 					}
 
 					if ($comment_start == 0) {

@@ -107,6 +107,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>How do I enable PHP under ...</p>
 </blockquote>
 <p>Replacing the three dots with your operating system and web server software should reveal many results on how to do this. The specific steps are outside of the scope of Cacti's FAQ documentation, though there are several How To installation documents included that may also help.</p>
+<hr />
 <p><strong>Q:</strong> I have forgotten my 'admin' password to Cacti, how do I reset it?</p>
 <p><strong>A:</strong> To reset the admin account password back to the default of 'admin', connect to your Cacti database at the command line.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb2-1" title="1">shell<span class="op">&gt;</span> mysql <span class="op">-</span>u root <span class="op">-</span>p cacti</a></code></pre></div>
@@ -114,35 +115,40 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb3"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb3-1" title="1">MySQL<span class="op">&gt;</span> <span class="kw">update</span> user_auth <span class="kw">set</span> <span class="kw">password</span><span class="op">=</span>md5(<span class="st">&#39;admin&#39;</span>) <span class="kw">where</span> username<span class="op">=</span><span class="st">&#39;admin&#39;</span>;</a></code></pre></div>
 <h2 id="monitoring">Monitoring</h2>
 <p><strong>Q:</strong> I am polling thousands of items and poller.php takes more than 5 minutes to run.</p>
-<p><strong>A:</strong> Give Spine, the fast replacement for poller.php a try. Unlike poller.php, Spine is written in c and makes use of threads. On a typical installation, it is not uncommon for Spine to poll about 50000 items in less then 10 seconds. Spine supports upto several threads per poller process and can also poll a single hosts with more than a single thread. If using spine alone does not help, look to both the amount of memory and CPU threads are available on your Cacti server. You should generally not use more than 2 times the number of CPU threads as you have spine threads. Remember, every spine thread has to also talk to the database, so having more CPU threads on your Cacti server has a direct impact on performance. If you make the thread setting too high, it will actually decrease performance. So, be careful.</p>
+<p><strong>A:</strong> Give Spine, the fast replacement for poller.php a try. Unlike poller.php, Spine is written in c and makes use of threads. On a typical installation, it is not uncommon for Spine to poll about 50000 items in less then 10 seconds. Spine supports upto several threads per poller process and can also poll a single hosts with more than a single thread.</p>
+<p>If using spine alone does not help, look to both the amount of memory and CPU threads are available on your Cacti server. You should generally not use more than 2 times the number of CPU threads as you have spine threads. Remember, every spine thread has to also talk to the database, so having more CPU threads on your Cacti server has a direct impact on performance. If you make the thread setting too high, it will actually decrease performance. So, be careful.</p>
+<hr />
 <p><strong>Q:</strong> I changed x, and now some of my graphs are not updating.</p>
 <p><strong>A:</strong> First, check your Poller Cache to see if the poller entries for the Data Sources in question are still found there. Then, if you find that they are missing, you can either resave the Device in question, if it's a single device, or Repopulate the Poller cache if it impacts multiple Devices. If you have a large installation with thousands or tens of thousands of devices you should use the CLI script <code>rebuild_poller_cache.php</code> to perform this action.</p>
 <p>Often times, if you have changed a Template, bad things can happen. So, it's always advisable to have a backup of your Graph and Data Templates as well as any Script or XML files you used to create the Templates. Another good practice is to perform database backups daily just in case of either an unintended change, or a disaster.</p>
+<hr />
 <p><strong>Q:</strong> I am using Redhat 8.0 and SNMP is not working.</p>
 <p><strong>A:</strong> Redhat 8.0 comes with a broken php-snmp package. Updating your 'php-snmp' and 'net-snmp' packages to their latest versions should fix this problem.</p>
+<hr />
 <p><strong>Q:</strong> How do I configure net-snmp so it will work with Cacti?</p>
 <p><strong>A:</strong> Run <code>snmpconf -g basic_setup</code> and follow the prompts. Also check that the file being used by snmpd is the correct config file. For Redhat Linux, snmpconf creates the <code>/etc/snmpd.conf</code>, but snmpd uses <code>/etc/snmpd/snmpd.conf</code>.</p>
 <p>If this doesn't work a very simple config file is:</p>
-<pre><code># contact
-syslocation Something
-syscontact &quot;root@someone.com&quot;
+<pre class="console"><code>    # contact
+    syslocation Something
+    syscontact &quot;root@someone.com&quot;
 
-# auth
-rocommunity public
+    # auth
+    rocommunity public
 
-# disk monitoring
-disk /
+    # disk monitoring
+    disk /
 
-# Don&#39;t monitor NFS
-skipNFSInHostResources true
+    # Don&#39;t monitor NFS
+    skipNFSInHostResources true
 
-# Allow for real big disk volumes
-realStorageUnits 0
+    # Allow for real big disk volumes
+    realStorageUnits 0
 </code></pre>
 <p>After you have made the changes to the net-snmp configuration file, you should restart the service using the following command:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" title="1"><span class="ex">shell</span><span class="op">&gt;</span> systemctl enable snmpd</a>
-<a class="sourceLine" id="cb5-2" title="2"><span class="ex">shell</span><span class="op">&gt;</span> systemctl restart snmpd</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" title="1"><span class="ex">systemctl</span> enable snmpd</a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="ex">systemctl</span> restart snmpd</a></code></pre></div>
 <p>Though there are many more advanced settings available in net-snmp, it generally recommended to keep a simpler configuration unless your information security policies require more stringent settings.</p>
+<hr />
 <p><strong>Q:</strong> I've installed Cacti, and scheduled a network discovery, but nothing is happening. Where should I go to see the issue?</p>
 <p><strong>A:</strong> You should click the <strong>Log</strong> tab at the top of the page. When you get to the <strong>Log</strong> tab, you should search for an entry "SYSTEM STATS:". If you do not find that entry, it means that you Cacti Data Collector, otherwise known as the Cacti Poller is not running.</p>
 <p>This can happen if you have neglected to create either a CRON entry for the Cacti Poller, or registered and started the <code>cactid</code> service available in the latest Cacti. If you find that the CRON entry is there, you should look at your systems CRON log for entries like <strong>permission denied</strong>. Sometimes the user accounts you have selected to run the CRON are not permitted to do so. We strongly recommend that you use the <code>cactid</code> service with Cacti 1.x though and avoid CRON based Data Collection though.</p>
@@ -152,15 +158,22 @@ realStorageUnits 0
 <p>If all of your settings appear correct, try running poller.php manually by cd'ing to Cacti's directory and typing:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb6-1" title="1"><span class="ex">shell</span><span class="op">&gt;</span> php poller.php</a></code></pre></div>
 <p>If you have files in your 'rra/' directory, but your graphs still appear as broken images, you should enable graph debug mode see exactly why the graphs are not rendering. To do this go into Cacti, select Graph Management from the menu, select any graph listed, and select Turn On Graph Debug Mode.</p>
+<hr />
 <p><strong>Q:</strong> My graphs render, but they do not contain any data.</p>
 <p><strong>A:</strong> More often than not, this problem's cause is permissions. For instance if you run poller.php manually as root for testing, any .rrd files that it creates will be owned by root. Now when poller.php runs from cron, it will not be able to update these .rrd files because they are owned by root. You can double check the owner of your .rrd files by running the following command in your Cacti directory:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb7-1" title="1"><span class="ex">shell</span><span class="op">&gt;</span> ls -al rra/</a></code></pre></div>
 <p>If only some of your graphs are not updating correctly, double check the Maximum Value field for all data sources used by these graphs. If the value being fed to the .rrd file exceeds its Maximum Value, RRDtool will insert an Unknown and you will see no data on the graph.</p>
+<hr />
 <p><strong>Q:</strong> A lot of my graphs contain long ifAlias names, but they are being truncated to 15 characters.</p>
 <p><strong>A:</strong> Cacti does this by default to better control graph title formatting. You can change this limit, by going to Cacti Settings on the Cacti menu, selecting the Visual tab, and changing the value for Data Queries - Maximum Field Length.</p>
+<hr />
 <p><strong>Q:</strong> One of my devices rebooted and now I have a huge spike on my graph!</p>
 <p><strong>A:</strong> This occurs because the reboot causes SNMP counters to reset, which can cause a rather large spike on the graph when RRDtool tries to determine the change between the new small counter value and the large previous value. One way to combat this issue is to specify realistic maximum values for your data sources. RRDtool will ignore any value that is larger than the maximum value.</p>
 <p>If you already have a spike on one or more of your graphs, there is a really <a href="http://cricket.sourceforge.net/contrib/files/killspike2">useful Perl script</a> that will remove them for you.</p>
+<hr />
+<p><strong>Q:</strong> I have a remote poller that is timing out but SNMP timing to the devices is fine</p>
+<p><strong>A:</strong> Check that the network connection between the Remote poller and Main poller is working ok if the link has very high latency this can cause the polling times to increase as the data being transferred from the remote poller will be slowed causing the poll not to finish in time</p>
+<hr />
 <p><strong>Q:</strong> RRDtool Says: ERROR: unknown option '--slope-mode' or RRDtool Says: ERROR: Garbage ':39:24 To 2005/10/22 16:39:24\c' after command: COMMENT:From 2005/10/21 16:39:24 To 2005/10/22 16:39:24\c</p>
 <p><strong>A:</strong> This occurs because the version of RRDtool that you are running does not match the RRDtool version Cacti is configured to use. Double check your Cacti Settings and make sure that the RRDtool version matches what version of RRDtool you are running.</p>
 <h2 id="windows-related">Windows Related</h2>
@@ -173,7 +186,7 @@ realStorageUnits 0
 passed since the last poll!
 </code></pre>
 <p>This warning message may be recorded in the Cacti logs if you have a mismatch between the cron file that runs the poller.php and the settings within Cacti itself. Browse to <strong>Console &gt; Configuration &gt; Settings &gt; Poller</strong> <em>(tab)</em> and check that the Cron Interval is defined as either 1 minute or 5 minutes.</p>
-<p>If the cron inteval is 5 minutes, then the schedule within the cron configuration file (normally /etc/cron.d/cacti) should be set to:</p>
+<p>If the cron interval is 5 minutes, then the schedule within the cron configuration file (normally /etc/cron.d/cacti) should be set to:</p>
 <pre class="console"><code>*/5 * * * *
 </code></pre>
 <p>For 1 minute intervals, this should be:</p>
@@ -241,6 +254,6 @@ RRDtool Says:
 </code></pre>
 <p>The newly created command prompt should show the user name if you have entered the correct password.</p>
 <hr />
-<p><copy>Copyright (c) 2004-2023 The Cacti Group</copy></p>
+<p>Copyright (c) 2004-2023 The Cacti Group</p>
 </body>
 </html>

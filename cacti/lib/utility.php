@@ -45,6 +45,7 @@ function repopulate_poller_cache() {
 	$poller_items   = array();
 	$local_data_ids = array();
 	$poller_prev    = 1;
+
 	$i = 0;
 	$j = 0;
 
@@ -58,7 +59,9 @@ function repopulate_poller_cache() {
 
 			if ($i > 500 || $poller_prev != $poller_id) {
 				poller_update_poller_cache_from_buffer($local_data_ids, $poller_items, $poller_prev);
+
 				$i = 0;
+
 				$local_data_ids = array();
 				$poller_items   = array();
 			}
@@ -66,6 +69,7 @@ function repopulate_poller_cache() {
 			$poller_prev      = $poller_id;
 			$poller_items     = array_merge($poller_items, update_poller_cache($data));
 			$local_data_ids[] = $data['id'];
+
 			$i++;
 			$j++;
 		}
@@ -91,11 +95,14 @@ function repopulate_poller_cache() {
 	db_execute('TRUNCATE TABLE poller_data_template_field_mappings');
 	db_execute('INSERT IGNORE INTO poller_data_template_field_mappings
 		SELECT dtr.data_template_id, dif.data_name,
-		GROUP_CONCAT(dtr.data_source_name ORDER BY dtr.data_source_name) AS data_source_names, NOW()
-		FROM data_template_rrd AS dtr
+		GROUP_CONCAT(DISTINCT dtr.data_source_name ORDER BY dtr.data_source_name) AS data_source_names, NOW()
+		FROM graph_templates_item AS gti
+		INNER JOIN data_template_rrd AS dtr
+		ON gti.task_item_id = dtr.id
 		INNER JOIN data_input_fields AS dif
 		ON dtr.data_input_field_id = dif.id
 		WHERE dtr.local_data_id = 0
+		AND gti.local_graph_id = 0
 		GROUP BY dtr.data_template_id, dif.data_name');
 
 	if (isset($_SESSION['sess_user_id'])) {
@@ -762,7 +769,9 @@ function push_out_host($host_id, $local_data_id = 0, $data_template_id = 0) {
 						$field = 'id';
 					}
 
-					if (preg_match('/^' . VALID_HOST_FIELDS . '$/i', $template_field['type_code']) && $template_field['t_value'] != 'on') {
+					// Only override if the template value is null as this point
+					if (preg_match('/^' . VALID_HOST_FIELDS . '$/i', $template_field['type_code']) &&
+						$template_field['t_value'] != 'on' && $template_field['value'] == '') {
 						// It's a valid host type-code
 						$update = true;
 
@@ -939,7 +948,7 @@ function utilities_get_mysql_recommendations() {
 			'class' => 'warning',
 			'measure' => 'ge',
 			'comment' => __('MySQL 5.6+ and MariaDB 10.0+ are great releases, and are very good versions to choose. Make sure you run the very latest release though which fixes a long standing low level networking issue that was causing spine many issues with reliability.')
-			)
+		)
 	);
 
 	if (isset($variables['innodb_version']) && version_compare($variables['innodb_version'], '5.6', '<')) {
@@ -980,7 +989,9 @@ function utilities_get_mysql_recommendations() {
 		);
 	} else {
 		if (version_compare($link_ver, '5.2', '>=')) {
-			if (!isset($variables['innodb_version'])) {
+			if (!isset($variables['innodb_version']) &&
+				($database == 'MySQL' || ($database == 'MariaDB' && version_compare($link_ver, '10.7', '<')))) {
+
 				$recommendations += array(
 					'innodb' => array(
 						'value' => 'ON',
@@ -1756,9 +1767,12 @@ function utility_php_verify_recommends(&$recommends, $source) {
 	$memory_limit   = utility_get_formatted_bytes($memory_ini, 'M', $memory_ini, 'B');
 
 	$execute_time   = ini_get('max_execution_time');
-	$ini_values     = parse_ini_file(get_cfg_var('cfg_file_path'));
-
 	$timezone       = ini_get('date.timezone');
+
+	$cfg_values     = parse_ini_file(get_cfg_var('cfg_file_path'));
+	$cfg_mem_limit  = empty($cfg_values['memory_limit']) ? '' : $cfg_values['memory_limit'];
+	$cfg_timezone   = empty($cfg_values['date.timezone']) ? '' : $cfg_values['date.timezone'];
+	$cfg_max_exec   = empty($cfg_values['max_execution_time']) ? '' : $cfg_values['max_execution_time'];
 
 	$recommends = array(
 		array(
@@ -1777,19 +1791,19 @@ function utility_php_verify_recommends(&$recommends, $source) {
 			'name'        => 'memory_limit',
 			'value'       => $rec_memory_mb,
 			'current'     => $memory_ini,
-			'status'      => (($memory_limit <= 0 || $memory_limit >= $rec_memory) ? DB_STATUS_SUCCESS :($memory_limit != $ini_values['memory_limit'] ? DB_STATUS_RESTART :  DB_STATUS_WARNING)),
+			'status'      => (($memory_limit <= 0 || $memory_limit >= $rec_memory) ? DB_STATUS_SUCCESS :($memory_limit != $cfg_mem_limit ? DB_STATUS_RESTART :  DB_STATUS_WARNING)),
 		),
 		array(
 			'name'        => 'max_execution_time',
 			'value'       => $rec_execute,
 			'current'     => $execute_time,
-			'status'      => (($execute_time <= 0 || $execute_time >= $rec_execute) ? DB_STATUS_SUCCESS : ($execute_time != $ini_values['max_execution_time'] ? DB_STATUS_RESTART : DB_STATUS_WARNING)),
+			'status'      => (($execute_time <= 0 || $execute_time >= $rec_execute) ? DB_STATUS_SUCCESS : ($execute_time != $cfg_max_exec ? DB_STATUS_RESTART : DB_STATUS_WARNING)),
 		),
 		array(
 			'name'        => 'date.timezone',
 			'value'       => '<timezone>',
 			'current'     => $timezone,
-			'status'      => ($timezone ? DB_STATUS_SUCCESS : ($timezone != $ini_values['date.timezone'] ? DB_STATUS_RESTART : DB_STATUS_ERROR)),
+			'status'      => ($timezone ? DB_STATUS_SUCCESS : ($timezone != $cfg_timezone ? DB_STATUS_RESTART : DB_STATUS_ERROR)),
 		),
 	);
 }

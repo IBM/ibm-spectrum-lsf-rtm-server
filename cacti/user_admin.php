@@ -545,15 +545,16 @@ function form_save() {
 		$username = db_fetch_cell_prepared('SELECT username FROM user_auth WHERE id = ?', array(get_nfilter_request_var('id')));
 		$history  = db_fetch_cell_prepared('SELECT password_history FROM user_auth WHERE id = ?', array(get_nfilter_request_var('id')));
 
-		if ($username != '' && $username != get_nfilter_request_var('username')) {
-			if (is_template_account(get_filter_request_var('id'))) {
-				raise_message(20);
-			}
-
-			if (get_filter_request_var('id') === get_guest_account()) {
-				raise_message(20);
-			}
-		}
+		/* deprecating as we are storing the id and not the username any longer */
+		//if ($username != '' && $username != get_nfilter_request_var('username')) {
+		//	if (is_template_account(get_filter_request_var('id'))) {
+		//		raise_message(20);
+		//	}
+		//
+		//	if (get_filter_request_var('id') === get_guest_account()) {
+		//		raise_message(20);
+		//	}
+		//}
 
 		/* check to make sure the passwords match; if not error */
 		if (get_nfilter_request_var('password') != get_nfilter_request_var('password_confirm')) {
@@ -1832,6 +1833,14 @@ function user_edit() {
 		'permstr'  => __('Tree Perms'),
 		'settings' => __('User Settings')
 	);
+
+	$permission_model = read_config_option('graph_auth_method');
+
+	if ($permission_model == 3) { // Device Based
+		unset($tabs['permste']);
+	} elseif ($permission_model == 4) { // Graph Template Based
+		unset($tabs['permsd']);
+	}
 
 	/* set the default tab */
 	load_current_session_value('tab', 'sess_user_admin_tab', 'general');

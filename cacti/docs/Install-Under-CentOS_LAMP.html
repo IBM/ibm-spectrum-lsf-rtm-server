@@ -90,14 +90,18 @@ yum-config-manager --enable remi-php72
 <pre class="console"><code>dnf module reset php
 dnf module enable php:8.0
 </code></pre></li>
-<li><p>Install Apache</p>
+</ol>
+<h3 id="a-special-note-for-systems-using-php-fpm">A special note for systems using PHP-FPM</h3>
+<p>Prior to starting the setup process of Cacti you should restart the PHP-FPM Daemon to rebuild the Cache or you may receive a HTTP 500 Error</p>
+<pre class="console"><code>systemctl restart php-fpm
+</code></pre>
+<p>2.Install Apache</p>
 <pre class="console"><code>yum install -y httpd
-</code></pre></li>
-<li><p>Enable and start the service to ensure it starts when the system reboots</p>
+</code></pre>
+<p>3.Enable and start the service to ensure it starts when the system reboots</p>
 <pre class="console"><code>systemctl start httpd
 systemctl enable httpd
-</code></pre></li>
-</ol>
+</code></pre>
 <h3 id="example-configuration-file-for-apache-24-and-ssl">Example configuration file for Apache 2.4 and SSL</h3>
 <p>This example configuration assumes you have your own certificates already. You should make sure you change the paths to match your setup.</p>
 <p>Replace <code>YourOwnCertFile.crt</code> and <code>YourOwnCertFile.key</code> with the names of the files holding your certificate (<code>.crt</code>) and private key (<code>.key</code>).</p>
@@ -202,6 +206,7 @@ systemctl start mariadb
 <pre class="console"><code>vim /etc/my.cnf.d/server.cnf
 </code></pre>
 <p>The following <code>[mysqld]</code> section is a base configuration. The installer will provide recommendations based on the actual system which will be more tailored to your environment.</p>
+<p>If using MariaDB less than version 11.1 or MySQL use the settings below. Note that you should revise up or down your settings depending on the Cacti recommendation that you see once you start the installer.</p>
 <pre class="shell"><code>[mysqld]
 character-set-server=utf8mb4
 collation-server=utf8mb4_unicode_ci
@@ -213,6 +218,20 @@ innodb_large_prefix = 1
 innodb_buffer_pool_size = 250M
 innodb_additional_mem_pool_size = 90M
 innodb_flush_log_at_trx_commit = 2
+log-error                      = /var/log/mysql/mysql-error.log
+log-queries-not-using-indexes  = 1
+slow-query-log                 = 1
+slow-query-log-file            = /var/log/mysql/mysql-slow.log
+</code></pre>
+<p>If using MariaDB 11.0 or higher, use the settings below:</p>
+<pre class="shell"><code>[mariadb]
+max_heap_table_size=500M
+character_set_client=utf8mb4
+character_set_server=utf8mb4
+collation_server=utf8mb4_unicode_ci
+innodb_buffer_pool_size=8G
+innodb_doublewrite=OFF
+tmp_table_size=500M
 log-error                      = /var/log/mysql/mysql-error.log
 log-queries-not-using-indexes  = 1
 slow-query-log                 = 1
@@ -233,22 +252,23 @@ MariaDB [(none)]&gt; create database if not exists cacti;
 Query OK, 1 row affected (0.00 sec)
 </code></pre></li>
 <li><p>Import Cacti database from SQL file</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb16-1" title="1">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">use</span> cacti;</a>
-<a class="sourceLine" id="cb16-2" title="2"><span class="kw">Database</span> changed</a>
-<a class="sourceLine" id="cb16-3" title="3">MariaDB [(cacti)]<span class="op">&gt;</span> <span class="kw">source</span> <span class="op">/</span>var<span class="op">/</span>www<span class="op">/</span>html<span class="op">/</span>cacti<span class="op">/</span>cacti.sql</a></code></pre></div></li>
+<div class="sourceCode" id="cb18"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb18-1" title="1">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">use</span> cacti;</a>
+<a class="sourceLine" id="cb18-2" title="2"><span class="kw">Database</span> changed</a>
+<a class="sourceLine" id="cb18-3" title="3">MariaDB [(cacti)]<span class="op">&gt;</span> <span class="kw">source</span> <span class="op">/</span>var<span class="op">/</span>www<span class="op">/</span>html<span class="op">/</span>cacti<span class="op">/</span>cacti.sql</a></code></pre></div></li>
 <li><p>Grant Cacti username access to Cacti database. Replace <code>your_cacti_username</code> and <code>your_cacti_password</code> with your own details.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb17-1" title="1">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">CREATE</span> <span class="fu">USER</span> <span class="st">&#39;your_cacti_username&#39;</span>@<span class="st">&#39;localhost&#39;</span> <span class="kw">IDENTIFIED</span> <span class="kw">BY</span> <span class="st">&#39;your_cacti_password&#39;</span>;</a>
-<a class="sourceLine" id="cb17-2" title="2"><span class="kw">Query</span> OK, <span class="dv">0</span> <span class="kw">rows</span> affected (<span class="fl">0.00</span> sec)</a>
-<a class="sourceLine" id="cb17-3" title="3">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">GRANT</span> <span class="kw">ALL</span> <span class="kw">PRIVILEGES</span> <span class="kw">ON</span> cacti.<span class="op">*</span> <span class="kw">TO</span> <span class="st">&#39;your_cacti_username&#39;</span>@<span class="st">&#39;localhost&#39;</span>;</a>
-<a class="sourceLine" id="cb17-4" title="4"><span class="kw">Query</span> OK, <span class="dv">0</span> <span class="kw">rows</span> affected (<span class="fl">0.00</span> sec)</a></code></pre></div></li>
+<div class="sourceCode" id="cb19"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb19-1" title="1">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">CREATE</span> <span class="fu">USER</span> <span class="st">&#39;your_cacti_username&#39;</span>@<span class="st">&#39;localhost&#39;</span> </a>
+<a class="sourceLine" id="cb19-2" title="2"><span class="kw">IDENTIFIED</span> <span class="kw">BY</span> <span class="st">&#39;your_cacti_password&#39;</span>;</a>
+<a class="sourceLine" id="cb19-3" title="3"><span class="kw">Query</span> OK, <span class="dv">0</span> <span class="kw">rows</span> affected (<span class="fl">0.00</span> sec)</a>
+<a class="sourceLine" id="cb19-4" title="4">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">GRANT</span> <span class="kw">ALL</span> <span class="kw">PRIVILEGES</span> <span class="kw">ON</span> cacti.<span class="op">*</span> <span class="kw">TO</span> <span class="st">&#39;your_cacti_username&#39;</span>@<span class="st">&#39;localhost&#39;</span>;</a>
+<a class="sourceLine" id="cb19-5" title="5"><span class="kw">Query</span> OK, <span class="dv">0</span> <span class="kw">rows</span> affected (<span class="fl">0.00</span> sec)</a></code></pre></div></li>
 <li><p>Grant cacti username to MySQL timezone table</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb18-1" title="1">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">GRANT</span> <span class="kw">SELECT</span> <span class="kw">ON</span> mysql.time_zone_name <span class="kw">TO</span> <span class="st">&#39;your_cacti_username&#39;</span>@<span class="st">&#39;localhost&#39;</span>;</a>
-<a class="sourceLine" id="cb18-2" title="2"><span class="kw">Query</span> OK, <span class="dv">0</span> <span class="kw">rows</span> affected (<span class="fl">0.00</span> sec)</a>
-<a class="sourceLine" id="cb18-3" title="3">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">FLUSH</span> <span class="kw">PRIVILEGES</span>;</a>
-<a class="sourceLine" id="cb18-4" title="4"><span class="kw">Query</span> OK, <span class="dv">0</span> <span class="kw">rows</span> affected (<span class="fl">0.00</span> sec)</a></code></pre></div></li>
+<div class="sourceCode" id="cb20"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb20-1" title="1">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">GRANT</span> <span class="kw">SELECT</span> <span class="kw">ON</span> mysql.time_zone_name <span class="kw">TO</span> <span class="st">&#39;your_cacti_username&#39;</span>@<span class="st">&#39;localhost&#39;</span>;</a>
+<a class="sourceLine" id="cb20-2" title="2"><span class="kw">Query</span> OK, <span class="dv">0</span> <span class="kw">rows</span> affected (<span class="fl">0.00</span> sec)</a>
+<a class="sourceLine" id="cb20-3" title="3">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">FLUSH</span> <span class="kw">PRIVILEGES</span>;</a>
+<a class="sourceLine" id="cb20-4" title="4"><span class="kw">Query</span> OK, <span class="dv">0</span> <span class="kw">rows</span> affected (<span class="fl">0.00</span> sec)</a></code></pre></div></li>
 <li><p>Save the Database Charset and Collation</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb19-1" title="1">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">ALTER</span> <span class="kw">DATABASE</span> cacti <span class="dt">CHARACTER</span> <span class="kw">SET</span> utf8mb4 COLLATE utf8mb4_unicode_ci;</a>
-<a class="sourceLine" id="cb19-2" title="2">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">FLUSH</span> <span class="kw">PRIVILEGES</span>;</a></code></pre></div></li>
+<div class="sourceCode" id="cb21"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb21-1" title="1">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">ALTER</span> <span class="kw">DATABASE</span> cacti <span class="dt">CHARACTER</span> <span class="kw">SET</span> utf8mb4 COLLATE utf8mb4_unicode_ci;</a>
+<a class="sourceLine" id="cb21-2" title="2">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">FLUSH</span> <span class="kw">PRIVILEGES</span>;</a></code></pre></div></li>
 </ol>
 <h3 id="common-packages">Common packages</h3>
 <h4 id="php">PHP</h4>
@@ -287,16 +307,16 @@ mv -v cacti-1.y.z /var/www/html/cacti
 <pre class="console"><code>mv -v /var/www/html/cacti/include/config.php-dist /var/www/html/cacti/include/config.php
 </code></pre></li>
 <li><p>Update <code>database_</code> fields with your own details. This section only applies to the Main Cacti Server</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb26-1" title="1"><span class="kw">$database_type</span>     = <span class="st">&#39;mysql&#39;</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb26-2" title="2"><span class="kw">$database_default</span>  = <span class="st">&#39;your_cacti_database&#39;</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb26-3" title="3"><span class="kw">$database_hostname</span> = <span class="st">&#39;localhost&#39;</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb26-4" title="4"><span class="kw">$database_username</span> = <span class="st">&#39;your_cacti_username&#39;</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb26-5" title="5"><span class="kw">$database_password</span> = <span class="st">&#39;your_cacti_password&#39;</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb26-6" title="6"><span class="kw">$database_port</span>     = <span class="st">&#39;3306&#39;</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb26-7" title="7"><span class="kw">$database_ssl</span>      = <span class="kw">false</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb26-8" title="8"><span class="kw">$database_ssl_key</span>  = <span class="st">&#39;&#39;</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb26-9" title="9"><span class="kw">$database_ssl_cert</span> = <span class="st">&#39;&#39;</span><span class="ot">;</span></a>
-<a class="sourceLine" id="cb26-10" title="10"><span class="kw">$database_ssl_ca</span>   = <span class="st">&#39;&#39;</span><span class="ot">;</span></a></code></pre></div></li>
+<div class="sourceCode" id="cb28"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb28-1" title="1"><span class="kw">$database_type</span>     = <span class="st">&#39;mysql&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb28-2" title="2"><span class="kw">$database_default</span>  = <span class="st">&#39;your_cacti_database&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb28-3" title="3"><span class="kw">$database_hostname</span> = <span class="st">&#39;localhost&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb28-4" title="4"><span class="kw">$database_username</span> = <span class="st">&#39;your_cacti_username&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb28-5" title="5"><span class="kw">$database_password</span> = <span class="st">&#39;your_cacti_password&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb28-6" title="6"><span class="kw">$database_port</span>     = <span class="st">&#39;3306&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb28-7" title="7"><span class="kw">$database_ssl</span>      = <span class="kw">false</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb28-8" title="8"><span class="kw">$database_ssl_key</span>  = <span class="st">&#39;&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb28-9" title="9"><span class="kw">$database_ssl_cert</span> = <span class="st">&#39;&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb28-10" title="10"><span class="kw">$database_ssl_ca</span>   = <span class="st">&#39;&#39;</span><span class="ot">;</span></a></code></pre></div></li>
 <li><p>Create your cron task file or systemd units file</p>
 <p>Starting with Cacti 1.2.16, you have the option to use either the legacy Crontab entry, or an optional cactid units file and server to run your Cacti pollers.</p>
 <p>For Crontab use, follow the instructions below:</p>
@@ -373,34 +393,34 @@ DB_Port       3306
 </code></pre></li>
 </ol>
 <h3 id="considerations-when-using-proxies-in-front-of-cacti-cacti-1223">Considerations when using Proxies in front of Cacti (Cacti 1.2.23+)</h3>
-<p>For optimal security, only specify the HTTP headers that are set by your proxy software to prevent unauthorized access. These can be set by editing the following section of config.php</p>
-<pre><code> * Allow the use of Proxy IPs when searching for client
- * IP to be used
- *
- * This can be set to one of the following:
- *   - false: to use only REMOTE_ADDR
- *   - true: to use all allowed headers (not advised)
- *   - array of one or more the following:
- *      &#39;X-Forwarded-For&#39;,
- *      &#39;X-Client-IP&#39;,
- *      &#39;X-Real-IP&#39;,
- *      &#39;X-ProxyUser-Ip&#39;,
- *      &#39;CF-Connecting-IP&#39;,
- *      &#39;True-Client-IP&#39;,
- *      &#39;HTTP_X_FORWARDED&#39;,
- *      &#39;HTTP_X_FORWARDED_FOR&#39;,
- *      &#39;HTTP_X_CLUSTER_CLIENT_IP&#39;,
- *      &#39;HTTP_FORWARDED_FOR&#39;,
- *      &#39;HTTP_FORWARDED&#39;,
- *      &#39;HTTP_CLIENT_IP&#39;,
- *
- * NOTE: The following will always be checked:
- *      &#39;REMOTE_ADDR&#39;,
- */
-$proxy_headers = null;
-</code></pre>
+<p>For optimal security, only specify the HTTP headers that are set by your proxy software to prevent unauthorized access.<br />
+These can be set by editing the following section of config.php</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode ini"><code class="sourceCode ini"><a class="sourceLine" id="cb40-1" title="1"><span class="dt"> * Allow the use of Proxy IPs when searching for client</span></a>
+<a class="sourceLine" id="cb40-2" title="2"><span class="dt"> * IP to be used</span></a>
+<a class="sourceLine" id="cb40-3" title="3"><span class="dt"> *</span></a>
+<a class="sourceLine" id="cb40-4" title="4"><span class="dt"> * This can be set to one of the following:</span></a>
+<a class="sourceLine" id="cb40-5" title="5"><span class="dt"> *   - false: to use only REMOTE_ADDR</span></a>
+<a class="sourceLine" id="cb40-6" title="6"><span class="dt"> *   - true: to use all allowed headers (not advised)</span></a>
+<a class="sourceLine" id="cb40-7" title="7"><span class="dt"> *   - array of one or more the following:</span></a>
+<a class="sourceLine" id="cb40-8" title="8"><span class="dt"> *&#39;X-Forwarded-For&#39;,</span></a>
+<a class="sourceLine" id="cb40-9" title="9"><span class="dt"> *&#39;X-Client-IP&#39;,</span></a>
+<a class="sourceLine" id="cb40-10" title="10"><span class="dt"> *&#39;X-Real-IP&#39;,</span></a>
+<a class="sourceLine" id="cb40-11" title="11"><span class="dt"> *&#39;X-ProxyUser-Ip&#39;,</span></a>
+<a class="sourceLine" id="cb40-12" title="12"><span class="dt"> *&#39;CF-Connecting-IP&#39;,</span></a>
+<a class="sourceLine" id="cb40-13" title="13"><span class="dt"> *&#39;True-Client-IP&#39;,</span></a>
+<a class="sourceLine" id="cb40-14" title="14"><span class="dt"> *&#39;HTTP_X_FORWARDED&#39;,</span></a>
+<a class="sourceLine" id="cb40-15" title="15"><span class="dt"> *&#39;HTTP_X_FORWARDED_FOR&#39;,</span></a>
+<a class="sourceLine" id="cb40-16" title="16"><span class="dt"> *&#39;HTTP_X_CLUSTER_CLIENT_IP&#39;,</span></a>
+<a class="sourceLine" id="cb40-17" title="17"><span class="dt"> *&#39;HTTP_FORWARDED_FOR&#39;,</span></a>
+<a class="sourceLine" id="cb40-18" title="18"><span class="dt"> *&#39;HTTP_FORWARDED&#39;,</span></a>
+<a class="sourceLine" id="cb40-19" title="19"><span class="dt"> *&#39;HTTP_CLIENT_IP&#39;,</span></a>
+<a class="sourceLine" id="cb40-20" title="20"><span class="dt"> *</span></a>
+<a class="sourceLine" id="cb40-21" title="21"><span class="dt"> * NOTE: The following will always be checked:</span></a>
+<a class="sourceLine" id="cb40-22" title="22"><span class="dt"> *&#39;REMOTE_ADDR&#39;,</span></a>
+<a class="sourceLine" id="cb40-23" title="23"><span class="dt"> */</span></a>
+<a class="sourceLine" id="cb40-24" title="24"><span class="dt">$proxy_headers </span><span class="ot">=</span><span class="st"> </span><span class="kw">null</span><span class="st">;</span></a></code></pre></div>
 <p><strong>Note:</strong> If you installed Cacti out of <code>/var/www/html</code> make sure you fix up all SELinux context and permissions.</p>
 <hr />
-<p><copy>Copyright (c) 2004-2023 The Cacti Group</copy></p>
+<p>Copyright (c) 2004-2023 The Cacti Group</p>
 </body>
 </html>

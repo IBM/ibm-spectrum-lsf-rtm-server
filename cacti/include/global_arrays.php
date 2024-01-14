@@ -132,6 +132,9 @@ $cacti_version_codes = array(
 	'1.2.21'  => '0103',
 	'1.2.22'  => '0103',
 	'1.2.23'  => '0103',
+	'1.2.24'  => '0103',
+	'1.2.25'  => '0103',
+	'1.2.26'  => '0103',
 );
 
 $messages = array(
@@ -822,6 +825,22 @@ $device_threads = array(
 	10 => __('%d Threads', 10)
 );
 
+$device_change_fields = array(
+	'preg_field' => array(
+		'/^snmp_/',
+		'/^ping_/'
+	),
+	'match_field' => array(
+		'poller_id',
+		'site_id',
+		'host_template_id',
+		'availability_method',
+		'device_threads',
+		'location',
+		'max_oids'
+	)
+);
+
 $cron_intervals = array(
 	60  => __('Every Minute'),
 	300 => __('Every %d Minutes', 5)
@@ -959,11 +978,11 @@ if ($config['poller_id'] == 1 || $config['connection'] == 'online') {
 	$menu = array(
 		__('Main Console') => array(
 			'index.php' => __('Console Page')
-			),
+		),
 		__('Create') => array(
 			'graphs_new.php' => __('New Graphs'),
 			'host.php?action=edit&create=true' => __('New Device')
-			),
+		),
 		__('Management') => array(
 			'host.php'             => __('Devices'),
 			'sites.php'            => __('Sites'),
@@ -971,49 +990,49 @@ if ($config['poller_id'] == 1 || $config['connection'] == 'online') {
 			'graphs.php'           => __('Graphs'),
 			'data_sources.php'     => __('Data Sources'),
 			'aggregate_graphs.php' => __('Aggregates'),
-			),
+		),
 		__('Data Collection') => array(
 			'pollers.php' => __('Data Collectors'),
 			'data_queries.php' => __('Data Queries'),
 			'data_input.php'   => __('Data Input Methods')
-			),
+		),
 		__('Templates') => array(
 			'host_templates.php'      => __('Device'),
 			'graph_templates.php'     => __('Graph'),
 			'data_templates.php'      => __('Data Source'),
 			'aggregate_templates.php' => __('Aggregate'),
 			'color_templates.php'     => __('Color')
-			),
+		),
 		__('Automation') => array(
 			'automation_networks.php'    => __('Networks'),
 			'automation_devices.php'     => __('Discovered Devices'),
 			'automation_templates.php'   => __('Device Rules'),
 			'automation_graph_rules.php' => __('Graph Rules'),
 			'automation_tree_rules.php'  => __('Tree Rules'),
-			'automation_snmp.php'        => __('SNMP Options'),
-			),
+		),
 		__('Presets') => array(
 			'data_source_profiles.php' => __('Data Profiles'),
+			'automation_snmp.php'      => __('SNMP'),
 			'cdef.php'                 => __('CDEFs'),
 			'vdef.php'                 => __('VDEFs'),
 			'color.php'                => __('Colors'),
-			'gprint_presets.php'       => __('GPRINTs')
-			),
+			'gprint_presets.php'       => __('GPRINTs'),
+		),
 		__('Import/Export') => array(
 			'templates_import.php' => __('Import Templates'),
 			'package_import.php'   => __('Import Packages'),
 			'templates_export.php' => __('Export Templates')
-			),
+		),
 		__('Configuration')  => array(
 			'settings.php'         => __('Settings'),
 			'user_admin.php'       => __('Users'),
 			'user_group_admin.php' => __('User Groups'),
 			'user_domains.php'     => __('User Domains')
-			),
+		),
 		__('Utilities') => array(
 			'utilities.php'  => __('System Utilities'),
 			'links.php'      => __('External Links'),
-			),
+		),
 		__('Troubleshooting') => array(
 			'data_debug.php' => __('Data Sources'),
 		)
@@ -1066,7 +1085,10 @@ $device_classes = array(
 	'loadbalancer' => __('Load Balancer'),
 	'switch'       => __('Network Switch'),
 	'router'       => __('Network Router'),
-	'firewall'     => __('Network Firewall'),
+	'nassan'       => __('NAS/SAN Related'),
+	'firewall'     => __('Network Firewalls'),
+	'power'        => __('Power Related PDUs/STS, etc.'),
+	'printer'      => __('Printer Related'),
 	'storage'      => __('Storage Related'),
 	'telephony'    => __('Telco Related'),
 	'webserver'    => __('Web Server Related'),
@@ -1296,7 +1318,6 @@ $user_auth_realm_filenames = array(
 	'color_templates_items.php' => 5,
 	'aggregate_templates.php' => 5,
 	'aggregate_graphs.php' => 5,
-	'aggregate_items.php' => 5,
 	'spikekill.php' => 1043,
 	'permission_denied.php' => -1,
 	'help.php' => -1
@@ -1582,7 +1603,7 @@ $boost_max_memory = array(
 	'5120' => __('%d GBytes', 5),
 	'6144' => __('%d GBytes', 6),
 	'8192' => __('%d GBytes', 8),
-	'-1' => __('Infinity')
+	'-1' => __('Unlimited')
 );
 
 $realtime_window = array(
@@ -2751,24 +2772,6 @@ $navigation = array(
 	'aggregate_graphs.php:actions' => array(
 		'title' => __('Actions'),
 		'mapping' => 'index.php:,aggregate_graphs.php:',
-		'url' => '',
-		'level' => '2'
-	),
-	'aggregate_items.php:' => array(
-		'title' => __('Aggregate Items'),
-		'mapping' => 'index.php:',
-		'url' => 'aggregate_items.php',
-		'level' => '1'
-	),
-	'aggregate_items.php:item_edit' => array(
-		'title' => __('(Edit)'),
-		'mapping' => 'index.php:,aggregate_graphs.php:,aggregate_items.php:',
-		'url' => '',
-		'level' => '2'
-	),
-	'aggregate_items.php:actions' => array(
-		'title' => __('Actions'),
-		'mapping' => 'index.php:,aggregate_items.php:',
 		'url' => '',
 		'level' => '2'
 	),

@@ -3,7 +3,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2022 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -62,7 +62,7 @@ function ss_host_cpu($hostname = '', $host_id = 0, $snmp_auth = '', $cmd = 'inde
 	$oids = array(
 		'index' => '.1.3.6.1.2.1.25.3.3.1.2',
 		'usage' => '.1.3.6.1.2.1.25.3.3.1.2'
-		);
+	);
 
 	if (($cmd == 'index')) {
 		$value = api_plugin_hook_function('hmib_get_cpu_indexes', array('host_id' => $host_id));

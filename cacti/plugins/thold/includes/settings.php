@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2006-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -194,6 +194,20 @@ function thold_draw_navigation_text($nav) {
 		'level' => '1'
 	);
 
+	$nav['notify_queue.php:'] = array(
+		'title' => __('Notification Queue', 'thold'),
+		'mapping' => 'index.php:',
+		'url' => 'notify_queue.php',
+		'level' => '1'
+	);
+
+	$nav['notify_queue.php:actions'] = array(
+		'title' => __('Notification Queue', 'thold'),
+		'mapping' => 'index.php:',
+		'url' => 'notify_queue.php',
+		'level' => '1'
+	);
+
 	return $nav;
 }
 
@@ -201,6 +215,7 @@ function thold_config_insert() {
 	global $menu;
 
 	$menu[__('Management')]['plugins/thold/notify_lists.php']   = __('Notification Lists', 'thold');
+	$menu[__('Management')]['plugins/thold/notify_queue.php']   = __('Notification Queue', 'thold');
 	$menu[__('Management')]['plugins/thold/thold.php']          = __('Thresholds', 'thold');
 	$menu[__('Templates')]['plugins/thold/thold_templates.php'] = __('Threshold', 'thold');
 
@@ -250,7 +265,7 @@ function thold_config_insert() {
 }
 
 function thold_config_arrays() {
-	global $config, $messages;
+	global $config, $messages, $device_change_fields;
 
 	$messages['thold_save'] = array(
 		'message' => __('A template with that Data Source already exists!', 'thold'),
@@ -264,6 +279,9 @@ function thold_config_arrays() {
 		);
 	}
 
+	$device_change_fields['match_field'][] = 'thold_send_email';
+	$device_change_fields['match_field'][] = 'thold_failure_count';
+
 	$realm_array = array(
 		__('Configure Thresholds', 'thold'),
 		__('Configure Threshold Templates', 'thold'),
@@ -275,7 +293,7 @@ function thold_config_arrays() {
 		auth_augment_roles(__('Normal User'), array('thold_graph.php'));
 		auth_augment_roles(__('Template Editor'), array('thold_templates.php'));
 		auth_augment_roles(__('General Administration'), array('thold.php'));
-		auth_augment_roles(__('General Administration'), array('notify_lists.php'));
+		auth_augment_roles(__('General Administration'), array('notify_lists.php','notify_queue.php'));
 	}
 
 	kill_session_var('thold_message');
@@ -309,7 +327,7 @@ function thold_config_form() {
 				'description' => __('Which Notification List(s) of should be notified about Device Up/Down events?', 'thold'),
 				'value' => '|arg1:thold_send_email|',
 				'on_change' => 'changeNotify()',
-				'default' => '0',
+				'default' => '1',
 				'form_id' => false
 			);
 
@@ -380,6 +398,37 @@ function thold_config_settings() {
 			'method' => 'checkbox',
 			'default' => ''
 		),
+		'thold_consider_unknown_zero' => array(
+			'friendly_name' => __('Consider Unknown Data as Zero', 'thold'),
+			'description' => __('When checking Thresholds, if a Data Source returns Unknown Data (\'U\'), consider the value as zero for the Threshold check.', 'thold'),
+			'method' => 'checkbox',
+			'default' => ''
+		),
+		'thold_filter_default' => array(
+			'friendly_name' => __('Default Management Status', 'thold'),
+			'description' => __('Default Threshold management filter status.', 'thold'),
+			'method' => 'drop_array',
+			'array' => array(
+				'-1' => __('Any', 'thold'),
+				'0'  => __('Disabled', 'thold'),
+				'2'  => __('Enabled', 'thold'),
+				'1'  => __('Breached', 'thold'),
+				'3'  => __('Triggered', 'thold')
+			),
+			'default' => -1
+		),
+		'thold_empty_if_speed_default' => array(
+			'friendly_name' => __('Empty ifHighSpeed Default', 'thold'),
+			'description' => __('When calculating Expression Thresholds, if the ifHighSpeed and ifSpeed come back as zero, use the following ifHighSpeed setting instead.  Default ifHighSpeed will be 10000 for 10GE interfaces.', 'thold'),
+			'method' => 'textbox',
+			'size' => 6,
+			'max_length' => 6,
+			'default' => '10000'
+		),
+		'notification_header' => array(
+			'friendly_name' => __('Notification Preferences', 'thold'),
+			'method' => 'spacer',
+		),
 		'thold_disable_legacy' => array(
 			'friendly_name' => __('Disable Legacy Notifications', 'thold'),
 			'description' => __('Checking this box will disable Legacy Alerting on all Thresholds.  Legacy Alerting is defined as any Specific Email Alerts not associated with a Notification List.', 'thold'),
@@ -403,45 +452,17 @@ function thold_config_settings() {
 			'method' => 'checkbox',
 			'default' => ''
 		),
-		'thold_consider_unknown_zero' => array(
-			'friendly_name' => __('Consider Unknown Data as Zero', 'thold'),
-			'description' => __('When checking Thresholds, if a Data Source returns Unknown Data (\'U\'), consider the value as zero for the Threshold check.', 'thold'),
+		'thold_notification_queue' => array(
+			'friendly_name' => __('Enable Notification Queue', 'thold'),
+			'description' => __('Checking this box will switch Thold from performing inline Notification to using either the Notification Daemon, or notifications performed out of band by the Notification poller.', 'thold'),
 			'method' => 'checkbox',
 			'default' => ''
 		),
-		'thold_filter_default' => array(
-			'friendly_name' => __('Default Management Status', 'thold'),
-			'description' => __('Default Threshold management filter status.', 'thold'),
-			'method' => 'drop_array',
-			'array' => array(
-				'-1' => __('Any', 'thold'),
-				'0'  => __('Disabled', 'thold'),
-				'2'  => __('Enabled', 'thold'),
-				'1'  => __('Breached', 'thold'),
-				'3'  => __('Triggered', 'thold')
-			),
-			'default' => -1
-		),
-		'thold_monitor_default' => array(
-			'friendly_name' => __('Default Monitor Status', 'thold'),
-			'description' => __('Default Threshold Tab filter status.', 'thold'),
-			'method' => 'drop_array',
-			'array' => array(
-				'-1' => __('Any', 'thold'),
-				'0'  => __('Disabled', 'thold'),
-				'2'  => __('Enabled', 'thold'),
-				'1'  => __('Breached', 'thold'),
-				'3'  => __('Triggered', 'thold')
-			),
-			'default' => -1
-		),
-		'thold_empty_if_speed_default' => array(
-			'friendly_name' => __('Empty ifHighSpeed Default', 'thold'),
-			'description' => __('When calculating Expression Thresholds, if the ifHighSpeed and ifSpeed come back as zero, use the following ifHighSpeed setting instead.  Default ifHighSpeed will be 10000 for 10GE interfaces.', 'thold'),
-			'method' => 'textbox',
-			'size' => 6,
-			'max_length' => 6,
-			'default' => '10000'
+		'thold_notify_alerts_to_warning_recipients' => array(
+			'friendly_name' => __('Enable Sending Alert Emails to Warning Notification Lists', 'thold'),
+			'description' => __('Check this box if you wish Warning Notification List recipients to receive Alert Emails in addition to the Alert Notification list receivers.  This case is applicable when Warning Notifications goes to Administrators and Alert Notifications go to Management.', 'thold'),
+			'method' => 'checkbox',
+			'default' => ''
 		),
 		'daemon_header' => array(
 			'friendly_name' => __('Threshold Daemon', 'thold'),
@@ -664,13 +685,41 @@ function thold_config_settings() {
 			'method' => 'spacer',
 		),
 		'alert_deadnotify' => array(
-			'friendly_name' => __('Device Notifications', 'thold'),
+			'friendly_name' => __('Enable Notifications', 'thold'),
 			'description' => __('Enable Dead/Recovering host notification', 'thold'),
 			'method' => 'checkbox',
 			'default' => 'on'
 		),
+		'alert_deadnotify_one_mail' => array(
+			'friendly_name' => __('Notification Single Email', 'thold'),
+			'description' => __('Supported for Notification Lists and the Notification Queue only.  If there are Down Device Notifications in a single processing cycle.  Send only one Email to Notification List repipients for all Devices.', 'thold'),
+			'method' => 'checkbox',
+			'default' => 'on'
+		),
+		'thold_notification_delay' => array(
+			'friendly_name' => __('Device Notification Delay Options', 'thold'),
+			'method' => 'spacer',
+		),
+		'alert_notification_pause' => array(
+			'friendly_name' => __('Notification Delay', 'thold'),
+			'description' => __('If a large influx of Down Device Notifications come in, Cacti can pause sending out those Notifications for a certain period of time to see if the issue is transient before sending them out.  Select the threshold Down Device Notifications before the Pause is Triggered.', 'thold'),
+			'array' => $notification_pause_values,
+			'method' => 'drop_multi',
+			'default' => '-1'
+		),
+		'alert_notification_delay' => array(
+			'friendly_name' => __('Notification Delay', 'thold'),
+			'description' => __('If you choose to delay Notifications for a large Down Devices Notification inrush, how long are you willing to wait before allowing the notifications to be processed?', 'thold'),
+			'array' => $notification_delay_values,
+			'method' => 'drop_array',
+			'default' => '-1'
+		),
+		'thold_device_email' => array(
+			'friendly_name' => __('Device Notification Email Options', 'thold'),
+			'method' => 'spacer',
+		),
 		'alert_email' => array(
-			'friendly_name' => __('Device Notifications Email', 'thold'),
+			'friendly_name' => __('Global Notification Email', 'thold'),
 			'description' => __('This is the Email Address that the Dead Device Notifications will be sent to if the Global Notification List is selected.', 'thold'),
 			'method' => 'textbox',
 			'size' => 80,
@@ -686,12 +735,12 @@ function thold_config_settings() {
 		),
 		'thold_down_text' => array(
 			'friendly_name' => __('Down Message', 'thold'),
-			'description' => __('This is the message that will be displayed as the message body of all UP / Down Device Messages (1024 Char MAX).  HTML is allowed, but will be removed for text only Emails.  There are several common replacement tags that may be used in include:<br>&#060HOSTNAME&#062 &#060HOST_ID&#062 &#060DESCRIPTION&#062 &#060UPTIME&#062 &#060UPTIMETEXT&#062 &#060DOWNTIME&#062 &#060TIME&#062 &#060DATE&#062 &#060DATE_RFC822&#062 &#060BREACHED_ITEMS&#062 &#060MESSAGE&#062 &#060SUBJECT&#062 &#060DOWN/UP&#062 &#060SNMP_HOSTNAME&#062 &#060SNMP_LOCATION&#062 &#060SNMP_CONTACT&#062 &#060SNMP_SYSTEM&#062 &#060LAST_FAIL&#062 &#060AVAILABILITY&#062 &#060TOT_POLL&#062 &#060FAIL_POLL&#062 &#060CUR_TIME&#062 &#060AVG_TIME&#062 &#060NOTES&#062', 'thold'),
+			'description' => __('This is the message that will be displayed as the message body of all UP / Down Device Messages (1024 Char MAX).  HTML is allowed, but will be removed for text only Emails.  There are several common replacement tags that may be used in include:<br>&#060HOSTNAME&#062 &#060HOST_ID&#062 &#060DESCRIPTION&#062 &#060SITE&#062 &#060LOCATION&#062 &#060UPTIME&#062 &#060UPTIMETEXT&#062 &#060DOWNTIME&#062 &#060TIME&#062 &#060DATE&#062 &#060DATE_RFC822&#062 &#060BREACHED_ITEMS&#062 &#060MESSAGE&#062 &#060SUBJECT&#062 &#060DOWN/UP&#062 &#060SNMP_HOSTNAME&#062 &#060SNMP_LOCATION&#062 &#060SNMP_CONTACT&#062 &#060SNMP_SYSTEM&#062 &#060LAST_FAIL&#062 &#060AVAILABILITY&#062 &#060TOT_POLL&#062 &#060FAIL_POLL&#062 &#060CUR_TIME&#062 &#060AVG_TIME&#062 &#060NOTES&#062', 'thold'),
 			'method' => 'textarea',
 			'class' => 'textAreaNotes',
 			'textarea_rows' => '7',
 			'textarea_cols' => '80',
-			'default' => __('System Error : <DESCRIPTION> (<HOSTNAME>) is <DOWN/UP><br>Reason: <MESSAGE><br><br>Average system response: <AVG_TIME> ms<br>System availability: <AVAILABILITY><br>Total Checks Since Clear: <TOT_POLL><br>Total Failed Checks: <FAIL_POLL><br>Last Date Checked DOWN : <LAST_FAIL><br>Device Previously UP for: <DOWNTIME><br>NOTES: <NOTES><br>Device NOTES: <DNOTES>', 'thold'),
+			'default' => __('System Error : <DESCRIPTION> (<HOSTNAME>) is <DOWN/UP><br><br>Site: <SITE><br>Location: <LOCATION><br>Reason: <MESSAGE><br>Average system response: <AVG_TIME> ms<br>System availability: <AVAILABILITY><br>Total Checks Since Clear: <TOT_POLL><br>Total Failed Checks: <FAIL_POLL><br>Last Date Checked DOWN : <LAST_FAIL><br>Device Previously UP for: <DOWNTIME><br>NOTES: <NOTES><br>Device NOTES: <DNOTES>', 'thold'),
 		),
 		'thold_up_subject' => array(
 			'friendly_name' => __('Recovering Subject', 'thold'),
@@ -703,16 +752,16 @@ function thold_config_settings() {
 		),
 		'thold_up_text' => array(
 			'friendly_name' => __('Recovering Message', 'thold'),
-			'description' => __('This is the message that will be displayed as the message body of all UP / Down Device Messages (1024 Char MAX).  HTML is allowed, but will be removed for text only Emails.  There are several common replacement tags that may be used in include:<br>&#060HOSTNAME&#062 &#060HOST_ID&#062 &#060DESCRIPTION&#062 &#060UPTIME&#062 &#060UPTIMETEXT&#062 &#060DOWNTIME&#062 &#060TIME&#062 &#060DATE&#062 &#060DATE_RFC822&#062 &#060BREACHED_ITEMS&#062  &#060MESSAGE&#062 &#060SUBJECT&#062 &#060DOWN/UP&#062 &#060SNMP_HOSTNAME&#062 &#060SNMP_LOCATION&#062 &#060SNMP_CONTACT&#062 &#060SNMP_SYSTEM&#062 &#060LAST_FAIL&#062 &#060AVAILABILITY&#062 &#060TOT_POLL&#062 &#060FAIL_POLL&#062 &#060CUR_TIME&#062 &#060AVG_TIME&#062 &#060NOTES&#062', 'thold'),
+			'description' => __('This is the message that will be displayed as the message body of all UP / Down Device Messages (1024 Char MAX).  HTML is allowed, but will be removed for text only Emails.  There are several common replacement tags that may be used in include:<br>&#060HOSTNAME&#062 &#060HOST_ID&#062 &#060DESCRIPTION&#062 &#060SITE&#062 &#060LOCATION&#062 &#060UPTIME&#062 &#060UPTIMETEXT&#062 &#060DOWNTIME&#062 &#060TIME&#062 &#060DATE&#062 &#060DATE_RFC822&#062 &#060BREACHED_ITEMS&#062  &#060MESSAGE&#062 &#060SUBJECT&#062 &#060DOWN/UP&#062 &#060SNMP_HOSTNAME&#062 &#060SNMP_LOCATION&#062 &#060SNMP_CONTACT&#062 &#060SNMP_SYSTEM&#062 &#060LAST_FAIL&#062 &#060AVAILABILITY&#062 &#060TOT_POLL&#062 &#060FAIL_POLL&#062 &#060CUR_TIME&#062 &#060AVG_TIME&#062 &#060NOTES&#062', 'thold'),
 			'method' => 'textarea',
 			'class' => 'textAreaNotes',
 			'textarea_rows' => '7',
 			'textarea_cols' => '80',
-			'default' => __('<br>System <DESCRIPTION> (<HOSTNAME>) status: <DOWN/UP><br><br>Current ping response: <CUR_TIME> ms<br>Average system response: <AVG_TIME> ms<br>System availability: <AVAILABILITY><br>Total Checks Since Clear: <TOT_POLL><br>Total Failed Checks: <FAIL_POLL><br>Last Date Checked UP: <LAST_FAIL><br>Device Previously DOWN for: <DOWNTIME><br><br>Snmp Info:<br>Name - <SNMP_HOSTNAME><br>Location - <SNMP_LOCATION><br>Uptime - <UPTIMETEXT> (<UPTIME> ms)<br>System - <SNMP_SYSTEM><br><br>NOTE: <NOTES><br>Device Notes: <DNOTES>', 'thold'),
+			'default' => __('<br>System <DESCRIPTION> (<HOSTNAME>) status: <DOWN/UP><br><br>Site: <SITE><br>Location: <LOCATION><br>Current ping response: <CUR_TIME> ms<br>Average system response: <AVG_TIME> ms<br>System availability: <AVAILABILITY><br>Total Checks Since Clear: <TOT_POLL><br>Total Failed Checks: <FAIL_POLL><br>Last Date Checked UP: <LAST_FAIL><br>Device Previously DOWN for: <DOWNTIME><br><br>Snmp Info:<br>Name - <SNMP_HOSTNAME><br>Location - <SNMP_LOCATION><br>Uptime - <UPTIMETEXT> (<UPTIME> ms)<br>System - <SNMP_SYSTEM><br><br>NOTE: <NOTES><br>Device Notes: <DNOTES>', 'thold'),
 		),
 		'thold_device_command' => array(
 			'friendly_name' => __('Status Change Command', 'thold'),
-			'description' => __('When a Device changes state from a Cacti perspective (UP to DOWN or DOWN to RECOVERING/UP), run the following command.  This command must NOT include command line arguments.  However, the following variables can be pulled from the environment of the script:<br>&#060THOLD_HOSTNAME&#062 &#060THOLD_HOST_ID&#062 &#060THOLD_DESCRIPTION&#062 &#060THOLD_UPTIME&#062 &#060THOLD_UPTIMETEXT&#062 &#060THOLD_DOWNTIME&#062 &#060THOLD_TIME&#062 &#060THOLD_DATE&#062 &#060THOLD_DATE_RFC822&#062 &#060THOLD_BREACHED_ITEMS&#062 &#060THOLD_MESSAGE&#062 &#060THOLD_SUBJECT&#062 &#060THOLD_DOWNUP&#062 &#060THOLD_SNMP_HOSTNAME&#062 &#060THOLD_SNMP_LOCATION&#062 &#060THOLD_SNMP_CONTACT&#062 &#060THOLD_SNMP_SYSTEM&#062 &#060THOLD_LAST_FAIL&#062 &#060THOLD_AVAILABILITY&#062 &#060THOLD_TOT_POLL&#062 &#060THOLD_FAIL_POLL&#062 &#060THOLD_CUR_TIME&#062 &#060THOLD_AVG_TIME&#062 &#060THOLD_NOTES&#062', 'thold'),
+			'description' => __('When a Device changes state from a Cacti perspective (UP to DOWN or DOWN to RECOVERING/UP), run the following command.  This command must NOT include command line arguments.  However, the following variables can be pulled from the environment of the script:<br>&#060THOLD_HOSTNAME&#062 &#060THOLD_SITE&#062 &#060THOLD_LOCATION&#062 &#060THOLD_HOST_ID&#062 &#060THOLD_DESCRIPTION&#062 &#060THOLD_UPTIME&#062 &#060THOLD_UPTIMETEXT&#062 &#060THOLD_DOWNTIME&#062 &#060THOLD_TIME&#062 &#060THOLD_DATE&#062 &#060THOLD_DATE_RFC822&#062 &#060THOLD_BREACHED_ITEMS&#062 &#060THOLD_MESSAGE&#062 &#060THOLD_SUBJECT&#062 &#060THOLD_DOWNUP&#062 &#060THOLD_SNMP_HOSTNAME&#062 &#060THOLD_SNMP_LOCATION&#062 &#060THOLD_SNMP_CONTACT&#062 &#060THOLD_SNMP_SYSTEM&#062 &#060THOLD_LAST_FAIL&#062 &#060THOLD_AVAILABILITY&#062 &#060THOLD_TOT_POLL&#062 &#060THOLD_FAIL_POLL&#062 &#060THOLD_CUR_TIME&#062 &#060THOLD_AVG_TIME&#062 &#060THOLD_NOTES&#062', 'thold'),
 			'method' => 'filepath',
 			'file_type' => 'binary',
 			'size' => '100',
@@ -725,7 +774,7 @@ function thold_config_settings() {
 		),
 		'thold_alert_text' => array(
 			'friendly_name' => __('Threshold Alert Message', 'thold'),
-			'description' => __('This is the message that will be displayed at the top of all Threshold Alerts (1024 Char MAX).  HTML is allowed, but will be removed for text only Emails.  There are several common replacement tags that may be used in include:<br>&#060DESCRIPTION&#062 &#060HOSTNAME&#062 &#060HOST_ID&#062 &#060TIME&#062 &#060DATE&#062 &#060DATE_RFC822&#062 &#060BREACHED_ITEMS&#062  &#060URL&#062 &#060GRAPHID&#062 &#060CURRENTVALUE&#062 &#060THRESHOLDNAME&#062  &#060DSNAME&#062 &#060SUBJECT&#062 &#060GRAPH&#062 &#60NOTES&#62 &#060DNOTES&#062', 'thold'),
+			'description' => __('This is the message that will be displayed at the top of all Threshold Alerts (1024 Char MAX).  HTML is allowed, but will be removed for text only Emails.  There are several common replacement tags that may be used in include:<br>&#060DESCRIPTION&#062 &#060HOSTNAME&#062 &#060HOST_ID&#062 &#060SITE&#062 &#060LOCATION&#062 &#060TIME&#062 &#060DATE&#062 &#060DATE_RFC822&#062 &#060BREACHED_ITEMS&#062  &#060URL&#062 &#060GRAPHID&#062 &#060THOLD_ID&#062 &#060CURRENTVALUE&#062 &#060THRESHOLDNAME&#062  &#060DSNAME&#062 &#060SUBJECT&#062 &#060GRAPH&#062 &#60NOTES&#62 &#060DNOTES&#062', 'thold'),
 			'method' => 'textarea',
 			'class' => 'textAreaNotes',
 			'textarea_rows' => '5',
@@ -734,7 +783,7 @@ function thold_config_settings() {
 		),
 		'thold_warning_text' => array(
 			'friendly_name' => __('Threshold Warning Message', 'thold'),
-			'description' => __('This is the message that will be displayed at the top of all Threshold warnings (1024 Char MAX).  HTML is allowed, but will be removed for text only Emails.  There are several common replacement tags that may be used in include:<br>&#060DESCRIPTION&#062 &#060HOSTNAME&#062 &#060HOST_ID&#062 &#060TIME&#062 &#060DATE&#062 &#060DATE_RFC822&#062 &#060BREACHED_ITEMS&#062  &#060URL&#062 &#060GRAPHID&#062 &#060CURRENTVALUE&#062 &#060THRESHOLDNAME&#062  &#060DSNAME&#062 &#060SUBJECT&#062 &#060GRAPH&#062 &#60NOTES&#62 &#060DNOTES&#062', 'thold'),
+			'description' => __('This is the message that will be displayed at the top of all Threshold warnings (1024 Char MAX).  HTML is allowed, but will be removed for text only Emails.  There are several common replacement tags that may be used in include:<br>&#060DESCRIPTION&#062 &#060HOSTNAME&#062 &#060HOST_ID&#062 &#060SITE&#062 &#060LOCATION&#062 &#060TIME&#062 &#060DATE&#062 &#060DATE_RFC822&#062 &#060BREACHED_ITEMS&#062  &#060URL&#062 &#060GRAPHID&#062 &#060THOLD_ID&#062 &#060CURRENTVALUE&#062 &#060THRESHOLDNAME&#062  &#060DSNAME&#062 &#060SUBJECT&#062 &#060GRAPH&#062 &#60NOTES&#62 &#060DNOTES&#062', 'thold'),
 			'method' => 'textarea',
 			'class' => 'textAreaNotes',
 			'textarea_rows' => '5',
@@ -743,7 +792,7 @@ function thold_config_settings() {
 		),
 		'thold_restoral_text' => array(
 			'friendly_name' => __('Threshold Restoral Message', 'thold'),
-			'description' => __('This is the message that will be displayed at the top of all Threshold restoral notifications (1024 Chars MAX).  HTML is allowed, but will be removed for text only Emails.  There are several common replacement tags that may be used in include:<br>&#060DESCRIPTION&#062 &#060HOSTNAME&#062 &#060HOST_ID&#062 &#060TIME&#062 &#060DATE&#062 &#060DATE_RFC822&#062 &#060BREACHED_ITEMS&#062  &#060URL&#062 &#060GRAPHID&#062 &#060CURRENTVALUE&#062 &#060THRESHOLDNAME&#062  &#060DSNAME&#062 &#060SUBJECT&#062 &#060GRAPH&#062 &#60NOTES&#62 &#060DNOTES&#062', 'thold'),
+			'description' => __('This is the message that will be displayed at the top of all Threshold restoral notifications (1024 Chars MAX).  HTML is allowed, but will be removed for text only Emails.  There are several common replacement tags that may be used in include:<br>&#060DESCRIPTION&#062 &#060HOSTNAME&#062 &#060HOST_ID&#062 &#060SITE&#062 &#060LOCATION&#062 &#060TIME&#062 &#060DATE&#062 &#060DATE_RFC822&#062 &#060BREACHED_ITEMS&#062  &#060URL&#062 &#060GRAPHID&#062 &#060THOLD_ID&#062 &#060CURRENTVALUE&#062 &#060THRESHOLDNAME&#062  &#060DSNAME&#062 &#060SUBJECT&#062 &#060GRAPH&#062 &#60NOTES&#62 &#060DNOTES&#062', 'thold'),
 			'method' => 'textarea',
 			'class' => 'textAreaNotes',
 			'textarea_rows' => '5',

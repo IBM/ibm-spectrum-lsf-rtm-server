@@ -190,6 +190,36 @@ class Installer implements JsonSerializable {
 			DB_STATUS_SKIPPED => 'fa fa-check-circle'
 		);
 
+		$this->defaultAutomation = array(
+			array(
+				'name'          => 'Net-SNMP Device',
+				'hash'          => '07d3fe6a52915f99e642d22e27d967a4',
+				'sysDescrMatch' => 'Linux',
+				'sysNameMatch'  => '',
+				'sysOidMatch'   => '',
+				'availMethod'   => 2,
+				'sequence'      => 1
+			),
+			array(
+				'name'          => 'Windows Device',
+				'hash'          => '5b8300be607dce4f030b026a381b91cd',
+				'sysDescrMatch' => 'Windows',
+				'sysNameMatch'  => '',
+				'sysOidMatch'   => '',
+				'availMethod'   => 2,
+				'sequence'      => 2
+			),
+			array(
+				'name'          => 'Cisco Router',
+				'hash'          => 'cae6a879f86edacb2471055783bec6d0',
+				'sysDescrMatch' => '(Cisco Internetwork Operating System Software|IOS)',
+				'sysNameMatch'  => '',
+				'sysOidMatch'   => '',
+				'availMethod'   => 2,
+				'sequence'      => 3
+			)
+		);
+
 		$this->errors        = array();
 		$this->templates     = array();
 		$this->eula          = read_config_option('install_eula', true);
@@ -299,6 +329,9 @@ class Installer implements JsonSerializable {
 				case 'CronInterval':
 					$this->setCronInterval($value);
 					break;
+				case 'DefaultTemplate':
+					$this->setDefaultTemplate($value);
+					break;
 				case 'AutomationMode':
 					$this->setAutomationMode($value);
 					break;
@@ -338,36 +371,6 @@ class Installer implements JsonSerializable {
 	 * @arg install_params - optional key/value array where key matches
 	 *                       XXX from setXXX/getXXX functions  */
 	private function setDefaults($install_params = array()) {
-		$this->defaultAutomation = array(
-			array(
-				'name'          => 'Net-SNMP Device',
-				'hash'          => '07d3fe6a52915f99e642d22e27d967a4',
-				'sysDescrMatch' => 'Linux',
-				'sysNameMatch'  => '',
-				'sysOidMatch'   => '',
-				'availMethod'   => 2,
-				'sequence'      => 1
-			),
-			array(
-				'name'          => 'Windows Device',
-				'hash'          => '5b8300be607dce4f030b026a381b91cd',
-				'sysDescrMatch' => 'Windows',
-				'sysNameMatch'  => '',
-				'sysOidMatch'   => '',
-				'availMethod'   => 2,
-				'sequence'      => 2
-			),
-			array(
-				'name'          => 'Cisco Router',
-				'hash'          => 'cae6a879f86edacb2471055783bec6d0',
-				'sysDescrMatch' => '(Cisco Internetwork Operating System Software|IOS)',
-				'sysNameMatch'  => '',
-				'sysOidMatch'   => '',
-				'availMethod'   => 2,
-				'sequence'      => 3
-			)
-		);
-
 		$this->tables             = $this->getTables();
 
 		// You have to set the paths before you start executing commands
@@ -377,6 +380,7 @@ class Installer implements JsonSerializable {
 		$this->permissions        = $this->getPermissions();
 		$this->modules            = $this->getModules();
 
+		$this->setDefaultTemplate($this->getDefaultTemplate());
 		$this->setTemplates($this->getTemplates());
 		$this->setProfile($this->getProfile());
 		$this->setAutomationMode($this->getAutomationMode());
@@ -501,74 +505,79 @@ class Installer implements JsonSerializable {
 		$permissions = array('install' => array(), 'always' => array());
 
 		$install_paths = array(
-			$config['base_path'] . '/resource/snmp_queries',
-			$config['base_path'] . '/resource/script_server',
-			$config['base_path'] . '/resource/script_queries',
-			$config['base_path'] . '/scripts',
+			'snmp_queries'   => $config['base_path'] . '/resource/snmp_queries',
+			'script_server'  => $config['base_path'] . '/resource/script_server',
+			'script_queries' => $config['base_path'] . '/resource/script_queries',
+			'scripts'        => $config['base_path'] . '/scripts',
 		);
+
+		$csrf_path = $config['base_path'] . '/include/vendor/csrf/csrf-secret.php';
+		if (!empty($config['path_csrf_secret'])) {
+			$csrf_path = $config['path_csrf_secret'];
+		}
+
+		if (is_dir($csrf_path)) {
+			$csrf_path = rtrim($csrf_path === null ? '' : $csrf_path, '/') . '/csrf-secret.php';
+		}
+
+		$install_paths['csrf'] = $csrf_path;
 
 		$always_paths = array(
-			sys_get_temp_dir(),
-			$config['base_path'] . '/log',
-			$config['base_path'] . '/cache/boost',
-			$config['base_path'] . '/cache/mibcache',
-			$config['base_path'] . '/cache/realtime',
-			$config['base_path'] . '/cache/spikekill'
+			'sys_temp'  => sys_get_temp_dir(),
+			'log'       => $config['base_path'] . '/log',
+			'boost'     => $config['base_path'] . '/cache/boost',
+			'mibcache'  => $config['base_path'] . '/cache/mibcache',
+			'realtime'  => $config['base_path'] . '/cache/realtime',
+			'spikekill' => $config['base_path'] . '/cache/spikekill'
 		);
-
-		$csrf_paths = array();
 
 		$install_key = 'always';
 		if ($this->mode != Installer::MODE_POLLER) {
 			$install_key = 'install';
-
-			if (!empty($config['path_csrf_secret'])) {
-				$csrf_paths[] = $config['path_csrf_secret'];
-			}
 		}
 
-		foreach ($install_paths as $path) {
+		foreach ($install_paths as $name => $path) {
 			if (is_dir($path)) {
 				$valid = (is_resource_writable($path . '/'));
 				$permissions[$install_key][$path . '/'] = $valid;
 			} else {
-				$valid = (is_resource_writable($path));
+				$valid = false;
+
+				// Lets see if this is the CSRF secret
+				if ($name == 'csrf') {
+
+					// Does it exist?
+					if (file_exists($path)) {
+
+						// Lets get the contents and make sure we have something at least
+						$csrf_secret = file_get_contents($path);
+						$valid = !empty($csrf_secret);
+					}
+				}
+
+				// If we aren't valid at this point, we aren't CSRF
+				// or the CSRF was empty
+				if (!$valid) {
+					// Lets me sure this path is writable
+					$valid = (is_resource_writable($path));
+				}
+
 				$permissions[$install_key][$path] = $valid;
 			}
-			log_install_debug('permission',"$path = $valid ($install_key)");
+
+			log_install_debug('permission',"($name) $path = $valid ($install_key)");
 			if (!$valid) {
-				$this->addError(Installer::STEP_PERMISSION_CHECK, 'Permission', $path, __('Path was not writable'));
+				$this->addError(Installer::STEP_PERMISSION_CHECK, 'Permission', $name.':'.$path, __('Path was not writable'));
 			}
 		}
 
-		foreach ($always_paths as $path) {
-			$valid = (is_resource_writable($path . '/'));
-			$permissions['always'][$path . '/'] = $valid;
-			log_install_debug('permission',"$path = $valid (always)");
+		foreach ($always_paths as $name => $path) {
+			$path = rtrim($path, '/') . '/';
+			$valid = (is_resource_writable($path));
+			$permissions['always'][$path] = $valid;
+			log_install_debug('permission',"($name) $path = $valid (always)");
 			if (!$valid) {
-				$this->addError(Installer::STEP_PERMISSION_CHECK, 'Permission', $path, __('Path is not writable'));
-			}
-		}
-
-		foreach ($csrf_paths as $path) {
-			if (is_dir($path)) {
-				$path .= '/csrf-secret.php';
-			}
-
-			$valid = file_exists($path);
-			if ($valid) {
-				$csrf_secret = file_get_contents($path);
-				$valid = !empty($csrf_secret);
-			}
-
-			if (!$valid) {
-				$valid = (is_resource_writable($path));
-			}
-			$permissions['install'][$path] = $valid;
-
-			log_install_debug('permission',"$path = $valid (csrf)");
-			if (!$valid) {
-				$this->addError(Installer::STEP_PERMISSION_CHECK, 'Permission', $path, __('Path was not writable'));
+				$this->addError(Installer::STEP_PERMISSION_CHECK, 'Permission', $name.':'.$path, __('Path is not writable'));
 			}
 		}
 
@@ -1087,6 +1096,69 @@ class Installer implements JsonSerializable {
 		return $this->extensions;
 	}
 
+	private function getDefaultTemplate($force = false) {
+		global $config;
+
+		$default_template = read_config_option('default_template', true);
+		log_install_always('templates', 'getDefaultTemplate(): Default Device Template is \'' . $default_template . '\'');
+
+		$sysDescrMatch = $config['cacti_server_os'] == 'win32' ? 'Windows' : 'Linux';
+		foreach ($this->defaultAutomation as $item) {
+			if ($item['sysDescrMatch'] == $sysDescrMatch || !empty($default_template)) {
+				$host_template_id = db_fetch_cell_prepared(
+					'SELECT id
+					FROM host_template
+					WHERE hash = ?',
+					array($item['hash'])
+				);
+
+				if (!empty($host_template_id)) {
+					if ($host_template_id != $default_template) {
+						log_install_always('templates', 'getDefaultTemplate(): Changing Device Template to \'' . $item['name'] . '\'');
+
+						set_config_option('default_template', $host_template_id);
+					}
+					break;
+				} else {
+					log_install_debug('templates', 'getDefaultTemplate(): Unable to find Device Template for \'' . $item['name'] .'\'');
+				}
+			}
+		}
+
+		if (empty($default_template) && !$force) {
+			set_default_action('default_template', '');
+			$default_template = $this->getDefaultTemplate(true);
+		}
+
+		return $default_template;
+	}
+
+	private function setDefaultTemplate($param_default_template = '') {
+		$default_template = null;
+		if (!empty($param_default_template)) {
+			foreach ($this->defaultAutomation as $item) {
+				$host_template_id = db_fetch_cell_prepared('SELECT id
+						FROM host_template
+						WHERE hash = ?',
+						array($item['hash']));
+
+				if (!empty($host_template_id) && $host_template_id == $param_default_template) {
+					$default_template = $param_default_template;
+					break;
+				}
+			}
+		}
+
+		if (empty($default_template)) {
+			$default_template = $this->getDefaultTemplate();
+		}
+
+		set_config_option('default_template', $default_template);
+
+		$default_template = $this->getDefaultTemplate();
+		log_install_always('template','setDefaultTemplate(): Device default template is \'' . $default_template . '\'');
+	}
+
 	/* getTemplates() - returns a list of expected templates and whether
 	 *                  they have been selected for installation */
 	private function getTemplates() {
@@ -1097,7 +1169,7 @@ class Installer implements JsonSerializable {
 		}
 
 		$db_templates = array_rekey(
-			db_fetch_assoc('SELECT name, value FROM settings WHERE name LIKE \'install_template_%\''),
+			db_fetch_assoc('SELECT name, value FROM settings WHERE name LIKE \'install_tp_%\''),
 			'name', 'value'
 		);
 
@@ -1110,7 +1182,7 @@ class Installer implements JsonSerializable {
 		foreach ($known_templates as $known) {
 			$filename    = $known['filename'];
 			$key_base    = str_replace('.', '_', $filename);
-			$key_install = 'install_template_' . $key_base;
+			$key_install = 'install_tp_' . $key_base;
 			$key_check   = 'chk_template_' . $key_base;
 
 			log_install_high('templates','getTemplates(): Checking template ' . $known['name'] . ' using base: ' . $key_base);
@@ -1147,7 +1219,7 @@ class Installer implements JsonSerializable {
 	 *         passed that is not expected */
 	private function setTemplates($param_templates = array()) {
 		if (is_array($param_templates)) {
-			db_execute('DELETE FROM settings WHERE name like \'install_template_%\'');
+			db_execute('DELETE FROM settings WHERE name like \'install_tp_%\'');
 			$known_templates = install_setup_get_templates();
 
 			log_install_medium('templates',"setTemplates(): Updating templates");
@@ -1183,7 +1255,7 @@ class Installer implements JsonSerializable {
 					$this->setTrueFalse($enabled, $set, $key, false);
 					$use = ($set) || ($param_all);
 					$value = ($use) ? $template['filename'] : '';
-					log_install_high('templates',"setTemplates(): Use: $use, Set: $set, All: $param_all, key: install_template_$key = " . $value);
+					log_install_high('templates',"setTemplates(): Use: $use, Set: $set, All: $param_all, key: install_tp_$key = " . $value);
 
 					// Don't default install templates if upgrade
 					if ($this->getMode() == Installer::MODE_DOWNGRADE) {
@@ -1191,7 +1263,7 @@ class Installer implements JsonSerializable {
 						$use   = false;
 					}
 
-					set_config_option("install_template_$key", $value);
+					set_config_option("install_tp_$key", $value);
 					$this->templates[$name] = $use;
 				}
 			}
@@ -1606,7 +1678,7 @@ class Installer implements JsonSerializable {
 				/* upgrade - if user upgrades send to settings check */
 				if ($this->isPre_v0_8_UpgradeNeeded()) {
 					/* upgrade - if user runs old version send to upgrade-oldversion */
-					$this->stepNext = Installer::STEP_INSTALL_OLD;
+					$this->stepNext = Installer::STEP_INSTALL_OLDVERSION;
 				} else {
 					$this->stepNext = Installer::STEP_INSTALL;
 				}
@@ -1675,7 +1747,7 @@ class Installer implements JsonSerializable {
 		}
 
 		$output .= Installer::sectionNormal(__('Thanks for taking the time to download and install Cacti, the complete graphing solution for your network. Before you can start making cool graphs, there are a few pieces of data that Cacti needs to know.'));
-		$output .= Installer::sectionNormal(__('Make sure you have read and followed the required steps needed to install Cacti before continuing. Install information can be found for <a href="%1$s">Unix</a> and <a href="%2$s">Win32</a>-based operating systems.', '../docs/html/install_unix.html', '../docs/html/install_windows.html'));
+		$output .= Installer::sectionNormal(__('Make sure you have read and followed the required steps needed to install Cacti before continuing. Install information can be found for <a href="%s">Unix</a> and <a href="%s">Win32</a>-based operating systems.', '../docs/html/install_unix.html', '../docs/html/install_windows.html'));
 
 		if ($this->mode == Installer::MODE_UPGRADE) {
 			$output .= Installer::sectionNote(__('This process will guide you through the steps for upgrading from version \'%s\'. ',$this->old_cacti_version));
@@ -1707,7 +1779,7 @@ class Installer implements JsonSerializable {
 			} else {
 				$flagName = strtolower($flags[0]);
 			}
-			$langOutput .= '<option value=\'' . $key . '\'' . $selected . ' data-class=\'flag-icon-' . $flagName . '\'><span class="flag-icon flag-icon-squared flag-icon-'.$flagName.'"></span>' . $value . '</option>';
+			$langOutput .= '<option value=\'' . $key . '\'' . $selected . ' data-class=\'fi-' . $flagName . '\'><span class="fi fis fi-'.$flagName.'"></span>' . $value . '</option>';
 		}
 		$langOutput .= '</select>';
 
@@ -2661,7 +2733,7 @@ class Installer implements JsonSerializable {
 			'<table width="100%"><tr>' .
 				'<td class="cactiInstallProgressLeft">Refresh in</td>' .
 				'<td class="cactiInstallProgressCenter">&nbsp;</td>' .
-				'<td class="cactiInstallProgressRight">Progress<span style=\'float:right\'>Last updated: ' . date('H:i:s', $time) . '</span></td>' .
+				'<td class="cactiInstallProgressRight">Progress<span style=\'float:right\'>Last updated: ' . date('H:i:s', intval($time)) . '</span></td>' .
 			'</tr><tr>' .
 				'<td class="cactiInstallProgressLeft">'.
 					'<div id="cactiInstallProgressCountdown"><div></div></div>' .
@@ -2799,6 +2871,7 @@ class Installer implements JsonSerializable {
 			$file = fopen($cacheFile, "r");
 			if ($file !== false) {
 				$version_last = '';
+				$sectionStatus = null;
 				$line = 0;
 				while (!feof($file)) {
 					$line++;
@@ -2978,7 +3051,7 @@ class Installer implements JsonSerializable {
 
 		$templates = db_fetch_assoc("SELECT value
 			FROM settings
-			WHERE name LIKE 'install_template_%'
+			WHERE name LIKE 'install_tp_%'
 			AND value <> ''");
 
 		$this->setProgress(Installer::PROGRESS_TEMPLATES_BEGIN);
@@ -2998,7 +3071,9 @@ class Installer implements JsonSerializable {
 
 				if (!empty($package)) {
 					set_config_option('install_updated', microtime(true));
-					$result = import_package($path . $package, $this->profile, false, false, false, false);
+
+					$info = import_package_get_details($path . $package);
+					$result = import_package($path . $package, $this->profile, false, false, false, false, true, array(), array(), $info['class']);
 
 					if ($result !== false) {
 						log_install_always('', __('Import of Package #%s \'%s\' under Profile \'%s\' succeeded', $i, $package, $this->profile));
@@ -3010,12 +3085,6 @@ class Installer implements JsonSerializable {
 					log_install_always('', __('Import of Package #%s \'%s\' under Profile \'%s\' failed', $i, $package, $this->profile));
 					$this->addError(Installer::STEP_ERROR, 'Package:'.$package, 'FAIL: XML version code error');
 				}
-			}
-
-			// If we are Windows, switch everything to PNG
-			if ($config['cacti_server_os'] != 'unix') {
-				db_execute('UPDATE graph_templates_graph SET image_format_id = 1');
-				set_config_option('default_image_format', '1');
 			}
 
 			// Repair automation rules if broken
@@ -3580,7 +3649,7 @@ class Installer implements JsonSerializable {
 					if ($integrated) {
 						cacti_log("Removing $plugin version $version as it is now integrated with Cacti " . CACTI_VERSION);
 					} else {
-						cacti_log("Disabling $plugin version $version as it is not compatible with Cacti " . CACTI_VERSION);
+						cacti_log("Disabling $plugin version $version as it is missing or not compatible with Cacti " . CACTI_VERSION);
 					}
 					api_plugin_disable_all($plugin);
 				}

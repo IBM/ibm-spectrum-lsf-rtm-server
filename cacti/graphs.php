@@ -88,7 +88,7 @@ switch (get_request_var('action')) {
 	case 'ajax_hosts':
 		$sql_where = '';
 		if (get_request_var('site_id') > 0) {
-			$sql_where = 'site_id = ' . get_request_var('site_id');
+			$sql_where = 'site_id = ' . get_filter_request_var('site_id');
 		}
 
 		get_allowed_ajax_hosts(true, 'applyFilter', $sql_where);
@@ -97,7 +97,7 @@ switch (get_request_var('action')) {
 	case 'ajax_hosts_noany':
 		$sql_where = '';
 		if (get_request_var('site_id') > 0) {
-			$sql_where = 'site_id = ' . get_request_var('site_id');
+			$sql_where = 'site_id = ' . get_filter_request_var('site_id');
 		}
 
 		get_allowed_ajax_hosts(false, 'applyFilter', $sql_where);
@@ -245,7 +245,7 @@ function form_save() {
 		$return_array = create_complete_graph_from_template($graph_template_id, $host_id, $snmp_query_array, $suggested_values);
 
 		if ($return_array !== false) {
-			debug_log_insert('new_graphs', __('Created graph: %s', get_graph_title($return_array['local_graph_id'])));
+			debug_log_insert('new_graphs', __esc('Created graph: %s', get_graph_title($return_array['local_graph_id'])));
 
 			/* lastly push host-specific information to our data sources */
 			if (cacti_sizeof($return_array['local_data_id'])) { # we expect at least one data source associated
@@ -253,7 +253,7 @@ function form_save() {
 					push_out_host($host_id, $item);
 				}
 			} else {
-				debug_log_insert('new_graphs', __('ERROR: No Data Source associated. Check Template'));
+				debug_log_insert('new_graphs', __esc('ERROR: No Data Source associated. Check Template'));
 			}
 		}
 
@@ -2151,6 +2151,8 @@ function graph_management() {
 			ON gl.id = gti.local_graph_id
 			LEFT JOIN data_template_rrd AS dtr
 			ON dtr.id = gti.task_item_id
+			INNER JOIN data_local AS dl
+			ON dl.id = dtr.local_data_id
 			LEFT JOIN host AS h
 			ON h.id = gl.host_id
 			WHERE graph_type_id IN (4,5,6,7,8,20)
@@ -2161,7 +2163,7 @@ function graph_management() {
 				ON c.id = ci.cdef_id
 				WHERE (ci.type = 4 OR (ci.type = 6 AND value LIKE '%DATA_SOURCE%'))
 			)
-			AND (dtr.id IS NULL OR (gl.snmp_query_id > 0 AND gl.snmp_index = ''))
+			AND (dl.orphan = 1 OR dtr.id IS NULL OR (gl.snmp_query_id > 0 AND gl.snmp_index = ''))
 			$sql_where2
 		) AS dtr
 		ON gl.id = dtr.local_graph_id";

@@ -212,10 +212,10 @@
 <blockquote>
 <p><strong>NOTE</strong>: Package maintainers may wish to utilize the CLI methods of install_cacti.php and upgrade_database.php to perform in place installations and upgrades.</p>
 </blockquote>
+<p>In the sub-sections below, we will demonstrate the use of a few of these CLI scripts.</p>
 <blockquote>
 <p><strong>Caution</strong>: In the following examples, several numbers are shown as output from various scripts. They will vary between different installations. So don't bother, if your numbers will vary.</p>
 </blockquote>
-<p>In the sub-sections below, we will demonstrate the use of a few of these CLI scripts.</p>
 <h2 id="rebuild-poller-cache">Rebuild Poller Cache</h2>
 <p>The poller cache holds all commands that cacti will issue during the polling process in an internal format. It is possible, to review the current contents of the poller cache by visiting <code>System Utilities</code>, <code>View Poller Cache</code>. It is possible to apply filters to this view; it will show up like</p>
 <pre class="console"><code>Localhost - Hard Drive Space    Script Server: /var/www/html/cacti/scripts/ss_host_disk.php ss_host_disk 127.0.0.1 1 1:161:500:somesecret:::::: get total 6
@@ -676,7 +676,7 @@ Success: Graph Template associated for host: (11: router) - graph-template: (7: 
 <h2 id="add-a-new-graph">Add a New Graph</h2>
 <p>You won't stop now as you've just created a device from cli. Surely, the task of setting up graphs is the next step. This is done using <code>add_graphs.php</code>. Calling the script with the parameter <code>--help</code> yields</p>
 <pre class="console"><code>shell&gt;php -q add_graphs.php
-Add Graphs Script 1.2, Copyright 2008 - 2023 The Cacti Group
+Add Graphs Script 1.2, Copyright 2008 - The Cacti Group
 
 A simple command line utility to add graphs in Cacti
 
@@ -1142,6 +1142,6 @@ Known Host Graphs: (id, name, template)
 </code></pre>
 <p><code>--user-id=4</code> must specify an existing users. Else, an error message will be printed. As <code>--item-type=graph</code> is given, <code>--item-id=1</code> must specify a valid graph. Again, if no graph template with this specific id exists, an error message will be printed. No output is produced on successful operations.</p>
 <hr />
-<p><copy>Copyright (c) 2004-2023 The Cacti Group</copy></p>
+<p>Copyright (c) 2004-2023 The Cacti Group</p>
 </body>
 </html>

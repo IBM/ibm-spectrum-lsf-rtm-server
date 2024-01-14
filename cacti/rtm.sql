@@ -1,12 +1,8 @@
---
--- $Id$
---
-
--- MySQL dump 10.14  Distrib 5.5.68-MariaDB, for Linux (x86_64)
+-- MariaDB dump 10.19  Distrib 10.5.22-MariaDB, for Linux (x86_64)
 --
 -- Host: localhost    Database: cacti
 -- ------------------------------------------------------
--- Server version	5.5.68-MariaDB
+-- Server version	10.5.22-MariaDB
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -37,7 +33,7 @@ CREATE TABLE `aggregate_graph_templates` (
   `total_type` int(10) unsigned NOT NULL,
   `total_prefix` varchar(64) NOT NULL,
   `order_type` int(10) unsigned NOT NULL,
-  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created` timestamp NOT NULL DEFAULT current_timestamp(),
   `user_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `graph_template_id` (`graph_template_id`),
@@ -55,11 +51,11 @@ DROP TABLE IF EXISTS `aggregate_graph_templates_graph`;
 CREATE TABLE `aggregate_graph_templates_graph` (
   `aggregate_template_id` int(10) unsigned NOT NULL,
   `t_image_format_id` char(2) DEFAULT '',
-  `image_format_id` tinyint(1) NOT NULL DEFAULT '0',
+  `image_format_id` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `t_height` char(2) DEFAULT '',
-  `height` mediumint(8) NOT NULL DEFAULT '0',
+  `height` mediumint(8) NOT NULL DEFAULT 0,
   `t_width` char(2) DEFAULT '',
-  `width` mediumint(8) NOT NULL DEFAULT '0',
+  `width` mediumint(8) NOT NULL DEFAULT 0,
   `t_upper_limit` char(2) DEFAULT '',
   `upper_limit` varchar(20) NOT NULL DEFAULT '0',
   `t_lower_limit` char(2) DEFAULT '',
@@ -71,7 +67,7 @@ CREATE TABLE `aggregate_graph_templates_graph` (
   `t_auto_scale` char(2) DEFAULT '',
   `auto_scale` char(2) DEFAULT '',
   `t_auto_scale_opts` char(2) DEFAULT '',
-  `auto_scale_opts` tinyint(1) NOT NULL DEFAULT '0',
+  `auto_scale_opts` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `t_auto_scale_log` char(2) DEFAULT '',
   `auto_scale_log` char(2) DEFAULT '',
   `t_scale_log_units` char(2) DEFAULT '',
@@ -81,7 +77,7 @@ CREATE TABLE `aggregate_graph_templates_graph` (
   `t_auto_padding` char(2) DEFAULT '',
   `auto_padding` char(2) DEFAULT '',
   `t_base_value` char(2) DEFAULT '',
-  `base_value` mediumint(8) NOT NULL DEFAULT '0',
+  `base_value` mediumint(8) NOT NULL DEFAULT 0,
   `t_grouping` char(2) DEFAULT '',
   `grouping` char(2) NOT NULL DEFAULT '',
   `t_unit_value` char(2) DEFAULT '',
@@ -128,10 +124,10 @@ DROP TABLE IF EXISTS `aggregate_graph_templates_item`;
 CREATE TABLE `aggregate_graph_templates_item` (
   `aggregate_template_id` int(10) unsigned NOT NULL,
   `graph_templates_item_id` int(10) unsigned NOT NULL,
-  `sequence` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `color_template` int(10) NOT NULL,
+  `sequence` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `color_template` int(10) unsigned NOT NULL,
   `t_graph_type_id` char(2) DEFAULT '',
-  `graph_type_id` tinyint(3) NOT NULL DEFAULT '0',
+  `graph_type_id` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `t_cdef_id` char(2) DEFAULT '',
   `cdef_id` mediumint(8) unsigned DEFAULT NULL,
   `item_skip` char(2) NOT NULL,
@@ -161,7 +157,7 @@ CREATE TABLE `aggregate_graphs` (
   `total_type` int(10) unsigned NOT NULL,
   `total_prefix` varchar(64) NOT NULL,
   `order_type` int(10) unsigned NOT NULL,
-  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `user_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `aggregate_template_id` (`aggregate_template_id`),
@@ -181,10 +177,10 @@ DROP TABLE IF EXISTS `aggregate_graphs_graph_item`;
 CREATE TABLE `aggregate_graphs_graph_item` (
   `aggregate_graph_id` int(10) unsigned NOT NULL,
   `graph_templates_item_id` int(10) unsigned NOT NULL,
-  `sequence` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `sequence` mediumint(8) unsigned NOT NULL DEFAULT 0,
   `color_template` int(10) unsigned NOT NULL,
   `t_graph_type_id` char(2) DEFAULT '',
-  `graph_type_id` tinyint(3) NOT NULL DEFAULT '0',
+  `graph_type_id` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `t_cdef_id` char(2) DEFAULT '',
   `cdef_id` mediumint(8) unsigned DEFAULT NULL,
   `item_skip` char(2) NOT NULL,
@@ -203,7 +199,7 @@ DROP TABLE IF EXISTS `aggregate_graphs_items`;
 CREATE TABLE `aggregate_graphs_items` (
   `aggregate_graph_id` int(10) unsigned NOT NULL,
   `local_graph_id` int(10) unsigned NOT NULL,
-  `sequence` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `sequence` mediumint(8) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`aggregate_graph_id`,`local_graph_id`)
 ) ENGINE=InnoDB COMMENT='Aggregate Graph Items';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -217,12 +213,12 @@ DROP TABLE IF EXISTS `automation_devices`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `automation_devices` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `network_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `network_id` int(10) unsigned NOT NULL DEFAULT 0,
   `hostname` varchar(100) NOT NULL DEFAULT '',
   `ip` varchar(17) NOT NULL DEFAULT '',
   `snmp_community` varchar(100) NOT NULL DEFAULT '',
-  `snmp_version` tinyint(1) unsigned NOT NULL DEFAULT '1',
-  `snmp_port` mediumint(5) unsigned NOT NULL DEFAULT '161',
+  `snmp_version` tinyint(1) unsigned NOT NULL DEFAULT 1,
+  `snmp_port` mediumint(5) unsigned NOT NULL DEFAULT 161,
   `snmp_username` varchar(50) DEFAULT NULL,
   `snmp_password` varchar(50) DEFAULT NULL,
   `snmp_auth_protocol` char(6) DEFAULT '',
@@ -234,12 +230,12 @@ CREATE TABLE `automation_devices` (
   `sysLocation` varchar(255) NOT NULL DEFAULT '',
   `sysContact` varchar(255) NOT NULL DEFAULT '',
   `sysDescr` varchar(255) NOT NULL DEFAULT '',
-  `sysUptime` int(32) NOT NULL DEFAULT '0',
+  `sysUpTime` bigint(20) unsigned NOT NULL DEFAULT 0,
   `os` varchar(64) NOT NULL DEFAULT '',
-  `snmp` tinyint(4) NOT NULL DEFAULT '0',
-  `known` tinyint(4) NOT NULL DEFAULT '0',
-  `up` tinyint(4) NOT NULL DEFAULT '0',
-  `time` int(10) NOT NULL DEFAULT '0',
+  `snmp` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `known` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `up` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `time` int(10) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ip` (`ip`),
   KEY `hostname` (`hostname`)
@@ -255,11 +251,11 @@ DROP TABLE IF EXISTS `automation_graph_rule_items`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `automation_graph_rule_items` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `rule_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `sequence` smallint(3) unsigned NOT NULL DEFAULT '0',
-  `operation` smallint(3) unsigned NOT NULL DEFAULT '0',
+  `rule_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `sequence` smallint(3) unsigned NOT NULL DEFAULT 0,
+  `operation` smallint(3) unsigned NOT NULL DEFAULT 0,
   `field` varchar(255) NOT NULL DEFAULT '',
-  `operator` smallint(3) unsigned NOT NULL DEFAULT '0',
+  `operator` smallint(3) unsigned NOT NULL DEFAULT 0,
   `pattern` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB COMMENT='Automation Graph Rule Items';
@@ -285,8 +281,8 @@ DROP TABLE IF EXISTS `automation_graph_rules`;
 CREATE TABLE `automation_graph_rules` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL DEFAULT '',
-  `snmp_query_id` smallint(3) unsigned NOT NULL DEFAULT '0',
-  `graph_type_id` smallint(3) unsigned NOT NULL DEFAULT '0',
+  `snmp_query_id` smallint(3) unsigned NOT NULL DEFAULT 0,
+  `graph_type_id` smallint(3) unsigned NOT NULL DEFAULT 0,
   `enabled` char(2) DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `name` (`name`(171))
@@ -331,12 +327,12 @@ DROP TABLE IF EXISTS `automation_match_rule_items`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `automation_match_rule_items` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `rule_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `rule_type` smallint(3) unsigned NOT NULL DEFAULT '0',
-  `sequence` smallint(3) unsigned NOT NULL DEFAULT '0',
-  `operation` smallint(3) unsigned NOT NULL DEFAULT '0',
+  `rule_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `rule_type` smallint(3) unsigned NOT NULL DEFAULT 0,
+  `sequence` smallint(3) unsigned NOT NULL DEFAULT 0,
+  `operation` smallint(3) unsigned NOT NULL DEFAULT 0,
   `field` varchar(255) NOT NULL DEFAULT '',
-  `operator` smallint(3) unsigned NOT NULL DEFAULT '0',
+  `operator` smallint(3) unsigned NOT NULL DEFAULT 0,
   `pattern` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB COMMENT='Automation Match Rule Items';
@@ -361,8 +357,8 @@ DROP TABLE IF EXISTS `automation_networks`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `automation_networks` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `poller_id` int(10) unsigned DEFAULT '1',
-  `site_id` int(10) unsigned DEFAULT '1',
+  `poller_id` int(10) unsigned DEFAULT 1,
+  `site_id` int(10) unsigned DEFAULT 1,
   `name` varchar(128) NOT NULL DEFAULT '' COMMENT 'The name for this network',
   `subnet_range` varchar(1024) NOT NULL DEFAULT '' COMMENT 'Defined subnet ranges for discovery',
   `dns_servers` varchar(128) NOT NULL DEFAULT '' COMMENT 'DNS Servers to use for name resolution',
@@ -375,25 +371,25 @@ CREATE TABLE `automation_networks` (
   `enable_netbios` char(2) DEFAULT '',
   `add_to_cacti` char(2) DEFAULT '',
   `same_sysname` char(2) DEFAULT '',
-  `total_ips` int(10) unsigned DEFAULT '0',
-  `up_hosts` int(10) unsigned NOT NULL DEFAULT '0',
-  `snmp_hosts` int(10) unsigned NOT NULL DEFAULT '0',
-  `ping_method` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'The ping method (ICMP:TCP:UDP)',
-  `ping_port` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'For TCP:UDP the port to ping',
-  `ping_timeout` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'The ping timeout in seconds',
-  `ping_retries` int(10) unsigned DEFAULT '0',
-  `sched_type` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Schedule type: manual or automatic',
-  `threads` int(10) unsigned DEFAULT '1',
-  `run_limit` int(10) unsigned DEFAULT '0' COMMENT 'The maximum runtime for the discovery',
+  `total_ips` int(10) unsigned DEFAULT 0,
+  `up_hosts` int(10) unsigned NOT NULL DEFAULT 0,
+  `snmp_hosts` int(10) unsigned NOT NULL DEFAULT 0,
+  `ping_method` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'The ping method (ICMP:TCP:UDP)',
+  `ping_port` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'For TCP:UDP the port to ping',
+  `ping_timeout` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'The ping timeout in seconds',
+  `ping_retries` int(10) unsigned DEFAULT 0,
+  `sched_type` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Schedule type: manual or automatic',
+  `threads` int(10) unsigned DEFAULT 1,
+  `run_limit` int(10) unsigned DEFAULT 0 COMMENT 'The maximum runtime for the discovery',
   `start_at` varchar(20) DEFAULT NULL,
   `next_start` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `recur_every` int(10) unsigned DEFAULT '1',
+  `recur_every` int(10) unsigned DEFAULT 1,
   `day_of_week` varchar(45) DEFAULT NULL COMMENT 'The days of week to run in crontab format',
   `month` varchar(45) DEFAULT NULL COMMENT 'The months to run in crontab format',
   `day_of_month` varchar(45) DEFAULT NULL COMMENT 'The days of month to run in crontab format',
   `monthly_week` varchar(45) DEFAULT NULL,
   `monthly_day` varchar(45) DEFAULT NULL,
-  `last_runtime` double NOT NULL DEFAULT '0' COMMENT 'The last runtime for discovery',
+  `last_runtime` double NOT NULL DEFAULT 0 COMMENT 'The last runtime for discovery',
   `last_started` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'The time the discovery last started',
   `last_status` varchar(128) NOT NULL DEFAULT '' COMMENT 'The last exit message if any',
   `rerun_data_queries` char(2) DEFAULT NULL COMMENT 'Rerun data queries or not for existing hosts',
@@ -411,13 +407,13 @@ DROP TABLE IF EXISTS `automation_processes`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `automation_processes` (
   `pid` int(8) unsigned NOT NULL,
-  `poller_id` int(10) unsigned DEFAULT '1',
-  `network_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `poller_id` int(10) unsigned DEFAULT 1,
+  `network_id` int(10) unsigned NOT NULL DEFAULT 0,
   `task` varchar(20) DEFAULT '',
   `status` varchar(20) DEFAULT NULL,
   `command` varchar(20) DEFAULT NULL,
-  `up_hosts` int(10) unsigned DEFAULT '0',
-  `snmp_hosts` int(10) unsigned DEFAULT '0',
+  `up_hosts` int(10) unsigned DEFAULT 0,
+  `snmp_hosts` int(10) unsigned DEFAULT 0,
   `heartbeat` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`pid`,`network_id`)
 ) ENGINE=MEMORY COMMENT='Table tracking active poller processes';
@@ -456,14 +452,15 @@ DROP TABLE IF EXISTS `automation_snmp_items`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `automation_snmp_items` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `snmp_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `sequence` int(10) unsigned NOT NULL DEFAULT '0',
-  `snmp_version` tinyint(1) unsigned NOT NULL DEFAULT '1',
+  `snmp_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `sequence` int(10) unsigned NOT NULL DEFAULT 0,
+  `snmp_version` tinyint(1) unsigned NOT NULL DEFAULT 1,
   `snmp_community` varchar(100) NOT NULL,
-  `snmp_port` mediumint(5) unsigned NOT NULL DEFAULT '161',
-  `snmp_timeout` int(10) unsigned NOT NULL DEFAULT '500',
-  `snmp_retries` tinyint(11) unsigned NOT NULL DEFAULT '3',
-  `max_oids` int(10) unsigned DEFAULT '10',
+  `snmp_port` mediumint(5) unsigned NOT NULL DEFAULT 161,
+  `snmp_timeout` int(10) unsigned NOT NULL DEFAULT 500,
+  `snmp_retries` tinyint(11) unsigned NOT NULL DEFAULT 3,
+  `max_oids` int(10) unsigned DEFAULT 10,
+  `bulk_walk_size` int(10) DEFAULT -1,
   `snmp_username` varchar(50) DEFAULT NULL,
   `snmp_password` varchar(50) DEFAULT NULL,
   `snmp_auth_protocol` char(6) DEFAULT '',
@@ -481,7 +478,7 @@ CREATE TABLE `automation_snmp_items` (
 
 LOCK TABLES `automation_snmp_items` WRITE;
 /*!40000 ALTER TABLE `automation_snmp_items` DISABLE KEYS */;
-INSERT INTO `automation_snmp_items` VALUES (1,1,1,2,'public',161,1000,3,10,'admin','baseball','MD5','','DES','',''),(2,1,2,2,'private',161,1000,3,10,'admin','baseball','MD5','','DES','','');
+INSERT INTO `automation_snmp_items` VALUES (1,1,1,2,'public',161,1000,3,10,-1,'admin','baseball','MD5','','DES','',''),(2,1,2,2,'private',161,1000,3,10,-1,'admin','baseball','MD5','','DES','','');
 /*!40000 ALTER TABLE `automation_snmp_items` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -493,13 +490,13 @@ DROP TABLE IF EXISTS `automation_templates`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `automation_templates` (
-  `id` int(8) NOT NULL AUTO_INCREMENT,
-  `host_template` int(8) NOT NULL DEFAULT '0',
-  `availability_method` int(10) unsigned DEFAULT '2',
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `host_template` int(10) unsigned NOT NULL DEFAULT 0,
+  `availability_method` int(10) unsigned DEFAULT 2,
   `sysDescr` varchar(255) DEFAULT '',
   `sysName` varchar(255) DEFAULT '',
   `sysOid` varchar(60) DEFAULT '',
-  `sequence` int(10) unsigned DEFAULT '0',
+  `sequence` int(10) unsigned DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB COMMENT='Templates of SNMP Sys variables used for automation';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -523,10 +520,10 @@ DROP TABLE IF EXISTS `automation_tree_rule_items`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `automation_tree_rule_items` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `rule_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `sequence` smallint(3) unsigned NOT NULL DEFAULT '0',
+  `rule_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `sequence` smallint(3) unsigned NOT NULL DEFAULT 0,
   `field` varchar(255) NOT NULL DEFAULT '',
-  `sort_type` smallint(3) unsigned NOT NULL DEFAULT '0',
+  `sort_type` smallint(3) unsigned NOT NULL DEFAULT 0,
   `propagate_changes` char(2) DEFAULT '',
   `search_pattern` varchar(255) NOT NULL DEFAULT '',
   `replace_pattern` varchar(255) NOT NULL DEFAULT '',
@@ -554,10 +551,10 @@ DROP TABLE IF EXISTS `automation_tree_rules`;
 CREATE TABLE `automation_tree_rules` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL DEFAULT '',
-  `tree_id` smallint(3) unsigned NOT NULL DEFAULT '0',
-  `tree_item_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `leaf_type` smallint(3) unsigned NOT NULL DEFAULT '0',
-  `host_grouping_type` smallint(3) unsigned NOT NULL DEFAULT '0',
+  `tree_id` smallint(3) unsigned NOT NULL DEFAULT 0,
+  `tree_item_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `leaf_type` smallint(3) unsigned NOT NULL DEFAULT 0,
+  `host_grouping_type` smallint(3) unsigned NOT NULL DEFAULT 0,
   `enabled` char(2) DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `name` (`name`(171))
@@ -584,7 +581,7 @@ DROP TABLE IF EXISTS `cdef`;
 CREATE TABLE `cdef` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `hash` varchar(32) NOT NULL DEFAULT '',
-  `system` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `system` mediumint(8) unsigned NOT NULL DEFAULT 0,
   `name` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `hash` (`hash`),
@@ -612,9 +609,9 @@ DROP TABLE IF EXISTS `cdef_items`;
 CREATE TABLE `cdef_items` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `hash` varchar(32) NOT NULL DEFAULT '',
-  `cdef_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `sequence` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `type` tinyint(2) NOT NULL DEFAULT '0',
+  `cdef_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `sequence` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `type` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `value` varchar(150) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `cdef_id_sequence` (`cdef_id`,`sequence`)
@@ -640,9 +637,9 @@ DROP TABLE IF EXISTS `color_template_items`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `color_template_items` (
   `color_template_item_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `color_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `color_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `sequence` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `color_template_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `color_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `sequence` mediumint(8) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`color_template_item_id`)
 ) ENGINE=InnoDB COMMENT='Color Items for Color Templates';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -717,12 +714,12 @@ DROP TABLE IF EXISTS `data_debug`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `data_debug` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `started` int(10) NOT NULL DEFAULT '0',
-  `done` int(10) NOT NULL DEFAULT '0',
-  `user` int(10) NOT NULL DEFAULT '0',
-  `datasource` int(10) NOT NULL DEFAULT '0',
-  `info` text NOT NULL,
-  `issue` text,
+  `started` int(10) unsigned NOT NULL DEFAULT 0,
+  `done` int(10) unsigned NOT NULL DEFAULT 0,
+  `user` int(10) unsigned NOT NULL DEFAULT 0,
+  `datasource` int(10) unsigned NOT NULL DEFAULT 0,
+  `info` text NOT NULL DEFAULT '',
+  `issue` text DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `user` (`user`),
   KEY `done` (`done`),
@@ -743,7 +740,7 @@ CREATE TABLE `data_input` (
   `hash` varchar(32) NOT NULL DEFAULT '',
   `name` varchar(200) NOT NULL DEFAULT '',
   `input_string` varchar(512) DEFAULT NULL,
-  `type_id` tinyint(2) NOT NULL DEFAULT '0',
+  `type_id` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `name_type_id` (`name`(171),`type_id`)
 ) ENGINE=InnoDB;
@@ -767,10 +764,10 @@ DROP TABLE IF EXISTS `data_input_data`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `data_input_data` (
-  `data_input_field_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `data_template_data_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `data_input_field_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `data_template_data_id` int(10) unsigned NOT NULL DEFAULT 0,
   `t_value` char(2) DEFAULT NULL,
-  `value` text,
+  `value` text DEFAULT NULL,
   PRIMARY KEY (`data_input_field_id`,`data_template_data_id`),
   KEY `t_value` (`t_value`),
   KEY `data_template_data_id` (`data_template_data_id`)
@@ -783,7 +780,7 @@ CREATE TABLE `data_input_data` (
 
 LOCK TABLES `data_input_data` WRITE;
 /*!40000 ALTER TABLE `data_input_data` DISABLE KEYS */;
-INSERT INTO `data_input_data` VALUES (1,4,'',''),(1,5,'',''),(1,6,'',''),(1,7,'',''),(1,8,'',''),(1,17,'',''),(1,19,'',''),(1,20,'',''),(1,22,'',''),(1,23,'',''),(1,24,'',''),(1,25,'',''),(1,26,'',''),(1,27,'',''),(1,29,'',''),(1,30,'',''),(1,31,'',''),(1,32,'',''),(1,33,'',''),(1,34,'',''),(1,35,'',''),(1,36,'',''),(1,37,'',''),(1,58,'',''),(1,59,'',''),(1,68,'',''),(1,119,'',''),(1,120,'',''),(1,121,'',''),(1,122,'',''),(1,123,'',''),(1,124,'',''),(1,125,'',''),(1,128,'',''),(1,129,'',''),(1,130,'',''),(1,131,'',''),(1,132,'',''),(1,133,'',''),(1,150,'',''),(1,151,'',''),(1,152,'',''),(1,161,'',''),(2,4,'',''),(2,5,'',''),(2,6,'',''),(2,7,'',''),(2,8,'',''),(2,17,'',''),(2,19,'',''),(2,20,'',''),(2,22,'',''),(2,23,'',''),(2,24,'',''),(2,25,'',''),(2,26,'',''),(2,27,'',''),(2,29,'',''),(2,30,'',''),(2,31,'',''),(2,32,'',''),(2,33,'',''),(2,34,'',''),(2,35,'',''),(2,36,'',''),(2,37,'',''),(2,58,'',''),(2,59,'',''),(2,68,'',''),(2,119,'',''),(2,120,'',''),(2,121,'',''),(2,122,'',''),(2,123,'',''),(2,124,'',''),(2,125,'',''),(2,128,'',''),(2,129,'',''),(2,130,'',''),(2,131,'',''),(2,132,'',''),(2,133,'',''),(2,150,'',''),(2,151,'',''),(2,152,'',''),(2,161,'',''),(3,4,'',''),(3,5,'',''),(3,6,'',''),(3,7,'',''),(3,8,'',''),(3,17,'',''),(3,19,'',''),(3,20,'',''),(3,22,'',''),(3,23,'',''),(3,24,'',''),(3,25,'',''),(3,26,'',''),(3,27,'',''),(3,29,'',''),(3,30,'',''),(3,31,'',''),(3,32,'',''),(3,33,'',''),(3,34,'',''),(3,35,'',''),(3,36,'',''),(3,37,'',''),(3,119,'',''),(3,120,'',''),(3,121,'',''),(3,122,'',''),(3,123,'',''),(3,124,'',''),(3,125,'',''),(3,128,'',''),(3,129,'',''),(3,130,'',''),(3,131,'',''),(3,132,'',''),(3,133,'',''),(3,150,'',''),(3,151,'',''),(3,152,'',''),(3,161,'',''),(4,17,'',''),(4,29,'',''),(4,30,'',''),(4,31,'',''),(4,32,'',''),(4,33,'',''),(4,34,'',''),(4,35,'',''),(4,36,'',''),(4,37,'',''),(4,119,'',''),(4,120,'',''),(4,121,'',''),(4,122,'',''),(4,123,'',''),(4,124,'',''),(4,125,'',''),(4,128,'',''),(4,129,'',''),(4,130,'',''),(4,131,'',''),(4,132,'',''),(4,133,'',''),(4,150,'',''),(4,151,'',''),(4,152,'',''),(4,161,'',''),(5,17,'',''),(5,29,'',''),(5,30,'',''),(5,31,'',''),(5,32,'',''),(5,33,'',''),(5,34,'',''),(5,35,'',''),(5,36,'',''),(5,37,'',''),(5,119,'',''),(5,120,'',''),(5,121,'',''),(5,122,'',''),(5,123,'',''),(5,124,'',''),(5,125,'',''),(5,128,'',''),(5,129,'',''),(5,130,'',''),(5,131,'',''),(5,132,'',''),(5,133,'',''),(5,150,'',''),(5,151,'',''),(5,152,'',''),(5,161,'',''),(6,17,'','.1.3.6.1.4.1.9.2.1.58.0'),(6,29,'','.1.3.6.1.4.1.2021.11.52.0'),(6,30,'','.1.3.6.1.4.1.2021.11.50.0'),(6,31,'','.1.3.6.1.4.1.2021.11.51.0'),(6,32,'','.1.3.6.1.4.1.2021.10.1.3.1'),(6,33,'','.1.3.6.1.4.1.2021.10.1.3.2'),(6,34,'','.1.3.6.1.4.1.2021.10.1.3.3'),(6,35,'','.1.3.6.1.4.1.2021.4.14.0'),(6,36,'','.1.3.6.1.4.1.2021.4.6.0'),(6,37,'','.1.3.6.1.4.1.2021.4.15.0'),(6,119,'','.1.3.6.1.2.1.25.1.5.0'),(6,120,'','.1.3.6.1.2.1.25.1.6.0'),(6,121,'','.1.3.6.1.4.1.2021.11.10.0'),(6,122,'','.1.3.6.1.4.1.2021.11.9.0'),(6,123,'','.1.3.6.1.4.1.2021.11.11.0'),(6,124,'','.1.3.6.1.4.1.2021.11.7.0'),(6,125,'','.1.3.6.1.4.1.2021.11.8.0'),(6,128,'','.1.3.6.1.4.1.23.2.28.2.5.0'),(6,129,'','.1.3.6.1.4.1.23.2.28.2.6.0'),(6,130,'','.1.3.6.1.4.1.23.2.28.2.1.0'),(6,131,'','.1.3.6.1.4.1.23.2.28.2.2.0'),(6,132,'','.1.3.6.1.4.1.23.2.28.3.2.0'),(6,133,'','.1.3.6.1.4.1.23.2.28.2.7.0'),(6,150,'','.1.3.6.1.4.1.2021.10.1.3.1'),(6,151,'','.1.3.6.1.4.1.2021.10.1.3.2'),(6,152,'','.1.3.6.1.4.1.2021.10.1.3.3'),(6,159,'on',''),(6,161,'','.1.3.6.1.4.1.23.2.28.3.1'),(7,18,'',''),(7,44,'',''),(8,18,'',''),(8,44,'',''),(9,18,'',''),(9,44,'',''),(10,18,'',''),(10,44,'',''),(11,18,'',''),(11,44,'',''),(12,18,'on',''),(12,19,'on',''),(12,20,'on',''),(12,21,'on',''),(12,44,'on',''),(12,115,'on',''),(12,116,'on',''),(12,117,'on',''),(12,118,'on',''),(12,134,'on',''),(12,135,'on',''),(12,136,'on',''),(13,18,'on',''),(13,19,'on',''),(13,20,'on',''),(13,21,'on',''),(13,44,'on',''),(13,115,'on',''),(13,116,'on',''),(13,117,'on',''),(13,118,'on',''),(13,134,'on',''),(13,135,'on',''),(13,136,'on',''),(14,18,'on',''),(14,19,'on',''),(14,20,'on',''),(14,21,'on',''),(14,44,'on',''),(14,115,'on',''),(14,116,'on',''),(14,117,'on',''),(14,118,'on',''),(14,134,'on',''),(14,135,'on',''),(14,136,'on',''),(20,3,'',''),(20,10,'',''),(22,4,'','MemFree:'),(22,5,'','SwapFree:'),(22,7,'','MemFree:'),(22,8,'','SwapFree:'),(29,160,'',''),(31,6,'on',''),(32,6,'on',''),(33,6,'on',''),(35,23,'on',''),(35,24,'on',''),(35,25,'on',''),(35,26,'on',''),(35,27,'on',''),(35,28,'on',''),(35,53,'on',''),(35,54,'on',''),(35,55,'on',''),(35,56,'on',''),(35,59,'on',''),(35,60,'on',''),(35,61,'on',''),(35,62,'on',''),(35,63,'on',''),(35,64,'on',''),(35,65,'on',''),(35,66,'on',''),(35,67,'on',''),(35,68,'on',''),(35,69,'on',''),(35,70,'on',''),(35,71,'on',''),(35,72,'on',''),(35,73,'on',''),(35,74,'on',''),(35,75,'on',''),(35,76,'on',''),(35,77,'on',''),(35,78,'on',''),(35,79,'on',''),(35,80,'on',''),(35,81,'on',''),(35,82,'on',''),(35,83,'on',''),(35,84,'on',''),(35,85,'on',''),(35,86,'on',''),(35,87,'on',''),(35,88,'on',''),(35,89,'on',''),(35,90,'on',''),(35,91,'on',''),(35,92,'on',''),(35,93,'on',''),(35,94,'on',''),(35,95,'on',''),(35,96,'on',''),(35,97,'on',''),(35,98,'on',''),(35,99,'on',''),(35,100,'on',''),(35,101,'on',''),(35,102,'on',''),(35,103,'on',''),(35,104,'on',''),(35,105,'on',''),(35,106,'on',''),(35,107,'on',''),(35,108,'on',''),(35,109,'on',''),(35,110,'on',''),(35,111,'on',''),(35,112,'on',''),(35,113,'on',''),(35,114,'on',''),(35,126,'on',''),(35,127,'on',''),(35,163,'on',''),(35,164,'on',''),(35,165,'on',''),(35,166,'on',''),(35,167,'on',''),(35,168,'on',''),(35,169,'on',''),(35,170,'on',''),(35,171,'on',''),(35,172,'on',''),(35,173,'on',''),(35,174,'on',''),(35,175,'on',''),(35,176,'on',''),(35,177,'on',''),(35,178,'on',''),(35,179,'on',''),(35,180,'on',''),(35,181,'on',''),(35,182,'on',''),(35,186,'on',''),(35,189,'on',''),(35,190,'on',''),(35,205,'on',''),(35,216,'on',''),(35,220,'on',''),(35,222,'on',''),(35,224,'on',''),(36,23,'on',''),(36,24,'on',''),(36,25,'on',''),(36,26,'on',''),(36,27,'on',''),(36,28,'on',''),(36,53,'on',''),(36,54,'on',''),(36,55,'on',''),(36,56,'on',''),(36,59,'on',''),(36,60,'on',''),(36,61,'on',''),(36,62,'on',''),(36,63,'on',''),(36,64,'on',''),(36,65,'on',''),(36,66,'on',''),(36,67,'on',''),(36,68,'on',''),(36,69,'on',''),(36,70,'on',''),(36,71,'on',''),(36,72,'on',''),(36,73,'on',''),(36,74,'on',''),(36,75,'on',''),(36,76,'on',''),(36,77,'on',''),(36,78,'on',''),(36,79,'on',''),(36,80,'on',''),(36,81,'on',''),(36,82,'on',''),(36,83,'on',''),(36,84,'on',''),(36,85,'on',''),(36,86,'on',''),(36,87,'on',''),(36,88,'on',''),(36,89,'on',''),(36,90,'on',''),(36,91,'on',''),(36,92,'on',''),(36,93,'on',''),(36,94,'on',''),(36,95,'on',''),(36,96,'on',''),(36,97,'on',''),(36,98,'on',''),(36,99,'on',''),(36,100,'on',''),(36,101,'on',''),(36,102,'on',''),(36,103,'on',''),(36,104,'on',''),(36,105,'on',''),(36,106,'on',''),(36,107,'on',''),(36,108,'on',''),(36,109,'on',''),(36,110,'on',''),(36,111,'on',''),(36,112,'on',''),(36,113,'on',''),(36,114,'on',''),(36,126,'on',''),(36,127,'on',''),(36,163,'on',''),(36,164,'on',''),(36,165,'on',''),(36,166,'on',''),(36,167,'on',''),(36,168,'on',''),(36,169,'on',''),(36,170,'on',''),(36,171,'on',''),(36,172,'on',''),(36,173,'on',''),(36,174,'on',''),(36,175,'on',''),(36,176,'on',''),(36,177,'on',''),(36,178,'on',''),(36,179,'on',''),(36,180,'on',''),(36,181,'on',''),(36,182,'on',''),(36,186,'on',''),(36,189,'on',''),(36,190,'on',''),(36,205,'on',''),(36,216,'on',''),(36,220,'on',''),(36,222,'on',''),(36,224,'on',''),(37,23,'on',''),(37,24,'on',''),(37,25,'on',''),(37,26,'on',''),(37,27,'on',''),(37,28,'on',''),(37,53,'on',''),(37,54,'on',''),(37,55,'on',''),(37,56,'on',''),(37,59,'on',''),(37,60,'on',''),(37,61,'on',''),(37,62,'on',''),(37,63,'on',''),(37,64,'on',''),(37,65,'on',''),(37,66,'on',''),(37,67,'on',''),(37,68,'on',''),(37,69,'on',''),(37,70,'on',''),(37,71,'on',''),(37,72,'on',''),(37,73,'on',''),(37,74,'on',''),(37,75,'on',''),(37,76,'on',''),(37,77,'on',''),(37,78,'on',''),(37,79,'on',''),(37,80,'on',''),(37,81,'on',''),(37,82,'on',''),(37,83,'on',''),(37,84,'on',''),(37,85,'on',''),(37,86,'on',''),(37,87,'on',''),(37,88,'on',''),(37,89,'on',''),(37,90,'on',''),(37,91,'on',''),(37,92,'on',''),(37,93,'on',''),(37,94,'on',''),(37,95,'on',''),(37,96,'on',''),(37,97,'on',''),(37,98,'on',''),(37,99,'on',''),(37,100,'on',''),(37,101,'on',''),(37,102,'on',''),(37,103,'on',''),(37,104,'on',''),(37,105,'on',''),(37,106,'on',''),(37,107,'on',''),(37,108,'on',''),(37,109,'on',''),(37,110,'on',''),(37,111,'on',''),(37,112,'on',''),(37,113,'on',''),(37,114,'on',''),(37,126,'on',''),(37,127,'on',''),(37,163,'on',''),(37,164,'on',''),(37,165,'on',''),(37,166,'on',''),(37,167,'on',''),(37,168,'on',''),(37,169,'on',''),(37,170,'on',''),(37,171,'on',''),(37,172,'on',''),(37,173,'on',''),(37,174,'on',''),(37,175,'on',''),(37,176,'on',''),(37,177,'on',''),(37,178,'on',''),(37,179,'on',''),(37,180,'on',''),(37,181,'on',''),(37,182,'on',''),(37,186,'on',''),(37,189,'on',''),(37,190,'on',''),(37,205,'on',''),(37,216,'on',''),(37,220,'on',''),(37,222,'on',''),(37,224,'on',''),(39,44,'',''),(40,29,'',''),(40,30,'',''),(40,31,'',''),(40,32,'',''),(40,33,'',''),(40,34,'',''),(40,35,'',''),(40,36,'',''),(40,37,'',''),(40,121,'',''),(40,122,'',''),(40,123,'',''),(40,124,'',''),(40,125,'',''),(41,29,'',''),(41,30,'',''),(41,31,'',''),(41,32,'',''),(41,33,'',''),(41,34,'',''),(41,35,'',''),(41,36,'',''),(41,37,'',''),(41,121,'',''),(41,122,'',''),(41,123,'',''),(41,124,'',''),(41,125,'',''),(42,29,'',''),(42,30,'',''),(42,31,'',''),(42,32,'',''),(42,33,'',''),(42,34,'',''),(42,35,'',''),(42,36,'',''),(42,37,'',''),(42,121,'',''),(42,122,'',''),(42,123,'',''),(42,124,'',''),(42,125,'',''),(43,29,'',''),(43,30,'',''),(43,31,'',''),(43,32,'',''),(43,33,'',''),(43,34,'',''),(43,35,'',''),(43,36,'',''),(43,37,'',''),(43,121,'',''),(43,122,'',''),(43,123,'',''),(43,124,'',''),(43,125,'',''),(44,44,'',''),(45,44,'',''),(46,44,'',''),(63,22,'',''),(65,38,'',''),(72,38,'',''),(73,38,'on','no'),(74,39,'',''),(78,39,'',''),(79,39,'on','no'),(80,40,'',''),(81,40,'',''),(82,40,'on','no'),(85,41,'',''),(86,41,'',''),(87,41,'on','no'),(90,42,'',''),(91,42,'',''),(92,42,'on','no'),(94,43,'',''),(95,43,'',''),(99,45,'',''),(100,45,'on','no'),(104,46,'',''),(105,46,'on','no'),(107,47,'',''),(109,48,'',''),(112,48,'on','100'),(113,48,'on',''),(115,49,'',''),(121,50,'',''),(124,51,'',''),(127,52,'',''),(137,137,'',''),(138,137,'on',''),(139,137,'on',''),(146,138,'',''),(147,138,'on',''),(148,138,'on',''),(155,139,'',''),(156,139,'on',''),(157,139,'on',''),(164,140,'',''),(165,140,'on',''),(166,140,'on',''),(173,141,'',''),(174,141,'on',''),(175,141,'on',''),(180,142,'',''),(181,142,'on',''),(182,142,'on',''),(191,143,'',''),(192,143,'on',''),(193,143,'on',''),(199,144,'',''),(200,144,'on',''),(201,144,'on',''),(206,145,'',''),(207,145,'on',''),(209,145,'on',''),(213,146,'',''),(214,146,'on',''),(215,146,'on',''),(219,147,'',''),(220,147,'on',''),(221,147,'on',''),(228,148,'',''),(229,148,'on',''),(230,148,'on',''),(236,149,'',''),(237,149,'on',''),(238,149,'on',''),(248,153,'',''),(249,153,'on',''),(250,153,'on',''),(255,154,'',''),(255,156,'',''),(256,154,'on',''),(256,156,'on',''),(257,154,'on',''),(257,156,'on',''),(266,155,'',''),(267,155,'on',''),(268,155,'on',''),(274,157,'on',''),(275,157,'on',''),(278,157,'',''),(279,158,'on',''),(280,158,'',''),(282,162,'',''),(283,162,'on',''),(284,162,'on',''),(295,191,'',''),(295,192,'',''),(295,193,'',''),(295,194,'',''),(295,195,'',''),(295,196,'',''),(295,197,'',''),(295,198,'',''),(295,199,'',''),(295,200,'',''),(295,202,'',''),(295,217,'',''),(296,191,'','hostInfo'),(296,192,'','matchCriteria'),(296,193,'','jobBuckets'),(296,194,'','jobInfo'),(296,195,'','schedInterval'),(296,196,'','jobsCompleted'),(296,197,'','jobsDispatched'),(296,198,'','jobsSubmitted'),(296,199,'','submitRequest'),(296,200,'','mbatchdRequest'),(296,202,'','queueInfo'),(296,217,'','jobsReordered'),(299,201,'',''),(300,201,'','fileDescriptor'),(306,204,'',''),(307,204,'',''),(311,206,'',''),(312,206,'on',''),(318,207,'',''),(319,207,'on',''),(322,208,'',''),(323,208,'on',''),(324,209,'',''),(326,209,'on',''),(327,210,'',''),(328,210,'on',''),(329,210,'on',''),(331,211,'',''),(332,211,'on',''),(334,212,'',''),(335,212,'on',''),(337,213,'',''),(338,213,'on',''),(340,214,'',''),(342,214,'on',''),(343,214,'on',''),(344,215,'',''),(346,215,'on',''),(347,215,'on',''),(348,218,'',''),(348,219,'',''),(349,218,'','memoryUT'),(349,219,'','slotUT');
+INSERT INTO `data_input_data` VALUES (1,4,'',''),(1,5,'',''),(1,6,'',''),(1,7,'','localhost'),(1,8,'','localhost'),(1,17,'',''),(1,19,'',''),(1,20,'',''),(1,22,'',''),(1,23,'',''),(1,24,'',''),(1,25,'',''),(1,26,'',''),(1,27,'',''),(1,29,'',''),(1,30,'',''),(1,31,'',''),(1,32,'',''),(1,33,'',''),(1,34,'',''),(1,35,'',''),(1,36,'',''),(1,37,'',''),(1,58,'',''),(1,59,'',''),(1,68,'',''),(1,119,'',''),(1,120,'',''),(1,121,'',''),(1,122,'',''),(1,123,'',''),(1,124,'',''),(1,125,'',''),(1,128,'',''),(1,129,'',''),(1,130,'',''),(1,131,'',''),(1,132,'',''),(1,133,'',''),(1,150,'',''),(1,151,'',''),(1,152,'',''),(1,161,'',''),(2,4,'',''),(2,5,'',''),(2,6,'',''),(2,7,'',''),(2,8,'',''),(2,17,'',''),(2,19,'',''),(2,20,'',''),(2,22,'',''),(2,23,'',''),(2,24,'',''),(2,25,'',''),(2,26,'',''),(2,27,'',''),(2,29,'',''),(2,30,'',''),(2,31,'',''),(2,32,'',''),(2,33,'',''),(2,34,'',''),(2,35,'',''),(2,36,'',''),(2,37,'',''),(2,58,'',''),(2,59,'',''),(2,68,'',''),(2,119,'',''),(2,120,'',''),(2,121,'',''),(2,122,'',''),(2,123,'',''),(2,124,'',''),(2,125,'',''),(2,128,'',''),(2,129,'',''),(2,130,'',''),(2,131,'',''),(2,132,'',''),(2,133,'',''),(2,150,'',''),(2,151,'',''),(2,152,'',''),(2,161,'',''),(3,4,'',''),(3,5,'',''),(3,6,'',''),(3,7,'',''),(3,8,'',''),(3,17,'',''),(3,19,'',''),(3,20,'',''),(3,22,'',''),(3,23,'',''),(3,24,'',''),(3,25,'',''),(3,26,'',''),(3,27,'',''),(3,29,'',''),(3,30,'',''),(3,31,'',''),(3,32,'',''),(3,33,'',''),(3,34,'',''),(3,35,'',''),(3,36,'',''),(3,37,'',''),(3,119,'',''),(3,120,'',''),(3,121,'',''),(3,122,'',''),(3,123,'',''),(3,124,'',''),(3,125,'',''),(3,128,'',''),(3,129,'',''),(3,130,'',''),(3,131,'',''),(3,132,'',''),(3,133,'',''),(3,150,'',''),(3,151,'',''),(3,152,'',''),(3,161,'',''),(4,17,'',''),(4,29,'',''),(4,30,'',''),(4,31,'',''),(4,32,'',''),(4,33,'',''),(4,34,'',''),(4,35,'',''),(4,36,'',''),(4,37,'',''),(4,119,'',''),(4,120,'',''),(4,121,'',''),(4,122,'',''),(4,123,'',''),(4,124,'',''),(4,125,'',''),(4,128,'',''),(4,129,'',''),(4,130,'',''),(4,131,'',''),(4,132,'',''),(4,133,'',''),(4,150,'',''),(4,151,'',''),(4,152,'',''),(4,161,'',''),(5,17,'',''),(5,29,'',''),(5,30,'',''),(5,31,'',''),(5,32,'',''),(5,33,'',''),(5,34,'',''),(5,35,'',''),(5,36,'',''),(5,37,'',''),(5,119,'',''),(5,120,'',''),(5,121,'',''),(5,122,'',''),(5,123,'',''),(5,124,'',''),(5,125,'',''),(5,128,'',''),(5,129,'',''),(5,130,'',''),(5,131,'',''),(5,132,'',''),(5,133,'',''),(5,150,'',''),(5,151,'',''),(5,152,'',''),(5,161,'',''),(6,17,'','.1.3.6.1.4.1.9.2.1.58.0'),(6,29,'','.1.3.6.1.4.1.2021.11.52.0'),(6,30,'','.1.3.6.1.4.1.2021.11.50.0'),(6,31,'','.1.3.6.1.4.1.2021.11.51.0'),(6,32,'','.1.3.6.1.4.1.2021.10.1.3.1'),(6,33,'','.1.3.6.1.4.1.2021.10.1.3.2'),(6,34,'','.1.3.6.1.4.1.2021.10.1.3.3'),(6,35,'','.1.3.6.1.4.1.2021.4.14.0'),(6,36,'','.1.3.6.1.4.1.2021.4.6.0'),(6,37,'','.1.3.6.1.4.1.2021.4.15.0'),(6,119,'','.1.3.6.1.2.1.25.1.5.0'),(6,120,'','.1.3.6.1.2.1.25.1.6.0'),(6,121,'','.1.3.6.1.4.1.2021.11.10.0'),(6,122,'','.1.3.6.1.4.1.2021.11.9.0'),(6,123,'','.1.3.6.1.4.1.2021.11.11.0'),(6,124,'','.1.3.6.1.4.1.2021.11.7.0'),(6,125,'','.1.3.6.1.4.1.2021.11.8.0'),(6,128,'','.1.3.6.1.4.1.23.2.28.2.5.0'),(6,129,'','.1.3.6.1.4.1.23.2.28.2.6.0'),(6,130,'','.1.3.6.1.4.1.23.2.28.2.1.0'),(6,131,'','.1.3.6.1.4.1.23.2.28.2.2.0'),(6,132,'','.1.3.6.1.4.1.23.2.28.3.2.0'),(6,133,'','.1.3.6.1.4.1.23.2.28.2.7.0'),(6,150,'','.1.3.6.1.4.1.2021.10.1.3.1'),(6,151,'','.1.3.6.1.4.1.2021.10.1.3.2'),(6,152,'','.1.3.6.1.4.1.2021.10.1.3.3'),(6,159,'on',''),(6,161,'','.1.3.6.1.4.1.23.2.28.3.1'),(7,18,'',''),(7,44,'',''),(8,18,'',''),(8,44,'',''),(9,18,'',''),(9,44,'',''),(10,18,'',''),(10,44,'',''),(11,18,'',''),(11,44,'',''),(12,18,'on',''),(12,19,'on',''),(12,20,'on',''),(12,21,'on',''),(12,44,'on',''),(12,115,'on',''),(12,116,'on',''),(12,117,'on',''),(12,118,'on',''),(12,134,'on',''),(12,135,'on',''),(12,136,'on',''),(13,18,'on',''),(13,19,'on',''),(13,20,'on',''),(13,21,'on',''),(13,44,'on',''),(13,115,'on',''),(13,116,'on',''),(13,117,'on',''),(13,118,'on',''),(13,134,'on',''),(13,135,'on',''),(13,136,'on',''),(14,18,'on',''),(14,19,'on',''),(14,20,'on',''),(14,21,'on',''),(14,44,'on',''),(14,115,'on',''),(14,116,'on',''),(14,117,'on',''),(14,118,'on',''),(14,134,'on',''),(14,135,'on',''),(14,136,'on',''),(20,3,'',''),(20,10,'',''),(22,4,'','MemFree:'),(22,5,'','SwapFree:'),(22,7,'','MemFree:'),(22,8,'','SwapFree:'),(29,160,'',''),(31,6,'on',''),(32,6,'on',''),(33,6,'on',''),(35,23,'on',''),(35,24,'on',''),(35,25,'on',''),(35,26,'on',''),(35,27,'on',''),(35,28,'on',''),(35,53,'on',''),(35,54,'on',''),(35,55,'on',''),(35,56,'on',''),(35,59,'on',''),(35,60,'on',''),(35,61,'on',''),(35,62,'on',''),(35,63,'on',''),(35,64,'on',''),(35,65,'on',''),(35,66,'on',''),(35,67,'on',''),(35,68,'on',''),(35,69,'on',''),(35,70,'on',''),(35,71,'on',''),(35,72,'on',''),(35,73,'on',''),(35,74,'on',''),(35,75,'on',''),(35,76,'on',''),(35,77,'on',''),(35,78,'on',''),(35,79,'on',''),(35,80,'on',''),(35,81,'on',''),(35,82,'on',''),(35,83,'on',''),(35,84,'on',''),(35,85,'on',''),(35,86,'on',''),(35,87,'on',''),(35,88,'on',''),(35,89,'on',''),(35,90,'on',''),(35,91,'on',''),(35,92,'on',''),(35,93,'on',''),(35,94,'on',''),(35,95,'on',''),(35,96,'on',''),(35,97,'on',''),(35,98,'on',''),(35,99,'on',''),(35,100,'on',''),(35,101,'on',''),(35,102,'on',''),(35,103,'on',''),(35,104,'on',''),(35,105,'on',''),(35,106,'on',''),(35,107,'on',''),(35,108,'on',''),(35,109,'on',''),(35,110,'on',''),(35,111,'on',''),(35,112,'on',''),(35,113,'on',''),(35,114,'on',''),(35,126,'on',''),(35,127,'on',''),(35,163,'on',''),(35,164,'on',''),(35,165,'on',''),(35,166,'on',''),(35,167,'on',''),(35,168,'on',''),(35,169,'on',''),(35,170,'on',''),(35,171,'on',''),(35,172,'on',''),(35,173,'on',''),(35,174,'on',''),(35,175,'on',''),(35,176,'on',''),(35,177,'on',''),(35,178,'on',''),(35,179,'on',''),(35,180,'on',''),(35,181,'on',''),(35,182,'on',''),(35,186,'on',''),(35,189,'on',''),(35,190,'on',''),(35,205,'on',''),(35,216,'on',''),(35,220,'on',''),(35,222,'on',''),(35,224,'on',''),(36,23,'on',''),(36,24,'on',''),(36,25,'on',''),(36,26,'on',''),(36,27,'on',''),(36,28,'on',''),(36,53,'on',''),(36,54,'on',''),(36,55,'on',''),(36,56,'on',''),(36,59,'on',''),(36,60,'on',''),(36,61,'on',''),(36,62,'on',''),(36,63,'on',''),(36,64,'on',''),(36,65,'on',''),(36,66,'on',''),(36,67,'on',''),(36,68,'on',''),(36,69,'on',''),(36,70,'on',''),(36,71,'on',''),(36,72,'on',''),(36,73,'on',''),(36,74,'on',''),(36,75,'on',''),(36,76,'on',''),(36,77,'on',''),(36,78,'on',''),(36,79,'on',''),(36,80,'on',''),(36,81,'on',''),(36,82,'on',''),(36,83,'on',''),(36,84,'on',''),(36,85,'on',''),(36,86,'on',''),(36,87,'on',''),(36,88,'on',''),(36,89,'on',''),(36,90,'on',''),(36,91,'on',''),(36,92,'on',''),(36,93,'on',''),(36,94,'on',''),(36,95,'on',''),(36,96,'on',''),(36,97,'on',''),(36,98,'on',''),(36,99,'on',''),(36,100,'on',''),(36,101,'on',''),(36,102,'on',''),(36,103,'on',''),(36,104,'on',''),(36,105,'on',''),(36,106,'on',''),(36,107,'on',''),(36,108,'on',''),(36,109,'on',''),(36,110,'on',''),(36,111,'on',''),(36,112,'on',''),(36,113,'on',''),(36,114,'on',''),(36,126,'on',''),(36,127,'on',''),(36,163,'on',''),(36,164,'on',''),(36,165,'on',''),(36,166,'on',''),(36,167,'on',''),(36,168,'on',''),(36,169,'on',''),(36,170,'on',''),(36,171,'on',''),(36,172,'on',''),(36,173,'on',''),(36,174,'on',''),(36,175,'on',''),(36,176,'on',''),(36,177,'on',''),(36,178,'on',''),(36,179,'on',''),(36,180,'on',''),(36,181,'on',''),(36,182,'on',''),(36,186,'on',''),(36,189,'on',''),(36,190,'on',''),(36,205,'on',''),(36,216,'on',''),(36,220,'on',''),(36,222,'on',''),(36,224,'on',''),(37,23,'on',''),(37,24,'on',''),(37,25,'on',''),(37,26,'on',''),(37,27,'on',''),(37,28,'on',''),(37,53,'on',''),(37,54,'on',''),(37,55,'on',''),(37,56,'on',''),(37,59,'on',''),(37,60,'on',''),(37,61,'on',''),(37,62,'on',''),(37,63,'on',''),(37,64,'on',''),(37,65,'on',''),(37,66,'on',''),(37,67,'on',''),(37,68,'on',''),(37,69,'on',''),(37,70,'on',''),(37,71,'on',''),(37,72,'on',''),(37,73,'on',''),(37,74,'on',''),(37,75,'on',''),(37,76,'on',''),(37,77,'on',''),(37,78,'on',''),(37,79,'on',''),(37,80,'on',''),(37,81,'on',''),(37,82,'on',''),(37,83,'on',''),(37,84,'on',''),(37,85,'on',''),(37,86,'on',''),(37,87,'on',''),(37,88,'on',''),(37,89,'on',''),(37,90,'on',''),(37,91,'on',''),(37,92,'on',''),(37,93,'on',''),(37,94,'on',''),(37,95,'on',''),(37,96,'on',''),(37,97,'on',''),(37,98,'on',''),(37,99,'on',''),(37,100,'on',''),(37,101,'on',''),(37,102,'on',''),(37,103,'on',''),(37,104,'on',''),(37,105,'on',''),(37,106,'on',''),(37,107,'on',''),(37,108,'on',''),(37,109,'on',''),(37,110,'on',''),(37,111,'on',''),(37,112,'on',''),(37,113,'on',''),(37,114,'on',''),(37,126,'on',''),(37,127,'on',''),(37,163,'on',''),(37,164,'on',''),(37,165,'on',''),(37,166,'on',''),(37,167,'on',''),(37,168,'on',''),(37,169,'on',''),(37,170,'on',''),(37,171,'on',''),(37,172,'on',''),(37,173,'on',''),(37,174,'on',''),(37,175,'on',''),(37,176,'on',''),(37,177,'on',''),(37,178,'on',''),(37,179,'on',''),(37,180,'on',''),(37,181,'on',''),(37,182,'on',''),(37,186,'on',''),(37,189,'on',''),(37,190,'on',''),(37,205,'on',''),(37,216,'on',''),(37,220,'on',''),(37,222,'on',''),(37,224,'on',''),(39,44,'',''),(40,29,'',''),(40,30,'',''),(40,31,'',''),(40,32,'',''),(40,33,'',''),(40,34,'',''),(40,35,'',''),(40,36,'',''),(40,37,'',''),(40,121,'',''),(40,122,'',''),(40,123,'',''),(40,124,'',''),(40,125,'',''),(41,29,'',''),(41,30,'',''),(41,31,'',''),(41,32,'',''),(41,33,'',''),(41,34,'',''),(41,35,'',''),(41,36,'',''),(41,37,'',''),(41,121,'',''),(41,122,'',''),(41,123,'',''),(41,124,'',''),(41,125,'',''),(42,29,'',''),(42,30,'',''),(42,31,'',''),(42,32,'',''),(42,33,'',''),(42,34,'',''),(42,35,'',''),(42,36,'',''),(42,37,'',''),(42,121,'',''),(42,122,'',''),(42,123,'',''),(42,124,'',''),(42,125,'',''),(43,29,'',''),(43,30,'',''),(43,31,'',''),(43,32,'',''),(43,33,'',''),(43,34,'',''),(43,35,'',''),(43,36,'',''),(43,37,'',''),(43,121,'',''),(43,122,'',''),(43,123,'',''),(43,124,'',''),(43,125,'',''),(44,44,'',''),(45,44,'',''),(46,44,'',''),(63,22,'',''),(65,38,'',''),(72,38,'',''),(73,38,'on','no'),(74,39,'',''),(78,39,'',''),(79,39,'on','no'),(80,40,'',''),(81,40,'',''),(82,40,'on','no'),(85,41,'',''),(86,41,'',''),(87,41,'on','no'),(90,42,'',''),(91,42,'',''),(92,42,'on','no'),(94,43,'',''),(95,43,'',''),(99,45,'',''),(100,45,'on','no'),(104,46,'',''),(105,46,'on','no'),(107,47,'',''),(109,48,'',''),(112,48,'on','100'),(113,48,'on',''),(115,49,'',''),(121,50,'',''),(124,51,'',''),(127,52,'',''),(137,137,'',''),(138,137,'on',''),(139,137,'on',''),(146,138,'',''),(147,138,'on',''),(148,138,'on',''),(155,139,'',''),(156,139,'on',''),(157,139,'on',''),(164,140,'',''),(165,140,'on',''),(166,140,'on',''),(173,141,'',''),(174,141,'on',''),(175,141,'on',''),(180,142,'',''),(181,142,'on',''),(182,142,'on',''),(191,143,'',''),(192,143,'on',''),(193,143,'on',''),(199,144,'',''),(200,144,'on',''),(201,144,'on',''),(206,145,'',''),(207,145,'on',''),(209,145,'on',''),(213,146,'',''),(214,146,'on',''),(215,146,'on',''),(219,147,'',''),(220,147,'on',''),(221,147,'on',''),(228,148,'',''),(229,148,'on',''),(230,148,'on',''),(236,149,'',''),(237,149,'on',''),(238,149,'on',''),(248,153,'',''),(249,153,'on',''),(250,153,'on',''),(255,154,'',''),(255,156,'',''),(256,154,'on',''),(256,156,'on',''),(257,154,'on',''),(257,156,'on',''),(266,155,'',''),(267,155,'on',''),(268,155,'on',''),(274,157,'on',''),(275,157,'on',''),(278,157,'',''),(279,158,'on',''),(280,158,'',''),(282,162,'',''),(283,162,'on',''),(284,162,'on',''),(295,191,'',''),(295,192,'',''),(295,193,'',''),(295,194,'',''),(295,195,'',''),(295,196,'',''),(295,197,'',''),(295,198,'',''),(295,199,'',''),(295,200,'',''),(295,202,'',''),(295,217,'',''),(296,191,'','hostInfo'),(296,192,'','matchCriteria'),(296,193,'','jobBuckets'),(296,194,'','jobInfo'),(296,195,'','schedInterval'),(296,196,'','jobsCompleted'),(296,197,'','jobsDispatched'),(296,198,'','jobsSubmitted'),(296,199,'','submitRequest'),(296,200,'','mbatchdRequest'),(296,202,'','queueInfo'),(296,217,'','jobsReordered'),(299,201,'',''),(300,201,'','fileDescriptor'),(306,204,'',''),(307,204,'',''),(311,206,'',''),(312,206,'on',''),(318,207,'',''),(319,207,'on',''),(322,208,'',''),(323,208,'on',''),(324,209,'',''),(326,209,'on',''),(327,210,'',''),(328,210,'on',''),(329,210,'on',''),(331,211,'',''),(332,211,'on',''),(334,212,'',''),(335,212,'on',''),(337,213,'',''),(338,213,'on',''),(340,214,'',''),(342,214,'on',''),(343,214,'on',''),(344,215,'',''),(346,215,'on',''),(347,215,'on',''),(348,218,'',''),(348,219,'',''),(349,218,'','memoryUT'),(349,219,'','slotUT');
 /*!40000 ALTER TABLE `data_input_data` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -797,12 +794,12 @@ DROP TABLE IF EXISTS `data_input_fields`;
 CREATE TABLE `data_input_fields` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `hash` varchar(32) NOT NULL DEFAULT '',
-  `data_input_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `data_input_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
   `name` varchar(200) NOT NULL DEFAULT '',
   `data_name` varchar(50) NOT NULL DEFAULT '',
   `input_output` char(3) NOT NULL DEFAULT '',
   `update_rra` char(2) DEFAULT '0',
-  `sequence` smallint(5) NOT NULL DEFAULT '0',
+  `sequence` smallint(5) NOT NULL DEFAULT 0,
   `type_code` varchar(40) DEFAULT NULL,
   `regexp_match` varchar(200) DEFAULT NULL,
   `allow_nulls` char(2) DEFAULT NULL,
@@ -832,11 +829,11 @@ DROP TABLE IF EXISTS `data_local`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `data_local` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `data_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `host_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `snmp_query_id` mediumint(8) NOT NULL DEFAULT '0',
+  `data_template_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `host_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `snmp_query_id` mediumint(8) NOT NULL DEFAULT 0,
   `snmp_index` varchar(255) NOT NULL DEFAULT '',
-  `orphan` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `orphan` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `host_id_snmp_query_id` (`host_id`,`snmp_query_id`),
   KEY `snmp_index` (`snmp_index`),
@@ -866,9 +863,9 @@ CREATE TABLE `data_source_profiles` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `hash` varchar(32) NOT NULL DEFAULT '',
   `name` varchar(255) NOT NULL DEFAULT '',
-  `step` int(10) unsigned NOT NULL DEFAULT '300',
-  `heartbeat` int(10) unsigned NOT NULL DEFAULT '600',
-  `x_files_factor` double DEFAULT '0.5',
+  `step` int(10) unsigned NOT NULL DEFAULT 300,
+  `heartbeat` int(10) unsigned NOT NULL DEFAULT 600,
+  `x_files_factor` double DEFAULT 0.5,
   `default` char(2) DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `name` (`name`(171))
@@ -893,8 +890,8 @@ DROP TABLE IF EXISTS `data_source_profiles_cf`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `data_source_profiles_cf` (
-  `data_source_profile_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `consolidation_function_id` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `data_source_profile_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `consolidation_function_id` smallint(5) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`data_source_profile_id`,`consolidation_function_id`)
 ) ENGINE=InnoDB COMMENT='Maps the Data Source Profile Consolidation Functions';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -918,11 +915,11 @@ DROP TABLE IF EXISTS `data_source_profiles_rra`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `data_source_profiles_rra` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `data_source_profile_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `data_source_profile_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
   `name` varchar(255) NOT NULL DEFAULT '',
-  `steps` int(10) unsigned DEFAULT '1',
-  `rows` int(10) unsigned NOT NULL DEFAULT '700',
-  `timespan` int(10) unsigned NOT NULL DEFAULT '0',
+  `steps` int(10) unsigned DEFAULT 1,
+  `rows` int(10) unsigned NOT NULL DEFAULT 700,
+  `timespan` int(10) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `data_source_profile_id` (`data_source_profile_id`)
 ) ENGINE=InnoDB COMMENT='Stores RRA Definitions for Data Source Profiles';
@@ -948,8 +945,8 @@ DROP TABLE IF EXISTS `data_source_purge_action`;
 CREATE TABLE `data_source_purge_action` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(128) NOT NULL DEFAULT '',
-  `local_data_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `action` tinyint(2) NOT NULL DEFAULT '0',
+  `local_data_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `action` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB COMMENT='RRD Cleaner File Actions';
@@ -965,12 +962,12 @@ DROP TABLE IF EXISTS `data_source_purge_temp`;
 CREATE TABLE `data_source_purge_temp` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name_cache` varchar(255) NOT NULL DEFAULT '',
-  `local_data_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `local_data_id` int(10) unsigned NOT NULL DEFAULT 0,
   `name` varchar(128) NOT NULL DEFAULT '',
-  `size` int(10) unsigned NOT NULL DEFAULT '0',
+  `size` int(10) unsigned NOT NULL DEFAULT 0,
   `last_mod` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `in_cacti` tinyint(4) NOT NULL DEFAULT '0',
-  `data_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `in_cacti` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `data_template_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`),
   KEY `local_data_id` (`local_data_id`),
@@ -1127,10 +1124,10 @@ DROP TABLE IF EXISTS `data_template_data`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `data_template_data` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `local_data_template_data_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `local_data_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `data_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `data_input_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `local_data_template_data_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `local_data_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `data_template_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `data_input_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
   `t_name` char(2) DEFAULT NULL,
   `name` varchar(250) NOT NULL DEFAULT '',
   `name_cache` varchar(255) NOT NULL DEFAULT '',
@@ -1138,15 +1135,15 @@ CREATE TABLE `data_template_data` (
   `t_active` char(2) DEFAULT '',
   `active` char(2) DEFAULT NULL,
   `t_rrd_step` char(2) DEFAULT '',
-  `rrd_step` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `rrd_step` mediumint(8) unsigned NOT NULL DEFAULT 0,
   `t_data_source_profile_id` char(2) DEFAULT '',
-  `data_source_profile_id` mediumint(8) unsigned NOT NULL DEFAULT '1',
+  `data_source_profile_id` mediumint(8) unsigned NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`),
   KEY `local_data_id` (`local_data_id`),
   KEY `data_template_id` (`data_template_id`),
   KEY `data_input_id` (`data_input_id`),
-  KEY `name_cache` (`name_cache`(191))
-) ENGINE=InnoDB;
+  KEY `name_cache` (`name_cache`)
+) ENGINE=InnoDB ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1169,21 +1166,21 @@ DROP TABLE IF EXISTS `data_template_rrd`;
 CREATE TABLE `data_template_rrd` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `hash` varchar(32) NOT NULL DEFAULT '',
-  `local_data_template_rrd_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `local_data_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `data_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `local_data_template_rrd_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `local_data_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `data_template_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
   `t_rrd_maximum` char(2) DEFAULT NULL,
   `rrd_maximum` varchar(20) NOT NULL DEFAULT '0',
   `t_rrd_minimum` char(2) DEFAULT NULL,
   `rrd_minimum` varchar(20) NOT NULL DEFAULT '0',
   `t_rrd_heartbeat` char(2) DEFAULT NULL,
-  `rrd_heartbeat` mediumint(6) NOT NULL DEFAULT '0',
+  `rrd_heartbeat` mediumint(6) NOT NULL DEFAULT 0,
   `t_data_source_type_id` char(2) DEFAULT NULL,
-  `data_source_type_id` smallint(5) NOT NULL DEFAULT '0',
+  `data_source_type_id` smallint(5) NOT NULL DEFAULT 0,
   `t_data_source_name` char(2) DEFAULT NULL,
   `data_source_name` varchar(19) NOT NULL DEFAULT '',
   `t_data_input_field_id` char(2) DEFAULT NULL,
-  `data_input_field_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `data_input_field_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `duplicate_dsname_contraint` (`local_data_id`,`data_source_name`,`data_template_id`),
   KEY `data_template_id` (`data_template_id`),
@@ -1236,7 +1233,7 @@ CREATE TABLE `disku_directory_totals` (
   `size0to6` double DEFAULT NULL,
   `size6to12` double DEFAULT NULL,
   `size12plus` double DEFAULT NULL,
-  `delme` tinyint(3) unsigned DEFAULT '0',
+  `delme` tinyint(3) unsigned DEFAULT 0,
   PRIMARY KEY (`poller_id`,`path_id`,`dirName`(191),`groupid`),
   KEY `delme` (`delme`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Totals Directory Use by Group';
@@ -1274,9 +1271,9 @@ DROP TABLE IF EXISTS `disku_extension_monitors`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `disku_extension_monitors` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `rid` int(10) unsigned NOT NULL DEFAULT '0',
+  `rid` int(10) unsigned NOT NULL DEFAULT 0,
   `extension` varchar(20) NOT NULL DEFAULT '',
-  `application_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `application_id` int(10) unsigned NOT NULL DEFAULT 0,
   `notes` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   UNIQUE KEY `app_ext_contraint` (`application_id`,`extension`),
@@ -1298,7 +1295,8 @@ CREATE TABLE `disku_extension_registry` (
   `notes` varchar(255) DEFAULT '',
   `monitor` char(3) NOT NULL DEFAULT 'on',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `ext_contraint` (`extension`)
+  UNIQUE KEY `ext_contraint` (`extension`),
+  KEY `ext` (`extension`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1320,16 +1318,16 @@ DROP TABLE IF EXISTS `disku_extension_totals`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `disku_extension_totals` (
-  `poller_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `path_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `poller_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `path_id` int(10) unsigned NOT NULL DEFAULT 0,
   `extension` varchar(20) NOT NULL DEFAULT '',
-  `userid` int(10) unsigned NOT NULL DEFAULT '0',
-  `files` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `size` double NOT NULL DEFAULT '0',
+  `userid` int(10) unsigned NOT NULL DEFAULT 0,
+  `files` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `size` double NOT NULL DEFAULT 0,
   `size0to6` double DEFAULT NULL,
   `size6to12` double DEFAULT NULL,
   `size12plus` double DEFAULT NULL,
-  `delme` tinyint(3) unsigned DEFAULT '0',
+  `delme` tinyint(3) unsigned DEFAULT 0,
   PRIMARY KEY (`extension`,`userid`,`path_id`,`poller_id`) USING BTREE,
   KEY `delme` (`delme`),
   KEY `userid` (`userid`)
@@ -1344,12 +1342,12 @@ DROP TABLE IF EXISTS `disku_extension_totals_history`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `disku_extension_totals_history` (
-  `poller_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `path_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `poller_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `path_id` int(10) unsigned NOT NULL DEFAULT 0,
   `extension` varchar(20) NOT NULL DEFAULT '',
-  `userid` int(10) unsigned NOT NULL DEFAULT '0',
-  `files` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `size` double NOT NULL DEFAULT '0',
+  `userid` int(10) unsigned NOT NULL DEFAULT 0,
+  `files` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `size` double NOT NULL DEFAULT 0,
   `size0to6` double DEFAULT NULL,
   `size6to12` double DEFAULT NULL,
   `size12plus` double DEFAULT NULL,
@@ -1368,13 +1366,13 @@ DROP TABLE IF EXISTS `disku_extension_totals_simple`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `disku_extension_totals_simple` (
   `extension` varchar(20) NOT NULL DEFAULT '',
-  `users` int(10) unsigned NOT NULL DEFAULT '0',
-  `files` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `size` double NOT NULL DEFAULT '0',
+  `users` int(10) unsigned NOT NULL DEFAULT 0,
+  `files` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `size` double NOT NULL DEFAULT 0,
   `size0to6` double DEFAULT NULL,
   `size6to12` double DEFAULT NULL,
   `size12plus` double DEFAULT NULL,
-  `delme` tinyint(3) unsigned DEFAULT '0',
+  `delme` tinyint(3) unsigned DEFAULT 0,
   PRIMARY KEY (`extension`),
   KEY `delme` (`delme`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Disk utilization information by extension';
@@ -1388,25 +1386,25 @@ DROP TABLE IF EXISTS `disku_files_raw`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `disku_files_raw` (
-  `poller_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `path_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `thread_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `device` int(10) unsigned NOT NULL DEFAULT '0',
-  `inode` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `poller_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `path_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `thread_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `device` int(10) unsigned NOT NULL DEFAULT 0,
+  `inode` bigint(20) unsigned NOT NULL DEFAULT 0,
   `fileType` char(2) DEFAULT NULL,
   `dirName` varchar(4096) DEFAULT '',
   `fileName` varchar(256) DEFAULT '',
-  `fileSize` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `fileSize` bigint(20) unsigned NOT NULL DEFAULT 0,
   `accTime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `statTime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `modTime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `user` varchar(20) NOT NULL DEFAULT '',
-  `userid` int(10) unsigned NOT NULL DEFAULT '0',
+  `userid` int(10) unsigned NOT NULL DEFAULT 0,
   `group` varchar(40) NOT NULL DEFAULT '',
-  `groupid` int(10) unsigned NOT NULL DEFAULT '0',
+  `groupid` int(10) unsigned NOT NULL DEFAULT 0,
   `perms` varchar(12) NOT NULL,
   `extension` varchar(20) NOT NULL DEFAULT '',
-  `lastUpdated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `lastUpdated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`poller_id`,`path_id`,`device`,`inode`),
   KEY `groupid` (`groupid`),
   KEY `userid` (`userid`),
@@ -1427,9 +1425,9 @@ DROP TABLE IF EXISTS `disku_groups`;
 CREATE TABLE `disku_groups` (
   `domain` varchar(20) NOT NULL DEFAULT '',
   `name` varchar(64) NOT NULL DEFAULT '',
-  `groupid` int(10) unsigned NOT NULL DEFAULT '0',
+  `groupid` int(10) unsigned NOT NULL DEFAULT 0,
   `firstSeen` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `lastSeen` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `lastSeen` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`domain`,`name`,`groupid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Holds registry of all know Groups';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1442,8 +1440,8 @@ DROP TABLE IF EXISTS `disku_groups_members`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `disku_groups_members` (
-  `groupid` int(10) unsigned NOT NULL DEFAULT '0',
-  `userid` int(10) NOT NULL DEFAULT '-1',
+  `groupid` int(10) unsigned NOT NULL DEFAULT 0,
+  `userid` int(10) NOT NULL DEFAULT -1,
   `user` varchar(20) NOT NULL DEFAULT '',
   PRIMARY KEY (`groupid`,`user`),
   KEY `userid` (`userid`)
@@ -1458,9 +1456,9 @@ DROP TABLE IF EXISTS `disku_groups_totals`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `disku_groups_totals` (
-  `poller_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `path_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `groupid` int(10) unsigned NOT NULL DEFAULT '0',
+  `poller_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `path_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `groupid` int(10) unsigned NOT NULL DEFAULT 0,
   `group` varchar(20) NOT NULL,
   `files` bigint(20) unsigned NOT NULL,
   `size` double NOT NULL,
@@ -1468,7 +1466,7 @@ CREATE TABLE `disku_groups_totals` (
   `size6to12` double DEFAULT NULL,
   `size12plus` double DEFAULT NULL,
   `directories` bigint(20) unsigned NOT NULL,
-  `delme` tinyint(3) unsigned DEFAULT '0',
+  `delme` tinyint(3) unsigned DEFAULT 0,
   PRIMARY KEY (`poller_id`,`path_id`,`groupid`) USING BTREE,
   KEY `delme` (`delme`),
   KEY `group` (`group`)
@@ -1483,9 +1481,9 @@ DROP TABLE IF EXISTS `disku_groups_totals_history`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `disku_groups_totals_history` (
-  `poller_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `path_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `groupid` int(10) unsigned NOT NULL DEFAULT '0',
+  `poller_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `path_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `groupid` int(10) unsigned NOT NULL DEFAULT 0,
   `group` varchar(20) NOT NULL,
   `files` bigint(20) unsigned NOT NULL,
   `size` double NOT NULL,
@@ -1511,7 +1509,7 @@ CREATE TABLE `disku_managers` (
   `user` varchar(20) NOT NULL,
   `createDate` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `createdBy` varchar(20) NOT NULL,
-  `lastChange` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `lastChange` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`user`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Identified Personnel that have certain administrative rights';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1531,7 +1529,7 @@ CREATE TABLE `disku_managers_group` (
   `hasMove` tinyint(3) unsigned NOT NULL,
   `hasCopy` tinyint(3) unsigned NOT NULL,
   `hasAuthorize` tinyint(3) unsigned NOT NULL,
-  `createDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `createDate` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `createdBy` varchar(20) NOT NULL,
   `lastChange` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`groupid`,`user`)
@@ -1551,17 +1549,17 @@ CREATE TABLE `disku_pollers` (
   `location` varchar(40) DEFAULT NULL,
   `disabled` char(3) DEFAULT '',
   `df_collect_flag` char(3) DEFAULT '',
-  `cacti_host` int(10) unsigned NOT NULL DEFAULT '0',
+  `cacti_host` int(10) unsigned NOT NULL DEFAULT 0,
   `last_started` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `last_ended` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `frequency` int(10) unsigned DEFAULT '0',
-  `dayOfWeek` int(10) unsigned DEFAULT '6',
-  `timeOfDay` int(10) unsigned DEFAULT '0',
-  `min_time` double DEFAULT '9999999999',
-  `max_time` double DEFAULT '0',
-  `cur_time` double DEFAULT '0',
-  `avg_time` double DEFAULT '0',
-  `total_polls` int(10) unsigned NOT NULL DEFAULT '0',
+  `frequency` int(10) unsigned DEFAULT 0,
+  `dayOfWeek` int(10) unsigned DEFAULT 6,
+  `timeOfDay` int(10) unsigned DEFAULT 0,
+  `min_time` double DEFAULT 9999999999,
+  `max_time` double DEFAULT 0,
+  `cur_time` double DEFAULT 0,
+  `avg_time` double DEFAULT 0,
+  `total_polls` int(10) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Defines collection frequencies for this poller';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1574,14 +1572,14 @@ DROP TABLE IF EXISTS `disku_pollers_filesystems`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `disku_pollers_filesystems` (
-  `poller_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `poller_id` int(10) unsigned NOT NULL DEFAULT 0,
   `device` varchar(255) NOT NULL DEFAULT '',
-  `blocks` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `used` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `available` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `percentUsed` int(10) unsigned NOT NULL DEFAULT '0',
+  `blocks` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `used` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `available` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `percentUsed` int(10) unsigned NOT NULL DEFAULT 0,
   `mountPoint` varchar(128) NOT NULL DEFAULT '',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(4) NOT NULL DEFAULT 1,
   PRIMARY KEY (`poller_id`,`mountPoint`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Holds all known files systems per poller';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1595,21 +1593,21 @@ DROP TABLE IF EXISTS `disku_pollers_paths`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `disku_pollers_paths` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `poller_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `poller_id` int(10) unsigned NOT NULL DEFAULT 0,
   `name` varchar(40) NOT NULL DEFAULT '',
   `description` varchar(128) NOT NULL DEFAULT '',
   `tagname` varchar(20) NOT NULL DEFAULT '',
   `path` varchar(128) DEFAULT '',
   `disabled` char(3) DEFAULT '',
-  `depth` int(10) unsigned NOT NULL DEFAULT '2',
-  `threads` int(10) unsigned NOT NULL DEFAULT '5',
+  `depth` int(10) unsigned NOT NULL DEFAULT 2,
+  `threads` int(10) unsigned NOT NULL DEFAULT 5,
   `last_started` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `last_ended` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `min_time` double DEFAULT '9999999999',
-  `max_time` double DEFAULT '0',
-  `cur_time` double DEFAULT '0',
-  `avg_time` double DEFAULT '0',
-  `total_polls` int(10) unsigned NOT NULL DEFAULT '0',
+  `min_time` double DEFAULT 9999999999,
+  `max_time` double DEFAULT 0,
+  `cur_time` double DEFAULT 0,
+  `avg_time` double DEFAULT 0,
+  `total_polls` int(10) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `pollerid_path_contraint` (`poller_id`,`path`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Defined paths to be scanned';
@@ -1624,13 +1622,13 @@ DROP TABLE IF EXISTS `disku_pollers_threads`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `disku_pollers_threads` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `poller_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `path_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `pid` int(10) unsigned NOT NULL DEFAULT '0',
+  `poller_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `path_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `pid` int(10) unsigned NOT NULL DEFAULT 0,
   `status` varchar(20) DEFAULT '',
-  `depth` int(10) NOT NULL DEFAULT '0',
+  `depth` int(10) NOT NULL DEFAULT 0,
   `dir` varchar(255) NOT NULL DEFAULT '',
-  `start_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `start_time` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
 ) ENGINE=MEMORY DEFAULT CHARSET=latin1 COMMENT='Stores temporary running process information';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1643,9 +1641,9 @@ DROP TABLE IF EXISTS `disku_processes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `disku_processes` (
-  `pid` int(10) unsigned NOT NULL DEFAULT '0',
+  `pid` int(10) unsigned NOT NULL DEFAULT 0,
   `taskname` varchar(20) NOT NULL DEFAULT '0',
-  `taskid` int(10) unsigned NOT NULL DEFAULT '0',
+  `taskid` int(10) unsigned NOT NULL DEFAULT 0,
   `heartbeat` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`taskname`,`taskid`)
 ) ENGINE=MEMORY DEFAULT CHARSET=latin1 COMMENT='Stored Client Processes in Disku Plugin';
@@ -1661,13 +1659,13 @@ DROP TABLE IF EXISTS `disku_users`;
 CREATE TABLE `disku_users` (
   `domain` varchar(20) NOT NULL DEFAULT '',
   `user` varchar(20) NOT NULL DEFAULT '',
-  `userid` int(10) unsigned NOT NULL DEFAULT '0',
-  `groupid` int(10) NOT NULL DEFAULT '-1',
+  `userid` int(10) unsigned NOT NULL DEFAULT 0,
+  `groupid` int(10) NOT NULL DEFAULT -1,
   `name` varchar(60) NOT NULL DEFAULT '',
   `path` varchar(40) NOT NULL DEFAULT '',
   `shell` varchar(20) NOT NULL DEFAULT '',
   `firstSeen` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `lastSeen` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `lastSeen` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`domain`,`user`,`userid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Stores all users in all known domains';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1680,9 +1678,9 @@ DROP TABLE IF EXISTS `disku_users_totals`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `disku_users_totals` (
-  `poller_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `path_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `userid` int(10) unsigned NOT NULL DEFAULT '0',
+  `poller_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `path_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `userid` int(10) unsigned NOT NULL DEFAULT 0,
   `user` varchar(20) NOT NULL,
   `files` bigint(20) unsigned NOT NULL,
   `size` double NOT NULL,
@@ -1690,7 +1688,7 @@ CREATE TABLE `disku_users_totals` (
   `size6to12` double DEFAULT NULL,
   `size12plus` double DEFAULT NULL,
   `directories` bigint(20) unsigned NOT NULL,
-  `delme` tinyint(3) unsigned DEFAULT '0',
+  `delme` tinyint(3) unsigned DEFAULT 0,
   PRIMARY KEY (`poller_id`,`path_id`,`userid`) USING BTREE,
   KEY `delme` (`delme`),
   KEY `user` (`user`)
@@ -1705,9 +1703,9 @@ DROP TABLE IF EXISTS `disku_users_totals_history`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `disku_users_totals_history` (
-  `poller_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `path_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `userid` int(10) unsigned NOT NULL DEFAULT '0',
+  `poller_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `path_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `userid` int(10) unsigned NOT NULL DEFAULT 0,
   `user` varchar(20) NOT NULL,
   `files` bigint(20) unsigned NOT NULL,
   `size` double NOT NULL,
@@ -1730,8 +1728,8 @@ DROP TABLE IF EXISTS `external_links`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `external_links` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
-  `sortorder` int(10) NOT NULL DEFAULT '0',
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `sortorder` int(10) unsigned NOT NULL DEFAULT 0,
   `enabled` char(2) DEFAULT 'on',
   `contentfile` varchar(255) NOT NULL DEFAULT '',
   `title` varchar(20) NOT NULL DEFAULT '',
@@ -1751,10 +1749,10 @@ DROP TABLE IF EXISTS `graph_local`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `graph_local` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `graph_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `host_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `snmp_query_id` mediumint(8) NOT NULL DEFAULT '0',
-  `snmp_query_graph_id` mediumint(8) NOT NULL DEFAULT '0',
+  `graph_template_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `host_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `snmp_query_id` mediumint(8) NOT NULL DEFAULT 0,
+  `snmp_query_graph_id` mediumint(8) NOT NULL DEFAULT 0,
   `snmp_index` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `host_id` (`host_id`),
@@ -1785,9 +1783,9 @@ DROP TABLE IF EXISTS `graph_template_input`;
 CREATE TABLE `graph_template_input` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `hash` varchar(32) NOT NULL DEFAULT '',
-  `graph_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `graph_template_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
   `name` varchar(255) NOT NULL DEFAULT '',
-  `description` text,
+  `description` text DEFAULT NULL,
   `column_name` varchar(50) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB COMMENT='Stores the names for graph item input groups.';
@@ -1811,8 +1809,8 @@ DROP TABLE IF EXISTS `graph_template_input_defs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `graph_template_input_defs` (
-  `graph_template_input_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `graph_template_item_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `graph_template_input_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `graph_template_item_id` int(10) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`graph_template_input_id`,`graph_template_item_id`)
 ) ENGINE=InnoDB COMMENT='Stores the relationship for what graph items are associated';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1839,10 +1837,11 @@ CREATE TABLE `graph_templates` (
   `hash` char(32) NOT NULL DEFAULT '',
   `name` char(255) NOT NULL DEFAULT '',
   `multiple` char(2) NOT NULL DEFAULT '',
+  `test_source` char(2) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
-  KEY `multiple_name` (`multiple`,`name`(171)),
-  KEY `name` (`name`(171))
-) ENGINE=InnoDB COMMENT='Contains each graph template name.';
+  KEY `multiple_name` (`multiple`,`name`),
+  KEY `name` (`name`)
+) ENGINE=InnoDB ROW_FORMAT=DYNAMIC COMMENT='Contains each graph template name.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1851,7 +1850,7 @@ CREATE TABLE `graph_templates` (
 
 LOCK TABLES `graph_templates` WRITE;
 /*!40000 ALTER TABLE `graph_templates` DISABLE KEYS */;
-INSERT INTO `graph_templates` VALUES (1,'9fe8b4da353689d376b99b2ea526cc6b','Unix - Processes',''),(2,'fe5edd777a76d48fc48c11aded5211ef','Unix - Load Average',''),(3,'63610139d44d52b195cc375636653ebd','Unix - Logged in Users',''),(4,'6992ed4df4b44f3d5595386b8298f0ec','Linux - Memory Usage',''),(5,'8e7c8a511652fe4a8e65c69f3d34779d','Unix - Available Disk Space',''),(6,'d4d9ba31d18ea0e68f8b2fd89b1dae92','Cacti Poller Statistics - Objects',''),(7,'a50a3bc4e066509b42440ab0e06621fb','Cacti Poller Statistics - DS/RRD',''),(8,'7bb3750476173205d78e311bf6c1f29d','Cacti Poller Statistics - Boost',''),(9,'9cd180035d1c3c356001443ccd3c029e','Cacti Poller Statistics - Items',''),(10,'bb6ae539aa2820d7b37da36992bd3f12','Cacti Poller Statistics - Recache',''),(11,'5cd07a18f0076e900def9b79e1785861','Cacti Poller Statistics - Runtime',''),(12,'1b9b8b6504ab7b73a8e13e8671e6c509','Cacti Poller Statistics - Boost Memory',''),(13,'9a5e6d7781cc1bd6cf24f64dd6ffb423','Cisco - CPU Usage',''),(14,'5deb0d66c81262843dce5f3861be9966','Interface - Traffic (bits/sec)',''),(15,'06621cd4a9289417cadcb8f9b5cfba80','Interface - Errors/Discards',''),(16,'e0d1625a1f4776a5294583659d5cee15','Interface - Unicast Packets',''),(17,'10ca5530554da7b73dc69d291bf55d38','Interface - Non-Unicast Packets',''),(18,'df244b337547b434b486662c3c5c7472','Interface - Traffic (bytes/sec)',''),(19,'1742b2066384637022d178cc5072905a','Interface - Traffic (bits/sec, 95th Percentile)',''),(20,'13b47e10b2d5db45707d61851f69c52b','Interface - Traffic (bits/sec, Total Bandwidth)',''),(21,'8ad6790c22b693680e041f21d62537ac','Interface - Traffic (bytes/sec, Total Bandwidth)',''),(22,'9e25a00a6f9222d02389b6ecc97590f1','LM License - Poller Stats',''),(23,'620954e227a1972dd9de72b7b9edddd2','LM License - Feature Use',''),(24,'dab23f124796196179eaefec678f3cbb','LM License - Host Feature Usage',''),(25,'1d2dedcb972def94556b55ee1717a833','LM License - User Feature Usage',''),(26,'0a21c283961ea0f197d88e1edac8fcc4','LM License - Vendor Feature Usage',''),(27,'a32b454435cee6819bacb80d74e1d5b3','LM License - License Server Usage',''),(28,'a7dd1672ef3c91218208f3f6dfe90db2','LM Summary - License Server Stats',''),(29,'80049870e3c6f7a85188f327380a86d1','LM Summary - License Feature Summary Use',''),(30,'e334bdcf821cd27270a4cc945e80915e','Net-SNMP - CPU Usage (tics)',''),(31,'5107ec0206562e77d965ce6b852ef9d4','Net-SNMP - Load Average',''),(32,'be275639d5680e94c72c0ebb4e19056d','Net-SNMP - Memory Usage',''),(33,'083b60c7741c9590db49b45d52b0d632','GRID - Cluster/Host Job Statistics',''),(34,'73f3f773720f26c3e7e27d1484ac438d','GRID - Cluster/Host Load Average',''),(35,'4950297b490f6bab4e8eaf4db180f1aa','GRID - Cluster/Host IO Levels',''),(36,'32ef20689c25cfe9c82a905ef79235c7','GRID - Cluster/Host Available Memory',''),(37,'959f365266409e915fa7449bcba0cf1f','GRID - Cluster/Host CPU Utilization',''),(38,'8816ce7aaf47a5866a434f167de76891','GRID - Host Reserved Memory',''),(39,'abb5e813c9f1e8cd6fc1e393092ef8cb','Net-SNMP - Available Disk Space',''),(40,'9455142e663b4ba10951de57058b59ad','GRID - Cluster/Overall Hourly Throughput',''),(41,'eacecfd6128023718606be8aa8c01751','GRID - Cluster/Overall Pending Jobs',''),(42,'c35e34d66e37a7a42b4946a6955d1115','GRID - Cluster Efficiency',''),(43,'a72072edc13aac5d87b9f726a8698406','GRID - Cluster Capacity',''),(44,'6c4d9c0c62603dec3e7bd46d73117421','GRID - Cluster GridJobs Stats',''),(45,'cf3899eae71057b1a93800a85629b461','GRID - LSF Performance',''),(46,'e9b5072c177c572113d7b8af118dc050','GRID - Cluster Static and Float Client Licenses',''),(47,'225dc580eabc5210cdbefd7a0be6f360','GRID - Cluster GridLoad Stats',''),(48,'d104a31eeadc69deabbe0b88033f8642','GRID - Cluster Gridhosts / Gridbhosts Stats',''),(49,'41a2faa418024388fcd6149f8bb216b1','GRID - Cluster GridUsers / GridUserGroups Stats',''),(50,'614f0502bb632bf2a33706ca2a4f9300','GRID - Cluster GridQueues Stats',''),(51,'be0f0c99c809fdb43236105f18ced826','GRID - Cluster GridParams Stats',''),(52,'b3807f16ee4be26a87822e356f4318e1','GRID - Cluster GridHostGroups Stats',''),(53,'02c5d1756f2fc4957eabec755b1c6972','GRID - Cluster GridArray Stats',''),(54,'72876594b9364e5cc560b4a0285a4c44','GRID - Queue - Pending Times',''),(55,'6afe0f11955cc9d5dd57128c5bfc9c88','GRID - Queue - Job Information',''),(56,'3a2dea2c14e5cecdf315cde84ba0fc18','GRID - Queue - Dispatch Times',''),(57,'82bd1bf6ad011bb64f86e37c2ee9ae59','GRID - Queue - Distinct Users',''),(58,'34688a187ca3f2f262bbedffbd425fb7','GRID - Queue - Hourly Throughput',''),(59,'c7412a39d7d25f6b270387b3548becd9','GRID - Queue - Slot Status',''),(60,'8386039b9e4d2d6340cceaa1f55333ac','GRID - Queue - Pending Slots',''),(61,'c1c1d2e8aa785833dbb79949a066fd99','GRID - Queue - Running Slots',''),(62,'0aa65c1c3d9bfb4e0230a9de24fc8f3f','GRID - Queue - Effective Utilization',''),(63,'64c270f6d1086a1fe49799aa600e32cd','GRID - Queue - Pending/Running Slots',''),(64,'d60eef8ae060cbddbd649abb0871e5b8','GRID - Host Group - CPU Utilization',''),(65,'1a86957d680ff307fb0714ff45696b78','GRID - Host Group - Paging/IO Rates',''),(66,'8da11c1aaf5bd1c7ef4221998dd88d4f','GRID - Host Group - CPU Capacity',''),(67,'a638e75101dfd978e0bb2608a964249e','GRID - Host Group - Slot Utilization',''),(68,'35a38ff4b08a76ca22de0871769df8dd','GRID - Host Group - Done and Exited Jobs',''),(69,'f45a99df27234d68e9a4d66adc382679','GRID - Host Group - Pending Jobs',''),(70,'52b4cc93f0a9bd0828e5b640fb90e95e','GRID - Host Group - Running Jobs',''),(71,'be721fbe133cfb8402285f50250bbdfc','GRID - Host Group - Available Memory',''),(72,'607920c266f264ab6ebe090fd847737b','GRID - Host Group - Memory Stats',''),(73,'6f1176cb10c4e54d8713d3f4df3811ec','GRID - Host Group - Host Details',''),(74,'1d1c664c949a83dcb4fade37a8445773','GRID - User Group - Job Stats',''),(75,'20eb1e1528f2f6a76ff3e49db6ddc8fd','GRID - User Group - Memory Stats',''),(76,'31bd0c963db1bf52e2185f642824701c','GRID - User Group - Efficiency',''),(77,'9529969bfa3ca107adf82b36146eb367','GRID - User Group - Total CPU',''),(78,'a4ec947ddac1e1390932fb393dc396ef','GRID - Users - Jobs Stats',''),(79,'58b8499d96931e70d5e52ead9aeb23cc','GRID - Cluster Shared Resources',''),(80,'2a0e63fb11e3b5d3b6ad5ab438c559ce','GRID - Projects - Level 1 - Efficiency',''),(81,'4f4137bf00100cf3ca070426a60647ec','GRID - Projects - Level 1 - Total CPU',''),(82,'8e6f92257670768488d8be3db65ac2c1','GRID - Projects - Level 1 - Memory Stats',''),(83,'fac467230b46e26e7c18b157efffb956','GRID - Projects - Level 1 - VM Stats',''),(84,'7a072a0ad4e8fe22d222e67511225785','GRID - Projects - Level 1 - Pending Job Slots',''),(85,'188ae2fd9e61259060b91edef5de3e89','GRID - Projects - Level 1 - Running Job Slots',''),(86,'3b34bd267f8643b10194d612b0539aa5','GRID - Projects - Level 1 - Pending Jobs',''),(87,'08437ef32df6924277e80cc68e3732e6','GRID - Projects - Level 1 - Running Jobs',''),(88,'5485021b9615d35c0be83cb94de60c4d','GRID - License Project - Efficiency',''),(89,'65a52969f503ab1be69fbb0bf34feb5e','GRID - License Project - Memory Stats',''),(90,'0730a95c872fc341459d64867850db00','GRID - License Project - Pending Jobs',''),(91,'eea9cf99214aa95a8009f5ff0c926f58','GRID - License Project - Running Jobs',''),(92,'66887c7d08c865f607ed04ed370b1613','GRID - License Project - Total CPU',''),(93,'e29c4d9ab6964a4d4531a62138396ae6','GRID - License Project - VM Stats',''),(94,'569d0470d477fddba5c0be733b27c482','GRID - Applications - Efficiency',''),(95,'d137adb9843f4c7d4a5a214fbfbfa348','GRID - Applications - Memory Stats',''),(96,'04f55ad9778aa1b3effec51b386e9a41','GRID - Applications - Pending Jobs',''),(97,'46bd0753d03a7ad9672f7786a7ba06ab','GRID - Applications - Running Jobs',''),(98,'56a192fb6464178c238600e4df6cdad9','GRID - Applications - Total CPU',''),(99,'d9b15035d21b98a4276e81fab4c41492','GRID - Applications - VM Stats',''),(100,'0a4de475574dc532adc00e89744b09cf','GRID - Job Groups - Running Jobs',''),(101,'43daa9cffd77fe600d950909c15fe3cb','GRID - Job Groups - Efficiency',''),(102,'a3893a8e448da14deb1ad2e24a003669','GRID - Job Groups - Memory Stats',''),(103,'cdfed37f0eeb602fddd9a471c87a9a37','GRID - Job Groups - Pending Jobs',''),(104,'b0e7aed350a6bb3082e7b3ddba301f15','GRID - Job Groups - Total CPU',''),(105,'4c988731b38a12c27fb36612d4e2e288','GRID - Job Groups - VM Stats',''),(106,'a043b12e1a219e56e51122fc457ff386','GRID - Guarantee SLA Resource Usage',''),(107,'afbb7c8839286bf03309a0ccefd79f40','GRID - Guarantee Resource Pool Usage',''),(108,'6c8c4a6c27c0b73866f11748e17f5ed2','GRID - Benchmarks - Submission Stats',''),(109,'5bd4321ca9ee22d8361b1dfa1f993bf5','GRID - Queue - Fairshare - Priority',''),(110,'89bebc6c9b59595566c2d4e0b6b6fa50','GRID - Queue - Fairshare - Started',''),(111,'75d89fd65c13c113e7fb35680b277caa','GRID - Queue - Fairshare - Share',''),(112,'dca1f7fdd065179d0d346a7c7eb1a528','GRID - Queue - Fairshare - Times',''),(113,'1b0897dcb3cbf72ce58d9b03d00103c9','GRID - Queue - Fairshare - Running Jobs',''),(114,'296b0d0f61949313ac135271ef28d62d','GRID - Queue - Fairshare - Running Slots',''),(115,'e84aa42453561acf1265ad1b64b587de','GRID - Queue - Fairshare - Pending Jobs',''),(116,'1adc5fb6c7378240bc4d6405e5ba2ab4','GRID - Queue - Fairshare - Pending Slots',''),(117,'280e38336d77acde4672879a7db823f3','Karlnet - Wireless Levels',''),(118,'3109d88e6806d2ce50c025541b542499','Karlnet - Wireless Transmissions',''),(119,'e8462bbe094e4e9e814d4e681671ea82','Host MIB - Logged in Users',''),(120,'62205afbd4066e5c4700338841e3901e','Host MIB - Processes',''),(121,'eee71ec20dc7b44635ab185bbf924dc4','Net-SNMP - CPU Utilization',''),(122,'4d2bdea3c52db05896b0d9323076613d','Net-SNMP - Interrupts',''),(123,'a9a2ce15df48242361bea33f786de6ee','Net-SNMP - Context Switches',''),(124,'7489e44466abee8a7d8636cb2cb14a1a','Host MIB - Available Disk Space',''),(125,'c6bb62bedec4ab97f9db9fd780bd85a6','Host MIB - CPU Utilization',''),(126,'f17e4a77b8496725dc924b8c35b60036','Netware - File System Cache',''),(127,'8e77a3036312fd0fda32eaea2b5f141b','Netware - File System Activity',''),(128,'5892c822b1bb2d38589b6c27934b9936','Netware - Logged In Users',''),(129,'e3780a13b0f7a3f85a44b70cd4d2fd36','Netware - Open Files',''),(130,'0dd0438d5e6cad6776f79ecaa96fb708','Netware - Volume Information',''),(131,'b18a3742ebea48c6198412b392d757fc','Netware - Directory Information',''),(132,'46bb77f4c0c69671980e3c60d3f22fa9','Netware - CPU Utilization',''),(133,'b6a6d4bafb2b91101799ba803eaaf13d','teMySQL - Volatile Queries',''),(134,'19a453319e51c348e8a982d5591ccab4','teMySQL - Volatile Handler',''),(135,'7a6f5988f37b0d8a28deb84910781346','teMySQL - Select Queries',''),(136,'c3d93e93bedf136130f4eb679985df48','teMySQL - Select Handler',''),(137,'8eed1d2ff9f8ffd934a9acb81c88fcf1','teMySQL - Index Usage',''),(138,'c3c91dbe2a1af48b4896d53f7e52b983','teMySQL - Query Cache',''),(139,'a0d56b2fd3e7df1eedfb33ebf886bbfc','teMySQL - Network Usage',''),(140,'aa5271e1497dea952d7142652fbcb897','teMySQL - Sorts',''),(141,'61b0a5b714d09b3372d9f1936ebc62a7','teMySQL - Locking and Slow',''),(142,'42e84714152fad6a87dd2e73f4a21292','teMySQL - Temporary Objects',''),(143,'be477f6bdfd5479ebfca7bc377ac74dd','teMySQL - Threads/Abends',''),(144,'a3fb7797a6ffc729bfe254a86d75080a','teMySQL - CPU Usage',''),(145,'f5a4d6f74ed157d105a0fab65656b4c2','teMySQL - Old Command Stats',''),(146,'c328115afb84f7f304954b175ff39157','teMySQL - Old Handler Stats',''),(147,'5e8b2b90a9e528392d5efd42c0eecc55','teMySQL - Load Average',''),(148,'a43e937f27820bb0c8ad7e53dc4d753e','teMySQL - InnoDB Row',''),(149,'92ac519a5ce7da8c91f04bce1b8d1108','teMySQL - InnoDB Buffers Pages/Mem',''),(150,'660bb5e5cfef9f6ff0aa71baff47a013','teMySQL - InnoDB Locks',''),(151,'75f88c448006db5683f536ea30b19cea','teMySQL - InnoDB InsBuffer',''),(152,'2a01ed5d916708e540a80be20d78d5da','teMySQL - InnoDB File I/O',''),(153,'9e85550dc9995c9fda1575193c510a7e','GRID - Projects - All - Efficiency',''),(154,'b322cf9b97576bbbe714bcdb6dbffc0d','GRID - Projects - All - Memory Stats',''),(155,'4d1baf5948a53ef29bfbdf8d47e810d8','GRID - Projects - All - Pending Job Slots',''),(156,'ba5ab44149f6f1f33750258be3b3d6e0','GRID - Projects - All - Running Job Slots',''),(157,'ec15154eca8fcdeabd24047f9d87f087','GRID - Projects - All - Total CPU',''),(158,'e756345d0f2ac4e65b56a0826caac618','GRID - Projects - All - VM Stats',''),(159,'427af8a85a327b391b41f5e1a04ade94','GRID - Projects - All - Pending Jobs',''),(160,'881eff1418a0f5e53a4b2de22486ade4','GRID - Projects - All - Running Jobs',''),(161,'b04fa4da5cb7e2d43c1d6c976f6a01d1','GRID - Cluster Pending by Pending Reason',''),(162,'010b90500e1fc6a05abfd542940584d0','SNMP - Generic OID Template',''),(163,'cf96dfb22b58e08bf101ca825377fa4b','Unix - Ping Latency',''),(164,'2aa36d3b19572c965b201d881a8fbdc0','GRID - License Scheduler - Cluster Acum Use',''),(165,'ca17b641cb0e471b13baab78335c1012','GRID - License Scheduler - Cluster Stats',''),(166,'7c84cf5ec411b2b330e1881b77eb3a91','GRID - License Scheduler - Cluster Contention',''),(167,'b40d45dffd84f39348c87c0ff9245930','GRID - License Scheduler - LSF/Non-LSF Use',''),(168,'926e4471808f58f9cb42c11e52f0e831','GRID - License Scheduler - Feature Stats',''),(169,'6493c0129530602d960ae62a3ccef6e0','GRID - License Scheduler - Project Use',''),(170,'f98f07cb171377284ffb0eea0300b7e1','GRID - License Scheduler - Project Demand',''),(171,'475abf8a87c41559c288357e290a3230','GRID - License Scheduler - Project Share',''),(172,'9cc5067f0b9dc5b6083e0688ddc514cc','GRID - License Scheduler - Project Summary',''),(173,'5f486fd1a4be78f6f5a44c22225b5112','GRID - License Scheduler - Cluster Summary Stats',''),(174,'7e044a8cc76b3ef06a32def04fb3f6f5','GRID - License Scheduler - Cluster Mode Stats',''),(175,'2623a7ef6e0534dd4431fc1a392413bf','GRID - License Scheduler - Demand vs Alloc',''),(176,'6331f6eb33f2dc0b28a56e306cfa1a80','DISKU - Extension Total File Size',''),(177,'4703c5266ebd38d3d8e8b7419f12ef7d','DISKU - Extension Total Files',''),(178,'94b3ed3994420497be025575bddfa403','DISKU - User Total File Size',''),(179,'7e541c22fd9aa9b61c045c8b56de261b','DISKU - User Directories/Files',''),(180,'1b9752616b4aa24f98241588138efd03','DISKU - Group Directories/Files',''),(181,'8573306e11120a747b8ea537e88b381e','DISKU - Group Total File Size',''),(182,'6a0a066094b48718a8d40257fdf9f580','DISKU - Group Active Users',''),(183,'7fa2cf151754d87c3fb856991aa7b9dc','DISKU - Application Total File Size',''),(184,'4d5348b97af8b270df416de37447671b','DISKU - Application Total Files',''),(185,'5cc68ae722a37f60f5aebaa101fa814c','DISKU - Tagname Total File Size',''),(186,'7469787aaf416f8506f06b6c8de10f82','DISKU - Tagname Total Files',''),(187,'b855a257a6fae5e638d60e898e808e4e','DISKU - Organization Directories/Files',''),(188,'789964e12c94d8be8bcd956fb2d900b5','DISKU - Organization Total File Size',''),(189,'7a6d9b0359597ca827bd209efa0de894','DISKU - Organization Active Users',''),(190,'12dc6715f3094e544a624124b17f850d','DISKU - Disk Space Usage',''),(191,'d7393ebb5e9d224cae0856aac3708d4a','DISKU - Disk Space Percent',''),(192,'917512ae743df5fef7a01ed039543613','GRID - LSF Host Info Requests',''),(193,'1ca158b33644192348fd2faf999aec5d','GRID - LSF Host Match Criteria',''),(194,'34fe506a41da00ab3eafb648a987554a','GRID - LSF Job Buckets',''),(195,'3ace1eb9b108acf85cab8fa264897076','GRID - LSF Job Info Requests',''),(196,'57742988364531d11a96732a2ec044a4','GRID - LSF Job Scheduling Interval',''),(197,'4b6af3347503c9bfe90e4c876986b185','GRID - LSF Jobs Completed',''),(198,'2a0008a59b4d531d9a006671c79e6959','GRID - LSF Jobs Dispatched',''),(199,'99ac5f8aeb0f9ea0f3089534090d5ba9','GRID - LSF Jobs Submitted',''),(200,'39f014fe2a2b9dd8cbaf09396f4606ce','GRID - LSF Job Submit Requests',''),(201,'c05903282cf4a29aaa9eef5259dc3f84','GRID - LSF MBatchD Requests',''),(202,'68288407f001671ca9e2c6356bafba6a','GRID - LSF MBD File Descriptor Usage',''),(203,'10917ca0f707f91949e53642cfb32d6f','GRID - LSF Queue Info Requests',''),(204,'c191bde34dd5da98ccfe501e414b9e9e','GRID - Cluster Effective Utilization',''),(205,'a03fa34c731c32268f1b7e1da765e8db','GRID - Cluster/Host Effective UT',''),(206,'d5bc1ab844d0fd4effcff3a918da538f','GRID - Host Group - Effective Utilization',''),(207,'b6f7e8df0fe1f326542d0489ef761708','Alert - LM License Feature Usage %',''),(208,'34cf7d508cf6ad9d79339f26732e332b','Alert - Host With /tmp Exceed % Capacity',''),(209,'ba1a9ab33638672db0cba450f9d24562','Alert - Host With /var/tmp Exceed % Capacity',''),(210,'1b4f40f1e434e2d3388b86804bb4153a','Alert - Host With X Status',''),(211,'6769088462b3c4e868e6edd5e35a46bf','Alert - Hostgroup With Low Number of Free Slots',''),(212,'58f7480130d232b0fd0c489ad0094e74','Alert - Hosts With Effective r15m > X',''),(213,'a930d4e166234e73f7e8d647e189e5a2','Alert - Hosts With Used Mem > %',''),(214,'069f434a6888dc25497d605e2437b759','Alert - Hosts with Used Swp > %',''),(215,'73c7588d73b8d741a82303450ff6dc9f','Alert - Idle Jobs',''),(216,'ad48bcf59ca57f8ef94b832ad058b699','Alert - Jobs Pending for X Seconds',''),(217,'3898ab98c2ab6d5c8d40b4ffbd4f38f7','GRID - Pool - Effective Utilization',''),(218,'d439a14bbc212ab1bd85731257da0921','GRID - LSF Jobs Reordered',''),(219,'3d0c9fa791119c0e9ed8149dc3c3ffb7','GRID - LSF Memory Utilization',''),(220,'f90a362c7d3d10ecb354e96dea7c6373','GRID - LSF Slot Utilization',''),(221,'641c48a1d12017cc724e520a9fbf2a21','GRID - GPU Memory Status',''),(222,'8c3a15ef7fe08f9a8381fd2e7791eefc','GRID - GPU Performance',''),(223,'aa3e61dbd6921331593b3ac4b8f0d527','GRID - GPU Utilization',''),(224,'d1423adce14ebf5d73bc8f8f71df450b','GRID - GPU Temperature',''),(225,'edb710c283a80e286411bc2f69fe89ed','GRID - GPU Jobs','');
+INSERT INTO `graph_templates` VALUES (1,'9fe8b4da353689d376b99b2ea526cc6b','Unix - Processes','',''),(2,'fe5edd777a76d48fc48c11aded5211ef','Unix - Load Average','',''),(3,'63610139d44d52b195cc375636653ebd','Unix - Logged in Users','',''),(4,'6992ed4df4b44f3d5595386b8298f0ec','Linux - Memory Usage','',''),(5,'8e7c8a511652fe4a8e65c69f3d34779d','Unix - Available Disk Space','',''),(6,'d4d9ba31d18ea0e68f8b2fd89b1dae92','Cacti Poller Statistics - Objects','',''),(7,'a50a3bc4e066509b42440ab0e06621fb','Cacti Poller Statistics - DS/RRD','',''),(8,'7bb3750476173205d78e311bf6c1f29d','Cacti Poller Statistics - Boost','',''),(9,'9cd180035d1c3c356001443ccd3c029e','Cacti Poller Statistics - Items','',''),(10,'bb6ae539aa2820d7b37da36992bd3f12','Cacti Poller Statistics - Recache','',''),(11,'5cd07a18f0076e900def9b79e1785861','Cacti Poller Statistics - Runtime','',''),(12,'1b9b8b6504ab7b73a8e13e8671e6c509','Cacti Poller Statistics - Boost Memory','',''),(13,'9a5e6d7781cc1bd6cf24f64dd6ffb423','Cisco - CPU Usage','',''),(14,'5deb0d66c81262843dce5f3861be9966','Interface - Traffic (bits/sec)','',''),(15,'06621cd4a9289417cadcb8f9b5cfba80','Interface - Errors/Discards','',''),(16,'e0d1625a1f4776a5294583659d5cee15','Interface - Unicast Packets','',''),(17,'10ca5530554da7b73dc69d291bf55d38','Interface - Non-Unicast Packets','',''),(18,'df244b337547b434b486662c3c5c7472','Interface - Traffic (bytes/sec)','',''),(19,'1742b2066384637022d178cc5072905a','Interface - Traffic (bits/sec, 95th Percentile)','',''),(20,'13b47e10b2d5db45707d61851f69c52b','Interface - Traffic (bits/sec, Total Bandwidth)','',''),(21,'8ad6790c22b693680e041f21d62537ac','Interface - Traffic (bytes/sec, Total Bandwidth)','',''),(22,'9e25a00a6f9222d02389b6ecc97590f1','LM License - Poller Stats','',''),(23,'620954e227a1972dd9de72b7b9edddd2','LM License - Feature Use','',''),(24,'dab23f124796196179eaefec678f3cbb','LM License - Host Feature Usage','',''),(25,'1d2dedcb972def94556b55ee1717a833','LM License - User Feature Usage','',''),(26,'0a21c283961ea0f197d88e1edac8fcc4','LM License - Vendor Feature Usage','',''),(27,'a32b454435cee6819bacb80d74e1d5b3','LM License - License Server Usage','',''),(28,'a7dd1672ef3c91218208f3f6dfe90db2','LM Summary - License Server Stats','',''),(29,'80049870e3c6f7a85188f327380a86d1','LM Summary - License Feature Summary Use','',''),(30,'e334bdcf821cd27270a4cc945e80915e','Net-SNMP - CPU Usage (tics)','',''),(31,'5107ec0206562e77d965ce6b852ef9d4','Net-SNMP - Load Average','',''),(32,'be275639d5680e94c72c0ebb4e19056d','Net-SNMP - Memory Usage','',''),(33,'083b60c7741c9590db49b45d52b0d632','GRID - Cluster/Host Job Statistics','',''),(34,'73f3f773720f26c3e7e27d1484ac438d','GRID - Cluster/Host Load Average','',''),(35,'4950297b490f6bab4e8eaf4db180f1aa','GRID - Cluster/Host IO Levels','',''),(36,'32ef20689c25cfe9c82a905ef79235c7','GRID - Cluster/Host Available Memory','',''),(37,'959f365266409e915fa7449bcba0cf1f','GRID - Cluster/Host CPU Utilization','',''),(38,'8816ce7aaf47a5866a434f167de76891','GRID - Host Reserved Memory','',''),(39,'abb5e813c9f1e8cd6fc1e393092ef8cb','Net-SNMP - Available Disk Space','',''),(40,'9455142e663b4ba10951de57058b59ad','GRID - Cluster/Overall Hourly Throughput','',''),(41,'eacecfd6128023718606be8aa8c01751','GRID - Cluster/Overall Pending Jobs','',''),(42,'c35e34d66e37a7a42b4946a6955d1115','GRID - Cluster Efficiency','',''),(43,'a72072edc13aac5d87b9f726a8698406','GRID - Cluster Capacity','',''),(44,'6c4d9c0c62603dec3e7bd46d73117421','GRID - Cluster GridJobs Stats','',''),(45,'cf3899eae71057b1a93800a85629b461','GRID - LSF Performance','',''),(46,'e9b5072c177c572113d7b8af118dc050','GRID - Cluster Static and Float Client Licenses','',''),(47,'225dc580eabc5210cdbefd7a0be6f360','GRID - Cluster GridLoad Stats','',''),(48,'d104a31eeadc69deabbe0b88033f8642','GRID - Cluster Gridhosts / Gridbhosts Stats','',''),(49,'41a2faa418024388fcd6149f8bb216b1','GRID - Cluster GridUsers / GridUserGroups Stats','',''),(50,'614f0502bb632bf2a33706ca2a4f9300','GRID - Cluster GridQueues Stats','',''),(51,'be0f0c99c809fdb43236105f18ced826','GRID - Cluster GridParams Stats','',''),(52,'b3807f16ee4be26a87822e356f4318e1','GRID - Cluster GridHostGroups Stats','',''),(53,'02c5d1756f2fc4957eabec755b1c6972','GRID - Cluster GridArray Stats','',''),(54,'72876594b9364e5cc560b4a0285a4c44','GRID - Queue - Pending Times','',''),(55,'6afe0f11955cc9d5dd57128c5bfc9c88','GRID - Queue - Job Information','',''),(56,'3a2dea2c14e5cecdf315cde84ba0fc18','GRID - Queue - Dispatch Times','',''),(57,'82bd1bf6ad011bb64f86e37c2ee9ae59','GRID - Queue - Distinct Users','',''),(58,'34688a187ca3f2f262bbedffbd425fb7','GRID - Queue - Hourly Throughput','',''),(59,'c7412a39d7d25f6b270387b3548becd9','GRID - Queue - Slot Status','',''),(60,'8386039b9e4d2d6340cceaa1f55333ac','GRID - Queue - Pending Slots','',''),(61,'c1c1d2e8aa785833dbb79949a066fd99','GRID - Queue - Running Slots','',''),(62,'0aa65c1c3d9bfb4e0230a9de24fc8f3f','GRID - Queue - Effective Utilization','',''),(63,'64c270f6d1086a1fe49799aa600e32cd','GRID - Queue - Pending/Running Slots','',''),(64,'d60eef8ae060cbddbd649abb0871e5b8','GRID - Host Group - CPU Utilization','',''),(65,'1a86957d680ff307fb0714ff45696b78','GRID - Host Group - Paging/IO Rates','',''),(66,'8da11c1aaf5bd1c7ef4221998dd88d4f','GRID - Host Group - CPU Capacity','',''),(67,'a638e75101dfd978e0bb2608a964249e','GRID - Host Group - Slot Utilization','',''),(68,'35a38ff4b08a76ca22de0871769df8dd','GRID - Host Group - Done and Exited Jobs','',''),(69,'f45a99df27234d68e9a4d66adc382679','GRID - Host Group - Pending Jobs','',''),(70,'52b4cc93f0a9bd0828e5b640fb90e95e','GRID - Host Group - Running Jobs','',''),(71,'be721fbe133cfb8402285f50250bbdfc','GRID - Host Group - Available Memory','',''),(72,'607920c266f264ab6ebe090fd847737b','GRID - Host Group - Memory Stats','',''),(73,'6f1176cb10c4e54d8713d3f4df3811ec','GRID - Host Group - Host Details','',''),(74,'1d1c664c949a83dcb4fade37a8445773','GRID - User Group - Job Stats','',''),(75,'20eb1e1528f2f6a76ff3e49db6ddc8fd','GRID - User Group - Memory Stats','',''),(76,'31bd0c963db1bf52e2185f642824701c','GRID - User Group - Efficiency','',''),(77,'9529969bfa3ca107adf82b36146eb367','GRID - User Group - Total CPU','',''),(78,'a4ec947ddac1e1390932fb393dc396ef','GRID - Users - Jobs Stats','',''),(79,'58b8499d96931e70d5e52ead9aeb23cc','GRID - Cluster Shared Resources','',''),(80,'2a0e63fb11e3b5d3b6ad5ab438c559ce','GRID - Projects - Level 1 - Efficiency','',''),(81,'4f4137bf00100cf3ca070426a60647ec','GRID - Projects - Level 1 - Total CPU','',''),(82,'8e6f92257670768488d8be3db65ac2c1','GRID - Projects - Level 1 - Memory Stats','',''),(83,'fac467230b46e26e7c18b157efffb956','GRID - Projects - Level 1 - VM Stats','',''),(84,'7a072a0ad4e8fe22d222e67511225785','GRID - Projects - Level 1 - Pending Job Slots','',''),(85,'188ae2fd9e61259060b91edef5de3e89','GRID - Projects - Level 1 - Running Job Slots','',''),(86,'3b34bd267f8643b10194d612b0539aa5','GRID - Projects - Level 1 - Pending Jobs','',''),(87,'08437ef32df6924277e80cc68e3732e6','GRID - Projects - Level 1 - Running Jobs','',''),(88,'5485021b9615d35c0be83cb94de60c4d','GRID - License Project - Efficiency','',''),(89,'65a52969f503ab1be69fbb0bf34feb5e','GRID - License Project - Memory Stats','',''),(90,'0730a95c872fc341459d64867850db00','GRID - License Project - Pending Jobs','',''),(91,'eea9cf99214aa95a8009f5ff0c926f58','GRID - License Project - Running Jobs','',''),(92,'66887c7d08c865f607ed04ed370b1613','GRID - License Project - Total CPU','',''),(93,'e29c4d9ab6964a4d4531a62138396ae6','GRID - License Project - VM Stats','',''),(94,'569d0470d477fddba5c0be733b27c482','GRID - Applications - Efficiency','',''),(95,'d137adb9843f4c7d4a5a214fbfbfa348','GRID - Applications - Memory Stats','',''),(96,'04f55ad9778aa1b3effec51b386e9a41','GRID - Applications - Pending Jobs','',''),(97,'46bd0753d03a7ad9672f7786a7ba06ab','GRID - Applications - Running Jobs','',''),(98,'56a192fb6464178c238600e4df6cdad9','GRID - Applications - Total CPU','',''),(99,'d9b15035d21b98a4276e81fab4c41492','GRID - Applications - VM Stats','',''),(100,'0a4de475574dc532adc00e89744b09cf','GRID - Job Groups - Running Jobs','',''),(101,'43daa9cffd77fe600d950909c15fe3cb','GRID - Job Groups - Efficiency','',''),(102,'a3893a8e448da14deb1ad2e24a003669','GRID - Job Groups - Memory Stats','',''),(103,'cdfed37f0eeb602fddd9a471c87a9a37','GRID - Job Groups - Pending Jobs','',''),(104,'b0e7aed350a6bb3082e7b3ddba301f15','GRID - Job Groups - Total CPU','',''),(105,'4c988731b38a12c27fb36612d4e2e288','GRID - Job Groups - VM Stats','',''),(106,'a043b12e1a219e56e51122fc457ff386','GRID - Guarantee SLA Resource Usage','',''),(107,'afbb7c8839286bf03309a0ccefd79f40','GRID - Guarantee Resource Pool Usage','',''),(108,'6c8c4a6c27c0b73866f11748e17f5ed2','GRID - Benchmarks - Submission Stats','',''),(109,'5bd4321ca9ee22d8361b1dfa1f993bf5','GRID - Queue - Fairshare - Priority','',''),(110,'89bebc6c9b59595566c2d4e0b6b6fa50','GRID - Queue - Fairshare - Started','',''),(111,'75d89fd65c13c113e7fb35680b277caa','GRID - Queue - Fairshare - Share','',''),(112,'dca1f7fdd065179d0d346a7c7eb1a528','GRID - Queue - Fairshare - Times','',''),(113,'1b0897dcb3cbf72ce58d9b03d00103c9','GRID - Queue - Fairshare - Running Jobs','',''),(114,'296b0d0f61949313ac135271ef28d62d','GRID - Queue - Fairshare - Running Slots','',''),(115,'e84aa42453561acf1265ad1b64b587de','GRID - Queue - Fairshare - Pending Jobs','',''),(116,'1adc5fb6c7378240bc4d6405e5ba2ab4','GRID - Queue - Fairshare - Pending Slots','',''),(117,'280e38336d77acde4672879a7db823f3','Karlnet - Wireless Levels','',''),(118,'3109d88e6806d2ce50c025541b542499','Karlnet - Wireless Transmissions','',''),(119,'e8462bbe094e4e9e814d4e681671ea82','Host MIB - Logged in Users','',''),(120,'62205afbd4066e5c4700338841e3901e','Host MIB - Processes','',''),(121,'eee71ec20dc7b44635ab185bbf924dc4','Net-SNMP - CPU Utilization','',''),(122,'4d2bdea3c52db05896b0d9323076613d','Net-SNMP - Interrupts','',''),(123,'a9a2ce15df48242361bea33f786de6ee','Net-SNMP - Context Switches','',''),(124,'7489e44466abee8a7d8636cb2cb14a1a','Host MIB - Available Disk Space','',''),(125,'c6bb62bedec4ab97f9db9fd780bd85a6','Host MIB - CPU Utilization','',''),(126,'f17e4a77b8496725dc924b8c35b60036','Netware - File System Cache','',''),(127,'8e77a3036312fd0fda32eaea2b5f141b','Netware - File System Activity','',''),(128,'5892c822b1bb2d38589b6c27934b9936','Netware - Logged In Users','',''),(129,'e3780a13b0f7a3f85a44b70cd4d2fd36','Netware - Open Files','',''),(130,'0dd0438d5e6cad6776f79ecaa96fb708','Netware - Volume Information','',''),(131,'b18a3742ebea48c6198412b392d757fc','Netware - Directory Information','',''),(132,'46bb77f4c0c69671980e3c60d3f22fa9','Netware - CPU Utilization','',''),(133,'b6a6d4bafb2b91101799ba803eaaf13d','teMySQL - Volatile Queries','',''),(134,'19a453319e51c348e8a982d5591ccab4','teMySQL - Volatile Handler','',''),(135,'7a6f5988f37b0d8a28deb84910781346','teMySQL - Select Queries','',''),(136,'c3d93e93bedf136130f4eb679985df48','teMySQL - Select Handler','',''),(137,'8eed1d2ff9f8ffd934a9acb81c88fcf1','teMySQL - Index Usage','',''),(138,'c3c91dbe2a1af48b4896d53f7e52b983','teMySQL - Query Cache','',''),(139,'a0d56b2fd3e7df1eedfb33ebf886bbfc','teMySQL - Network Usage','',''),(140,'aa5271e1497dea952d7142652fbcb897','teMySQL - Sorts','',''),(141,'61b0a5b714d09b3372d9f1936ebc62a7','teMySQL - Locking and Slow','',''),(142,'42e84714152fad6a87dd2e73f4a21292','teMySQL - Temporary Objects','',''),(143,'be477f6bdfd5479ebfca7bc377ac74dd','teMySQL - Threads/Abends','',''),(144,'a3fb7797a6ffc729bfe254a86d75080a','teMySQL - CPU Usage','',''),(145,'f5a4d6f74ed157d105a0fab65656b4c2','teMySQL - Old Command Stats','',''),(146,'c328115afb84f7f304954b175ff39157','teMySQL - Old Handler Stats','',''),(147,'5e8b2b90a9e528392d5efd42c0eecc55','teMySQL - Load Average','',''),(148,'a43e937f27820bb0c8ad7e53dc4d753e','teMySQL - InnoDB Row','',''),(149,'92ac519a5ce7da8c91f04bce1b8d1108','teMySQL - InnoDB Buffers Pages/Mem','',''),(150,'660bb5e5cfef9f6ff0aa71baff47a013','teMySQL - InnoDB Locks','',''),(151,'75f88c448006db5683f536ea30b19cea','teMySQL - InnoDB InsBuffer','',''),(152,'2a01ed5d916708e540a80be20d78d5da','teMySQL - InnoDB File I/O','',''),(153,'9e85550dc9995c9fda1575193c510a7e','GRID - Projects - All - Efficiency','',''),(154,'b322cf9b97576bbbe714bcdb6dbffc0d','GRID - Projects - All - Memory Stats','',''),(155,'4d1baf5948a53ef29bfbdf8d47e810d8','GRID - Projects - All - Pending Job Slots','',''),(156,'ba5ab44149f6f1f33750258be3b3d6e0','GRID - Projects - All - Running Job Slots','',''),(157,'ec15154eca8fcdeabd24047f9d87f087','GRID - Projects - All - Total CPU','',''),(158,'e756345d0f2ac4e65b56a0826caac618','GRID - Projects - All - VM Stats','',''),(159,'427af8a85a327b391b41f5e1a04ade94','GRID - Projects - All - Pending Jobs','',''),(160,'881eff1418a0f5e53a4b2de22486ade4','GRID - Projects - All - Running Jobs','',''),(161,'b04fa4da5cb7e2d43c1d6c976f6a01d1','GRID - Cluster Pending by Pending Reason','',''),(162,'010b90500e1fc6a05abfd542940584d0','SNMP - Generic OID Template','',''),(163,'cf96dfb22b58e08bf101ca825377fa4b','Unix - Ping Latency','',''),(164,'2aa36d3b19572c965b201d881a8fbdc0','GRID - License Scheduler - Cluster Acum Use','',''),(165,'ca17b641cb0e471b13baab78335c1012','GRID - License Scheduler - Cluster Stats','',''),(166,'7c84cf5ec411b2b330e1881b77eb3a91','GRID - License Scheduler - Cluster Contention','',''),(167,'b40d45dffd84f39348c87c0ff9245930','GRID - License Scheduler - LSF/Non-LSF Use','',''),(168,'926e4471808f58f9cb42c11e52f0e831','GRID - License Scheduler - Feature Stats','',''),(169,'6493c0129530602d960ae62a3ccef6e0','GRID - License Scheduler - Project Use','',''),(170,'f98f07cb171377284ffb0eea0300b7e1','GRID - License Scheduler - Project Demand','',''),(171,'475abf8a87c41559c288357e290a3230','GRID - License Scheduler - Project Share','',''),(172,'9cc5067f0b9dc5b6083e0688ddc514cc','GRID - License Scheduler - Project Summary','',''),(173,'5f486fd1a4be78f6f5a44c22225b5112','GRID - License Scheduler - Cluster Summary Stats','',''),(174,'7e044a8cc76b3ef06a32def04fb3f6f5','GRID - License Scheduler - Cluster Mode Stats','',''),(175,'2623a7ef6e0534dd4431fc1a392413bf','GRID - License Scheduler - Demand vs Alloc','',''),(176,'6331f6eb33f2dc0b28a56e306cfa1a80','DISKU - Extension Total File Size','',''),(177,'4703c5266ebd38d3d8e8b7419f12ef7d','DISKU - Extension Total Files','',''),(178,'94b3ed3994420497be025575bddfa403','DISKU - User Total File Size','',''),(179,'7e541c22fd9aa9b61c045c8b56de261b','DISKU - User Directories/Files','',''),(180,'1b9752616b4aa24f98241588138efd03','DISKU - Group Directories/Files','',''),(181,'8573306e11120a747b8ea537e88b381e','DISKU - Group Total File Size','',''),(182,'6a0a066094b48718a8d40257fdf9f580','DISKU - Group Active Users','',''),(183,'7fa2cf151754d87c3fb856991aa7b9dc','DISKU - Application Total File Size','',''),(184,'4d5348b97af8b270df416de37447671b','DISKU - Application Total Files','',''),(185,'5cc68ae722a37f60f5aebaa101fa814c','DISKU - Tagname Total File Size','',''),(186,'7469787aaf416f8506f06b6c8de10f82','DISKU - Tagname Total Files','',''),(187,'b855a257a6fae5e638d60e898e808e4e','DISKU - Organization Directories/Files','',''),(188,'789964e12c94d8be8bcd956fb2d900b5','DISKU - Organization Total File Size','',''),(189,'7a6d9b0359597ca827bd209efa0de894','DISKU - Organization Active Users','',''),(190,'12dc6715f3094e544a624124b17f850d','DISKU - Disk Space Usage','',''),(191,'d7393ebb5e9d224cae0856aac3708d4a','DISKU - Disk Space Percent','',''),(192,'917512ae743df5fef7a01ed039543613','GRID - LSF Host Info Requests','',''),(193,'1ca158b33644192348fd2faf999aec5d','GRID - LSF Host Match Criteria','',''),(194,'34fe506a41da00ab3eafb648a987554a','GRID - LSF Job Buckets','',''),(195,'3ace1eb9b108acf85cab8fa264897076','GRID - LSF Job Info Requests','',''),(196,'57742988364531d11a96732a2ec044a4','GRID - LSF Job Scheduling Interval','',''),(197,'4b6af3347503c9bfe90e4c876986b185','GRID - LSF Jobs Completed','',''),(198,'2a0008a59b4d531d9a006671c79e6959','GRID - LSF Jobs Dispatched','',''),(199,'99ac5f8aeb0f9ea0f3089534090d5ba9','GRID - LSF Jobs Submitted','',''),(200,'39f014fe2a2b9dd8cbaf09396f4606ce','GRID - LSF Job Submit Requests','',''),(201,'c05903282cf4a29aaa9eef5259dc3f84','GRID - LSF MBatchD Requests','',''),(202,'68288407f001671ca9e2c6356bafba6a','GRID - LSF MBD File Descriptor Usage','',''),(203,'10917ca0f707f91949e53642cfb32d6f','GRID - LSF Queue Info Requests','',''),(204,'c191bde34dd5da98ccfe501e414b9e9e','GRID - Cluster Effective Utilization','',''),(205,'a03fa34c731c32268f1b7e1da765e8db','GRID - Cluster/Host Effective UT','',''),(206,'d5bc1ab844d0fd4effcff3a918da538f','GRID - Host Group - Effective Utilization','',''),(207,'b6f7e8df0fe1f326542d0489ef761708','Alert - LM License Feature Usage %','',''),(208,'34cf7d508cf6ad9d79339f26732e332b','Alert - Host With /tmp Exceed % Capacity','',''),(209,'ba1a9ab33638672db0cba450f9d24562','Alert - Host With /var/tmp Exceed % Capacity','',''),(210,'1b4f40f1e434e2d3388b86804bb4153a','Alert - Host With X Status','',''),(211,'6769088462b3c4e868e6edd5e35a46bf','Alert - Hostgroup With Low Number of Free Slots','',''),(212,'58f7480130d232b0fd0c489ad0094e74','Alert - Hosts With Effective r15m > X','',''),(213,'a930d4e166234e73f7e8d647e189e5a2','Alert - Hosts With Used Mem > %','',''),(214,'069f434a6888dc25497d605e2437b759','Alert - Hosts with Used Swp > %','',''),(215,'73c7588d73b8d741a82303450ff6dc9f','Alert - Idle Jobs','',''),(216,'ad48bcf59ca57f8ef94b832ad058b699','Alert - Jobs Pending for X Seconds','',''),(217,'3898ab98c2ab6d5c8d40b4ffbd4f38f7','GRID - Pool - Effective Utilization','',''),(218,'d439a14bbc212ab1bd85731257da0921','GRID - LSF Jobs Reordered','',''),(219,'3d0c9fa791119c0e9ed8149dc3c3ffb7','GRID - LSF Memory Utilization','',''),(220,'f90a362c7d3d10ecb354e96dea7c6373','GRID - LSF Slot Utilization','',''),(221,'641c48a1d12017cc724e520a9fbf2a21','GRID - GPU Memory Status','',''),(222,'8c3a15ef7fe08f9a8381fd2e7791eefc','GRID - GPU Performance','',''),(223,'aa3e61dbd6921331593b3ac4b8f0d527','GRID - GPU Utilization','',''),(224,'d1423adce14ebf5d73bc8f8f71df450b','GRID - GPU Temperature','',''),(225,'edb710c283a80e286411bc2f69fe89ed','GRID - GPU Jobs','','');
 /*!40000 ALTER TABLE `graph_templates` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1891,18 +1890,18 @@ DROP TABLE IF EXISTS `graph_templates_graph`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `graph_templates_graph` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `local_graph_template_graph_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `local_graph_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `graph_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `local_graph_template_graph_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `local_graph_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `graph_template_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
   `t_image_format_id` char(2) DEFAULT '',
-  `image_format_id` tinyint(1) NOT NULL DEFAULT '0',
+  `image_format_id` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `t_title` char(2) DEFAULT '',
   `title` varchar(255) NOT NULL DEFAULT '',
   `title_cache` varchar(255) NOT NULL DEFAULT '',
   `t_height` char(2) DEFAULT '',
-  `height` mediumint(8) NOT NULL DEFAULT '0',
+  `height` mediumint(8) NOT NULL DEFAULT 0,
   `t_width` char(2) DEFAULT '',
-  `width` mediumint(8) NOT NULL DEFAULT '0',
+  `width` mediumint(8) NOT NULL DEFAULT 0,
   `t_upper_limit` char(2) DEFAULT '',
   `upper_limit` varchar(20) NOT NULL DEFAULT '0',
   `t_lower_limit` char(2) DEFAULT '',
@@ -1914,7 +1913,7 @@ CREATE TABLE `graph_templates_graph` (
   `t_auto_scale` char(2) DEFAULT '',
   `auto_scale` char(2) DEFAULT NULL,
   `t_auto_scale_opts` char(2) DEFAULT '',
-  `auto_scale_opts` tinyint(1) NOT NULL DEFAULT '0',
+  `auto_scale_opts` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `t_auto_scale_log` char(2) DEFAULT '',
   `auto_scale_log` char(2) DEFAULT NULL,
   `t_scale_log_units` char(2) DEFAULT '',
@@ -1924,7 +1923,7 @@ CREATE TABLE `graph_templates_graph` (
   `t_auto_padding` char(2) DEFAULT '',
   `auto_padding` char(2) DEFAULT NULL,
   `t_base_value` char(2) DEFAULT '',
-  `base_value` mediumint(8) NOT NULL DEFAULT '0',
+  `base_value` mediumint(8) NOT NULL DEFAULT 0,
   `t_grouping` char(2) DEFAULT '',
   `grouping` char(2) NOT NULL DEFAULT '',
   `t_unit_value` char(2) DEFAULT '',
@@ -1960,8 +1959,8 @@ CREATE TABLE `graph_templates_graph` (
   PRIMARY KEY (`id`),
   KEY `local_graph_id` (`local_graph_id`),
   KEY `graph_template_id` (`graph_template_id`),
-  KEY `title_cache` (`title_cache`(191))
-) ENGINE=InnoDB COMMENT='Stores the actual graph data.';
+  KEY `title_cache` (`title_cache`)
+) ENGINE=InnoDB ROW_FORMAT=DYNAMIC COMMENT='Stores the actual graph data.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1984,31 +1983,36 @@ DROP TABLE IF EXISTS `graph_templates_item`;
 CREATE TABLE `graph_templates_item` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `hash` varchar(32) NOT NULL DEFAULT '',
-  `local_graph_template_item_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `local_graph_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `graph_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `task_item_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `color_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `local_graph_template_item_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `local_graph_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `graph_template_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `task_item_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `color_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
   `alpha` char(2) DEFAULT 'FF',
-  `graph_type_id` tinyint(3) NOT NULL DEFAULT '0',
-  `line_width` decimal(4,2) DEFAULT '0.00',
+  `graph_type_id` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `line_width` decimal(4,2) DEFAULT 0.00,
   `dashes` varchar(20) DEFAULT NULL,
   `dash_offset` mediumint(4) DEFAULT NULL,
-  `cdef_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `vdef_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `cdef_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `vdef_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
   `shift` char(2) DEFAULT NULL,
-  `consolidation_function_id` tinyint(2) NOT NULL DEFAULT '0',
+  `consolidation_function_id` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `textalign` varchar(10) DEFAULT NULL,
   `text_format` varchar(255) DEFAULT NULL,
   `value` varchar(255) DEFAULT NULL,
   `hard_return` char(2) DEFAULT NULL,
-  `gprint_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `sequence` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `gprint_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `sequence` mediumint(8) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `graph_template_id` (`graph_template_id`),
   KEY `local_graph_id_sequence` (`local_graph_id`,`sequence`),
   KEY `task_item_id` (`task_item_id`),
-  KEY `lgi_gti` (`local_graph_id`,`graph_template_id`)
+  KEY `lgi_gti` (`local_graph_id`,`graph_template_id`),
+  KEY `cdef_id` (`cdef_id`),
+  KEY `vdef_id` (`vdef_id`),
+  KEY `color_id` (`color_id`),
+  KEY `gprint_id` (`gprint_id`),
+  KEY `local_graph_template_item_id` (`local_graph_template_item_id`)
 ) ENGINE=InnoDB COMMENT='Stores the actual graph item data.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2032,14 +2036,14 @@ DROP TABLE IF EXISTS `graph_tree`;
 CREATE TABLE `graph_tree` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `enabled` char(2) DEFAULT 'on',
-  `locked` tinyint(4) DEFAULT '0',
+  `locked` tinyint(3) unsigned DEFAULT 0,
   `locked_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `sort_type` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `sort_type` tinyint(3) unsigned NOT NULL DEFAULT 1,
   `name` varchar(255) NOT NULL DEFAULT '',
-  `sequence` int(10) unsigned DEFAULT '1',
-  `user_id` int(10) unsigned DEFAULT '1',
+  `sequence` int(10) unsigned DEFAULT 1,
+  `user_id` int(10) unsigned DEFAULT 1,
   `last_modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `modified_by` int(10) unsigned DEFAULT '1',
+  `modified_by` int(10) unsigned DEFAULT 1,
   PRIMARY KEY (`id`),
   KEY `sequence` (`sequence`),
   KEY `name` (`name`(171))
@@ -2067,13 +2071,13 @@ CREATE TABLE `graph_tree_items` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `parent` bigint(20) unsigned DEFAULT NULL,
   `position` int(10) unsigned DEFAULT NULL,
-  `graph_tree_id` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `local_graph_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `graph_tree_id` smallint(5) unsigned NOT NULL DEFAULT 0,
+  `local_graph_id` int(10) unsigned NOT NULL DEFAULT 0,
   `title` varchar(255) DEFAULT NULL,
-  `host_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `site_id` int(10) unsigned DEFAULT '0',
-  `host_grouping_type` tinyint(3) unsigned NOT NULL DEFAULT '1',
-  `sort_children_type` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `host_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `site_id` int(10) unsigned DEFAULT 0,
+  `host_grouping_type` tinyint(3) unsigned NOT NULL DEFAULT 1,
+  `sort_children_type` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `graph_regex` varchar(60) DEFAULT '',
   `host_regex` varchar(60) DEFAULT '',
   PRIMARY KEY (`id`),
@@ -2103,19 +2107,19 @@ DROP TABLE IF EXISTS `grid_applications`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_applications` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `appName` varchar(40) NOT NULL DEFAULT '',
-  `numRUN` int(10) unsigned NOT NULL DEFAULT '0',
-  `numPEND` int(10) unsigned NOT NULL DEFAULT '0',
-  `numJOBS` int(10) unsigned NOT NULL DEFAULT '0',
-  `efficiency` double NOT NULL DEFAULT '0',
-  `avg_mem` double NOT NULL DEFAULT '0',
-  `max_mem` double NOT NULL DEFAULT '0',
-  `avg_swap` double NOT NULL DEFAULT '0',
-  `max_swap` double NOT NULL DEFAULT '0',
-  `total_cpu` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `numRUN` int(10) unsigned NOT NULL DEFAULT 0,
+  `numPEND` int(10) unsigned NOT NULL DEFAULT 0,
+  `numJOBS` int(10) unsigned NOT NULL DEFAULT 0,
+  `efficiency` double NOT NULL DEFAULT 0,
+  `avg_mem` double NOT NULL DEFAULT 0,
+  `max_mem` double NOT NULL DEFAULT 0,
+  `avg_swap` double NOT NULL DEFAULT 0,
+  `max_swap` double NOT NULL DEFAULT 0,
+  `total_cpu` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp(),
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`clusterid`,`appName`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2145,8 +2149,8 @@ DROP TABLE IF EXISTS `grid_apps_error_codes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_apps_error_codes` (
-  `app_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `exit_code` int(10) NOT NULL DEFAULT '0',
+  `app_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `exit_code` int(10) NOT NULL DEFAULT 0,
   `reason` varchar(50) NOT NULL DEFAULT '',
   `description` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`app_id`,`exit_code`)
@@ -2164,33 +2168,33 @@ CREATE TABLE `grid_arrays` (
   `clusterid` int(10) unsigned NOT NULL,
   `jobid` int(10) unsigned NOT NULL,
   `submit_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `stat` int(10) unsigned NOT NULL DEFAULT '0',
-  `jType` int(10) unsigned NOT NULL DEFAULT '0',
+  `stat` int(10) unsigned NOT NULL DEFAULT 0,
+  `jType` int(10) unsigned NOT NULL DEFAULT 0,
   `jName` varchar(128) NOT NULL DEFAULT '',
   `user` varchar(60) NOT NULL DEFAULT '',
-  `userGroup` varchar(60) DEFAULT '',
+  `userGroup` varchar(60) DEFAULT NULL,
   `queue` varchar(60) NOT NULL DEFAULT '',
   `projectName` varchar(45) NOT NULL DEFAULT '0',
-  `numJobs` int(10) unsigned NOT NULL DEFAULT '0',
-  `numPEND` int(10) unsigned NOT NULL DEFAULT '0',
-  `numPSUSP` int(10) unsigned NOT NULL DEFAULT '0',
-  `numRUN` int(10) unsigned NOT NULL DEFAULT '0',
-  `numSSUSP` int(10) unsigned NOT NULL DEFAULT '0',
-  `numUSUSP` int(10) unsigned NOT NULL DEFAULT '0',
-  `numEXIT` int(10) unsigned NOT NULL DEFAULT '0',
-  `numDONE` int(10) unsigned NOT NULL DEFAULT '0',
-  `minMemory` double NOT NULL DEFAULT '0',
-  `maxMemory` double NOT NULL DEFAULT '0',
-  `avgMemory` double NOT NULL DEFAULT '0',
-  `minSwap` double NOT NULL DEFAULT '0',
-  `maxSwap` double NOT NULL DEFAULT '0',
-  `avgSwap` double NOT NULL DEFAULT '0',
-  `totalCPU` double NOT NULL DEFAULT '0',
-  `totalUTime` double NOT NULL DEFAULT '0',
-  `totalSTime` double NOT NULL DEFAULT '0',
-  `totalEfficiency` decimal(9,5) NOT NULL DEFAULT '0.00000',
+  `numJobs` int(10) unsigned NOT NULL DEFAULT 0,
+  `numPEND` int(10) unsigned NOT NULL DEFAULT 0,
+  `numPSUSP` int(10) unsigned NOT NULL DEFAULT 0,
+  `numRUN` int(10) unsigned NOT NULL DEFAULT 0,
+  `numSSUSP` int(10) unsigned NOT NULL DEFAULT 0,
+  `numUSUSP` int(10) unsigned NOT NULL DEFAULT 0,
+  `numEXIT` int(10) unsigned NOT NULL DEFAULT 0,
+  `numDONE` int(10) unsigned NOT NULL DEFAULT 0,
+  `minMemory` double NOT NULL DEFAULT 0,
+  `maxMemory` double NOT NULL DEFAULT 0,
+  `avgMemory` double NOT NULL DEFAULT 0,
+  `minSwap` double NOT NULL DEFAULT 0,
+  `maxSwap` double NOT NULL DEFAULT 0,
+  `avgSwap` double NOT NULL DEFAULT 0,
+  `totalCPU` double NOT NULL DEFAULT 0,
+  `totalUTime` double NOT NULL DEFAULT 0,
+  `totalSTime` double NOT NULL DEFAULT 0,
+  `totalEfficiency` decimal(9,5) NOT NULL DEFAULT 0.00000,
   `first_seen` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`clusterid`,`jobid`,`submit_time`),
   KEY `clusterid_last_updated` (`clusterid`,`last_updated`),
   KEY `clusterid_jName` (`clusterid`,`jName`),
@@ -2213,33 +2217,33 @@ CREATE TABLE `grid_arrays_finished` (
   `clusterid` int(10) unsigned NOT NULL,
   `jobid` int(10) unsigned NOT NULL,
   `submit_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `stat` int(10) unsigned NOT NULL DEFAULT '0',
-  `jType` int(10) unsigned NOT NULL DEFAULT '0',
+  `stat` int(10) unsigned NOT NULL DEFAULT 0,
+  `jType` int(10) unsigned NOT NULL DEFAULT 0,
   `jName` varchar(128) NOT NULL DEFAULT '',
   `user` varchar(60) NOT NULL DEFAULT '',
-  `userGroup` varchar(60) DEFAULT '',
+  `userGroup` varchar(60) DEFAULT NULL,
   `queue` varchar(60) NOT NULL DEFAULT '',
   `projectName` varchar(45) NOT NULL DEFAULT '0',
-  `numJobs` int(10) unsigned NOT NULL DEFAULT '0',
-  `numPEND` int(10) unsigned NOT NULL DEFAULT '0',
-  `numPSUSP` int(10) unsigned NOT NULL DEFAULT '0',
-  `numRUN` int(10) unsigned NOT NULL DEFAULT '0',
-  `numSSUSP` int(10) unsigned NOT NULL DEFAULT '0',
-  `numUSUSP` int(10) unsigned NOT NULL DEFAULT '0',
-  `numEXIT` int(10) unsigned NOT NULL DEFAULT '0',
-  `numDONE` int(10) unsigned NOT NULL DEFAULT '0',
-  `minMemory` double NOT NULL DEFAULT '0',
-  `maxMemory` double NOT NULL DEFAULT '0',
-  `avgMemory` double NOT NULL DEFAULT '0',
-  `minSwap` double NOT NULL DEFAULT '0',
-  `maxSwap` double NOT NULL DEFAULT '0',
-  `avgSwap` double NOT NULL DEFAULT '0',
-  `totalCPU` double NOT NULL DEFAULT '0',
-  `totalUTime` double NOT NULL DEFAULT '0',
-  `totalSTime` double NOT NULL DEFAULT '0',
-  `totalEfficiency` decimal(9,5) NOT NULL DEFAULT '0.00000',
+  `numJobs` int(10) unsigned NOT NULL DEFAULT 0,
+  `numPEND` int(10) unsigned NOT NULL DEFAULT 0,
+  `numPSUSP` int(10) unsigned NOT NULL DEFAULT 0,
+  `numRUN` int(10) unsigned NOT NULL DEFAULT 0,
+  `numSSUSP` int(10) unsigned NOT NULL DEFAULT 0,
+  `numUSUSP` int(10) unsigned NOT NULL DEFAULT 0,
+  `numEXIT` int(10) unsigned NOT NULL DEFAULT 0,
+  `numDONE` int(10) unsigned NOT NULL DEFAULT 0,
+  `minMemory` double NOT NULL DEFAULT 0,
+  `maxMemory` double NOT NULL DEFAULT 0,
+  `avgMemory` double NOT NULL DEFAULT 0,
+  `minSwap` double NOT NULL DEFAULT 0,
+  `maxSwap` double NOT NULL DEFAULT 0,
+  `avgSwap` double NOT NULL DEFAULT 0,
+  `totalCPU` double NOT NULL DEFAULT 0,
+  `totalUTime` double NOT NULL DEFAULT 0,
+  `totalSTime` double NOT NULL DEFAULT 0,
+  `totalEfficiency` decimal(9,5) NOT NULL DEFAULT 0.00000,
   `first_seen` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`clusterid`,`jobid`,`submit_time`),
   KEY `clusterid_last_updated` (`clusterid`,`last_updated`),
   KEY `clusterid_jName` (`clusterid`,`jName`),
@@ -2259,7 +2263,7 @@ DROP TABLE IF EXISTS `grid_blstat`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_blstat` (
-  `lsid` int(10) unsigned NOT NULL DEFAULT '0',
+  `lsid` int(10) unsigned NOT NULL DEFAULT 0,
   `feature` varchar(64) NOT NULL,
   `service_domain` varchar(64) NOT NULL,
   `type` int(10) unsigned NOT NULL,
@@ -2270,14 +2274,14 @@ CREATE TABLE `grid_blstat` (
   `total_alloc` int(10) unsigned NOT NULL,
   `total_use` int(10) unsigned NOT NULL,
   `total_others` int(10) unsigned NOT NULL,
-  `fd_total` int(10) unsigned DEFAULT '0',
-  `fd_adj` int(10) unsigned DEFAULT '0',
-  `fd_max` int(10) unsigned DEFAULT '0',
-  `fd_step` int(10) DEFAULT '0',
-  `fd_util` double DEFAULT '0',
-  `fd_target` double DEFAULT '0',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `fd_total` int(10) unsigned DEFAULT 0,
+  `fd_adj` int(10) unsigned DEFAULT 0,
+  `fd_max` int(10) unsigned DEFAULT 0,
+  `fd_step` int(10) DEFAULT 0,
+  `fd_util` double DEFAULT 0,
+  `fd_target` double DEFAULT 0,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp(),
+  `present` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`lsid`,`feature`,`service_domain`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='General License Scheduler Information';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2290,12 +2294,12 @@ DROP TABLE IF EXISTS `grid_blstat_cluster_use`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_blstat_cluster_use` (
-  `lsid` int(10) unsigned NOT NULL DEFAULT '0',
+  `lsid` int(10) unsigned NOT NULL DEFAULT 0,
   `feature` varchar(64) NOT NULL,
   `project` varchar(64) NOT NULL,
   `type` tinyint(3) unsigned DEFAULT NULL,
   `cluster` varchar(20) NOT NULL,
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `alloc` int(10) unsigned DEFAULT NULL,
   `inuse` int(10) unsigned NOT NULL,
   `reserve` int(10) unsigned NOT NULL,
@@ -2307,8 +2311,8 @@ CREATE TABLE `grid_blstat_cluster_use` (
   `acum_use` int(10) unsigned NOT NULL,
   `scaled_acum` int(10) unsigned NOT NULL,
   `avail` int(10) unsigned NOT NULL,
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp(),
+  `present` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`lsid`,`feature`,`project`,`cluster`),
   KEY `present` (`present`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='License Scheduler Use by Cluster';
@@ -2322,11 +2326,11 @@ DROP TABLE IF EXISTS `grid_blstat_clusters`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_blstat_clusters` (
-  `lsid` int(10) unsigned NOT NULL DEFAULT '0',
+  `lsid` int(10) unsigned NOT NULL DEFAULT 0,
   `feature` varchar(64) NOT NULL,
   `service_domain` varchar(64) NOT NULL,
   `cluster` varchar(20) NOT NULL,
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `share` float NOT NULL,
   `alloc` int(10) unsigned NOT NULL,
   `inuse` int(10) unsigned NOT NULL,
@@ -2336,9 +2340,9 @@ CREATE TABLE `grid_blstat_clusters` (
   `buffer` int(10) unsigned NOT NULL,
   `free` int(10) unsigned NOT NULL,
   `demand` int(10) unsigned NOT NULL,
-  `max_reclaim` int(10) unsigned NOT NULL DEFAULT '0',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `max_reclaim` int(10) unsigned NOT NULL DEFAULT 0,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp(),
+  `present` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`lsid`,`feature`,`service_domain`,`cluster`) USING BTREE,
   KEY `present` (`present`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='License Scheduler Cluster Details';
@@ -2352,8 +2356,8 @@ DROP TABLE IF EXISTS `grid_blstat_collector_clusters`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_blstat_collector_clusters` (
-  `lsid` int(10) unsigned NOT NULL DEFAULT '0',
-  `clusterid` int(18) unsigned NOT NULL DEFAULT '0',
+  `lsid` int(10) unsigned NOT NULL DEFAULT 0,
+  `clusterid` int(18) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`lsid`,`clusterid`)
 ) ENGINE=MyISAM COMMENT='Contains list of Clusters included in the bld';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2395,7 +2399,7 @@ DROP TABLE IF EXISTS `grid_blstat_distribution`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_blstat_distribution` (
-  `lsid` int(10) unsigned NOT NULL DEFAULT '0',
+  `lsid` int(10) unsigned NOT NULL DEFAULT 0,
   `feature` varchar(64) NOT NULL,
   `service_domain` varchar(64) NOT NULL,
   `total` int(10) unsigned NOT NULL,
@@ -2405,7 +2409,7 @@ CREATE TABLE `grid_blstat_distribution` (
   `non_lsf_use` int(10) unsigned NOT NULL,
   `non_lsf_deserve` int(10) unsigned NOT NULL,
   `non_lsf_free` int(10) unsigned NOT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`lsid`,`feature`,`service_domain`),
   KEY `present` (`present`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -2419,10 +2423,10 @@ DROP TABLE IF EXISTS `grid_blstat_feature_map`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_blstat_feature_map` (
-  `lsid` int(10) unsigned NOT NULL DEFAULT '0',
+  `lsid` int(10) unsigned NOT NULL DEFAULT 0,
   `bld_feature` varchar(64) NOT NULL,
   `lic_feature` varchar(64) NOT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`lsid`,`bld_feature`,`lic_feature`) USING BTREE,
   KEY `lic_feature` (`lic_feature`) USING BTREE,
   KEY `present` (`present`) USING BTREE
@@ -2437,7 +2441,7 @@ DROP TABLE IF EXISTS `grid_blstat_projects`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_blstat_projects` (
-  `lsid` int(10) unsigned NOT NULL DEFAULT '0',
+  `lsid` int(10) unsigned NOT NULL DEFAULT 0,
   `feature` varchar(64) NOT NULL,
   `service_domain` varchar(64) NOT NULL,
   `project` varchar(64) NOT NULL,
@@ -2447,8 +2451,8 @@ CREATE TABLE `grid_blstat_projects` (
   `reserve` int(10) unsigned NOT NULL,
   `free` int(10) unsigned NOT NULL,
   `demand` int(10) unsigned NOT NULL,
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp(),
+  `present` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`lsid`,`feature`,`service_domain`,`project`) USING BTREE,
   KEY `present` (`present`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='License Scheduler Project Details';
@@ -2462,10 +2466,10 @@ DROP TABLE IF EXISTS `grid_blstat_service_domains`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_blstat_service_domains` (
-  `lsid` int(10) unsigned NOT NULL DEFAULT '0',
+  `lsid` int(10) unsigned NOT NULL DEFAULT 0,
   `service_domain` varchar(64) NOT NULL,
   `lic_id` int(10) unsigned NOT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`lsid`,`service_domain`,`lic_id`) USING BTREE,
   KEY `present` (`present`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Maintains the mapping between BLD Service Domains and License Services';
@@ -2479,7 +2483,7 @@ DROP TABLE IF EXISTS `grid_blstat_tasks`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_blstat_tasks` (
-  `lsid` int(10) unsigned NOT NULL DEFAULT '0',
+  `lsid` int(10) unsigned NOT NULL DEFAULT 0,
   `feature` varchar(64) NOT NULL,
   `project` varchar(64) NOT NULL,
   `host` varchar(64) NOT NULL,
@@ -2495,7 +2499,7 @@ CREATE TABLE `grid_blstat_tasks` (
   `cpu_idle` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `res_requirements` varchar(128) NOT NULL,
   `command` varchar(256) NOT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`lsid`,`feature`,`host`,`user`,`tid`) USING BTREE,
   KEY `present` (`present`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='License Scheduler Task Details';
@@ -2509,11 +2513,11 @@ DROP TABLE IF EXISTS `grid_blstat_users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_blstat_users` (
-  `lsid` int(10) unsigned NOT NULL DEFAULT '0',
+  `lsid` int(10) unsigned NOT NULL DEFAULT 0,
   `jobid` int(10) unsigned NOT NULL,
   `indexid` int(10) unsigned NOT NULL,
   `cluster` varchar(20) NOT NULL,
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `user` varchar(60) NOT NULL,
   `host` varchar(64) NOT NULL,
   `project` varchar(64) NOT NULL,
@@ -2521,7 +2525,7 @@ CREATE TABLE `grid_blstat_users` (
   `resource` varchar(45) NOT NULL,
   `rusage` int(10) unsigned NOT NULL,
   `service_domain` varchar(64) NOT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`lsid`,`jobid`,`indexid`,`cluster`,`resource`) USING HASH,
   KEY `user` (`user`),
   KEY `host` (`host`),
@@ -2540,42 +2544,42 @@ DROP TABLE IF EXISTS `grid_clusters`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_clusters` (
   `clusterid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `poller_id` int(10) unsigned NOT NULL DEFAULT '1',
-  `cacti_host` int(10) unsigned NOT NULL DEFAULT '0',
-  `cacti_tree` int(10) unsigned NOT NULL DEFAULT '0',
+  `poller_id` int(10) unsigned NOT NULL DEFAULT 1,
+  `cacti_host` int(10) unsigned NOT NULL DEFAULT 0,
+  `cacti_tree` int(10) unsigned NOT NULL DEFAULT 0,
   `clustername` varchar(128) NOT NULL DEFAULT '',
   `cluster_timezone` varchar(64) NOT NULL DEFAULT '',
-  `efficiency_state` tinyint(3) unsigned NOT NULL DEFAULT '1',
-  `efficiency` double NOT NULL DEFAULT '100',
+  `efficiency_state` tinyint(3) unsigned NOT NULL DEFAULT 1,
+  `efficiency` double NOT NULL DEFAULT 100,
   `efficiency_queues` varchar(255) DEFAULT '',
-  `efficiency_warn_count` int(10) unsigned NOT NULL DEFAULT '0',
-  `efficiency_alarm_count` int(10) unsigned NOT NULL DEFAULT '0',
-  `efficiency_clear_count` int(10) unsigned NOT NULL DEFAULT '0',
+  `efficiency_warn_count` int(10) unsigned NOT NULL DEFAULT 0,
+  `efficiency_alarm_count` int(10) unsigned NOT NULL DEFAULT 0,
+  `efficiency_clear_count` int(10) unsigned NOT NULL DEFAULT 0,
   `disabled` char(2) NOT NULL DEFAULT '',
-  `total_hosts` int(10) unsigned NOT NULL DEFAULT '0',
-  `total_cpus` int(10) unsigned NOT NULL DEFAULT '0',
-  `total_clients` int(10) unsigned NOT NULL DEFAULT '0',
-  `hourly_started_jobs` double NOT NULL DEFAULT '0',
-  `hourly_done_jobs` double NOT NULL DEFAULT '0',
-  `hourly_exit_jobs` double NOT NULL DEFAULT '0',
-  `daily_started_jobs` double NOT NULL DEFAULT '0',
-  `daily_done_jobs` double NOT NULL DEFAULT '0',
-  `daily_exit_jobs` double NOT NULL DEFAULT '0',
-  `lim_timeout` int(10) unsigned NOT NULL DEFAULT '10',
-  `mbd_timeout` int(10) unsigned NOT NULL DEFAULT '10',
-  `mbd_job_timeout` int(10) unsigned NOT NULL DEFAULT '1',
-  `mbd_job_retries` int(10) unsigned NOT NULL DEFAULT '1',
+  `total_hosts` int(10) unsigned NOT NULL DEFAULT 0,
+  `total_cpus` int(10) unsigned NOT NULL DEFAULT 0,
+  `total_clients` int(10) unsigned NOT NULL DEFAULT 0,
+  `hourly_started_jobs` double NOT NULL DEFAULT 0,
+  `hourly_done_jobs` double NOT NULL DEFAULT 0,
+  `hourly_exit_jobs` double NOT NULL DEFAULT 0,
+  `daily_started_jobs` double NOT NULL DEFAULT 0,
+  `daily_done_jobs` double NOT NULL DEFAULT 0,
+  `daily_exit_jobs` double NOT NULL DEFAULT 0,
+  `lim_timeout` int(10) unsigned NOT NULL DEFAULT 10,
+  `mbd_timeout` int(10) unsigned NOT NULL DEFAULT 10,
+  `mbd_job_timeout` int(10) unsigned NOT NULL DEFAULT 1,
+  `mbd_job_retries` int(10) unsigned NOT NULL DEFAULT 1,
   `lsf_envdir` varchar(255) DEFAULT '',
   `lsf_confdir` varchar(255) DEFAULT '',
   `ego_confdir` varchar(255) NOT NULL DEFAULT '',
-  `lsf_version` int(10) unsigned NOT NULL DEFAULT '62',
+  `lsf_version` int(10) unsigned NOT NULL DEFAULT 62,
   `lsf_clustername` varchar(128) NOT NULL DEFAULT '',
-  `lsf_ls_error` int(10) unsigned NOT NULL DEFAULT '0',
-  `lsf_lsb_error` int(10) unsigned NOT NULL DEFAULT '0',
-  `lsf_lsb_jobs_error` int(10) unsigned NOT NULL DEFAULT '0',
-  `lsf_lim_response` float NOT NULL DEFAULT '0',
-  `lsf_lsb_response` float NOT NULL DEFAULT '0',
-  `lsf_lsb_jobs_response` float NOT NULL DEFAULT '0',
+  `lsf_ls_error` int(10) unsigned NOT NULL DEFAULT 0,
+  `lsf_lsb_error` int(10) unsigned NOT NULL DEFAULT 0,
+  `lsf_lsb_jobs_error` int(10) unsigned NOT NULL DEFAULT 0,
+  `lsf_lim_response` float NOT NULL DEFAULT 0,
+  `lsf_lsb_response` float NOT NULL DEFAULT 0,
+  `lsf_lsb_jobs_response` float NOT NULL DEFAULT 0,
   `lsf_admins` varchar(256) NOT NULL DEFAULT '',
   `lsb_debug` varchar(20) NOT NULL DEFAULT '',
   `lsf_lim_debug` varchar(20) NOT NULL DEFAULT '',
@@ -2604,21 +2608,21 @@ CREATE TABLE `grid_clusters` (
   `privatekey_path` varchar(255) NOT NULL DEFAULT '',
   `LSF_TOP` varchar(255) NOT NULL DEFAULT '',
   `add_frequency` int(10) unsigned NOT NULL,
-  `host_template_id` mediumint(8) unsigned NOT NULL DEFAULT '14',
-  `add_graph_frequency` int(10) unsigned NOT NULL DEFAULT '0',
+  `host_template_id` mediumint(8) unsigned NOT NULL DEFAULT 14,
+  `add_graph_frequency` int(10) unsigned NOT NULL DEFAULT 0,
   `advanced_enabled` char(2) NOT NULL DEFAULT '',
   `email_domain` varchar(64) NOT NULL DEFAULT '',
   `email_admin` varchar(512) NOT NULL DEFAULT '',
   `grididle_enabled` char(2) NOT NULL DEFAULT '',
-  `grididle_notify` int(1) NOT NULL DEFAULT '0',
-  `grididle_runtime` int(10) NOT NULL DEFAULT '3600',
-  `grididle_window` int(10) NOT NULL DEFAULT '3600',
-  `grididle_cputime` int(10) NOT NULL DEFAULT '24',
+  `grididle_notify` int(1) NOT NULL DEFAULT 0,
+  `grididle_runtime` int(10) NOT NULL DEFAULT 3600,
+  `grididle_window` int(10) NOT NULL DEFAULT 3600,
+  `grididle_cputime` int(10) NOT NULL DEFAULT 24,
   `grididle_jobtypes` varchar(20) NOT NULL DEFAULT 'all',
   `grididle_jobcommands` varchar(255) NOT NULL DEFAULT '',
   `grididle_exclude_queues` varchar(255) NOT NULL DEFAULT '',
   `perfmon_run` char(3) DEFAULT '',
-  `perfmon_interval` int(10) unsigned DEFAULT '0',
+  `perfmon_interval` int(10) unsigned DEFAULT 0,
   `exec_host_res_req` varchar(512) NOT NULL DEFAULT '',
   PRIMARY KEY (`clusterid`),
   KEY `poller_id_disabled` (`poller_id`,`disabled`)
@@ -2634,20 +2638,20 @@ DROP TABLE IF EXISTS `grid_clusters_benchmark_summary`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_clusters_benchmark_summary` (
   `clusterid` int(10) unsigned NOT NULL,
-  `benchmark_id` int(10) NOT NULL DEFAULT '0',
+  `benchmark_id` int(10) NOT NULL DEFAULT 0,
   `start_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `pjob_jobid` int(10) unsigned NOT NULL,
   `pjob_submit_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `pjob_bsubTime` double unsigned DEFAULT '0',
-  `pjob_seenTime` double unsigned DEFAULT '0',
-  `pjob_runTime` double unsigned DEFAULT '0',
-  `pjob_doneTime` double unsigned DEFAULT '0',
-  `pjob_seenDoneTime` double unsigned DEFAULT '0',
-  `pjob_startTime` double unsigned DEFAULT '0',
-  `exitStatus` int(10) unsigned DEFAULT '0',
-  `exitInfo` int(10) unsigned DEFAULT '0',
-  `exceptMask` int(10) unsigned DEFAULT '0',
-  `status` int(10) unsigned DEFAULT '1',
+  `pjob_bsubTime` double unsigned DEFAULT 0,
+  `pjob_seenTime` double unsigned DEFAULT 0,
+  `pjob_runTime` double unsigned DEFAULT 0,
+  `pjob_doneTime` double unsigned DEFAULT 0,
+  `pjob_seenDoneTime` double unsigned DEFAULT 0,
+  `pjob_startTime` double unsigned DEFAULT 0,
+  `exitStatus` int(10) unsigned DEFAULT 0,
+  `exitInfo` int(10) unsigned DEFAULT 0,
+  `exceptMask` int(10) unsigned DEFAULT 0,
+  `status` int(10) unsigned DEFAULT 1,
   PRIMARY KEY (`clusterid`,`benchmark_id`,`start_time`)
 ) ENGINE=InnoDB COMMENT='Contains Benchmark Job Runtimes';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2666,9 +2670,9 @@ CREATE TABLE `grid_clusters_benchmarks` (
   `benchmark_name` varchar(100) NOT NULL,
   `run_interval` int(10) NOT NULL,
   `last_runtime` int(10) NOT NULL,
-  `max_runtime` int(10) unsigned DEFAULT '300',
-  `warn_time` int(10) unsigned DEFAULT '10',
-  `alert_time` int(10) unsigned DEFAULT '20',
+  `max_runtime` int(10) unsigned DEFAULT 300,
+  `warn_time` int(10) unsigned DEFAULT 10,
+  `alert_time` int(10) unsigned DEFAULT 20,
   `clusterid` mediumint(8) NOT NULL,
   `username` varchar(60) NOT NULL,
   `queue` varchar(60) NOT NULL,
@@ -2677,17 +2681,17 @@ CREATE TABLE `grid_clusters_benchmarks` (
   `res_req` varchar(255) DEFAULT NULL,
   `command` varchar(100) NOT NULL,
   `host_spec` varchar(100) DEFAULT NULL,
-  `status` int(10) unsigned DEFAULT '0',
+  `status` int(10) unsigned DEFAULT 0,
   `status_rec_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `status_fail_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `status_last_error` varchar(255) DEFAULT '',
-  `min_time` double DEFAULT '0',
-  `max_time` double DEFAULT '0',
-  `cur_time` double DEFAULT '0',
-  `avg_time` double DEFAULT '0',
-  `total_good_runs` int(10) unsigned DEFAULT '0',
-  `total_failed_runs` int(10) unsigned DEFAULT '0',
-  `total_errored_runs` int(10) unsigned NOT NULL DEFAULT '0',
+  `min_time` double DEFAULT 0,
+  `max_time` double DEFAULT 0,
+  `cur_time` double DEFAULT 0,
+  `avg_time` double DEFAULT 0,
+  `total_good_runs` int(10) unsigned DEFAULT 0,
+  `total_failed_runs` int(10) unsigned DEFAULT 0,
+  `total_errored_runs` int(10) unsigned NOT NULL DEFAULT 0,
   `pjob_bsubTime` double DEFAULT NULL,
   `pjob_seenTime` double DEFAULT NULL,
   `pjob_runTime` double DEFAULT NULL,
@@ -2724,14 +2728,14 @@ DROP TABLE IF EXISTS `grid_clusters_perfmon_metrics`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_clusters_perfmon_metrics` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `metric` varchar(40) NOT NULL DEFAULT '',
-  `current` double NOT NULL DEFAULT '0',
-  `max` double NOT NULL DEFAULT '0',
-  `min` double NOT NULL DEFAULT '0',
-  `avg` double NOT NULL DEFAULT '0',
-  `total` double NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `current` double NOT NULL DEFAULT 0,
+  `max` double NOT NULL DEFAULT 0,
+  `min` double NOT NULL DEFAULT 0,
+  `avg` double NOT NULL DEFAULT 0,
+  `total` double NOT NULL DEFAULT 0,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 1,
   PRIMARY KEY (`clusterid`,`metric`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Contains Perfmon Metrics';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2745,9 +2749,9 @@ DROP TABLE IF EXISTS `grid_clusters_perfmon_metrics_type`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_clusters_perfmon_metrics_type` (
   `metric` varchar(40) NOT NULL DEFAULT '',
-  `type` int(10) unsigned NOT NULL DEFAULT '0',
+  `type` int(10) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`metric`),
-  KEY `type` (`type`)
+  KEY `type` (`type`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Define Perfmon Metrics type';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2769,40 +2773,40 @@ DROP TABLE IF EXISTS `grid_clusters_perfmon_status`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_clusters_perfmon_status` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `clients` int(10) unsigned NOT NULL DEFAULT '0',
-  `clients_peak` int(10) unsigned NOT NULL DEFAULT '0',
-  `servers` int(10) unsigned NOT NULL DEFAULT '0',
-  `servers_peak` int(10) unsigned NOT NULL DEFAULT '0',
-  `cpus` int(10) unsigned NOT NULL DEFAULT '0',
-  `cpus_peak` int(10) unsigned NOT NULL DEFAULT '0',
-  `cores` int(10) unsigned NOT NULL DEFAULT '0',
-  `cores_peak` int(10) unsigned NOT NULL DEFAULT '0',
-  `slots` int(10) unsigned NOT NULL DEFAULT '0',
-  `slots_peak` int(10) unsigned NOT NULL DEFAULT '0',
-  `serv_all` int(10) unsigned NOT NULL DEFAULT '0',
-  `serv_ok` int(10) unsigned NOT NULL DEFAULT '0',
-  `serv_closed` int(10) unsigned NOT NULL DEFAULT '0',
-  `serv_unreachable` int(10) unsigned NOT NULL DEFAULT '0',
-  `serv_unavail` int(10) unsigned NOT NULL DEFAULT '0',
-  `dc_servers` int(10) unsigned NOT NULL DEFAULT '0',
-  `dc_servers_peak` int(10) unsigned NOT NULL DEFAULT '0',
-  `dc_cores` int(10) unsigned NOT NULL DEFAULT '0',
-  `dc_cores_peak` int(10) unsigned NOT NULL DEFAULT '0',
-  `dc_vm_containers` int(10) unsigned NOT NULL DEFAULT '0',
-  `dc_vm_containers_peak` int(10) unsigned NOT NULL DEFAULT '0',
-  `num_jobs` int(10) unsigned NOT NULL DEFAULT '0',
-  `num_run` int(10) unsigned NOT NULL DEFAULT '0',
-  `num_susp` int(10) unsigned NOT NULL DEFAULT '0',
-  `num_pend` int(10) unsigned NOT NULL DEFAULT '0',
-  `num_finished` int(10) unsigned NOT NULL DEFAULT '0',
-  `num_users` int(10) unsigned NOT NULL DEFAULT '0',
-  `num_active_users` int(10) unsigned NOT NULL DEFAULT '0',
-  `num_groups` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
+  `clients` int(10) unsigned NOT NULL DEFAULT 0,
+  `clients_peak` int(10) unsigned NOT NULL DEFAULT 0,
+  `servers` int(10) unsigned NOT NULL DEFAULT 0,
+  `servers_peak` int(10) unsigned NOT NULL DEFAULT 0,
+  `cpus` int(10) unsigned NOT NULL DEFAULT 0,
+  `cpus_peak` int(10) unsigned NOT NULL DEFAULT 0,
+  `cores` int(10) unsigned NOT NULL DEFAULT 0,
+  `cores_peak` int(10) unsigned NOT NULL DEFAULT 0,
+  `slots` int(10) unsigned NOT NULL DEFAULT 0,
+  `slots_peak` int(10) unsigned NOT NULL DEFAULT 0,
+  `serv_all` int(10) unsigned NOT NULL DEFAULT 0,
+  `serv_ok` int(10) unsigned NOT NULL DEFAULT 0,
+  `serv_closed` int(10) unsigned NOT NULL DEFAULT 0,
+  `serv_unreachable` int(10) unsigned NOT NULL DEFAULT 0,
+  `serv_unavail` int(10) unsigned NOT NULL DEFAULT 0,
+  `dc_servers` int(10) unsigned NOT NULL DEFAULT 0,
+  `dc_servers_peak` int(10) unsigned NOT NULL DEFAULT 0,
+  `dc_cores` int(10) unsigned NOT NULL DEFAULT 0,
+  `dc_cores_peak` int(10) unsigned NOT NULL DEFAULT 0,
+  `dc_vm_containers` int(10) unsigned NOT NULL DEFAULT 0,
+  `dc_vm_containers_peak` int(10) unsigned NOT NULL DEFAULT 0,
+  `num_jobs` int(10) unsigned NOT NULL DEFAULT 0,
+  `num_run` int(10) unsigned NOT NULL DEFAULT 0,
+  `num_susp` int(10) unsigned NOT NULL DEFAULT 0,
+  `num_pend` int(10) unsigned NOT NULL DEFAULT 0,
+  `num_finished` int(10) unsigned NOT NULL DEFAULT 0,
+  `num_users` int(10) unsigned NOT NULL DEFAULT 0,
+  `num_active_users` int(10) unsigned NOT NULL DEFAULT 0,
+  `num_groups` int(10) unsigned NOT NULL DEFAULT 0,
   `last_mbatchd_start` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `active_mbd_pid` int(10) unsigned NOT NULL DEFAULT '0',
+  `active_mbd_pid` int(10) unsigned NOT NULL DEFAULT 0,
   `last_mbatchd_reconfig` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`clusterid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Contains badmin showstatus information';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2815,18 +2819,18 @@ DROP TABLE IF EXISTS `grid_clusters_perfmon_summary`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_clusters_perfmon_summary` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `last_jobid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
+  `last_jobid` int(10) unsigned NOT NULL DEFAULT 0,
   `start_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `last_run` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `poller_interval` int(10) unsigned NOT NULL DEFAULT '0',
-  `pjob_submitTime` double NOT NULL DEFAULT '0',
-  `pjob_seenTime` double NOT NULL DEFAULT '0',
-  `pjob_runTime` int(10) unsigned NOT NULL DEFAULT '0',
-  `pjob_doneTime` double NOT NULL DEFAULT '0',
-  `pjob_seenDoneTime` double NOT NULL DEFAULT '0',
-  `pjob_startTime` double NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `poller_interval` int(10) unsigned NOT NULL DEFAULT 0,
+  `pjob_submitTime` double NOT NULL DEFAULT 0,
+  `pjob_seenTime` double NOT NULL DEFAULT 0,
+  `pjob_runTime` int(10) unsigned NOT NULL DEFAULT 0,
+  `pjob_doneTime` double NOT NULL DEFAULT 0,
+  `pjob_seenDoneTime` double NOT NULL DEFAULT 0,
+  `pjob_startTime` double NOT NULL DEFAULT 0,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`clusterid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Contains Perfmon Sampling Information';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2839,14 +2843,14 @@ DROP TABLE IF EXISTS `grid_clusters_queue_reportdata`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_clusters_queue_reportdata` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `queue` varchar(60) NOT NULL,
   `reportid` varchar(20) NOT NULL,
   `name` varchar(20) NOT NULL,
-  `value` double NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `value` double NOT NULL DEFAULT 0,
+  `present` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`clusterid`,`queue`,`reportid`,`name`)
-) ENGINE=MEMORY DEFAULT CHARSET=utf8 COMMENT='queue level reporting results table';
+) ENGINE=MEMORY COMMENT='queue level reporting results table';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2857,13 +2861,13 @@ DROP TABLE IF EXISTS `grid_clusters_reportdata`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_clusters_reportdata` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `reportid` varchar(20) NOT NULL,
   `name` varchar(20) NOT NULL,
-  `value` double NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `value` double NOT NULL DEFAULT 0,
+  `present` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`clusterid`,`reportid`,`name`)
-) ENGINE=MEMORY DEFAULT CHARSET=utf8 COMMENT='cluster level reporting results table';
+) ENGINE=MEMORY COMMENT='cluster level reporting results table';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2890,11 +2894,11 @@ DROP TABLE IF EXISTS `grid_elim_template_instances`;
 CREATE TABLE `grid_elim_template_instances` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `name` char(255) NOT NULL DEFAULT '',
-  `grid_elim_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `hosttype_option` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `grid_elim_template_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
+  `hosttype_option` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `hosttype_value` varchar(40) DEFAULT NULL,
-  `data_source_profile_id` mediumint(8) unsigned NOT NULL DEFAULT '1',
+  `data_source_profile_id` mediumint(8) unsigned NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`),
   KEY `grid_elim_template_id` (`grid_elim_template_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Stores the instances of  ELIM graph template.';
@@ -2934,19 +2938,19 @@ DROP TABLE IF EXISTS `grid_elim_templates_graph`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_elim_templates_graph` (
-  `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `local_graph_template_graph_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `local_graph_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `graph_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `local_graph_template_graph_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `local_graph_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `graph_template_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
   `t_image_format_id` char(2) DEFAULT '',
-  `image_format_id` tinyint(1) NOT NULL DEFAULT '0',
+  `image_format_id` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `t_title` char(2) DEFAULT '',
   `title` varchar(255) NOT NULL DEFAULT '',
   `title_cache` varchar(255) NOT NULL DEFAULT '',
   `t_height` char(2) DEFAULT '',
-  `height` mediumint(8) NOT NULL DEFAULT '0',
+  `height` mediumint(8) NOT NULL DEFAULT 0,
   `t_width` char(2) DEFAULT '',
-  `width` mediumint(8) NOT NULL DEFAULT '0',
+  `width` mediumint(8) NOT NULL DEFAULT 0,
   `t_upper_limit` char(2) DEFAULT '',
   `upper_limit` varchar(20) NOT NULL DEFAULT '0',
   `t_lower_limit` char(2) DEFAULT '',
@@ -2958,7 +2962,7 @@ CREATE TABLE `grid_elim_templates_graph` (
   `t_auto_scale` char(2) DEFAULT '',
   `auto_scale` char(2) DEFAULT NULL,
   `t_auto_scale_opts` char(2) DEFAULT '',
-  `auto_scale_opts` tinyint(1) NOT NULL DEFAULT '0',
+  `auto_scale_opts` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `t_auto_scale_log` char(2) DEFAULT '',
   `auto_scale_log` char(2) DEFAULT NULL,
   `t_scale_log_units` char(2) DEFAULT '',
@@ -2968,7 +2972,7 @@ CREATE TABLE `grid_elim_templates_graph` (
   `t_auto_padding` char(2) DEFAULT '',
   `auto_padding` char(2) DEFAULT NULL,
   `t_base_value` char(2) DEFAULT '',
-  `base_value` mediumint(8) NOT NULL DEFAULT '0',
+  `base_value` mediumint(8) NOT NULL DEFAULT 0,
   `t_grouping` char(2) DEFAULT '',
   `grouping` char(2) NOT NULL DEFAULT '',
   `t_unit_value` char(2) DEFAULT '',
@@ -3044,33 +3048,38 @@ DROP TABLE IF EXISTS `grid_elim_templates_item`;
 CREATE TABLE `grid_elim_templates_item` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `hash` varchar(32) NOT NULL DEFAULT '',
-  `local_graph_template_item_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `local_graph_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `graph_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `task_item_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `color_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `local_graph_template_item_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `local_graph_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `graph_template_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `task_item_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `color_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
   `alpha` char(2) DEFAULT 'FF',
-  `graph_type_id` tinyint(3) NOT NULL DEFAULT '0',
-  `line_width` decimal(4,2) DEFAULT '0.00',
+  `graph_type_id` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `line_width` decimal(4,2) DEFAULT 0.00,
   `dashes` varchar(20) DEFAULT NULL,
   `dash_offset` mediumint(4) DEFAULT NULL,
-  `cdef_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `vdef_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `cdef_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `vdef_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
   `shift` char(2) DEFAULT NULL,
-  `consolidation_function_id` tinyint(2) NOT NULL DEFAULT '0',
+  `consolidation_function_id` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `textalign` varchar(10) DEFAULT NULL,
   `text_format` varchar(255) DEFAULT NULL,
   `value` varchar(255) DEFAULT NULL,
   `hard_return` char(2) DEFAULT NULL,
-  `gprint_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `sequence` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `gprint_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `sequence` mediumint(8) unsigned NOT NULL DEFAULT 0,
   `resource_name` varchar(40) DEFAULT '',
-  `resource_option` tinyint(3) NOT NULL DEFAULT '0',
+  `resource_option` tinyint(3) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `graph_template_id` (`graph_template_id`),
   KEY `local_graph_id_sequence` (`local_graph_id`,`sequence`),
   KEY `task_item_id` (`task_item_id`),
-  KEY `lgi_gti` (`local_graph_id`,`graph_template_id`)
+  KEY `lgi_gti` (`local_graph_id`,`graph_template_id`),
+  KEY `cdef_id` (`cdef_id`) USING BTREE,
+  KEY `color_id` (`color_id`) USING BTREE,
+  KEY `gprint_id` (`gprint_id`) USING BTREE,
+  KEY `local_graph_template_item_id` (`local_graph_template_item_id`) USING BTREE,
+  KEY `vdef_id` (`vdef_id`) USING BTREE
 ) ENGINE=InnoDB COMMENT='Stores the actual graph item data.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3108,21 +3117,21 @@ DROP TABLE IF EXISTS `grid_groups`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_groups` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `groupName` varchar(512) NOT NULL DEFAULT '',
-  `numRUN` int(10) unsigned NOT NULL DEFAULT '0',
-  `numPEND` int(10) unsigned NOT NULL DEFAULT '0',
-  `numJOBS` int(10) unsigned NOT NULL DEFAULT '0',
-  `numSSUSP` int(10) unsigned NOT NULL DEFAULT '0',
-  `numUSUSP` int(10) unsigned NOT NULL DEFAULT '0',
-  `efficiency` double NOT NULL DEFAULT '0',
-  `avg_mem` double NOT NULL DEFAULT '0',
-  `max_mem` double NOT NULL DEFAULT '0',
-  `avg_swap` double NOT NULL DEFAULT '0',
-  `max_swap` double NOT NULL DEFAULT '0',
-  `total_cpu` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `numRUN` int(10) unsigned NOT NULL DEFAULT 0,
+  `numPEND` int(10) unsigned NOT NULL DEFAULT 0,
+  `numJOBS` int(10) unsigned NOT NULL DEFAULT 0,
+  `numSSUSP` int(10) unsigned NOT NULL DEFAULT 0,
+  `numUSUSP` int(10) unsigned NOT NULL DEFAULT 0,
+  `efficiency` double NOT NULL DEFAULT 0,
+  `avg_mem` double NOT NULL DEFAULT 0,
+  `max_mem` double NOT NULL DEFAULT 0,
+  `avg_swap` double NOT NULL DEFAULT 0,
+  `max_swap` double NOT NULL DEFAULT 0,
+  `total_cpu` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp(),
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`clusterid`,`groupName`(191))
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -3135,32 +3144,32 @@ DROP TABLE IF EXISTS `grid_guarantee_pool`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_guarantee_pool` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `name` varchar(60) NOT NULL DEFAULT '',
   `poolType` varchar(32) NOT NULL DEFAULT '',
   `rsrcName` varchar(128) DEFAULT NULL,
   `status` varchar(32) NOT NULL,
   `res_select` varchar(128) NOT NULL,
-  `slots_per_host` int(10) unsigned NOT NULL DEFAULT '0',
-  `policies` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `loan_duration` int(10) unsigned NOT NULL DEFAULT '0',
-  `retain` int(10) unsigned NOT NULL DEFAULT '0',
-  `total` int(10) NOT NULL DEFAULT '0',
-  `free` int(10) NOT NULL DEFAULT '0',
-  `guar_config` int(10) NOT NULL DEFAULT '0',
-  `guar_used` int(10) NOT NULL DEFAULT '0',
-  `runJobs` int(10) unsigned NOT NULL DEFAULT '0',
-  `runSlots` int(10) unsigned NOT NULL DEFAULT '0',
-  `pendJobs` int(10) unsigned NOT NULL DEFAULT '0',
-  `pendSlots` int(10) unsigned NOT NULL DEFAULT '0',
-  `memSlotUtil` int(10) unsigned NOT NULL DEFAULT '0',
-  `slotUtil` int(10) unsigned NOT NULL DEFAULT '0',
-  `cpuUtil` int(10) unsigned NOT NULL DEFAULT '0',
-  `memUsed` int(10) unsigned NOT NULL DEFAULT '0',
-  `memRequested` int(10) unsigned NOT NULL DEFAULT '0',
-  `memReserved` int(10) unsigned NOT NULL DEFAULT '0',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `slots_per_host` int(10) unsigned NOT NULL DEFAULT 0,
+  `policies` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `loan_duration` int(10) unsigned NOT NULL DEFAULT 0,
+  `retain` int(10) unsigned NOT NULL DEFAULT 0,
+  `total` int(10) NOT NULL DEFAULT 0,
+  `free` int(10) NOT NULL DEFAULT 0,
+  `guar_config` int(10) NOT NULL DEFAULT 0,
+  `guar_used` int(10) NOT NULL DEFAULT 0,
+  `runJobs` int(10) unsigned NOT NULL DEFAULT 0,
+  `runSlots` int(10) unsigned NOT NULL DEFAULT 0,
+  `pendJobs` int(10) unsigned NOT NULL DEFAULT 0,
+  `pendSlots` int(10) unsigned NOT NULL DEFAULT 0,
+  `memSlotUtil` int(10) unsigned NOT NULL DEFAULT 0,
+  `slotUtil` int(10) unsigned NOT NULL DEFAULT 0,
+  `cpuUtil` int(10) unsigned NOT NULL DEFAULT 0,
+  `memUsed` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `memRequested` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `memReserved` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp(),
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`clusterid`,`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Stores Configuration of Guarantee Resource Pools';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -3181,12 +3190,12 @@ CREATE TABLE `grid_guarantee_pool_distribution` (
   `guarantee_config` int(10) unsigned NOT NULL,
   `guarantee_used` int(10) unsigned NOT NULL,
   `total_used` int(10) unsigned NOT NULL,
-  `runJobs` int(10) unsigned NOT NULL DEFAULT '0',
-  `runSlots` int(10) unsigned NOT NULL DEFAULT '0',
-  `pendJobs` int(10) unsigned NOT NULL DEFAULT '0',
-  `pendSlots` int(10) unsigned NOT NULL DEFAULT '0',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `runJobs` int(10) unsigned NOT NULL DEFAULT 0,
+  `runSlots` int(10) unsigned NOT NULL DEFAULT 0,
+  `pendJobs` int(10) unsigned NOT NULL DEFAULT 0,
+  `pendSlots` int(10) unsigned NOT NULL DEFAULT 0,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp(),
+  `present` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`clusterid`,`name`,`consumer`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Stores Distribution Consumer Information for Guarantee Pool';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -3203,7 +3212,7 @@ CREATE TABLE `grid_guarantee_pool_hosts` (
   `name` varchar(60) NOT NULL,
   `host` varchar(64) NOT NULL,
   `owner` varchar(40) NOT NULL DEFAULT '',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`clusterid`,`name`,`host`),
   KEY `host` (`host`),
   KEY `clusterid_host` (`clusterid`,`host`),
@@ -3222,7 +3231,7 @@ CREATE TABLE `grid_guarantee_pool_loan_queues` (
   `clusterid` int(10) unsigned NOT NULL,
   `name` varchar(60) NOT NULL,
   `queue` varchar(60) NOT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`clusterid`,`name`,`queue`),
   KEY ` queue` (`queue`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Stores Loan Policies for Guarantee Pool';
@@ -3244,30 +3253,30 @@ CREATE TABLE `grid_heuristics` (
   `reqCpus` int(10) unsigned NOT NULL,
   `jobs` bigint(20) unsigned NOT NULL,
   `cores` int(10) unsigned NOT NULL,
-  `run_avg` float NOT NULL DEFAULT '0',
-  `run_max` int(10) unsigned NOT NULL DEFAULT '0',
-  `run_min` int(10) unsigned NOT NULL DEFAULT '0',
-  `run_stddev` float NOT NULL DEFAULT '0',
-  `run_median` int(10) unsigned NOT NULL DEFAULT '0',
-  `run_25thp` int(10) unsigned NOT NULL DEFAULT '0',
-  `run_75thp` int(10) unsigned NOT NULL DEFAULT '0',
-  `run_90thp` int(10) unsigned NOT NULL DEFAULT '0',
-  `mem_avg` float NOT NULL DEFAULT '0',
-  `mem_max` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `mem_min` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `mem_stddev` float NOT NULL DEFAULT '0',
-  `mem_median` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `mem_25thp` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `mem_75thp` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `mem_90thp` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `pend_avg` float NOT NULL DEFAULT '0',
-  `pend_max` int(10) unsigned NOT NULL DEFAULT '0',
-  `pend_min` int(10) unsigned NOT NULL DEFAULT '0',
-  `pend_stddev` float NOT NULL DEFAULT '0',
-  `pend_median` int(10) unsigned NOT NULL DEFAULT '0',
-  `pend_25thp` int(10) unsigned NOT NULL DEFAULT '0',
-  `pend_75thp` int(10) unsigned NOT NULL DEFAULT '0',
-  `pend_90thp` int(10) unsigned NOT NULL DEFAULT '0',
+  `run_avg` float NOT NULL DEFAULT 0,
+  `run_max` int(10) unsigned NOT NULL DEFAULT 0,
+  `run_min` int(10) unsigned NOT NULL DEFAULT 0,
+  `run_stddev` float NOT NULL DEFAULT 0,
+  `run_median` int(10) unsigned NOT NULL DEFAULT 0,
+  `run_25thp` int(10) unsigned NOT NULL DEFAULT 0,
+  `run_75thp` int(10) unsigned NOT NULL DEFAULT 0,
+  `run_90thp` int(10) unsigned NOT NULL DEFAULT 0,
+  `mem_avg` float NOT NULL DEFAULT 0,
+  `mem_max` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `mem_min` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `mem_stddev` float NOT NULL DEFAULT 0,
+  `mem_median` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `mem_25thp` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `mem_75thp` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `mem_90thp` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `pend_avg` float NOT NULL DEFAULT 0,
+  `pend_max` int(10) unsigned NOT NULL DEFAULT 0,
+  `pend_min` int(10) unsigned NOT NULL DEFAULT 0,
+  `pend_stddev` float NOT NULL DEFAULT 0,
+  `pend_median` int(10) unsigned NOT NULL DEFAULT 0,
+  `pend_25thp` int(10) unsigned NOT NULL DEFAULT 0,
+  `pend_75thp` int(10) unsigned NOT NULL DEFAULT 0,
+  `pend_90thp` int(10) unsigned NOT NULL DEFAULT 0,
   `jph_avg` float NOT NULL,
   `jph_3std` float NOT NULL,
   `last_updated` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -3290,9 +3299,9 @@ CREATE TABLE `grid_heuristics_percentiles` (
   `resReq` varchar(512) NOT NULL,
   `reqCpus` int(10) unsigned NOT NULL,
   `run_time` int(10) unsigned NOT NULL,
-  `max_memory` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `mem_used` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `pend_time` int(10) unsigned NOT NULL DEFAULT '0',
+  `max_memory` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `mem_used` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `pend_time` int(10) unsigned NOT NULL DEFAULT 0,
   `partition` int(10) unsigned NOT NULL
 ) ENGINE=MyISAM ROW_FORMAT=DYNAMIC COMMENT='Table used for percentile calculations';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -3309,8 +3318,8 @@ CREATE TABLE `grid_heuristics_user_history_today` (
   `queue` varchar(60) NOT NULL,
   `custom` varchar(128) NOT NULL DEFAULT '',
   `projectName` varchar(64) NOT NULL,
-  `reqCpus` int(10) unsigned NOT NULL DEFAULT '1',
-  `user` varchar(60) NOT NULL,
+  `reqCpus` int(10) unsigned NOT NULL DEFAULT 1,
+  `user` varchar(60) NOT NULL DEFAULT '',
   `numPEND` int(10) unsigned NOT NULL,
   `numRUN` int(10) unsigned NOT NULL,
   `numSUSP` int(10) unsigned NOT NULL,
@@ -3337,8 +3346,8 @@ CREATE TABLE `grid_heuristics_user_history_yesterday` (
   `queue` varchar(60) NOT NULL,
   `custom` varchar(128) NOT NULL DEFAULT '',
   `projectName` varchar(64) NOT NULL,
-  `reqCpus` int(10) unsigned NOT NULL DEFAULT '1',
-  `user` varchar(60) NOT NULL,
+  `reqCpus` int(10) unsigned NOT NULL DEFAULT 1,
+  `user` varchar(40) NOT NULL,
   `numPEND` int(10) unsigned NOT NULL,
   `numRUN` int(10) unsigned NOT NULL,
   `numSUSP` int(10) unsigned NOT NULL,
@@ -3365,8 +3374,8 @@ CREATE TABLE `grid_heuristics_user_stats` (
   `queue` varchar(60) NOT NULL,
   `custom` varchar(128) NOT NULL DEFAULT '',
   `projectName` varchar(64) NOT NULL,
-  `reqCpus` int(10) unsigned NOT NULL DEFAULT '1',
-  `user` varchar(60) NOT NULL,
+  `reqCpus` int(10) unsigned NOT NULL DEFAULT 1,
+  `user` varchar(60) NOT NULL DEFAULT '',
   `numPEND` int(10) unsigned NOT NULL,
   `numRUN` int(10) unsigned NOT NULL,
   `numSUSP` int(10) unsigned NOT NULL,
@@ -3389,14 +3398,14 @@ DROP TABLE IF EXISTS `grid_host_closure_events`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_host_closure_events` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `host` varchar(64) NOT NULL DEFAULT '',
   `admin` varchar(45) NOT NULL DEFAULT '',
   `event_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `lockid` varchar(128) NOT NULL DEFAULT '',
   `hCtrlMsg` varchar(255) NOT NULL DEFAULT '',
   `end_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`clusterid`,`host`,`event_time`,`lockid`),
   KEY `summarized` (`clusterid`,`host`,`lockid`),
   KEY `event_time_lockid` (`event_time`,`lockid`),
@@ -3413,14 +3422,14 @@ DROP TABLE IF EXISTS `grid_host_closure_events_finished`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_host_closure_events_finished` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `host` varchar(64) NOT NULL DEFAULT '',
   `admin` varchar(45) NOT NULL DEFAULT '',
   `event_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `lockid` varchar(128) NOT NULL DEFAULT '',
   `hCtrlMsg` varchar(255) NOT NULL DEFAULT '',
   `end_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`clusterid`,`host`,`event_time`,`lockid`),
   KEY `summarized` (`clusterid`,`host`,`lockid`),
   KEY `event_time_lockid` (`event_time`,`lockid`),
@@ -3437,7 +3446,7 @@ DROP TABLE IF EXISTS `grid_host_closure_lockids`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_host_closure_lockids` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `lockid` varchar(128) NOT NULL DEFAULT '',
   `last_seen` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`clusterid`,`lockid`),
@@ -3454,14 +3463,14 @@ DROP TABLE IF EXISTS `grid_host_threshold`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_host_threshold` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `hostname` varchar(64) NOT NULL DEFAULT '',
   `resource_name` varchar(40) NOT NULL DEFAULT '',
-  `loadSched` double NOT NULL DEFAULT '0',
-  `loadStop` double NOT NULL DEFAULT '0',
-  `busySched` int(10) NOT NULL DEFAULT '0',
-  `busyStop` int(10) NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `loadSched` double NOT NULL DEFAULT 0,
+  `loadStop` double NOT NULL DEFAULT 0,
+  `busySched` int(10) NOT NULL DEFAULT 0,
+  `busyStop` int(10) NOT NULL DEFAULT 0,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 1,
   PRIMARY KEY (`clusterid`,`hostname`,`resource_name`),
   KEY `id` (`id`),
   KEY `hostname` (`hostname`),
@@ -3477,10 +3486,10 @@ DROP TABLE IF EXISTS `grid_hostgroups`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_hostgroups` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `groupName` varchar(64) NOT NULL DEFAULT '',
   `host` varchar(64) NOT NULL DEFAULT '',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 1,
   PRIMARY KEY (`clusterid`,`groupName`,`host`),
   KEY `host` (`host`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -3494,25 +3503,25 @@ DROP TABLE IF EXISTS `grid_hostgroups_stats`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_hostgroups_stats` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `groupName` varchar(64) NOT NULL,
-  `efficiency` double NOT NULL DEFAULT '0',
-  `avg_mem` double NOT NULL DEFAULT '0',
-  `max_mem` double NOT NULL DEFAULT '0',
-  `avg_swap` double NOT NULL DEFAULT '0',
-  `max_swap` double NOT NULL DEFAULT '0',
-  `total_cpu` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `numRUN` int(10) unsigned NOT NULL DEFAULT '0',
-  `numJOBS` int(10) unsigned NOT NULL DEFAULT '0',
-  `numPEND` int(10) unsigned NOT NULL DEFAULT '0',
-  `memSlotUtil` double NOT NULL DEFAULT '0',
-  `slotUtil` double NOT NULL DEFAULT '0',
-  `cpuUtil` double NOT NULL DEFAULT '0',
-  `memUsed` bigint(20) NOT NULL DEFAULT '0',
-  `memRequested` bigint(20) NOT NULL DEFAULT '0',
-  `memReserved` bigint(20) NOT NULL DEFAULT '0',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `efficiency` double NOT NULL DEFAULT 0,
+  `avg_mem` double NOT NULL DEFAULT 0,
+  `max_mem` double NOT NULL DEFAULT 0,
+  `avg_swap` double NOT NULL DEFAULT 0,
+  `max_swap` double NOT NULL DEFAULT 0,
+  `total_cpu` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `numRUN` int(10) unsigned NOT NULL DEFAULT 0,
+  `numJOBS` int(10) unsigned NOT NULL DEFAULT 0,
+  `numPEND` int(10) unsigned NOT NULL DEFAULT 0,
+  `memSlotUtil` double NOT NULL DEFAULT 0,
+  `slotUtil` double NOT NULL DEFAULT 0,
+  `cpuUtil` double NOT NULL DEFAULT 0,
+  `memUsed` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `memRequested` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `memReserved` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp(),
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`clusterid`,`groupName`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tracks Host Group Statistics';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -3526,7 +3535,7 @@ DROP TABLE IF EXISTS `grid_hostinfo`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_hostinfo` (
   `host` varchar(64) NOT NULL DEFAULT '',
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `hostType` varchar(20) NOT NULL DEFAULT '',
   `hostModel` varchar(40) NOT NULL DEFAULT '0',
   `cpuFactor` varchar(10) DEFAULT NULL,
@@ -3540,19 +3549,19 @@ CREATE TABLE `grid_hostinfo` (
   `windows` varchar(255) NOT NULL DEFAULT '0',
   `isServer` char(1) NOT NULL DEFAULT '',
   `licensed` char(1) NOT NULL DEFAULT '',
-  `rexPriority` int(10) unsigned NOT NULL DEFAULT '0',
-  `licFeaturesNeeded` int(10) unsigned NOT NULL DEFAULT '0',
-  `licClass` int(10) unsigned NOT NULL DEFAULT '0',
-  `nProcs` int(10) unsigned NOT NULL DEFAULT '0',
-  `cores` int(10) unsigned NOT NULL DEFAULT '0',
-  `nThreads` int(10) unsigned NOT NULL DEFAULT '0',
-  `ngpus` int(10) unsigned NOT NULL DEFAULT '0',
-  `gMaxFactor` float NOT NULL DEFAULT '0',
-  `gpu_shared_avg_mut` float NOT NULL DEFAULT '0',
-  `gpu_shared_avg_ut` float NOT NULL DEFAULT '0',
+  `rexPriority` int(10) unsigned NOT NULL DEFAULT 0,
+  `licFeaturesNeeded` int(10) unsigned NOT NULL DEFAULT 0,
+  `licClass` int(10) unsigned NOT NULL DEFAULT 0,
+  `nProcs` int(10) unsigned NOT NULL DEFAULT 0,
+  `cores` int(10) unsigned NOT NULL DEFAULT 0,
+  `nThreads` int(10) unsigned NOT NULL DEFAULT 0,
+  `ngpus` int(10) unsigned NOT NULL DEFAULT 0,
+  `gMaxFactor` float NOT NULL DEFAULT 0,
+  `gpu_shared_avg_mut` float NOT NULL DEFAULT 0,
+  `gpu_shared_avg_ut` float NOT NULL DEFAULT 0,
   `first_seen` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `last_seen` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 1,
   PRIMARY KEY (`host`,`clusterid`),
   KEY `isServer` (`isServer`),
   KEY `hostType` (`hostType`),
@@ -3560,8 +3569,7 @@ CREATE TABLE `grid_hostinfo` (
   KEY `last_seen` (`last_seen`),
   KEY `clusterid_is_server` (`clusterid`,`isServer`),
   KEY `licFeaturesNeeded` (`licFeaturesNeeded`),
-  KEY `clusterid_host` (`clusterid`,`host`),
-  KEY `clusterid_present` (`clusterid`,`present`)
+  KEY `clusterid_host` (`clusterid`,`host`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3574,27 +3582,27 @@ DROP TABLE IF EXISTS `grid_hostinfo_gpu`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_hostinfo_gpu` (
   `host` varchar(64) NOT NULL DEFAULT '',
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `gpu_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
+  `gpu_id` int(10) unsigned NOT NULL DEFAULT 0,
   `gBrand` varchar(20) NOT NULL DEFAULT '',
   `gModel` varchar(20) NOT NULL DEFAULT '',
-  `gpu_mode` int(10) unsigned NOT NULL DEFAULT '0',
-  `pstatus` int(10) unsigned NOT NULL DEFAULT '0',
+  `gpu_mode` int(10) unsigned NOT NULL DEFAULT 0,
+  `pstatus` int(10) unsigned NOT NULL DEFAULT 0,
   `status` varchar(20) DEFAULT NULL,
   `gpu_error` varchar(255) NOT NULL DEFAULT '',
   `gpu_driver` varchar(64) NOT NULL DEFAULT '',
   `gpu_factor` varchar(64) NOT NULL DEFAULT '',
-  `gpu_temp` int(10) unsigned NOT NULL DEFAULT '0',
-  `gpu_ecc` float NOT NULL DEFAULT '0',
-  `gpu_ut` float NOT NULL DEFAULT '0',
-  `gpu_mut` float NOT NULL DEFAULT '0',
-  `gpu_power_ut` float NOT NULL DEFAULT '0',
-  `gpu_mtotal` float NOT NULL DEFAULT '0',
-  `gpu_mused` float NOT NULL DEFAULT '0',
-  `gvendor` int(10) unsigned NOT NULL DEFAULT '0',
+  `gpu_temp` int(10) unsigned NOT NULL DEFAULT 0,
+  `gpu_ecc` float NOT NULL DEFAULT 0,
+  `gpu_ut` float NOT NULL DEFAULT 0,
+  `gpu_mut` float NOT NULL DEFAULT 0,
+  `gpu_power_ut` float NOT NULL DEFAULT 0,
+  `gpu_mtotal` float NOT NULL DEFAULT 0,
+  `gpu_mused` float NOT NULL DEFAULT 0,
+  `gvendor` int(10) unsigned NOT NULL DEFAULT 0,
   `driverVersion` varchar(256) NOT NULL DEFAULT '',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 1,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`host`,`clusterid`,`gpu_id`),
   KEY `clusterid_last_updated` (`clusterid`,`last_updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -3609,10 +3617,10 @@ DROP TABLE IF EXISTS `grid_hostresources`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_hostresources` (
   `host` varchar(64) NOT NULL DEFAULT '',
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `rtype` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
+  `rtype` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `resource_name` varchar(50) NOT NULL DEFAULT '',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`host`,`clusterid`,`resource_name`),
   KEY `clusterid` (`clusterid`),
   KEY `resource_name` (`resource_name`)
@@ -3628,29 +3636,29 @@ DROP TABLE IF EXISTS `grid_hosts`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_hosts` (
   `host` varchar(64) NOT NULL DEFAULT '',
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `hStatus` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
+  `hStatus` int(10) unsigned NOT NULL DEFAULT 0,
   `hCtrlMsg` varchar(255) NOT NULL DEFAULT '',
   `status` varchar(20) DEFAULT NULL,
   `prev_status` varchar(20) NOT NULL DEFAULT '',
-  `time_in_state` int(10) unsigned NOT NULL DEFAULT '0',
-  `cpuFactor` float NOT NULL DEFAULT '0',
+  `time_in_state` int(10) unsigned NOT NULL DEFAULT 0,
+  `cpuFactor` float NOT NULL DEFAULT 0,
   `windows` varchar(255) DEFAULT NULL,
   `userJobLimit` varchar(20) DEFAULT NULL,
-  `maxJobs` int(10) NOT NULL DEFAULT '0',
-  `numJobs` int(10) unsigned NOT NULL DEFAULT '0',
-  `numRun` int(10) unsigned NOT NULL DEFAULT '0',
-  `numSSUSP` int(10) unsigned NOT NULL DEFAULT '0',
-  `numUSUSP` int(10) unsigned NOT NULL DEFAULT '0',
-  `mig` int(10) unsigned NOT NULL DEFAULT '0',
-  `attr` int(10) unsigned NOT NULL DEFAULT '0',
-  `numRESERVE` int(10) unsigned NOT NULL DEFAULT '0',
-  `ngpus` int(10) unsigned NOT NULL DEFAULT '0',
-  `avail_shared_ngpus` int(10) unsigned NOT NULL DEFAULT '0',
-  `avail_excl_ngpus` int(10) unsigned NOT NULL DEFAULT '0',
-  `alloc_jsexcl_ngpus` int(10) unsigned NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
-  `exceptional` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `maxJobs` int(10) NOT NULL DEFAULT 0,
+  `numJobs` int(10) unsigned NOT NULL DEFAULT 0,
+  `numRun` int(10) unsigned NOT NULL DEFAULT 0,
+  `numSSUSP` int(10) unsigned NOT NULL DEFAULT 0,
+  `numUSUSP` int(10) unsigned NOT NULL DEFAULT 0,
+  `mig` int(10) unsigned NOT NULL DEFAULT 0,
+  `attr` int(10) unsigned NOT NULL DEFAULT 0,
+  `numRESERVE` int(10) unsigned NOT NULL DEFAULT 0,
+  `ngpus` int(10) unsigned NOT NULL DEFAULT 0,
+  `avail_shared_ngpus` int(10) unsigned NOT NULL DEFAULT 0,
+  `avail_excl_ngpus` int(10) unsigned NOT NULL DEFAULT 0,
+  `alloc_jsexcl_ngpus` int(10) unsigned NOT NULL DEFAULT 0,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 1,
+  `exceptional` tinyint(1) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`host`,`clusterid`),
   KEY `clusterid` (`clusterid`),
   KEY `status` (`status`),
@@ -3666,15 +3674,15 @@ DROP TABLE IF EXISTS `grid_hosts_alarm`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_hosts_alarm` (
-  `type_id` bigint(20) NOT NULL DEFAULT '0',
+  `type_id` bigint(20) NOT NULL DEFAULT 0,
   `name` varchar(100) NOT NULL DEFAULT '',
   `hostname` varchar(64) NOT NULL DEFAULT '',
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `type` int(10) NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
+  `type` int(10) NOT NULL DEFAULT 0,
   `message` varchar(1024) NOT NULL,
   `acknowledgement` char(3) NOT NULL DEFAULT 'off',
-  `alert_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `alert_time` timestamp NOT NULL DEFAULT current_timestamp(),
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 1,
   PRIMARY KEY (`type`,`type_id`,`clusterid`,`hostname`),
   KEY `hostname` (`hostname`),
   KEY `clusterid` (`clusterid`)
@@ -3690,24 +3698,24 @@ DROP TABLE IF EXISTS `grid_hosts_gpu`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_hosts_gpu` (
   `host` varchar(64) NOT NULL DEFAULT '',
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `gpu_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
+  `gpu_id` int(10) unsigned NOT NULL DEFAULT 0,
   `gpu_model` varchar(40) NOT NULL DEFAULT '',
-  `gpu_mode` int(10) unsigned NOT NULL DEFAULT '0',
-  `pstatus` int(10) unsigned NOT NULL DEFAULT '0',
+  `gpu_mode` int(10) unsigned NOT NULL DEFAULT 0,
+  `pstatus` int(10) unsigned NOT NULL DEFAULT 0,
   `status` varchar(20) DEFAULT NULL,
   `gpu_error` varchar(255) NOT NULL DEFAULT '',
   `prev_status` varchar(20) NOT NULL DEFAULT '',
-  `time_in_state` int(10) unsigned NOT NULL DEFAULT '0',
-  `mem_used` int(10) unsigned NOT NULL DEFAULT '0',
-  `mem_rsv` int(10) unsigned NOT NULL DEFAULT '0',
-  `numJobs` int(10) unsigned NOT NULL DEFAULT '0',
-  `numRun` int(10) unsigned NOT NULL DEFAULT '0',
-  `numSUSP` int(10) unsigned NOT NULL DEFAULT '0',
-  `numRSV` int(10) unsigned NOT NULL DEFAULT '0',
-  `socketid` int(10) unsigned NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `time_in_state` int(10) unsigned NOT NULL DEFAULT 0,
+  `mem_used` int(10) unsigned NOT NULL DEFAULT 0,
+  `mem_rsv` int(10) unsigned NOT NULL DEFAULT 0,
+  `numJobs` int(10) unsigned NOT NULL DEFAULT 0,
+  `numRun` int(10) unsigned NOT NULL DEFAULT 0,
+  `numSUSP` int(10) unsigned NOT NULL DEFAULT 0,
+  `numRSV` int(10) unsigned NOT NULL DEFAULT 0,
+  `socketid` int(10) unsigned NOT NULL DEFAULT 0,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 1,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`host`,`clusterid`,`gpu_id`),
   KEY `clusterid_last_updated` (`clusterid`,`last_updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -3722,10 +3730,10 @@ DROP TABLE IF EXISTS `grid_hosts_jobtraffic`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_hosts_jobtraffic` (
   `host` varchar(64) NOT NULL DEFAULT '',
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `idle_slot_time` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `jobs_done` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `jobs_exited` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
+  `idle_slot_time` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `jobs_done` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `jobs_exited` bigint(20) unsigned NOT NULL DEFAULT 0,
   `job_last_started` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `job_last_ended` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `job_last_suspended` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -3747,14 +3755,14 @@ CREATE TABLE `grid_hosts_resources` (
   `host` varchar(64) NOT NULL,
   `clusterid` int(10) unsigned NOT NULL,
   `resource_name` varchar(40) NOT NULL,
-  `resType` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `flag` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `resType` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `flag` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `availValue` varchar(128) NOT NULL DEFAULT '',
   `totalValue` varchar(128) NOT NULL DEFAULT '',
   `reservedValue` varchar(128) NOT NULL DEFAULT '',
   `value` varchar(128) NOT NULL DEFAULT '',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `present` tinyint(3) unsigned NOT NULL,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`host`,`clusterid`,`resource_name`,`resType`) USING HASH,
   KEY `value` (`value`),
   KEY `resource_name_host` (`resource_name`,`host`),
@@ -3770,7 +3778,7 @@ DROP TABLE IF EXISTS `grid_job_daily_stats`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_job_daily_stats` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `user` varchar(60) NOT NULL DEFAULT '',
   `stat` varchar(45) NOT NULL DEFAULT '',
   `queue` varchar(60) NOT NULL DEFAULT '',
@@ -3778,17 +3786,17 @@ CREATE TABLE `grid_job_daily_stats` (
   `from_host` varchar(64) NOT NULL DEFAULT '',
   `exec_host` varchar(64) NOT NULL DEFAULT '',
   `projectName` varchar(60) NOT NULL DEFAULT '',
-  `jobs_in_state` int(10) unsigned NOT NULL DEFAULT '0',
-  `jobs_wall_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `gpu_wall_time` int(10) unsigned NOT NULL DEFAULT '0',
+  `jobs_in_state` int(10) unsigned NOT NULL DEFAULT 0,
+  `jobs_wall_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `gpu_wall_time` int(10) unsigned NOT NULL DEFAULT 0,
   `jobs_stime` double NOT NULL,
   `jobs_utime` double NOT NULL,
-  `slots_in_state` int(10) unsigned NOT NULL DEFAULT '0',
-  `gpus_in_state` int(10) unsigned NOT NULL DEFAULT '0',
-  `avg_memory` double NOT NULL DEFAULT '0',
-  `max_memory` double NOT NULL DEFAULT '0',
-  `gpu_avg_mem` double NOT NULL DEFAULT '0',
-  `gpu_max_mem` double NOT NULL DEFAULT '0',
+  `slots_in_state` int(10) unsigned NOT NULL DEFAULT 0,
+  `gpus_in_state` int(10) unsigned NOT NULL DEFAULT 0,
+  `avg_memory` double NOT NULL DEFAULT 0,
+  `max_memory` double NOT NULL DEFAULT 0,
+  `gpu_avg_mem` double NOT NULL DEFAULT 0,
+  `gpu_max_mem` double NOT NULL DEFAULT 0,
   `interval_start` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `interval_end` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `date_recorded` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -3813,14 +3821,14 @@ DROP TABLE IF EXISTS `grid_job_daily_user_stats`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_job_daily_user_stats` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `user` varchar(60) NOT NULL DEFAULT '',
-  `wall_time` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `total_wall_time` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `cpu_time` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `total_cpu_time` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `slots_done` int(10) unsigned NOT NULL DEFAULT '0',
-  `slots_exited` int(10) unsigned NOT NULL DEFAULT '0',
+  `wall_time` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `total_wall_time` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `cpu_time` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `total_cpu_time` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `slots_done` int(10) unsigned NOT NULL DEFAULT 0,
+  `slots_exited` int(10) unsigned NOT NULL DEFAULT 0,
   `interval_start` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `interval_end` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `date_recorded` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -3840,14 +3848,14 @@ DROP TABLE IF EXISTS `grid_job_daily_usergroup_stats`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_job_daily_usergroup_stats` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `usergroup` varchar(60) NOT NULL DEFAULT '',
-  `wall_time` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `total_wall_time` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `cpu_time` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `total_cpu_time` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `slots_done` int(10) unsigned NOT NULL DEFAULT '0',
-  `slots_exited` int(10) unsigned NOT NULL DEFAULT '0',
+  `wall_time` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `total_wall_time` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `cpu_time` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `total_cpu_time` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `slots_done` int(10) unsigned NOT NULL DEFAULT 0,
+  `slots_exited` int(10) unsigned NOT NULL DEFAULT 0,
   `interval_start` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `interval_end` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `date_recorded` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -3867,7 +3875,7 @@ DROP TABLE IF EXISTS `grid_job_interval_stats`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_job_interval_stats` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `user` varchar(60) NOT NULL DEFAULT '',
   `stat` varchar(45) NOT NULL DEFAULT '',
   `queue` varchar(60) NOT NULL DEFAULT '',
@@ -3875,17 +3883,17 @@ CREATE TABLE `grid_job_interval_stats` (
   `from_host` varchar(64) NOT NULL DEFAULT '',
   `exec_host` varchar(64) NOT NULL DEFAULT '',
   `projectName` varchar(60) NOT NULL DEFAULT '',
-  `jobs_reaching_state` int(10) unsigned NOT NULL DEFAULT '0',
-  `jobs_wall_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `gpu_wall_time` int(10) unsigned NOT NULL DEFAULT '0',
+  `jobs_reaching_state` int(10) unsigned NOT NULL DEFAULT 0,
+  `jobs_wall_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `gpu_wall_time` int(10) unsigned NOT NULL DEFAULT 0,
   `jobs_stime` double NOT NULL,
   `jobs_utime` double NOT NULL,
-  `slots_in_state` int(10) unsigned NOT NULL DEFAULT '0',
-  `gpus_in_state` int(10) unsigned NOT NULL DEFAULT '0',
-  `avg_memory` double NOT NULL DEFAULT '0',
-  `max_memory` double NOT NULL DEFAULT '0',
-  `gpu_avg_mem` double NOT NULL DEFAULT '0',
-  `gpu_max_mem` double NOT NULL DEFAULT '0',
+  `slots_in_state` int(10) unsigned NOT NULL DEFAULT 0,
+  `gpus_in_state` int(10) unsigned NOT NULL DEFAULT 0,
+  `avg_memory` double NOT NULL DEFAULT 0,
+  `max_memory` double NOT NULL DEFAULT 0,
+  `gpu_avg_mem` double NOT NULL DEFAULT 0,
+  `gpu_max_mem` double NOT NULL DEFAULT 0,
   `interval_start` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `interval_end` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `date_recorded` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -3912,39 +3920,39 @@ DROP TABLE IF EXISTS `grid_jobs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_jobs` (
-  `jobid` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `indexid` int(10) unsigned NOT NULL DEFAULT '0',
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `options` int(10) unsigned NOT NULL DEFAULT '0',
-  `options2` int(10) unsigned NOT NULL DEFAULT '0',
-  `options3` int(10) unsigned NOT NULL DEFAULT '0',
-  `options4` int(10) unsigned NOT NULL DEFAULT '0',
+  `jobid` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `indexid` int(10) unsigned NOT NULL DEFAULT 0,
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
+  `options` int(10) unsigned NOT NULL DEFAULT 0,
+  `options2` int(10) unsigned NOT NULL DEFAULT 0,
+  `options3` int(10) unsigned NOT NULL DEFAULT 0,
+  `options4` int(10) unsigned NOT NULL DEFAULT 0,
   `user` varchar(60) NOT NULL DEFAULT '',
   `stat` varchar(10) NOT NULL DEFAULT '',
   `prev_stat` varchar(10) NOT NULL DEFAULT '',
-  `stat_changes` int(10) unsigned NOT NULL DEFAULT '0',
-  `flapping_logged` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `exitStatus` int(10) unsigned NOT NULL DEFAULT '0',
+  `stat_changes` int(10) unsigned NOT NULL DEFAULT 0,
+  `flapping_logged` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `exitStatus` int(10) unsigned NOT NULL DEFAULT 0,
   `pendReasons` varchar(512) NOT NULL DEFAULT '',
   `queue` varchar(60) NOT NULL DEFAULT '',
   `nice` varchar(4) NOT NULL DEFAULT '',
   `from_host` varchar(64) NOT NULL DEFAULT '',
   `exec_host` varchar(64) DEFAULT NULL,
-  `execUid` int(10) unsigned NOT NULL DEFAULT '0',
+  `execUid` int(10) unsigned NOT NULL DEFAULT 0,
   `loginShell` varchar(20) DEFAULT NULL,
   `execHome` varchar(255) NOT NULL DEFAULT '',
   `execCwd` varchar(255) NOT NULL DEFAULT '',
   `cwd` varchar(255) NOT NULL DEFAULT '',
-  `exceptMask` int(10) NOT NULL DEFAULT '0',
-  `exitInfo` int(10) NOT NULL DEFAULT '0',
+  `exceptMask` int(10) NOT NULL DEFAULT 0,
+  `exitInfo` int(10) NOT NULL DEFAULT 0,
   `postExecCmd` varchar(255) NOT NULL DEFAULT '',
   `app` varchar(40) NOT NULL DEFAULT '',
   `execUsername` varchar(60) NOT NULL DEFAULT '',
   `mailUser` varchar(512) DEFAULT NULL,
   `jobname` varchar(128) DEFAULT NULL,
-  `jobPriority` int(10) unsigned NOT NULL DEFAULT '0',
-  `jobPid` int(10) unsigned NOT NULL DEFAULT '0',
-  `userPriority` int(10) DEFAULT '0',
+  `jobPriority` int(10) unsigned NOT NULL DEFAULT 0,
+  `jobPid` int(10) unsigned NOT NULL DEFAULT 0,
+  `userPriority` int(10) DEFAULT 0,
   `projectName` varchar(60) NOT NULL DEFAULT '',
   `parentGroup` varchar(128) NOT NULL DEFAULT '',
   `sla` varchar(60) NOT NULL DEFAULT '',
@@ -3959,29 +3967,29 @@ CREATE TABLE `grid_jobs` (
   `gpuResReq` varchar(512) DEFAULT NULL,
   `dependCond` varchar(1024) DEFAULT '',
   `mem_used` double DEFAULT NULL,
-  `swap_used` double NOT NULL DEFAULT '0',
-  `max_memory` double DEFAULT '0',
-  `gpu_mem_used` double DEFAULT '0',
-  `gpu_max_memory` double DEFAULT '0',
-  `max_swap` double DEFAULT '0',
-  `mem_requested` double DEFAULT '0',
+  `swap_used` double NOT NULL DEFAULT 0,
+  `max_memory` double DEFAULT 0,
+  `gpu_mem_used` double DEFAULT 0,
+  `gpu_max_memory` double DEFAULT 0,
+  `max_swap` double DEFAULT 0,
+  `mem_requested` double DEFAULT 0,
   `mem_requested_oper` varchar(8) DEFAULT '',
-  `mem_reserved` double DEFAULT '0',
-  `cpu_used` double NOT NULL DEFAULT '0',
-  `utime` double NOT NULL DEFAULT '0',
-  `stime` double NOT NULL DEFAULT '0',
-  `efficiency` decimal(9,5) NOT NULL DEFAULT '0.00000',
-  `effic_logged` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `numPIDS` int(10) unsigned NOT NULL DEFAULT '0',
-  `numPGIDS` int(10) unsigned NOT NULL DEFAULT '0',
-  `numThreads` int(10) unsigned NOT NULL DEFAULT '0',
-  `pid_alarm_logged` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `num_nodes` int(10) unsigned NOT NULL DEFAULT '1',
-  `num_cpus` int(10) unsigned NOT NULL DEFAULT '1',
-  `max_allocated_processes` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'job level allocated slot',
-  `maxNumProcessors` int(10) unsigned NOT NULL DEFAULT '0',
-  `num_gpus` int(10) unsigned NOT NULL DEFAULT '0',
-  `gpu_mode` int(10) unsigned NOT NULL DEFAULT '0',
+  `mem_reserved` double DEFAULT 0,
+  `cpu_used` double NOT NULL DEFAULT 0,
+  `utime` double NOT NULL DEFAULT 0,
+  `stime` double NOT NULL DEFAULT 0,
+  `efficiency` decimal(9,5) NOT NULL DEFAULT 0.00000,
+  `effic_logged` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `numPIDS` int(10) unsigned NOT NULL DEFAULT 0,
+  `numPGIDS` int(10) unsigned NOT NULL DEFAULT 0,
+  `numThreads` int(10) unsigned NOT NULL DEFAULT 0,
+  `pid_alarm_logged` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `num_nodes` int(10) unsigned NOT NULL DEFAULT 1,
+  `num_cpus` int(10) unsigned NOT NULL DEFAULT 1,
+  `max_allocated_processes` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'job level allocated slot',
+  `maxNumProcessors` int(10) unsigned NOT NULL DEFAULT 0,
+  `num_gpus` int(10) unsigned NOT NULL DEFAULT 0,
+  `gpu_mode` int(10) unsigned NOT NULL DEFAULT 0,
   `submit_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `reserveTime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `predictedStartTime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -3989,28 +3997,28 @@ CREATE TABLE `grid_jobs` (
   `end_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `beginTime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `termTime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `runtimeEstimation` int(10) unsigned DEFAULT '0',
-  `pend_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `psusp_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `run_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `gpu_exec_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `ususp_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `ssusp_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `unkwn_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `prov_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `acJobWaitTime` int(10) unsigned NOT NULL DEFAULT '0',
+  `runtimeEstimation` int(10) unsigned DEFAULT 0,
+  `pend_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `psusp_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `run_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `gpu_exec_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `ususp_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `ssusp_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `unkwn_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `prov_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `acJobWaitTime` int(10) unsigned NOT NULL DEFAULT 0,
   `hostSpec` varchar(40) DEFAULT NULL,
-  `rlimit_max_cpu` int(10) unsigned NOT NULL DEFAULT '0',
-  `rlimit_max_wallt` int(10) unsigned NOT NULL DEFAULT '0',
-  `rlimit_max_swap` float unsigned NOT NULL DEFAULT '0',
-  `rlimit_max_fsize` float unsigned NOT NULL DEFAULT '0',
-  `rlimit_max_data` float unsigned NOT NULL DEFAULT '0',
-  `rlimit_max_stack` float unsigned NOT NULL DEFAULT '0',
-  `rlimit_max_core` float unsigned NOT NULL DEFAULT '0',
-  `rlimit_max_rss` float unsigned NOT NULL DEFAULT '0',
-  `job_start_logged` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `job_end_logged` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `job_scan_logged` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `rlimit_max_cpu` int(10) unsigned NOT NULL DEFAULT 0,
+  `rlimit_max_wallt` int(10) unsigned NOT NULL DEFAULT 0,
+  `rlimit_max_swap` float unsigned NOT NULL DEFAULT 0,
+  `rlimit_max_fsize` float unsigned NOT NULL DEFAULT 0,
+  `rlimit_max_data` float unsigned NOT NULL DEFAULT 0,
+  `rlimit_max_stack` float unsigned NOT NULL DEFAULT 0,
+  `rlimit_max_core` float unsigned NOT NULL DEFAULT 0,
+  `rlimit_max_rss` float unsigned NOT NULL DEFAULT 0,
+  `job_start_logged` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `job_end_logged` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `job_scan_logged` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `userGroup` varchar(60) NOT NULL,
   `jobDescription` varchar(512) DEFAULT '',
   `combinedResreq` varchar(512) DEFAULT '',
@@ -4018,16 +4026,16 @@ CREATE TABLE `grid_jobs` (
   `gpuCombinedResreq` varchar(512) DEFAULT '',
   `gpuEffectiveResreq` varchar(512) DEFAULT '',
   `chargedSAAP` varchar(256) DEFAULT '',
-  `ineligiblePendingTime` int(10) unsigned NOT NULL DEFAULT '0',
-  `pendState` int(10) NOT NULL DEFAULT '-1',
-  `effectivePendingTimeLimit` int(10) unsigned NOT NULL DEFAULT '0',
-  `effectiveEligiblePendingTimeLimit` int(10) unsigned NOT NULL DEFAULT '0',
-  `isLoaningGSLA` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `cpuPeak` decimal(9,5) NOT NULL default '0.00000',
-  `peakEfficiency` decimal(9,5) NOT NULL default '0.00000',
-  `memEfficiency` decimal(9,5) NOT NULL default '0.00000',
-  `cpuPeakReachedTime` double NOT NULL default '0',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `ineligiblePendingTime` int(10) unsigned NOT NULL DEFAULT 0,
+  `pendState` int(10) NOT NULL DEFAULT -1,
+  `effectivePendingTimeLimit` int(10) unsigned NOT NULL DEFAULT 0,
+  `effectiveEligiblePendingTimeLimit` int(10) unsigned NOT NULL DEFAULT 0,
+  `isLoaningGSLA` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `cpuPeak` decimal(9,5) NOT NULL DEFAULT 0.00000,
+  `peakEfficiency` decimal(9,5) NOT NULL DEFAULT 0.00000,
+  `memEfficiency` decimal(9,5) NOT NULL DEFAULT 0.00000,
+  `cpuPeakReachedTime` double NOT NULL DEFAULT 0,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`clusterid`,`jobid`,`indexid`,`submit_time`),
   KEY `submit_time` (`submit_time`),
   KEY `projectName` (`projectName`),
@@ -4091,8 +4099,8 @@ DROP TABLE IF EXISTS `grid_jobs_exec_hosts`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_jobs_exec_hosts` (
   `exec_host` varchar(64) NOT NULL DEFAULT '',
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`exec_host`,`clusterid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -4105,39 +4113,39 @@ DROP TABLE IF EXISTS `grid_jobs_finished`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_jobs_finished` (
-  `jobid` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `indexid` int(10) unsigned NOT NULL DEFAULT '0',
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `options` int(10) unsigned NOT NULL DEFAULT '0',
-  `options2` int(10) unsigned NOT NULL DEFAULT '0',
-  `options3` int(10) unsigned NOT NULL DEFAULT '0',
-  `options4` int(10) unsigned NOT NULL DEFAULT '0',
+  `jobid` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `indexid` int(10) unsigned NOT NULL DEFAULT 0,
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
+  `options` int(10) unsigned NOT NULL DEFAULT 0,
+  `options2` int(10) unsigned NOT NULL DEFAULT 0,
+  `options3` int(10) unsigned NOT NULL DEFAULT 0,
+  `options4` int(10) unsigned NOT NULL DEFAULT 0,
   `user` varchar(60) NOT NULL DEFAULT '',
   `stat` varchar(10) NOT NULL DEFAULT '',
   `prev_stat` varchar(10) NOT NULL DEFAULT '',
-  `stat_changes` int(10) unsigned NOT NULL DEFAULT '0',
-  `flapping_logged` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `exitStatus` int(10) unsigned NOT NULL DEFAULT '0',
+  `stat_changes` int(10) unsigned NOT NULL DEFAULT 0,
+  `flapping_logged` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `exitStatus` int(10) unsigned NOT NULL DEFAULT 0,
   `pendReasons` varchar(512) NOT NULL DEFAULT '',
   `queue` varchar(60) NOT NULL DEFAULT '',
   `nice` varchar(4) NOT NULL DEFAULT '',
   `from_host` varchar(64) NOT NULL DEFAULT '',
   `exec_host` varchar(64) DEFAULT NULL,
-  `execUid` int(10) unsigned NOT NULL DEFAULT '0',
+  `execUid` int(10) unsigned NOT NULL DEFAULT 0,
   `loginShell` varchar(20) DEFAULT NULL,
   `execHome` varchar(255) NOT NULL DEFAULT '',
   `execCwd` varchar(255) NOT NULL DEFAULT '',
   `cwd` varchar(255) NOT NULL DEFAULT '',
-  `exceptMask` int(10) NOT NULL DEFAULT '0',
-  `exitInfo` int(10) NOT NULL DEFAULT '0',
+  `exceptMask` int(10) NOT NULL DEFAULT 0,
+  `exitInfo` int(10) NOT NULL DEFAULT 0,
   `postExecCmd` varchar(255) NOT NULL DEFAULT '',
   `app` varchar(40) NOT NULL DEFAULT '',
   `execUsername` varchar(60) NOT NULL DEFAULT '',
   `mailUser` varchar(512) DEFAULT NULL,
   `jobname` varchar(128) DEFAULT NULL,
-  `jobPriority` int(10) unsigned NOT NULL DEFAULT '0',
-  `jobPid` int(10) unsigned NOT NULL DEFAULT '0',
-  `userPriority` int(10) DEFAULT '0',
+  `jobPriority` int(10) unsigned NOT NULL DEFAULT 0,
+  `jobPid` int(10) unsigned NOT NULL DEFAULT 0,
+  `userPriority` int(10) DEFAULT 0,
   `projectName` varchar(60) NOT NULL DEFAULT '',
   `parentGroup` varchar(128) NOT NULL DEFAULT '',
   `sla` varchar(60) NOT NULL DEFAULT '',
@@ -4152,29 +4160,29 @@ CREATE TABLE `grid_jobs_finished` (
   `gpuResReq` varchar(512) DEFAULT NULL,
   `dependCond` varchar(1024) DEFAULT '',
   `mem_used` double DEFAULT NULL,
-  `swap_used` double NOT NULL DEFAULT '0',
-  `max_memory` double DEFAULT '0',
-  `gpu_mem_used` double DEFAULT '0',
-  `gpu_max_memory` double DEFAULT '0',
-  `max_swap` double DEFAULT '0',
-  `mem_requested` double DEFAULT '0',
+  `swap_used` double NOT NULL DEFAULT 0,
+  `max_memory` double DEFAULT 0,
+  `gpu_mem_used` double DEFAULT 0,
+  `gpu_max_memory` double DEFAULT 0,
+  `max_swap` double DEFAULT 0,
+  `mem_requested` double DEFAULT 0,
   `mem_requested_oper` varchar(8) DEFAULT '',
-  `mem_reserved` double DEFAULT '0',
-  `cpu_used` double NOT NULL DEFAULT '0',
-  `utime` double NOT NULL DEFAULT '0',
-  `stime` double NOT NULL DEFAULT '0',
-  `efficiency` decimal(9,5) NOT NULL DEFAULT '0.00000',
-  `effic_logged` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `numPIDS` int(10) unsigned NOT NULL DEFAULT '0',
-  `numPGIDS` int(10) unsigned NOT NULL DEFAULT '0',
-  `numThreads` int(10) unsigned NOT NULL DEFAULT '0',
-  `pid_alarm_logged` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `num_nodes` int(10) unsigned NOT NULL DEFAULT '1',
-  `num_cpus` int(10) unsigned NOT NULL DEFAULT '1',
-  `max_allocated_processes` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'job level allocated slot',
-  `maxNumProcessors` int(10) unsigned NOT NULL DEFAULT '0',
-  `num_gpus` int(10) unsigned NOT NULL DEFAULT '0',
-  `gpu_mode` int(10) unsigned NOT NULL DEFAULT '0',
+  `mem_reserved` double DEFAULT 0,
+  `cpu_used` double NOT NULL DEFAULT 0,
+  `utime` double NOT NULL DEFAULT 0,
+  `stime` double NOT NULL DEFAULT 0,
+  `efficiency` decimal(9,5) NOT NULL DEFAULT 0.00000,
+  `effic_logged` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `numPIDS` int(10) unsigned NOT NULL DEFAULT 0,
+  `numPGIDS` int(10) unsigned NOT NULL DEFAULT 0,
+  `numThreads` int(10) unsigned NOT NULL DEFAULT 0,
+  `pid_alarm_logged` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `num_nodes` int(10) unsigned NOT NULL DEFAULT 1,
+  `num_cpus` int(10) unsigned NOT NULL DEFAULT 1,
+  `max_allocated_processes` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'job level allocated slot',
+  `maxNumProcessors` int(10) unsigned NOT NULL DEFAULT 0,
+  `num_gpus` int(10) unsigned NOT NULL DEFAULT 0,
+  `gpu_mode` int(10) unsigned NOT NULL DEFAULT 0,
   `submit_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `reserveTime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `predictedStartTime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -4182,28 +4190,28 @@ CREATE TABLE `grid_jobs_finished` (
   `end_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `beginTime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `termTime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `runtimeEstimation` int(10) unsigned DEFAULT '0',
-  `pend_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `psusp_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `run_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `gpu_exec_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `ususp_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `ssusp_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `unkwn_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `prov_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `acJobWaitTime` int(10) unsigned NOT NULL DEFAULT '0',
+  `runtimeEstimation` int(10) unsigned DEFAULT 0,
+  `pend_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `psusp_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `run_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `gpu_exec_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `ususp_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `ssusp_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `unkwn_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `prov_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `acJobWaitTime` int(10) unsigned NOT NULL DEFAULT 0,
   `hostSpec` varchar(40) DEFAULT NULL,
-  `rlimit_max_cpu` int(10) unsigned NOT NULL DEFAULT '0',
-  `rlimit_max_wallt` int(10) unsigned NOT NULL DEFAULT '0',
-  `rlimit_max_swap` float unsigned NOT NULL DEFAULT '0',
-  `rlimit_max_fsize` float unsigned NOT NULL DEFAULT '0',
-  `rlimit_max_data` float unsigned NOT NULL DEFAULT '0',
-  `rlimit_max_stack` float unsigned NOT NULL DEFAULT '0',
-  `rlimit_max_core` float unsigned NOT NULL DEFAULT '0',
-  `rlimit_max_rss` float unsigned NOT NULL DEFAULT '0',
-  `job_start_logged` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `job_end_logged` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `job_scan_logged` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `rlimit_max_cpu` int(10) unsigned NOT NULL DEFAULT 0,
+  `rlimit_max_wallt` int(10) unsigned NOT NULL DEFAULT 0,
+  `rlimit_max_swap` float unsigned NOT NULL DEFAULT 0,
+  `rlimit_max_fsize` float unsigned NOT NULL DEFAULT 0,
+  `rlimit_max_data` float unsigned NOT NULL DEFAULT 0,
+  `rlimit_max_stack` float unsigned NOT NULL DEFAULT 0,
+  `rlimit_max_core` float unsigned NOT NULL DEFAULT 0,
+  `rlimit_max_rss` float unsigned NOT NULL DEFAULT 0,
+  `job_start_logged` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `job_end_logged` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `job_scan_logged` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `userGroup` varchar(60) NOT NULL,
   `jobDescription` varchar(512) DEFAULT '',
   `combinedResreq` varchar(512) DEFAULT '',
@@ -4211,16 +4219,16 @@ CREATE TABLE `grid_jobs_finished` (
   `gpuCombinedResreq` varchar(512) DEFAULT '',
   `gpuEffectiveResreq` varchar(512) DEFAULT '',
   `chargedSAAP` varchar(256) DEFAULT '',
-  `ineligiblePendingTime` int(10) unsigned NOT NULL DEFAULT '0',
-  `pendState` int(10) NOT NULL DEFAULT '-1',
-  `effectivePendingTimeLimit` int(10) unsigned NOT NULL DEFAULT '0',
-  `effectiveEligiblePendingTimeLimit` int(10) unsigned NOT NULL DEFAULT '0',
-  `isLoaningGSLA` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `cpuPeak` decimal(9,5) NOT NULL default '0.00000',
-  `peakEfficiency` decimal(9,5) NOT NULL default '0.00000',
-  `memEfficiency` decimal(9,5) NOT NULL default '0.00000',
-  `cpuPeakReachedTime` double NOT NULL default '0',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `ineligiblePendingTime` int(10) unsigned NOT NULL DEFAULT 0,
+  `pendState` int(10) NOT NULL DEFAULT -1,
+  `effectivePendingTimeLimit` int(10) unsigned NOT NULL DEFAULT 0,
+  `effectiveEligiblePendingTimeLimit` int(10) unsigned NOT NULL DEFAULT 0,
+  `isLoaningGSLA` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `cpuPeak` decimal(9,5) NOT NULL DEFAULT 0.00000,
+  `peakEfficiency` decimal(9,5) NOT NULL DEFAULT 0.00000,
+  `memEfficiency` decimal(9,5) NOT NULL DEFAULT 0.00000,
+  `cpuPeakReachedTime` double NOT NULL DEFAULT 0,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`clusterid`,`jobid`,`indexid`,`submit_time`),
   KEY `submit_time` (`submit_time`),
   KEY `projectName` (`projectName`),
@@ -4259,8 +4267,8 @@ DROP TABLE IF EXISTS `grid_jobs_from_hosts`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_jobs_from_hosts` (
   `from_host` varchar(64) NOT NULL DEFAULT '',
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`from_host`,`clusterid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -4274,23 +4282,23 @@ DROP TABLE IF EXISTS `grid_jobs_gpu_rusage`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_jobs_gpu_rusage` (
   `id` bigint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `jobid` bigint(20) NOT NULL DEFAULT '0',
-  `indexid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
+  `jobid` bigint(20) NOT NULL DEFAULT 0,
+  `indexid` int(10) unsigned NOT NULL DEFAULT 0,
   `submit_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `start_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `update_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `host` varchar(64) NOT NULL DEFAULT '',
-  `gpu_id` smallint(5) NOT NULL DEFAULT '0',
-  `exec_time` float NOT NULL DEFAULT '0',
-  `energy` float NOT NULL DEFAULT '0',
-  `sm_ut_avg` float NOT NULL DEFAULT '0',
-  `sm_ut_max` float NOT NULL DEFAULT '0',
-  `sm_ut_min` float NOT NULL DEFAULT '0',
-  `mem_ut_avg` float NOT NULL DEFAULT '0',
-  `mem_ut_max` float NOT NULL DEFAULT '0',
-  `mem_ut_min` float NOT NULL DEFAULT '0',
-  `gpu_mused_max` float NOT NULL DEFAULT '0',
+  `gpu_id` smallint(5) NOT NULL DEFAULT 0,
+  `exec_time` float NOT NULL DEFAULT 0,
+  `energy` float NOT NULL DEFAULT 0,
+  `sm_ut_avg` float NOT NULL DEFAULT 0,
+  `sm_ut_max` float NOT NULL DEFAULT 0,
+  `sm_ut_min` float NOT NULL DEFAULT 0,
+  `mem_ut_avg` float NOT NULL DEFAULT 0,
+  `mem_ut_max` float NOT NULL DEFAULT 0,
+  `mem_ut_min` float NOT NULL DEFAULT 0,
+  `gpu_mused_max` float NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `cid_jid_idx_subtime_hname_gid_utime` (`clusterid`,`jobid`,`indexid`,`submit_time`,`host`,`gpu_id`,`update_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -4304,17 +4312,17 @@ DROP TABLE IF EXISTS `grid_jobs_host_rusage`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_jobs_host_rusage` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `jobid` bigint(20) NOT NULL DEFAULT '0',
-  `indexid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
+  `jobid` bigint(20) NOT NULL DEFAULT 0,
+  `indexid` int(10) unsigned NOT NULL DEFAULT 0,
   `submit_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `update_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `host` varchar(64) NOT NULL DEFAULT '',
-  `utime` float NOT NULL DEFAULT '0',
-  `stime` float NOT NULL DEFAULT '0',
-  `mem` float NOT NULL DEFAULT '0',
-  `swap` float NOT NULL DEFAULT '0',
-  `processes` int(10) NOT NULL DEFAULT '0' COMMENT 'job host level allocated slot',
+  `utime` float NOT NULL DEFAULT 0,
+  `stime` float NOT NULL DEFAULT 0,
+  `mem` float NOT NULL DEFAULT 0,
+  `swap` float NOT NULL DEFAULT 0,
+  `processes` int(10) NOT NULL DEFAULT 0 COMMENT 'job host level allocated slot',
   PRIMARY KEY (`clusterid`,`jobid`,`indexid`,`submit_time`,`host`,`update_time`),
   KEY `update_time` (`update_time`),
   KEY `submit_time` (`submit_time`)
@@ -4329,13 +4337,13 @@ DROP TABLE IF EXISTS `grid_jobs_idled`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_jobs_idled` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `jobid` int(10) unsigned NOT NULL,
   `indexid` varchar(45) NOT NULL,
   `submit_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `cumulative_cpu` int(10) unsigned NOT NULL,
-  `notified` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `notified` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 1,
   PRIMARY KEY (`clusterid`,`submit_time`,`indexid`,`jobid`),
   KEY `present` (`present`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -4349,14 +4357,14 @@ DROP TABLE IF EXISTS `grid_jobs_jobhosts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_jobs_jobhosts` (
-  `jobid` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `indexid` int(10) unsigned NOT NULL DEFAULT '0',
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `jobid` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `indexid` int(10) unsigned NOT NULL DEFAULT 0,
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `exec_host` varchar(64) NOT NULL DEFAULT '',
   `submit_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `processes` int(10) NOT NULL DEFAULT '0',
-  `ngpus` mediumint(8) NOT NULL DEFAULT '0',
-  `isborrowed` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `processes` int(10) NOT NULL DEFAULT 0,
+  `ngpus` mediumint(8) NOT NULL DEFAULT 0,
+  `isborrowed` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`clusterid`,`jobid`,`indexid`,`submit_time`,`exec_host`),
   KEY `exec_host` (`exec_host`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -4370,14 +4378,14 @@ DROP TABLE IF EXISTS `grid_jobs_jobhosts_finished`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_jobs_jobhosts_finished` (
-  `jobid` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `indexid` int(10) unsigned NOT NULL DEFAULT '0',
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `jobid` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `indexid` int(10) unsigned NOT NULL DEFAULT 0,
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `exec_host` varchar(64) NOT NULL DEFAULT '',
   `submit_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `processes` int(10) NOT NULL DEFAULT '0',
-  `ngpus` mediumint(8) NOT NULL DEFAULT '0',
-  `isborrowed` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `processes` int(10) NOT NULL DEFAULT 0,
+  `ngpus` mediumint(8) NOT NULL DEFAULT 0,
+  `isborrowed` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`clusterid`,`jobid`,`indexid`,`submit_time`,`exec_host`),
   KEY `exec_host` (`exec_host`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -4391,18 +4399,18 @@ DROP TABLE IF EXISTS `grid_jobs_memvio`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_jobs_memvio` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `jobid` int(10) unsigned NOT NULL,
   `indexid` varchar(45) NOT NULL,
   `submit_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `type` int(10) NOT NULL DEFAULT '0',
-  `run_time` int(10) NOT NULL DEFAULT '0',
+  `type` int(10) NOT NULL DEFAULT 0,
+  `run_time` int(10) NOT NULL DEFAULT 0,
   `rusage_memory` double unsigned NOT NULL,
   `rusage_swap` double unsigned NOT NULL,
   `max_memory` double unsigned NOT NULL,
   `max_swap` double unsigned NOT NULL,
-  `notified` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `notified` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 1,
   PRIMARY KEY (`clusterid`,`submit_time`,`indexid`,`jobid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -4425,7 +4433,7 @@ CREATE TABLE `grid_jobs_pendhist_daily` (
   `user` varchar(60) NOT NULL,
   `total_pend` int(10) unsigned NOT NULL,
   `total_slots` int(10) unsigned NOT NULL,
-  `year_day` int(10) NOT NULL DEFAULT '2011001',
+  `year_day` int(10) NOT NULL DEFAULT 2011001,
   KEY `projectName` (`projectName`),
   KEY `queue` (`queue`),
   KEY `user` (`user`),
@@ -4502,8 +4510,8 @@ DROP TABLE IF EXISTS `grid_jobs_pendreason_maps`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_jobs_pendreason_maps` (
-  `issusp` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `reason_code` int(10) unsigned NOT NULL DEFAULT '0',
+  `issusp` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `reason_code` int(10) unsigned NOT NULL DEFAULT 0,
   `sub_reason_code` varchar(40) NOT NULL DEFAULT '',
   `reason` varchar(256) NOT NULL DEFAULT '',
   PRIMARY KEY (`issusp`,`reason_code`,`sub_reason_code`)
@@ -4519,19 +4527,19 @@ DROP TABLE IF EXISTS `grid_jobs_pendreasons`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_jobs_pendreasons` (
   `clusterid` int(10) unsigned NOT NULL,
-  `jobid` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `indexid` int(10) unsigned NOT NULL DEFAULT '0',
+  `jobid` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `indexid` int(10) unsigned NOT NULL DEFAULT 0,
   `submit_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `issusp` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `reason` int(10) unsigned NOT NULL DEFAULT '0',
+  `issusp` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `reason` int(10) unsigned NOT NULL DEFAULT 0,
   `subreason` varchar(40) NOT NULL DEFAULT '',
-  `type` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `type` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `detail` varchar(128) NOT NULL DEFAULT '',
-  `ratio` float NOT NULL DEFAULT '0',
+  `ratio` float NOT NULL DEFAULT 0,
   `start_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `end_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`clusterid`,`jobid`,`indexid`,`submit_time`,`issusp`,`reason`,`subreason`,`type`,`end_time`),
   KEY `clusterid_end_time_last_updated` (`clusterid`,`end_time`,`last_updated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -4546,19 +4554,19 @@ DROP TABLE IF EXISTS `grid_jobs_pendreasons_finished`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_jobs_pendreasons_finished` (
   `clusterid` int(10) unsigned NOT NULL,
-  `jobid` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `indexid` int(10) unsigned NOT NULL DEFAULT '0',
+  `jobid` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `indexid` int(10) unsigned NOT NULL DEFAULT 0,
   `submit_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `issusp` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `reason` int(10) unsigned NOT NULL DEFAULT '0',
+  `issusp` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `reason` int(10) unsigned NOT NULL DEFAULT 0,
   `subreason` varchar(40) NOT NULL DEFAULT '',
-  `type` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `type` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `detail` varchar(128) NOT NULL DEFAULT '',
-  `ratio` float NOT NULL DEFAULT '0',
+  `ratio` float NOT NULL DEFAULT 0,
   `start_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `end_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`clusterid`,`jobid`,`indexid`,`submit_time`,`issusp`,`reason`,`subreason`,`type`,`end_time`),
   KEY `clusterid_end_time` (`clusterid`,`end_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -4572,18 +4580,18 @@ DROP TABLE IF EXISTS `grid_jobs_processes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_jobs_processes` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `jobid` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `indexid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
+  `jobid` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `indexid` int(10) unsigned NOT NULL DEFAULT 0,
   `host` varchar(64) NOT NULL DEFAULT '',
-  `PID` int(10) unsigned NOT NULL DEFAULT '0',
-  `PGID` int(10) unsigned NOT NULL DEFAULT '0',
+  `PID` int(10) unsigned NOT NULL DEFAULT 0,
+  `PGID` int(10) unsigned NOT NULL DEFAULT 0,
   `mem` double DEFAULT NULL,
   `swap` double DEFAULT NULL,
   `utime` double DEFAULT NULL,
   `stime` double DEFAULT NULL,
   `first_seen` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `last_seen` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `last_seen` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`clusterid`,`jobid`,`indexid`,`host`,`PID`) USING BTREE,
   KEY `clusterid_host` (`clusterid`,`host`),
   KEY `pid` (`PID`)
@@ -4599,8 +4607,8 @@ DROP TABLE IF EXISTS `grid_jobs_queues`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_jobs_queues` (
   `queue` varchar(60) NOT NULL DEFAULT '',
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`queue`,`clusterid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -4613,9 +4621,9 @@ DROP TABLE IF EXISTS `grid_jobs_reqhosts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_jobs_reqhosts` (
-  `jobid` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `indexid` int(10) unsigned NOT NULL DEFAULT '0',
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `jobid` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `indexid` int(10) unsigned NOT NULL DEFAULT 0,
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `host` varchar(64) NOT NULL DEFAULT '',
   `submit_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`clusterid`,`jobid`,`indexid`,`submit_time`,`host`),
@@ -4631,9 +4639,9 @@ DROP TABLE IF EXISTS `grid_jobs_reqhosts_finished`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_jobs_reqhosts_finished` (
-  `jobid` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `indexid` int(10) unsigned NOT NULL DEFAULT '0',
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `jobid` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `indexid` int(10) unsigned NOT NULL DEFAULT 0,
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `host` varchar(64) NOT NULL DEFAULT '',
   `submit_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`clusterid`,`jobid`,`indexid`,`submit_time`,`host`),
@@ -4649,16 +4657,16 @@ DROP TABLE IF EXISTS `grid_jobs_runtime`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_jobs_runtime` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `jobid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
+  `jobid` int(10) unsigned NOT NULL DEFAULT 0,
   `indexid` varchar(45) NOT NULL DEFAULT '0',
   `submit_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `rlimit_max_wallt` int(10) unsigned NOT NULL DEFAULT '0',
-  `runtimeEstimation` int(10) unsigned NOT NULL DEFAULT '0',
-  `run_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `type` int(10) unsigned NOT NULL DEFAULT '0',
-  `notified` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `rlimit_max_wallt` int(10) unsigned NOT NULL DEFAULT 0,
+  `runtimeEstimation` int(10) unsigned NOT NULL DEFAULT 0,
+  `run_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `type` int(10) unsigned NOT NULL DEFAULT 0,
+  `notified` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 1,
   PRIMARY KEY (`clusterid`,`submit_time`,`indexid`,`jobid`,`type`,`rlimit_max_wallt`,`runtimeEstimation`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -4671,23 +4679,23 @@ DROP TABLE IF EXISTS `grid_jobs_rusage`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_jobs_rusage` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `jobid` bigint(20) NOT NULL DEFAULT '0',
-  `indexid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
+  `jobid` bigint(20) NOT NULL DEFAULT 0,
+  `indexid` int(10) unsigned NOT NULL DEFAULT 0,
   `submit_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `update_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `utime` float NOT NULL DEFAULT '0',
-  `stime` float NOT NULL DEFAULT '0',
-  `avgCpuEffi` decimal(9,5) NOT NULL DEFAULT '0.00000',
-  `mem` float NOT NULL DEFAULT '0',
-  `swap` float NOT NULL DEFAULT '0',
-  `mem_reserved` float NOT NULL DEFAULT '0',
-  `npids` int(10) unsigned NOT NULL DEFAULT '0',
-  `npgids` int(10) unsigned NOT NULL DEFAULT '0',
-  `nthreads` int(10) unsigned NOT NULL DEFAULT '0',
-  `num_cpus` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'job level allocated slot',
+  `utime` float NOT NULL DEFAULT 0,
+  `stime` float NOT NULL DEFAULT 0,
+  `mem` float NOT NULL DEFAULT 0,
+  `swap` float NOT NULL DEFAULT 0,
+  `mem_reserved` float NOT NULL DEFAULT 0,
+  `npids` int(10) unsigned NOT NULL DEFAULT 0,
+  `npgids` int(10) unsigned NOT NULL DEFAULT 0,
+  `nthreads` int(10) unsigned NOT NULL DEFAULT 0,
+  `num_cpus` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'job level allocated slot',
   `pids` varchar(1024) NOT NULL DEFAULT '',
   `pgids` varchar(40) NOT NULL DEFAULT '',
+  `avgCpuEffi` decimal(9,5) NOT NULL DEFAULT 0.00000,
   PRIMARY KEY (`clusterid`,`jobid`,`indexid`,`submit_time`,`update_time`),
   KEY `update_time` (`update_time`),
   KEY `submit_time` (`submit_time`)
@@ -4702,14 +4710,14 @@ DROP TABLE IF EXISTS `grid_jobs_sla_loaning`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_jobs_sla_loaning` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `jobid` bigint(20) NOT NULL DEFAULT '0',
-  `indexid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
+  `jobid` bigint(20) NOT NULL DEFAULT 0,
+  `indexid` int(10) unsigned NOT NULL DEFAULT 0,
   `submit_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `poolname` varchar(60) NOT NULL DEFAULT '',
-  `numRsrc` int(10) DEFAULT '0',
-  `mem` double DEFAULT '0',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `numRsrc` int(10) DEFAULT 0,
+  `mem` double DEFAULT 0,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`clusterid`,`jobid`,`indexid`,`submit_time`,`poolname`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -4722,14 +4730,14 @@ DROP TABLE IF EXISTS `grid_jobs_sla_loaning_finished`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_jobs_sla_loaning_finished` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `jobid` bigint(20) NOT NULL DEFAULT '0',
-  `indexid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
+  `jobid` bigint(20) NOT NULL DEFAULT 0,
+  `indexid` int(10) unsigned NOT NULL DEFAULT 0,
   `submit_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `poolname` varchar(60) NOT NULL DEFAULT '',
-  `numRsrc` int(10) DEFAULT '0',
-  `mem` double DEFAULT '0',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `numRsrc` int(10) DEFAULT 0,
+  `mem` double DEFAULT 0,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`clusterid`,`jobid`,`indexid`,`submit_time`,`poolname`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -4743,8 +4751,8 @@ DROP TABLE IF EXISTS `grid_jobs_stats`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_jobs_stats` (
   `stat` varchar(10) NOT NULL DEFAULT '',
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`stat`,`clusterid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -4758,8 +4766,8 @@ DROP TABLE IF EXISTS `grid_jobs_users`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_jobs_users` (
   `user` varchar(60) NOT NULL DEFAULT '',
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`user`,`clusterid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -4774,17 +4782,17 @@ DROP TABLE IF EXISTS `grid_license_projects`;
 CREATE TABLE `grid_license_projects` (
   `clusterid` int(10) unsigned NOT NULL,
   `licenseProject` varchar(64) NOT NULL,
-  `numRUN` int(10) unsigned NOT NULL DEFAULT '0',
-  `numPEND` int(10) unsigned NOT NULL DEFAULT '0',
-  `numJOBS` int(10) unsigned NOT NULL DEFAULT '0',
-  `efficiency` double NOT NULL DEFAULT '0',
-  `avg_mem` double NOT NULL DEFAULT '0',
-  `max_mem` double NOT NULL DEFAULT '0',
-  `avg_swap` double NOT NULL DEFAULT '0',
-  `max_swap` double NOT NULL DEFAULT '0',
-  `total_cpu` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `numRUN` int(10) unsigned NOT NULL DEFAULT 0,
+  `numPEND` int(10) unsigned NOT NULL DEFAULT 0,
+  `numJOBS` int(10) unsigned NOT NULL DEFAULT 0,
+  `efficiency` double NOT NULL DEFAULT 0,
+  `avg_mem` double NOT NULL DEFAULT 0,
+  `max_mem` double NOT NULL DEFAULT 0,
+  `avg_swap` double NOT NULL DEFAULT 0,
+  `max_swap` double NOT NULL DEFAULT 0,
+  `total_cpu` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp(),
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`clusterid`,`licenseProject`),
   KEY `present` (`present`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tracks License Project Information';
@@ -4799,23 +4807,23 @@ DROP TABLE IF EXISTS `grid_load`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_load` (
   `host` varchar(64) NOT NULL DEFAULT '',
-  `clusterid` int(10) NOT NULL DEFAULT '0',
+  `clusterid` int(10) NOT NULL DEFAULT 0,
   `status` varchar(20) NOT NULL DEFAULT '',
   `prev_status` varchar(20) NOT NULL DEFAULT '',
-  `time_in_state` int(10) unsigned NOT NULL DEFAULT '0',
-  `istatus` int(10) unsigned NOT NULL DEFAULT '0',
-  `r15s` float NOT NULL DEFAULT '0',
-  `r1m` float NOT NULL DEFAULT '0',
-  `r15m` float NOT NULL DEFAULT '0',
-  `ut` float NOT NULL DEFAULT '0',
-  `pg` float NOT NULL DEFAULT '0',
-  `io` float NOT NULL DEFAULT '0',
-  `ls` float NOT NULL DEFAULT '0',
-  `it` float NOT NULL DEFAULT '0',
-  `tmp` float NOT NULL DEFAULT '0',
-  `swp` float NOT NULL DEFAULT '0',
-  `mem` float NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `time_in_state` int(10) unsigned NOT NULL DEFAULT 0,
+  `istatus` int(10) unsigned NOT NULL DEFAULT 0,
+  `r15s` float NOT NULL DEFAULT 0,
+  `r1m` float NOT NULL DEFAULT 0,
+  `r15m` float NOT NULL DEFAULT 0,
+  `ut` float NOT NULL DEFAULT 0,
+  `pg` float NOT NULL DEFAULT 0,
+  `io` float NOT NULL DEFAULT 0,
+  `ls` float NOT NULL DEFAULT 0,
+  `it` float NOT NULL DEFAULT 0,
+  `tmp` float NOT NULL DEFAULT 0,
+  `swp` float NOT NULL DEFAULT 0,
+  `mem` float NOT NULL DEFAULT 0,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 1,
   PRIMARY KEY (`host`,`clusterid`),
   KEY `clusterid` (`clusterid`),
   KEY `status` (`status`),
@@ -4899,8 +4907,8 @@ DROP TABLE IF EXISTS `grid_os_signals`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_os_signals` (
   `hostType_match` varchar(45) NOT NULL DEFAULT '',
-  `signal` int(10) unsigned NOT NULL DEFAULT '0',
-  `action` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `signal` int(10) unsigned NOT NULL DEFAULT 0,
+  `action` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `abreviation` varchar(20) NOT NULL DEFAULT '',
   `description` text NOT NULL,
   PRIMARY KEY (`hostType_match`,`signal`,`abreviation`)
@@ -4915,7 +4923,7 @@ DROP TABLE IF EXISTS `grid_params`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_params` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `parameter` varchar(45) NOT NULL DEFAULT '',
   `parameter_class` varchar(10) NOT NULL DEFAULT '',
   `parameter_value` varchar(255) NOT NULL DEFAULT '',
@@ -4935,11 +4943,11 @@ DROP TABLE IF EXISTS `grid_pendreasons_ignore`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_pendreasons_ignore` (
   `user_id` mediumint(8) unsigned NOT NULL,
-  `issusp` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `issusp` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `reason` int(10) unsigned NOT NULL,
   `subreason` varchar(40) NOT NULL DEFAULT '',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`user_id`,`issusp`,`reason`,`subreason`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -4955,10 +4963,10 @@ CREATE TABLE `grid_pollers` (
   `poller_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `poller_name` varchar(45) NOT NULL DEFAULT '',
   `poller_lbindir` varchar(255) NOT NULL DEFAULT '',
-  `poller_licserver_threads` int(10) NOT NULL DEFAULT '5',
+  `poller_licserver_threads` int(10) NOT NULL DEFAULT 5,
   `poller_location` varchar(255) NOT NULL DEFAULT '',
   `poller_support_info` varchar(255) NOT NULL DEFAULT '',
-  `lsf_version` int(10) unsigned NOT NULL DEFAULT '62',
+  `lsf_version` int(10) unsigned NOT NULL DEFAULT 1017,
   `remote` varchar(20) DEFAULT NULL,
   `poller_max_insert_packet_size` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`poller_id`)
@@ -4971,7 +4979,7 @@ CREATE TABLE `grid_pollers` (
 
 LOCK TABLES `grid_pollers` WRITE;
 /*!40000 ALTER TABLE `grid_pollers` DISABLE KEYS */;
-INSERT INTO `grid_pollers` VALUES (8,'Poller for LSF 9.1','/opt/IBM/rtm/lsf91/bin/',5,'','',91,'',NULL),(9,'Poller for LSF 10.1','/opt/IBM/rtm/lsf101/bin/',5,'','',1010,'',NULL),(10,'Poller for LSF 10.1.0.7','/opt/IBM/rtm/lsf1017/bin/',5,'','',1017,'',NULL),(11,'Poller for LSF 10.1.0.13','/opt/IBM/rtm/lsf10.1.0.13/bin/',5,'','',10010013,NULL,NULL);
+INSERT INTO `grid_pollers` VALUES (8,'Poller for LSF 9.1','/var/www/html/rtm/lsf91/bin/',5,'','',91,'',NULL),(9,'Poller for LSF 10.1','/var/www/html/rtm/lsf101/bin/',5,'','',1010,'',NULL),(10,'Poller for LSF 10.1.0.7','/var/www/html/rtm/lsf1017/bin/',5,'','',1017,'',NULL),(11,'Poller for LSF 10.1.0.13','/var/www/html/rtm/lsf10.1.0.13/bin/',5,'','',10010013,NULL,NULL);
 /*!40000 ALTER TABLE `grid_pollers` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -4983,9 +4991,9 @@ DROP TABLE IF EXISTS `grid_processes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_processes` (
-  `pid` int(10) unsigned NOT NULL DEFAULT '0',
+  `pid` int(10) unsigned NOT NULL DEFAULT 0,
   `taskname` varchar(20) NOT NULL DEFAULT '0',
-  `taskid` int(10) unsigned NOT NULL DEFAULT '0',
+  `taskid` int(10) unsigned NOT NULL DEFAULT 0,
   `heartbeat` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`taskname`,`taskid`)
 ) ENGINE=MEMORY DEFAULT CHARSET=latin1;
@@ -4999,22 +5007,22 @@ DROP TABLE IF EXISTS `grid_projects`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_projects` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `projectName` varchar(64) NOT NULL,
-  `numRUN` int(10) unsigned NOT NULL DEFAULT '0',
-  `numPEND` int(10) unsigned NOT NULL DEFAULT '0',
-  `numJOBS` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'num slots of this project',
-  `pendJOBS` int(10) unsigned NOT NULL DEFAULT '0',
-  `runJOBS` int(10) unsigned NOT NULL DEFAULT '0',
-  `totalJOBS` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'num jobs of this project',
-  `efficiency` double NOT NULL DEFAULT '0',
-  `avg_mem` double NOT NULL DEFAULT '0',
-  `max_mem` double NOT NULL DEFAULT '0',
-  `avg_swap` double NOT NULL DEFAULT '0',
-  `max_swap` double NOT NULL DEFAULT '0',
-  `total_cpu` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `numRUN` int(10) unsigned NOT NULL DEFAULT 0,
+  `numPEND` int(10) unsigned NOT NULL DEFAULT 0,
+  `numJOBS` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'num slots of this project',
+  `pendJOBS` int(10) unsigned NOT NULL DEFAULT 0,
+  `runJOBS` int(10) unsigned NOT NULL DEFAULT 0,
+  `totalJOBS` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'num jobs of this project',
+  `efficiency` double NOT NULL DEFAULT 0,
+  `avg_mem` double NOT NULL DEFAULT 0,
+  `max_mem` double NOT NULL DEFAULT 0,
+  `avg_swap` double NOT NULL DEFAULT 0,
+  `max_swap` double NOT NULL DEFAULT 0,
+  `total_cpu` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp(),
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`clusterid`,`projectName`),
   KEY `present` (`present`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tracks Project Information';
@@ -5029,56 +5037,56 @@ DROP TABLE IF EXISTS `grid_queues`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_queues` (
   `queuename` varchar(60) NOT NULL DEFAULT '',
-  `clusterid` int(10) NOT NULL DEFAULT '0',
+  `clusterid` int(10) NOT NULL DEFAULT 0,
   `description` varchar(255) DEFAULT NULL,
-  `priority` int(10) unsigned NOT NULL DEFAULT '0',
-  `nice` int(10) unsigned NOT NULL DEFAULT '0',
+  `priority` int(10) unsigned NOT NULL DEFAULT 0,
+  `nice` int(10) unsigned NOT NULL DEFAULT 0,
   `status` varchar(20) NOT NULL DEFAULT '',
   `reason` varchar(20) NOT NULL DEFAULT '',
-  `numslots` int(10) unsigned NOT NULL DEFAULT '0',
+  `numslots` int(10) unsigned NOT NULL DEFAULT 0,
   `maxjobs` varchar(10) NOT NULL DEFAULT '',
   `userJobLimit` varchar(20) NOT NULL DEFAULT '',
   `procJobLimit` varchar(5) NOT NULL DEFAULT '',
   `hostJobLimit` varchar(5) NOT NULL DEFAULT '',
-  `nojobs` int(10) unsigned NOT NULL DEFAULT '0',
-  `pendjobs` int(10) unsigned NOT NULL DEFAULT '0',
-  `runjobs` int(10) unsigned NOT NULL DEFAULT '0',
-  `suspjobs` int(10) unsigned NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
-  `avg_pend_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `max_pend_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `avg_psusp_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `max_psusp_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `avg_run_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `max_run_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `avg_ususp_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `max_ususp_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `avg_ssusp_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `max_ssusp_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `avg_unkwn_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `max_unkwn_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `avg_disp_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `max_disp_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `hourly_started_jobs` double NOT NULL DEFAULT '0',
-  `hourly_done_jobs` double NOT NULL DEFAULT '0',
-  `hourly_exit_jobs` double NOT NULL DEFAULT '0',
-  `daily_started_jobs` double NOT NULL DEFAULT '0',
-  `daily_done_jobs` double NOT NULL DEFAULT '0',
-  `daily_exit_jobs` double NOT NULL DEFAULT '0',
-  `efficiency` double NOT NULL DEFAULT '0',
-  `avg_mem` double NOT NULL DEFAULT '0',
-  `max_mem` double NOT NULL DEFAULT '0',
-  `avg_swap` double NOT NULL DEFAULT '0',
-  `max_swap` double NOT NULL DEFAULT '0',
-  `total_cpu` double NOT NULL DEFAULT '0',
-  `dedicatedSlots` int(10) NOT NULL DEFAULT '0',
-  `sharedSlots` int(10) NOT NULL DEFAULT '0',
-  `openDedicatedSlots` int(10) NOT NULL DEFAULT '0',
-  `openSharedSlots` int(10) NOT NULL DEFAULT '0',
+  `nojobs` int(10) unsigned NOT NULL DEFAULT 0,
+  `pendjobs` int(10) unsigned NOT NULL DEFAULT 0,
+  `runjobs` int(10) unsigned NOT NULL DEFAULT 0,
+  `suspjobs` int(10) unsigned NOT NULL DEFAULT 0,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `avg_pend_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `max_pend_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `avg_psusp_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `max_psusp_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `avg_run_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `max_run_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `avg_ususp_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `max_ususp_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `avg_ssusp_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `max_ssusp_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `avg_unkwn_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `max_unkwn_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `avg_disp_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `max_disp_time` int(10) unsigned NOT NULL DEFAULT 0,
+  `hourly_started_jobs` double NOT NULL DEFAULT 0,
+  `hourly_done_jobs` double NOT NULL DEFAULT 0,
+  `hourly_exit_jobs` double NOT NULL DEFAULT 0,
+  `daily_started_jobs` double NOT NULL DEFAULT 0,
+  `daily_done_jobs` double NOT NULL DEFAULT 0,
+  `daily_exit_jobs` double NOT NULL DEFAULT 0,
+  `efficiency` double NOT NULL DEFAULT 0,
+  `avg_mem` double NOT NULL DEFAULT 0,
+  `max_mem` double NOT NULL DEFAULT 0,
+  `avg_swap` double NOT NULL DEFAULT 0,
+  `max_swap` double NOT NULL DEFAULT 0,
+  `total_cpu` double NOT NULL DEFAULT 0,
+  `dedicatedSlots` int(10) NOT NULL DEFAULT 0,
+  `sharedSlots` int(10) NOT NULL DEFAULT 0,
+  `openDedicatedSlots` int(10) NOT NULL DEFAULT 0,
+  `openSharedSlots` int(10) NOT NULL DEFAULT 0,
   `windows` varchar(255) NOT NULL,
   `windowsD` varchar(255) NOT NULL,
   `hostSpec` varchar(64) NOT NULL,
-  `qAttrib` int(10) NOT NULL DEFAULT '0',
+  `qAttrib` int(10) NOT NULL DEFAULT 0,
   `qStatus` int(10) unsigned NOT NULL,
   `userShares` varchar(255) NOT NULL,
   `defaultHostSpec` varchar(64) NOT NULL,
@@ -5101,15 +5109,15 @@ CREATE TABLE `grid_queues` (
   `maxRschedTime` int(10) unsigned NOT NULL,
   `maxJobRequeue` int(10) unsigned NOT NULL,
   `chkpntDir` varchar(255) NOT NULL,
-  `chkpntPeriod` int(10) NOT NULL DEFAULT '0',
-  `imptJobBklg` int(10) NOT NULL DEFAULT '0',
+  `chkpntPeriod` int(10) NOT NULL DEFAULT 0,
+  `imptJobBklg` int(10) NOT NULL DEFAULT 0,
   `chunkJobSize` int(10) unsigned NOT NULL,
-  `minProcLimit` int(10) NOT NULL DEFAULT '0',
-  `defProcLimit` int(10) NOT NULL DEFAULT '0',
+  `minProcLimit` int(10) NOT NULL DEFAULT 0,
+  `defProcLimit` int(10) NOT NULL DEFAULT 0,
   `fairshareQueues` varchar(255) NOT NULL,
   `defExtSched` varchar(255) NOT NULL,
   `mandExtSched` varchar(255) NOT NULL,
-  `slotShare` int(10) NOT NULL DEFAULT '0',
+  `slotShare` int(10) NOT NULL DEFAULT 0,
   `slotPool` varchar(255) NOT NULL,
   `underRCond` int(10) unsigned NOT NULL,
   `overRCond` int(10) unsigned NOT NULL,
@@ -5117,18 +5125,18 @@ CREATE TABLE `grid_queues` (
   `underRJobs` int(10) unsigned NOT NULL,
   `overRJobs` int(10) unsigned NOT NULL,
   `idleJobs` int(10) unsigned NOT NULL,
-  `warningTimePeriod` int(10) NOT NULL DEFAULT '0',
+  `warningTimePeriod` int(10) NOT NULL DEFAULT 0,
   `warningAction` varchar(255) NOT NULL,
   `qCtrlMsg` varchar(255) NOT NULL,
-  `rlimit_max_cpu` int(10) unsigned NOT NULL DEFAULT '0',
-  `rlimit_max_wallt` int(10) unsigned NOT NULL DEFAULT '0',
-  `rlimit_max_swap` float unsigned NOT NULL DEFAULT '0',
-  `rlimit_max_fsize` float unsigned NOT NULL DEFAULT '0',
-  `rlimit_max_data` float unsigned NOT NULL DEFAULT '0',
-  `rlimit_max_stack` float unsigned NOT NULL DEFAULT '0',
-  `rlimit_max_core` float unsigned NOT NULL DEFAULT '0',
-  `rlimit_max_rss` float unsigned NOT NULL DEFAULT '0',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `rlimit_max_cpu` int(10) unsigned NOT NULL DEFAULT 0,
+  `rlimit_max_wallt` int(10) unsigned NOT NULL DEFAULT 0,
+  `rlimit_max_swap` float unsigned NOT NULL DEFAULT 0,
+  `rlimit_max_fsize` float unsigned NOT NULL DEFAULT 0,
+  `rlimit_max_data` float unsigned NOT NULL DEFAULT 0,
+  `rlimit_max_stack` float unsigned NOT NULL DEFAULT 0,
+  `rlimit_max_core` float unsigned NOT NULL DEFAULT 0,
+  `rlimit_max_rss` float unsigned NOT NULL DEFAULT 0,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`queuename`,`clusterid`),
   KEY `status` (`status`),
   KEY `reason` (`reason`),
@@ -5145,10 +5153,10 @@ DROP TABLE IF EXISTS `grid_queues_hosts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_queues_hosts` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `queue` varchar(60) NOT NULL DEFAULT '',
   `host` varchar(64) NOT NULL DEFAULT '',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`clusterid`,`queue`,`host`),
   KEY `host` (`host`),
   KEY `queue` (`queue`)
@@ -5181,8 +5189,8 @@ CREATE TABLE `grid_queues_shares` (
   `run_slots` int(10) unsigned DEFAULT NULL,
   `relative_share` double DEFAULT NULL,
   `slot_share` int(10) unsigned DEFAULT NULL,
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp(),
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`clusterid`,`queue`,`user_or_group`,`shareAcctPath`(191)) USING HASH,
   KEY `user_or_group` (`user_or_group`),
   KEY `clusterid_user_or_group` (`clusterid`,`user_or_group`)
@@ -5197,25 +5205,25 @@ DROP TABLE IF EXISTS `grid_queues_stats`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_queues_stats` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `queue` varchar(60) NOT NULL,
-  `numRUN` int(10) unsigned NOT NULL DEFAULT '0',
-  `numPEND` int(10) unsigned NOT NULL DEFAULT '0',
-  `numJOBS` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'num slots of this queue',
-  `efficiency` double NOT NULL DEFAULT '0',
-  `avg_mem` double NOT NULL DEFAULT '0',
-  `max_mem` double NOT NULL DEFAULT '0',
-  `avg_swap` double NOT NULL DEFAULT '0',
-  `max_swap` double NOT NULL DEFAULT '0',
-  `total_cpu` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `memSlotUtil` double NOT NULL DEFAULT '0',
-  `slotUtil` double NOT NULL DEFAULT '0',
-  `cpuUtil` double NOT NULL DEFAULT '0',
-  `memUsed` bigint(20) NOT NULL DEFAULT '0',
-  `memRequested` bigint(20) NOT NULL DEFAULT '0',
-  `memReserved` bigint(20) NOT NULL DEFAULT '0',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `numRUN` int(10) unsigned NOT NULL DEFAULT 0,
+  `numPEND` int(10) unsigned NOT NULL DEFAULT 0,
+  `numJOBS` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'num slots of this queue',
+  `efficiency` double NOT NULL DEFAULT 0,
+  `avg_mem` double NOT NULL DEFAULT 0,
+  `max_mem` double NOT NULL DEFAULT 0,
+  `avg_swap` double NOT NULL DEFAULT 0,
+  `max_swap` double NOT NULL DEFAULT 0,
+  `total_cpu` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `memSlotUtil` double NOT NULL DEFAULT 0,
+  `slotUtil` double NOT NULL DEFAULT 0,
+  `cpuUtil` double NOT NULL DEFAULT 0,
+  `memUsed` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `memRequested` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `memReserved` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp(),
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`clusterid`,`queue`),
   KEY `present` (`present`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tracks Queue Statistical Information';
@@ -5245,10 +5253,10 @@ DROP TABLE IF EXISTS `grid_queues_users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_queues_users` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `queue` varchar(60) NOT NULL DEFAULT '',
   `user` varchar(60) NOT NULL DEFAULT '',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`clusterid`,`queue`,`user`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -5269,7 +5277,7 @@ CREATE TABLE `grid_queues_users_stats` (
   `runjobs` int(10) unsigned NOT NULL,
   `suspjobs` int(10) unsigned NOT NULL,
   `efficiency` double NOT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`clusterid`,`queue`,`user_or_group`),
   KEY `clusterid_user_or_group` (`clusterid`,`user_or_group`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -5286,7 +5294,7 @@ CREATE TABLE `grid_resources` (
   `resource_name` varchar(20) NOT NULL,
   `value` varchar(128) NOT NULL,
   `clusterid` int(10) unsigned NOT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 1,
   PRIMARY KEY (`resource_name`,`value`,`clusterid`) USING HASH,
   KEY `clusterid` (`clusterid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -5309,8 +5317,8 @@ CREATE TABLE `grid_service_class` (
   `auto_attach` tinyint(3) unsigned NOT NULL,
   `ego_res_req` varchar(255) NOT NULL,
   `max_host_idle_time` int(10) unsigned NOT NULL,
-  `throughput` double NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `throughput` double NOT NULL DEFAULT 0,
+  `present` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`clusterid`,`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Stores Service Class Definitions';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -5327,7 +5335,7 @@ CREATE TABLE `grid_service_class_access_control` (
   `name` varchar(60) NOT NULL,
   `acl_type` int(10) unsigned NOT NULL,
   `acl_member` varchar(60) NOT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`clusterid`,`name`,`acl_type`,`acl_member`),
   KEY `acl_member` (`acl_member`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Stores Access Control Information for Service Class';
@@ -5343,7 +5351,7 @@ DROP TABLE IF EXISTS `grid_service_class_goals`;
 CREATE TABLE `grid_service_class_goals` (
   `clusterid` int(10) unsigned NOT NULL,
   `name` varchar(60) NOT NULL,
-  `goal_seq` int(10) NOT NULL DEFAULT '0',
+  `goal_seq` int(10) NOT NULL DEFAULT 0,
   `goalType` varchar(20) DEFAULT NULL,
   `goal_window` varchar(1024) DEFAULT NULL,
   `status` varchar(64) DEFAULT NULL,
@@ -5351,7 +5359,7 @@ CREATE TABLE `grid_service_class_goals` (
   `goal_config` int(10) unsigned DEFAULT NULL,
   `actual` int(10) unsigned DEFAULT NULL,
   `optimum` int(10) unsigned DEFAULT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`clusterid`,`name`,`goal_seq`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Stores Service Class Goals';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -5367,7 +5375,7 @@ CREATE TABLE `grid_service_class_groups` (
   `clusterid` int(10) unsigned NOT NULL,
   `name` varchar(60) NOT NULL,
   `user_or_group` varchar(60) NOT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`clusterid`,`name`,`user_or_group`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='User or User Groups Permitted to Use Service Class';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -5380,7 +5388,7 @@ DROP TABLE IF EXISTS `grid_settings`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_settings` (
-  `user_id` smallint(8) unsigned NOT NULL DEFAULT '0',
+  `user_id` smallint(8) unsigned NOT NULL DEFAULT 0,
   `name` varchar(50) NOT NULL DEFAULT '',
   `value` varchar(1024) NOT NULL DEFAULT '',
   PRIMARY KEY (`user_id`,`name`)
@@ -5396,9 +5404,9 @@ DROP TABLE IF EXISTS `grid_sharedresources`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_sharedresources` (
   `clusterid` int(10) unsigned NOT NULL,
-  `resource_name` varchar(40) NOT NULL,
+  `resource_name` varchar(40) NOT NULL DEFAULT '',
   `description` varchar(128) NOT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 1,
   PRIMARY KEY (`clusterid`,`resource_name`) USING HASH,
   KEY `resource_name` (`resource_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -5417,29 +5425,29 @@ CREATE TABLE `grid_summary` (
   `host` varchar(64) NOT NULL DEFAULT '',
   `summary_status` varchar(20) NOT NULL DEFAULT '',
   `load_status` varchar(20) NOT NULL DEFAULT '',
-  `r15s` float NOT NULL DEFAULT '0',
-  `r1m` float NOT NULL DEFAULT '0',
-  `r15m` float NOT NULL DEFAULT '0',
-  `ut` float NOT NULL DEFAULT '0',
-  `pg` float NOT NULL DEFAULT '0',
-  `io` float NOT NULL DEFAULT '0',
-  `ls` float NOT NULL DEFAULT '0',
-  `it` float NOT NULL DEFAULT '0',
-  `tmp` float NOT NULL DEFAULT '0',
-  `swp` float NOT NULL DEFAULT '0',
-  `mem` float NOT NULL DEFAULT '0',
-  `hStatus` int(10) unsigned NOT NULL DEFAULT '0',
+  `r15s` float NOT NULL DEFAULT 0,
+  `r1m` float NOT NULL DEFAULT 0,
+  `r15m` float NOT NULL DEFAULT 0,
+  `ut` float NOT NULL DEFAULT 0,
+  `pg` float NOT NULL DEFAULT 0,
+  `io` float NOT NULL DEFAULT 0,
+  `ls` float NOT NULL DEFAULT 0,
+  `it` float NOT NULL DEFAULT 0,
+  `tmp` float NOT NULL DEFAULT 0,
+  `swp` float NOT NULL DEFAULT 0,
+  `mem` float NOT NULL DEFAULT 0,
+  `hStatus` int(10) unsigned NOT NULL DEFAULT 0,
   `hCtrlMsg` varchar(255) NOT NULL DEFAULT '',
   `bhost_status` varchar(20) DEFAULT NULL,
-  `cpuFactor` float NOT NULL DEFAULT '0',
+  `cpuFactor` float NOT NULL DEFAULT 0,
   `windows` varchar(255) DEFAULT NULL,
   `userJobLimit` varchar(20) DEFAULT NULL,
-  `maxJobs` int(10) unsigned NOT NULL DEFAULT '0',
-  `numJobs` int(10) unsigned NOT NULL DEFAULT '0',
-  `numRun` int(10) unsigned NOT NULL DEFAULT '0',
-  `numSSUSP` int(10) unsigned NOT NULL DEFAULT '0',
-  `numUSUSP` int(10) unsigned NOT NULL DEFAULT '0',
-  `numRESERVE` int(10) unsigned NOT NULL DEFAULT '0',
+  `maxJobs` int(10) unsigned NOT NULL DEFAULT 0,
+  `numJobs` int(10) unsigned NOT NULL DEFAULT 0,
+  `numRun` int(10) unsigned NOT NULL DEFAULT 0,
+  `numSSUSP` int(10) unsigned NOT NULL DEFAULT 0,
+  `numUSUSP` int(10) unsigned NOT NULL DEFAULT 0,
+  `numRESERVE` int(10) unsigned NOT NULL DEFAULT 0,
   `hostType` varchar(20) NOT NULL DEFAULT '',
   `hostModel` varchar(40) NOT NULL DEFAULT '0',
   `maxCpus` varchar(10) DEFAULT NULL,
@@ -5449,8 +5457,8 @@ CREATE TABLE `grid_summary` (
   `nDisks` varchar(10) NOT NULL DEFAULT '0',
   `isServer` char(1) NOT NULL DEFAULT '',
   `licensed` char(1) NOT NULL DEFAULT '',
-  `rexPriority` int(10) unsigned NOT NULL DEFAULT '0',
-  `licFeaturesNeeded` int(10) unsigned NOT NULL DEFAULT '0',
+  `rexPriority` int(10) unsigned NOT NULL DEFAULT 0,
+  `licFeaturesNeeded` int(10) unsigned NOT NULL DEFAULT 0,
   `first_seen` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `last_seen` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `job_last_started` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -5464,12 +5472,12 @@ CREATE TABLE `grid_summary` (
   `cacti_status` tinyint(2) DEFAULT NULL,
   `status_rec_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `status_fail_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `min_time` decimal(10,5) DEFAULT '9.99999',
-  `max_time` decimal(10,5) DEFAULT '0.00000',
-  `cur_time` decimal(10,5) DEFAULT '0.00000',
-  `avg_time` decimal(10,5) DEFAULT '0.00000',
+  `min_time` decimal(10,5) DEFAULT 9.99999,
+  `max_time` decimal(10,5) DEFAULT 0.00000,
+  `cur_time` decimal(10,5) DEFAULT 0.00000,
+  `avg_time` decimal(10,5) DEFAULT 0.00000,
   `availability` decimal(10,5) DEFAULT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 1,
   PRIMARY KEY (`clusterid`,`host`),
   KEY `load_status` (`load_status`),
   KEY `cacti_status` (`cacti_status`),
@@ -5532,11 +5540,11 @@ DROP TABLE IF EXISTS `grid_user_group_members`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_user_group_members` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `groupname` varchar(60) NOT NULL DEFAULT '0',
   `username` varchar(60) NOT NULL DEFAULT '0',
-  `shares` int(10) unsigned NOT NULL DEFAULT '1',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `shares` int(10) unsigned NOT NULL DEFAULT 1,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 1,
   PRIMARY KEY (`clusterid`,`groupname`,`username`),
   KEY `groupname` (`groupname`),
   KEY `username` (`username`)
@@ -5553,17 +5561,17 @@ DROP TABLE IF EXISTS `grid_user_group_stats`;
 CREATE TABLE `grid_user_group_stats` (
   `clusterid` int(10) unsigned NOT NULL,
   `userGroup` varchar(60) NOT NULL,
-  `numRUN` int(10) unsigned NOT NULL DEFAULT '0',
-  `numPEND` int(10) unsigned NOT NULL DEFAULT '0',
-  `numJOBS` int(10) unsigned NOT NULL DEFAULT '0',
-  `efficiency` double NOT NULL DEFAULT '0',
-  `avg_mem` double NOT NULL DEFAULT '0',
-  `max_mem` double NOT NULL DEFAULT '0',
-  `avg_swap` double NOT NULL DEFAULT '0',
-  `max_swap` double NOT NULL DEFAULT '0',
-  `total_cpu` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `numRUN` int(10) unsigned NOT NULL DEFAULT 0,
+  `numPEND` int(10) unsigned NOT NULL DEFAULT 0,
+  `numJOBS` int(10) unsigned NOT NULL DEFAULT 0,
+  `efficiency` double NOT NULL DEFAULT 0,
+  `avg_mem` double NOT NULL DEFAULT 0,
+  `max_mem` double NOT NULL DEFAULT 0,
+  `avg_swap` double NOT NULL DEFAULT 0,
+  `max_swap` double NOT NULL DEFAULT 0,
+  `total_cpu` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp(),
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`clusterid`,`userGroup`),
   KEY `present` (`present`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tracks userGroup Stats';
@@ -5577,25 +5585,24 @@ DROP TABLE IF EXISTS `grid_users_or_groups`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `grid_users_or_groups` (
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `user_or_group` varchar(60) NOT NULL DEFAULT '',
   `type` char(1) NOT NULL DEFAULT '',
-  `procJobLimit` double NOT NULL DEFAULT '0',
-  `maxJobs` int(10) unsigned NOT NULL DEFAULT '0',
-  `numStartJobs` int(10) unsigned NOT NULL DEFAULT '0',
-  `numJobs` int(10) unsigned NOT NULL DEFAULT '0',
-  `numPEND` int(10) unsigned NOT NULL DEFAULT '0',
-  `numRUN` int(10) unsigned NOT NULL DEFAULT '0',
-  `numSSUSP` int(10) unsigned NOT NULL DEFAULT '0',
-  `numUSUSP` int(10) unsigned NOT NULL DEFAULT '0',
-  `numRESERVE` int(10) unsigned NOT NULL DEFAULT '0',
-  `maxPendJobs` int(10) unsigned NOT NULL DEFAULT '0',
+  `procJobLimit` double NOT NULL DEFAULT 0,
+  `maxJobs` int(10) unsigned NOT NULL DEFAULT 0,
+  `numStartJobs` int(10) unsigned NOT NULL DEFAULT 0,
+  `numJobs` int(10) unsigned NOT NULL DEFAULT 0,
+  `numPEND` int(10) unsigned NOT NULL DEFAULT 0,
+  `numRUN` int(10) unsigned NOT NULL DEFAULT 0,
+  `numSSUSP` int(10) unsigned NOT NULL DEFAULT 0,
+  `numUSUSP` int(10) unsigned NOT NULL DEFAULT 0,
+  `numRESERVE` int(10) unsigned NOT NULL DEFAULT 0,
+  `maxPendJobs` int(10) unsigned NOT NULL DEFAULT 0,
   `efficiency` double NOT NULL,
   `first_seen` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
-  PRIMARY KEY (`clusterid`,`user_or_group`),
-  KEY `type` (`type`)
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`clusterid`,`user_or_group`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -5608,30 +5615,30 @@ DROP TABLE IF EXISTS `gridalarms_alarm`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `gridalarms_alarm` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
-  `template_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `template_id` int(10) unsigned NOT NULL DEFAULT 0,
   `template_enabled` char(3) DEFAULT NULL,
   `name` varchar(100) NOT NULL,
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `type` int(1) NOT NULL DEFAULT '0',
-  `expression_id` int(10) NOT NULL DEFAULT '0',
-  `aggregation` int(1) NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
+  `type` int(1) NOT NULL DEFAULT 0,
+  `expression_id` int(10) NOT NULL DEFAULT 0,
+  `aggregation` int(1) NOT NULL DEFAULT 0,
   `metric` varchar(100) NOT NULL,
   `base_time_display` varchar(20) NOT NULL DEFAULT '12:00am',
-  `base_time` int(10) DEFAULT '0',
-  `frequency` int(10) unsigned NOT NULL DEFAULT '1',
+  `base_time` int(10) DEFAULT 0,
+  `frequency` int(10) unsigned NOT NULL DEFAULT 1,
   `last_runtime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `last_duration` float DEFAULT NULL,
-  `alarm_type` int(3) NOT NULL DEFAULT '0',
+  `alarm_type` int(3) NOT NULL DEFAULT 0,
   `alarm_hi` varchar(100) DEFAULT NULL,
   `alarm_low` varchar(100) DEFAULT NULL,
   `alarm_fail_trigger` int(10) unsigned DEFAULT NULL,
-  `alarm_fail_count` int(10) NOT NULL DEFAULT '0',
-  `alarm_alert` int(1) NOT NULL DEFAULT '0',
+  `alarm_fail_count` int(10) NOT NULL DEFAULT 0,
+  `alarm_alert` int(1) NOT NULL DEFAULT 0,
   `alarm_enabled` enum('on','off') NOT NULL DEFAULT 'on',
   `time_hi` varchar(100) NOT NULL,
   `time_low` varchar(100) NOT NULL,
-  `time_fail_trigger` int(10) NOT NULL DEFAULT '1',
-  `time_fail_length` int(10) NOT NULL DEFAULT '1',
+  `time_fail_trigger` int(10) NOT NULL DEFAULT 1,
+  `time_fail_length` int(10) NOT NULL DEFAULT 1,
   `warning_pct` varchar(5) NOT NULL,
   `trigger_cmd_high` varchar(255) NOT NULL,
   `trigger_cmd_low` varchar(255) NOT NULL,
@@ -5641,13 +5648,13 @@ CREATE TABLE `gridalarms_alarm` (
   `oldvalue` varchar(100) NOT NULL,
   `repeat_alert` int(10) unsigned DEFAULT NULL,
   `notify_extra` varchar(255) DEFAULT NULL,
-  `notify_cluster_admin` int(1) NOT NULL DEFAULT '0',
+  `notify_cluster_admin` int(1) NOT NULL DEFAULT 0,
   `notify_alert` int(10) unsigned DEFAULT NULL,
   `notify_users` char(3) NOT NULL,
   `syslog_priority` int(2) DEFAULT NULL,
   `syslog_facility` int(2) DEFAULT NULL,
   `syslog_enabled` char(3) NOT NULL,
-  `tcheck` int(1) NOT NULL DEFAULT '0',
+  `tcheck` int(1) NOT NULL DEFAULT 0,
   `exempt` char(3) NOT NULL DEFAULT 'off',
   `acknowledgement` char(3) NOT NULL DEFAULT 'off',
   `restored_alert` char(3) NOT NULL DEFAULT 'off',
@@ -5687,11 +5694,11 @@ DROP TABLE IF EXISTS `gridalarms_alarm_layout`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `gridalarms_alarm_layout` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `alarm_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `template_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `alarm_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `template_id` int(10) unsigned NOT NULL DEFAULT 0,
   `display_name` varchar(20) NOT NULL,
   `column_name` varchar(40) NOT NULL,
-  `sequence` int(10) unsigned NOT NULL DEFAULT '1',
+  `sequence` int(10) unsigned NOT NULL DEFAULT 1,
   `sortposition` int(10) unsigned DEFAULT NULL,
   `sortdirection` int(1) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -5714,7 +5721,7 @@ CREATE TABLE `gridalarms_alarm_log` (
   `status` int(5) NOT NULL,
   `type` int(5) NOT NULL,
   `description` varchar(255) NOT NULL,
-  `details` blob,
+  `details` blob DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `time` (`time`),
   KEY `alarm_id` (`alarm_id`),
@@ -5735,8 +5742,8 @@ CREATE TABLE `gridalarms_alarm_log_items` (
   `alarm_id` int(10) unsigned NOT NULL,
   `type` int(10) NOT NULL,
   `clusterid` int(10) unsigned NOT NULL,
-  `jobid` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `indexid` int(10) unsigned NOT NULL DEFAULT '0',
+  `jobid` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `indexid` int(10) unsigned NOT NULL DEFAULT 0,
   `submit_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `queue` varchar(40) NOT NULL,
   `host` varchar(64) NOT NULL,
@@ -5757,10 +5764,10 @@ CREATE TABLE `gridalarms_alarm_log_items` (
   `column13` varchar(64) DEFAULT NULL,
   `column14` varchar(64) DEFAULT NULL,
   `column15` varchar(64) DEFAULT NULL,
-  `first_seen` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `first_seen` timestamp NOT NULL DEFAULT current_timestamp(),
   `last_updated` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `last_reported` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`),
   KEY `type` (`type`),
   KEY `cjis_idx` (`clusterid`,`jobid`,`indexid`,`submit_time`),
@@ -5783,17 +5790,17 @@ DROP TABLE IF EXISTS `gridalarms_expression`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `gridalarms_expression` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `alarm_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `template_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `alarm_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `template_id` int(10) unsigned NOT NULL DEFAULT 0,
   `name` varchar(255) NOT NULL,
   `description` varchar(255) NOT NULL,
-  `ds_type` int(10) unsigned DEFAULT '0',
+  `ds_type` int(10) unsigned DEFAULT 0,
   `type` int(1) NOT NULL,
   `db_table` varchar(50) NOT NULL,
   `sql_query` varchar(1024) DEFAULT NULL,
   `script_thold` varchar(255) DEFAULT NULL,
   `script_data` varchar(255) DEFAULT NULL,
-  `script_data_type` int(10) unsigned DEFAULT '0',
+  `script_data_type` int(10) unsigned DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB COMMENT='Stores Alert Expression Details';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -5807,9 +5814,9 @@ DROP TABLE IF EXISTS `gridalarms_expression_input`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `gridalarms_expression_input` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `alarm_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `template_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `expression_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `alarm_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `template_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `expression_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
   `name` varchar(20) DEFAULT NULL,
   `description` varchar(128) DEFAULT NULL,
   `value` varchar(128) DEFAULT NULL,
@@ -5827,10 +5834,10 @@ DROP TABLE IF EXISTS `gridalarms_expression_item`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `gridalarms_expression_item` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `alarm_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `template_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `expression_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `sequence` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `alarm_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `template_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `expression_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `sequence` mediumint(8) unsigned NOT NULL DEFAULT 0,
   `type` int(1) NOT NULL,
   `value` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
@@ -5854,7 +5861,7 @@ CREATE TABLE `gridalarms_metric` (
   `db_column` varchar(50) NOT NULL,
   PRIMARY KEY (`name`),
   KEY `id` (`id`)
-) ENGINE=InnoDB ROW_FORMAT=DYNAMIC COMMENT='Stores Metrics to be watched for Legacy Expressions';
+) ENGINE=InnoDB COMMENT='Stores Metrics to be watched for Legacy Expressions';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5865,8 +5872,8 @@ DROP TABLE IF EXISTS `gridalarms_metric_expression`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `gridalarms_metric_expression` (
-  `expression_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `metric_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `expression_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `metric_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`expression_id`,`metric_id`)
 ) ENGINE=InnoDB COMMENT='Table Linking Metrics to Expressions';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -5882,22 +5889,22 @@ CREATE TABLE `gridalarms_template` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `hash` varchar(32) DEFAULT NULL,
   `name` varchar(100) NOT NULL,
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
-  `type` int(1) NOT NULL DEFAULT '0',
-  `expression_id` int(10) NOT NULL DEFAULT '0',
-  `aggregation` int(1) NOT NULL DEFAULT '0',
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
+  `type` int(1) NOT NULL DEFAULT 0,
+  `expression_id` int(10) NOT NULL DEFAULT 0,
+  `aggregation` int(1) NOT NULL DEFAULT 0,
   `metric` varchar(100) NOT NULL,
   `base_time_display` varchar(20) NOT NULL DEFAULT '12:00am',
-  `base_time` int(10) DEFAULT '0',
-  `frequency` int(10) unsigned NOT NULL DEFAULT '1',
-  `alarm_type` int(3) NOT NULL DEFAULT '0',
+  `base_time` int(10) DEFAULT 0,
+  `frequency` int(10) unsigned NOT NULL DEFAULT 1,
+  `alarm_type` int(3) NOT NULL DEFAULT 0,
   `alarm_hi` varchar(100) DEFAULT NULL,
   `alarm_low` varchar(100) DEFAULT NULL,
   `alarm_fail_trigger` int(10) unsigned DEFAULT NULL,
   `time_hi` varchar(100) NOT NULL,
   `time_low` varchar(100) NOT NULL,
-  `time_fail_trigger` int(10) NOT NULL DEFAULT '1',
-  `time_fail_length` int(10) NOT NULL DEFAULT '1',
+  `time_fail_trigger` int(10) NOT NULL DEFAULT 1,
+  `time_fail_length` int(10) NOT NULL DEFAULT 1,
   `warning_pct` varchar(5) NOT NULL,
   `trigger_cmd_high` varchar(255) NOT NULL,
   `trigger_cmd_low` varchar(255) NOT NULL,
@@ -5905,13 +5912,13 @@ CREATE TABLE `gridalarms_template` (
   `cmd_retrigger_enabled` char(3) NOT NULL,
   `repeat_alert` int(10) unsigned DEFAULT NULL,
   `notify_extra` varchar(255) DEFAULT NULL,
-  `notify_cluster_admin` int(1) NOT NULL DEFAULT '0',
+  `notify_cluster_admin` int(1) NOT NULL DEFAULT 0,
   `notify_alert` int(10) unsigned DEFAULT NULL,
   `notify_users` char(3) NOT NULL,
   `syslog_priority` int(2) DEFAULT NULL,
   `syslog_facility` int(2) DEFAULT NULL,
   `syslog_enabled` char(3) NOT NULL,
-  `tcheck` int(1) NOT NULL DEFAULT '0',
+  `tcheck` int(1) NOT NULL DEFAULT 0,
   `exempt` char(3) NOT NULL DEFAULT 'off',
   `acknowledgement` char(3) NOT NULL DEFAULT 'off',
   `restored_alert` char(3) NOT NULL DEFAULT 'off',
@@ -5963,13 +5970,13 @@ CREATE TABLE `gridalarms_template_expression` (
   `hash` varchar(32) DEFAULT NULL,
   `name` varchar(255) NOT NULL,
   `description` varchar(255) NOT NULL,
-  `ds_type` int(10) unsigned DEFAULT '0',
+  `ds_type` int(10) unsigned DEFAULT 0,
   `type` int(1) NOT NULL,
   `db_table` varchar(50) NOT NULL,
   `sql_query` varchar(1024) DEFAULT NULL,
   `script_thold` varchar(255) DEFAULT NULL,
   `script_data` varchar(255) DEFAULT NULL,
-  `script_data_type` int(10) unsigned DEFAULT '0',
+  `script_data_type` int(10) unsigned DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `hash` (`hash`)
 ) ENGINE=InnoDB COMMENT='Stores Alert Template Expressions';
@@ -5995,7 +6002,7 @@ DROP TABLE IF EXISTS `gridalarms_template_expression_input`;
 CREATE TABLE `gridalarms_template_expression_input` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `hash` varchar(32) DEFAULT NULL,
-  `expression_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `expression_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
   `name` varchar(20) DEFAULT NULL,
   `description` varchar(128) DEFAULT NULL,
   `value` varchar(128) DEFAULT NULL,
@@ -6025,8 +6032,8 @@ DROP TABLE IF EXISTS `gridalarms_template_expression_item`;
 CREATE TABLE `gridalarms_template_expression_item` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `hash` varchar(32) DEFAULT NULL,
-  `expression_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `sequence` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `expression_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `sequence` mediumint(8) unsigned NOT NULL DEFAULT 0,
   `type` int(1) NOT NULL,
   `value` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
@@ -6045,10 +6052,10 @@ DROP TABLE IF EXISTS `gridalarms_template_layout`;
 CREATE TABLE `gridalarms_template_layout` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `hash` varchar(32) DEFAULT NULL,
-  `alarm_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `alarm_id` int(10) unsigned NOT NULL DEFAULT 0,
   `display_name` varchar(20) NOT NULL,
   `column_name` varchar(40) NOT NULL,
-  `sequence` int(10) unsigned NOT NULL DEFAULT '1',
+  `sequence` int(10) unsigned NOT NULL DEFAULT 1,
   `sortposition` int(10) unsigned DEFAULT NULL,
   `sortdirection` int(1) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -6084,7 +6091,7 @@ CREATE TABLE `gridalarms_template_metric` (
   PRIMARY KEY (`name`),
   KEY `hash` (`hash`),
   KEY `id` (`id`)
-) ENGINE=InnoDB ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -6095,8 +6102,8 @@ DROP TABLE IF EXISTS `gridalarms_template_metric_expression`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `gridalarms_template_metric_expression` (
-  `expression_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `metric_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `expression_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `metric_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`expression_id`,`metric_id`)
 ) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -6110,18 +6117,18 @@ DROP TABLE IF EXISTS `host`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `host` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `poller_id` int(10) unsigned NOT NULL DEFAULT '1',
-  `site_id` int(10) unsigned NOT NULL DEFAULT '1',
-  `host_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `lic_server_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `clusterid` int(10) unsigned NOT NULL DEFAULT '0',
+  `poller_id` int(10) unsigned NOT NULL DEFAULT 1,
+  `site_id` int(10) unsigned NOT NULL DEFAULT 1,
+  `host_template_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `lic_server_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `clusterid` int(10) unsigned NOT NULL DEFAULT 0,
   `description` varchar(150) NOT NULL DEFAULT '',
   `hostname` varchar(100) DEFAULT NULL,
   `location` varchar(40) DEFAULT NULL,
-  `notes` text,
+  `notes` text DEFAULT NULL,
   `external_id` varchar(40) DEFAULT NULL,
   `snmp_community` varchar(100) DEFAULT NULL,
-  `snmp_version` tinyint(1) unsigned NOT NULL DEFAULT '1',
+  `snmp_version` tinyint(1) unsigned NOT NULL DEFAULT 1,
   `snmp_username` varchar(50) DEFAULT NULL,
   `snmp_password` varchar(50) DEFAULT NULL,
   `snmp_auth_protocol` char(6) DEFAULT '',
@@ -6129,41 +6136,42 @@ CREATE TABLE `host` (
   `snmp_priv_protocol` char(6) DEFAULT '',
   `snmp_context` varchar(64) DEFAULT '',
   `snmp_engine_id` varchar(64) DEFAULT '',
-  `snmp_port` mediumint(5) unsigned NOT NULL DEFAULT '161',
-  `snmp_timeout` mediumint(8) unsigned NOT NULL DEFAULT '500',
+  `snmp_port` mediumint(5) unsigned NOT NULL DEFAULT 161,
+  `snmp_timeout` mediumint(8) unsigned NOT NULL DEFAULT 500,
   `snmp_sysDescr` varchar(300) NOT NULL DEFAULT '',
   `snmp_sysObjectID` varchar(128) NOT NULL DEFAULT '',
-  `snmp_sysUpTimeInstance` int(10) unsigned NOT NULL DEFAULT '0',
+  `snmp_sysUpTimeInstance` bigint(20) unsigned NOT NULL DEFAULT 0,
   `snmp_sysContact` varchar(300) NOT NULL DEFAULT '',
   `snmp_sysName` varchar(300) NOT NULL DEFAULT '',
   `snmp_sysLocation` varchar(300) NOT NULL DEFAULT '',
-  `availability_method` smallint(5) unsigned NOT NULL DEFAULT '1',
-  `ping_method` smallint(5) unsigned DEFAULT '0',
-  `ping_port` int(10) unsigned DEFAULT '0',
-  `ping_timeout` int(10) unsigned DEFAULT '500',
-  `ping_retries` int(10) unsigned DEFAULT '2',
-  `max_oids` int(10) unsigned DEFAULT '10',
-  `device_threads` tinyint(2) unsigned NOT NULL DEFAULT '1',
-  `deleted` char(2) DEFAULT '',
-  `disabled` char(2) DEFAULT NULL,
+  `availability_method` smallint(5) unsigned NOT NULL DEFAULT 1,
+  `ping_method` smallint(5) unsigned DEFAULT 0,
+  `ping_port` int(10) unsigned DEFAULT 0,
+  `ping_timeout` int(10) unsigned DEFAULT 500,
+  `ping_retries` int(10) unsigned DEFAULT 2,
+  `max_oids` int(10) unsigned DEFAULT 10,
+  `bulk_walk_size` int(10) DEFAULT -1,
+  `device_threads` tinyint(2) unsigned NOT NULL DEFAULT 1,
+  `deleted` char(2) NOT NULL DEFAULT '',
+  `disabled` char(2) NOT NULL DEFAULT '',
   `monitor` char(3) NOT NULL DEFAULT 'on',
-  `thold_send_email` int(10) NOT NULL DEFAULT '1',
+  `thold_send_email` int(10) NOT NULL DEFAULT 1,
   `thold_host_email` int(10) DEFAULT NULL,
-  `thold_failure_count` int(10) NOT NULL DEFAULT '0',
-  `status` tinyint(2) NOT NULL DEFAULT '0',
-  `status_event_count` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `thold_failure_count` int(10) NOT NULL DEFAULT 0,
+  `status` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `status_event_count` mediumint(8) unsigned NOT NULL DEFAULT 0,
   `status_fail_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `status_rec_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `status_last_error` varchar(255) DEFAULT '',
-  `min_time` decimal(10,5) DEFAULT '9.99999',
-  `max_time` decimal(10,5) DEFAULT '0.00000',
-  `cur_time` decimal(10,5) DEFAULT '0.00000',
-  `avg_time` decimal(10,5) DEFAULT '0.00000',
-  `polling_time` double DEFAULT '0',
-  `total_polls` int(10) unsigned DEFAULT '0',
-  `failed_polls` int(10) unsigned DEFAULT '0',
-  `availability` decimal(8,5) NOT NULL DEFAULT '100.00000',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `min_time` decimal(10,5) DEFAULT 9.99999,
+  `max_time` decimal(10,5) DEFAULT 0.00000,
+  `cur_time` decimal(10,5) DEFAULT 0.00000,
+  `avg_time` decimal(10,5) DEFAULT 0.00000,
+  `polling_time` double DEFAULT 0,
+  `total_polls` int(10) unsigned DEFAULT 0,
+  `failed_polls` int(10) unsigned DEFAULT 0,
+  `availability` decimal(8,5) NOT NULL DEFAULT 100.00000,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `poller_id_disabled` (`poller_id`,`disabled`),
   KEY `external_id` (`external_id`),
@@ -6182,7 +6190,7 @@ CREATE TABLE `host` (
 
 LOCK TABLES `host` WRITE;
 /*!40000 ALTER TABLE `host` DISABLE KEYS */;
-INSERT INTO `host` VALUES (1,1,0,1,0,0,'Local Linux Machine','localhost',NULL,'',NULL,'',0,'','','','','','','',161,500,'','',0,'','','',0,2,0,400,1,10,1,'','','on',1,NULL,0,3,0,'0000-00-00 00:00:00','0000-00-00 00:00:00','',0.00000,0.00000,0.00000,0.00000,0.1357569694519,589,0,100.00000,'2022-03-06 04:50:02');
+INSERT INTO `host` VALUES (1,1,0,1,0,0,'Local Linux Machine','localhost',NULL,'',NULL,'',0,'','','','','','','',161,500,'','',0,'','','',0,2,0,400,1,10,-1,1,'','','on',1,NULL,0,3,0,'0000-00-00 00:00:00','0000-00-00 00:00:00','',0.00000,0.00000,0.00000,0.00000,0.10951995849609,589,0,100.00000,'0000-00-00 00:00:00:00');
 /*!40000 ALTER TABLE `host` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -6194,8 +6202,8 @@ DROP TABLE IF EXISTS `host_graph`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `host_graph` (
-  `host_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `graph_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `host_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `graph_template_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`host_id`,`graph_template_id`)
 ) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -6218,14 +6226,14 @@ DROP TABLE IF EXISTS `host_snmp_cache`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `host_snmp_cache` (
-  `host_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `snmp_query_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `host_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `snmp_query_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
   `field_name` varchar(50) NOT NULL DEFAULT '',
   `field_value` varchar(512) DEFAULT NULL,
   `snmp_index` varchar(255) NOT NULL DEFAULT '',
   `oid` text NOT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 1,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`host_id`,`snmp_query_id`,`field_name`,`snmp_index`),
   KEY `host_id` (`host_id`,`field_name`),
   KEY `field_name` (`field_name`),
@@ -6245,11 +6253,11 @@ DROP TABLE IF EXISTS `host_snmp_query`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `host_snmp_query` (
-  `host_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `snmp_query_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `host_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `snmp_query_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
   `sort_field` varchar(50) NOT NULL DEFAULT '',
   `title_format` varchar(50) NOT NULL DEFAULT '',
-  `reindex_method` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `reindex_method` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`host_id`,`snmp_query_id`)
 ) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -6275,6 +6283,7 @@ CREATE TABLE `host_template` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `hash` varchar(32) NOT NULL DEFAULT '',
   `name` varchar(100) NOT NULL DEFAULT '',
+  `class` varchar(40) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `name` (`name`)
 ) ENGINE=InnoDB;
@@ -6286,7 +6295,7 @@ CREATE TABLE `host_template` (
 
 LOCK TABLES `host_template` WRITE;
 /*!40000 ALTER TABLE `host_template` DISABLE KEYS */;
-INSERT INTO `host_template` VALUES (1,'2d3e47f416738c2d22c87c40218cc55e','Local Linux Machine'),(2,'bd1c482a581a40e96348657977e33b75','Cacti Polling Host'),(3,'cae6a879f86edacb2471055783bec6d0','Cisco Router'),(4,'305007178521f03fde7e0a66c37784c8','LM Server'),(5,'4e7ef5bb8c546d214d565bb24763ab08','LM Summary'),(6,'4855b0e3e553085ed57219690285f91f','Generic SNMP-enabled Host'),(7,'7972b0b7c4b67da7ba7ebd020cf54f87','Grid Host (w/net-snmp)'),(8,'284bbabef4bb6e161af7e123c7c90969','Grid Host'),(9,'d8ff1374e732012338d9cd47b9da18d4','Grid Summary'),(10,'4e5dc8dd115264c2e9f3adb725c29413','Karlnet Wireless Bridge'),(11,'07d3fe6a52915f99e642d22e27d967a4','Net-SNMP Host'),(12,'9ef418b4251751e09c3c416704b01b01','Netware 4/5 Server'),(13,'c5cc0bf1e96873c899eab03a5d2f5942','teMySQL Host'),(14,'5b8300be607dce4f030b026a381b91cd','Windows 2000/XP Host'),(15,'b1528fb95b04821b0e5b6a5aedd8e659','License Scheduler Summary'),(16,'8cb14a5b4c4623801ffbe011191ff9d8','Disk Monitoring Host'),(17,'0d2005384e7a4fa6c63dd3d78d82abed','Disk Filesystem Host');
+INSERT INTO `host_template` VALUES (1,'2d3e47f416738c2d22c87c40218cc55e','Local Linux Machine',''),(2,'bd1c482a581a40e96348657977e33b75','Cacti Polling Host',''),(3,'cae6a879f86edacb2471055783bec6d0','Cisco Router',''),(4,'305007178521f03fde7e0a66c37784c8','LM Server',''),(5,'4e7ef5bb8c546d214d565bb24763ab08','LM Summary',''),(6,'4855b0e3e553085ed57219690285f91f','Generic SNMP-enabled Host',''),(7,'7972b0b7c4b67da7ba7ebd020cf54f87','Grid Host (w/net-snmp)',''),(8,'284bbabef4bb6e161af7e123c7c90969','Grid Host',''),(9,'d8ff1374e732012338d9cd47b9da18d4','Grid Summary',''),(10,'4e5dc8dd115264c2e9f3adb725c29413','Karlnet Wireless Bridge',''),(11,'07d3fe6a52915f99e642d22e27d967a4','Net-SNMP Host',''),(12,'9ef418b4251751e09c3c416704b01b01','Netware 4/5 Server',''),(13,'c5cc0bf1e96873c899eab03a5d2f5942','teMySQL Host',''),(14,'5b8300be607dce4f030b026a381b91cd','Windows 2000/XP Host',''),(15,'b1528fb95b04821b0e5b6a5aedd8e659','License Scheduler Summary',''),(16,'8cb14a5b4c4623801ffbe011191ff9d8','Disk Monitoring Host',''),(17,'0d2005384e7a4fa6c63dd3d78d82abed','Disk Filesystem Host','');
 /*!40000 ALTER TABLE `host_template` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -6298,8 +6307,8 @@ DROP TABLE IF EXISTS `host_template_graph`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `host_template_graph` (
-  `host_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `graph_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `host_template_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `graph_template_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`host_template_id`,`graph_template_id`)
 ) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -6322,8 +6331,8 @@ DROP TABLE IF EXISTS `host_template_snmp_query`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `host_template_snmp_query` (
-  `host_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `snmp_query_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `host_template_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `snmp_query_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`host_template_id`,`snmp_query_id`)
 ) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -6348,8 +6357,8 @@ DROP TABLE IF EXISTS `lic_application_accounting`;
 CREATE TABLE `lic_application_accounting` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `application` varchar(40) DEFAULT '',
-  `monthly_cost` double DEFAULT '0',
-  `user_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `monthly_cost` double DEFAULT 0,
+  `user_id` int(10) unsigned NOT NULL DEFAULT 0,
   `last_updated` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`),
   UNIQUE KEY `application` (`application`)
@@ -6364,13 +6373,13 @@ DROP TABLE IF EXISTS `lic_application_feature_map`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lic_application_feature_map` (
-  `service_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `service_id` int(10) unsigned NOT NULL DEFAULT 0,
   `feature_name` varchar(50) NOT NULL DEFAULT '',
   `user_feature_name` varchar(80) DEFAULT '',
   `application` varchar(40) DEFAULT '',
   `manager_hint` varchar(255) DEFAULT '',
-  `critical` tinyint(3) unsigned DEFAULT '0',
-  `user_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `critical` tinyint(3) unsigned DEFAULT 0,
+  `user_id` int(10) unsigned NOT NULL DEFAULT 0,
   `last_updated` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`service_id`,`feature_name`),
   KEY `feature_name` (`feature_name`)
@@ -6385,18 +6394,18 @@ DROP TABLE IF EXISTS `lic_daily_stats`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lic_daily_stats` (
-  `service_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `service_id` int(10) unsigned NOT NULL DEFAULT 0,
   `feature` varchar(50) NOT NULL DEFAULT '',
   `user` varchar(60) NOT NULL DEFAULT '',
   `host` varchar(64) NOT NULL DEFAULT '',
   `action` varchar(20) NOT NULL DEFAULT '',
-  `count` int(10) unsigned NOT NULL DEFAULT '0',
-  `total_license_count` int(10) unsigned NOT NULL DEFAULT '0',
-  `utilization` float NOT NULL DEFAULT '0',
-  `peak_ut` float NOT NULL DEFAULT '0',
+  `count` int(10) unsigned NOT NULL DEFAULT 0,
+  `total_license_count` int(10) unsigned NOT NULL DEFAULT 0,
+  `utilization` float NOT NULL DEFAULT 0,
+  `peak_ut` float NOT NULL DEFAULT 0,
   `vendor` varchar(40) NOT NULL DEFAULT '0',
-  `duration` int(10) unsigned NOT NULL DEFAULT '0',
-  `transaction_count` int(10) unsigned NOT NULL DEFAULT '0',
+  `duration` int(10) unsigned NOT NULL DEFAULT 0,
+  `transaction_count` int(10) unsigned NOT NULL DEFAULT 0,
   `type` enum('0','1','2','3','4','5','6','7','8') NOT NULL DEFAULT '0',
   `interval_end` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `date_recorded` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -6418,18 +6427,18 @@ DROP TABLE IF EXISTS `lic_daily_stats_today`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lic_daily_stats_today` (
-  `service_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `service_id` int(10) unsigned NOT NULL DEFAULT 0,
   `feature` varchar(50) NOT NULL DEFAULT '',
   `user` varchar(60) NOT NULL DEFAULT '',
   `host` varchar(64) NOT NULL DEFAULT '',
   `action` varchar(20) NOT NULL DEFAULT '',
-  `count` int(10) unsigned NOT NULL DEFAULT '0',
-  `total_license_count` int(10) unsigned NOT NULL DEFAULT '0',
-  `utilization` float NOT NULL DEFAULT '0',
-  `peak_ut` float NOT NULL DEFAULT '0',
+  `count` int(10) unsigned NOT NULL DEFAULT 0,
+  `total_license_count` int(10) unsigned NOT NULL DEFAULT 0,
+  `utilization` float NOT NULL DEFAULT 0,
+  `peak_ut` float NOT NULL DEFAULT 0,
   `vendor` varchar(40) NOT NULL DEFAULT '0',
-  `duration` int(10) unsigned NOT NULL DEFAULT '0',
-  `transaction_count` int(10) unsigned NOT NULL DEFAULT '0',
+  `duration` int(10) unsigned NOT NULL DEFAULT 0,
+  `transaction_count` int(10) unsigned NOT NULL DEFAULT 0,
   `type` enum('0','1','2','3','4','5','6','7','8') NOT NULL DEFAULT '0',
   `interval_end` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `date_recorded` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -6455,7 +6464,7 @@ CREATE TABLE `lic_daily_stats_traffic` (
   `feature` varchar(50) NOT NULL,
   `user` varchar(60) NOT NULL,
   `host` varchar(64) NOT NULL,
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`service_id`,`feature`,`user`,`host`),
   KEY `feature` (`feature`),
   KEY `user` (`user`),
@@ -6472,9 +6481,9 @@ DROP TABLE IF EXISTS `lic_errorcode_maps`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lic_errorcode_maps` (
-  `type` int(10) unsigned NOT NULL DEFAULT '0',
-  `errorno` int(10) NOT NULL DEFAULT '0',
-  `sub_errorno` int(10) NOT NULL DEFAULT '0',
+  `type` int(10) unsigned NOT NULL DEFAULT 0,
+  `errorno` int(10) NOT NULL DEFAULT 0,
+  `sub_errorno` int(10) NOT NULL DEFAULT 0,
   `error_text` varchar(512) DEFAULT '',
   PRIMARY KEY (`type`,`errorno`,`sub_errorno`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -6503,7 +6512,7 @@ CREATE TABLE `lic_flexlm_log` (
   `vendor_daemon` varchar(100) NOT NULL,
   `feature` varchar(50) NOT NULL,
   `action` varchar(50) NOT NULL,
-  `no_of_license_out_in` int(10) NOT NULL DEFAULT '1',
+  `no_of_license_out_in` int(10) NOT NULL DEFAULT 1,
   `user` varchar(200) NOT NULL,
   `host` varchar(200) NOT NULL,
   `reasons` text NOT NULL,
@@ -6521,19 +6530,19 @@ DROP TABLE IF EXISTS `lic_interval_stats`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lic_interval_stats` (
   `seq` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `service_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `service_id` int(10) unsigned NOT NULL DEFAULT 0,
   `feature` varchar(50) NOT NULL DEFAULT '',
   `user` varchar(60) NOT NULL DEFAULT '',
   `host` varchar(64) NOT NULL DEFAULT '',
   `action` varchar(20) NOT NULL DEFAULT '',
-  `count` int(10) unsigned NOT NULL DEFAULT '0',
-  `total_license_count` int(10) unsigned NOT NULL DEFAULT '0',
-  `utilization` float NOT NULL DEFAULT '0',
+  `count` int(10) unsigned NOT NULL DEFAULT 0,
+  `total_license_count` int(10) unsigned NOT NULL DEFAULT 0,
+  `utilization` float NOT NULL DEFAULT 0,
   `vendor` varchar(20) NOT NULL DEFAULT '0',
-  `duration` int(10) unsigned NOT NULL DEFAULT '0',
+  `duration` int(10) unsigned NOT NULL DEFAULT 0,
   `interval_end` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `date_recorded` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `event_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `event_id` int(10) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`seq`),
   KEY `feature` (`feature`),
   KEY `interval_end` (`interval_end`),
@@ -6556,7 +6565,7 @@ CREATE TABLE `lic_ip_ranges` (
   `ip_range` varchar(16) NOT NULL,
   `hostname` varchar(64) NOT NULL,
   `ip_address` varchar(16) NOT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 1,
   PRIMARY KEY (`ip_range`,`hostname`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Stores IP range and host membership from DNS';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -6571,7 +6580,7 @@ DROP TABLE IF EXISTS `lic_ldap_groups`;
 CREATE TABLE `lic_ldap_groups` (
   `group` varchar(60) NOT NULL,
   `user` varchar(60) NOT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 1,
   PRIMARY KEY (`group`,`user`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Stores LDAP Group Information';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -6586,7 +6595,7 @@ DROP TABLE IF EXISTS `lic_ldap_to_flex_groups`;
 CREATE TABLE `lic_ldap_to_flex_groups` (
   `ldap_group` varchar(40) NOT NULL,
   `flex_group` varchar(40) NOT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 1,
   PRIMARY KEY (`ldap_group`,`flex_group`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='A Mapping Table of LDAP Groups to FLEXlm Group';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -6603,13 +6612,13 @@ CREATE TABLE `lic_managers` (
   `hash` char(32) NOT NULL,
   `name` varchar(20) NOT NULL,
   `description` varchar(127) NOT NULL,
-  `type` tinyint(3) NOT NULL DEFAULT '0' COMMENT '0: default, 1: json',
+  `type` tinyint(3) NOT NULL DEFAULT 0 COMMENT '0: default, 1: json',
   `logparser_binary` varchar(127) NOT NULL,
   `collector_binary` varchar(127) NOT NULL,
   `lm_client` varchar(127) NOT NULL,
   `lm_client_arg1` varchar(127) NOT NULL,
-  `failover_hosts` tinyint(3) unsigned DEFAULT '1',
-  `disabled` tinyint(3) NOT NULL DEFAULT '0',
+  `failover_hosts` tinyint(3) unsigned DEFAULT 1,
+  `disabled` tinyint(3) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -6638,7 +6647,7 @@ CREATE TABLE `lic_pollers` (
   `poller_description` varchar(100) NOT NULL,
   `poller_hostname` varchar(64) NOT NULL,
   `poller_exechost` varchar(64) NOT NULL DEFAULT '',
-  `poller_type` smallint(3) NOT NULL DEFAULT '0',
+  `poller_type` smallint(3) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -6649,7 +6658,7 @@ CREATE TABLE `lic_pollers` (
 
 LOCK TABLES `lic_pollers` WRITE;
 /*!40000 ALTER TABLE `lic_pollers` DISABLE KEYS */;
-INSERT INTO `lic_pollers` VALUES (1,'/opt/IBM/rtm/lic/bin','/opt/IBM/flexlm/bin/','FLEXlm poller','local','',1),(2,'/opt/IBM/rtm/lic/bin','/opt/IBM/rlm/bin/','RLM poller','local','',3);
+INSERT INTO `lic_pollers` VALUES (1,'/var/www/html/rtm/lic/bin','/var/www/html/flexlm/bin/','FLEXlm poller','local','',1),(2,'/var/www/html/rtm/lic/bin','/var/www/html/rlm/bin/','RLM poller','local','',3);
 /*!40000 ALTER TABLE `lic_pollers` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -6661,13 +6670,13 @@ DROP TABLE IF EXISTS `lic_servers`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lic_servers` (
-  `service_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `service_id` int(10) unsigned NOT NULL DEFAULT 0,
   `name` varchar(64) NOT NULL DEFAULT '',
   `status` varchar(20) NOT NULL DEFAULT '',
   `type` varchar(50) NOT NULL DEFAULT '',
   `version` varchar(20) NOT NULL DEFAULT '',
-  `errorno` int(10) NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `errorno` int(10) NOT NULL DEFAULT 0,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`service_id`,`name`),
   KEY `name` (`name`)
 ) ENGINE=MEMORY DEFAULT CHARSET=latin1;
@@ -6682,10 +6691,10 @@ DROP TABLE IF EXISTS `lic_services`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lic_services` (
   `service_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `poller_interval` int(10) unsigned NOT NULL DEFAULT '300',
+  `poller_interval` int(10) unsigned NOT NULL DEFAULT 300,
   `poller_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `poller_id` int(10) unsigned NOT NULL,
-  `poller_trigger` int(10) NOT NULL DEFAULT '0',
+  `poller_trigger` int(10) NOT NULL DEFAULT 0,
   `server_portatserver` varchar(512) NOT NULL DEFAULT '',
   `server_timezone` varchar(64) NOT NULL,
   `server_name` varchar(256) NOT NULL DEFAULT '',
@@ -6697,22 +6706,22 @@ CREATE TABLE `lic_services` (
   `server_region` varchar(100) NOT NULL DEFAULT '',
   `server_support_info` varchar(255) NOT NULL DEFAULT '',
   `enable_checkouts` varchar(20) NOT NULL DEFAULT '',
-  `timeout` int(10) unsigned NOT NULL DEFAULT '1',
-  `errorno` int(10) NOT NULL DEFAULT '0',
+  `timeout` int(10) unsigned NOT NULL DEFAULT 1,
+  `errorno` int(10) NOT NULL DEFAULT 0,
   `disabled` varchar(2) NOT NULL DEFAULT '',
   `options_path` varchar(2048) NOT NULL DEFAULT '',
-  `retries` int(10) unsigned NOT NULL DEFAULT '3',
-  `status` int(10) unsigned NOT NULL DEFAULT '0',
-  `status_event_count` int(10) unsigned NOT NULL DEFAULT '0',
-  `cur_time` decimal(10,5) NOT NULL DEFAULT '0.00000',
-  `min_time` decimal(10,5) NOT NULL DEFAULT '0.00000',
-  `max_time` decimal(10,5) NOT NULL DEFAULT '0.00000',
-  `avg_time` decimal(10,5) NOT NULL DEFAULT '0.00000',
-  `total_polls` int(10) unsigned NOT NULL DEFAULT '0',
-  `failed_polls` int(10) unsigned NOT NULL DEFAULT '0',
+  `retries` int(10) unsigned NOT NULL DEFAULT 3,
+  `status` int(10) unsigned NOT NULL DEFAULT 0,
+  `status_event_count` int(10) unsigned NOT NULL DEFAULT 0,
+  `cur_time` decimal(10,5) NOT NULL DEFAULT 0.00000,
+  `min_time` decimal(10,5) NOT NULL DEFAULT 0.00000,
+  `max_time` decimal(10,5) NOT NULL DEFAULT 0.00000,
+  `avg_time` decimal(10,5) NOT NULL DEFAULT 0.00000,
+  `total_polls` int(10) unsigned NOT NULL DEFAULT 0,
+  `failed_polls` int(10) unsigned NOT NULL DEFAULT 0,
   `status_fail_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `status_rec_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `availability` decimal(8,5) NOT NULL DEFAULT '0.00000',
+  `availability` decimal(8,5) NOT NULL DEFAULT 0.00000,
   `server_subisv` varchar(40) NOT NULL DEFAULT '',
   `file_path` varchar(255) NOT NULL DEFAULT '',
   `prefix` varchar(255) NOT NULL DEFAULT '',
@@ -6730,14 +6739,14 @@ DROP TABLE IF EXISTS `lic_services_feature`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lic_services_feature` (
-  `service_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `service_id` int(10) unsigned NOT NULL DEFAULT 0,
   `feature_name` varchar(50) NOT NULL DEFAULT '',
   `feature_version` varchar(20) NOT NULL DEFAULT '',
-  `feature_number_to_expire` int(10) unsigned NOT NULL DEFAULT '0',
-  `total_reserved_token` int(10) unsigned NOT NULL DEFAULT '0',
+  `feature_number_to_expire` int(10) unsigned NOT NULL DEFAULT 0,
+  `total_reserved_token` int(10) unsigned NOT NULL DEFAULT 0,
   `feature_expiration_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `vendor_daemon` varchar(45) NOT NULL DEFAULT '',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`service_id`,`feature_name`,`feature_version`,`vendor_daemon`,`feature_expiration_date`) USING HASH,
   KEY `feature_name` (`feature_name`),
   KEY `feature_version` (`feature_version`),
@@ -6753,7 +6762,7 @@ DROP TABLE IF EXISTS `lic_services_feature_details`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lic_services_feature_details` (
-  `service_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `service_id` int(10) unsigned NOT NULL DEFAULT 0,
   `vendor_daemon` varchar(40) NOT NULL DEFAULT '',
   `feature_name` varchar(50) NOT NULL DEFAULT '0',
   `subfeature` varchar(50) NOT NULL DEFAULT '',
@@ -6762,12 +6771,12 @@ CREATE TABLE `lic_services_feature_details` (
   `groupname` varchar(60) NOT NULL DEFAULT '',
   `hostname` varchar(64) NOT NULL DEFAULT '',
   `chkoutid` varchar(20) NOT NULL DEFAULT '',
-  `restype` int(10) unsigned NOT NULL DEFAULT '0',
+  `restype` int(10) unsigned NOT NULL DEFAULT 0,
   `status` varchar(20) NOT NULL DEFAULT '',
-  `tokens_acquired` int(10) unsigned NOT NULL DEFAULT '0',
+  `tokens_acquired` int(10) unsigned NOT NULL DEFAULT 0,
   `tokens_acquired_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `present` tinyint(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`service_id`,`vendor_daemon`,`feature_name`,`username`,`groupname`,`hostname`,`chkoutid`,`restype`,`status`,`tokens_acquired_date`),
   KEY `idx_vendor_daemon` (`vendor_daemon`),
   KEY `idx_feature_name` (`feature_name`),
@@ -6786,21 +6795,21 @@ DROP TABLE IF EXISTS `lic_services_feature_history`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lic_services_feature_history` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `service_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `service_id` int(10) unsigned NOT NULL DEFAULT 0,
   `vendor_daemon` varchar(40) NOT NULL DEFAULT '',
   `feature_name` varchar(50) NOT NULL DEFAULT '0',
   `subfeature` varchar(50) NOT NULL DEFAULT '',
   `feature_version` varchar(50) NOT NULL DEFAULT '',
   `username` varchar(60) NOT NULL DEFAULT '',
-  `groupname` varchar(60) NOT NULL DEFAULT '',
+  `groupname` varchar(50) NOT NULL DEFAULT '',
   `hostname` varchar(64) NOT NULL DEFAULT '',
   `chkoutid` varchar(20) NOT NULL DEFAULT '',
-  `restype` int(10) unsigned NOT NULL DEFAULT '0',
+  `restype` int(10) unsigned NOT NULL DEFAULT 0,
   `status` varchar(20) NOT NULL DEFAULT '',
-  `tokens_acquired` int(10) unsigned NOT NULL DEFAULT '0',
+  `tokens_acquired` int(10) unsigned NOT NULL DEFAULT 0,
   `tokens_acquired_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `last_poll_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `tokens_released_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `tokens_released_date` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `idx_vendor_daemon` (`vendor_daemon`),
   KEY `idx_feature_name` (`feature_name`),
@@ -6840,14 +6849,14 @@ DROP TABLE IF EXISTS `lic_services_feature_use`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lic_services_feature_use` (
-  `service_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `service_id` int(10) unsigned NOT NULL DEFAULT 0,
   `feature_name` varchar(50) NOT NULL DEFAULT '',
-  `feature_max_licenses` int(10) unsigned NOT NULL DEFAULT '0',
-  `feature_inuse_licenses` int(10) unsigned NOT NULL DEFAULT '0',
-  `feature_queued` int(10) unsigned NOT NULL DEFAULT '0',
-  `feature_reserved` int(10) unsigned NOT NULL DEFAULT '0',
+  `feature_max_licenses` int(10) unsigned NOT NULL DEFAULT 0,
+  `feature_inuse_licenses` int(10) unsigned NOT NULL DEFAULT 0,
+  `feature_queued` int(10) unsigned NOT NULL DEFAULT 0,
+  `feature_reserved` int(10) unsigned NOT NULL DEFAULT 0,
   `vendor_daemon` varchar(45) NOT NULL DEFAULT 'TBD',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(1) NOT NULL DEFAULT 1,
   `vendor_status` varchar(10) NOT NULL DEFAULT '',
   `vendor_version` varchar(30) NOT NULL DEFAULT '',
   `status` varchar(29) NOT NULL DEFAULT '',
@@ -6867,7 +6876,7 @@ DROP TABLE IF EXISTS `lic_services_options_feature`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lic_services_options_feature` (
-  `service_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `service_id` int(10) unsigned NOT NULL DEFAULT 0,
   `feature` varchar(50) NOT NULL DEFAULT '',
   `keyword` varchar(60) NOT NULL,
   `borrow_lowwater` int(10) unsigned DEFAULT NULL,
@@ -6875,7 +6884,7 @@ CREATE TABLE `lic_services_options_feature` (
   `max_borrow_hours` int(10) unsigned DEFAULT NULL,
   `max_overdraft` int(10) unsigned DEFAULT NULL,
   `timeout` int(10) unsigned DEFAULT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`service_id`,`feature`,`keyword`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Includes Feature Options';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -6888,14 +6897,14 @@ DROP TABLE IF EXISTS `lic_services_options_feature_type`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lic_services_options_feature_type` (
-  `service_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `service_id` int(10) unsigned NOT NULL DEFAULT 0,
   `feature` varchar(50) NOT NULL DEFAULT '',
   `keyword` varchar(60) NOT NULL,
   `variable` varchar(20) NOT NULL DEFAULT '',
   `otype` varchar(20) NOT NULL DEFAULT '',
   `name` varchar(40) NOT NULL DEFAULT '',
   `notes` varchar(255) DEFAULT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`service_id`,`feature`,`variable`,`otype`,`name`,`keyword`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Per Feature/Type Options';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -6908,7 +6917,7 @@ DROP TABLE IF EXISTS `lic_services_options_global`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lic_services_options_global` (
-  `service_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `service_id` int(10) unsigned NOT NULL DEFAULT 0,
   `options_path` varchar(255) NOT NULL DEFAULT '',
   `debug_path` varchar(255) DEFAULT NULL,
   `report_path` varchar(255) DEFAULT NULL,
@@ -6918,7 +6927,7 @@ CREATE TABLE `lic_services_options_global` (
   `nolog_queued` int(10) unsigned DEFAULT NULL,
   `timeoutall` int(10) unsigned DEFAULT NULL,
   `groupcaseinsens` int(10) unsigned DEFAULT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(4) DEFAULT 1,
   PRIMARY KEY (`service_id`,`options_path`(191))
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Contains Per Options File Global Settings';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -6931,10 +6940,10 @@ DROP TABLE IF EXISTS `lic_services_options_host_groups`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lic_services_options_host_groups` (
-  `service_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `service_id` int(10) unsigned NOT NULL DEFAULT 0,
   `group` varchar(64) NOT NULL DEFAULT '',
   `host` varchar(64) NOT NULL DEFAULT '',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`service_id`,`group`,`host`),
   KEY `group` (`group`),
   KEY `host` (`host`)
@@ -6949,12 +6958,12 @@ DROP TABLE IF EXISTS `lic_services_options_incexcl_all`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lic_services_options_incexcl_all` (
-  `service_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `service_id` int(10) unsigned NOT NULL DEFAULT 0,
   `incexcl` varchar(12) NOT NULL DEFAULT '',
   `otype` varchar(20) NOT NULL DEFAULT '',
   `name` varchar(40) NOT NULL DEFAULT '',
   `notes` varchar(255) DEFAULT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`service_id`,`incexcl`,`otype`,`name`),
   KEY `incexcl` (`incexcl`),
   KEY `otype` (`otype`),
@@ -6970,14 +6979,14 @@ DROP TABLE IF EXISTS `lic_services_options_max`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lic_services_options_max` (
-  `service_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `num_lic` int(10) unsigned NOT NULL DEFAULT '0',
+  `service_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `num_lic` int(10) unsigned NOT NULL DEFAULT 0,
   `feature` varchar(50) NOT NULL DEFAULT '',
   `keyword` varchar(60) NOT NULL,
   `otype` varchar(10) NOT NULL DEFAULT '',
   `name` varchar(40) NOT NULL DEFAULT '',
   `notes` varchar(255) DEFAULT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`service_id`,`feature`,`otype`,`name`,`keyword`),
   KEY `feature` (`feature`),
   KEY `name` (`name`),
@@ -6993,14 +7002,14 @@ DROP TABLE IF EXISTS `lic_services_options_reserve`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lic_services_options_reserve` (
-  `service_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `num_lic` int(10) unsigned NOT NULL DEFAULT '0',
+  `service_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `num_lic` int(10) unsigned NOT NULL DEFAULT 0,
   `feature` varchar(50) NOT NULL DEFAULT '',
   `keyword` varchar(60) NOT NULL,
   `otype` varchar(10) NOT NULL DEFAULT '',
   `name` varchar(40) NOT NULL DEFAULT '',
   `notes` varchar(255) DEFAULT NULL,
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`service_id`,`feature`,`otype`,`name`,`keyword`),
   KEY `feature` (`feature`),
   KEY `name` (`name`),
@@ -7016,10 +7025,10 @@ DROP TABLE IF EXISTS `lic_services_options_user_groups`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lic_services_options_user_groups` (
-  `service_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `group` varchar(60) NOT NULL DEFAULT '',
+  `service_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `group` varchar(64) NOT NULL DEFAULT '',
   `user` varchar(60) NOT NULL DEFAULT '',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`service_id`,`group`,`user`),
   KEY `group` (`group`),
   KEY `user` (`user`)
@@ -7034,7 +7043,7 @@ DROP TABLE IF EXISTS `lic_settings`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lic_settings` (
-  `user_id` smallint(8) unsigned NOT NULL DEFAULT '0',
+  `user_id` smallint(8) unsigned NOT NULL DEFAULT 0,
   `name` varchar(50) NOT NULL DEFAULT '',
   `value` varchar(1024) NOT NULL DEFAULT '',
   PRIMARY KEY (`user_id`,`name`)
@@ -7055,6 +7064,44 @@ CREATE TABLE `lic_users_winsp` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `notification_queue`
+--
+
+DROP TABLE IF EXISTS `notification_queue`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `notification_queue` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `notification_list_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `topic` varchar(20) NOT NULL DEFAULT '',
+  `object_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `object_name` varchar(128) NOT NULL DEFAULT '',
+  `host_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `site_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `hostname` varchar(64) NOT NULL DEFAULT '',
+  `delay_notify` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `delay_type` varchar(10) NOT NULL DEFAULT '',
+  `delay_start` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `delay_end` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `delay_clear` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `event_time` timestamp NOT NULL DEFAULT current_timestamp(),
+  `event_data` longblob NOT NULL DEFAULT '',
+  `error_code` int(10) NOT NULL DEFAULT 0,
+  `error_message` varchar(128) NOT NULL DEFAULT '',
+  `process_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `event_processed` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `event_processed_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `event_processed_runtime` double unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `topic_processed` (`topic`,`event_processed`),
+  KEY `process_id` (`process_id`),
+  KEY `object_id` (`object_id`),
+  KEY `host_id` (`host_id`),
+  KEY `hostname` (`hostname`)
+) ENGINE=InnoDB COMMENT='Holds Transactions to be processed by Thold';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `plugin_config`
 --
 
@@ -7065,7 +7112,7 @@ CREATE TABLE `plugin_config` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `directory` varchar(32) NOT NULL DEFAULT '',
   `name` varchar(64) NOT NULL DEFAULT '',
-  `status` tinyint(2) NOT NULL DEFAULT '0',
+  `status` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `author` varchar(64) NOT NULL DEFAULT '',
   `webpage` varchar(255) NOT NULL DEFAULT '',
   `version` varchar(10) NOT NULL DEFAULT '',
@@ -7081,7 +7128,7 @@ CREATE TABLE `plugin_config` (
 
 LOCK TABLES `plugin_config` WRITE;
 /*!40000 ALTER TABLE `plugin_config` DISABLE KEYS */;
-INSERT INTO `plugin_config` VALUES (1,'syslog','Syslog Monitoring',1,'The Cacti Group','http://www.cacti.net','2.3'),(2,'thold','Thresholds',1,'The Cacti Group','http://www.cacti.net','1.5.2'),(3,'RTM','IBM Spectrum LSF RTM Console',1,'IBM Corporation','http://www.ibm.com','10.2.0.15'),(4,'grid','IBM Spectrum LSF RTM Grid Plugin',1,'IBM Corporation','http://www.ibm.com','10.2.0.15'),(5,'heuristics','IBM Spectrum LSF RTM User Heuristics Dashboard',1,'IBM Corporation','http://www.ibm.com','10.2.0.14'),(6,'gridcstat','IBM Spectrum LSF RTM Cluster Statistics Plugin',1,'IBM Corporation','http://www.ibm.com','10.2.0.14'),(7,'meta','IBM Spectrum LSF RTM MetaData',1,'IBM Corporation','http://www.ibm.com','10.2.0.14'),(8,'gridalarms','IBM Spectrum LSF RTM Alerting Plugin',1,'IBM Corporation','http://www.ibm.com','10.2.0.15'),(9,'license','IBM Spectrum LSF RTM License Monitor',1,'IBM Corporation','http://www.ibm.com','10.2.0.14'),(10,'gridpend','IBM Spectrum LSF RTM Pending Reasons Statistics Plugin',1,'IBM Corporation','http://www.ibm.com','10.2.0.14'),(11,'gridblstat','IBM Spectrum LSF RTM License Scheduler Plugin',1,'IBM Corporation','http://www.ibm.com','10.2.0.14'),(12,'benchmark','IBM Spectrum LSF RTM Benchmark Utilities',1,'IBM Corporation','http://www.ibm.com','10.2.0.14'),(13,'disku','IBM Spectrum LSF RTM Disk Monitoring Plugin',1,'IBM Corporation','http://www.ibm.com','10.2.0.14'),(14,'lichist','IBM Spectrum LSF RTM License Checkout History Viewer',1,'IBM Corporation','http://www.ibm.com','10.2.0.14');
+INSERT INTO `plugin_config` VALUES (1,'syslog','Syslog Monitoring',1,'The Cacti Group','http://www.cacti.net','2.3'),(2,'thold','Thresholds',1,'The Cacti Group','http://www.cacti.net','1.8'),(3,'RTM','IBM Spectrum LSF RTM Console',1,'IBM Corporation','http://www.ibm.com','10.2.0.15'),(4,'grid','IBM Spectrum LSF RTM Grid Plugin',1,'IBM Corporation','http://www.ibm.com','10.2.0.15'),(5,'heuristics','IBM Spectrum LSF RTM User Heuristics Dashboard',1,'IBM Corporation','http://www.ibm.com','10.2.0.14'),(6,'gridcstat','IBM Spectrum LSF RTM Cluster Statistics Plugin',1,'IBM Corporation','http://www.ibm.com','10.2.0.14'),(7,'meta','IBM Spectrum LSF RTM MetaData',1,'IBM Corporation','http://www.ibm.com','10.2.0.14'),(8,'gridalarms','IBM Spectrum LSF RTM Alerting Plugin',1,'IBM Corporation','http://www.ibm.com','10.2.0.15'),(9,'license','IBM Spectrum LSF RTM License Monitor',1,'IBM Corporation','http://www.ibm.com','10.2.0.14'),(10,'gridpend','IBM Spectrum LSF RTM Pending Reasons Statistics Plugin',1,'IBM Corporation','http://www.ibm.com','10.2.0.14'),(11,'gridblstat','IBM Spectrum LSF RTM License Scheduler Plugin',1,'IBM Corporation','http://www.ibm.com','10.2.0.14'),(12,'benchmark','IBM Spectrum LSF RTM Benchmark Utilities',1,'IBM Corporation','http://www.ibm.com','10.2.0.14'),(13,'disku','IBM Spectrum LSF RTM Disk Monitoring Plugin',1,'IBM Corporation','http://www.ibm.com','10.2.0.14'),(14,'lichist','IBM Spectrum LSF RTM License Checkout History Viewer',1,'IBM Corporation','http://www.ibm.com','10.2.0.14');
 /*!40000 ALTER TABLE `plugin_config` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -7110,7 +7157,7 @@ CREATE TABLE `plugin_db_changes` (
 
 LOCK TABLES `plugin_db_changes` WRITE;
 /*!40000 ALTER TABLE `plugin_db_changes` DISABLE KEYS */;
-INSERT INTO `plugin_db_changes` VALUES (1,'thold','thold_data','','create'),(2,'thold','thold_template','','create'),(3,'thold','plugin_thold_contacts','','create'),(4,'thold','plugin_thold_template_contact','','create'),(5,'thold','plugin_thold_threshold_contact','','create'),(6,'thold','plugin_thold_log','','create'),(7,'thold','plugin_notification_lists','','create'),(8,'thold','host','thold_send_email','addcolumn'),(9,'thold','host','thold_host_email','addcolumn'),(10,'thold','plugin_thold_host_failed','','create'),(11,'thold','plugin_thold_daemon_data','','create'),(12,'thold','plugin_thold_daemon_processes','','create'),(13,'thold','plugin_thold_host_template','','create'),(14,'grid','host','clusterid','addcolumn'),(15,'grid','host','monitor','addcolumn'),(16,'grid','grid_clusters_queue_reportdata','','create'),(17,'grid','grid_clusters_reportdata','','create'),(18,'grid','grid_heuristics','','create'),(19,'grid','grid_heuristics_percentiles','','create'),(20,'heuristics','grid_heuristics','','create'),(21,'heuristics','grid_heuristics_user_history_today','','create'),(22,'heuristics','grid_heuristics_user_history_yesterday','','create'),(23,'heuristics','grid_heuristics_user_stats','','create'),(24,'gridalarms','gridalarms_alarm','','create'),(25,'gridalarms','gridalarms_alarm_contacts','','create'),(26,'gridalarms','gridalarms_alarm_layout','','create'),(27,'gridalarms','gridalarms_alarm_log','','create'),(28,'gridalarms','gridalarms_alarm_log_items','','create'),(29,'gridalarms','gridalarms_expression','','create'),(30,'gridalarms','gridalarms_expression_input','','create'),(31,'gridalarms','gridalarms_expression_item','','create'),(32,'gridalarms','gridalarms_metric','','create'),(33,'gridalarms','gridalarms_metric_expression','','create'),(34,'gridalarms','gridalarms_template','','create'),(35,'gridalarms','gridalarms_template_contacts','','create'),(36,'gridalarms','gridalarms_template_expression','','create'),(37,'gridalarms','gridalarms_template_expression_input','','create'),(38,'gridalarms','gridalarms_template_expression_item','','create'),(39,'gridalarms','gridalarms_template_layout','','create'),(40,'gridalarms','gridalarms_template_metric','','create'),(41,'gridalarms','gridalarms_template_metric_expression','','create'),(42,'gridalarms','thold_data','gridadmin_action_level','addcolumn'),(43,'gridalarms','thold_data','host_action_high','addcolumn'),(44,'gridalarms','thold_data','host_action_low','addcolumn'),(45,'gridalarms','thold_data','job_action_high','addcolumn'),(46,'gridalarms','thold_data','job_target_high','addcolumn'),(47,'gridalarms','thold_data','job_signal_high','addcolumn'),(48,'gridalarms','thold_data','job_action_low','addcolumn'),(49,'gridalarms','thold_data','job_target_low','addcolumn'),(50,'gridalarms','thold_data','job_signal_low','addcolumn'),(51,'gridalarms','thold_template','gridadmin_action_level','addcolumn'),(52,'gridalarms','thold_template','host_action_high','addcolumn'),(53,'gridalarms','thold_template','host_action_low','addcolumn'),(54,'gridalarms','thold_template','job_action_high','addcolumn'),(55,'gridalarms','thold_template','job_target_high','addcolumn'),(56,'gridalarms','thold_template','job_signal_high','addcolumn'),(57,'gridalarms','thold_template','job_action_low','addcolumn'),(58,'gridalarms','thold_template','job_target_low','addcolumn'),(59,'gridalarms','thold_template','job_signal_low','addcolumn'),(60,'license','host','lic_server_id','addcolumn'),(61,'gridalarms','thold_data','host_action_high_lockid','addcolumn'),(62,'gridalarms','thold_data','host_action_low_lockid','addcolumn'),(63,'grid','user_auth','grid_settings','addcolumn'),(64,'thold','host','thold_failure_count','addcolumn');
+INSERT INTO `plugin_db_changes` VALUES (1,'thold','thold_data','','create'),(2,'thold','thold_template','','create'),(3,'thold','plugin_thold_contacts','','create'),(4,'thold','plugin_thold_template_contact','','create'),(5,'thold','plugin_thold_threshold_contact','','create'),(6,'thold','plugin_thold_log','','create'),(7,'thold','plugin_notification_lists','','create'),(8,'thold','host','thold_send_email','addcolumn'),(9,'thold','host','thold_host_email','addcolumn'),(10,'thold','plugin_thold_host_failed','','create'),(11,'thold','plugin_thold_daemon_data','','create'),(12,'thold','plugin_thold_daemon_processes','','create'),(13,'thold','plugin_thold_host_template','','create'),(14,'grid','host','clusterid','addcolumn'),(15,'grid','host','monitor','addcolumn'),(16,'grid','grid_clusters_queue_reportdata','','create'),(17,'grid','grid_clusters_reportdata','','create'),(18,'grid','grid_heuristics','','create'),(19,'grid','grid_heuristics_percentiles','','create'),(20,'heuristics','grid_heuristics_user_history_today','','create'),(21,'heuristics','grid_heuristics_user_history_yesterday','','create'),(22,'heuristics','grid_heuristics_user_stats','','create'),(23,'gridalarms','gridalarms_alarm','','create'),(24,'gridalarms','gridalarms_alarm_contacts','','create'),(25,'gridalarms','gridalarms_alarm_layout','','create'),(26,'gridalarms','gridalarms_alarm_log','','create'),(27,'gridalarms','gridalarms_alarm_log_items','','create'),(28,'gridalarms','gridalarms_expression','','create'),(29,'gridalarms','gridalarms_expression_input','','create'),(30,'gridalarms','gridalarms_expression_item','','create'),(31,'gridalarms','gridalarms_metric','','create'),(32,'gridalarms','gridalarms_metric_expression','','create'),(33,'gridalarms','gridalarms_template','','create'),(34,'gridalarms','gridalarms_template_contacts','','create'),(35,'gridalarms','gridalarms_template_expression','','create'),(36,'gridalarms','gridalarms_template_expression_input','','create'),(37,'gridalarms','gridalarms_template_expression_item','','create'),(38,'gridalarms','gridalarms_template_layout','','create'),(39,'gridalarms','gridalarms_template_metric','','create'),(40,'gridalarms','gridalarms_template_metric_expression','','create'),(41,'gridalarms','thold_data','gridadmin_action_level','addcolumn'),(42,'gridalarms','thold_data','host_action_high','addcolumn'),(43,'gridalarms','thold_data','host_action_low','addcolumn'),(44,'gridalarms','thold_data','job_action_high','addcolumn'),(45,'gridalarms','thold_data','job_target_high','addcolumn'),(46,'gridalarms','thold_data','job_signal_high','addcolumn'),(47,'gridalarms','thold_data','job_action_low','addcolumn'),(48,'gridalarms','thold_data','job_target_low','addcolumn'),(49,'gridalarms','thold_data','job_signal_low','addcolumn'),(50,'gridalarms','thold_template','gridadmin_action_level','addcolumn'),(51,'gridalarms','thold_template','host_action_high','addcolumn'),(52,'gridalarms','thold_template','host_action_low','addcolumn'),(53,'gridalarms','thold_template','job_action_high','addcolumn'),(54,'gridalarms','thold_template','job_target_high','addcolumn'),(55,'gridalarms','thold_template','job_signal_high','addcolumn'),(56,'gridalarms','thold_template','job_action_low','addcolumn'),(57,'gridalarms','thold_template','job_target_low','addcolumn'),(58,'gridalarms','thold_template','job_signal_low','addcolumn'),(59,'license','host','lic_server_id','addcolumn'),(60,'gridalarms','thold_data','host_action_high_lockid','addcolumn'),(61,'gridalarms','thold_data','host_action_low_lockid','addcolumn'),(62,'grid','user_auth','grid_settings','addcolumn'),(63,'thold','host','thold_failure_count','addcolumn'),(64,'thold','plugin_thold_host','','create'),(65,'thold','notification_queue','','create');
 /*!40000 ALTER TABLE `plugin_db_changes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -7127,7 +7174,7 @@ CREATE TABLE `plugin_hooks` (
   `hook` varchar(64) NOT NULL DEFAULT '',
   `file` varchar(255) NOT NULL DEFAULT '',
   `function` varchar(128) NOT NULL DEFAULT '',
-  `status` int(8) NOT NULL DEFAULT '0',
+  `status` int(10) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `hook` (`hook`),
   KEY `status` (`status`)
@@ -7140,7 +7187,7 @@ CREATE TABLE `plugin_hooks` (
 
 LOCK TABLES `plugin_hooks` WRITE;
 /*!40000 ALTER TABLE `plugin_hooks` DISABLE KEYS */;
-INSERT INTO `plugin_hooks` VALUES (1,'internal','config_arrays','','plugin_config_arrays',1),(2,'internal','draw_navigation_text','','plugin_draw_navigation_text',1),(3,'syslog','config_arrays','setup.php','syslog_config_arrays',1),(4,'syslog','draw_navigation_text','setup.php','syslog_draw_navigation_text',1),(5,'syslog','config_settings','setup.php','syslog_config_settings',1),(6,'syslog','top_header_tabs','setup.php','syslog_show_tab',1),(7,'syslog','top_graph_header_tabs','setup.php','syslog_show_tab',1),(8,'syslog','top_graph_refresh','setup.php','syslog_top_graph_refresh',1),(9,'syslog','poller_bottom','setup.php','syslog_poller_bottom',1),(10,'syslog','graph_buttons','setup.php','syslog_graph_buttons',1),(11,'syslog','config_insert','setup.php','syslog_config_insert',1),(12,'syslog','utilities_list','setup.php','syslog_utilities_list',1),(13,'syslog','utilities_action','setup.php','syslog_utilities_action',1),(14,'thold','page_head','setup.php','thold_page_head',1),(15,'thold','top_header_tabs','includes/tab.php','thold_show_tab',1),(16,'thold','top_graph_header_tabs','includes/tab.php','thold_show_tab',1),(19,'thold','config_form','includes/settings.php','thold_config_form',1),(20,'thold','config_settings','includes/settings.php','thold_config_settings',1),(21,'thold','draw_navigation_text','includes/settings.php','thold_draw_navigation_text',1),(22,'thold','poller_output','includes/polling.php','thold_poller_output',1),(23,'thold','device_action_array','setup.php','thold_device_action_array',1),(24,'thold','device_action_execute','setup.php','thold_device_action_execute',1),(25,'thold','device_action_prepare','setup.php','thold_device_action_prepare',1),(26,'thold','api_device_save','setup.php','thold_api_device_save',1),(27,'thold','host_edit_bottom','setup.php','thold_host_edit_bottom',1),(28,'thold','device_threshold_autocreate','setup.php','thold_device_autocreate',1),(29,'thold','create_complete_graph_from_template','setup.php','thold_create_graph_thold',1),(30,'thold','poller_bottom','includes/polling.php','thold_poller_bottom',1),(31,'thold','graph_buttons','setup.php','thold_graph_button',1),(32,'thold','graph_buttons_thumbnails','setup.php','thold_graph_button',1),(33,'thold','data_source_action_array','setup.php','thold_data_source_action_array',1),(34,'thold','data_source_action_prepare','setup.php','thold_data_source_action_prepare',1),(35,'thold','data_source_action_execute','setup.php','thold_data_source_action_execute',1),(36,'thold','data_source_remove','setup.php','thold_data_source_remove',1),(37,'thold','data_sources_table','setup.php','thold_data_sources_table',1),(38,'thold','graphs_action_array','setup.php','thold_graphs_action_array',1),(39,'thold','graphs_action_prepare','setup.php','thold_graphs_action_prepare',1),(40,'thold','graphs_action_execute','setup.php','thold_graphs_action_execute',1),(41,'thold','device_template_edit','setup.php','thold_device_template_edit',1),(42,'thold','device_template_top','setup.php','thold_device_template_top',1),(43,'thold','device_edit_pre_bottom','setup.php','thold_device_edit_pre_bottom',1),(44,'thold','api_device_new','setup.php','thold_api_device_new',1),(45,'thold','graphs_new_top_links','setup.php','thold_graphs_new',1),(46,'thold','update_host_status','includes/polling.php','thold_update_host_status',1),(47,'thold','user_admin_setup_sql_save','setup.php','thold_user_admin_setup_sql_save',1),(48,'thold','rrd_graph_graph_options','setup.php','thold_rrd_graph_graph_options',1),(49,'thold','snmpagent_cache_install','setup.php','thold_snmpagent_cache_install',1),(50,'thold','clog_regex_array','setup.php','thold_clog_regex_array',1),(51,'RTM','custom_login','include/auth_login.php','rtm_custom_login',1),(52,'RTM','custom_denied','include/permission_denied.php','rtm_custom_denied',1),(53,'RTM','custom_logout','include/logout.php','rtm_custom_logout',1),(54,'RTM','custom_logout_message','include/logout.php','rtm_custom_logout',1),(55,'RTM','custom_password','include/auth_changepassword.php','rtm_custom_password',1),(56,'RTM','console_before','setup.php','rtm_console_before',1),(57,'RTM','page_head','setup.php','rtm_page_head',1),(58,'grid','top_header_tabs','setup.php','grid_show_tab',1),(59,'grid','rtm_landing_page','setup.php','grid_rtm_landing_page',1),(60,'grid','console_after','setup.php','grid_console_after',1),(61,'grid','top_graph_header_tabs','setup.php','grid_show_tab',1),(62,'grid','page_head','setup.php','grid_page_head',1),(63,'grid','config_form','setup.php','grid_config_form',1),(64,'grid','api_device_save','setup.php','grid_api_device_save',1),(65,'grid','copy_user','setup.php','grid_copy_user',1),(66,'grid','user_remove','setup.php','grid_user_remove',1),(67,'grid','config_arrays','setup.php','grid_config_arrays',1),(68,'grid','draw_navigation_text','setup.php','grid_draw_navigation_text',1),(69,'grid','config_settings','setup.php','grid_config_settings',1),(70,'grid','login_options_navigate','setup.php','grid_login_navigate',1),(71,'grid','valid_host_fields','setup.php','grid_valid_host_fields',1),(72,'grid','substitute_host_data','setup.php','grid_substitute_host_data',1),(73,'grid','user_admin_run_action','setup.php','grid_user_settings_edit',1),(74,'grid','user_admin_action','setup.php','grid_user_edit',1),(75,'grid','user_admin_tab','setup.php','grid_user_edit_show_tab',1),(76,'grid','user_admin_user_save','setup.php','grid_user_save',1),(77,'grid','user_admin_setup_sql_save','setup.php','grid_user_setup_sql_save',1),(78,'grid','graph_buttons','setup.php','grid_graph_buttons',1),(79,'grid','graph_buttons_thumbnails','setup.php','grid_graph_buttons',1),(80,'grid','poller_top','setup.php','grid_poller_top',1),(81,'grid','poller_bottom','setup.php','grid_poller_bottom',1),(82,'grid','config_insert','setup.php','grid_config',1),(83,'grid','device_action_array','setup.php','grid_device_action_array',1),(84,'grid','device_action_prepare','setup.php','grid_device_action_prepare',1),(85,'grid','device_action_execute','setup.php','grid_device_action_execute',1),(86,'grid','thold_update_hostsalarm','setup.php','grid_thold_update_hostsalarm',1),(87,'grid','thold_reset_hostsalarm','setup.php','grid_thold_reset_hostsalarm',1),(88,'grid','thold_delete_hostsalarm','setup.php','grid_thold_delete_hostsalarm',1),(89,'grid','gridalarms_update_hostsalarm','setup.php','grid_gridalarms_update_hostsalarm',1),(90,'grid','gridalarms_reset_hostsalarm','setup.php','grid_gridalarms_reset_hostsalarm',1),(91,'grid','gridalarms_delete_hostsalarm','setup.php','grid_gridalarms_delete_hostsalarm',1),(92,'grid','syslog_update_hostsalarm','setup.php','grid_syslog_update_hostsalarm',1),(93,'grid','syslog_delete_hostsalarm','setup.php','grid_syslog_delete_hostsalarm',1),(94,'grid','custom_version_info','setup.php','grid_custom_version_info',1),(95,'grid','graphs_remove','setup.php','grid_graphs_remove',1),(96,'grid','graphs_item_array','setup.php','grid_graphs_item_array',1),(97,'grid','graph_edit_after','setup.php','grid_graph_edit_after',1),(98,'grid','resolve_dependencies','setup.php','grid_elim_resolve_dependencies',1),(99,'grid','export_action','setup.php','grid_elim_template_to_xml',1),(100,'grid','import_action','setup.php','grid_elim_xml_to_template',1),(101,'grid','filter_views','setup.php','grid_filter_views',1),(102,'grid','filter_graphs','setup.php','grid_filter_graphs',1),(103,'grid','view_cluster_summary','setup.php','grid_view_cluster_summary',1),(104,'grid','view_cluster_status','setup.php','grid_view_cluster_status',1),(105,'grid','view_cluster_master','setup.php','grid_view_cluster_master',1),(106,'grid','view_cluster_tput','setup.php','grid_view_cluster_tput',1),(107,'grid','view_cluster_perfmon','setup.php','grid_view_cluster_perfmon',1),(108,'grid','view_cluster_benchmark_exceptional_jobs','setup.php','grid_view_cluster_benchmark_exceptional_jobs',1),(109,'grid','graph_cluster_limstat','setup.php','grid_graph_cluster_limstat',1),(110,'grid','graph_cluster_batchstat','setup.php','grid_graph_cluster_batchstat',1),(111,'grid','graph_cluster_gridstat','setup.php','grid_graph_cluster_gridstat',1),(112,'grid','graph_cluster_memavastat','setup.php','grid_graph_cluster_memavastat',1),(113,'grid','auth_profile_tabs','setup.php','grid_auth_profile_tabs',1),(114,'grid','auth_profile_update_data','setup.php','grid_auth_profile_update_data',1),(115,'grid','auth_profile_run_action','setup.php','grid_auth_profile_run_action',1),(116,'grid','auth_profile_save','setup.php','grid_auth_profile_save',1),(117,'heuristics','config_arrays','setup.php','heuristics_config_arrays',1),(118,'heuristics','config_form','setup.php','heuristics_config_form',1),(119,'heuristics','draw_navigation_text','setup.php','heuristics_draw_navigation_text',1),(120,'heuristics','config_settings','setup.php','heuristics_config_settings',1),(121,'heuristics','top_header_tabs','setup.php','heuristics_show_tab',1),(122,'heuristics','top_graph_header_tabs','setup.php','heuristics_show_tab',1),(123,'heuristics','poller_bottom','setup.php','heuristics_poller_bottom',1),(124,'heuristics','page_head','setup.php','heuristics_page_head',1),(125,'heuristics','login_options_navigate','setup.php','heuristics_login_navigate',1),(126,'heuristics','grid_busers_icon','setup.php','heuristics_busers_icon',1),(127,'heuristics','grid_jobs_sql_where','setup.php','heuristics_jobs_sql_where',1),(128,'heuristics','grid_menu','setup.php','heuristics_grid_menu',1),(129,'gridcstat','config_arrays','setup.php','gridcstat_config_arrays',1),(130,'gridcstat','draw_navigation_text','setup.php','gridcstat_draw_navigation_text',1),(131,'gridcstat','poller_bottom','setup.php','gridcstat_poller_bottom',1),(132,'gridcstat','grid_tab_down','setup.php','cstat_grid_tab_down',1),(133,'gridcstat','grid_menu','setup.php','cstat_grid_menu',1),(134,'meta','config_arrays','setup.php','meta_config_arrays',1),(135,'meta','draw_navigation_text','setup.php','meta_draw_navigation_text',1),(136,'meta','page_head','lib/metadata_api.php','meta_page_head',1),(137,'meta','grid_page_bottom','lib/metadata_api.php','meta_page_bottom',1),(138,'meta','lic_page_bottom','lib/metadata_api.php','meta_page_bottom',1),(139,'meta','grid_user_details','lib/metadata_api.php','meta_user_details',1),(140,'meta','grid_object_details','lib/metadata_api.php','meta_object_details',1),(141,'meta','grid_meta_settings_tab','lib/metadata_api.php','meta_settings_tab',1),(142,'meta','grid_meta_column_header','lib/metadata_api.php','meta_column_header',1),(143,'meta','grid_meta_column_content','lib/metadata_api.php','meta_column_content',1),(144,'meta','grid_meta_param','lib/metadata_api.php','meta_param',1),(145,'meta','grid_meta_param_where','lib/metadata_api.php','meta_param_where',1),(146,'meta','grid_meta_column_filter','lib/metadata_api.php','meta_column_filter',1),(147,'gridalarms','config_arrays','includes/settings.php','gridalarms_config_arrays',1),(148,'gridalarms','draw_navigation_text','setup.php','gridalarms_draw_navigation_text',1),(149,'gridalarms','poller_bottom','setup.php','gridalarms_poller_bottom',1),(150,'gridalarms','page_bottom','setup.php','gridalarms_bottom_footer',1),(151,'gridalarms','config_settings','includes/settings.php','gridalarms_config_settings',1),(152,'gridalarms','grid_tab_down','setup.php','gridalarms_grid_tab_down',1),(153,'gridalarms','grid_menu','setup.php','gridalarms_grid_menu',1),(154,'gridalarms','rtm_landing_page','setup.php','gridalarms_rtm_landing_page',1),(155,'gridalarms','notify_list_tabs','includes/notify.php','gridalarms_notify_list_tabs',1),(156,'gridalarms','notify_list_save','includes/notify.php','gridalarms_notify_list_save',1),(157,'gridalarms','notify_list_form_confirm','includes/notify.php','gridalarms_notify_list_form_confirm',1),(158,'gridalarms','notify_list_display','includes/notify.php','gridalarms_notify_list_display',1),(159,'gridalarms','thold_edit_save_thold','includes/thold.php','gridalarms_th_edit_save_thold',1),(160,'gridalarms','thold_edit_form_array','includes/thold.php','gridalarms_th_edit_form_array',1),(161,'gridalarms','thold_edit_javascript','includes/thold.php','gridalarms_th_edit_javascript',1),(162,'gridalarms','thold_template_edit_save_thold','includes/thold.php','gridalarms_tht_edit_save_thold',1),(163,'gridalarms','thold_template_edit_form_array','includes/thold.php','gridalarms_th_edit_form_array',1),(164,'gridalarms','thold_template_edit_javascript','includes/thold.php','gridalarms_th_edit_javascript',1),(165,'gridalarms','thold_action','includes/thold.php','gridalarms_thold_action',1),(166,'gridalarms','thold_replacement_text','includes/thold.php','gridalarms_thold_replacement_text',1),(167,'gridalarms','thold_graph_tabs','includes/thold.php','gridalarms_thold_graph_tabs',1),(168,'gridalarms','thold_graph_view','includes/thold.php','gridalarms_thold_graph_view',1),(169,'gridalarms','thold_graph_actions_url','includes/thold.php','gridalarms_thold_graph_actions_url',1),(170,'gridalarms','expand_title','includes/thold.php','gridalarms_expand_title',1),(171,'gridalarms','page_head','setup.php','gridalarms_page_head',1),(172,'license','top_header_tabs','setup.php','license_show_tab',1),(173,'license','top_graph_header_tabs','setup.php','license_show_tab',1),(174,'license','config_arrays','setup.php','license_config_arrays',1),(175,'license','config_settings','setup.php','license_config_settings',1),(176,'license','config_form','setup.php','license_config_form',1),(177,'license','api_device_save','setup.php','license_api_device_save',1),(178,'license','login_options_navigate','setup.php','license_login_navigate',1),(179,'license','draw_navigation_text','setup.php','license_draw_navigation_text',1),(180,'license','poller_bottom','setup.php','license_poller_bottom',1),(181,'license','substitute_host_data','setup.php','license_substitute_host_data',1),(182,'license','valid_host_fields','setup.php','license_valid_host_fields',1),(183,'license','rtm_landing_page','setup.php','license_rtm_landing_page',1),(184,'gridpend','config_arrays','setup.php','gridpend_config_arrays',1),(185,'gridpend','config_settings','setup.php','gridpend_config_settings',1),(186,'gridpend','draw_navigation_text','setup.php','gridpend_draw_navigation_text',1),(187,'gridpend','poller_bottom','setup.php','gridpend_poller_bottom',1),(188,'gridpend','grid_tab_down','setup.php','gridpend_grid_tab_down',1),(189,'gridpend','grid_menu','setup.php','gridpend_grid_menu',1),(190,'gridpend','poller_command_args','setup.php','gridpend_poller_command_args',1),(191,'gridblstat','config_settings','setup.php','gridblstat_config_settings',1),(192,'gridblstat','config_arrays','setup.php','gridblstat_config_arrays',1),(193,'gridblstat','poller_bottom','setup.php','gridblstat_poller_bottom',1),(194,'gridblstat','draw_navigation_text','setup.php','gridblstat_navigation',1),(195,'gridblstat','grid_menu','setup.php','gridblstat_grid_menu',1),(196,'gridblstat','grid_tab_down','setup.php','gridblstat_grid_tab_down',1),(197,'benchmark','config_arrays','setup.php','benchmark_config_arrays',1),(198,'benchmark','poller_bottom','setup.php','benchmark_poller_bottom',1),(199,'benchmark','draw_navigation_text','setup.php','benchmark_draw_navigation_text',1),(200,'benchmark','config_settings','setup.php','benchmark_config_settings',1),(201,'benchmark','grid_tab_down','setup.php','benchmark_grid_tab_down',1),(202,'benchmark','grid_menu','setup.php','benchmark_grid_menu',1),(203,'disku','top_header_tabs','setup.php','disku_show_tab',1),(204,'disku','top_graph_header_tabs','setup.php','disku_show_tab',1),(205,'disku','config_arrays','setup.php','disku_config_arrays',1),(206,'disku','config_settings','setup.php','disku_config_settings',1),(207,'disku','config_form','setup.php','disku_config_form',1),(208,'disku','api_device_save','setup.php','disku_api_device_save',1),(209,'disku','draw_navigation_text','setup.php','disku_draw_navigation_text',1),(210,'disku','poller_bottom','setup.php','disku_poller_bottom',1),(211,'disku','valid_host_fields','setup.php','disku_valid_host_fields',1),(212,'disku','grid_tab_down','setup.php','disku_grid_tab_down',1),(213,'disku','grid_menu','setup.php','disku_grid_menu',1),(214,'lichist','grid_jobs_tabs','setup.php','lichist_jobs_tabs',1),(215,'lichist','grid_jobs_show_tab','setup.php','lichist_jobs_show_tab',1),(216,'lichist','poller_bottom','setup.php','lichist_poller_bottom',1),(217,'lichist','draw_navigation_text','setup.php','lichist_draw_navigation_text',1),(218,'grid','customize_graph','setup.php','grid_elim_customize_graph',1),(219,'grid','customize_template_details','setup.php','grid_elim_customize_template_details',1),(220,'grid','device_filter_start','setup.php','grid_device_filter_start',1),(221,'grid','device_sql_where','setup.php','grid_device_sql_where',1),(222,'grid','device_display_text','setup.php','grid_device_display_text',1),(223,'grid','device_table_replace','setup.php','grid_device_table_replace',1),(224,'thold','config_insert','includes/settings.php','thold_config_insert',1),(225,'thold','config_arrays','includes/settings.php','thold_config_arrays',1);
+INSERT INTO `plugin_hooks` VALUES (1,'internal','config_arrays','','plugin_config_arrays',1),(2,'internal','draw_navigation_text','','plugin_draw_navigation_text',1),(3,'syslog','config_arrays','setup.php','syslog_config_arrays',1),(4,'syslog','draw_navigation_text','setup.php','syslog_draw_navigation_text',1),(5,'syslog','config_settings','setup.php','syslog_config_settings',1),(6,'syslog','top_header_tabs','setup.php','syslog_show_tab',1),(7,'syslog','top_graph_header_tabs','setup.php','syslog_show_tab',1),(8,'syslog','top_graph_refresh','setup.php','syslog_top_graph_refresh',1),(9,'syslog','poller_bottom','setup.php','syslog_poller_bottom',1),(10,'syslog','graph_buttons','setup.php','syslog_graph_buttons',1),(11,'syslog','config_insert','setup.php','syslog_config_insert',1),(12,'syslog','utilities_list','setup.php','syslog_utilities_list',1),(13,'syslog','utilities_action','setup.php','syslog_utilities_action',1),(14,'thold','page_head','setup.php','thold_page_head',1),(15,'thold','top_header_tabs','includes/tab.php','thold_show_tab',1),(16,'thold','top_graph_header_tabs','includes/tab.php','thold_show_tab',1),(19,'thold','config_form','includes/settings.php','thold_config_form',1),(20,'thold','config_settings','includes/settings.php','thold_config_settings',1),(21,'thold','draw_navigation_text','includes/settings.php','thold_draw_navigation_text',1),(22,'thold','poller_output','includes/polling.php','thold_poller_output',1),(23,'thold','device_action_array','setup.php','thold_device_action_array',1),(24,'thold','device_action_execute','setup.php','thold_device_action_execute',1),(25,'thold','device_action_prepare','setup.php','thold_device_action_prepare',1),(26,'thold','api_device_save','setup.php','thold_api_device_save',1),(27,'thold','host_edit_bottom','setup.php','thold_host_edit_bottom',1),(28,'thold','device_threshold_autocreate','setup.php','thold_device_autocreate',1),(29,'thold','create_complete_graph_from_template','setup.php','thold_create_graph_thold',1),(30,'thold','poller_bottom','includes/polling.php','thold_poller_bottom',1),(31,'thold','graph_buttons','setup.php','thold_graph_button',1),(32,'thold','graph_buttons_thumbnails','setup.php','thold_graph_button',1),(33,'thold','data_source_action_array','setup.php','thold_data_source_action_array',1),(34,'thold','data_source_action_prepare','setup.php','thold_data_source_action_prepare',1),(35,'thold','data_source_action_execute','setup.php','thold_data_source_action_execute',1),(36,'thold','data_source_remove','setup.php','thold_data_source_remove',1),(37,'thold','data_sources_table','setup.php','thold_data_sources_table',1),(38,'thold','graphs_action_array','setup.php','thold_graphs_action_array',1),(39,'thold','graphs_action_prepare','setup.php','thold_graphs_action_prepare',1),(40,'thold','graphs_action_execute','setup.php','thold_graphs_action_execute',1),(41,'thold','device_template_edit','setup.php','thold_device_template_edit',1),(42,'thold','device_template_top','setup.php','thold_device_template_top',1),(43,'thold','device_edit_pre_bottom','setup.php','thold_device_edit_pre_bottom',1),(44,'thold','api_device_new','setup.php','thold_api_device_new',1),(45,'thold','graphs_new_top_links','setup.php','thold_graphs_new',1),(46,'thold','update_host_status','includes/polling.php','thold_update_host_status',1),(47,'thold','user_admin_setup_sql_save','setup.php','thold_user_admin_setup_sql_save',1),(48,'thold','rrd_graph_graph_options','setup.php','thold_rrd_graph_graph_options',1),(49,'thold','snmpagent_cache_install','setup.php','thold_snmpagent_cache_install',1),(50,'thold','clog_regex_array','setup.php','thold_clog_regex_array',1),(51,'RTM','custom_login','include/auth_login.php','rtm_custom_login',1),(52,'RTM','custom_denied','include/permission_denied.php','rtm_custom_denied',1),(53,'RTM','custom_logout','include/logout.php','rtm_custom_logout',1),(54,'RTM','custom_logout_message','include/logout.php','rtm_custom_logout',1),(55,'RTM','custom_password','include/auth_changepassword.php','rtm_custom_password',1),(56,'RTM','console_before','setup.php','rtm_console_before',1),(57,'RTM','page_head','setup.php','rtm_page_head',1),(58,'grid','top_header_tabs','setup.php','grid_show_tab',1),(59,'grid','rtm_landing_page','setup.php','grid_rtm_landing_page',1),(60,'grid','console_after','setup.php','grid_console_after',1),(61,'grid','top_graph_header_tabs','setup.php','grid_show_tab',1),(62,'grid','page_head','setup.php','grid_page_head',1),(63,'grid','config_form','setup.php','grid_config_form',1),(64,'grid','api_device_save','setup.php','grid_api_device_save',1),(65,'grid','copy_user','setup.php','grid_copy_user',1),(66,'grid','user_remove','setup.php','grid_user_remove',1),(67,'grid','config_arrays','setup.php','grid_config_arrays',1),(68,'grid','draw_navigation_text','setup.php','grid_draw_navigation_text',1),(69,'grid','config_settings','setup.php','grid_config_settings',1),(70,'grid','login_options_navigate','setup.php','grid_login_navigate',1),(71,'grid','valid_host_fields','setup.php','grid_valid_host_fields',1),(72,'grid','substitute_host_data','setup.php','grid_substitute_host_data',1),(73,'grid','user_admin_run_action','setup.php','grid_user_settings_edit',1),(74,'grid','user_admin_action','setup.php','grid_user_edit',1),(75,'grid','user_admin_tab','setup.php','grid_user_edit_show_tab',1),(76,'grid','user_admin_user_save','setup.php','grid_user_save',1),(77,'grid','user_admin_setup_sql_save','setup.php','grid_user_setup_sql_save',1),(78,'grid','graph_buttons','setup.php','grid_graph_buttons',1),(79,'grid','graph_buttons_thumbnails','setup.php','grid_graph_buttons',1),(80,'grid','poller_top','setup.php','grid_poller_top',1),(81,'grid','poller_bottom','setup.php','grid_poller_bottom',1),(82,'grid','config_insert','setup.php','grid_config',1),(83,'grid','device_action_array','setup.php','grid_device_action_array',1),(84,'grid','device_action_prepare','setup.php','grid_device_action_prepare',1),(85,'grid','device_action_execute','setup.php','grid_device_action_execute',1),(86,'grid','thold_update_hostsalarm','setup.php','grid_thold_update_hostsalarm',1),(87,'grid','thold_reset_hostsalarm','setup.php','grid_thold_reset_hostsalarm',1),(88,'grid','thold_delete_hostsalarm','setup.php','grid_thold_delete_hostsalarm',1),(89,'grid','gridalarms_update_hostsalarm','setup.php','grid_gridalarms_update_hostsalarm',1),(90,'grid','gridalarms_reset_hostsalarm','setup.php','grid_gridalarms_reset_hostsalarm',1),(91,'grid','gridalarms_delete_hostsalarm','setup.php','grid_gridalarms_delete_hostsalarm',1),(92,'grid','syslog_update_hostsalarm','setup.php','grid_syslog_update_hostsalarm',1),(93,'grid','syslog_delete_hostsalarm','setup.php','grid_syslog_delete_hostsalarm',1),(94,'grid','custom_version_info','setup.php','grid_custom_version_info',1),(95,'grid','graphs_remove','setup.php','grid_graphs_remove',1),(96,'grid','graphs_item_array','setup.php','grid_graphs_item_array',1),(97,'grid','graph_edit_after','setup.php','grid_graph_edit_after',1),(98,'grid','resolve_dependencies','setup.php','grid_elim_resolve_dependencies',1),(99,'grid','export_action','setup.php','grid_elim_template_to_xml',1),(100,'grid','import_action','setup.php','grid_elim_xml_to_template',1),(101,'grid','filter_views','setup.php','grid_filter_views',1),(102,'grid','filter_graphs','setup.php','grid_filter_graphs',1),(103,'grid','view_cluster_summary','setup.php','grid_view_cluster_summary',1),(104,'grid','view_cluster_status','setup.php','grid_view_cluster_status',1),(105,'grid','view_cluster_master','setup.php','grid_view_cluster_master',1),(106,'grid','view_cluster_tput','setup.php','grid_view_cluster_tput',1),(107,'grid','view_cluster_perfmon','setup.php','grid_view_cluster_perfmon',1),(108,'grid','view_cluster_benchmark_exceptional_jobs','setup.php','grid_view_cluster_benchmark_exceptional_jobs',1),(109,'grid','graph_cluster_limstat','setup.php','grid_graph_cluster_limstat',1),(110,'grid','graph_cluster_batchstat','setup.php','grid_graph_cluster_batchstat',1),(111,'grid','graph_cluster_gridstat','setup.php','grid_graph_cluster_gridstat',1),(112,'grid','graph_cluster_memavastat','setup.php','grid_graph_cluster_memavastat',1),(113,'grid','auth_profile_tabs','setup.php','grid_auth_profile_tabs',1),(114,'grid','auth_profile_update_data','setup.php','grid_auth_profile_update_data',1),(115,'grid','auth_profile_run_action','setup.php','grid_auth_profile_run_action',1),(116,'grid','auth_profile_save','setup.php','grid_auth_profile_save',1),(117,'heuristics','config_arrays','setup.php','heuristics_config_arrays',1),(118,'heuristics','config_form','setup.php','heuristics_config_form',1),(119,'heuristics','draw_navigation_text','setup.php','heuristics_draw_navigation_text',1),(120,'heuristics','config_settings','setup.php','heuristics_config_settings',1),(121,'heuristics','top_header_tabs','setup.php','heuristics_show_tab',1),(122,'heuristics','top_graph_header_tabs','setup.php','heuristics_show_tab',1),(123,'heuristics','poller_bottom','setup.php','heuristics_poller_bottom',1),(124,'heuristics','page_head','setup.php','heuristics_page_head',1),(125,'heuristics','login_options_navigate','setup.php','heuristics_login_navigate',1),(126,'heuristics','grid_busers_icon','setup.php','heuristics_busers_icon',1),(127,'heuristics','grid_jobs_sql_where','setup.php','heuristics_jobs_sql_where',1),(128,'heuristics','grid_menu','setup.php','heuristics_grid_menu',1),(129,'gridcstat','config_arrays','setup.php','gridcstat_config_arrays',1),(130,'gridcstat','draw_navigation_text','setup.php','gridcstat_draw_navigation_text',1),(131,'gridcstat','poller_bottom','setup.php','gridcstat_poller_bottom',1),(132,'gridcstat','grid_tab_down','setup.php','cstat_grid_tab_down',1),(133,'gridcstat','grid_menu','setup.php','cstat_grid_menu',1),(134,'meta','config_arrays','setup.php','meta_config_arrays',1),(135,'meta','draw_navigation_text','setup.php','meta_draw_navigation_text',1),(136,'meta','page_head','lib/metadata_api.php','meta_page_head',1),(137,'meta','grid_page_bottom','lib/metadata_api.php','meta_page_bottom',1),(138,'meta','lic_page_bottom','lib/metadata_api.php','meta_page_bottom',1),(139,'meta','grid_user_details','lib/metadata_api.php','meta_user_details',1),(140,'meta','grid_object_details','lib/metadata_api.php','meta_object_details',1),(141,'meta','grid_meta_settings_tab','lib/metadata_api.php','meta_settings_tab',1),(142,'meta','grid_meta_column_header','lib/metadata_api.php','meta_column_header',1),(143,'meta','grid_meta_column_content','lib/metadata_api.php','meta_column_content',1),(144,'meta','grid_meta_param','lib/metadata_api.php','meta_param',1),(145,'meta','grid_meta_param_where','lib/metadata_api.php','meta_param_where',1),(146,'meta','grid_meta_column_filter','lib/metadata_api.php','meta_column_filter',1),(147,'gridalarms','config_arrays','includes/settings.php','gridalarms_config_arrays',1),(148,'gridalarms','draw_navigation_text','setup.php','gridalarms_draw_navigation_text',1),(149,'gridalarms','poller_bottom','setup.php','gridalarms_poller_bottom',1),(150,'gridalarms','page_bottom','setup.php','gridalarms_bottom_footer',1),(151,'gridalarms','config_settings','includes/settings.php','gridalarms_config_settings',1),(152,'gridalarms','grid_tab_down','setup.php','gridalarms_grid_tab_down',1),(153,'gridalarms','grid_menu','setup.php','gridalarms_grid_menu',1),(154,'gridalarms','rtm_landing_page','setup.php','gridalarms_rtm_landing_page',1),(155,'gridalarms','notify_list_tabs','includes/notify.php','gridalarms_notify_list_tabs',1),(156,'gridalarms','notify_list_save','includes/notify.php','gridalarms_notify_list_save',1),(157,'gridalarms','notify_list_form_confirm','includes/notify.php','gridalarms_notify_list_form_confirm',1),(158,'gridalarms','notify_list_display','includes/notify.php','gridalarms_notify_list_display',1),(159,'gridalarms','thold_edit_save_thold','includes/thold.php','gridalarms_th_edit_save_thold',1),(160,'gridalarms','thold_edit_form_array','includes/thold.php','gridalarms_th_edit_form_array',1),(161,'gridalarms','thold_edit_javascript','includes/thold.php','gridalarms_th_edit_javascript',1),(162,'gridalarms','thold_template_edit_save_thold','includes/thold.php','gridalarms_tht_edit_save_thold',1),(163,'gridalarms','thold_template_edit_form_array','includes/thold.php','gridalarms_th_edit_form_array',1),(164,'gridalarms','thold_template_edit_javascript','includes/thold.php','gridalarms_th_edit_javascript',1),(165,'gridalarms','thold_action','includes/thold.php','gridalarms_thold_action',1),(166,'gridalarms','thold_replacement_text','includes/thold.php','gridalarms_thold_replacement_text',1),(167,'gridalarms','thold_graph_tabs','includes/thold.php','gridalarms_thold_graph_tabs',1),(168,'gridalarms','thold_graph_view','includes/thold.php','gridalarms_thold_graph_view',1),(169,'gridalarms','thold_graph_actions_url','includes/thold.php','gridalarms_thold_graph_actions_url',1),(170,'gridalarms','expand_title','includes/thold.php','gridalarms_expand_title',1),(171,'gridalarms','page_head','setup.php','gridalarms_page_head',1),(172,'license','top_header_tabs','setup.php','license_show_tab',1),(173,'license','top_graph_header_tabs','setup.php','license_show_tab',1),(174,'license','config_arrays','setup.php','license_config_arrays',1),(175,'license','config_settings','setup.php','license_config_settings',1),(176,'license','config_form','setup.php','license_config_form',1),(177,'license','api_device_save','setup.php','license_api_device_save',1),(178,'license','login_options_navigate','setup.php','license_login_navigate',1),(179,'license','draw_navigation_text','setup.php','license_draw_navigation_text',1),(180,'license','poller_bottom','setup.php','license_poller_bottom',1),(181,'license','substitute_host_data','setup.php','license_substitute_host_data',1),(182,'license','valid_host_fields','setup.php','license_valid_host_fields',1),(183,'license','rtm_landing_page','setup.php','license_rtm_landing_page',1),(184,'gridpend','config_arrays','setup.php','gridpend_config_arrays',1),(185,'gridpend','config_settings','setup.php','gridpend_config_settings',1),(186,'gridpend','draw_navigation_text','setup.php','gridpend_draw_navigation_text',1),(187,'gridpend','poller_bottom','setup.php','gridpend_poller_bottom',1),(188,'gridpend','grid_tab_down','setup.php','gridpend_grid_tab_down',1),(189,'gridpend','grid_menu','setup.php','gridpend_grid_menu',1),(190,'gridpend','poller_command_args','setup.php','gridpend_poller_command_args',1),(191,'gridblstat','config_settings','setup.php','gridblstat_config_settings',1),(192,'gridblstat','config_arrays','setup.php','gridblstat_config_arrays',1),(193,'gridblstat','poller_bottom','setup.php','gridblstat_poller_bottom',1),(194,'gridblstat','draw_navigation_text','setup.php','gridblstat_navigation',1),(195,'gridblstat','grid_menu','setup.php','gridblstat_grid_menu',1),(196,'gridblstat','grid_tab_down','setup.php','gridblstat_grid_tab_down',1),(197,'benchmark','config_arrays','setup.php','benchmark_config_arrays',1),(198,'benchmark','poller_bottom','setup.php','benchmark_poller_bottom',1),(199,'benchmark','draw_navigation_text','setup.php','benchmark_draw_navigation_text',1),(200,'benchmark','config_settings','setup.php','benchmark_config_settings',1),(201,'benchmark','grid_tab_down','setup.php','benchmark_grid_tab_down',1),(202,'benchmark','grid_menu','setup.php','benchmark_grid_menu',1),(203,'disku','top_header_tabs','setup.php','disku_show_tab',1),(204,'disku','top_graph_header_tabs','setup.php','disku_show_tab',1),(205,'disku','config_arrays','setup.php','disku_config_arrays',1),(206,'disku','config_settings','setup.php','disku_config_settings',1),(207,'disku','config_form','setup.php','disku_config_form',1),(208,'disku','api_device_save','setup.php','disku_api_device_save',1),(209,'disku','draw_navigation_text','setup.php','disku_draw_navigation_text',1),(210,'disku','poller_bottom','setup.php','disku_poller_bottom',1),(211,'disku','substitute_host_data','setup.php','disku_substitute_host_data',1),(212,'disku','valid_host_fields','setup.php','disku_valid_host_fields',1),(213,'disku','grid_tab_down','setup.php','disku_grid_tab_down',1),(214,'disku','grid_menu','setup.php','disku_grid_menu',1),(215,'lichist','grid_jobs_tabs','setup.php','lichist_jobs_tabs',1),(216,'lichist','grid_jobs_show_tab','setup.php','lichist_jobs_show_tab',1),(217,'lichist','poller_bottom','setup.php','lichist_poller_bottom',1),(218,'lichist','draw_navigation_text','setup.php','lichist_draw_navigation_text',1),(219,'grid','customize_graph','setup.php','grid_elim_customize_graph',1),(220,'grid','customize_template_details','setup.php','grid_elim_customize_template_details',1),(221,'grid','device_filter_start','setup.php','grid_device_filter_start',1),(222,'grid','device_sql_where','setup.php','grid_device_sql_where',1),(223,'grid','device_display_text','setup.php','grid_device_display_text',1),(224,'grid','device_table_replace','setup.php','grid_device_table_replace',1),(225,'thold','config_insert','includes/settings.php','thold_config_insert',1),(226,'thold','config_arrays','includes/settings.php','thold_config_arrays',1),(227,'thold','device_template_change','setup.php','thold_device_template_change',1),(228,'thold','settings_bottom','setup.php','thold_settings_bottom',1);
 /*!40000 ALTER TABLE `plugin_hooks` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -7154,8 +7201,11 @@ DROP TABLE IF EXISTS `plugin_notification_lists`;
 CREATE TABLE `plugin_notification_lists` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `name` varchar(128) NOT NULL,
+  `enabled` char(3) NOT NULL DEFAULT '',
   `description` varchar(512) NOT NULL,
   `emails` varchar(512) NOT NULL,
+  `bcc_emails` varchar(512) NOT NULL DEFAULT '',
+  `format_file` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB COMMENT='Table of Notification Lists';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -7183,7 +7233,7 @@ CREATE TABLE `plugin_realms` (
 
 LOCK TABLES `plugin_realms` WRITE;
 /*!40000 ALTER TABLE `plugin_realms` DISABLE KEYS */;
-INSERT INTO `plugin_realms` VALUES (1,'internal','plugins.php','Plugin Management'),(2,'syslog','syslog.php','Plugin -> Syslog User'),(3,'syslog','syslog_alerts.php,syslog_removal.php,syslog_reports.php','Plugin -> Syslog Administration'),(4,'thold','thold.php','Configure Thresholds'),(5,'thold','thold_templates.php','Configure Threshold Templates'),(6,'thold','notify_lists.php','Manage Notification Lists'),(7,'thold','thold_graph.php,graph_thold.php,thold_view_failures.php,thold_view_normal.php,thold_view_recover.php,thold_view_recent.php,thold_view_host.php','View Thresholds'),(8,'grid','grid_shared.php,grid_bjobs.php,grid_bzen.php,grid_bhosts.php,grid_bhosts_closed.php,grid_bqueues.php,grid_lsload.php,grid_lshosts.php,grid_bhpart.php,grid_busers.php,grid_jobgraph.php,grid_jobgraphzoom.php,grid_ajax.php','General LSF Data'),(9,'grid','grid_dailystats.php,grid_clients.php,grid_params.php,grid_elim_graph_templates_items.php,grid_download.php','LSF Admin Data'),(10,'grid','grid_bhgroups.php,grid_bjgroup.php,grid_lsgload.php,grid_bmgroup.php','LSF Host Group Data'),(11,'grid','grid_clusterdb.php,grid_summary.php,grid_bresourcespool.php,grid_lsf_config.php','LSF Advanced Options'),(12,'grid','grid_barrays.php','LSF Job Array Data'),(13,'grid','grid_bugroup.php','LSF User Group Data'),(14,'grid','grid_projects.php','LSF Project Data'),(15,'grid','grid_license_projects.php','LSF License Project Data'),(16,'grid','grid_bapps.php','LSF Application Data'),(17,'grid','grid_bjgroups.php','LSF Job Group Data'),(18,'grid','grid_queue_distrib.php','LSF Queue Distribution'),(19,'grid','grid_manage_hosts.php,grid_utilities.php,grid_elim_graphs.php,grid_elim_templates.php,grid_clusters.php,grid_settings_system.php,grid_pollers.php','LSF Administration'),(20,'grid','LSF_Extended_History','LSF Extended History'),(21,'grid','LSF_Host_Alert_Stop','LSF Host Alert Stop/Resume'),(22,'grid','LSF_Cluster_Control','LSF Cluster Control'),(23,'heuristics','heuristics.php,heuristics_jobs.php,grid_heuristics.php','View JobIQ'),(24,'gridcstat','gridcstat.php','View Statistical Dashboard'),(25,'meta','metadata.php','View Metadata'),(26,'meta','Edit_Metadata','Edit Metadata'),(27,'gridalarms','grid_alarmdb.php','View Grid Alerts'),(28,'gridalarms','notify_lists.php,gridalarms_alarm.php,gridalarms_templates.php,gridalarms_alarm_edit.php,gridalarms_template_edit.php','Configure Grid Alerts'),(29,'license','lic_pollers.php,lic_servers.php,lic_managers.php,lic_feature_maps.php,lic_applications.php','License Administration'),(30,'license','lic_servicedb.php,lic_options.php,lic_details.php,lic_usage.php,lic_checkouts.php,lic_dailystats.php,lic_service_summary.php','View License Usage Data'),(31,'license','lic_lm_fusion.php','View License Admin Data'),(32,'gridpend','grid_pend.php','Pending Reason History'),(33,'benchmark','grid_benchmark_jobs.php,grid_benchmark_summary.php','View Benchmark Job'),(34,'benchmark','benchmark.php','Edit Benchmark Job Configuration'),(35,'disku','disku_orgview.php,disku_users.php,disku_groups.php,disku_managers.php,disku_extensions.php,disku_appview.php,disku_tagview.php','View Disk Admin Data'),(36,'disku','disku_dashboard.php','View Disk Usage Data'),(37,'disku','disku_pollers.php,disku_paths.php,disku_extenreg.php,disku_applications.php','Disk Usage Administration'),(38,'lichist','grid_lichist.php','Plugin -> LSF Job License History Viewer');
+INSERT INTO `plugin_realms` VALUES (1,'internal','plugins.php','Plugin Management'),(2,'syslog','syslog.php','Plugin -> Syslog User'),(3,'syslog','syslog_alerts.php,syslog_removal.php,syslog_reports.php','Plugin -> Syslog Administration'),(4,'thold','thold.php','Configure Thresholds'),(5,'thold','thold_templates.php','Configure Threshold Templates'),(6,'thold','notify_lists.php,notify_queue.php','Manage Notification Lists'),(7,'thold','thold_graph.php,graph_thold.php,thold_view_failures.php,thold_view_normal.php,thold_view_recover.php,thold_view_recent.php,thold_view_host.php','View Thresholds'),(8,'grid','grid_shared.php,grid_bjobs.php,grid_bzen.php,grid_bhosts.php,grid_bhosts_closed.php,grid_bqueues.php,grid_lsload.php,grid_lshosts.php,grid_bhpart.php,grid_busers.php,grid_jobgraph.php,grid_jobgraphzoom.php,grid_ajax.php','General LSF Data'),(9,'grid','grid_dailystats.php,grid_clients.php,grid_params.php,grid_elim_graph_templates_items.php,grid_download.php','LSF Admin Data'),(10,'grid','grid_bhgroups.php,grid_bjgroup.php,grid_lsgload.php,grid_bmgroup.php','LSF Host Group Data'),(11,'grid','grid_clusterdb.php,grid_summary.php,grid_bresourcespool.php,grid_lsf_config.php','LSF Advanced Options'),(12,'grid','grid_barrays.php','LSF Job Array Data'),(13,'grid','grid_bugroup.php','LSF User Group Data'),(14,'grid','grid_projects.php','LSF Project Data'),(15,'grid','grid_license_projects.php','LSF License Project Data'),(16,'grid','grid_bapps.php','LSF Application Data'),(17,'grid','grid_bjgroups.php','LSF Job Group Data'),(18,'grid','grid_queue_distrib.php','LSF Queue Distribution'),(19,'grid','grid_manage_hosts.php,grid_utilities.php,grid_elim_graphs.php,grid_elim_templates.php,grid_clusters.php,grid_settings_system.php,grid_pollers.php','LSF Administration'),(20,'grid','LSF_Extended_History','LSF Extended History'),(21,'grid','LSF_Host_Alert_Stop','LSF Host Alert Stop/Resume'),(22,'grid','LSF_Cluster_Control','LSF Cluster Control'),(23,'heuristics','heuristics.php,heuristics_jobs.php,grid_heuristics.php','View JobIQ'),(24,'gridcstat','gridcstat.php','View Statistical Dashboard'),(25,'meta','metadata.php','View Metadata'),(26,'meta','Edit_Metadata','Edit Metadata'),(27,'gridalarms','grid_alarmdb.php','View Grid Alerts'),(28,'gridalarms','notify_lists.php,gridalarms_alarm.php,gridalarms_templates.php,gridalarms_alarm_edit.php,gridalarms_template_edit.php','Configure Grid Alerts'),(29,'license','lic_pollers.php,lic_servers.php,lic_managers.php,lic_feature_maps.php,lic_applications.php','License Administration'),(30,'license','lic_servicedb.php,lic_options.php,lic_details.php,lic_usage.php,lic_checkouts.php,lic_dailystats.php,lic_service_summary.php','View License Usage Data'),(31,'license','lic_lm_fusion.php','View License Admin Data'),(32,'gridpend','grid_pend.php','Pending Reason History'),(33,'benchmark','grid_benchmark_jobs.php,grid_benchmark_summary.php','View Benchmark Job'),(34,'benchmark','benchmark.php','Edit Benchmark Job Configuration'),(35,'disku','disku_orgview.php,disku_users.php,disku_groups.php,disku_managers.php,disku_extensions.php,disku_appview.php,disku_tagview.php','View Disk Admin Data'),(36,'disku','disku_dashboard.php','View Disk Usage Data'),(37,'disku','disku_pollers.php,disku_paths.php,disku_extenreg.php,disku_applications.php','Disk Usage Administration'),(38,'lichist','grid_lichist.php','Plugin -> LSF Job License History Viewer');
 /*!40000 ALTER TABLE `plugin_realms` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -7201,7 +7251,8 @@ CREATE TABLE `plugin_thold_contacts` (
   `data` text NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_id_type` (`user_id`,`type`),
-  KEY `type` (`type`)
+  KEY `type` (`type`),
+  KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB COMMENT='Table of Threshold contacts';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -7214,29 +7265,28 @@ DROP TABLE IF EXISTS `plugin_thold_daemon_data`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `plugin_thold_daemon_data` (
   `id` int(10) NOT NULL,
-  `poller_id` int(10) unsigned NOT NULL DEFAULT '1',
-  `pid` varchar(25) NOT NULL DEFAULT '',
+  `poller_id` int(10) unsigned NOT NULL DEFAULT 1,
+  `thread_id` int(10) unsigned NOT NULL DEFAULT 0,
   `rrd_reindexed` varchar(600) NOT NULL DEFAULT '',
   `rrd_time_reindexed` int(10) unsigned NOT NULL,
-  KEY `id` (`id`,`pid`)
+  `time` timestamp NOT NULL DEFAULT current_timestamp(),
+  KEY `id` (`id`,`thread_id`)
 ) ENGINE=InnoDB COMMENT='Table of Poller Outdata needed for queued daemon processes';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `plugin_thold_daemon_processes`
+-- Table structure for table `plugin_thold_host`
 --
 
-DROP TABLE IF EXISTS `plugin_thold_daemon_processes`;
+DROP TABLE IF EXISTS `plugin_thold_host`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `plugin_thold_daemon_processes` (
-  `poller_id` int(10) unsigned NOT NULL DEFAULT '1',
-  `pid` varchar(25) NOT NULL DEFAULT '',
-  `start` double NOT NULL DEFAULT '0',
-  `end` double NOT NULL DEFAULT '0',
-  `processed_items` mediumint(8) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`pid`)
-) ENGINE=InnoDB COMMENT='Table of Thold Daemon Processes being queued';
+CREATE TABLE `plugin_thold_host` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `host_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `thold_template_id` int(10) unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB COMMENT='Table of Device to Supported Threshold Templates';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -7248,7 +7298,7 @@ DROP TABLE IF EXISTS `plugin_thold_host_failed`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `plugin_thold_host_failed` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `poller_id` int(10) unsigned NOT NULL DEFAULT '1',
+  `poller_id` int(10) unsigned NOT NULL DEFAULT 1,
   `host_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB COMMENT='Table of Devices in a Down State';
@@ -7263,8 +7313,8 @@ DROP TABLE IF EXISTS `plugin_thold_host_template`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `plugin_thold_host_template` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `host_template_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `thold_template_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `host_template_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `thold_template_id` int(10) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB COMMENT='Table of Device Template Threshold Templates';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -7280,7 +7330,7 @@ CREATE TABLE `plugin_thold_log` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `time` int(24) NOT NULL,
   `host_id` int(10) NOT NULL,
-  `local_graph_id` int(10) NOT NULL,
+  `local_graph_id` int(10) unsigned NOT NULL,
   `threshold_id` int(10) NOT NULL,
   `threshold_value` varchar(64) NOT NULL DEFAULT '',
   `current` varchar(64) NOT NULL DEFAULT '',
@@ -7339,29 +7389,30 @@ CREATE TABLE `poller` (
   `disabled` char(2) DEFAULT '',
   `name` varchar(30) DEFAULT NULL,
   `notes` varchar(1024) DEFAULT '',
-  `status` int(10) unsigned NOT NULL DEFAULT '0',
+  `status` int(10) unsigned NOT NULL DEFAULT 0,
   `timezone` varchar(40) DEFAULT '',
   `hostname` varchar(100) NOT NULL DEFAULT '',
   `dbdefault` varchar(20) NOT NULL DEFAULT '',
   `dbhost` varchar(64) NOT NULL DEFAULT '',
   `dbuser` varchar(20) NOT NULL DEFAULT '',
   `dbpass` varchar(64) NOT NULL DEFAULT '',
-  `dbport` int(10) unsigned DEFAULT '3306',
+  `dbport` int(10) unsigned DEFAULT 3306,
+  `dbretries` int(10) unsigned DEFAULT 2,
   `dbssl` char(3) DEFAULT '',
   `dbsslkey` varchar(255) DEFAULT NULL,
   `dbsslcert` varchar(255) DEFAULT NULL,
   `dbsslca` varchar(255) DEFAULT NULL,
-  `total_time` double DEFAULT '0',
+  `total_time` double DEFAULT 0,
   `max_time` double DEFAULT NULL,
   `min_time` double DEFAULT NULL,
   `avg_time` double DEFAULT NULL,
-  `total_polls` int(10) unsigned DEFAULT '0',
-  `processes` int(10) unsigned DEFAULT '1',
-  `threads` int(10) unsigned DEFAULT '1',
-  `sync_interval` int(10) unsigned DEFAULT '7200',
-  `snmp` mediumint(8) unsigned DEFAULT '0',
-  `script` mediumint(8) unsigned DEFAULT '0',
-  `server` mediumint(8) unsigned DEFAULT '0',
+  `total_polls` int(10) unsigned DEFAULT 0,
+  `processes` int(10) unsigned DEFAULT 1,
+  `threads` int(10) unsigned DEFAULT 1,
+  `sync_interval` int(10) unsigned DEFAULT 7200,
+  `snmp` mediumint(8) unsigned DEFAULT 0,
+  `script` mediumint(8) unsigned DEFAULT 0,
+  `server` mediumint(8) unsigned DEFAULT 0,
   `last_update` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `last_status` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `last_sync` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -7378,7 +7429,7 @@ CREATE TABLE `poller` (
 
 LOCK TABLES `poller` WRITE;
 /*!40000 ALTER TABLE `poller` DISABLE KEYS */;
-INSERT INTO `poller` (`id`, `name`, `hostname`) VALUES (1,'Main Poller', 'localhost');
+INSERT INTO `poller` VALUES (1,'','Main Poller','',2,'',@@hostname,'',@@hostname,'','',3306,2,'',NULL,NULL,NULL,1.3958,1.3958218097687,1.3958218097687,1.3958218097687,1,1,1,7200,0,5,0,'0000-00-00 00:00:00:00','0000-00-00 00:00:00:00','0000-00-00 00:00:00','');
 /*!40000 ALTER TABLE `poller` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -7390,11 +7441,11 @@ DROP TABLE IF EXISTS `poller_command`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `poller_command` (
-  `poller_id` smallint(5) unsigned NOT NULL DEFAULT '1',
+  `poller_id` smallint(5) unsigned NOT NULL DEFAULT 1,
   `time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `action` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `action` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `command` varchar(191) NOT NULL DEFAULT '',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`poller_id`,`action`,`command`),
   KEY `poller_id_last_updated` (`poller_id`,`last_updated`)
 ) ENGINE=InnoDB;
@@ -7408,10 +7459,10 @@ DROP TABLE IF EXISTS `poller_data_template_field_mappings`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `poller_data_template_field_mappings` (
-  `data_template_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `data_template_id` int(10) unsigned NOT NULL DEFAULT 0,
   `data_name` varchar(40) NOT NULL DEFAULT '',
   `data_source_names` varchar(125) NOT NULL DEFAULT '',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`data_template_id`,`data_name`,`data_source_names`)
 ) ENGINE=InnoDB COMMENT='Tracks mapping of Data Templates to their Data Source Names';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -7422,7 +7473,7 @@ CREATE TABLE `poller_data_template_field_mappings` (
 
 LOCK TABLES `poller_data_template_field_mappings` WRITE;
 /*!40000 ALTER TABLE `poller_data_template_field_mappings` DISABLE KEYS */;
-INSERT INTO `poller_data_template_field_mappings` VALUES (1,'proc','proc','2022-03-06 04:46:42'),(2,'10min','load_15min','2022-03-06 04:46:42'),(2,'1min','load_1min','2022-03-06 04:46:42'),(2,'5min','load_5min','2022-03-06 04:46:42'),(3,'users','users','2022-03-06 04:46:42'),(4,'kilobytes','mem_buffers','2022-03-06 04:46:42'),(5,'kilobytes','mem_swap','2022-03-06 04:46:42'),(7,'DataSources','DataSources','2022-03-06 04:46:43'),(7,'Hosts','Hosts','2022-03-06 04:46:43'),(7,'HostsPerProcess','HostsPerProcess','2022-03-06 04:46:43'),(7,'Processes','Processes','2022-03-06 04:46:43'),(7,'RRDsProcessed','RRDsProcessed','2022-03-06 04:46:43'),(7,'Threads','Threads','2022-03-06 04:46:43'),(7,'Time','Time','2022-03-06 04:46:43'),(8,'RRDUpdates','rrdupdates','2022-03-06 04:46:43'),(8,'Time','time','2022-03-06 04:46:43'),(9,'script','script','2022-03-06 04:46:43'),(9,'script_server','script_server','2022-03-06 04:46:43'),(9,'snmp','snmp','2022-03-06 04:46:43'),(10,'HostsRecached','hosts','2022-03-06 04:46:43'),(10,'RecacheTime','time','2022-03-06 04:46:43'),(11,'boost_peak_memory','boost_peak_memory','2022-03-06 04:46:43'),(17,'avail','avail','2022-03-06 04:46:46'),(17,'runtime','runtime','2022-03-06 04:46:46'),(33,'max_jobs','max_jobs','2022-03-06 04:53:30'),(33,'num_jobs','num_jobs','2022-03-06 04:53:30'),(33,'res_jobs','res_jobs','2022-03-06 04:53:30'),(33,'run_jobs','run_jobs','2022-03-06 04:53:30'),(33,'sys_susp_jobs','sys_susp_jobs','2022-03-06 04:53:30'),(33,'usr_susp_jobs','usr_susp_jobs','2022-03-06 04:53:30'),(34,'r15m','r15m','2022-03-06 04:53:30'),(34,'r15s','r15s','2022-03-06 04:53:30'),(34,'r1m','r1m','2022-03-06 04:53:30'),(35,'io','io','2022-03-06 04:53:30'),(35,'pg','pg','2022-03-06 04:53:30'),(36,'mem','mem','2022-03-06 04:53:30'),(36,'swp','swp','2022-03-06 04:53:30'),(37,'ut','ut','2022-03-06 04:53:30'),(38,'mem','mem','2022-03-06 04:46:50'),(38,'res','res','2022-03-06 04:46:50'),(38,'swp','swp','2022-03-06 04:46:50'),(40,'done','done','2022-03-06 04:53:30'),(40,'exited','exited','2022-03-06 04:53:30'),(40,'started','started','2022-03-06 04:53:30'),(41,'pending','pending','2022-03-06 04:53:30'),(42,'efficiency','efficiency','2022-03-06 04:53:30'),(43,'capacity','capacity','2022-03-06 04:53:30'),(43,'load','load','2022-03-06 04:53:30'),(44,'Done','Done','2022-03-06 04:53:30'),(44,'MBDppMax','MBDppMax','2022-03-06 04:53:30'),(44,'MBDtime','MBDtime','2022-03-06 04:53:30'),(44,'Pending','Pending','2022-03-06 04:53:30'),(44,'Running','Running','2022-03-06 04:53:30'),(44,'Runtime','Runtime','2022-03-06 04:53:30'),(45,'lim','lim','2022-03-06 04:53:30'),(45,'lsb','lsb','2022-03-06 04:53:30'),(46,'numFloatClients','numFloatClients','2022-03-06 04:53:30'),(46,'numStaticClients','numStaticClients','2022-03-06 04:53:30'),(47,'barray_Runtime','barray_runtime','2022-03-06 04:53:30'),(47,'bhostgroups_Runtime','bhostgroups_runtime','2022-03-06 04:53:30'),(47,'bhosts_Runtime','bhosts_runtime','2022-03-06 04:53:30'),(47,'bparams_Runtime','bparams_runtime','2022-03-06 04:53:30'),(47,'bqueues_Runtime','bqueues_runtime','2022-03-06 04:53:30'),(47,'busergroups_Runtime','busergroups_runtime','2022-03-06 04:53:30'),(47,'busers_Runtime','busers_runtime','2022-03-06 04:53:30'),(47,'lshosts_Runtime','lshosts_runtime','2022-03-06 04:53:30'),(47,'lsload_Runtime','lsload_runtime','2022-03-06 04:53:30'),(132,'Com_delete','Com_delete','2022-03-06 04:47:15'),(132,'Com_insert','Com_insert','2022-03-06 04:47:15'),(132,'Com_insert_select','Com_insert_select','2022-03-06 04:47:15'),(132,'Com_truncate','Com_truncate','2022-03-06 04:47:15'),(132,'Com_update','Com_update','2022-03-06 04:47:15'),(132,'Com_update_multi','Com_update_multi','2022-03-06 04:47:15'),(133,'Handler_commit','Handler_commit','2022-03-06 04:47:15'),(133,'Handler_delete','Handler_delete','2022-03-06 04:47:15'),(133,'Handler_discover','Handler_discover','2022-03-06 04:47:15'),(133,'Handler_rollback','Handler_rollback','2022-03-06 04:47:15'),(133,'Handler_update','Handler_update','2022-03-06 04:47:15'),(133,'Handler_write','Handler_write','2022-03-06 04:47:15'),(134,'Com_select','Com_select','2022-03-06 04:47:15'),(134,'Select_full_join','Select_full_join','2022-03-06 04:47:15'),(134,'Select_full_range_join','Selectfullrangejoin','2022-03-06 04:47:15'),(134,'Select_range','Select_range','2022-03-06 04:47:15'),(134,'Select_range_check','Select_range_check','2022-03-06 04:47:15'),(134,'Select_scan','Select_scan','2022-03-06 04:47:15'),(135,'Handler_read_first','Handler_read_first','2022-03-06 04:47:15'),(135,'Handler_read_key','Handler_read_key','2022-03-06 04:47:15'),(135,'Handler_read_next','Handler_read_next','2022-03-06 04:47:15'),(135,'Handler_read_prev','Handler_read_prev','2022-03-06 04:47:15'),(135,'Handler_read_rnd','Handler_read_rnd','2022-03-06 04:47:15'),(135,'Handler_read_rnd_next','Handlerreadrndnext','2022-03-06 04:47:15'),(136,'Key_read_requests','Key_read_requests','2022-03-06 04:47:15'),(136,'Key_reads','Key_reads','2022-03-06 04:47:15'),(136,'Key_write_requests','Key_write_requests','2022-03-06 04:47:15'),(136,'Key_writes','Key_writes','2022-03-06 04:47:15'),(137,'Qcache_free_blocks','Qcache_free_blocks','2022-03-06 04:47:15'),(137,'Qcache_free_memory','Qcache_free_memory','2022-03-06 04:47:15'),(137,'Qcache_hits','Qcache_hits','2022-03-06 04:47:15'),(137,'Qcache_inserts','Qcache_inserts','2022-03-06 04:47:15'),(137,'Qcache_lowmem_prunes','Qcachelowmemprunes','2022-03-06 04:47:15'),(137,'Qcache_not_cached','Qcache_not_cached','2022-03-06 04:47:15'),(137,'Qcache_queries_in_cache','Qcachequeriesincach','2022-03-06 04:47:15'),(137,'Qcache_total_blocks','Qcache_total_blocks','2022-03-06 04:47:15'),(138,'Bytes_received','Bytes_received','2022-03-06 04:47:15'),(138,'Bytes_sent','Bytes_sent','2022-03-06 04:47:15'),(138,'Connections','Connections','2022-03-06 04:47:15'),(138,'Max_used_connections','Max_used_connection','2022-03-06 04:47:15'),(138,'Questions','Questions','2022-03-06 04:47:15'),(139,'Sort_merge_passes','Sort_merge_passes','2022-03-06 04:47:15'),(139,'Sort_range','Sort_range','2022-03-06 04:47:15'),(139,'Sort_rows','Sort_rows','2022-03-06 04:47:15'),(139,'Sort_scan','Sort_scan','2022-03-06 04:47:15'),(140,'Slow_launch_threads','Slow_launch_threads','2022-03-06 04:47:15'),(140,'Slow_queries','Slow_queries','2022-03-06 04:47:15'),(140,'Table_locks_immediate','Table_locks_immedia','2022-03-06 04:47:15'),(140,'Table_locks_waited','Table_locks_waited','2022-03-06 04:47:15'),(141,'Created_tmp_disk_tables','Createdtmpdisktable','2022-03-06 04:47:15'),(141,'Created_tmp_files','Created_tmp_files','2022-03-06 04:47:15'),(141,'Created_tmp_tables','Created_tmp_tables','2022-03-06 04:47:15'),(142,'Aborted_clients','Aborted_clients','2022-03-06 04:47:15'),(142,'Aborted_connects','Aborted_connects','2022-03-06 04:47:15'),(142,'Threads_cached','Threads_cached','2022-03-06 04:47:15'),(142,'Threads_connected','Threads_connected','2022-03-06 04:47:15'),(142,'Threads_created','Threads_created','2022-03-06 04:47:15'),(142,'Threads_running','Threads_running','2022-03-06 04:47:15'),(143,'change_db','change_db','2022-03-06 04:47:16'),(143,'delete','delete','2022-03-06 04:47:16'),(143,'insert','insert','2022-03-06 04:47:16'),(143,'select','select','2022-03-06 04:47:16'),(143,'update','update','2022-03-06 04:47:16'),(144,'delete','delete','2022-03-06 04:47:16'),(144,'read_first','read_first','2022-03-06 04:47:16'),(144,'read_key','read_key','2022-03-06 04:47:16'),(144,'read_next','read_next','2022-03-06 04:47:16'),(144,'read_prev','read_prev','2022-03-06 04:47:16'),(144,'read_rnd','read_rnd','2022-03-06 04:47:16'),(144,'read_rnd_next','read_rnd_next','2022-03-06 04:47:16'),(144,'update','update','2022-03-06 04:47:16'),(144,'write','write','2022-03-06 04:47:16'),(148,'rows_deleted','rows_deleted','2022-03-06 04:47:16'),(148,'rows_inserted','rows_inserted','2022-03-06 04:47:16'),(148,'rows_read','rows_read','2022-03-06 04:47:16'),(148,'rows_updated','rows_updated','2022-03-06 04:47:16'),(149,'buffer_database_pages','database_pages','2022-03-06 04:47:16'),(149,'buffer_free_pages','free_pages','2022-03-06 04:47:16'),(149,'buffer_hit_rate','hit_rate','2022-03-06 04:47:16'),(149,'buffer_modified_pages','modified_pages','2022-03-06 04:47:16'),(149,'buffer_pool_size','pool_size','2022-03-06 04:47:16'),(150,'os_waits','os_waits','2022-03-06 04:47:16'),(150,'spin_rounds','spin_rounds','2022-03-06 04:47:16'),(150,'spin_waits','spin_waits','2022-03-06 04:47:16'),(151,'insert_buffer_inserts','insbuffer_inserts','2022-03-06 04:47:16'),(151,'insert_buffer_merged','insbuffer_merged','2022-03-06 04:47:16'),(151,'insert_buffer_merges','insbuffer_merges','2022-03-06 04:47:16'),(152,'file_fsyncs','fsyncs','2022-03-06 04:47:16'),(152,'file_reads','reads','2022-03-06 04:47:16'),(152,'file_writes','file_writes','2022-03-06 04:47:16'),(152,'log_writes','log_writes','2022-03-06 04:47:16'),(153,'pendJobs','pendJobs','2022-03-06 04:47:21'),(155,'out_ms','ping','2022-03-06 04:47:21'),(157,'Binlog_cache_disk_use','BinlogCacheDiskUse','2022-03-06 04:47:22'),(157,'Binlog_cache_use','BinlogCacheUse','2022-03-06 04:47:22'),(157,'Read_Exec_Log_Pos_Diff','ReadExecLogPosDiff','2022-03-06 04:47:22'),(157,'Seconds_Behind_Master','SecondsBehindMaster','2022-03-06 04:47:22'),(186,'avg','avg','2022-03-06 04:47:28'),(186,'current','current','2022-03-06 04:47:28'),(187,'avg','avg','2022-03-06 04:47:28'),(187,'current','current','2022-03-06 04:47:28'),(188,'avg','avg','2022-03-06 04:47:28'),(188,'current','current','2022-03-06 04:47:28'),(189,'avg','avg','2022-03-06 04:47:29'),(189,'current','current','2022-03-06 04:47:29'),(190,'avg','avg','2022-03-06 04:47:29'),(190,'current','current','2022-03-06 04:47:29'),(191,'avg','avg','2022-03-06 04:47:29'),(191,'current','current','2022-03-06 04:47:29'),(192,'avg','avg','2022-03-06 04:47:29'),(192,'current','current','2022-03-06 04:47:29'),(193,'avg','avg','2022-03-06 04:47:29'),(193,'current','current','2022-03-06 04:47:29'),(194,'avg','avg','2022-03-06 04:47:30'),(194,'current','current','2022-03-06 04:47:30'),(195,'avg','avg','2022-03-06 04:47:30'),(195,'current','current','2022-03-06 04:47:30'),(196,'free','free','2022-03-06 04:47:30'),(196,'total','total','2022-03-06 04:47:30'),(196,'used','used','2022-03-06 04:47:30'),(197,'avg','avg','2022-03-06 04:47:30'),(197,'current','current','2022-03-06 04:47:30'),(199,'cpuUtil','cpuUtil','2022-03-06 04:47:31'),(199,'memSlotUtil','memSlotUtil','2022-03-06 04:47:31'),(199,'slotUtil','slotUtil','2022-03-06 04:47:31'),(201,'usage','usage','2022-03-06 04:47:33'),(202,'numHost','host_tmp_pct','2022-03-06 04:47:33'),(203,'numHost','host_vartmp_pct','2022-03-06 04:47:34'),(204,'numHost','host_status','2022-03-06 04:47:34'),(205,'numHostGroup','queue_free_slots','2022-03-06 04:47:34'),(206,'numHost','host_eff_r15m','2022-03-06 04:47:34'),(207,'numHost','host_mem_pct','2022-03-06 04:47:34'),(208,'numHost','host_swp_pct','2022-03-06 04:47:34'),(209,'numJobs','host_idle_jobs','2022-03-06 04:47:34'),(210,'pend_jobs','pend_jobs','2022-03-06 04:47:35'),(212,'avg','avg','2022-03-06 04:53:40'),(212,'current','current','2022-03-06 04:53:40'),(213,'current','current','2022-03-06 04:53:40'),(213,'total','total','2022-03-06 04:53:40'),(214,'current','current','2022-03-06 04:53:41'),(214,'total','total','2022-03-06 04:53:41');
+INSERT INTO `poller_data_template_field_mappings` VALUES (1,'proc','proc','0000-00-00 00:00:00:00'),(2,'10min','load_15min','0000-00-00 00:00:00:00'),(2,'1min','load_1min','0000-00-00 00:00:00:00'),(2,'5min','load_5min','0000-00-00 00:00:00:00'),(3,'users','users','0000-00-00 00:00:00:00'),(4,'kilobytes','mem_buffers','0000-00-00 00:00:00:00'),(5,'kilobytes','mem_swap','0000-00-00 00:00:00:00'),(7,'DataSources','DataSources','0000-00-00 00:00:00:00'),(7,'Hosts','Hosts','0000-00-00 00:00:00:00'),(7,'HostsPerProcess','HostsPerProcess','0000-00-00 00:00:00:00'),(7,'Processes','Processes','0000-00-00 00:00:00:00'),(7,'RRDsProcessed','RRDsProcessed','0000-00-00 00:00:00:00'),(7,'Threads','Threads','0000-00-00 00:00:00:00'),(7,'Time','Time','0000-00-00 00:00:00:00'),(8,'RRDUpdates','rrdupdates','0000-00-00 00:00:00:00'),(8,'Time','time','0000-00-00 00:00:00:00'),(9,'script','script','0000-00-00 00:00:00:00'),(9,'script_server','script_server','0000-00-00 00:00:00:00'),(9,'snmp','snmp','0000-00-00 00:00:00:00'),(10,'HostsRecached','hosts','0000-00-00 00:00:00:00'),(10,'RecacheTime','time','0000-00-00 00:00:00:00'),(11,'boost_peak_memory','boost_peak_memory','0000-00-00 00:00:00:00'),(17,'avail','avail','0000-00-00 00:00:00:00'),(17,'runtime','runtime','0000-00-00 00:00:00:00'),(33,'max_jobs','max_jobs','0000-00-00 00:00:00:00'),(33,'num_jobs','num_jobs','0000-00-00 00:00:00:00'),(33,'res_jobs','res_jobs','0000-00-00 00:00:00:00'),(33,'run_jobs','run_jobs','0000-00-00 00:00:00:00'),(33,'sys_susp_jobs','sys_susp_jobs','0000-00-00 00:00:00:00'),(33,'usr_susp_jobs','usr_susp_jobs','0000-00-00 00:00:00:00'),(34,'r15m','r15m','0000-00-00 00:00:00:00'),(34,'r15s','r15s','0000-00-00 00:00:00:00'),(34,'r1m','r1m','0000-00-00 00:00:00:00'),(35,'io','io','0000-00-00 00:00:00:00'),(35,'pg','pg','0000-00-00 00:00:00:00'),(36,'mem','mem','0000-00-00 00:00:00:00'),(36,'swp','swp','0000-00-00 00:00:00:00'),(37,'ut','ut','0000-00-00 00:00:00:00'),(38,'mem','mem','0000-00-00 00:00:00:00'),(38,'res','res','0000-00-00 00:00:00:00'),(38,'swp','swp','0000-00-00 00:00:00:00'),(40,'done','done','0000-00-00 00:00:00:00'),(40,'exited','exited','0000-00-00 00:00:00:00'),(40,'started','started','0000-00-00 00:00:00:00'),(41,'pending','pending','0000-00-00 00:00:00:00'),(42,'efficiency','efficiency','0000-00-00 00:00:00:00'),(43,'capacity','capacity','0000-00-00 00:00:00:00'),(43,'load','load','0000-00-00 00:00:00:00'),(44,'Done','Done','0000-00-00 00:00:00:00'),(44,'MBDppMax','MBDppMax','0000-00-00 00:00:00:00'),(44,'MBDtime','MBDtime','0000-00-00 00:00:00:00'),(44,'Pending','Pending','0000-00-00 00:00:00:00'),(44,'Running','Running','0000-00-00 00:00:00:00'),(44,'Runtime','Runtime','0000-00-00 00:00:00:00'),(45,'lim','lim','0000-00-00 00:00:00:00'),(45,'lsb','lsb','0000-00-00 00:00:00:00'),(46,'numFloatClients','numFloatClients','0000-00-00 00:00:00:00'),(46,'numStaticClients','numStaticClients','0000-00-00 00:00:00:00'),(47,'barray_Runtime','barray_runtime','0000-00-00 00:00:00:00'),(47,'bhostgroups_Runtime','bhostgroups_runtime','0000-00-00 00:00:00:00'),(47,'bhosts_Runtime','bhosts_runtime','0000-00-00 00:00:00:00'),(47,'bparams_Runtime','bparams_runtime','0000-00-00 00:00:00:00'),(47,'bqueues_Runtime','bqueues_runtime','0000-00-00 00:00:00:00'),(47,'busergroups_Runtime','busergroups_runtime','0000-00-00 00:00:00:00'),(47,'busers_Runtime','busers_runtime','0000-00-00 00:00:00:00'),(47,'lshosts_Runtime','lshosts_runtime','0000-00-00 00:00:00:00'),(47,'lsload_Runtime','lsload_runtime','0000-00-00 00:00:00:00'),(132,'Com_delete','Com_delete','0000-00-00 00:00:00:00'),(132,'Com_insert','Com_insert','0000-00-00 00:00:00:00'),(132,'Com_insert_select','Com_insert_select','0000-00-00 00:00:00:00'),(132,'Com_truncate','Com_truncate','0000-00-00 00:00:00:00'),(132,'Com_update','Com_update','0000-00-00 00:00:00:00'),(132,'Com_update_multi','Com_update_multi','0000-00-00 00:00:00:00'),(133,'Handler_commit','Handler_commit','0000-00-00 00:00:00:00'),(133,'Handler_delete','Handler_delete','0000-00-00 00:00:00:00'),(133,'Handler_discover','Handler_discover','0000-00-00 00:00:00:00'),(133,'Handler_rollback','Handler_rollback','0000-00-00 00:00:00:00'),(133,'Handler_update','Handler_update','0000-00-00 00:00:00:00'),(133,'Handler_write','Handler_write','0000-00-00 00:00:00:00'),(134,'Com_select','Com_select','0000-00-00 00:00:00:00'),(134,'Select_full_join','Select_full_join','0000-00-00 00:00:00:00'),(134,'Select_full_range_join','Selectfullrangejoin','0000-00-00 00:00:00:00'),(134,'Select_range','Select_range','0000-00-00 00:00:00:00'),(134,'Select_range_check','Select_range_check','0000-00-00 00:00:00:00'),(134,'Select_scan','Select_scan','0000-00-00 00:00:00:00'),(135,'Handler_read_first','Handler_read_first','0000-00-00 00:00:00:00'),(135,'Handler_read_key','Handler_read_key','0000-00-00 00:00:00:00'),(135,'Handler_read_next','Handler_read_next','0000-00-00 00:00:00:00'),(135,'Handler_read_prev','Handler_read_prev','0000-00-00 00:00:00:00'),(135,'Handler_read_rnd','Handler_read_rnd','0000-00-00 00:00:00:00'),(135,'Handler_read_rnd_next','Handlerreadrndnext','0000-00-00 00:00:00:00'),(136,'Key_read_requests','Key_read_requests','0000-00-00 00:00:00:00'),(136,'Key_reads','Key_reads','0000-00-00 00:00:00:00'),(136,'Key_write_requests','Key_write_requests','0000-00-00 00:00:00:00'),(136,'Key_writes','Key_writes','0000-00-00 00:00:00:00'),(137,'Qcache_free_blocks','Qcache_free_blocks','0000-00-00 00:00:00:00'),(137,'Qcache_free_memory','Qcache_free_memory','0000-00-00 00:00:00:00'),(137,'Qcache_hits','Qcache_hits','0000-00-00 00:00:00:00'),(137,'Qcache_inserts','Qcache_inserts','0000-00-00 00:00:00:00'),(137,'Qcache_lowmem_prunes','Qcachelowmemprunes','0000-00-00 00:00:00:00'),(137,'Qcache_not_cached','Qcache_not_cached','0000-00-00 00:00:00:00'),(137,'Qcache_queries_in_cache','Qcachequeriesincach','0000-00-00 00:00:00:00'),(137,'Qcache_total_blocks','Qcache_total_blocks','0000-00-00 00:00:00:00'),(138,'Bytes_received','Bytes_received','0000-00-00 00:00:00:00'),(138,'Bytes_sent','Bytes_sent','0000-00-00 00:00:00:00'),(138,'Connections','Connections','0000-00-00 00:00:00:00'),(138,'Max_used_connections','Max_used_connection','0000-00-00 00:00:00:00'),(138,'Questions','Questions','0000-00-00 00:00:00:00'),(139,'Sort_merge_passes','Sort_merge_passes','0000-00-00 00:00:00:00'),(139,'Sort_range','Sort_range','0000-00-00 00:00:00:00'),(139,'Sort_rows','Sort_rows','0000-00-00 00:00:00:00'),(139,'Sort_scan','Sort_scan','0000-00-00 00:00:00:00'),(140,'Slow_launch_threads','Slow_launch_threads','0000-00-00 00:00:00:00'),(140,'Slow_queries','Slow_queries','0000-00-00 00:00:00:00'),(140,'Table_locks_immediate','Table_locks_immedia','0000-00-00 00:00:00:00'),(140,'Table_locks_waited','Table_locks_waited','0000-00-00 00:00:00:00'),(141,'Created_tmp_disk_tables','Createdtmpdisktable','0000-00-00 00:00:00:00'),(141,'Created_tmp_files','Created_tmp_files','0000-00-00 00:00:00:00'),(141,'Created_tmp_tables','Created_tmp_tables','0000-00-00 00:00:00:00'),(142,'Aborted_clients','Aborted_clients','0000-00-00 00:00:00:00'),(142,'Aborted_connects','Aborted_connects','0000-00-00 00:00:00:00'),(142,'Threads_cached','Threads_cached','0000-00-00 00:00:00:00'),(142,'Threads_connected','Threads_connected','0000-00-00 00:00:00:00'),(142,'Threads_created','Threads_created','0000-00-00 00:00:00:00'),(142,'Threads_running','Threads_running','0000-00-00 00:00:00:00'),(143,'change_db','change_db','0000-00-00 00:00:00:00'),(143,'delete','delete','0000-00-00 00:00:00:00'),(143,'insert','insert','0000-00-00 00:00:00:00'),(143,'select','select','0000-00-00 00:00:00:00'),(143,'update','update','0000-00-00 00:00:00:00'),(144,'delete','delete','0000-00-00 00:00:00:00'),(144,'read_first','read_first','0000-00-00 00:00:00:00'),(144,'read_key','read_key','0000-00-00 00:00:00:00'),(144,'read_next','read_next','0000-00-00 00:00:00:00'),(144,'read_prev','read_prev','0000-00-00 00:00:00:00'),(144,'read_rnd','read_rnd','0000-00-00 00:00:00:00'),(144,'read_rnd_next','read_rnd_next','0000-00-00 00:00:00:00'),(144,'update','update','0000-00-00 00:00:00:00'),(144,'write','write','0000-00-00 00:00:00:00'),(148,'rows_deleted','rows_deleted','0000-00-00 00:00:00:00'),(148,'rows_inserted','rows_inserted','0000-00-00 00:00:00:00'),(148,'rows_read','rows_read','0000-00-00 00:00:00:00'),(148,'rows_updated','rows_updated','0000-00-00 00:00:00:00'),(149,'buffer_database_pages','database_pages','0000-00-00 00:00:00:00'),(149,'buffer_free_pages','free_pages','0000-00-00 00:00:00:00'),(149,'buffer_hit_rate','hit_rate','0000-00-00 00:00:00:00'),(149,'buffer_modified_pages','modified_pages','0000-00-00 00:00:00:00'),(149,'buffer_pool_size','pool_size','0000-00-00 00:00:00:00'),(150,'os_waits','os_waits','0000-00-00 00:00:00:00'),(150,'spin_rounds','spin_rounds','0000-00-00 00:00:00:00'),(150,'spin_waits','spin_waits','0000-00-00 00:00:00:00'),(151,'insert_buffer_inserts','insbuffer_inserts','0000-00-00 00:00:00:00'),(151,'insert_buffer_merged','insbuffer_merged','0000-00-00 00:00:00:00'),(151,'insert_buffer_merges','insbuffer_merges','0000-00-00 00:00:00:00'),(152,'file_fsyncs','fsyncs','0000-00-00 00:00:00:00'),(152,'file_reads','reads','0000-00-00 00:00:00:00'),(152,'file_writes','file_writes','0000-00-00 00:00:00:00'),(152,'log_writes','log_writes','0000-00-00 00:00:00:00'),(153,'pendJobs','pendJobs','0000-00-00 00:00:00:00'),(155,'out_ms','ping','0000-00-00 00:00:00:00'),(157,'Binlog_cache_disk_use','BinlogCacheDiskUse','0000-00-00 00:00:00:00'),(157,'Binlog_cache_use','BinlogCacheUse','0000-00-00 00:00:00:00'),(157,'Read_Exec_Log_Pos_Diff','ReadExecLogPosDiff','0000-00-00 00:00:00:00'),(157,'Seconds_Behind_Master','SecondsBehindMaster','0000-00-00 00:00:00:00'),(186,'avg','avg','0000-00-00 00:00:00:00'),(186,'current','current','0000-00-00 00:00:00:00'),(187,'avg','avg','0000-00-00 00:00:00:00'),(187,'current','current','0000-00-00 00:00:00:00'),(188,'avg','avg','0000-00-00 00:00:00:00'),(188,'current','current','0000-00-00 00:00:00:00'),(189,'avg','avg','0000-00-00 00:00:00:00'),(189,'current','current','0000-00-00 00:00:00:00'),(190,'avg','avg','0000-00-00 00:00:00:00'),(190,'current','current','0000-00-00 00:00:00:00'),(191,'avg','avg','0000-00-00 00:00:00:00'),(191,'current','current','0000-00-00 00:00:00:00'),(192,'avg','avg','0000-00-00 00:00:00:00'),(192,'current','current','0000-00-00 00:00:00:00'),(193,'avg','avg','0000-00-00 00:00:00:00'),(193,'current','current','0000-00-00 00:00:00:00'),(194,'avg','avg','0000-00-00 00:00:00:00'),(194,'current','current','0000-00-00 00:00:00:00'),(195,'avg','avg','0000-00-00 00:00:00:00'),(195,'current','current','0000-00-00 00:00:00:00'),(196,'free','free','0000-00-00 00:00:00:00'),(196,'total','total','0000-00-00 00:00:00:00'),(196,'used','used','0000-00-00 00:00:00:00'),(197,'avg','avg','0000-00-00 00:00:00:00'),(197,'current','current','0000-00-00 00:00:00:00'),(199,'cpuUtil','cpuUtil','0000-00-00 00:00:00:00'),(199,'memSlotUtil','memSlotUtil','0000-00-00 00:00:00:00'),(199,'slotUtil','slotUtil','0000-00-00 00:00:00:00'),(201,'usage','usage','0000-00-00 00:00:00:00'),(202,'numHost','host_tmp_pct','0000-00-00 00:00:00:00'),(203,'numHost','host_vartmp_pct','0000-00-00 00:00:00:00'),(204,'numHost','host_status','0000-00-00 00:00:00:00'),(205,'numHostGroup','queue_free_slots','0000-00-00 00:00:00:00'),(206,'numHost','host_eff_r15m','0000-00-00 00:00:00:00'),(207,'numHost','host_mem_pct','0000-00-00 00:00:00:00'),(208,'numHost','host_swp_pct','0000-00-00 00:00:00:00'),(209,'numJobs','host_idle_jobs','0000-00-00 00:00:00:00'),(210,'pend_jobs','pend_jobs','0000-00-00 00:00:00:00');
 /*!40000 ALTER TABLE `poller_data_template_field_mappings` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -7434,15 +7485,15 @@ DROP TABLE IF EXISTS `poller_item`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `poller_item` (
-  `local_data_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `poller_id` int(10) unsigned NOT NULL DEFAULT '1',
-  `host_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `action` tinyint(2) unsigned NOT NULL DEFAULT '1',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `local_data_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `poller_id` int(10) unsigned NOT NULL DEFAULT 1,
+  `host_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `action` tinyint(2) unsigned NOT NULL DEFAULT 1,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 1,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `hostname` varchar(100) NOT NULL DEFAULT '',
   `snmp_community` varchar(100) NOT NULL DEFAULT '',
-  `snmp_version` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `snmp_version` tinyint(1) unsigned NOT NULL DEFAULT 0,
   `snmp_username` varchar(50) NOT NULL DEFAULT '',
   `snmp_password` varchar(50) NOT NULL DEFAULT '',
   `snmp_auth_protocol` char(6) NOT NULL DEFAULT '',
@@ -7450,14 +7501,14 @@ CREATE TABLE `poller_item` (
   `snmp_priv_protocol` char(6) NOT NULL DEFAULT '',
   `snmp_context` varchar(64) DEFAULT '',
   `snmp_engine_id` varchar(64) DEFAULT '',
-  `snmp_port` mediumint(5) unsigned NOT NULL DEFAULT '161',
-  `snmp_timeout` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `snmp_port` mediumint(5) unsigned NOT NULL DEFAULT 161,
+  `snmp_timeout` mediumint(8) unsigned NOT NULL DEFAULT 0,
   `rrd_name` varchar(19) NOT NULL DEFAULT '',
   `rrd_path` varchar(255) NOT NULL DEFAULT '',
-  `rrd_num` tinyint(2) unsigned NOT NULL DEFAULT '0',
-  `rrd_step` mediumint(8) NOT NULL DEFAULT '300',
-  `rrd_next_step` mediumint(8) NOT NULL DEFAULT '0',
-  `arg1` text,
+  `rrd_num` tinyint(2) unsigned NOT NULL DEFAULT 0,
+  `rrd_step` mediumint(8) NOT NULL DEFAULT 300,
+  `rrd_next_step` mediumint(8) NOT NULL DEFAULT 0,
+  `arg1` text DEFAULT NULL,
   `arg2` varchar(255) DEFAULT NULL,
   `arg3` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`local_data_id`,`rrd_name`),
@@ -7477,7 +7528,7 @@ CREATE TABLE `poller_item` (
 
 LOCK TABLES `poller_item` WRITE;
 /*!40000 ALTER TABLE `poller_item` DISABLE KEYS */;
-INSERT INTO `poller_item` VALUES (1,1,1,1,1,'2022-03-06 04:50:02','localhost','',0,'','','','','','','',161,500,'mem_buffers','/var/www/html/cacti/rra/local_linux_machine_mem_buffers_1.rrd',1,300,0,'perl /var/www/html/cacti/scripts/linux_memory.pl \'MemFree:\'','',''),(2,1,1,1,1,'2022-03-06 04:50:02','localhost','',0,'','','','','','','',161,500,'mem_swap','/var/www/html/cacti/rra/local_linux_machine_mem_swap_2.rrd',1,300,0,'perl /var/www/html/cacti/scripts/linux_memory.pl \'SwapFree:\'','',''),(3,1,1,1,1,'2022-03-06 04:50:02','localhost','',0,'','','','','','','',161,500,'','/var/www/html/cacti/rra/local_linux_machine_load_1min_3.rrd',1,300,0,'perl /var/www/html/cacti/scripts/loadavg_multi.pl','',''),(4,1,1,1,1,'2022-03-06 04:50:02','localhost','',0,'','','','','','','',161,500,'users','/var/www/html/cacti/rra/local_linux_machine_users_4.rrd',1,300,0,'perl /var/www/html/cacti/scripts/unix_users.pl ','',''),(5,1,1,1,1,'2022-03-06 04:50:02','localhost','',0,'','','','','','','',161,500,'proc','/var/www/html/cacti/rra/local_linux_machine_proc_5.rrd',1,300,0,'perl /var/www/html/cacti/scripts/unix_processes.pl','','');
+INSERT INTO `poller_item` VALUES (1,1,1,1,1,'0000-00-00 00:00:00:00','localhost','',0,'','','','','','','',161,500,'mem_buffers','/var/www/html/cacti/rra/local_linux_machine_mem_buffers_1.rrd',1,300,0,'perl /var/www/html/cacti/scripts/linux_memory.pl \'MemFree:\'','',''),(2,1,1,1,1,'0000-00-00 00:00:00:00','localhost','',0,'','','','','','','',161,500,'mem_swap','/var/www/html/cacti/rra/local_linux_machine_mem_swap_2.rrd',1,300,0,'perl /var/www/html/cacti/scripts/linux_memory.pl \'SwapFree:\'','',''),(3,1,1,1,1,'0000-00-00 00:00:00:00','localhost','',0,'','','','','','','',161,500,'','/var/www/html/cacti/rra/local_linux_machine_load_1min_3.rrd',1,300,0,'perl /var/www/html/cacti/scripts/loadavg_multi.pl','',''),(4,1,1,1,1,'0000-00-00 00:00:00:00','localhost','',0,'','','','','','','',161,500,'users','/var/www/html/cacti/rra/local_linux_machine_users_4.rrd',1,300,0,'perl /var/www/html/cacti/scripts/unix_users.pl ','',''),(5,1,1,1,1,'0000-00-00 00:00:00:00','localhost','',0,'','','','','','','',161,500,'proc','/var/www/html/cacti/rra/local_linux_machine_proc_5.rrd',1,300,0,'perl /var/www/html/cacti/scripts/unix_processes.pl','','');
 /*!40000 ALTER TABLE `poller_item` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -7489,7 +7540,7 @@ DROP TABLE IF EXISTS `poller_output`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `poller_output` (
-  `local_data_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `local_data_id` int(10) unsigned NOT NULL DEFAULT 0,
   `rrd_name` varchar(19) NOT NULL DEFAULT '',
   `time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `output` varchar(512) NOT NULL DEFAULT '',
@@ -7505,7 +7556,7 @@ DROP TABLE IF EXISTS `poller_output_boost`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `poller_output_boost` (
-  `local_data_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `local_data_id` int(10) unsigned NOT NULL DEFAULT 0,
   `rrd_name` varchar(19) NOT NULL DEFAULT '',
   `time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `output` varchar(512) NOT NULL,
@@ -7535,7 +7586,7 @@ DROP TABLE IF EXISTS `poller_output_realtime`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `poller_output_realtime` (
-  `local_data_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `local_data_id` int(10) unsigned NOT NULL DEFAULT 0,
   `rrd_name` varchar(19) NOT NULL DEFAULT '',
   `time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `output` text NOT NULL,
@@ -7554,10 +7605,10 @@ DROP TABLE IF EXISTS `poller_reindex`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `poller_reindex` (
-  `host_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `data_query_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `action` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `present` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `host_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `data_query_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `action` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `present` tinyint(3) unsigned NOT NULL DEFAULT 1,
   `op` char(1) NOT NULL DEFAULT '',
   `assert_value` varchar(100) NOT NULL DEFAULT '',
   `arg1` varchar(255) NOT NULL DEFAULT '',
@@ -7579,8 +7630,8 @@ CREATE TABLE `poller_resource_cache` (
   `md5sum` varchar(32) DEFAULT NULL,
   `path` varchar(191) DEFAULT NULL,
   `update_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `contents` longblob,
-  `attributes` int(10) unsigned DEFAULT '0',
+  `contents` longblob DEFAULT NULL,
+  `attributes` int(10) unsigned DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `path` (`path`)
 ) ENGINE=InnoDB COMMENT='Caches all scripts, resources files, and plugins';
@@ -7595,8 +7646,8 @@ DROP TABLE IF EXISTS `poller_time`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `poller_time` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `pid` int(10) unsigned NOT NULL DEFAULT '0',
-  `poller_id` int(10) unsigned NOT NULL DEFAULT '1',
+  `pid` int(10) unsigned NOT NULL DEFAULT 0,
+  `poller_id` int(10) unsigned NOT NULL DEFAULT 1,
   `start_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `end_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`),
@@ -7613,12 +7664,12 @@ DROP TABLE IF EXISTS `processes`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `processes` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `pid` int(10) unsigned NOT NULL DEFAULT '0',
+  `pid` int(10) unsigned NOT NULL DEFAULT 0,
   `tasktype` varchar(20) NOT NULL DEFAULT '',
   `taskname` varchar(40) NOT NULL DEFAULT '',
-  `taskid` int(10) unsigned NOT NULL DEFAULT '0',
-  `timeout` int(10) DEFAULT '300',
-  `started` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `taskid` int(10) unsigned NOT NULL DEFAULT 0,
+  `timeout` int(10) unsigned DEFAULT 300,
+  `started` timestamp NOT NULL DEFAULT current_timestamp(),
   `last_update` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`pid`,`tasktype`,`taskname`,`taskid`),
   KEY `tasktype` (`tasktype`),
@@ -7635,28 +7686,28 @@ DROP TABLE IF EXISTS `reports`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `reports` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `user_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
   `name` varchar(100) NOT NULL DEFAULT '',
   `cformat` char(2) NOT NULL DEFAULT '',
   `format_file` varchar(255) NOT NULL DEFAULT '',
-  `font_size` smallint(2) unsigned NOT NULL DEFAULT '0',
-  `alignment` smallint(2) unsigned NOT NULL DEFAULT '0',
+  `font_size` smallint(2) unsigned NOT NULL DEFAULT 0,
+  `alignment` smallint(2) unsigned NOT NULL DEFAULT 0,
   `graph_linked` char(2) NOT NULL DEFAULT '',
-  `intrvl` smallint(2) unsigned NOT NULL DEFAULT '0',
-  `count` smallint(2) unsigned NOT NULL DEFAULT '0',
-  `offset` int(10) unsigned NOT NULL DEFAULT '0',
-  `mailtime` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `intrvl` smallint(2) unsigned NOT NULL DEFAULT 0,
+  `count` smallint(2) unsigned NOT NULL DEFAULT 0,
+  `offset` int(10) unsigned NOT NULL DEFAULT 0,
+  `mailtime` bigint(20) unsigned NOT NULL DEFAULT 0,
   `subject` varchar(64) NOT NULL DEFAULT '',
   `from_name` varchar(40) NOT NULL,
   `from_email` text NOT NULL,
   `email` text NOT NULL,
   `bcc` text NOT NULL,
-  `attachment_type` smallint(2) unsigned NOT NULL DEFAULT '1',
-  `graph_height` smallint(2) unsigned NOT NULL DEFAULT '0',
-  `graph_width` smallint(2) unsigned NOT NULL DEFAULT '0',
-  `graph_columns` smallint(2) unsigned NOT NULL DEFAULT '0',
+  `attachment_type` smallint(2) unsigned NOT NULL DEFAULT 1,
+  `graph_height` smallint(2) unsigned NOT NULL DEFAULT 0,
+  `graph_width` smallint(2) unsigned NOT NULL DEFAULT 0,
+  `graph_columns` smallint(2) unsigned NOT NULL DEFAULT 0,
   `thumbnails` char(2) NOT NULL DEFAULT '',
-  `lastsent` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `lastsent` bigint(20) unsigned NOT NULL DEFAULT 0,
   `enabled` char(2) DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `mailtime` (`mailtime`)
@@ -7672,24 +7723,39 @@ DROP TABLE IF EXISTS `reports_items`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `reports_items` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `report_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `item_type` tinyint(1) unsigned NOT NULL DEFAULT '1',
-  `tree_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `branch_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `report_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `item_type` tinyint(1) unsigned NOT NULL DEFAULT 1,
+  `tree_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `branch_id` int(10) unsigned NOT NULL DEFAULT 0,
   `tree_cascade` char(2) NOT NULL DEFAULT '',
   `graph_name_regexp` varchar(128) NOT NULL DEFAULT '',
-  `host_template_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `host_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `graph_template_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `local_graph_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `timespan` int(10) unsigned NOT NULL DEFAULT '0',
-  `align` tinyint(1) unsigned NOT NULL DEFAULT '1',
+  `site_id` int(10) NOT NULL DEFAULT -1,
+  `host_template_id` int(10) NOT NULL DEFAULT -1,
+  `host_id` int(10) NOT NULL DEFAULT -1,
+  `graph_template_id` int(10) NOT NULL DEFAULT -1,
+  `local_graph_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `timespan` int(10) unsigned NOT NULL DEFAULT 0,
+  `align` tinyint(1) unsigned NOT NULL DEFAULT 1,
   `item_text` text NOT NULL,
-  `font_size` smallint(2) unsigned NOT NULL DEFAULT '10',
-  `sequence` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `font_size` smallint(2) unsigned NOT NULL DEFAULT 10,
+  `sequence` smallint(5) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `report_id` (`report_id`)
 ) ENGINE=InnoDB COMMENT='Cacti Reporting Items';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `rrdcheck`
+--
+
+DROP TABLE IF EXISTS `rrdcheck`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `rrdcheck` (
+  `local_data_id` mediumint(8) unsigned NOT NULL,
+  `test_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `message` varchar(250) DEFAULT ''
+) ENGINE=InnoDB ROW_FORMAT=DYNAMIC COMMENT='Store result of RRDcheck';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -7703,7 +7769,11 @@ CREATE TABLE `sessions` (
   `id` varchar(32) NOT NULL,
   `remote_addr` varchar(25) NOT NULL DEFAULT '',
   `access` int(10) unsigned DEFAULT NULL,
-  `data` mediumblob,
+  `data` mediumblob DEFAULT NULL,
+  `user_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `user_agent` varchar(128) NOT NULL DEFAULT '',
+  `start_time` timestamp NOT NULL DEFAULT current_timestamp(),
+  `transactions` int(10) unsigned NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB COMMENT='Used for Database based Session Storage';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -7716,8 +7786,8 @@ DROP TABLE IF EXISTS `settings`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `settings` (
-  `name` varchar(50) NOT NULL DEFAULT '',
-  `value` varchar(1024) NOT NULL DEFAULT '',
+  `name` varchar(75) NOT NULL DEFAULT '',
+  `value` varchar(4096) NOT NULL DEFAULT '',
   PRIMARY KEY (`name`)
 ) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -7728,7 +7798,7 @@ CREATE TABLE `settings` (
 
 LOCK TABLES `settings` WRITE;
 /*!40000 ALTER TABLE `settings` DISABLE KEYS */;
-INSERT INTO `settings` VALUES ('add_summary_device','on'),('admin_user','1'),('advocate_port','8089'),('ajax_filter_enabled',''),('app_key','62ad985c83ab27faa24466b3266d24ecb2649358'),('auth_cache_enabled','on'),('auth_method','1'),('autocomplete_enabled','1'),('autocomplete_rows','30'),('automation_email',''),('automation_fromemail',''),('automation_fromname',''),('automation_graphs_enabled','on'),('automation_tree_enabled','on'),('availability_method','0'),('axis_size','7'),('base_url',CONCAT('http://', @@hostname, '/cacti/')),('benchmark_total_benchmarks','0'),('boost_parallel','1'),('boost_png_cache_enable',''),('boost_poller_mem_limit','2048'),('boost_redirect',''),('boost_rrd_update_enable',''),('boost_rrd_update_interval','60'),('boost_rrd_update_max_records','1000000'),('boost_rrd_update_max_records_per_select','50000'),('boost_rrd_update_max_runtime','1200'),('boost_rrd_update_string_length','2000'),('boost_rrd_update_system_enable',''),('concurrent_processes','1'),('cron_interval','300'),('date','2022-03-06 04:50:02'),('default_date_format','4'),('default_datechar','1'),('default_graph_height','150'),('default_graph_width','500'),('default_graphs_new_dropdown','-2'),('default_has',''),('default_image_format','1'),('default_poller','1'),('default_site','1'),('default_template','1'),('deletion_verification','on'),('device_threads','1'),('disku_bypass_directories','.snapshot'),('disku_db_version','10.2.0.14'),('disku_device_add','on'),('disku_level1','meta_col4'),('disku_level2','meta_col5'),('disku_level3','meta_col6'),('disku_part_version','10.2.0.14'),('disku_version','10.2.0.14'),('drag_and_drop','on'),('dsstats_daily_interval','60'),('dsstats_enable',''),('dsstats_hourly_duration','60'),('dsstats_major_update_time','12:00am'),('dsstats_poller_mem_limit','2048'),('enable_snmp_agent',''),('font_method','1'),('force_https',''),('graph_auth_method','1'),('graph_watermark','Generated by IBM® Spectrum LSF RTM'),('grds_creation_method','0'),('grid_archive_rrd_files','off'),('grid_archive_rrd_location','/var/www/html/cacti/rraarchive'),('grid_backup_enable','on'),('grid_backup_generations','4'),('grid_backup_partitions','1'),('grid_backup_path','/var/www/html/cacti/backup'),('grid_backup_restore_host_file',''),('grid_backup_schedule','d'),('grid_backup_weekday','0'),('grid_cache_dir','/var/www/html/cacti/gridcache'),('grid_collection_enabled','on'),('grid_copyright_year','2006-2023'),('grid_db_version','10.2.0.15'),('grid_host_autopurge','1'),('grid_job_stats_fromhost_enabled',''),('grid_job_stats_project_enabled',''),('grid_license_project_tracking',''),('grid_os','OFF'),('grid_part_version','10.2.0.15'),('grid_partitioning_enable','on'),('grid_partitions_upgrade_status','done'),('grid_pendreason_full_collection',''),('grid_short_hostname','on'),('grid_system_collection_enabled','on'),('grid_thold_resdown_status','1'),('grid_utime_stime_zero_collection',''),('grid_version','10.2.0.15'),('grid_xport_rows','1000'),('gridalarms_db_version','10.2.0.15'),('gridalarms_part_version','10.2.0.15'),('gridalarms_version','10.2.0.15'),('gridblstat_db_version','10.2.0.14'),('gridblstat_part_version','10.2.0.14'),('gridblstat_version','10.2.0.14'),('gridpend_db_version','10.2.0.14'),('gridpend_poller_mem_limit','2048'),('guest_user','0'),('help_loc_online_kc','https://www.ibm.com/support/knowledgecenter/SSZT2D_10.2.0'),('heuristics_db_version','10.2.0.14'),('heuristics_part_version','10.2.0.14'),('heuristics_version','10.2.0.14'),('hide_console',''),('hide_form_description',''),('i18n_auto_detection','1'),('i18n_default_language','en-US'),('i18n_language_support','1'),('install_complete',UNIX_TIMESTAMP(NOW(6))),('install_started',UNIX_TIMESTAMP(NOW(6))),('install_theme','spectrum'),('ldap_encryption','0'),('ldap_group_member_type','1'),('ldap_group_require',''),('ldap_mode','0'),('ldap_port','389'),('ldap_port_ssl','636'),('ldap_referrals','0'),('ldap_version','3'),('legend_size','8'),('lic_add_device','on'),('lic_add_features_graph',''),('lic_data_retention','2weeks'),('lic_db_maint_time','12:00am'),('lic_db_upgrade','0'),('license_db_version','10.2.0.14'),('license_part_version','10.2.0.14'),('license_version','10.2.0.14'),('log_destination','1'),('log_perror','on'),('log_pstats',''),('log_pwarn',''),('log_refresh_interval','60'),('log_validation',''),('log_verbosity','2'),('logrotate_enabled','on'),('logrotate_frequency','1'),('logrotate_retain','7'),('max_data_query_field_length','40'),('max_display_rows','1000'),('max_get_size','10'),('max_threads','1'),('max_title_length','110'),('notify_admin',''),('ntp_server','pool.ntp.org'),('num_rows_log','500'),('num_rows_table','30'),('oid_increasing_check_disable',''),('path_cactilog','/var/www/html/cacti/log/cacti.log'),('path_php_binary','/usr/bin/php'),('path_rrdtool','/usr/bin/rrdtool'),('path_rrdtool_default_font',''),('path_snmpbulkwalk','/usr/bin/snmpbulkwalk'),('path_snmpget','/usr/bin/snmpget'),('path_snmpgetnext','/usr/bin/snmpgetnext'),('path_snmptrap','/usr/bin/snmptrap'),('path_snmpwalk','/usr/bin/snmpwalk'),('path_stderrlog','/var/www/html/cacti/log/cacti_stderr.log'),('path_stderrrlog','/var/www/html/cacti/log/cacti_stderr.log'),('path_webroot','/var/www/html/cacti'),('php_servers','1'),('ping_failure_count','2'),('ping_method','2'),('ping_port','23'),('ping_recovery_count','3'),('ping_retries','1'),('ping_timeout','400'),('poller_debug',''),('poller_enabled','on'),('poller_interval','300'),('poller_replicate_data_input_crc','ec612932f3b4f5267a8eb504a6f875037b1b866e'),('poller_replicate_data_input_fields_crc','1b42e7e9d54b59578f881335e20861a7bce73e7a'),('poller_replicate_data_source_cache_crc_1','63c118eb518d896747eeea41bd333f4d1e4d8e62'),('poller_replicate_device_cache_crc_1','216b85b6b654c733b0bb47e05e9f4c4dedf1cfc6'),('poller_replicate_snmp_query_crc','ecf349bfb00d88a5996624cec8f2848d234890c9'),('poller_sync_interval','7200'),('poller_type','1'),('process_leveling','on'),('realtime_cache_path','/var/www/html/cacti/cache/realtime/'),('realtime_enabled','on'),('realtime_gwindow','60'),('realtime_interval','10'),('reindex_method','1'),('remote_agent_timeout','5'),('reports_allow_ln',''),('reports_default_image_format','1'),('reports_log_verbosity','2'),('reports_max_attach','10485760'),('rrd_archive','/var/www/html/cacti/rra/archive/'),('rrd_autoclean',''),('rrd_autoclean_method','1'),('rrdp_fingerprint',''),('rrdp_fingerprint_backup',''),('rrdp_port','40301'),('rrdp_port_backup','40301'),('rsa_fingerprint','ed:aa:54:f1:e7:9b:dc:26:bf:d2:2f:41:66:04:48:a8'),('rsa_private_key','-----BEGIN RSA PRIVATE KEY----- MIIEowIBAAKCAQEAyJ/bm7JVJ1wYaFAS2o7/vc7/PZgjB1tHoNc69buSSQfW6Fkz +rYY8mEmgiTB3sdgGWwQdvYf+ypCZZaxqhM9izLaixZg9qceYbfJ1yWpXihOtHRv 1Q9kCtHP0g6p2XDAn6Itjo8EWMS+obkeujjcz5VlAgC7ast0SzhyP2F2OVlYmnT9 SzVPd0djn02K3i3jUBgE39s9wdvSq8caKctqKKHr/ZV2v/OWGelsd7BxXitgheQ/ njMNOvfF30/mZ9jmBMoyemD8tCvQb42uEnx+HWpw5lgIzO6yDaFEUUIMwarENwMB EWqmcpK1YeiQuBgHmSt7uJ8xsCAoy+RtctH0awIDAQABAoIBABO9701N6iU6Ych6 ALDzG2VhJiq4etHxgIXqSAoAUC/RjqtEg+Hq41+OgcySs2Upt2IpCSG7rH/5s5jt kEQNKqQ0995x8E61OT8iZ8E9GoKCcuQ9BPgxUIXkCZBBEyOrfbj3q4X4utPFYIDn h4eJqujeaZcd3VNv+9yfDFcCTzDrVe7ZGG50u4HGaFl76hjLaPdlsITXsSGoRU1W x4nHXGjwI5ua3GYkQSo0vxPGLXmZgNcz/1Ax1Jv6jm5uVkKppSUCxeVysfxP7lhQ xcZ7jUDdUrAv9LQd5Fuef+Wlb5LyF90zI0WwXvXKlmJkVFMZueBq6iai0e/pjMsm rsQteGkCgYEA/nh3DITqSr4sw5x2zaUlLlTHwEe/ypEhugd2aT+E4AQgy3J9QsfE vpfTeS5YszilK5ecO5VLpfcmcWX7XCxr+8VR/Y245X0wKYlEEJqLid8+YhBGBW/s cCvpDHLDO8hUQgZNv/ByBfsUjZYyMGoVK4I59qnuYkvlR7BJwnJJjAcCgYEAydSL NTBQk86pkM/Roo7+3y+vs11ja4PfzyPlKMZvGf1DTHUVlTmJVjMiPrA5kFidLF47 DelW/zB6qDuxAR80j'),('rsa_public_key','-----BEGIN PUBLIC KEY----- MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyJ/bm7JVJ1wYaFAS2o7/ vc7/PZgjB1tHoNc69buSSQfW6Fkz+rYY8mEmgiTB3sdgGWwQdvYf+ypCZZaxqhM9 izLaixZg9qceYbfJ1yWpXihOtHRv1Q9kCtHP0g6p2XDAn6Itjo8EWMS+obkeujjc z5VlAgC7ast0SzhyP2F2OVlYmnT9SzVPd0djn02K3i3jUBgE39s9wdvSq8caKctq KKHr/ZV2v/OWGelsd7BxXitgheQ/njMNOvfF30/mZ9jmBMoyemD8tCvQb42uEnx+ HWpw5lgIzO6yDaFEUUIMwarENwMBEWqmcpK1YeiQuBgHmSt7uJ8xsCAoy+RtctH0 awIDAQAB -----END PUBLIC KEY-----'),('script_timeout','25'),('secpass_expireaccount','0'),('secpass_expirepass','0'),('secpass_forceold',''),('secpass_history','0'),('secpass_lockfailed','5'),('secpass_minlen','8'),('secpass_reqmixcase','on'),('secpass_reqnum','on'),('secpass_reqspec','on'),('secpass_unlocktime','1440'),('selected_theme','spectrum'),('selective_debug',''),('selective_device_debug',''),('selective_plugin_debug',''),('settings_dns_primary',''),('settings_dns_secondary',''),('settings_dns_timeout','500'),('settings_how','PHP Mail() ??'),('settings_ping_mail','0'),('settings_sendmail_path','/usr/sbin/sendmail'),('settings_smtp_host','localhost'),('settings_smtp_port','25'),('settings_smtp_secure','none'),('settings_smtp_timeout','10'),('settings_wordwrap','120'),('snmp_auth_protocol','MD5'),('snmp_bulk_walk_size','10'),('snmp_community','public'),('snmp_context',''),('snmp_engine_id',''),('snmp_password',''),('snmp_port','161'),('snmp_priv_passphrase',''),('snmp_priv_protocol','DES'),('snmp_retries','3'),('snmp_security_level','authPriv'),('snmp_timeout','500'),('snmp_username',''),('snmp_version','0'),('spikekill_avgnan','last'),('spikekill_backupdir','/var/www/html/cacti/cache/spikekill/'),('spikekill_basetime','12:00am'),('spikekill_batch','0'),('spikekill_deviations','10'),('spikekill_method','2'),('spikekill_number','5'),('spikekill_outliers','5'),('spikekill_percent','1000'),('spine_log_level','0'),('storage_location','0'),('syslog_alert_retention','30'),('syslog_domains',''),('syslog_enabled','on'),('syslog_html','on'),('syslog_maxrecords','100'),('syslog_refresh','300'),('syslog_retention','30'),('syslog_statistics',''),('syslog_validate_hostname',''),('thold_empty_if_speed_default','10000'),('thold_enable_per_thold_body','on'),('thold_enable_scripts','on'),('thold_log_storage','31'),('timezone','America/New_York'),('title_size','10'),('unit_size','7'),('user_template','0');
+INSERT INTO `settings` VALUES ('add_summary_device','on'),('admin_user','1'),('advocate_port','8089'),('ajax_filter_enabled',''),('auth_cache_enabled','on'),('auth_method','1'),('autocomplete_enabled','1'),('autocomplete_rows','30'),('automation_email',''),('automation_fromemail',''),('automation_fromname',''),('automation_graphs_enabled','on'),('automation_tree_enabled','on'),('availability_method','0'),('axis_size','7'),('base_url',CONCAT('http://', @@hostname, '/cacti/')),('benchmark_total_benchmarks','0'),('boost_parallel','1'),('boost_png_cache_enable',''),('boost_poller_mem_limit','2048'),('boost_redirect',''),('boost_rrd_update_enable',''),('boost_rrd_update_interval','60'),('boost_rrd_update_max_records','1000000'),('boost_rrd_update_max_records_per_select','50000'),('boost_rrd_update_max_runtime','1200'),('boost_rrd_update_string_length','2000'),('boost_rrd_update_system_enable',''),('concurrent_processes','1'),('cron_interval','300'),('date',NOW()),('default_date_format','4'),('default_datechar','1'),('default_graph_height','150'),('default_graph_width','500'),('default_graphs_new_dropdown','-2'),('default_has',''),('default_image_format','1'),('default_poller','1'),('default_site','1'),('default_template','1'),('deletion_verification','on'),('device_threads','1'),('disku_bypass_directories','.snapshot'),('disku_db_version','10.2'),('disku_device_add','on'),('disku_level1','meta_col4'),('disku_level2','meta_col5'),('disku_level3','meta_col6'),('disku_part_version','10.2'),('disku_version','10.2.0.14'),('drag_and_drop','on'),('dsstats_daily_interval','60'),('dsstats_enable',''),('dsstats_hourly_duration','60'),('dsstats_major_update_time','12:00am'),('dsstats_poller_mem_limit','1024'),('enable_snmp_agent',''),('font_method','1'),('force_https',''),('graph_auth_method','1'),('graph_watermark','Generated by IBM® Spectrum LSF RTM'),('grds_creation_method','0'),('grid_archive_rrd_files','off'),('grid_archive_rrd_location','/var/www/html/cacti/rraarchive'),('grid_backup_enable','on'),('grid_backup_generations','4'),('grid_backup_partitions','1'),('grid_backup_path','/var/www/html/cacti/backup'),('grid_backup_restore_host_file',''),('grid_backup_schedule','d'),('grid_backup_weekday','0'),('grid_cache_dir','/var/www/html/cacti/gridcache'),('grid_collection_enabled','on'),('grid_copyright_year','2006-2024'),('grid_db_version','10.2.0.15'),('grid_host_autopurge','1'),('grid_job_stats_fromhost_enabled',''),('grid_job_stats_project_enabled',''),('grid_license_poller_failure_count','2'),('grid_license_poller_interval','300'),('grid_license_poller_recovery_count','2'),('grid_license_poller_threads','5'),('grid_license_project_tracking',''),('grid_os','OFF'),('grid_part_version','10.2.0.15'),('grid_partitioning_enable','on'),('grid_partitions_upgrade_status','done'),('grid_pendreason_full_collection',''),('grid_short_hostname','on'),('grid_system_collection_enabled','on'),('grid_thold_resdown_status','1'),('grid_utime_stime_zero_collection',''),('grid_version','10.2.0.15'),('grid_xport_rows','1000'),('gridalarms_db_version','10.2.0.0'),('gridalarms_part_version','10.2'),('gridalarms_version','10.2.0.15'),('gridblstat_db_version','10.2.0.11'),('gridblstat_part_version','10.2'),('gridblstat_version','10.2.0.15'),('gridpend_db_version','10.2.0.0'),('gridpend_poller_mem_limit','2048'),('guest_user','0'),('help_loc_online_kc','https://www.ibm.com/support/knowledgecenter/SSZT2D_10.2.0'),('heuristics_db_version','10.2.0.13'),('heuristics_part_version','10.2.0.13'),('heuristics_version','10.2.0.14'),('hide_console',''),('hide_form_description',''),('i18n_auto_detection','1'),('i18n_default_language','en-US'),('i18n_language_support','1'),('install_complete',UNIX_TIMESTAMP(NOW(6))),('install_started',UNIX_TIMESTAMP(NOW(6))),('install_theme','spectrum'),('install_updated',UNIX_TIMESTAMP(NOW(6))),('ldap_encryption','0'),('ldap_group_member_type','1'),('ldap_group_require',''),('ldap_mode','0'),('ldap_port','389'),('ldap_port_ssl','636'),('ldap_referrals','0'),('ldap_version','3'),('legend_size','8'),('lic_add_device','on'),('lic_add_features_graph',''),('lic_data_retention','2weeks'),('lic_db_maint_time','12:00am'),('lic_db_upgrade','0'),('license_db_version','10.2.0.13'),('license_part_version','10.2'),('license_version','10.2.0.15'),('log_destination','1'),('log_perror','on'),('log_pstats',''),('log_pwarn',''),('log_refresh_interval','60'),('log_validation',''),('log_verbosity','2'),('logrotate_enabled','on'),('logrotate_frequency','1'),('logrotate_retain','7'),('max_data_query_field_length','40'),('max_display_rows','1000'),('max_get_size','10'),('max_threads','1'),('max_title_length','110'),('notify_admin',''),('ntp_server','pool.ntp.org'),('num_rows_log','500'),('num_rows_table','30'),('oid_increasing_check_disable',''),('path_cactilog','/var/www/html/cacti/log/cacti.log'),('path_php_binary','/usr/bin/php'),('path_rrdtool','/usr/bin/rrdtool'),('path_rrdtool_default_font',''),('path_snmpbulkwalk','/usr/bin/snmpbulkwalk'),('path_snmpget','/usr/bin/snmpget'),('path_snmpgetnext','/usr/bin/snmpgetnext'),('path_snmptrap','/usr/bin/snmptrap'),('path_snmpwalk','/usr/bin/snmpwalk'),('path_stderrlog','/var/www/html/cacti/log/cacti_stderr.log'),('path_stderrrlog','/var/www/html/cacti/log/cacti_stderr.log'),('path_webroot','/var/www/html/cacti'),('php_servers','1'),('ping_failure_count','2'),('ping_method','2'),('ping_port','23'),('ping_recovery_count','3'),('ping_retries','1'),('ping_timeout','400'),('poller_debug',''),('poller_enabled','on'),('poller_interval','300'),('poller_replicate_data_input_crc','3025665e1676d3d39a7fb3e8339df889d29b61fc'),('poller_replicate_data_input_fields_crc','099b67c1c0f4ee787e7dcfbfad40a3bd02bd8226'),('poller_replicate_data_source_cache_crc_1','7d00ba4112c7be40cef77a937366c4c84a437c2d'),('poller_replicate_device_cache_crc_1','7f540b916031913af79d74488f54b2f6f03e9fe9'),('poller_replicate_snmp_query_crc','91341a6a03b82f9531e9bb414979d80efadfe6c9'),('poller_sync_interval','7200'),('poller_type','1'),('process_leveling','on'),('realtime_cache_path','/var/www/html/cacti/cache/realtime/'),('realtime_enabled','on'),('realtime_gwindow','60'),('realtime_interval','10'),('reindex_method','1'),('remote_agent_timeout','5'),('reports_allow_ln',''),('reports_default_image_format','1'),('reports_log_verbosity','2'),('reports_max_attach','10485760'),('rrd_archive','/var/www/html/cacti/rra/archive/'),('rrd_autoclean',''),('rrd_autoclean_method','1'),('rrdp_fingerprint',''),('rrdp_fingerprint_backup',''),('rrdp_port','40301'),('rrdp_port_backup','40301'),('rsa_fingerprint','ed:aa:54:f1:e7:9b:dc:26:bf:d2:2f:41:66:04:48:a8'),('rsa_private_key','-----BEGIN RSA PRIVATE KEY----- MIIEowIBAAKCAQEAyJ/bm7JVJ1wYaFAS2o7/vc7/PZgjB1tHoNc69buSSQfW6Fkz +rYY8mEmgiTB3sdgGWwQdvYf+ypCZZaxqhM9izLaixZg9qceYbfJ1yWpXihOtHRv 1Q9kCtHP0g6p2XDAn6Itjo8EWMS+obkeujjcz5VlAgC7ast0SzhyP2F2OVlYmnT9 SzVPd0djn02K3i3jUBgE39s9wdvSq8caKctqKKHr/ZV2v/OWGelsd7BxXitgheQ/ njMNOvfF30/mZ9jmBMoyemD8tCvQb42uEnx+HWpw5lgIzO6yDaFEUUIMwarENwMB EWqmcpK1YeiQuBgHmSt7uJ8xsCAoy+RtctH0awIDAQABAoIBABO9701N6iU6Ych6 ALDzG2VhJiq4etHxgIXqSAoAUC/RjqtEg+Hq41+OgcySs2Upt2IpCSG7rH/5s5jt kEQNKqQ0995x8E61OT8iZ8E9GoKCcuQ9BPgxUIXkCZBBEyOrfbj3q4X4utPFYIDn h4eJqujeaZcd3VNv+9yfDFcCTzDrVe7ZGG50u4HGaFl76hjLaPdlsITXsSGoRU1W x4nHXGjwI5ua3GYkQSo0vxPGLXmZgNcz/1Ax1Jv6jm5uVkKppSUCxeVysfxP7lhQ xcZ7jUDdUrAv9LQd5Fuef+Wlb5LyF90zI0WwXvXKlmJkVFMZueBq6iai0e/pjMsm rsQteGkCgYEA/nh3DITqSr4sw5x2zaUlLlTHwEe/ypEhugd2aT+E4AQgy3J9QsfE vpfTeS5YszilK5ecO5VLpfcmcWX7XCxr+8VR/Y245X0wKYlEEJqLid8+YhBGBW/s cCvpDHLDO8hUQgZNv/ByBfsUjZYyMGoVK4I59qnuYkvlR7BJwnJJjAcCgYEAydSL NTBQk86pkM/Roo7+3y+vs11ja4PfzyPlKMZvGf1DTHUVlTmJVjMiPrA5kFidLF47 DelW/zB6qDuxAR80j'),('rsa_public_key','-----BEGIN PUBLIC KEY----- MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyJ/bm7JVJ1wYaFAS2o7/ vc7/PZgjB1tHoNc69buSSQfW6Fkz+rYY8mEmgiTB3sdgGWwQdvYf+ypCZZaxqhM9 izLaixZg9qceYbfJ1yWpXihOtHRv1Q9kCtHP0g6p2XDAn6Itjo8EWMS+obkeujjc z5VlAgC7ast0SzhyP2F2OVlYmnT9SzVPd0djn02K3i3jUBgE39s9wdvSq8caKctq KKHr/ZV2v/OWGelsd7BxXitgheQ/njMNOvfF30/mZ9jmBMoyemD8tCvQb42uEnx+ HWpw5lgIzO6yDaFEUUIMwarENwMBEWqmcpK1YeiQuBgHmSt7uJ8xsCAoy+RtctH0 awIDAQAB -----END PUBLIC KEY-----'),('script_timeout','25'),('secpass_expireaccount','0'),('secpass_expirepass','0'),('secpass_forceold',''),('secpass_history','0'),('secpass_lockfailed','5'),('secpass_minlen','8'),('secpass_reqmixcase','on'),('secpass_reqnum','on'),('secpass_reqspec','on'),('secpass_unlocktime','1440'),('selected_theme','spectrum'),('selective_debug',''),('selective_device_debug',''),('selective_plugin_debug',''),('settings_dns_primary',''),('settings_dns_secondary',''),('settings_dns_timeout','500'),('settings_how','PHP Mail() ??'),('settings_ping_mail','0'),('settings_sendmail_path','/usr/sbin/sendmail'),('settings_smtp_host','localhost'),('settings_smtp_port','25'),('settings_smtp_secure','none'),('settings_smtp_timeout','10'),('settings_wordwrap','120'),('snmp_auth_protocol','MD5'),('snmp_bulk_walk_size','10'),('snmp_community','public'),('snmp_context',''),('snmp_engine_id',''),('snmp_password',''),('snmp_port','161'),('snmp_priv_passphrase',''),('snmp_priv_protocol','DES'),('snmp_retries','3'),('snmp_security_level','authPriv'),('snmp_timeout','500'),('snmp_username',''),('snmp_version','0'),('spikekill_avgnan','last'),('spikekill_backupdir','/var/www/html/cacti/cache/spikekill/'),('spikekill_basetime','12:00am'),('spikekill_batch','0'),('spikekill_deviations','10'),('spikekill_method','2'),('spikekill_number','5'),('spikekill_outliers','5'),('spikekill_percent','1000'),('spine_log_level','0'),('storage_location','0'),('syslog_alert_retention','30'),('syslog_domains',''),('syslog_enabled','on'),('syslog_html','on'),('syslog_maxrecords','100'),('syslog_refresh','300'),('syslog_retention','30'),('syslog_statistics',''),('syslog_validate_hostname',''),('thold_empty_if_speed_default','10000'),('thold_enable_per_thold_body','on'),('thold_enable_scripts','on'),('thold_log_storage','31'),('timezone','America/New_York'),('title_size','10'),('unit_size','7'),('user_template','0');
 /*!40000 ALTER TABLE `settings` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -7740,9 +7810,9 @@ DROP TABLE IF EXISTS `settings_tree`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `settings_tree` (
-  `user_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `graph_tree_item_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `status` tinyint(1) NOT NULL DEFAULT '0',
+  `user_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `graph_tree_item_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `status` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`user_id`,`graph_tree_item_id`)
 ) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -7755,9 +7825,9 @@ DROP TABLE IF EXISTS `settings_user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `settings_user` (
-  `user_id` smallint(8) unsigned NOT NULL DEFAULT '0',
-  `name` varchar(50) NOT NULL DEFAULT '',
-  `value` varchar(2048) NOT NULL DEFAULT '',
+  `user_id` smallint(8) unsigned NOT NULL DEFAULT 0,
+  `name` varchar(75) NOT NULL DEFAULT '',
+  `value` varchar(4096) NOT NULL DEFAULT '',
   PRIMARY KEY (`user_id`,`name`)
 ) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -7780,7 +7850,7 @@ DROP TABLE IF EXISTS `settings_user_group`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `settings_user_group` (
-  `group_id` smallint(8) unsigned NOT NULL DEFAULT '0',
+  `group_id` smallint(8) unsigned NOT NULL DEFAULT 0,
   `name` varchar(50) NOT NULL DEFAULT '',
   `value` varchar(2048) NOT NULL DEFAULT '',
   PRIMARY KEY (`group_id`,`name`)
@@ -7804,8 +7874,8 @@ CREATE TABLE `sites` (
   `postal_code` varchar(20) DEFAULT '',
   `country` varchar(30) DEFAULT '',
   `timezone` varchar(40) DEFAULT '',
-  `latitude` decimal(13,10) NOT NULL DEFAULT '0.0000000000',
-  `longitude` decimal(13,10) NOT NULL DEFAULT '0.0000000000',
+  `latitude` decimal(13,10) NOT NULL DEFAULT 0.0000000000,
+  `longitude` decimal(13,10) NOT NULL DEFAULT 0.0000000000,
   `zoom` tinyint(3) unsigned DEFAULT NULL,
   `alternate_id` varchar(30) DEFAULT '',
   `notes` varchar(1024) DEFAULT NULL,
@@ -7842,8 +7912,8 @@ CREATE TABLE `snmp_query` (
   `xml_path` varchar(255) NOT NULL DEFAULT '',
   `name` varchar(100) NOT NULL DEFAULT '',
   `description` varchar(255) DEFAULT NULL,
-  `graph_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `data_input_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `graph_template_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `data_input_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `name` (`name`)
 ) ENGINE=InnoDB;
@@ -7869,9 +7939,9 @@ DROP TABLE IF EXISTS `snmp_query_graph`;
 CREATE TABLE `snmp_query_graph` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `hash` varchar(32) NOT NULL DEFAULT '',
-  `snmp_query_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `snmp_query_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
   `name` varchar(100) NOT NULL DEFAULT '',
-  `graph_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `graph_template_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `graph_template_id_name` (`graph_template_id`,`name`),
   KEY `snmp_query_id_name` (`snmp_query_id`,`name`)
@@ -7896,9 +7966,9 @@ DROP TABLE IF EXISTS `snmp_query_graph_rrd`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `snmp_query_graph_rrd` (
-  `snmp_query_graph_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `data_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `data_template_rrd_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `snmp_query_graph_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `data_template_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `data_template_rrd_id` int(10) unsigned NOT NULL DEFAULT 0,
   `snmp_field_name` varchar(50) NOT NULL DEFAULT '0',
   PRIMARY KEY (`snmp_query_graph_id`,`data_template_id`,`data_template_rrd_id`),
   KEY `data_template_rrd_id` (`data_template_rrd_id`)
@@ -7925,9 +7995,9 @@ DROP TABLE IF EXISTS `snmp_query_graph_rrd_sv`;
 CREATE TABLE `snmp_query_graph_rrd_sv` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `hash` varchar(32) NOT NULL DEFAULT '',
-  `snmp_query_graph_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `data_template_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `sequence` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `snmp_query_graph_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `data_template_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `sequence` mediumint(8) unsigned NOT NULL DEFAULT 0,
   `field_name` varchar(100) NOT NULL DEFAULT '',
   `text` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
@@ -7956,8 +8026,8 @@ DROP TABLE IF EXISTS `snmp_query_graph_sv`;
 CREATE TABLE `snmp_query_graph_sv` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `hash` varchar(32) NOT NULL DEFAULT '',
-  `snmp_query_graph_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `sequence` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `snmp_query_graph_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `sequence` mediumint(8) unsigned NOT NULL DEFAULT 0,
   `field_name` varchar(100) NOT NULL DEFAULT '',
   `text` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
@@ -8069,12 +8139,12 @@ DROP TABLE IF EXISTS `snmpagent_managers`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `snmpagent_managers` (
-  `id` int(8) NOT NULL AUTO_INCREMENT,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `hostname` varchar(100) NOT NULL,
   `description` varchar(255) NOT NULL,
   `disabled` char(2) DEFAULT NULL,
   `max_log_size` tinyint(1) NOT NULL,
-  `snmp_version` tinyint(1) unsigned NOT NULL DEFAULT '1',
+  `snmp_version` tinyint(1) unsigned NOT NULL DEFAULT 1,
   `snmp_community` varchar(100) NOT NULL DEFAULT '',
   `snmp_username` varchar(50) NOT NULL,
   `snmp_password` varchar(50) NOT NULL,
@@ -8082,9 +8152,9 @@ CREATE TABLE `snmpagent_managers` (
   `snmp_priv_passphrase` varchar(200) NOT NULL,
   `snmp_priv_protocol` char(6) NOT NULL,
   `snmp_engine_id` varchar(64) DEFAULT NULL,
-  `snmp_port` mediumint(5) unsigned NOT NULL DEFAULT '161',
+  `snmp_port` mediumint(5) unsigned NOT NULL DEFAULT 161,
   `snmp_message_type` tinyint(1) NOT NULL,
-  `notes` text,
+  `notes` text DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `hostname` (`hostname`)
 ) ENGINE=InnoDB COMMENT='snmp notification receivers';
@@ -8098,7 +8168,7 @@ DROP TABLE IF EXISTS `snmpagent_managers_notifications`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `snmpagent_managers_notifications` (
-  `manager_id` int(8) NOT NULL,
+  `manager_id` int(10) unsigned NOT NULL,
   `notification` varchar(50) NOT NULL,
   `mib` varchar(50) NOT NULL,
   PRIMARY KEY (`manager_id`,`notification`,`mib`),
@@ -8114,7 +8184,7 @@ DROP TABLE IF EXISTS `snmpagent_mibs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `snmpagent_mibs` (
-  `id` int(8) NOT NULL AUTO_INCREMENT,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL DEFAULT '',
   `file` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
@@ -8139,10 +8209,10 @@ DROP TABLE IF EXISTS `snmpagent_notifications_log`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `snmpagent_notifications_log` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `time` int(24) NOT NULL,
   `severity` tinyint(1) NOT NULL,
-  `manager_id` int(8) NOT NULL,
+  `manager_id` int(10) unsigned NOT NULL,
   `notification` varchar(190) NOT NULL,
   `mib` varchar(50) NOT NULL,
   `varbinds` varchar(5000) NOT NULL,
@@ -8165,50 +8235,16 @@ CREATE TABLE `syslog` (
   `priority_id` int(10) unsigned DEFAULT NULL,
   `program_id` int(10) unsigned DEFAULT NULL,
   `host_id` int(10) unsigned DEFAULT NULL,
-  `logtime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `logtime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `message` varchar(1024) NOT NULL DEFAULT '',
   `seq` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`seq`,`logtime`),
+  PRIMARY KEY (`seq`),
   KEY `logtime` (`logtime`),
   KEY `program_id` (`program_id`),
   KEY `host_id` (`host_id`),
   KEY `priority_id` (`priority_id`),
   KEY `facility_id` (`facility_id`)
-) ENGINE=InnoDB
-/*!50100 PARTITION BY RANGE (UNIX_TIMESTAMP(logtime))
-(PARTITION d20220204 VALUES LESS THAN (1644048000) ENGINE = InnoDB,
- PARTITION d20220205 VALUES LESS THAN (1644134400) ENGINE = InnoDB,
- PARTITION d20220206 VALUES LESS THAN (1644220800) ENGINE = InnoDB,
- PARTITION d20220207 VALUES LESS THAN (1644307200) ENGINE = InnoDB,
- PARTITION d20220208 VALUES LESS THAN (1644393600) ENGINE = InnoDB,
- PARTITION d20220209 VALUES LESS THAN (1644480000) ENGINE = InnoDB,
- PARTITION d20220210 VALUES LESS THAN (1644566400) ENGINE = InnoDB,
- PARTITION d20220211 VALUES LESS THAN (1644652800) ENGINE = InnoDB,
- PARTITION d20220212 VALUES LESS THAN (1644739200) ENGINE = InnoDB,
- PARTITION d20220213 VALUES LESS THAN (1644825600) ENGINE = InnoDB,
- PARTITION d20220214 VALUES LESS THAN (1644912000) ENGINE = InnoDB,
- PARTITION d20220215 VALUES LESS THAN (1644998400) ENGINE = InnoDB,
- PARTITION d20220216 VALUES LESS THAN (1645084800) ENGINE = InnoDB,
- PARTITION d20220217 VALUES LESS THAN (1645171200) ENGINE = InnoDB,
- PARTITION d20220218 VALUES LESS THAN (1645257600) ENGINE = InnoDB,
- PARTITION d20220219 VALUES LESS THAN (1645344000) ENGINE = InnoDB,
- PARTITION d20220220 VALUES LESS THAN (1645430400) ENGINE = InnoDB,
- PARTITION d20220221 VALUES LESS THAN (1645516800) ENGINE = InnoDB,
- PARTITION d20220222 VALUES LESS THAN (1645603200) ENGINE = InnoDB,
- PARTITION d20220223 VALUES LESS THAN (1645689600) ENGINE = InnoDB,
- PARTITION d20220224 VALUES LESS THAN (1645776000) ENGINE = InnoDB,
- PARTITION d20220225 VALUES LESS THAN (1645862400) ENGINE = InnoDB,
- PARTITION d20220226 VALUES LESS THAN (1645948800) ENGINE = InnoDB,
- PARTITION d20220227 VALUES LESS THAN (1646035200) ENGINE = InnoDB,
- PARTITION d20220228 VALUES LESS THAN (1646121600) ENGINE = InnoDB,
- PARTITION d20220301 VALUES LESS THAN (1646208000) ENGINE = InnoDB,
- PARTITION d20220302 VALUES LESS THAN (1646294400) ENGINE = InnoDB,
- PARTITION d20220303 VALUES LESS THAN (1646380800) ENGINE = InnoDB,
- PARTITION d20220304 VALUES LESS THAN (1646467200) ENGINE = InnoDB,
- PARTITION d20220305 VALUES LESS THAN (1646553600) ENGINE = InnoDB,
- PARTITION d20220306 VALUES LESS THAN (1646640000) ENGINE = InnoDB,
- PARTITION d20220307 VALUES LESS THAN (1646726400) ENGINE = InnoDB,
- PARTITION dMaxValue VALUES LESS THAN MAXVALUE ENGINE = InnoDB) */;
+) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -8222,17 +8258,20 @@ CREATE TABLE `syslog_alert` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `hash` varchar(32) NOT NULL DEFAULT '',
   `name` varchar(255) NOT NULL DEFAULT '',
-  `severity` int(10) unsigned NOT NULL DEFAULT '0',
-  `method` int(10) unsigned NOT NULL DEFAULT '0',
-  `num` int(10) unsigned NOT NULL DEFAULT '1',
+  `severity` int(10) unsigned NOT NULL DEFAULT 0,
+  `method` int(10) unsigned NOT NULL DEFAULT 0,
+  `level` int(10) unsigned NOT NULL DEFAULT 0,
+  `num` int(10) unsigned NOT NULL DEFAULT 1,
   `type` varchar(16) NOT NULL DEFAULT '',
   `enabled` char(2) DEFAULT 'on',
-  `repeat_alert` int(10) unsigned NOT NULL DEFAULT '0',
+  `repeat_alert` int(10) unsigned NOT NULL DEFAULT 0,
   `open_ticket` char(2) DEFAULT '',
-  `message` varchar(128) NOT NULL DEFAULT '',
+  `message` varchar(2048) NOT NULL DEFAULT '',
+  `body` varchar(8192) NOT NULL DEFAULT '',
   `user` varchar(32) NOT NULL DEFAULT '',
-  `date` int(16) NOT NULL DEFAULT '0',
+  `date` int(16) NOT NULL DEFAULT 0,
   `email` varchar(255) DEFAULT NULL,
+  `notify` int(10) unsigned NOT NULL DEFAULT 0,
   `command` varchar(255) DEFAULT NULL,
   `notes` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -8249,21 +8288,11 @@ DROP TABLE IF EXISTS `syslog_facilities`;
 CREATE TABLE `syslog_facilities` (
   `facility_id` int(10) unsigned NOT NULL,
   `facility` varchar(10) NOT NULL,
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`facility_id`),
   KEY `last_updated` (`last_updated`)
 ) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `syslog_facilities`
---
-
-LOCK TABLES `syslog_facilities` WRITE;
-/*!40000 ALTER TABLE `syslog_facilities` DISABLE KEYS */;
-INSERT INTO `syslog_facilities` VALUES (0,'kern','2022-03-06 04:46:25'),(1,'user','2022-03-06 04:46:25'),(2,'mail','2022-03-06 04:46:25'),(3,'daemon','2022-03-06 04:46:25'),(4,'auth','2022-03-06 04:46:25'),(5,'syslog','2022-03-06 04:46:25'),(6,'lpd','2022-03-06 04:46:25'),(7,'news','2022-03-06 04:46:25'),(8,'uucp','2022-03-06 04:46:25'),(9,'crond','2022-03-06 04:46:25'),(10,'authpriv','2022-03-06 04:46:25'),(11,'ftpd','2022-03-06 04:46:25'),(12,'ntpd','2022-03-06 04:46:25'),(13,'logaudit','2022-03-06 04:46:25'),(14,'logalert','2022-03-06 04:46:25'),(15,'crond','2022-03-06 04:46:25'),(16,'local0','2022-03-06 04:46:25'),(17,'local1','2022-03-06 04:46:25'),(18,'local2','2022-03-06 04:46:25'),(19,'local3','2022-03-06 04:46:25'),(20,'local4','2022-03-06 04:46:25'),(21,'local5','2022-03-06 04:46:25'),(22,'local6','2022-03-06 04:46:25'),(23,'local7','2022-03-06 04:46:25');
-/*!40000 ALTER TABLE `syslog_facilities` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `syslog_host_facilities`
@@ -8275,7 +8304,7 @@ DROP TABLE IF EXISTS `syslog_host_facilities`;
 CREATE TABLE `syslog_host_facilities` (
   `host_id` int(10) unsigned NOT NULL,
   `facility_id` int(10) unsigned NOT NULL,
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`host_id`,`facility_id`)
 ) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -8290,7 +8319,7 @@ DROP TABLE IF EXISTS `syslog_hosts`;
 CREATE TABLE `syslog_hosts` (
   `host_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `host` varchar(64) NOT NULL,
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`host`),
   KEY `host_id` (`host_id`),
   KEY `last_updated` (`last_updated`)
@@ -8310,9 +8339,9 @@ CREATE TABLE `syslog_incoming` (
   `program` varchar(40) DEFAULT NULL,
   `logtime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `host` varchar(64) DEFAULT NULL,
-  `message` varchar(1024) NOT NULL DEFAULT '',
+  `message` varchar(2048) NOT NULL DEFAULT '',
   `seq` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `status` tinyint(4) NOT NULL DEFAULT '0',
+  `status` tinyint(4) NOT NULL DEFAULT 0,
   PRIMARY KEY (`seq`),
   KEY `program` (`program`),
   KEY `status` (`status`)
@@ -8327,7 +8356,7 @@ DROP TABLE IF EXISTS `syslog_logs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `syslog_logs` (
-  `alert_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `alert_id` int(10) unsigned NOT NULL DEFAULT 0,
   `logseq` bigint(20) unsigned NOT NULL,
   `logtime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `logmsg` varchar(1024) DEFAULT NULL,
@@ -8335,14 +8364,15 @@ CREATE TABLE `syslog_logs` (
   `facility_id` int(10) unsigned DEFAULT NULL,
   `priority_id` int(10) unsigned DEFAULT NULL,
   `program_id` int(10) unsigned DEFAULT NULL,
-  `count` int(10) unsigned NOT NULL DEFAULT '0',
-  `html` blob,
+  `count` int(10) unsigned NOT NULL DEFAULT 0,
+  `html` blob DEFAULT NULL,
   `seq` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`seq`),
   KEY `logseq` (`logseq`),
   KEY `program_id` (`program_id`),
   KEY `alert_id` (`alert_id`),
   KEY `host` (`host`),
+  KEY `seq` (`seq`),
   KEY `logtime` (`logtime`),
   KEY `priority_id` (`priority_id`),
   KEY `facility_id` (`facility_id`)
@@ -8359,21 +8389,11 @@ DROP TABLE IF EXISTS `syslog_priorities`;
 CREATE TABLE `syslog_priorities` (
   `priority_id` int(10) unsigned NOT NULL,
   `priority` varchar(10) NOT NULL,
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`priority_id`),
   KEY `last_updated` (`last_updated`)
 ) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `syslog_priorities`
---
-
-LOCK TABLES `syslog_priorities` WRITE;
-/*!40000 ALTER TABLE `syslog_priorities` DISABLE KEYS */;
-INSERT INTO `syslog_priorities` VALUES (0,'emerg','2022-03-06 04:46:25'),(1,'alert','2022-03-06 04:46:25'),(2,'crit','2022-03-06 04:46:25'),(3,'err','2022-03-06 04:46:25'),(4,'warning','2022-03-06 04:46:25'),(5,'notice','2022-03-06 04:46:25'),(6,'info','2022-03-06 04:46:25'),(7,'debug','2022-03-06 04:46:25'),(8,'other','2022-03-06 04:46:25');
-/*!40000 ALTER TABLE `syslog_priorities` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `syslog_programs`
@@ -8385,22 +8405,12 @@ DROP TABLE IF EXISTS `syslog_programs`;
 CREATE TABLE `syslog_programs` (
   `program_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `program` varchar(40) NOT NULL,
-  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`program`),
   KEY `host_id` (`program_id`),
   KEY `last_updated` (`last_updated`)
 ) ENGINE=InnoDB COMMENT='Contains all programs currently in the syslog table';
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `syslog_programs`
---
-
-LOCK TABLES `syslog_programs` WRITE;
-/*!40000 ALTER TABLE `syslog_programs` DISABLE KEYS */;
-INSERT INTO `syslog_programs` VALUES (1,'advocate','2022-03-06 04:50:04'),(2,'CROND','2022-03-06 04:50:04'),(3,'ntpd','2022-03-06 04:50:04'),(4,'polkitd','2022-03-06 04:50:04'),(5,'postfix','2022-03-06 04:50:04'),(6,'rsyslogd','2022-03-06 04:50:04'),(7,'systemd','2022-03-06 04:50:04'),(8,'useradd','2022-03-06 04:50:04'),(9,'yum','2022-03-06 04:50:04');
-/*!40000 ALTER TABLE `syslog_programs` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `syslog_remove`
@@ -8416,9 +8426,9 @@ CREATE TABLE `syslog_remove` (
   `type` varchar(16) NOT NULL DEFAULT '',
   `enabled` char(2) DEFAULT 'on',
   `method` char(5) DEFAULT 'del',
-  `message` varchar(128) NOT NULL DEFAULT '',
+  `message` varchar(2048) NOT NULL DEFAULT '',
   `user` varchar(32) NOT NULL DEFAULT '',
-  `date` int(16) NOT NULL DEFAULT '0',
+  `date` int(16) NOT NULL DEFAULT 0,
   `notes` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
@@ -8436,50 +8446,16 @@ CREATE TABLE `syslog_removed` (
   `priority_id` int(10) unsigned DEFAULT NULL,
   `program_id` int(10) unsigned DEFAULT NULL,
   `host_id` int(10) unsigned DEFAULT NULL,
-  `logtime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `logtime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `message` varchar(1024) NOT NULL DEFAULT '',
   `seq` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`seq`,`logtime`),
+  PRIMARY KEY (`seq`),
   KEY `logtime` (`logtime`),
   KEY `program_id` (`program_id`),
   KEY `host_id` (`host_id`),
   KEY `priority_id` (`priority_id`),
   KEY `facility_id` (`facility_id`)
-) ENGINE=InnoDB
-/*!50100 PARTITION BY RANGE (UNIX_TIMESTAMP(logtime))
-(PARTITION d20220204 VALUES LESS THAN (1644048000) ENGINE = InnoDB,
- PARTITION d20220205 VALUES LESS THAN (1644134400) ENGINE = InnoDB,
- PARTITION d20220206 VALUES LESS THAN (1644220800) ENGINE = InnoDB,
- PARTITION d20220207 VALUES LESS THAN (1644307200) ENGINE = InnoDB,
- PARTITION d20220208 VALUES LESS THAN (1644393600) ENGINE = InnoDB,
- PARTITION d20220209 VALUES LESS THAN (1644480000) ENGINE = InnoDB,
- PARTITION d20220210 VALUES LESS THAN (1644566400) ENGINE = InnoDB,
- PARTITION d20220211 VALUES LESS THAN (1644652800) ENGINE = InnoDB,
- PARTITION d20220212 VALUES LESS THAN (1644739200) ENGINE = InnoDB,
- PARTITION d20220213 VALUES LESS THAN (1644825600) ENGINE = InnoDB,
- PARTITION d20220214 VALUES LESS THAN (1644912000) ENGINE = InnoDB,
- PARTITION d20220215 VALUES LESS THAN (1644998400) ENGINE = InnoDB,
- PARTITION d20220216 VALUES LESS THAN (1645084800) ENGINE = InnoDB,
- PARTITION d20220217 VALUES LESS THAN (1645171200) ENGINE = InnoDB,
- PARTITION d20220218 VALUES LESS THAN (1645257600) ENGINE = InnoDB,
- PARTITION d20220219 VALUES LESS THAN (1645344000) ENGINE = InnoDB,
- PARTITION d20220220 VALUES LESS THAN (1645430400) ENGINE = InnoDB,
- PARTITION d20220221 VALUES LESS THAN (1645516800) ENGINE = InnoDB,
- PARTITION d20220222 VALUES LESS THAN (1645603200) ENGINE = InnoDB,
- PARTITION d20220223 VALUES LESS THAN (1645689600) ENGINE = InnoDB,
- PARTITION d20220224 VALUES LESS THAN (1645776000) ENGINE = InnoDB,
- PARTITION d20220225 VALUES LESS THAN (1645862400) ENGINE = InnoDB,
- PARTITION d20220226 VALUES LESS THAN (1645948800) ENGINE = InnoDB,
- PARTITION d20220227 VALUES LESS THAN (1646035200) ENGINE = InnoDB,
- PARTITION d20220228 VALUES LESS THAN (1646121600) ENGINE = InnoDB,
- PARTITION d20220301 VALUES LESS THAN (1646208000) ENGINE = InnoDB,
- PARTITION d20220302 VALUES LESS THAN (1646294400) ENGINE = InnoDB,
- PARTITION d20220303 VALUES LESS THAN (1646380800) ENGINE = InnoDB,
- PARTITION d20220304 VALUES LESS THAN (1646467200) ENGINE = InnoDB,
- PARTITION d20220305 VALUES LESS THAN (1646553600) ENGINE = InnoDB,
- PARTITION d20220306 VALUES LESS THAN (1646640000) ENGINE = InnoDB,
- PARTITION d20220307 VALUES LESS THAN (1646726400) ENGINE = InnoDB,
- PARTITION dMaxValue VALUES LESS THAN MAXVALUE ENGINE = InnoDB) */;
+) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -8495,14 +8471,15 @@ CREATE TABLE `syslog_reports` (
   `name` varchar(255) NOT NULL DEFAULT '',
   `type` varchar(16) NOT NULL DEFAULT '',
   `enabled` char(2) DEFAULT 'on',
-  `timespan` int(16) NOT NULL DEFAULT '0',
+  `timespan` int(16) NOT NULL DEFAULT 0,
   `timepart` char(5) NOT NULL DEFAULT '00:00',
-  `lastsent` int(16) NOT NULL DEFAULT '0',
-  `body` varchar(1024) DEFAULT NULL,
-  `message` varchar(128) DEFAULT NULL,
+  `lastsent` int(16) NOT NULL DEFAULT 0,
+  `body` varchar(8192) NOT NULL DEFAULT '',
+  `message` varchar(2048) DEFAULT NULL,
   `user` varchar(32) NOT NULL DEFAULT '',
-  `date` int(16) NOT NULL DEFAULT '0',
+  `date` int(16) NOT NULL DEFAULT 0,
   `email` varchar(255) DEFAULT NULL,
+  `notify` int(10) unsigned NOT NULL DEFAULT 0,
   `notes` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
@@ -8521,10 +8498,11 @@ CREATE TABLE `syslog_statistics` (
   `facility_id` int(10) unsigned NOT NULL,
   `priority_id` int(10) unsigned NOT NULL,
   `program_id` int(10) unsigned DEFAULT NULL,
-  `insert_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `insert_time` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `records` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_pk` (`host_id`,`facility_id`,`priority_id`,`program_id`,`insert_time`),
+  KEY `host_id` (`host_id`),
   KEY `facility_id` (`facility_id`),
   KEY `priority_id` (`priority_id`),
   KEY `program_id` (`program_id`),
@@ -8541,42 +8519,50 @@ DROP TABLE IF EXISTS `thold_data`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `thold_data` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
+  `thread_id` int(10) unsigned NOT NULL DEFAULT 0,
   `name` varchar(150) DEFAULT '',
-  `name_cache` varchar(150) DEFAULT '',
-  `local_data_id` int(10) NOT NULL DEFAULT '0',
-  `data_template_rrd_id` int(10) NOT NULL DEFAULT '0',
-  `local_graph_id` int(10) NOT NULL DEFAULT '0',
-  `graph_template_id` int(10) NOT NULL DEFAULT '0',
-  `data_template_id` int(10) NOT NULL DEFAULT '0',
+  `name_cache` varchar(100) DEFAULT '',
+  `local_data_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `data_template_rrd_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `local_graph_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `graph_template_id` int(10) NOT NULL DEFAULT 0,
+  `data_template_id` int(10) NOT NULL DEFAULT 0,
   `data_template_hash` varchar(32) NOT NULL DEFAULT '',
   `data_source_name` varchar(100) NOT NULL DEFAULT '',
   `thold_hi` varchar(100) DEFAULT '',
   `thold_low` varchar(100) DEFAULT '',
-  `thold_fail_trigger` int(10) unsigned DEFAULT NULL,
-  `thold_fail_count` int(10) NOT NULL DEFAULT '0',
+  `thold_fail_trigger` int(10) unsigned DEFAULT '',
+  `thold_fail_count` int(10) NOT NULL DEFAULT 0,
   `time_hi` varchar(100) DEFAULT '',
   `time_low` varchar(100) DEFAULT '',
-  `time_fail_trigger` int(10) NOT NULL DEFAULT '1',
-  `time_fail_length` int(10) NOT NULL DEFAULT '1',
+  `time_fail_trigger` int(10) NOT NULL DEFAULT 1,
+  `time_fail_length` int(10) NOT NULL DEFAULT 1,
   `thold_warning_hi` varchar(100) DEFAULT '',
   `thold_warning_low` varchar(100) DEFAULT '',
-  `thold_warning_fail_trigger` int(10) unsigned DEFAULT NULL,
-  `thold_warning_fail_count` int(10) NOT NULL DEFAULT '0',
+  `thold_warning_fail_trigger` int(10) unsigned DEFAULT 0,
+  `thold_warning_fail_count` int(10) NOT NULL DEFAULT 0,
   `time_warning_hi` varchar(100) DEFAULT '',
   `time_warning_low` varchar(100) DEFAULT '',
-  `time_warning_fail_trigger` int(10) NOT NULL DEFAULT '1',
-  `time_warning_fail_length` int(10) NOT NULL DEFAULT '1',
-  `thold_alert` int(1) NOT NULL DEFAULT '0',
-  `prev_thold_alert` int(1) NOT NULL DEFAULT '0',
+  `time_warning_fail_trigger` int(10) NOT NULL DEFAULT 1,
+  `time_warning_fail_length` int(10) NOT NULL DEFAULT 1,
+  `thold_alert` int(1) NOT NULL DEFAULT 0,
+  `prev_thold_alert` int(1) NOT NULL DEFAULT 0,
   `thold_enabled` enum('on','off') NOT NULL DEFAULT 'on',
-  `thold_type` int(3) NOT NULL DEFAULT '0',
+  `thold_per_enabled` char(3) NOT NULL DEFAULT 'on',
+  `thold_type` int(3) NOT NULL DEFAULT 0,
   `bl_ref_time_range` int(10) unsigned DEFAULT NULL,
+  `bl_type` int(3) NOT NULL DEFAULT 0,
   `bl_pct_down` varchar(100) DEFAULT '',
   `bl_pct_up` varchar(100) DEFAULT '',
   `bl_fail_trigger` int(10) unsigned DEFAULT NULL,
   `bl_fail_count` int(10) unsigned DEFAULT NULL,
-  `bl_alert` int(2) NOT NULL DEFAULT '0',
-  `bl_thold_valid` int(10) unsigned NOT NULL DEFAULT '0',
+  `bl_alert` int(2) NOT NULL DEFAULT 0,
+  `bl_cf` varchar(4) NOT NULL DEFAULT 'AVG',
+  `bl_reference_min` double DEFAULT 0,
+  `bl_reference_max` double DEFAULT 0,
+  `bl_reference_avg` double NOT NULL DEFAULT 0,
+  `bl_reference_last` double NOT NULL DEFAULT 0,
+  `bl_thold_valid` int(10) unsigned NOT NULL DEFAULT 0,
   `lastread` varchar(100) DEFAULT '',
   `lasttime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `lastchanged` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -8587,29 +8573,35 @@ CREATE TABLE `thold_data` (
   `notify_warning` int(10) unsigned DEFAULT NULL,
   `notify_alert` int(10) unsigned DEFAULT NULL,
   `snmp_event_category` varchar(255) DEFAULT '',
-  `snmp_event_severity` tinyint(1) NOT NULL DEFAULT '3',
-  `snmp_event_warning_severity` tinyint(1) NOT NULL DEFAULT '2',
-  `thold_daemon_pid` varchar(25) NOT NULL DEFAULT '',
+  `snmp_event_description` varchar(1000) DEFAULT '',
+  `snmp_event_severity` tinyint(1) NOT NULL DEFAULT 3,
+  `snmp_event_warning_severity` tinyint(1) NOT NULL DEFAULT 2,
   `host_id` int(10) DEFAULT NULL,
-  `syslog_priority` int(2) NOT NULL DEFAULT '3',
+  `syslog_priority` int(2) NOT NULL DEFAULT 3,
   `syslog_facility` int(2) DEFAULT NULL,
   `syslog_enabled` char(3) NOT NULL DEFAULT '',
-  `data_type` int(10) NOT NULL DEFAULT '0',
+  `data_type` int(10) NOT NULL DEFAULT 0,
   `show_units` char(3) NOT NULL DEFAULT '',
-  `cdef` int(10) NOT NULL DEFAULT '0',
+  `units_suffix` varchar(10) NOT NULL DEFAULT '',
+  `decimals` int(10) NOT NULL DEFAULT -1,
+  `cdef` int(10) NOT NULL DEFAULT 0,
   `percent_ds` varchar(64) NOT NULL DEFAULT '',
   `expression` varchar(512) NOT NULL DEFAULT '',
   `upper_ds` varchar(64) NOT NULL DEFAULT '',
-  `thold_template_id` int(10) NOT NULL DEFAULT '0',
+  `thold_template_id` int(10) NOT NULL DEFAULT 0,
   `template_enabled` char(3) NOT NULL DEFAULT '',
-  `tcheck` int(1) NOT NULL DEFAULT '0',
+  `tcheck` int(1) NOT NULL DEFAULT 0,
   `exempt` char(3) NOT NULL DEFAULT '',
   `acknowledgment` char(3) NOT NULL DEFAULT '',
   `thold_hrule_alert` int(10) unsigned DEFAULT NULL,
   `thold_hrule_warning` int(10) unsigned DEFAULT NULL,
+  `skipscale` char(3) DEFAULT '',
   `restored_alert` char(3) NOT NULL DEFAULT '',
   `reset_ack` char(3) NOT NULL DEFAULT '',
   `persist_ack` char(3) NOT NULL DEFAULT '',
+  `email_subject` varchar(128) NOT NULL DEFAULT '',
+  `email_subject_warn` varchar(128) NOT NULL DEFAULT '',
+  `email_subject_restoral` varchar(128) NOT NULL DEFAULT '',
   `email_body` varchar(1024) DEFAULT '',
   `email_body_warn` varchar(1024) NOT NULL DEFAULT '',
   `email_body_restoral` varchar(1024) NOT NULL DEFAULT '',
@@ -8628,6 +8620,8 @@ CREATE TABLE `thold_data` (
   `notes` varchar(1024) DEFAULT '',
   `host_action_high_lockid` varchar(128) NOT NULL DEFAULT '',
   `host_action_low_lockid` varchar(128) NOT NULL DEFAULT '',
+  `format_file` varchar(255) NOT NULL DEFAULT '',
+  `graph_timespan` int(10) unsigned NOT NULL DEFAULT 7,
   PRIMARY KEY (`id`),
   KEY `host_id` (`host_id`),
   KEY `local_data_id` (`local_data_id`),
@@ -8635,12 +8629,11 @@ CREATE TABLE `thold_data` (
   KEY `thold_template_id` (`thold_template_id`),
   KEY `thold_enabled` (`thold_enabled`),
   KEY `template_enabled` (`template_enabled`),
-  KEY `thold_daemon_pid` (`thold_daemon_pid`),
   KEY `tcheck` (`tcheck`),
   KEY `local_graph_id` (`local_graph_id`),
   KEY `graph_template_id` (`graph_template_id`),
   KEY `data_template_id` (`data_template_id`)
-) ENGINE=InnoDB COMMENT='Threshold data';
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Table of Thresholds defaults for graphs';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -8655,10 +8648,10 @@ CREATE TABLE `thold_template` (
   `hash` varchar(32) NOT NULL DEFAULT '',
   `name` varchar(100) NOT NULL DEFAULT '',
   `suggested_name` varchar(255) NOT NULL DEFAULT '',
-  `data_template_id` int(10) DEFAULT '0',
+  `data_template_id` int(10) DEFAULT 0,
   `data_template_hash` varchar(32) NOT NULL DEFAULT '',
   `data_template_name` varchar(100) NOT NULL DEFAULT '',
-  `data_source_id` int(10) NOT NULL DEFAULT '0',
+  `data_source_id` int(10) NOT NULL DEFAULT 0,
   `data_source_name` varchar(100) NOT NULL DEFAULT '',
   `data_source_friendly` varchar(100) NOT NULL DEFAULT '',
   `thold_hi` varchar(100) DEFAULT '',
@@ -8666,24 +8659,26 @@ CREATE TABLE `thold_template` (
   `thold_fail_trigger` int(10) unsigned DEFAULT NULL,
   `time_hi` varchar(100) DEFAULT '',
   `time_low` varchar(100) DEFAULT '',
-  `time_fail_trigger` int(10) NOT NULL DEFAULT '1',
-  `time_fail_length` int(10) NOT NULL DEFAULT '1',
+  `time_fail_trigger` int(10) NOT NULL DEFAULT 1,
+  `time_fail_length` int(10) NOT NULL DEFAULT 1,
   `thold_warning_hi` varchar(100) DEFAULT '',
   `thold_warning_low` varchar(100) DEFAULT '',
   `thold_warning_fail_trigger` int(10) unsigned DEFAULT NULL,
-  `thold_warning_fail_count` int(10) NOT NULL DEFAULT '0',
+  `thold_warning_fail_count` int(10) NOT NULL DEFAULT 0,
   `time_warning_hi` varchar(100) DEFAULT '',
   `time_warning_low` varchar(100) DEFAULT '',
-  `time_warning_fail_trigger` int(10) NOT NULL DEFAULT '1',
-  `time_warning_fail_length` int(10) NOT NULL DEFAULT '1',
+  `time_warning_fail_trigger` int(10) NOT NULL DEFAULT 1,
+  `time_warning_fail_length` int(10) NOT NULL DEFAULT 1,
   `thold_enabled` enum('on','off') NOT NULL DEFAULT 'on',
-  `thold_type` int(3) NOT NULL DEFAULT '0',
+  `thold_type` int(3) NOT NULL DEFAULT 0,
   `bl_ref_time_range` int(10) unsigned DEFAULT NULL,
+  `bl_type` int(3) NOT NULL DEFAULT 0,
   `bl_pct_down` varchar(100) DEFAULT '',
   `bl_pct_up` varchar(100) DEFAULT '',
   `bl_fail_trigger` int(10) unsigned DEFAULT NULL,
   `bl_fail_count` int(10) unsigned DEFAULT NULL,
-  `bl_alert` int(2) NOT NULL DEFAULT '0',
+  `bl_alert` int(2) NOT NULL DEFAULT 0,
+  `bl_cf` varchar(4) NOT NULL DEFAULT 'AVG',
   `repeat_alert` int(10) DEFAULT NULL,
   `notify_extra` varchar(512) DEFAULT '',
   `notify_warning_extra` varchar(512) DEFAULT '',
@@ -8691,20 +8686,27 @@ CREATE TABLE `thold_template` (
   `notify_warning` int(10) unsigned DEFAULT NULL,
   `notify_alert` int(10) unsigned DEFAULT NULL,
   `snmp_event_category` varchar(255) DEFAULT '',
-  `snmp_event_severity` tinyint(1) NOT NULL DEFAULT '3',
-  `snmp_event_warning_severity` tinyint(1) NOT NULL DEFAULT '2',
-  `data_type` int(10) NOT NULL DEFAULT '0',
+  `snmp_event_description` varchar(1000) DEFAULT '',
+  `snmp_event_severity` tinyint(1) NOT NULL DEFAULT 3,
+  `snmp_event_warning_severity` tinyint(1) NOT NULL DEFAULT 2,
+  `data_type` int(10) NOT NULL DEFAULT 0,
   `show_units` char(3) NOT NULL DEFAULT '',
-  `cdef` int(10) NOT NULL DEFAULT '0',
+  `units_suffix` varchar(10) NOT NULL DEFAULT '',
+  `decimals` int(10) NOT NULL DEFAULT -1,
+  `cdef` int(10) NOT NULL DEFAULT 0,
   `percent_ds` varchar(64) NOT NULL DEFAULT '',
   `expression` varchar(512) NOT NULL DEFAULT '',
   `upper_ds` varchar(64) NOT NULL DEFAULT '',
   `exempt` char(3) NOT NULL DEFAULT '',
   `thold_hrule_alert` int(10) unsigned DEFAULT NULL,
   `thold_hrule_warning` int(10) unsigned DEFAULT NULL,
+  `skipscale` char(3) DEFAULT '',
   `restored_alert` char(3) NOT NULL DEFAULT '',
   `reset_ack` char(3) NOT NULL DEFAULT '',
   `persist_ack` char(3) NOT NULL DEFAULT '',
+  `email_subject` varchar(128) NOT NULL DEFAULT '',
+  `email_subject_warn` varchar(128) NOT NULL DEFAULT '',
+  `email_subject_restoral` varchar(128) NOT NULL DEFAULT '',
   `email_body` varchar(1024) DEFAULT '',
   `email_body_warn` varchar(1024) NOT NULL DEFAULT '',
   `email_body_restoral` varchar(1024) NOT NULL DEFAULT '',
@@ -8724,7 +8726,10 @@ CREATE TABLE `thold_template` (
   `syslog_facility` int(2) DEFAULT NULL,
   `syslog_enabled` char(3) NOT NULL DEFAULT '',
   `notes` varchar(1024) DEFAULT '',
+  `format_file` varchar(255) NOT NULL DEFAULT '',
+  `graph_timespan` int(10) unsigned NOT NULL DEFAULT 7,
   PRIMARY KEY (`id`),
+  KEY `id` (`id`),
   KEY `data_source_id` (`data_source_id`),
   KEY `data_template_id` (`data_template_id`)
 ) ENGINE=InnoDB COMMENT='Table of Thresholds defaults for graphs';
@@ -8736,7 +8741,7 @@ CREATE TABLE `thold_template` (
 
 LOCK TABLES `thold_template` WRITE;
 /*!40000 ALTER TABLE `thold_template` DISABLE KEYS */;
-INSERT INTO `thold_template` VALUES (1,'338f94769de76b9fb5fa302d6b8a102c','Alert - Host With /tmp Exceed % Capacity [host_tmp_pct]','|data_source_description|',202,'67b772b2d1defae33f8692baa62a6f19','Alert - Host With /tmp Exceed % Capacity',480,'host_tmp_pct','Number of host exceeds /tmp percentage used','10','',1,'','',1,1,'','',0,0,'','',1,1,'on',0,10800,'','',3,0,0,15,'','','on',0,0,'',3,2,0,'',0,'host_tmp_pct','','','off',0,0,'off','off','off','<html><body><strong>Alert name: </strong><THRESHOLDNAME><br><strong>Details: </strong><DETAILS_URL><br><br><SUBJECT><br><br><GRAPH></body></html>','','','','','','','','','','','','','','',0,0,'',''),(2,'c2e9209f9603d4f67357679537be3a56','Alert - Host With /var/tmp Exceed % Capacity [host_vartmp_pct]','|data_source_description|',203,'e49fd2725f7dfbe45b735909b52e1d92','Alert - Host With /var/tmp Exceed % Capacity',481,'host_vartmp_pct','Number of Hosts exceed /var/tmp percentage usage','10','',1,'','',1,1,'','',0,0,'','',1,1,'on',0,10800,'','',3,0,0,15,'','','on',0,0,'',3,2,0,'',0,'host_vartmp_pct','','','off',0,0,'off','off','off','<html><body><strong>Alert name: </strong><THRESHOLDNAME><br><strong>Details: </strong><DETAILS_URL><br><br><SUBJECT><br><br><GRAPH></body></html>','','','','','','','','','','','','','','',0,0,'',''),(3,'6b99da14ad956f63d57012a3975a62c0','Alert - Hostgroup With Low Number of Free Slots [queue_free_slots]','|data_source_description|',205,'e58d2e27dad0c478728ca9e169116ad6','Alert - Hostgroup With Low Number of Free Slots',483,'queue_free_slots','return 1 when free slots less than limit, 0 when equals or more than limit','5','',1,'','',1,1,'','',0,0,'','',1,1,'on',0,10800,'','',3,0,0,15,'','','on',0,0,'',3,2,0,'',0,'queue_free_slots','','','off',0,0,'off','off','off','<html><body><strong>Alert name: </strong><THRESHOLDNAME><br><strong>Details: </strong><DETAILS_URL><br><br><SUBJECT><br><br><GRAPH></body></html>','','','','','','','','','','','','','','',0,0,'',''),(4,'386eb4ae09d9d032414831d454c76881','Alert - Hosts With Effective r15m > X [host_eff_r15m]','|data_source_description|',206,'cc1d6b0b5f819e3bb0b1b376ecb66eec','Alert - Hosts With Effective r15m > X',484,'host_eff_r15m','Number of Hosts exceed maximum run queue length indicator','10','',1,'','',1,1,'','',0,0,'','',1,1,'on',0,10800,'','',3,0,0,15,'','','on',0,0,'',3,2,0,'',0,'host_eff_r15m','','','off',0,0,'off','off','off','<html><body><strong>Alert name: </strong><THRESHOLDNAME><br><strong>Details: </strong><DETAILS_URL><br><br><SUBJECT><br><br><GRAPH></body></html>','','','','','','','','','','','','','','',0,0,'',''),(5,'2ba496201c0dd336b6d03479bb3486c5','Alert - Hosts With Used Mem > % [host_mem_pct]','|data_source_description|',207,'a7f8d97d39528145a583b6a6bce5e74c','Alert - Hosts With Used Mem > %',485,'host_mem_pct','Number of Hosts exceed mem usage','10','',1,'','',1,1,'','',0,0,'','',1,1,'on',0,10800,'','',3,0,0,15,'','','on',0,0,'',3,2,0,'',0,'host_mem_pct','','','off',0,0,'off','off','off','<html><body><strong>Alert name: </strong><THRESHOLDNAME><br><strong>Details: </strong><DETAILS_URL><br><br><SUBJECT><br><br><GRAPH></body></html>','','','','','','','','','','','','','','',0,0,'',''),(6,'001d9ea7d464f66bc2f9a63db3f40bc4','Alert - Hosts With Used Swp > % [host_swp_pct]','|data_source_description|',208,'c0b234c49ce038e15746a94cc773f4f2','Alert - Hosts With Used Swp > %',486,'host_swp_pct','Number of hosts exceed swp usage','10','',1,'','',1,1,'','',0,0,'','',1,1,'on',0,10800,'','',3,0,0,15,'','','on',0,0,'',3,2,0,'',0,'host_swp_pct','','','off',0,0,'off','off','off','<html><body><strong>Alert name: </strong><THRESHOLDNAME><br><strong>Details: </strong><DETAILS_URL><br><br><SUBJECT><br><br><GRAPH></body></html>','','','','','','','','','','','','','','',0,0,'',''),(7,'4538f2866ab4a3070e1af7e9f44e31d9','Alert - Hosts With X Status [host_status]','|data_source_description|',204,'00e0a29c573070c49315c8380e076a54','Alert - Hosts With X Status',482,'host_status','Number of Unavailable Hosts','10','',1,'','',1,1,'','',0,0,'','',1,1,'on',0,10800,'','',3,0,0,15,'','','on',0,0,'',3,2,0,'',0,'host_status','','','off',0,0,'off','off','off','<html><body><strong>Alert name: </strong><THRESHOLDNAME><br><strong>Details: </strong><DETAILS_URL><br><br><SUBJECT><br><br><GRAPH></body></html>','','','','','','','','','','','','','','',0,0,'',''),(8,'f27fa0af6fd98d3c192bd7d1a8916a8d','Alert - Idle Jobs [host_idle_jobs]','|data_source_description|',209,'34da44a9980034334421e03610626d0a','Alert - Idle Jobs',487,'host_idle_jobs','Number of jobs below minimum efficiency','10','',1,'','',1,1,'','',0,0,'','',1,1,'on',0,10800,'','',3,0,0,15,'','','on',0,0,'',3,2,0,'',0,'host_idle_jobs','','','off',0,0,'off','off','off','<html><body><strong>Alert name: </strong><THRESHOLDNAME><br><strong>Details: </strong><DETAILS_URL><br><br><SUBJECT><br><br><GRAPH></body></html>','','','','','','','','','','','','','','',0,0,'',''),(9,'f2a9e9c44ae7e1d43a104a01931a1c82','Alert - Jobs Pending for X seconds [pend_jobs]','|data_source_description|',210,'7cfb2f60b2f9616a34cf62e396c97566','Alert - Jobs Pending for X seconds',488,'pend_jobs','Number of pending jobs exceed maximum time','10','',1,'','',1,1,'','',0,0,'','',1,1,'on',0,10800,'','',3,0,0,15,'','','on',0,0,'',3,2,0,'',0,'pend_jobs','','','off',0,0,'off','off','off','<html><body><strong>Alert name: </strong><THRESHOLDNAME><br><strong>Details: </strong><DETAILS_URL><br><br><SUBJECT><br><br><GRAPH></body></html>','','','','','','','','','','','','','','',0,0,'','');
+INSERT INTO `thold_template` VALUES (1,'338f94769de76b9fb5fa302d6b8a102c','Alert - Host With /tmp Exceed % Capacity [host_tmp_pct]','|data_source_description|',202,'67b772b2d1defae33f8692baa62a6f19','Alert - Host With /tmp Exceed % Capacity',480,'host_tmp_pct','Number of host exceeds /tmp percentage used','10','',1,'','',1,1,'','',0,0,'','',1,1,'on',0,10800,0,'','',3,0,0,'AVG',15,'','','on',0,0,'',NULL,3,2,0,'','',-1,0,'host_tmp_pct','','','off',0,0,'','off','off','off','','','','<html><body><strong>Alert name: </strong><THRESHOLDNAME><br><strong>Details: </strong><DETAILS_URL><br><br><SUBJECT><br><br><GRAPH></body></html>','','','','','','','','','','','','','','',0,0,'','','',7),(2,'c2e9209f9603d4f67357679537be3a56','Alert - Host With /var/tmp Exceed % Capacity [host_vartmp_pct]','|data_source_description|',203,'e49fd2725f7dfbe45b735909b52e1d92','Alert - Host With /var/tmp Exceed % Capacity',481,'host_vartmp_pct','Number of Hosts exceed /var/tmp percentage usage','10','',1,'','',1,1,'','',0,0,'','',1,1,'on',0,10800,0,'','',3,0,0,'AVG',15,'','','on',0,0,'',NULL,3,2,0,'','',-1,0,'host_vartmp_pct','','','off',0,0,'','off','off','off','','','','<html><body><strong>Alert name: </strong><THRESHOLDNAME><br><strong>Details: </strong><DETAILS_URL><br><br><SUBJECT><br><br><GRAPH></body></html>','','','','','','','','','','','','','','',0,0,'','','',7),(3,'6b99da14ad956f63d57012a3975a62c0','Alert - Hostgroup With Low Number of Free Slots [queue_free_slots]','|data_source_description|',205,'e58d2e27dad0c478728ca9e169116ad6','Alert - Hostgroup With Low Number of Free Slots',483,'queue_free_slots','return 1 when free slots less than limit, 0 when equals or more than limit','5','',1,'','',1,1,'','',0,0,'','',1,1,'on',0,10800,0,'','',3,0,0,'AVG',15,'','','on',0,0,'',NULL,3,2,0,'','',-1,0,'queue_free_slots','','','off',0,0,'','off','off','off','','','','<html><body><strong>Alert name: </strong><THRESHOLDNAME><br><strong>Details: </strong><DETAILS_URL><br><br><SUBJECT><br><br><GRAPH></body></html>','','','','','','','','','','','','','','',0,0,'','','',7),(4,'386eb4ae09d9d032414831d454c76881','Alert - Hosts With Effective r15m > X [host_eff_r15m]','|data_source_description|',206,'cc1d6b0b5f819e3bb0b1b376ecb66eec','Alert - Hosts With Effective r15m > X',484,'host_eff_r15m','Number of Hosts exceed maximum run queue length indicator','10','',1,'','',1,1,'','',0,0,'','',1,1,'on',0,10800,0,'','',3,0,0,'AVG',15,'','','on',0,0,'',NULL,3,2,0,'','',-1,0,'host_eff_r15m','','','off',0,0,'','off','off','off','','','','<html><body><strong>Alert name: </strong><THRESHOLDNAME><br><strong>Details: </strong><DETAILS_URL><br><br><SUBJECT><br><br><GRAPH></body></html>','','','','','','','','','','','','','','',0,0,'','','',7),(5,'2ba496201c0dd336b6d03479bb3486c5','Alert - Hosts With Used Mem > % [host_mem_pct]','|data_source_description|',207,'a7f8d97d39528145a583b6a6bce5e74c','Alert - Hosts With Used Mem > %',485,'host_mem_pct','Number of Hosts exceed mem usage','10','',1,'','',1,1,'','',0,0,'','',1,1,'on',0,10800,0,'','',3,0,0,'AVG',15,'','','on',0,0,'',NULL,3,2,0,'','',-1,0,'host_mem_pct','','','off',0,0,'','off','off','off','','','','<html><body><strong>Alert name: </strong><THRESHOLDNAME><br><strong>Details: </strong><DETAILS_URL><br><br><SUBJECT><br><br><GRAPH></body></html>','','','','','','','','','','','','','','',0,0,'','','',7),(6,'001d9ea7d464f66bc2f9a63db3f40bc4','Alert - Hosts With Used Swp > % [host_swp_pct]','|data_source_description|',208,'c0b234c49ce038e15746a94cc773f4f2','Alert - Hosts With Used Swp > %',486,'host_swp_pct','Number of hosts exceed swp usage','10','',1,'','',1,1,'','',0,0,'','',1,1,'on',0,10800,0,'','',3,0,0,'AVG',15,'','','on',0,0,'',NULL,3,2,0,'','',-1,0,'host_swp_pct','','','off',0,0,'','off','off','off','','','','<html><body><strong>Alert name: </strong><THRESHOLDNAME><br><strong>Details: </strong><DETAILS_URL><br><br><SUBJECT><br><br><GRAPH></body></html>','','','','','','','','','','','','','','',0,0,'','','',7),(7,'4538f2866ab4a3070e1af7e9f44e31d9','Alert - Hosts With X Status [host_status]','|data_source_description|',204,'00e0a29c573070c49315c8380e076a54','Alert - Hosts With X Status',482,'host_status','Number of Unavailable Hosts','10','',1,'','',1,1,'','',0,0,'','',1,1,'on',0,10800,0,'','',3,0,0,'AVG',15,'','','on',0,0,'',NULL,3,2,0,'','',-1,0,'host_status','','','off',0,0,'','off','off','off','','','','<html><body><strong>Alert name: </strong><THRESHOLDNAME><br><strong>Details: </strong><DETAILS_URL><br><br><SUBJECT><br><br><GRAPH></body></html>','','','','','','','','','','','','','','',0,0,'','','',7),(8,'f27fa0af6fd98d3c192bd7d1a8916a8d','Alert - Idle Jobs [host_idle_jobs]','|data_source_description|',209,'34da44a9980034334421e03610626d0a','Alert - Idle Jobs',487,'host_idle_jobs','Number of jobs below minimum efficiency','10','',1,'','',1,1,'','',0,0,'','',1,1,'on',0,10800,0,'','',3,0,0,'AVG',15,'','','on',0,0,'',NULL,3,2,0,'','',-1,0,'host_idle_jobs','','','off',0,0,'','off','off','off','','','','<html><body><strong>Alert name: </strong><THRESHOLDNAME><br><strong>Details: </strong><DETAILS_URL><br><br><SUBJECT><br><br><GRAPH></body></html>','','','','','','','','','','','','','','',0,0,'','','',7),(9,'f2a9e9c44ae7e1d43a104a01931a1c82','Alert - Jobs Pending for X seconds [pend_jobs]','|data_source_description|',210,'7cfb2f60b2f9616a34cf62e396c97566','Alert - Jobs Pending for X seconds',488,'pend_jobs','Number of pending jobs exceed maximum time','10','',1,'','',1,1,'','',0,0,'','',1,1,'on',0,10800,0,'','',3,0,0,'AVG',15,'','','on',0,0,'',NULL,3,2,0,'','',-1,0,'pend_jobs','','','off',0,0,'','off','off','off','','','','<html><body><strong>Alert name: </strong><THRESHOLDNAME><br><strong>Details: </strong><DETAILS_URL><br><br><SUBJECT><br><br><GRAPH></body></html>','','','','','','','','','','','','','','',0,0,'','','',7);
 /*!40000 ALTER TABLE `thold_template` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -8751,7 +8756,7 @@ CREATE TABLE `user_auth` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(50) NOT NULL DEFAULT '0',
   `password` varchar(256) NOT NULL DEFAULT '',
-  `realm` mediumint(8) NOT NULL DEFAULT '0',
+  `realm` mediumint(8) NOT NULL DEFAULT 0,
   `full_name` varchar(100) DEFAULT '0',
   `email_address` varchar(128) DEFAULT NULL,
   `must_change_password` char(2) DEFAULT NULL,
@@ -8761,19 +8766,19 @@ CREATE TABLE `user_auth` (
   `show_preview` char(2) NOT NULL DEFAULT 'on',
   `graph_settings` char(2) DEFAULT NULL,
   `grid_settings` char(2) NOT NULL DEFAULT 'on',
-  `login_opts` tinyint(1) NOT NULL DEFAULT '1',
-  `policy_graphs` tinyint(1) unsigned NOT NULL DEFAULT '1',
-  `policy_trees` tinyint(1) unsigned NOT NULL DEFAULT '1',
-  `policy_hosts` tinyint(1) unsigned NOT NULL DEFAULT '1',
-  `policy_graph_templates` tinyint(1) unsigned NOT NULL DEFAULT '1',
+  `login_opts` tinyint(3) unsigned NOT NULL DEFAULT 1,
+  `policy_graphs` tinyint(1) unsigned NOT NULL DEFAULT 1,
+  `policy_trees` tinyint(1) unsigned NOT NULL DEFAULT 1,
+  `policy_hosts` tinyint(1) unsigned NOT NULL DEFAULT 1,
+  `policy_graph_templates` tinyint(1) unsigned NOT NULL DEFAULT 1,
   `enabled` char(2) NOT NULL DEFAULT 'on',
-  `lastchange` int(10) NOT NULL DEFAULT '-1',
-  `lastlogin` int(10) NOT NULL DEFAULT '-1',
+  `lastchange` int(10) NOT NULL DEFAULT -1,
+  `lastlogin` int(10) NOT NULL DEFAULT -1,
   `password_history` varchar(4096) NOT NULL DEFAULT '-1',
   `locked` varchar(3) NOT NULL DEFAULT '',
-  `failed_attempts` int(5) NOT NULL DEFAULT '0',
-  `lastfail` int(10) NOT NULL DEFAULT '0',
-  `reset_perms` int(10) unsigned NOT NULL DEFAULT '0',
+  `failed_attempts` int(5) NOT NULL DEFAULT 0,
+  `lastfail` int(10) unsigned NOT NULL DEFAULT 0,
+  `reset_perms` int(10) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `username` (`username`),
   KEY `realm` (`realm`),
@@ -8800,9 +8805,9 @@ DROP TABLE IF EXISTS `user_auth_cache`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user_auth_cache` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `user_id` int(10) unsigned NOT NULL DEFAULT 0,
   `hostname` varchar(100) NOT NULL DEFAULT '',
-  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_update` timestamp NOT NULL DEFAULT current_timestamp(),
   `token` varchar(191) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   UNIQUE KEY `tokenkey` (`token`),
@@ -8824,14 +8829,14 @@ CREATE TABLE `user_auth_group` (
   `name` varchar(20) NOT NULL,
   `description` varchar(255) NOT NULL DEFAULT '',
   `graph_settings` varchar(2) DEFAULT NULL,
-  `login_opts` tinyint(1) NOT NULL DEFAULT '1',
+  `login_opts` tinyint(3) unsigned NOT NULL DEFAULT 1,
   `show_tree` varchar(2) DEFAULT 'on',
   `show_list` varchar(2) DEFAULT 'on',
   `show_preview` varchar(2) NOT NULL DEFAULT 'on',
-  `policy_graphs` tinyint(1) unsigned NOT NULL DEFAULT '1',
-  `policy_trees` tinyint(1) unsigned NOT NULL DEFAULT '1',
-  `policy_hosts` tinyint(1) unsigned NOT NULL DEFAULT '1',
-  `policy_graph_templates` tinyint(1) unsigned NOT NULL DEFAULT '1',
+  `policy_graphs` tinyint(1) unsigned NOT NULL DEFAULT 1,
+  `policy_trees` tinyint(1) unsigned NOT NULL DEFAULT 1,
+  `policy_hosts` tinyint(1) unsigned NOT NULL DEFAULT 1,
+  `policy_graph_templates` tinyint(1) unsigned NOT NULL DEFAULT 1,
   `enabled` char(2) NOT NULL DEFAULT 'on',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB COMMENT='Table that Contains User Groups';
@@ -8860,9 +8865,9 @@ DROP TABLE IF EXISTS `user_auth_group_perms`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user_auth_group_perms` (
-  `group_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `item_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `type` tinyint(2) unsigned NOT NULL DEFAULT '0',
+  `group_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `item_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `type` tinyint(2) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`group_id`,`item_id`,`type`),
   KEY `group_id` (`group_id`,`type`)
 ) ENGINE=InnoDB COMMENT='Table that Contains User Group Permissions';
@@ -8891,9 +8896,9 @@ DROP TABLE IF EXISTS `user_auth_perms`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user_auth_perms` (
-  `user_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `item_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `type` tinyint(2) unsigned NOT NULL DEFAULT '0',
+  `user_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `item_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `type` tinyint(2) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`user_id`,`item_id`,`type`),
   KEY `user_id` (`user_id`,`type`)
 ) ENGINE=InnoDB;
@@ -8907,8 +8912,8 @@ DROP TABLE IF EXISTS `user_auth_realm`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user_auth_realm` (
-  `realm_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `user_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `realm_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `user_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`realm_id`,`user_id`),
   KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB;
@@ -8925,6 +8930,23 @@ INSERT INTO `user_auth_realm` VALUES (1,1),(2,1),(3,1),(4,1),(5,1),(7,1),(7,3),(
 UNLOCK TABLES;
 
 --
+-- Table structure for table `user_auth_row_cache`
+--
+
+DROP TABLE IF EXISTS `user_auth_row_cache`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user_auth_row_cache` (
+  `user_id` mediumint(8) NOT NULL DEFAULT 0,
+  `class` varchar(20) NOT NULL DEFAULT '',
+  `hash` varchar(32) NOT NULL DEFAULT '0',
+  `total_rows` int(10) unsigned NOT NULL DEFAULT 0,
+  `time` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`user_id`,`class`,`hash`)
+) ENGINE=InnoDB ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `user_domains`
 --
 
@@ -8934,10 +8956,10 @@ DROP TABLE IF EXISTS `user_domains`;
 CREATE TABLE `user_domains` (
   `domain_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `domain_name` varchar(20) NOT NULL,
-  `type` int(10) unsigned NOT NULL DEFAULT '0',
+  `type` int(10) unsigned NOT NULL DEFAULT 0,
   `enabled` char(2) NOT NULL DEFAULT 'on',
-  `defdomain` tinyint(3) NOT NULL DEFAULT '0',
-  `user_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `defdomain` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `user_id` int(10) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`domain_id`)
 ) ENGINE=InnoDB COMMENT='Table to Hold Login Domains';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -8964,7 +8986,7 @@ CREATE TABLE `user_domains_ldap` (
   `group_attrib` varchar(128) NOT NULL,
   `group_member_type` tinyint(3) unsigned NOT NULL,
   `search_base` varchar(128) NOT NULL,
-  `search_filter` varchar(128) NOT NULL,
+  `search_filter` varchar(512) NOT NULL DEFAULT '',
   `specific_dn` varchar(128) NOT NULL,
   `specific_password` varchar(128) NOT NULL,
   `cn_full_name` varchar(50) DEFAULT '',
@@ -8982,9 +9004,9 @@ DROP TABLE IF EXISTS `user_log`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user_log` (
   `username` varchar(50) NOT NULL DEFAULT '0',
-  `user_id` mediumint(8) NOT NULL DEFAULT '0',
+  `user_id` mediumint(8) NOT NULL DEFAULT 0,
   `time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `result` tinyint(1) NOT NULL DEFAULT '0',
+  `result` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `ip` varchar(40) NOT NULL DEFAULT '',
   PRIMARY KEY (`username`,`user_id`,`time`),
   KEY `user_id` (`user_id`)
@@ -9028,9 +9050,9 @@ DROP TABLE IF EXISTS `vdef_items`;
 CREATE TABLE `vdef_items` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `hash` varchar(32) NOT NULL DEFAULT '',
-  `vdef_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `sequence` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `type` tinyint(2) NOT NULL DEFAULT '0',
+  `vdef_id` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `sequence` mediumint(8) unsigned NOT NULL DEFAULT 0,
+  `type` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `value` varchar(150) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `vdef_id_sequence` (`vdef_id`,`sequence`)
@@ -9066,7 +9088,7 @@ CREATE TABLE `version` (
 
 LOCK TABLES `version` WRITE;
 /*!40000 ALTER TABLE `version` DISABLE KEYS */;
-INSERT INTO `version` VALUES ('1.2.23');
+INSERT INTO `version` VALUES ('1.2.26');
 /*!40000 ALTER TABLE `version` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -9079,4 +9101,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-04-19 19:50:35
+-- Dump completed on 2024-01-14  23:59:59

@@ -5939,7 +5939,8 @@ function gridmemvio_notify_users() {
 				if ($last_cluster > 0) {
 					/* replace tags in main message */
 
-					$tag_array = array(
+                    $tag_array = array(
+                        // fix of issue #595. Replace following 4 $cc with $last_cluster_details
 						"<CLUSTERNAME>"   => $last_cluster_details["clustername"],
 						"<OVERSHOOT>"     => ($overshoot * 100) . " %",
 						"<UNDERSHOOT>"    => ($undershoot * 100) . " %",
@@ -6005,8 +6006,9 @@ function gridmemvio_notify_users() {
 					$outstr = "";
 					$outstr2 = "";
 					$outmessage = "";
-					$rank         = 1;
-					$users = array();
+                                        $rank         = 1;
+                                        // fix of issue 595
+                                        $users = array();
 				} else {
 					$users        = array();
 					$last_cluster = $record["clusterid"];

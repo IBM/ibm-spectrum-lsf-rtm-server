@@ -1,4 +1,22 @@
 /* $Id$ */
+/*
+ +-------------------------------------------------------------------------+
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
+ |                                                                         |
+ | This program is free software; you can redistribute it and/or           |
+ | modify it under the terms of the GNU General Public License             |
+ | as published by the Free Software Foundation; either version 2          |
+ | of the License, or (at your option) any later version.                  |
+ |                                                                         |
+ | This program is distributed in the hope that it will be useful,         |
+ | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
+ | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | http://www.cacti.net/                                                   |
+ +-------------------------------------------------------------------------+
+*/
+
 /* main styles */
 
 ::-webkit-scrollbar {
@@ -833,7 +851,7 @@ ul#breadcrumbs {
 	background: #161616 none repeat scroll 0 0;
 	width: 100%;
 	vertical-align: top;
-	padding-top: 56px;
+	padding-top: 62px;
 }
 
 .cactiTreeNavigationArea {
@@ -1066,7 +1084,7 @@ legend {
 
 .cactiGraphContentArea {
 	background: #161616;
-	padding-top: 10px;
+	padding-top: 5px;
 	padding-right: 5px;
 	padding-left: 5px;
 	display: none;
@@ -1079,7 +1097,7 @@ legend {
 .cactiGraphContentAreaPreview {
 	height: 100vh;
 	background: #161616;
-	padding-top: 10px;
+	padding-top: 5px;
 	padding-right: 5px;
 	padding-left: 5px;
 	display: none;
@@ -1090,7 +1108,7 @@ legend {
 
 .cactiConsoleContentArea {
 	background: #161616;
-	padding-top: 10px;
+	padding-top: 5px;
 	padding-right: 5px;
 	padding-left: 5px;
 	vertical-align: top;
@@ -1846,6 +1864,7 @@ legend {
 	height: 14px !important;
 	vertical-align: middle;
 	text-decoration: none !important;
+	padding-right: 7px !important;
 }
 
 .deleteMarker:hover {
@@ -1857,6 +1876,7 @@ legend {
 	height: 14px !important;
 	vertical-align: middle;
 	text-decoration: none !important;
+	padding-right: 7px !important;
 }
 
 .deleteMarkerDisabled:hover {
@@ -1878,7 +1898,7 @@ legend {
 
 .moveArrowNone {
 	display: inline-block;
-	width: 11.75px;
+	width: 14.75px;
 }
 
 .action, .shiftArrow, .calendar {

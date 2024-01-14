@@ -1,4 +1,22 @@
 /* $Id$ */
+/*
+ +-------------------------------------------------------------------------+
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
+ |                                                                         |
+ | This program is free software; you can redistribute it and/or           |
+ | modify it under the terms of the GNU General Public License             |
+ | as published by the Free Software Foundation; either version 2          |
+ | of the License, or (at your option) any later version.                  |
+ |                                                                         |
+ | This program is distributed in the hope that it will be useful,         |
+ | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
+ | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | http://www.cacti.net/                                                   |
+ +-------------------------------------------------------------------------+
+*/
+
 /* main styles */
 
 ::-webkit-scrollbar {
@@ -905,7 +923,7 @@ label.ui-state-hover > span {
 }
 
 .cactiLogo {
-	background: transparent url('./images/cacti_logo.svg') no-repeat 30px;
+	background: transparent;
 	display:none;
 	cursor: pointer;
 	padding-bottom: 140px;
@@ -1857,6 +1875,7 @@ table.cactiTable {
 	color: red;
 	vertical-align: middle;
 	text-decoration: none !important;
+	padding-right: 7px !important;
 }
 
 .deleteMarker:hover {
@@ -1865,6 +1884,7 @@ table.cactiTable {
 
 .deleteMarkerDisabled {
 	color: #9d9d9d !important;
+	padding-right: 7px !important;
 }
 
 .moveArrow {
@@ -1883,7 +1903,7 @@ table.cactiTable {
 
 .moveArrowNone {
 	display: inline-block;
-	width: 11.75px;
+	width: 14.75px;
 }
 
 .action, .shiftArrow, .calendar {
