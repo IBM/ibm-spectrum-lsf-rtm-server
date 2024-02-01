@@ -1,6 +1,6 @@
 [info]
 name = benchmark
-version = 10.2.0.14
+version = 10.2.0.15
 longname = IBM Spectrum LSF RTM Benchmark Utilities
 author = IBM Corporation
 email =

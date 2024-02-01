@@ -62,6 +62,16 @@ function benchmark_config_arrays() {
 		'type' => 'error'
 	);
 
+	$messages['benchmark_numtask_min_greater_than_max'] = array(
+		'message' => __('The minimum number of tasks should not be greater than the maximum number of tasks.'),
+		'type' => 'error'
+	);
+
+	$messages['benchmark_numtask_should_be_greater_than_zero'] = array(
+		'message' => __('The number of tasks should be greater than 0.'),
+		'type' => 'error'
+	);
+
 	/* Establish menu for this plugin */
 	$console_menu = array('plugins/benchmark/benchmark.php' => __('Benchmark Jobs'));
 	if(isset($menu[__('Clusters', 'grid')])){
@@ -274,6 +284,21 @@ function benchmark_config_arrays() {
 			'value' => '|arg1:user_group|',
 			'max_length' => '100',
 			'size' => 20,
+			),
+		'task_num_in_job' => array(
+			'method' => 'textbox',
+			'friendly_name' => __('Task Number (bsub -n number)'),
+			'description' => __('Enter the number of tasks used to allocate the number of slots for a job (bsub -n number).'),
+			'value' => '|arg1:task_num_in_job|',
+			'max_length' => '64',
+			'size' => 20,
+			),
+		'exclusive_job' => array(
+			'method' => 'checkbox',
+			'friendly_name' => __('Exclusive Job (bsub -x)'),
+			'description' => __('Puts the host running your job into exclusive execution mode.'),
+			'value' => '|arg1:exclusive_job|',
+			'default' => ''
 			),
 		'host_spec' => array(
 			'method' => 'textbox',
@@ -568,6 +593,8 @@ function benchmark_setup_table_new() {
 		`pjob_doneTime` double default NULL,
 		`pjob_seenDoneTime` double default NULL,
 		`pjob_startTime` double default NULL,
+		`task_num_in_job` varchar(64) default NULL,
+		`exclusive_job` char(2) default '',
 		PRIMARY KEY  (`benchmark_id`))
 		ENGINE=InnoDB
 		COMMENT='Contains Defined Benchmark Jobs and Status'");
