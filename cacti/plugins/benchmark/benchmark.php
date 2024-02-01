@@ -214,6 +214,30 @@ function save_benchmark() {
 	}
 }
 
+function is_tasknum_valid($task_num_in_job) {
+	if (0 == strlen($task_num_in_job)) {
+		return true;
+	}
+
+	$task_num_array = explode(",", $task_num_in_job);
+	$v1 = intval($task_num_array[0]);
+	$v2 = $v1;
+	if (count($task_num_array) > 1) {
+		$v2 = intval($task_num_array[1]);
+	}
+
+	if ($v1 <= 0 ||
+		$v2 <= 0) {
+		raise_message('benchmark_numtask_should_be_greater_than_zero');
+		return false;
+	}
+	if ($v1 > $v2) {
+		raise_message('benchmark_numtask_min_greater_than_max');
+		return false;
+	}
+	return true;
+}
+
 function api_grid_benchmark_save($benchmark_id) {
 	if ($benchmark_id) {
 		$save['benchmark_id'] = $benchmark_id;
@@ -235,6 +259,13 @@ function api_grid_benchmark_save($benchmark_id) {
 	$save['max_runtime']    = form_input_validate(get_request_var('max_runtime'), 'max_runtime', '[0-9]', false,  3);
 	$save['alert_time']     = form_input_validate(get_request_var('alert_time'), 'alert_time', '[0-9]', false,  3);
 	$save['warn_time']      = form_input_validate(get_request_var('warn_time'), 'warn_time', '[0-9]', false,  3);
+	$save['task_num_in_job']	= form_input_validate(get_request_var('task_num_in_job'), 'task_num_in_job', '^[0-9]+(,[0-9])*$', true,  3);
+	$save['exclusive_job']	= isset_request_var('exclusive_job') ? 'on': '';
+
+	if (!isset($_SESSION['sess_error_fields']['task_num_in_job']) &&
+		!is_tasknum_valid($save['task_num_in_job'])) {
+		$_SESSION['sess_error_fields']['task_num_in_job'] = 'task_num_in_job';
+	}
 
 	if (round($save['max_runtime']) > 4*3600) {
 		raise_message('benchmark_maxrun_over_4_hour');

@@ -1129,6 +1129,8 @@ INSERT INTO `table_columns` VALUES ('grid_clusters_benchmarks',31,'pjob_runTime'
 INSERT INTO `table_columns` VALUES ('grid_clusters_benchmarks',32,'pjob_doneTime','double','YES','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_clusters_benchmarks',33,'pjob_seenDoneTime','double','YES','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_clusters_benchmarks',34,'pjob_startTime','double','YES','',NULL,'');
+INSERT INTO `table_columns` VALUES ('grid_clusters_benchmarks',35,'task_num_in_job','varchar(64)','YES','',NULL,'');
+INSERT INTO `table_columns` VALUES ('grid_clusters_benchmarks',36,'exclusive_job','char(2)','YES','','','');
 INSERT INTO `table_columns` VALUES ('grid_clusters_dashboard_items',1,'dashboard_item_id','int(10) unsigned','NO','PRI',NULL,'auto_increment');
 INSERT INTO `table_columns` VALUES ('grid_clusters_dashboard_items',2,'clusterid','int(10) unsigned','NO','',NULL,'');
 INSERT INTO `table_columns` VALUES ('grid_clusters_dashboard_items',3,'user_id','int(10) unsigned','NO','',NULL,'');
