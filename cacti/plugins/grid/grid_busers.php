@@ -263,7 +263,7 @@ function build_user_display_array() {
 				'align'   => 'right'
 			),
 			'numJobs' => array(
-				'display' => __('Num Jobs', 'grid'),
+				'display' => __('Num %s', format_job_slots(), 'grid'),
 				'dbname'  => 'show_user_numSlots',
 				'sort'    => 'DESC',
 				'align'   => 'right'
