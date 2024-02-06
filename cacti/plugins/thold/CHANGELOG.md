@@ -22,6 +22,8 @@
 
 * issue#558: Thold entry displayed moretimes
 
+* issue#660: data_template_hash is wrongly empty after import thold template by CLI
+
 * issue: Fix issues associated with PHP8.1.2 on transactions.  By default Cacti uses
   autocommit, so don't use them.
 
