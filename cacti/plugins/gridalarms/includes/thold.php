@@ -360,7 +360,9 @@ function switchLSFEventType() {
 		$('#template_enabled').on('change', function() {
 			var status = $('#template_enabled').is(':checked');
 	<?php
-	if (isset($thold_data['data_template_hash']) &&  !array_key_exists($thold_data['data_template_hash'], $thold_oob_templates)){
+	if (read_config_option('gridalarm_thold_detail') != 'on'
+		&& isset($thold_data['data_template_hash'])
+		&& !array_key_exists($thold_data['data_template_hash'], $thold_oob_templates)){
 		//Only enable LSF event triggering type drop-down list with out-of-box templates
 	?>
 		$('#gridadmin_action_level').attr('disabled', true);
@@ -404,8 +406,10 @@ function switchLSFEventType() {
 
 	$(function() {
 <?php
-	if (isset($thold_data['data_template_hash']) &&  !array_key_exists($thold_data['data_template_hash'], $thold_oob_templates)){
-		//Only enable LSF event triggering type drop-down list with out-of-box templates
+	if (read_config_option('gridalarm_thold_detail') != 'on'
+		&& isset($thold_data['data_template_hash'])
+		&& !array_key_exists($thold_data['data_template_hash'], $thold_oob_templates)){
+	//Only enable LSF event triggering type drop-down list with out-of-box templates
 	?>
 		$('#gridadmin_action_level').attr('disabled', true);
 		if($('#gridadmin_action_level').selectmenu('instance')) {
@@ -654,20 +658,13 @@ function gridalarms_fetch_breached_info($local_data_id){
 			}
 
 			if (isset($length[1]) && function_exists($length[1])) {
-				switch ($input_parameter) {
-				case 1:
-					$return_value = $length[1]($length[2], 1);
-					break;
-				case 2:
-					$return_value = $length[1]($length[2], $length[3], 1);
-					break;
-				case 3:
-					$return_value = $length[1]($length[2], $length[3], $length[4], 1);
-					break;
-				case 4;
-					$return_value = $length[1]($length[2], $length[3], $length[4], $length[5], 1);
-					break;
+				if ($input_parameter == 0) {
+					$detail_args = array();
+				} elseif ($input_parameter >= 1) {
+					$detail_args = array_slice($length, 2);
 				}
+				array_push($detail_args, 1);
+				$return_value = call_user_func_array($length[1], $detail_args);
 			}
 		}
 	}
@@ -726,13 +723,16 @@ function gridalarms_thold_graph_actions_url($data) {
 
 	if (isset($data['thold_data'])) {
 		$thold_data = $data['thold_data'];
-		if (!array_key_exists($thold_data['data_template_hash'], $thold_oob_templates)){
-			//Only show breach item icon with out-of-box templates
+		if ($thold_data['gridadmin_action_level'] == ''
+			|| $thold_data['gridadmin_action_level'] == 'none'
+			|| (read_config_option('gridalarm_thold_detail') != 'on'
+				&& !array_key_exists($thold_data['data_template_hash'], $thold_oob_templates))){
+			//Show breach item icon with out-of-box templates or global enabled
 			return $data;
 		}
 
-		if ($thold_data['gridadmin_action_level'] != ''
-			&& $thold_data['lastread'] != '-' && $thold_data['lastread'] != '' && $thold_data['lastread'] > 0) {
+		if (read_config_option('gridalarm_thold_detail') == 'on'
+			|| $thold_data['lastread'] != '-' && $thold_data['lastread'] != '' && $thold_data['lastread'] > 0) {
 			$data['actions_url'] .= '<a class="hyperLink" title="' . __('View Breached Items', 'gridalarms') . '" href="' . html_escape($config['url_path'] . 'plugins/thold/thold_graph.php?action=breached&id=' . $thold_data['id']) . '"><img alt="" src="' . $config['url_path'] . 'plugins/gridalarms/images/view_alarm_details.gif' . '"></a>';
 		}
 	}
