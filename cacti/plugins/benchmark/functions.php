@@ -64,7 +64,7 @@ function benchmark_status_filter($location = 'summary') {
 }
 
 function benchmark_get_time($value) {
-	return __('%.2f sec', number_format(round($value,2),2));
+	return __('%s sec', number_format_i18n($value, 2));
 }
 
 function benchmark_get_exit_code($status, $reason) {
