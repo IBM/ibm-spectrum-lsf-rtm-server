@@ -485,8 +485,9 @@ function grid_view_db() {
 		$sql_order = get_order_string();
 		$sql_limit = ' LIMIT ' . ($rows*(get_request_var('page')-1)) . ',' . $rows;
 
-		$featsql = "SELECT a.region, a.lsid, a.feature AS bfeature, fm.lic_feature AS ffeature,
-			lic_feature, bls.service_domain, service_id, a.type,
+		/* GHE#584:implode lic_feature in LS dashboard to ensure one row per LS feature on dashbaord. */
+		$featsql = "SELECT a.region, a.lsid, a.feature AS bfeature, GROUP_CONCAT(DISTINCT fm.lic_feature) AS ffeature,
+			bls.service_domain, service_id, a.type,
 			a.inuse, a.`over`, a.reserve, a.free, a.demand, a.others,
 			SUM(feature_max_licenses) AS maxavail,
 			SUM(feature_inuse_licenses) AS flexuse,
@@ -667,7 +668,7 @@ function grid_view_db() {
 				}
 
 				$actions_url .= "<a href='" . html_escape('grid_lsdashboard.php?action=distribution&tab=distribution&lsid=' . $row['lsid'] . '&feature=' . $row['bfeature'] . '&region=' . $row['region'] . '&sd=' . '&inuse=' . get_request_var('inuse')) . "'><img src='" . $config['url_path'] . "plugins/gridblstat/images/view_distribution.gif' title='" . __esc('View Distribution', 'gridblstat') . "'></a>\n";
-				$actions_url .= "<a href='" . html_escape('grid_lsdashboard.php?action=checkouts&tab=checkouts&lsid=' . $row['lsid'] . '&ffeature=' . read_config_option('grid_blstats_flexname_' . $row['lsid'] . '_' . $row['bfeature']) . '&region=' . $row['region'] . '&sd=&lsf=-1&host=&user=&except=-1') . "'><img src='" . $config['url_path'] . "plugins/grid/images/view_checkouts.gif' title='" . __esc('View Feature Checkouts', 'gridblstat') . "'></a>\n";
+				$actions_url .= "<a href='" . html_escape('grid_lsdashboard.php?action=checkouts&tab=checkouts&lsid=' . $row['lsid'] . '&ffeature=' . $row['ffeature'] . '&region=' . $row['region'] . '&sd=&lsf=-1&host=&user=&except=-1') . "'><img src='" . $config['url_path'] . "plugins/grid/images/view_checkouts.gif' title='" . __esc('View Feature Checkouts', 'gridblstat') . "'></a>\n";
 
 				if ($graph_select) {
 					$actions_url .= "<a href='" . html_escape('grid_lsdashboard.php?action=graphs&tab=graphs&query=1&lsid=' . $row['lsid'] . '&feature=' . $row['bfeature'] . '&region=' . $row['region'] . '&inuse=' . get_request_var('inuse')) . "&template=0&cluster=-1'><img src='" . $config['url_path'] . "plugins/grid/images/view_graphs.gif' title='" . __esc('View User Graphs', 'gridblstat') . "'></a>";
@@ -682,13 +683,13 @@ function grid_view_db() {
 				form_selectable_cell($row['maxavail']=='' ? __('N/A', 'gridblstat'):number_format_i18n($row['maxavail']), $i, '', 'right');
 				form_selectable_cell(filter_value(number_format_i18n($row['inuse']), '', 'grid_lsdashboard.php?action=users&tab=users&cluster=-1&filter=&user=&host=&region=' . $row['region'] . '&sd=' . urlencode($row['service_domain']) . '&resource=' . $ffirst . '&project=&rows=-1'), $i, '', 'right');
 
-				form_selectable_cell(filter_value($row['flexuse'] == '' ? __('N/A', 'gridblstat'):number_format_i18n($row['flexuse']), '', 'grid_lsdashboard.php?action=checkouts&tab=checkouts&region=' . $row['region'] . '&ffeature=' . read_config_option('grid_blstats_flexname_' . $row['lsid'] . '_' . $row['bfeature']) . '&sd=&lsf=-1&host=&user=&except=-1'), $i, '', 'right');
+				form_selectable_cell(filter_value($row['flexuse'] == '' ? __('N/A', 'gridblstat'):number_format_i18n($row['flexuse']), '', 'grid_lsdashboard.php?action=checkouts&tab=checkouts&region=' . $row['region'] . '&ffeature=' . $row['ffeature'] . '&sd=&lsf=-1&host=&user=&except=-1'), $i, '', 'right');
 
 				form_selectable_cell($row['queued'] == '' ? __('N/A', 'gridblstat'):($row['queued'] != 'N/A' ? number_format_i18n($row['queued']):$row['queued']), $i, '', 'right');
 				form_selectable_cell(filter_value(number_format_i18n($row['reserve']), '', 'grid_lsdashboard.php?action=users&tab=users&cluster=-1&filter=&user=&host=&sd=UNKNOWN&region=' . $row['region'] . '&resource=' . $ffirst . '&project=&rows=-1'), $i, '', 'right');
 				form_selectable_cell($row['free'] == '' ? '-':number_format_i18n($row['free']), $i, '', 'right');
 				form_selectable_cell(filter_value($row['demand'] == '' ? '-':number_format_i18n($row['demand']), '', 'grid_lsdashboard.php?action=users&tab=users&cluster=-1&filter=&user=&host=&sd=-3&region=' . $row['region'] . '&resource=' . $ffirst . '&project=&rows=-1'), $i, '', 'right');
-				form_selectable_cell(filter_value(number_format($row['others']), '', 'grid_lsdashboard.php?action=checkouts&tab=checkouts&region=' . $row['region'] . '&ffeature=' . read_config_option('grid_blstats_flexname_' . $row['lsid'] . '_' . $row['bfeature']) . '&sd=&lsf=-1&host=&user=&except=-2'), $i, '', 'right');
+				form_selectable_cell(filter_value(number_format($row['others']), '', 'grid_lsdashboard.php?action=checkouts&tab=checkouts&region=' . $row['region'] . '&ffeature=' . $row['ffeature'] . '&sd=&lsf=-1&host=&user=&except=-2'), $i, '', 'right');
 
 				form_end_row();
 
@@ -1861,9 +1862,10 @@ function grid_view_users() {
 	$total_rows = db_fetch_cell_prepared($rows_query_string, $sql_params);
 
 	/*RTC#222297: remove 'lsid'. In other 'ffeature' param usage, 'lsid' is used to get actual feature name by read_config_option('grid_blstats_flexname_' + lsid + feature)*/
+	/* GHE#584: implode lic_feature in LS dashboard to ensure one row per LS feature on dashbaord. */
 	$features = array_rekey(
-		db_fetch_assoc('SELECT bld_feature, lic_feature
-			FROM grid_blstat_feature_map'),
+		db_fetch_assoc('SELECT bld_feature, GROUP_CONCAT(DISTINCT lic_feature) AS lic_feature
+			FROM grid_blstat_feature_map GROUP BY bld_feature'),
 		'bld_feature', 'lic_feature'
 	);
 
@@ -3190,7 +3192,8 @@ function grid_view_zen() {
 			$main_params[] = '%' . get_request_var('region') . '%';
 		}
 
-		$details = db_fetch_row_prepared("SELECT region, feature, GROUP_CONCAT(lic_feature) AS lic_feature, service_id, type,
+		/* GHE#584: implode lic_feature in LS dashboard to ensure one row per LS feature on dashbaord. */
+		$details = db_fetch_row_prepared("SELECT region, feature, GROUP_CONCAT(DISTINCT lic_feature) AS lic_feature, service_id, type,
 			inuse, reserve, free, demand, ttokens, others,
 			SUM(feature_max_licenses) AS maxavail,
 			SUM(feature_inuse_licenses) AS flexuse,
@@ -3516,7 +3519,7 @@ function grid_view_zen() {
 					RIGHT JOIN lic_services_feature_details AS fu
 					ON fu.username = bu.user
 					AND fu.hostname = bu.host
-					WHERE fu.feature_name IN ('" . implode("','", explode(',', $details['lic_feature'])) . "')
+					WHERE fu.feature_name IN ('" . implode("','", preg_split('/[ ,]/', $details['lic_feature'], -1, PREG_SPLIT_NO_EMPTY)) . "')
 					AND service_id IN(SELECT lic_id FROM grid_blstat_service_domains WHERE lsid = ?)
 					AND bu.jobid IS NULL
 				) AS recordset
@@ -3530,7 +3533,7 @@ function grid_view_zen() {
 					RIGHT JOIN lic_services_feature_details AS fu
 					ON fu.username = bu.user
 					AND fu.hostname = bu.host
-					WHERE fu.feature_name IN ('" . implode("','", explode(',', $details['lic_feature'])) . "')
+					WHERE fu.feature_name IN ('" . implode("','", preg_split('/[ ,]/', $details['lic_feature'], -1, PREG_SPLIT_NO_EMPTY)) . "')
 					AND service_id IN(SELECT lic_id FROM grid_blstat_service_domains WHERE lsid = ?)
 					AND bu.jobid IS NULL
 					GROUP BY fu.username
@@ -3593,7 +3596,7 @@ function grid_view_zen() {
 								FROM grid_blstat_users AS bu
 								RIGHT JOIN lic_services_feature_details AS fu
 								ON fu.username=bu.user AND fu.hostname=bu.host
-								WHERE fu.feature_name IN (\'' . implode("','", explode(',', $details['lic_feature'])) . '\')
+								WHERE fu.feature_name IN (\'' . implode("','", preg_split('/[ ,]/', $details['lic_feature'], -1, PREG_SPLIT_NO_EMPTY)) . '\')
 								AND service_id IN(
 									SELECT lic_id
 									FROM grid_blstat_service_domains
@@ -3931,7 +3934,7 @@ function grid_view_zen() {
 					fu.tokens_acquired AS tokens,
 					UNIX_TIMESTAMP()-UNIX_TIMESTAMP(tokens_acquired_date) AS duration
 					FROM lic_services_feature_details AS fu
-					WHERE fu.feature_name IN ('" . implode("','", explode(',', $details['lic_feature'])) . "')
+					WHERE fu.feature_name IN ('" . implode("','", preg_split('/[ ,]/', $details['lic_feature'], -1, PREG_SPLIT_NO_EMPTY)) . "')
 					AND service_id IN (
 						SELECT lic_id
 						FROM grid_blstat_service_domains
@@ -3946,7 +3949,7 @@ function grid_view_zen() {
 					fu.username,
 					SUM(fu.tokens_acquired) AS maxtokens
 					FROM lic_services_feature_details AS fu
-					WHERE fu.feature_name IN ('" . implode("','", explode(',', $details['lic_feature'])) . "')
+					WHERE fu.feature_name IN ('" . implode("','", preg_split('/[ ,]/', $details['lic_feature'], -1, PREG_SPLIT_NO_EMPTY)) . "')
 					AND service_id IN (
 						SELECT lic_id
 						FROM grid_blstat_service_domains
@@ -4010,7 +4013,7 @@ function grid_view_zen() {
 								FROM grid_blstat_users AS bu
 								RIGHT JOIN lic_services_feature_details AS fu
 								ON fu.username = bu.user AND fu.hostname=bu.host
-								WHERE fu.feature_name IN (\'' . implode("','", explode(',', $details['lic_feature'])) . '\')
+								WHERE fu.feature_name IN (\'' . implode("','", preg_split('/[ ,]/', $details['lic_feature'], -1, PREG_SPLIT_NO_EMPTY)) . '\')
 								AND service_id IN (
 									SELECT lic_id
 									FROM grid_blstat_service_domains
@@ -4361,7 +4364,7 @@ function grid_get_checkouts(&$sql_where, $apply_limits = true, $rows = 30, &$tot
 	}
 
 	if (get_request_var('ffeature') != '') {
-		$sql_where .= ($sql_where != '' ? ' AND':'WHERE') . ' feature_name IN (\'' . implode("','", explode(',', get_request_var('ffeature'))) . '\')';
+		$sql_where .= ($sql_where != '' ? ' AND':'WHERE') . ' feature_name IN (\'' . implode("','", preg_split('/[ ,]/', get_request_var('ffeature'), -1, PREG_SPLIT_NO_EMPTY)) . '\')';
 	}
 
 	if (get_request_var('region') != '') {
