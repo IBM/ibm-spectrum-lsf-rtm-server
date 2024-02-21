@@ -452,13 +452,15 @@ function gridblstat_check_blstat($log = false, $collector = array()) {
 
 					$flexs = explode(" ", $flex);
 					if (cacti_sizeof($flexs)) {
-						foreach($flexs as $flex) {
-							if (strlen($flex)) {
-								$sf = db_fetch_assoc_prepared("SELECT feature FROM grid_blstat WHERE (feature = ? OR feature LIKE ?) AND lsid=? AND present = 1", array($name, "$name@%", $lsid));
-								if (cacti_sizeof($sf)) {
-									foreach($sf as $f) {
-										$bld_name = $f['feature'];
-										db_execute_prepared("REPLACE INTO settings (name, value) VALUES (?, ?)", array("grid_blstats_flexname_" . $lsid . "_" . $bld_name, $flex));
+						/* GHE#584: settings.grid_blstats_flexname_xxx is used for drilldown on non-lm-feature page only */
+						$flexstr = implode(",", $flexs);
+						$sf = db_fetch_assoc_prepared("SELECT feature FROM grid_blstat WHERE (feature = ? OR feature LIKE ?) AND lsid=? AND present = 1", array($name, "$name@%", $lsid));
+						if (cacti_sizeof($sf)) {
+							foreach($sf as $f) {
+								$bld_name = $f['feature'];
+								db_execute_prepared("REPLACE INTO settings (name, value) VALUES (?, ?)", array("grid_blstats_flexname_" . $lsid . "_" . $bld_name, $flexstr));
+								foreach($flexs as $flex) {
+									if (strlen($flex)) {
 										db_execute_prepared("REPLACE INTO grid_blstat_feature_map (lsid, bld_feature, lic_feature, present) VALUES (?, ?, ?, 1)", array($lsid, $bld_name, $flex));
 									}
 								}

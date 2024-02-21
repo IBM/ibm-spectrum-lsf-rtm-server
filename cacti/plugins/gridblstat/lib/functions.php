@@ -103,12 +103,12 @@ function grid_blstat_ajax_search() {
 		switch(get_request_var('type')) {
 		case 'feature':
 			if (get_request_var('term') != '') {
-				$values = db_fetch_assoc_prepared('SELECT bld_feature AS label, bld_feature AS value
+				$values = db_fetch_assoc_prepared('SELECT DISTINCT bld_feature AS label, bld_feature AS value
 					FROM grid_blstat_feature_map
 					WHERE bld_feature LIKE ?
 					ORDER BY label', array('%' . get_request_var('term') . '%'));
 			} else {
-				$values = db_fetch_assoc('SELECT bld_feature AS label, bld_feature AS value
+				$values = db_fetch_assoc('SELECT DISTINCT bld_feature AS label, bld_feature AS value
 					FROM grid_blstat_feature_map
 					ORDER BY label');
 			}
@@ -137,7 +137,7 @@ function grid_blstat_ajax_search() {
 					ORDER BY label
 					LIMIT 20', array('%' . get_request_var('term') . '%'));
 			} else {
-				$values = db_fetch_assoc('SELECT feature_name AS label, feature_name AS value
+				$values = db_fetch_assoc('SELECT DISTINCT feature_name AS label, feature_name AS value
 					FROM lic_services_feature_use
 					ORDER BY label
 					LIMIT 20');
@@ -333,7 +333,7 @@ function get_flex_paths_path($feature, $service_domains) {
 				WHERE snmp_index IN (
 				SELECT CONCAT(lic_services_feature_use.service_id, '-', feature_name, '-', vendor_daemon) AS feature_name
 				FROM lic_services_feature_use
-				WHERE feature_name IN ('" . implode("','", explode(',', $feature)) . "')
+				WHERE feature_name IN ('" . implode("','", preg_split('/[ ,]/', $feature, -1, PREG_SPLIT_NO_EMPTY)) . "')
 				AND service_id IN (" . implode(',', $lic_ids) . "))
 				AND dl.host_id IN (" . implode(',', $host_ids) . ")
 				AND gti.graph_template_id = ?",
@@ -353,7 +353,8 @@ function get_flex_paths_path($feature, $service_domains) {
 }
 
 function get_flex_feature($bld_feature) {
-	return db_fetch_cell_prepared('SELECT GROUP_CONCAT(lic_feature)
+	/* GHE#584: implode lic_feature in LS dashboard to ensure one row per LS feature on dashbaord. */
+	return db_fetch_cell_prepared('SELECT GROUP_CONCAT(DISTINCT lic_feature)
 		FROM grid_blstat_feature_map
 		WHERE bld_feature = ?
 		GROUP BY bld_feature',
