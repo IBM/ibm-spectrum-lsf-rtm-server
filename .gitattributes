@@ -10,6 +10,7 @@
 *.sql* text eol=lf ident
 *.xml text eol=lf ident
 *.xsd text eol=lf ident
+*.php.demo eol=lf ident
 
 *.gif binary
 *.jar binary
