@@ -126,7 +126,7 @@ function gridalarms_config_settings() {
 		),
 		'gridalarm_thold_detail' => array(
 			'friendly_name' => __('Show View Breached Items Icons', 'gridalarms'),
-			'description' => __('Checking this box will always show \'View Breached Items\' icon in Thresholds list. NOTE: This is only valueable when Data Input Script include an optional last positional \'detail\' parameter that when passed 1 will return the list of objects that are breached.', 'gridalarms'),
+			'description' => __('Enable this option to always show the "View Breached Items" icon in the thresholds list. Note: When using this option, also ensure that the data input script value includes an optional last positional "detail" parameter that, when passed with a value of 1, will return the list of objects that are breached.', 'gridalarms'),
 			'method' => 'checkbox',
 			'default' => ''
 		)
