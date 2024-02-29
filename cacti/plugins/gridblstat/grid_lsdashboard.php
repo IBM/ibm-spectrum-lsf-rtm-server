@@ -3515,13 +3515,13 @@ function grid_view_zen() {
 				RIGHT JOIN (
 					SELECT fu.username, fu.hostname AS hostname, fu.tokens_acquired AS tokens,
 					UNIX_TIMESTAMP()-UNIX_TIMESTAMP(tokens_acquired_date) AS duration
-					FROM grid_blstat_users AS bu
+					FROM (SELECT user, host, COUNT(*) AS cnt FROM grid_blstat_users GROUP BY user, host) AS bu
 					RIGHT JOIN lic_services_feature_details AS fu
 					ON fu.username = bu.user
 					AND fu.hostname = bu.host
 					WHERE fu.feature_name IN ('" . implode("','", preg_split('/[ ,]/', $details['lic_feature'], -1, PREG_SPLIT_NO_EMPTY)) . "')
 					AND service_id IN(SELECT lic_id FROM grid_blstat_service_domains WHERE lsid = ?)
-					AND bu.jobid IS NULL
+					AND bu.cnt IS NULL
 				) AS recordset
 				ON gh.host = recordset.hostname
 				INNER JOIN grid_clusters AS gc
@@ -3529,13 +3529,13 @@ function grid_view_zen() {
 				INNER JOIN (SELECT
 					fu.username,
 					SUM(fu.tokens_acquired) AS maxtokens
-					FROM grid_blstat_users AS bu
+					FROM (SELECT user, host, COUNT(*) AS cnt FROM grid_blstat_users GROUP BY user, host) AS bu
 					RIGHT JOIN lic_services_feature_details AS fu
 					ON fu.username = bu.user
 					AND fu.hostname = bu.host
 					WHERE fu.feature_name IN ('" . implode("','", preg_split('/[ ,]/', $details['lic_feature'], -1, PREG_SPLIT_NO_EMPTY)) . "')
 					AND service_id IN(SELECT lic_id FROM grid_blstat_service_domains WHERE lsid = ?)
-					AND bu.jobid IS NULL
+					AND bu.cnt IS NULL
 					GROUP BY fu.username
 				) AS maxrs
 				ON maxrs.username = recordset.username
@@ -3593,7 +3593,7 @@ function grid_view_zen() {
 								SELECT fu.username, fu.hostname AS hostname,
 								fu.tokens_acquired AS tokens,
 								UNIX_TIMESTAMP()-UNIX_TIMESTAMP(tokens_acquired_date) AS duration
-								FROM grid_blstat_users AS bu
+								FROM (SELECT user, host, COUNT(*) AS cnt FROM grid_blstat_users GROUP BY user, host) AS bu
 								RIGHT JOIN lic_services_feature_details AS fu
 								ON fu.username=bu.user AND fu.hostname=bu.host
 								WHERE fu.feature_name IN (\'' . implode("','", preg_split('/[ ,]/', $details['lic_feature'], -1, PREG_SPLIT_NO_EMPTY)) . '\')
@@ -3602,7 +3602,7 @@ function grid_view_zen() {
 									FROM grid_blstat_service_domains
 									WHERE lsid = ?)
 								AND username = ?
-								AND bu.jobid IS NULL) AS recordset
+								AND bu.cnt IS NULL) AS recordset
 							ON gh.host=recordset.hostname
 							WHERE duration > ?
 							AND isServer = 0
@@ -4010,7 +4010,7 @@ function grid_view_zen() {
 							RIGHT JOIN (
 								SELECT fu.username, fu.hostname AS hostname, fu.tokens_acquired AS tokens,
 								UNIX_TIMESTAMP()-UNIX_TIMESTAMP(tokens_acquired_date) AS duration
-								FROM grid_blstat_users AS bu
+								FROM (SELECT user, host, COUNT(*) AS cnt FROM grid_blstat_users GROUP BY user, host) AS bu
 								RIGHT JOIN lic_services_feature_details AS fu
 								ON fu.username = bu.user AND fu.hostname=bu.host
 								WHERE fu.feature_name IN (\'' . implode("','", preg_split('/[ ,]/', $details['lic_feature'], -1, PREG_SPLIT_NO_EMPTY)) . '\')
@@ -4020,7 +4020,7 @@ function grid_view_zen() {
 									WHERE lsid = ?
 								)
 								AND username = ?
-								AND bu.jobid IS NULL) AS recordset
+								AND bu.cnt IS NULL) AS recordset
 							ON gh.host = recordset.hostname
 							WHERE duration > ?
 							AND isServer = 0
@@ -4463,10 +4463,10 @@ function grid_get_checkouts(&$sql_where, $apply_limits = true, $rows = 30, &$tot
 				ON fm.lic_feature=fu.feature_name
 				INNER JOIN lic_services AS fs
 				ON fu.service_id=fs.service_id
-				LEFT JOIN grid_blstat_users AS bu
+				LEFT JOIN (SELECT user, host, COUNT(*) AS cnt FROM grid_blstat_users GROUP BY user, host) AS bu
 				ON fu.username=bu.user AND fu.hostname=bu.host
 				$sql_where
-				AND bu.jobid IS " . (get_request_var('except') == "-3" ? "NOT ":"") . "NULL
+				AND bu.cnt IS " . (get_request_var('except') == "-3" ? "NOT ":"") . "NULL
 			) AS recordset
 			ON gh.host=recordset.hostname $sql_where_ex
 			$sql_order";
@@ -4483,10 +4483,10 @@ function grid_get_checkouts(&$sql_where, $apply_limits = true, $rows = 30, &$tot
 					ON fm.lic_feature=fu.feature_name
 					INNER JOIN lic_services AS fs
 					ON fu.service_id=fs.service_id
-					LEFT JOIN grid_blstat_users AS bu
+					LEFT JOIN (SELECT user, host, COUNT(*) AS cnt FROM grid_blstat_users GROUP BY user, host) AS bu
 					ON fu.username=bu.user AND fu.hostname=bu.host
 					$sql_where
-					AND bu.jobid IS " . (get_request_var('except') == "-3" ? "NOT ":"") . "NULL
+					AND bu.cnt IS " . (get_request_var('except') == "-3" ? "NOT ":"") . "NULL
 				) AS recordset
 				ON gh.host=recordset.hostname $sql_where_ex
 				GROUP BY feature_name, server_name, feature_version,
