@@ -39,6 +39,7 @@ $debug      = FALSE;
 $force      = FALSE;
 $start_date = 0;
 $end_date   = 0;
+$partno     = "";
 $custom     = false;
 
 foreach($parms as $parameter) {
@@ -63,6 +64,11 @@ foreach($parms as $parameter) {
 		$start_date = $value;
 		$custom = true;
 		break;
+	case '-p':
+	case '--lichist-partno':
+		$partno = $value;
+		$custom = true;
+		break;
 	case '-e':
 	case '--end-date':
 		$end_date = $value;
@@ -84,6 +90,14 @@ foreach($parms as $parameter) {
 
 if ($custom && (empty($start_date) || empty($end_date))) {
 	print "ERROR: You must supply both an start date and an end date.\n\n";
+	exit;
+}
+if ($custom && !empty($partno)) {
+	$table_exist = db_fetch_row("SHOW TABLES LIKE 'lic_services_feature_history_v$partno'");
+	if (sizeof($table_exist) == 0) {
+		print "ERROR: You must supply a correct partition number of lic_services_feature_history table.\n\n";
+		exit;
+	}
 }
 
 $poller_interval = read_config_option('poller_interval');
@@ -98,7 +112,7 @@ if (detect_and_correct_running_processes(0, 'LICHIST', $poller_interval*3) || $f
 	}
 
 	// Process Finished Jobs
-	list($job_count, $hist_count) = process_jobs($start_date, $end_date);
+	list($job_count, $hist_count) = process_jobs($start_date, $end_date, $partno);
 
 	// Partition the history and the job mapping tables
 	do_partitions();
@@ -234,9 +248,9 @@ function manage_partitions() {
 // @param $user The user running the job
 //
 // @return An array of license events related to the given time period, username and execution host
-function get_license_events($start_time, $end_time, $exec_host, $user) {
+function get_license_events($start_time, $end_time, $exec_host, $user, $partno = NULL) {
 	$sql_query = "SELECT id, username, hostname, tokens_acquired_date, last_poll_time, tokens_released_date
-		FROM lic_services_feature_history
+		FROM lic_services_feature_history" . (!empty($partno) ? "_v$partno" : '') . "
 		WHERE username=?
 		AND hostname=?
 		AND tokens_acquired_date>=?
@@ -254,7 +268,7 @@ function get_license_events($start_time, $end_time, $exec_host, $user) {
 //                      insert it as a conflicting jobid.
 // @param conflicting_jobs The set of jobs that conflict with the outer job id, in terms of
 //                         license checkouts.
-function update_job_conflicts($job, $license_event) {
+function update_job_conflicts($job, $license_event, $partno = NULL) {
 	// For the job itself, and all conflicting jobs, add an
 	$jobid                = $job['jobid'];
 	$indexid              = $job['indexid'];
@@ -264,7 +278,7 @@ function update_job_conflicts($job, $license_event) {
 	$history_event_id     = $license_event['id'];
 	$tokens_released_date = $license_event['tokens_released_date'];
 
-	$insert_stmt = "INSERT INTO lic_services_feature_history_mapping
+	$insert_stmt = "INSERT INTO lic_services_feature_history_mapping" . (!empty($partno) ? "_v$partno" : '') . "
 		(jobid, indexid, clusterid, submit_time, exec_host, history_event_id, tokens_released_date)
 		VALUES (?, ?, ?, ?, ?,  ?, ?)
 		ON DUPLICATE KEY UPDATE exec_host=VALUES(exec_host), tokens_released_date=VALUES(tokens_released_date)";
@@ -273,7 +287,7 @@ function update_job_conflicts($job, $license_event) {
 }
 
 // Called from poller_bottom eventually, in poller_lichist.php
-function process_jobs($start_date, $end_date) {
+function process_jobs($start_date, $end_date, $lichpartno = NULL) {
 	global $custom;
 
 	$hist_events = 0;
@@ -293,7 +307,7 @@ function process_jobs($start_date, $end_date) {
 			$job_end_time   = date('Y-m-d H:i:s', strtotime($job['end_time']));
 
 			// Get the license events that may have come from this job
-			$license_events = get_license_events($job_start_time, $job_end_time, $job['exec_host'], $job['user']);
+			$license_events = get_license_events($job_start_time, $job_end_time, $job['exec_host'], $job['user'], $lichpartno);
 
 			$hist_events += cacti_sizeof($license_events);
 
@@ -302,7 +316,7 @@ function process_jobs($start_date, $end_date) {
 			// For each such license event....
 			if (cacti_sizeof($license_events)) {
 				foreach ($license_events as $license_event) {
-					update_job_conflicts($job, $license_event);
+					update_job_conflicts($job, $license_event, $lichpartno);
 				}
 			}
 		}
@@ -326,6 +340,7 @@ function display_help () {
 	echo "-f | --force       - Force License History Correlation\n";
 	echo "-s | --start-date  - Start with Jobs that Ended beginning with this Start Date 'YYYY-MM-DD'\n";
 	echo "-e | --end-date    - End with Jobs that Ended by this End Date 'YYYY-MM-DD'\n";
+	echo "-p | --lich-partno - Partition number of target lic_services_feature_history_mapping, 3 digits: '000'\n";
 	echo "-d | --debug       - Display verbose output during execution\n";
 	echo "-v -V --version    - Display this help message\n";
 	echo "-h --help          - Display this help message\n";
