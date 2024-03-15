@@ -2550,12 +2550,8 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 						}
 						if (cacti_sizeof($temp_tables)) {
 							foreach ($temp_tables as $table) {
-								//Ignore temp table that is end with a timestamp string.
-								if (!preg_match("/_\d{10}$/", $table['Tables_in_' . $database_default])) {
-									$tables_to_backup_struct .= ($tables_to_backup_struct != '' ? ' ':'') . $table['Tables_in_' . $database_default];
-								}
-
 								$backup = true;
+								$backup_strunc = true;
 								switch ($table['Tables_in_' . $database_default]) {
 									// Grid Tables
 									case 'grid_jobs':
@@ -2630,49 +2626,54 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 									default:
 										break;
 								}
+								/* Ignore temp table that is end with a timestamp string. */
+								if (preg_match("/_\d{10}$/", $table['Tables_in_' . $database_default])) {
+									$backup = false;
+									$backup_strunc = false;
+								}
+								/* don't backup grid partition tables */
+								else if (preg_match('/^grid_\S+_v[0-9]/', $table['Tables_in_' . $database_default])) {
+									$backup = false;
+									$backup_strunc = false;
+								}
+								/* don't backup license partition tables */
+								else if (preg_match('/^lic_\S+_v[0-9]/', $table['Tables_in_' . $database_default])) {
+									$backup = false;
+									$backup_strunc = false;
+								}
+								/* don't backup disku partition tables */
+								else if (preg_match('/^disku_\S+_v[0-9]/', $table['Tables_in_' . $database_default])) {
+									$backup = false;
+									$backup_strunc = false;
+								}
+								/* don't backup disku raw tables */
+								else if (preg_match('/^disku_files_raw_/', $table['Tables_in_' . $database_default])) {
+									$backup = false;
+								}
+								/* don't backup license daily stats traffic tables */
+								else if ($backup_method == 'q' && preg_match('/^lic_daily_stats_/', $table['Tables_in_' . $database_default])) {
+									$backup = false;
+								}
+								/* don't backup license interval stats tables regardless */
+								else if (preg_match('/^lic_interval_stats_/', $table['Tables_in_' . $database_default])) {
+									$backup = false;
+								}
+								/* don't backup boost archive tables regardless */
+								else if (preg_match('/^poller_output_boost_/', $table['Tables_in_' . $database_default])) {
+									$backup = false;
+								}
+								/* don't backup job pending history tables regardless */
+								else if ($backup_method == 'q' && preg_match('/^grid_jobs_pendhist_hourly_/', $table['Tables_in_' . $database_default])) {
+									$backup = false;
+								}
+								else if (preg_match("/^grid_heuristics_user_history_today_/", $table["Tables_in_" . $database_default])) {
+									$backup = false;
+								}
 								if ($backup) {
-									/* don't backup grid partition tables */
-									if (preg_match('/^grid_\S+_v[0-9]/', $table['Tables_in_' . $database_default])) {
-										$backup = false;
-									}
-									/* don't backup license partition tables */
-									if (preg_match('/^lic_\S+_v[0-9]/', $table['Tables_in_' . $database_default])) {
-										$backup = false;
-									}
-									/* don't backup disku partition tables */
-									if (preg_match('/^disku_\S+_v[0-9]/', $table['Tables_in_' . $database_default])) {
-										$backup = false;
-									}
-									/* don't backup disku raw tables */
-									if (preg_match('/^disku_files_raw_/', $table['Tables_in_' . $database_default])) {
-										$backup = false;
-									}
-									/* don't backup license daily stats tables */
-									if (preg_match('/^lic_daily_stats_/', $table['Tables_in_' . $database_default])) {
-										if ($backup_method == 'q') {
-											$backup = false;
-										}
-									}
-									/* don't backup license interval stats tables regardless */
-									if (preg_match('/^lic_interval_stats_/', $table['Tables_in_' . $database_default])) {
-										$backup = false;
-									}
-									/* don't backup boost archive tables regardless */
-									if (preg_match('/^poller_output_boost_/', $table['Tables_in_' . $database_default])) {
-										$backup = false;
-									}
-									/* don't backup job pending history tables regardless */
-									if (preg_match('/^grid_jobs_pendhist_hourly_/', $table['Tables_in_' . $database_default])) {
-										if ($backup_method == 'q') {
-											$backup = false;
-										}
-									}
-									if (preg_match("/^grid_heuristics_user_history_today_/", $table["Tables_in_" . $database_default])) {
-										$backup = false;
-									}
-									if ($backup) {
-										$tables_to_backup .= ($tables_to_backup != '' ? ' ':'') . $table['Tables_in_' . $database_default];
-									}
+									$tables_to_backup .= ($tables_to_backup != '' ? ' ':'') . $table['Tables_in_' . $database_default];
+								}
+								if ($backup_strunc) {
+									$tables_to_backup_struct .= ($tables_to_backup_struct != '' ? ' ':'') . $table['Tables_in_' . $database_default];
 								}
 							}
 						} else {
@@ -2720,6 +2721,25 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 							}
 
 							$start_return = mysql_dump_no_passwd_check(cacti_escapeshellarg($database_username), cacti_escapeshellarg($database_password));
+							//Backup table scheme of all tables, except temp/partition table.
+							$backup_command = cacti_escapeshellcmd($mysqldmp) .
+								($start_return ? " --defaults-extra-file='$start_return'" : ' --user='     . cacti_escapeshellarg($database_username) .  ' --password=' . cacti_escapeshellarg($database_password)) .
+								' --lock-tables=false'         .
+								' --host='     . cacti_escapeshellarg($database_hostname) .
+								' --port='     . cacti_escapeshellarg($database_port)     .
+								($database_hostname == 'localhost' ? ' --protocol=socket' : '' ) .
+								' -d -f'       .
+								' '            . cacti_escapeshellarg($database_default)  .
+								' '            . $tables_to_backup_struct .
+								' > '          . $backup_file_cacti_struct;
+							$result = grid_shell_exec($backup_command, $stdoutput, $stderror);
+							if ($result) {
+								cacti_log("ERROR: Cacti Database Structure Backup Failed!  Message: '" . str_replace("\n", "; ", $stderror) . "'; ExitCode: '$result'", true, "GRID");
+								$backup_database_success = false;
+							} else {
+								cacti_log("NOTE: Cacti Database Structure Backup Successful!", true, "GRID");
+							}
+							//Backup selected table data
 							$backup_command = cacti_escapeshellcmd($mysqldmp) .
 								($start_return ? " --defaults-extra-file='$start_return'" : ' --user='     . cacti_escapeshellarg($database_username) .  ' --password=' . cacti_escapeshellarg($database_password)) .
 								($can_dump_master_data ? ' --master-data' : '' ) .
@@ -2737,23 +2757,6 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 								$backup_database_success = false;
 							} else {
 								cacti_log("NOTE: Cacti Database Backup Successful!", true, "GRID");
-							}
-							$backup_command = cacti_escapeshellcmd($mysqldmp) .
-								($start_return ? " --defaults-extra-file='$start_return'" : ' --user='     . cacti_escapeshellarg($database_username) .  ' --password=' . cacti_escapeshellarg($database_password)) .
-								' --lock-tables=false'         .
-								' --host='     . cacti_escapeshellarg($database_hostname) .
-								' --port='     . cacti_escapeshellarg($database_port)     .
-								($database_hostname == 'localhost' ? ' --protocol=socket' : '' ) .
-								' -d -f'       .
-								' '            . cacti_escapeshellarg($database_default)  .
-								' '            . $tables_to_backup_struct .
-								' > '          . $backup_file_cacti_struct;
-							$result = grid_shell_exec($backup_command, $stdoutput, $stderror);
-							if ($result) {
-								cacti_log("ERROR: Cacti Database Structure Backup Failed!  Message: '" . str_replace("\n", "; ", $stderror) . "'; ExitCode: '$result'", true, "GRID");
-								$backup_database_success = false;
-							} else {
-								cacti_log("NOTE: Cacti Database Structure Backup Successful!", true, "GRID");
 							}
 							//Backup RTM_ROOT/etc
 							if ($config['cacti_server_os'] == 'win32') {
@@ -11474,7 +11477,7 @@ function grid_jobs_host_group($table_name, $hostgroup, $apply_limits, $rows, &$j
 		//Note: $table_name = grid_jobs include two cases
 		//   1. Active job query, two SQL clause from grid_jobs w/o grid_jobs_jobhosts
 		//   2. All/Started job query, four SQL clauses from grid_jobs w/o grid_jobs_jobhosts,
-		//      and grid_jobs_finished and grid_jobs_jobhosts_finished
+		//      and grid_jobs_finished w/o grid_jobs_jobhosts_finished
 		$jobsquery_tbl = $jobsquery;
 		foreach ($grid_jobs_hosts_tables as $table) {
 			if ((strlen($table) - strrpos($table, '_v')) == 5) {
@@ -11491,7 +11494,8 @@ function grid_jobs_host_group($table_name, $hostgroup, $apply_limits, $rows, &$j
 				}
 			}
 
-			$sql_join = "INNER join $table
+			//Note: COUNT performance might better than DISTINCT
+			$sql_join = "INNER JOIN (SELECT jobid, indexid, clusterid, submit_time, COUNT(exec_host) AS hostcnt FROM $table WHERE $table.exec_host IN (SELECT host FROM grid_hostgroups WHERE groupName='$hostgroup' $ifclusterid) $ifclusterid GROUP BY jobid, indexid, clusterid, submit_time) AS $table
 				ON jobs.jobid=$table.jobid
 				AND jobs.indexid=$table.indexid
 				AND jobs.clusterid=$table.clusterid
@@ -11499,7 +11503,7 @@ function grid_jobs_host_group($table_name, $hostgroup, $apply_limits, $rows, &$j
 
 			$new_jobsquery .= ($new_jobsquery == "" ? "" : " UNION ALL ") . "SELECT $fields FROM ($jobsquery_tbl) AS jobs " .
 				$sql_join .
-				"WHERE $table.exec_host IN (SELECT host FROM grid_hostgroups where groupName='$hostgroup' $ifclusterid ) AND num_nodes>1 ";
+				"WHERE num_nodes>1 ";
 		}
 	}
 
