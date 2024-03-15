@@ -125,7 +125,7 @@ function gridalarms_get_template_sql_columns($expression_id) {
  * @param $triggerct		- unused, the current trigger count
  * @returns					- none
  */
-function logger($syslog_level, $syslog_facility, $name, $breach_up, $threshld, $currentval, $trigger, $triggerct) {
+function rtm_logger($syslog_level, $syslog_facility, $name, $breach_up, $threshld, $currentval, $trigger, $triggerct) {
 	if (function_exists('define_syslog_variables')) define_syslog_variables();
 
 	if (!isset($syslog_level)) {
@@ -754,7 +754,7 @@ function gridalarms_check_alarm($alarm, $force = false) {
 
 			if ($status == 1 || $status == 2) {
 				if ($syslog_set) {
-					logger($alarm_syslog_priority, $alarm_syslog_facility, $alarm['name'], $breach_up, ($breach_up ? $alarm['alarm_hi'] : $alarm['alarm_low']), $currentval, $trigger, $alarm['alarm_fail_count']);
+					rtm_logger($alarm_syslog_priority, $alarm_syslog_facility, $alarm['name'], $breach_up, ($breach_up ? $alarm['alarm_hi'] : $alarm['alarm_low']), $currentval, $trigger, $alarm['alarm_fail_count']);
 				}
 
 				if (trim($alarm_emails) != '') {
@@ -861,7 +861,7 @@ function gridalarms_check_alarm($alarm, $force = false) {
 				$logmsg = $subject = 'NORMAL: ' . $alarm['name'] . " restored to normal with value $currentval";
 
 				if ($syslog_set) {
-					logger($alarm_syslog_priority, $alarm_syslog_facility, $alarm['name'], 'ok', 0, $currentval, $trigger, $alarm['alarm_fail_count']);
+					rtm_logger($alarm_syslog_priority, $alarm_syslog_facility, $alarm['name'], 'ok', 0, $currentval, $trigger, $alarm['alarm_fail_count']);
 				}
 
 				if ($alarm['alarm_fail_count'] >= $trigger) {
@@ -989,7 +989,7 @@ function gridalarms_check_alarm($alarm, $force = false) {
 
 			if ($notify) {
 				if ($syslog_set) {
-					logger($alarm_syslog_priority, $alarm_syslog_facility, $alarm['name'], $breach_up, ($breach_up ? $alarm['time_hi'] : $alarm['time_low']), $currentval, $trigger, $failures);
+					rtm_logger($alarm_syslog_priority, $alarm_syslog_facility, $alarm['name'], $breach_up, ($breach_up ? $alarm['time_hi'] : $alarm['time_low']), $currentval, $trigger, $failures);
 				}
 
 				if (trim($alarm_emails) != '') {
@@ -1086,7 +1086,7 @@ function gridalarms_check_alarm($alarm, $force = false) {
 		} else {
 			if ($alertstat != 0 && $failures < $trigger) {
 				if ($syslog_set) {
-					logger($alarm_syslog_priority, $alarm_syslog_facility, $alarm['name'], 'ok', 0, $currentval, $trigger, $alarm['alarm_fail_count']);
+					rtm_logger($alarm_syslog_priority, $alarm_syslog_facility, $alarm['name'], 'ok', 0, $currentval, $trigger, $alarm['alarm_fail_count']);
 				}
 
 				$logmsg = $subject = 'NORMAL: ' . $alarm['name'] . " restored to normal with value $currentval";
@@ -5008,6 +5008,80 @@ function alarm_log_purge() {
 	db_execute("TRUNCATE gridalarms_alarm_log");
 }
 
+function api_alarm_remove($alarm_id){
+	$expression_id = db_fetch_cell_prepared('SELECT expression_id
+		FROM gridalarms_alarm
+		WHERE id = ?',
+		array($alarm_id));
+
+	/* delete non relational data first */
+	db_execute_prepared('DELETE FROM gridalarms_alarm
+		WHERE id = ?',
+		array($alarm_id));
+
+	db_execute_prepared('DELETE FROM gridalarms_alarm_contacts
+		WHERE alarm_id = ?',
+		array($alarm_id));
+
+	db_execute_prepared('DELETE FROM gridalarms_alarm_layout
+		WHERE alarm_id = ?',
+		array($alarm_id));
+
+	db_execute_prepared('DELETE FROM gridalarms_alarm_log
+		WHERE alarm_id = ?',
+		array($alarm_id));
+
+	db_execute_prepared('DELETE FROM gridalarms_alarm_log_items
+		WHERE alarm_id = ?',
+		array($alarm_id));
+
+	api_plugin_hook_function('gridalarms_delete_hostsalarm',$alarm_id);
+
+	/* delete the expression next */
+	if (!empty($expression_id)) {
+		db_execute_prepared('DELETE FROM gridalarms_expression
+			WHERE id = ?',
+			array($expression_id));
+
+		db_execute_prepared('DELETE FROM gridalarms_expression_input
+			WHERE expression_id = ?',
+			array($expression_id));
+
+		db_execute_prepared('DELETE FROM gridalarms_expression_item
+			WHERE expression_id = ?',
+			array($expression_id));
+
+		/* remove any non-shared metrics */
+		$metrics = db_fetch_assoc_prepared('SELECT metric_id
+			FROM gridalarms_metric_expression
+			WHERE expression_id = ?',
+			array($expression_id));
+
+		if (cacti_sizeof($metrics)) {
+			foreach ($metrics as $m) {
+				$shared_metric = db_fetch_cell_prepared('SELECT COUNT(*)
+					FROM gridalarms_metric_expression
+					WHERE metric_id = ?
+					AND expression_id != ?',
+					array($m['metric_id'], $expression_id));
+
+				if (!$shared_metric) {
+					db_execute_prepared('DELETE FROM gridalarms_metric
+						WHERE id = ?',
+						array($m['metric_id']));
+				}
+			}
+		}
+
+		/* remove any relationship of the expression to the metric */
+		db_execute_prepared('DELETE FROM gridalarms_metric_expression WHERE expression_id=?', array($expression_id));
+	}
+}
+
+function api_alarm_remove_multi(){
+	;
+}
+
 function do_alarms($from = 'console') {
 	global $config;
 
@@ -5033,73 +5107,7 @@ function do_alarms($from = 'console') {
 
 				if ($alarm != false) {
 					foreach ($alarm as $del => $me) {
-						$expression_id = db_fetch_cell_prepared('SELECT expression_id
-							FROM gridalarms_alarm
-							WHERE id = ?',
-							array($del));
-
-						/* delete non relational data first */
-						db_execute_prepared('DELETE FROM gridalarms_alarm
-							WHERE id = ?',
-							array($del));
-
-						db_execute_prepared('DELETE FROM gridalarms_alarm_contacts
-							WHERE alarm_id = ?',
-							array($del));
-
-						db_execute_prepared('DELETE FROM gridalarms_alarm_layout
-							WHERE alarm_id = ?',
-							array($del));
-
-						db_execute_prepared('DELETE FROM gridalarms_alarm_log
-							WHERE alarm_id = ?',
-							array($del));
-
-						db_execute_prepared('DELETE FROM gridalarms_alarm_log_items
-							WHERE alarm_id = ?',
-							array($del));
-
-						api_plugin_hook_function('gridalarms_delete_hostsalarm',$del);
-
-						/* delete the expression next */
-						if (!empty($expression_id)) {
-							db_execute_prepared('DELETE FROM gridalarms_expression
-								WHERE id = ?',
-								array($expression_id));
-
-							db_execute_prepared('DELETE FROM gridalarms_expression_input
-								WHERE expression_id = ?',
-								array($expression_id));
-
-							db_execute_prepared('DELETE FROM gridalarms_expression_item
-								WHERE expression_id = ?',
-								array($expression_id));
-
-							/* remove any non-shared metrics */
-							$metrics = db_fetch_assoc_prepared('SELECT metric_id
-								FROM gridalarms_metric_expression
-								WHERE expression_id = ?',
-								array($expression_id));
-
-							if (cacti_sizeof($metrics)) {
-								foreach ($metrics as $m) {
-									$shared_metric = db_fetch_cell_prepared('SELECT COUNT(*)
-										FROM gridalarms_metric_expression
-										WHERE metric_id = ?
-										AND expression_id != ?',
-										array($m['metric_id'], $expression_id));
-
-									if (!$shared_metric) {
-										db_execute_prepared('DELETE FROM gridalarms_metric
-											WHERE id = ?',
-											array($m['metric_id']));
-									}
-								}
-							}
-
-							/* remove any relationship of the expression to the metric */
-							db_execute_prepared('DELETE FROM gridalarms_metric_expression WHERE expression_id=?', array($expression_id));
-						}
+						api_alarm_remove($del);
 					}
 				}
 

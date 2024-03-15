@@ -30,6 +30,8 @@ function plugin_gridblstat_install () {
 	api_plugin_register_hook('gridblstat', 'grid_menu',            'gridblstat_grid_menu',       'setup.php');
 	api_plugin_register_hook('gridblstat', 'grid_tab_down',        'gridblstat_grid_tab_down',     'setup.php');
 
+	api_plugin_register_hook('gridblstat', 'grid_cluster_remove', 'gridblstat_grid_cluster_remove', 'setup.php');
+
 	gridblstat_setup_table_new ();
 }
 
@@ -797,3 +799,13 @@ function gridblstat_grid_menu($grid_menu = array()) {
 	return $gridblstat_menu;
 }
 
+function gridblstat_grid_cluster_remove($cluster){
+	if (isset($cluster) && isset($cluster['clusterid'])){
+		db_execute_prepared('UPDATE grid_blstat_clusters SET clusterid=0 WHERE clusterid=?', array($cluster['clusterid']));
+		db_execute_prepared('UPDATE grid_blstat_cluster_use SET clusterid=0 WHERE clusterid=?', array($cluster['clusterid']));
+		db_execute_prepared('UPDATE grid_blstat_collector_clusters SET clusterid=0 WHERE clusterid=?', array($cluster['clusterid']));
+		db_execute_prepared('UPDATE grid_blstat_users SET clusterid=0 WHERE clusterid=?', array($cluster['clusterid']));
+	}
+
+    return $cluster;
+}

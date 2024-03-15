@@ -37,6 +37,9 @@ function plugin_benchmark_install () {
     api_plugin_register_hook('benchmark', 'grid_tab_down', 'benchmark_grid_tab_down', 'setup.php');
     api_plugin_register_hook('benchmark', 'grid_menu', 'benchmark_grid_menu', 'setup.php');
 
+	/* Register for disable/remove benchmark when cluster is deleted */
+	api_plugin_register_hook('benchmark', 'grid_cluster_remove', 'benchmark_grid_cluster_remove', 'setup.php');
+
 	api_plugin_register_realm('benchmark', 'grid_benchmark_jobs.php,grid_benchmark_summary.php', 'View Benchmark Job', 1);
 	api_plugin_register_realm('benchmark', 'benchmark.php', 'Edit Benchmark Job Configuration', 1);
 
@@ -681,4 +684,17 @@ function benchmark_setup_table_new() {
 
 	//clear up grid_clusters.perfmon_job, This is for disabling Submit Performance Monitoring Job feature in perfmon, which has been included in benchmark plugin.
 	db_execute("ALTER TABLE `grid_clusters` DROP COLUMN `perfmon_job`, DROP COLUMN `perfmon_user`, DROP COLUMN `perfmon_queue`;");
+}
+
+function benchmark_grid_cluster_remove($cluster){
+	if (isset($cluster) && isset($cluster['clusterid']) && isset($cluster['delete_type'])){
+		if ($cluster['delete_type'] == 1){
+			db_execute_prepared('UPDATE grid_clusters_benchmarks SET enabled=0 WHERE clusterid=?', array($cluster['clusterid']));
+		} else if ($cluster['delete_type'] == 2){
+			db_execute_prepared('DELETE FROM grid_clusters_benchmark_summary WHERE clusterid=?', array($cluster['clusterid']));
+			db_execute_prepared('DELETE FROM grid_clusters_benchmarks WHERE clusterid=?', array($cluster['clusterid']));
+		}
+	}
+
+    return $cluster;
 }
