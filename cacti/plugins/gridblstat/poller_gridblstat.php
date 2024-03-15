@@ -289,8 +289,6 @@ function gridblstat_check_blstat($log = false, $collector = array()) {
 		cacti_log('WARNING: blinfo returned no information from license scheduler collector:' . $collector['name'], false, 'GRIDBLSTAT');
 	}
 
-	$clusterid = $collector['clusterid'];
-
 	gridblstat_debug('NOTE: Getting blusers -J');
 	$blusers         = shell_exec($bluser_binary . ' -J');
 

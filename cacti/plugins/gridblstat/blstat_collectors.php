@@ -301,7 +301,7 @@ function form_actions() {
 				for ($i=0;($i<count($selected_items));$i++) {
 					db_execute_prepared("UPDATE grid_blstat_collectors SET disabled='' WHERE lsid=?", array($selected_items[$i]));
 				}
-			} elseif (get_request_var('drp_action') == '3') { /* enable */
+			} elseif (get_request_var('drp_action') == '3') { /* disable */
 				for ($i=0;($i<count($selected_items));$i++) {
 					db_execute_prepared("UPDATE grid_blstat_collectors SET disabled='on' WHERE lsid=?", array($selected_items[$i]));
 				}
