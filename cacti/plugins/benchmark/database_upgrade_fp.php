@@ -80,6 +80,13 @@ if(!empty($force_version)){
 	$benchmark_version = $force_version;
 } else {
 	$benchmark_version = read_config_option('benchmark_version');
+	if (empty($benchmark_version)){
+		if (db_column_exists('grid_clusters_benchmark_summary', 'pjob_bsubTime')) {
+			$benchmark_version = '10.2.0.14';
+		} else {
+			$benchmark_version = '9.1.3';
+		}
+	}
 }
 $benchmark_current_version = get_benchmark_version();
 
