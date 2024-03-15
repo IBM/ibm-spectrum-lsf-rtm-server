@@ -24,12 +24,8 @@ function upgrade_to_10_2_0_15() {
 	include_once(dirname(__FILE__) . '/../lib/grid_functions.php');
 	include_once(dirname(__FILE__) . '/../include/grid_constants.php');
 	include_once(dirname(__FILE__) . '/../../../lib/rtm_db_upgrade.php');
-	include_once(dirname(__FILE__) . '/../../../lib/import.php');
 	include_once(dirname(__FILE__) . '/../../../lib/plugins.php');
 	include_once(dirname(__FILE__) . '/../../../lib/utility.php');
-	include_once(dirname(__FILE__) . '/../../../lib/template.php');
-	include_once(dirname(__FILE__) . '/../../../lib/api_device.php');
-	include_once(dirname(__FILE__) . '/../../../lib/api_data_source.php');
 
 	$column_arr= array(
 		'cpuPeak' => "ADD COLUMN `cpuPeak` decimal(9,5) NOT NULL default '0.00000' AFTER `isLoaningGSLA`",
@@ -48,7 +44,7 @@ function upgrade_to_10_2_0_15() {
 	db_update_table('grid_jobs_rusage', $data);
 
 	//update version for other plugins that file touched, and no much DB change
-	db_execute("UPDATE plugin_config SET version='10.2.0.15' WHERE directory IN ('RTM', 'gridalarms')");
+	db_execute("UPDATE plugin_config SET version='10.2.0.15' WHERE directory IN ('RTM', 'license', 'meta')");
 }
 
 function partition_tables_to_10_2_0_15(){
