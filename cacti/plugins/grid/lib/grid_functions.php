@@ -6767,7 +6767,7 @@ function update_user_group_stats() {
 			sum(numRUN) AS numRUN,
 			sum(numPEND) AS numPEND,
 			sum(numJOBS) AS numJOBS,
-			avg(avg_efficiency) AS efficiency,
+			avg(if(numRUN=0, NULL, avg_efficiency)) AS efficiency,
 			avg(avg_mem) AS avg_mem,
 			max(max_mem) AS max_mem,
 			avg(avg_max_swap) AS avg_swap,
