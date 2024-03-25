@@ -112,10 +112,13 @@ function grid_backup_cacti_db_partition($poller = true, $force = false, $backup_
 		if (empty($backup_path)) {
 			$backup_path = read_config_option('grid_backup_path') . '/partition_backups';
 		}
-		@mkdir($backup_path);
+		if (!is_dir($backup_path)) {
+			//Remove '@' and check existing by is_dir because '@' does not silent error in RHEL/CentOS 9 + PHP 8.1
+			mkdir($backup_path);
+		}
 
 		/* check if directory exists */
-		if (file_exists($backup_path) && is_writable($backup_path)) {
+		if (is_dir($backup_path) && is_writable($backup_path)) {
 			if ($config['cacti_server_os'] == 'win32') {
 				$tmp_backup_dir = getenv('TEMP');
 			} else {
