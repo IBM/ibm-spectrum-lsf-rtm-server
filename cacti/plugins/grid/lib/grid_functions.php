@@ -13214,7 +13214,7 @@ function grid_view_job_detail($job_page = 'grid_bjobs.php') {
 				$now        = time();
 				$start_time = strtotime($job['start_time']);
 				$end_time = strtotime($job['end_time']);
-				if ($end_time <= 0) {
+				if ($end_time === false || $end_time <= 0) {
 					$end_time = $now;
 				}
 				$timespan['end_now']   = $end_time;
