@@ -3455,7 +3455,7 @@ function get_estimate(&$record, $ahead, &$others) {
 	$p     = $record['projectName'];
 	$cq    = $record['clustername'] . '|' . $q . '|' . $p;
 	$cpu   = $record['reqCpus'];
-	$ahead = ($ahead != 'NA' && $ahead != 'FCFS' && !empty($ahead) ? number_format_i18n((float)$ahead):0);
+	$ahead = ($ahead != 'NA' && $ahead != 'FCFS' && !empty($ahead) ? number_format((float)$ahead, 2, '.', '') : 0);
 
 	// Method1: Velocity Based Estimate
 	$fivm_tp     = $record['tput5MIN'] * 12;
