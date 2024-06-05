@@ -118,8 +118,8 @@ global $php_bin, $path_grid;
 echo "Creating RTM Tree List\n";
 
 $php_bin   = cacti_escapeshellcmd(read_config_option('path_php_binary'));
-$path_grid = read_config_option('path_webroot') . '/plugins/grid';
-$path_web  = read_config_option('path_webroot');
+$path_web  = cacti_escapeshellarg(read_config_option('base_path'));
+$path_grid = $path_web . '/plugins/grid';
 
 $ctrees	   = get_cluster_trees();
 

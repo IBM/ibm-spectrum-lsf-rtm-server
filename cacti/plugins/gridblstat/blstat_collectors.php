@@ -671,7 +671,7 @@ function filter() {
 				<tr>
 					<td><?php print __('Search', 'gridblstat');?></td>
 					<td>
-						<input type='text' id='filter' size='20' value='<?php print html_escape(get_request_var('filter'));?>'>
+						<input type='text' id='filter' size='20' value='<?php print html_escape_request_var('filter');?>'>
 					</td>
 					<td><?php print __('Rows', 'gridblstat');?></td>
 					<td>

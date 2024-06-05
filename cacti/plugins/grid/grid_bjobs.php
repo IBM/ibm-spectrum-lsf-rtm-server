@@ -449,19 +449,19 @@ function grid_view_export_jobs() {
 			$rowsquery = "";//$rowsquery is not required for export
 			//$rowsquery2 = '';
 
-			get_jobs_query('grid_jobs', false, $jobsquery, $rowsquery, $_REQUEST['resource_str_search_by']);
+			get_jobs_query('grid_jobs', false, $jobsquery, $rowsquery, get_request_var('resource_str_search_by'));
 			$grid_jobs_query = $jobsquery;
 
-			get_jobs_query('grid_jobs_finished', false, $jobsquery, $rowsquery, $_REQUEST['resource_str_search_by']);
+			get_jobs_query('grid_jobs_finished', false, $jobsquery, $rowsquery, get_request_var('resource_str_search_by'));
 			$grid_jobs_finished_query = $jobsquery;
 
 			$union_jobs_query = union_grids($grid_jobs_query, $grid_jobs_finished_query, true, read_config_option('grid_xport_rows'), $total_rows);
 			$jobs  = db_fetch_assoc($union_jobs_query);
 		} else {
-			$jobs = grid_view_get_jobs_records($total_rows, $table_name, true, false, read_config_option('grid_xport_rows'), $_REQUEST['resource_str_search_by']);
+			$jobs = grid_view_get_jobs_records($total_rows, $table_name, true, false, read_config_option('grid_xport_rows'), get_request_var('resource_str_search_by'));
 		}
 	} else {
-		$jobs = grid_view_get_jobs_records($total_rows, $table_name, false, false, read_config_option('grid_xport_rows'), $_REQUEST['resource_str_search_by']);
+		$jobs = grid_view_get_jobs_records($total_rows, $table_name, false, false, read_config_option('grid_xport_rows'), get_request_var('resource_str_search_by'));
 	}
 
 	$queue_nice_levels = array_rekey(db_fetch_assoc("SELECT
@@ -1147,22 +1147,22 @@ function grid_view_jobs() {
 			$total_rows = 0;
 
 			//get_jobs_query('grid_jobs', false, $jobsquery, $rowsquery);
-			get_jobs_query('grid_jobs', false, $grid_jobs_query, $rowsquery1, $_REQUEST['resource_str_search_by']);
+			get_jobs_query('grid_jobs', false, $grid_jobs_query, $rowsquery1, get_request_var('resource_str_search_by'));
 			//$grid_jobs_query = $jobsquery;
 
 			//$rowsquery  = '';
 			//get_jobs_query('grid_jobs_finished', false, $jobsquery, $rowsquery);
-			get_jobs_query('grid_jobs_finished', false, $grid_jobs_finished_query, $rowsquery2, $_REQUEST['resource_str_search_by']);
+			get_jobs_query('grid_jobs_finished', false, $grid_jobs_finished_query, $rowsquery2, get_request_var('resource_str_search_by'));
 			//$grid_jobs_finished_query = $jobsquery;
 
 			$union_jobs_query = union_grids($grid_jobs_query, $grid_jobs_finished_query, true, $rows, $total_rows);
 
 			$job_results  = db_fetch_assoc($union_jobs_query);
 		} else {
-			$job_results = grid_view_get_jobs_records($total_rows, $table_name, true, true, $rows, $_REQUEST['resource_str_search_by']);
+			$job_results = grid_view_get_jobs_records($total_rows, $table_name, true, true, $rows, get_request_var('resource_str_search_by'));
 		}
 	} else {
-		$job_results = grid_view_get_jobs_records($total_rows, $table_name, false, true, $rows, $_REQUEST['resource_str_search_by']);
+		$job_results = grid_view_get_jobs_records($total_rows, $table_name, false, true, $rows, get_request_var('resource_str_search_by'));
 	}
 
 	general_header();

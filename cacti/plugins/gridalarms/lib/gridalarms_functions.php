@@ -3167,7 +3167,7 @@ function list_alarm_log($admin = true) {
 						<?php print __('Search', 'gridalarms');?>
 					</td>
 					<td>
-						<input type='text' id='filter' size='25' value='<?php print html_escape(get_request_var('filter'));?>'>
+						<input type='text' id='filter' size='25' value='<?php print html_escape_request_var('filter');?>'>
 					</td>
 					<td>
 						<?php print __('Alert', 'gridalarms');?>
@@ -4425,7 +4425,7 @@ function list_templates($admin = true) {
 						<?php print __('Search', 'gridalarms');?>
 					</td>
 					<td>
-						<input type='text' size='25' id='filter' value='<?php print html_escape(get_request_var('filter'));?>'>
+						<input type='text' size='25' id='filter' value='<?php print html_escape_request_var('filter');?>'>
 					</td>
 					<td>
 						<?php print __('Cluster', 'gridalarms');?>
@@ -4697,7 +4697,7 @@ function list_alarms($admin = true) {
 						<?php print __('Search', 'gridalarms');?>
 					</td>
 					<td>
-						<input type='text' id='filter' size='25' value='<?php print html_escape(get_request_var('filter'));?>'>
+						<input type='text' id='filter' size='25' value='<?php print html_escape_request_var('filter');?>'>
 					</td>
 					<td>
 						<?php print __('Cluster', 'gridalarms');?>

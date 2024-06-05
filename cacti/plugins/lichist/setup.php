@@ -143,7 +143,7 @@ function lichist_jobs_tabs($tabs) {
 function lichist_jobs_show_tab() {
 	global $config;
 
-	if ($_REQUEST['tab'] == 'lichist') {
+	if (get_request_var('tab') == 'lichist') {
 		include('./plugins/lichist/grid_lichist.php');
 
 	}

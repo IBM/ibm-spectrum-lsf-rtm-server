@@ -33,7 +33,7 @@ function rtm_custom_denied(){
 	}
 
 	if (isset($_SERVER['HTTP_REFERER'])) {
-		$goBack = "<td colspan='2' class='center'>[<a href='" . $_SERVER['HTTP_REFERER'] . "'>" . __('Return') . "</a> | <a href='" . $config['url_path'] . "logout.php'>" . __('Login Again') . "</a>]</td>";
+		$goBack = "<td colspan='2' class='center'>[<a href='" . html_escape($_SERVER['HTTP_REFERER']) . "'>" . __('Return') . "</a> | <a href='" . $config['url_path'] . "logout.php'>" . __('Login Again') . "</a>]</td>";
 	} else {
 		$goBack = "<td colspan='2' class='center'>[<a href='" . $config['url_path'] . "logout.php'>" . __('Login Again') . "</a>]</td>";
 	}

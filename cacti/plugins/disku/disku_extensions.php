@@ -190,7 +190,7 @@ function disku_extensions() {
 						<?php print __('Search', 'disku');?>
 					</td>
 					<td width='1'>
-						<input type='text' id='filter' size='30' value='<?php print html_escape(get_request_var('filter'));?>'>
+						<input type='text' id='filter' size='30' value='<?php print html_escape_request_var('filter');?>'>
 					</td>
 				</tr>
 			</table>

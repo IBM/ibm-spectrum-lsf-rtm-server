@@ -3622,7 +3622,7 @@ function edit_general_actions() {
 			$('#row_metric').hide();
 
 			$('#addDs').click(function() {
-				loadPageNoHeader('gridalarms_alarm_edit.php?tab=data&header=false&&action=expression_edit&id=<?php print html_escape(get_request_var('id'));?>');
+				loadPageNoHeader('gridalarms_alarm_edit.php?tab=data&header=false&&action=expression_edit&id=<?php print html_escape_request_var('id');?>');
 			});
 		}
 

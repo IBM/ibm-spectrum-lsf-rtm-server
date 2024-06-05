@@ -240,7 +240,7 @@ function guarPoolFilter() {
                     </td>
                 </tr>
             </table>
-            <input type='hidden' id='tab' value='<?php print html_escape(get_request_var('tab'));?>'>
+            <input type='hidden' id='tab' value='<?php print html_escape_request_var('tab');?>'>
             <input type='hidden' id='page' value='1'>
         </form>
     </td>
@@ -710,7 +710,7 @@ function guarSLAFilter($respools) {
                     </td>
                 </tr>
             </table>
-            <input type='hidden' id='tab' value='<?php print html_escape(get_request_var('tab'));?>'>
+            <input type='hidden' id='tab' value='<?php print html_escape_request_var('tab');?>'>
             <input type='hidden' id='page' value='1'>
         </form>
     </td>

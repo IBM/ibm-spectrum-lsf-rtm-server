@@ -1033,8 +1033,8 @@ function treeFilter() {
 						<input type='hidden' id='page' value='1'>
 						<input type='hidden' id='action' value='viewqueue'>
 						<input type='hidden' id='tab' value='share'>
-						<input type='hidden' id='queue' value='<?php print html_escape(get_request_var('queue'));?>'>
-						<input type='hidden' id='clusterid' value='<?php print html_escape(get_request_var('clusterid'));?>'>
+						<input type='hidden' id='queue' value='<?php print html_escape_request_var('queue');?>'>
+						<input type='hidden' id='clusterid' value='<?php print html_escape_request_var('clusterid');?>'>
 
 						&nbsp;<input type='button' id='go' value='Go' title='Search'>
 						&nbsp;<input type='button' id='clear' value='<?php print __('Clear');?>' title='<?php print __('Clear Filters');?>'>
@@ -1804,7 +1804,7 @@ function queuesFilter() {
 						<?php print __('Search', 'grid');?>
 					</td>
 					<td>
-						<input type='text' id='filter' size='30' value="<?php print html_escape(get_request_var('filter'));?>">
+						<input type='text' id='filter' size='30' value="<?php print html_escape_request_var('filter');?>">
 					</td>
 					<td>
 						<input type='checkbox' id='unused'<?php if ((get_request_var('unused') == 'true') || (get_request_var('unused') == 'on')) print ' checked="true"';?>>
@@ -2376,7 +2376,7 @@ function get_fairshare_tree_data() {
 }
 
 function get_header() {
-	return ' ' . __('[ Queue: %s, Cluster: %s ]', html_escape(get_request_var('queue')), grid_get_clustername(get_request_var('clusterid')), 'grid');
+	return ' ' . __('[ Queue: %s, Cluster: %s ]', html_escape_request_var('queue'), grid_get_clustername(get_request_var('clusterid')), 'grid');
 }
 
 function grid_view_queue_fairshare($queue) {
@@ -2428,7 +2428,7 @@ function grid_view_queue_fairshare($queue) {
 			core : {
 				data : {
 					expand_selected_onload : true,
-					url : 'grid_bqueues.php?action=get_fairshare_tree&clusterid=<?php print html_escape(get_request_var('clusterid'));?>&queue=<?php print html_escape(get_request_var('queue'));?>',
+					url : 'grid_bqueues.php?action=get_fairshare_tree&clusterid=<?php print html_escape_request_var('clusterid');?>&queue=<?php print html_escape_request_var('queue');?>',
 					data : function(node) {
 						resizeTreeData();
 						return { 'id' : node.id }
@@ -3325,8 +3325,8 @@ function grid_bqueues_graph_view_filter($queue) {
 					<td>
 						<input type='hidden' id='clusterid' value="<?php print html_escape($queue['clusterid']);?>">
 						<input type='hidden' id='queue' value="<?php print html_escape($queue['queuename']);?>">
-						<input type='hidden' id='action' value="<?php print html_escape(get_request_var('action'));?>">
-						<input type='hidden' id='tab' value="<?php print html_escape(get_request_var('tab'));?>">
+						<input type='hidden' id='action' value="<?php print html_escape_request_var('action');?>">
+						<input type='hidden' id='tab' value="<?php print html_escape_request_var('tab');?>">
 					</td>
 				</tr>
 			</table>

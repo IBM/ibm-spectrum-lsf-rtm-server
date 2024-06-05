@@ -128,7 +128,7 @@ function rtm_custom_password(){
 			<legend><?php print RTM_BRAND_NAME_BOLD;?><span class="logo-area"> <?php print RTM_PRODUCT_NAME . " " . RTM_VERSION;?></span></legend>
 			<form name='login' method='post' action='<?php print get_current_page();?>'>
 				<input type='hidden' name='action' value='changepassword'>
-				<input type='hidden' name='ref' value='<?php print html_escape(get_request_var('ref')); ?>'>
+				<input type='hidden' name='ref' value='<?php print html_escape_request_var('ref'); ?>'>
 				<input type='hidden' name='name' value='<?php print isset($user['username']) ? html_escape($user['username']) : '';?>'>
 				<div class='loginTitle'>
 <?php

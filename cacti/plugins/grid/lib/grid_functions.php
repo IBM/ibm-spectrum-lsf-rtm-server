@@ -852,7 +852,7 @@ function grid_get_master_lsf_status($clusterid) {
 
 	if ($cluster_status['lsf_master'] == '') {
 		$is_master = 'U';
-} elseif (strpos(trim($cluster_status['lsf_masterhosts']), $cluster_status['lsf_master']) > 0) {
+	} elseif (strpos(trim($cluster_status['lsf_masterhosts']), $cluster_status['lsf_master']) > 0) {
 		$is_master = 'A';
 	} else {
 		$is_master = 'P';
@@ -12855,24 +12855,24 @@ function get_grid_job_hosts_rraarchive($job, $row_limit, $pageno, &$total_rows =
 function get_grid_job_gpus($row_limit){
 	$sql_params = array();
 	if (read_config_option("grid_partitioning_enable") == "") {
-        	$sql_query = "SELECT host, gpu_id"
-	        	. " FROM grid_jobs_gpu_rusage"
-        		. " WHERE jobid=" . $_REQUEST["jobid"]
-        		. " AND indexid=" . $_REQUEST["indexid"]
-        		. " AND submit_time='" . date("Y-m-d H:i:s", $_REQUEST["submit_time"]) . "'"
-        		. " AND clusterid=" . $_REQUEST["clusterid"]
-        		. " GROUP BY host, gpu_id";
-		$sql_params[] = $_REQUEST['jobid'];
-		$sql_params[] = $_REQUEST['indexid'];
-		$sql_params[] = date("Y-m-d H:i:s", $_REQUEST['submit_time']);
-		$sql_params[] = $_REQUEST['clusterid'];
+		$sql_query = "SELECT host, gpu_id"
+			. " FROM grid_jobs_gpu_rusage"
+			. " WHERE jobid=" . get_request_var('jobid')
+			. " AND indexid=" . get_request_var('indexid')
+			. " AND submit_time='" . date("Y-m-d H:i:s", get_request_var('submit_time')) . "'"
+			. " AND clusterid=" . get_request_var('clusterid')
+			. " GROUP BY host, gpu_id";
+		$sql_params[] = get_request_var('jobid');
+		$sql_params[] = get_request_var('indexid');
+		$sql_params[] = date("Y-m-d H:i:s", get_request_var('submit_time'));
+		$sql_params[] = get_request_var('clusterid');
 
-        	$sql_query .= " LIMIT " . ($row_limit*($_REQUEST["page"]-1)) . "," . $row_limit;
-        	$job_gpus = db_fetch_assoc_prepared($sql_query, $sql_params);
+		$sql_query .= " LIMIT " . ($row_limit*(get_request_var('page')-1)) . "," . $row_limit;
+		$job_gpus = db_fetch_assoc_prepared($sql_query, $sql_params);
         	return $job_gpus;
 	}else{
 		$query  = "";
-		$tables = partition_get_partitions_for_query("grid_jobs_gpu_rusage", $_REQUEST["submit_time"], date("Y-m-d H:i:s"));
+		$tables = partition_get_partitions_for_query("grid_jobs_gpu_rusage", get_request_var('submit_time'), date("Y-m-d H:i:s"));
 
 		if (cacti_sizeof($tables)) {
 			foreach($tables as $table) {
@@ -12886,12 +12886,12 @@ function get_grid_job_gpus($row_limit){
         				. " AND indexid=?"
         				. " AND submit_time=?"
         				. " AND clusterid=?)";
-				$sql_params[] = $_REQUEST['jobid'];
-				$sql_params[] = $_REQUEST['indexid'];
-				$sql_params[] = date("Y-m-d H:i:s", $_REQUEST['submit_time']);
-				$sql_params[] = $_REQUEST['clusterid'];
+				$sql_params[] = get_request_var('jobid');
+				$sql_params[] = get_request_var('indexid');
+				$sql_params[] = date("Y-m-d H:i:s", get_request_var('submit_time'));
+				$sql_params[] = get_request_var('clusterid');
 			}
-        	$sql_query = " $query GROUP BY host, gpu_id LIMIT " . ($row_limit*($_REQUEST["page"]-1)) . "," . $row_limit;
+			$sql_query = " $query GROUP BY host, gpu_id LIMIT " . ($row_limit*(get_request_var('page')-1)) . "," . $row_limit;
         	$job_gpus = db_fetch_assoc_prepared($sql_query, $sql_params);
         	return $job_gpus;
 		}else{
@@ -14524,7 +14524,7 @@ print '</tr></table>';
 					$obj_cnt = 2;
 					$num_g_per_obj = 4;
 
-					$total_rows=get_grid_job_hosts_total_rows($_REQUEST["jobid"], $_REQUEST["indexid"], $_REQUEST["clusterid"], $_REQUEST["submit_time"]);
+					$total_rows=get_grid_job_hosts_total_rows(get_request_var('jobid'), get_request_var('indexid'), get_request_var('clusterid'), get_request_var('submit_time'));
 					if($total_rows >0){
 						$grid_job_hosts = get_grid_job_hosts($obj_cnt);
 					}
@@ -14600,7 +14600,7 @@ print '</tr></table>';
 					$obj_cnt = 2;
 					$num_g_per_obj = 6;
 
-					$total_rows=get_grid_job_gpus_total_rows($_REQUEST["jobid"], $_REQUEST["indexid"], $_REQUEST["clusterid"], $_REQUEST["submit_time"]);
+					$total_rows=get_grid_job_gpus_total_rows(get_request_var('jobid'), get_request_var('indexid'), get_request_var('clusterid'), get_request_var('submit_time'));
 					if($total_rows > 0){
 						$grid_job_gpus = get_grid_job_gpus($obj_cnt);
 					}
@@ -16587,10 +16587,10 @@ function jobGraphFilter($job, $job_page) {
 									}
 								}
 								if($total_hrusage_rows <= 0){
-									$total_hrusage_rows = get_grid_job_hosts_total_rows($_REQUEST["jobid"], $_REQUEST["indexid"], $_REQUEST["clusterid"], $_REQUEST["submit_time"]);
+									$total_hrusage_rows = get_grid_job_hosts_total_rows(get_request_var('jobid'), get_request_var('indexid'), get_request_var('clusterid'), get_request_var('submit_time'));
 								}
 								if($total_grusage_rows <= 0){
-									$total_grusage_rows = get_grid_job_gpus_total_rows($_REQUEST["jobid"], $_REQUEST["indexid"], $_REQUEST["clusterid"], $_REQUEST["submit_time"]);
+									$total_grusage_rows = get_grid_job_gpus_total_rows(get_request_var('jobid'), get_request_var('indexid'), get_request_var('clusterid'), get_request_var('submit_time'));
 								}
 							}
 							if($job['stat'] == 'PEND' || ($total_hrusage_rows <= 0 && $total_grusage_rows <= 0)){

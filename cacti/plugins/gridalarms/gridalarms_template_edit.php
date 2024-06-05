@@ -1324,7 +1324,7 @@ function confirm_layout_remove() {
 
 	print "<tr>
 		<td class='textArea'>
-			<p>" . __('Click \'Continue\' to Delete this Layout Column <b>\'%s\'</b>.', html_escape(get_request_var('column')), 'gridalarms') . "</p>
+			<p>" . __('Click \'Continue\' to Delete this Layout Column <b>\'%s\'</b>.', html_escape_request_var('column'), 'gridalarms') . "</p>
 		</td>
 	</tr>\n";
 
@@ -1336,7 +1336,7 @@ function confirm_layout_remove() {
 		<td class='saveRow'>
 			<input type='hidden' name='action' value='layout_remove'>
 			<input type='hidden' name='id' value='" . get_request_var('id') . "'>
-			<input type='hidden' name='column' value='" . html_escape(get_request_var('column')) . "'>
+			<input type='hidden' name='column' value='" . html_escape_request_var('column') . "'>
 			<input type='hidden' name='confirm_layout_remove' value='1'>
 			$save_html
 		</td>

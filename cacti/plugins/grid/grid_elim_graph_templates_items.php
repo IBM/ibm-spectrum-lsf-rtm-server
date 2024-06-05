@@ -351,7 +351,7 @@ function elim_draw_edit_form($array,$resource_not_exist) {
 		foreach ($fields_array as $field_name => $field_array) {
 			if ($i == 0) {
 				if (!isset($config_array["no_form_tag"])) {
-					print "<tr style='display:none;'><td><form method='post' autocomplete='off' action='" . ((isset($config_array["post_to"])) ? $config_array["post_to"] : basename($_SERVER["PHP_SELF"])) . "'" . ((isset($config_array["form_name"])) ? " name='" . $config_array["form_name"] . "'" : "") . ((isset($config_array["enctype"])) ? " enctype='" . $config_array["enctype"] . "'" : "") . "></td></tr>\n";
+					print "<tr style='display:none;'><td><form method='post' autocomplete='off' action='" . html_escape(((isset($config_array["post_to"])) ? $config_array["post_to"] : basename($_SERVER["PHP_SELF"])) . "'" . ((isset($config_array["form_name"])) ? " name='" . $config_array["form_name"] . "'" : "") . ((isset($config_array["enctype"])) ? " enctype='" . $config_array["enctype"] . "'" : "")) . "></td></tr>\n";
 				}
 			}
 

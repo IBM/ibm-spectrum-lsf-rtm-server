@@ -119,6 +119,11 @@ function grid_view_get_users_records(&$sql_where, &$sql_join, $apply_limits = tr
 			$sql_params[] = get_request_var('usergroup');
 		}
 
+		if (get_request_var('filter') != '') {
+			$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . ' gqus.user_or_group LIKE ?';
+			$sql_params[] = '%'. get_request_var('filter') . '%';
+		}
+
 		$sql_query = "SELECT gc.clustername, gqus.clusterid, gqus.queue, gqus.user_or_group, gqus.efficiency, gqs.shares,
 			gqs.shareAcctPath, gqs.priority, gqs.started AS numStartJobs, gqs.reserved AS numRESERVE, gqs.cpu_time, gqs.run_time,
 			gqus.nojobs AS numJobs, gqus.pendjobs AS numPEND, gqus.runjobs AS numRUN, gqus.suspjobs, gq.maxjobs, gq.userJobLimit,
@@ -717,6 +722,7 @@ function grid_view_users() {
 				$url = $config['url_path'] . 'plugins/grid/grid_bjobs.php' .
 					'?action=viewlist&reset=1' .
 					'&clusterid=' . $user['clusterid'] .
+					'&queue=' . $user['queue'] . 
 					'&job_user=' . $user['user_or_group'] .
 					'&status=RUNNING&page=1';
 
