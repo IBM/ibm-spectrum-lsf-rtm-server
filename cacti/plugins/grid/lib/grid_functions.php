@@ -1,5 +1,5 @@
 <?php
-// $Id: e22e26148d17cd9be1bc57b436e7a944954da7f4 $
+// $Id$
 /*
  +-------------------------------------------------------------------------+
  | Copyright IBM Corp. 2006, 2022-2023                                     |
@@ -6775,6 +6775,7 @@ function update_user_group_stats() {
 			SUM(numPEND) AS numPEND,
 			SUM(numJOBS) AS numJOBS,
 			AVG(avg_efficiency) AS efficiency,
+      AVG(IF(numRUN=0, NULL, avg_efficiency)) AS efficiency,
 			AVG(avg_mem) AS avg_mem,
 			MAX(max_mem) AS max_mem,
 			AVG(avg_max_swap) AS avg_swap,
@@ -6790,7 +6791,7 @@ function update_user_group_stats() {
 				SUM(CASE WHEN stat IN ('RUNNING', 'PROV') THEN num_cpus ELSE 0 END) as numRUN,
 				SUM(CASE WHEN stat = 'PEND' THEN num_cpus ELSE 0 END) as numPEND,
 				SUM(num_cpus) as numJOBS,
-				(SUM(CASE WHEN stat IN ('RUNNING', 'PROV') AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (stime+utime) ELSE 0 END) / SUM(CASE WHEN stat IN ('RUNNING','PROV') AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (run_time*max_allocated_processes) ELSE 0 END)) * 100 as avg_efficiency,
+				(SUM(CASE WHEN stat IN ('RUNNING', 'PROV') AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (stime+utime) ELSE 0 END) / SUM(CASE WHEN stat IN ('RUNNING','PROV') AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (run_time*max_allocated_processes) ELSE 0 END)) * 100 AS avg_efficiency,
 				AVG(max_memory) as avg_mem,
 				MAX(max_memory) as max_mem,
 				AVG(max_swap) as avg_max_swap,
