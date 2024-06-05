@@ -127,7 +127,7 @@ $disable_log_rotation = false;
  * the CRSF secret file.
  */
 
-//$path_csrf_secret = '/usr/share/cacti/resource/csrf-secret.php';
+$path_csrf_secret = '/opt/IBM/rtm/etc/csrf-secret.php';
 
 /**
  * The following are optional variables for debugging low level system
