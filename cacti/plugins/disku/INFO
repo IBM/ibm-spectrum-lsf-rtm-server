@@ -1,6 +1,6 @@
 [info]
 name = disku
-version = 10.2.0.14
+version = 10.2.0.15
 longname = IBM Spectrum LSF RTM Disk Monitoring Plugin
 author = IBM Corporation
 email =
