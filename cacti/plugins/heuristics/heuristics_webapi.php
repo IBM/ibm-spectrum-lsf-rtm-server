@@ -3467,7 +3467,7 @@ function get_estimate(&$record, $ahead, &$others) {
 	$tot_hr_tp   = $hr_tp + $oth_hr_tp;
 
 	/* calculate the estimate based upon 5 minute tput */
-	if (!empty($oth_fiv_mtp) && $record['numPEND'] > 0) {
+	if (!empty($oth_fivm_tp) && $record['numPEND'] > 0) {
 		$efm = (float)(($ahead + $record['numRUN']) / ($tot_fivm_tp)) + (float)($record['numPEND'] / ($tot_fivm_tp));
 	} elseif (!empty($fivm_tp) && $record['numPEND'] > 0) {
 		$efm = (float)($record['numRUN'] / $tot_fivm_tp) + (float)($record['numPEND'] / ($tot_fivm_tp));
