@@ -9465,7 +9465,7 @@ function find_archive_jobgraph_rrdfile($clusterid, $jobid, $indexid, $submit_tim
 	if($host_name != null){
 		$file_name .= "_" . $host_name;
 	}
-	if($gpu_id != null){
+	if($gpu_id !== null){
 		$file_name .= "_" . $gpu_id;
 	}
 	$file_name .= ".rrd";
@@ -9520,7 +9520,7 @@ function grid_maint_update_job_rrds($clusterid, $jobid, $indexid, $submit_time, 
 
 		/* update the rrdfiles */
 		if (is_dir($archive_directory)) {
-			if($gpu_id != null){
+			if($gpu_id !== null){
 				$recreate_png = update_job_rrds_gpu("grid_jobs_finished", $archive_directory, $file_base, $clusterid, $jobid, $indexid, $submit_time, $data_class, $rrdtool_pipe, $host_name, $gpu_id);
 			}else if($host_name != null){
 				$recreate_png = update_job_rrds_host("grid_jobs_finished", $archive_directory, $file_base, $clusterid, $jobid, $indexid, $submit_time, $data_class, $rrdtool_pipe, $host_name);
@@ -9564,7 +9564,7 @@ function get_jobgraph_imgele($job, $start_time, $end_time, $rrd_interval,
 	if($host_name != null){
 		$img_base_url .= '&host=' . $host_name;
 	}
-	if($gpu_id != null){
+	if($gpu_id !== null){
 		$img_base_url .= '&gpu_id=' . $gpu_id;
 	}
 	$alt_str = ucfirst($data_class);
@@ -12857,10 +12857,10 @@ function get_grid_job_gpus($row_limit){
 	if (read_config_option("grid_partitioning_enable") == "") {
 		$sql_query = "SELECT host, gpu_id"
 			. " FROM grid_jobs_gpu_rusage"
-			. " WHERE jobid=" . get_request_var('jobid')
-			. " AND indexid=" . get_request_var('indexid')
-			. " AND submit_time='" . date("Y-m-d H:i:s", get_request_var('submit_time')) . "'"
-			. " AND clusterid=" . get_request_var('clusterid')
+			. " WHERE jobid=?"
+			. " AND indexid=?"
+			. " AND submit_time=?"
+			. " AND clusterid=?"
 			. " GROUP BY host, gpu_id";
 		$sql_params[] = get_request_var('jobid');
 		$sql_params[] = get_request_var('indexid');

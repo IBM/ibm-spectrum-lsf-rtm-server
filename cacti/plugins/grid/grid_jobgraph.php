@@ -77,7 +77,7 @@ $filebase        = $jobid . "_" .  $indexid . "_" .  $clusterid . "_" .  $submit
 if($host_name != null){
 	$filebase	.= "_" . $host_name;
 }
-if($gpu_id != null){
+if($gpu_id !== null){
 	$filebase	.= "_" . $gpu_id;
 }
 $pngfile         = $cache_directory . '/' . $filebase . '_' . $graph_type . '.png';
@@ -109,7 +109,7 @@ if (cacti_sizeof($jobs)) {
 
 if (strlen($cache_directory)) {
 	if (is_dir($cache_directory)) {
-		if ($gpu_id != null) {
+		if ($gpu_id !== null) {
 			$recreate_png = update_job_rrds_gpu($table_name, $cache_directory, $filebase,
 												$clusterid, $jobid, $indexid, $submit_time,
 												$data_class, $rrdtool_pipe, $host_name, $gpu_id);
