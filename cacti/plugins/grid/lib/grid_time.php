@@ -225,6 +225,6 @@ function grid_shift_time(&$span, $direction, $shift_size) {
 	# now custom time settings in effect
 	$_SESSION['sess_grid_current_timespan'] = GT_CUSTOM;
 	$_SESSION['grid_custom'] = 1;
-	set_request_var('cont_predefined_timespan', GT_CUSTOM);
+	set_request_var('predefined_timespan', GT_CUSTOM);
 }
 

@@ -523,30 +523,56 @@ function process_jg_html_variables() {
 function process_jg_user_input(&$timespan, $timeshift) {
 	global $job, $config;
 
-	if (isset_request_var('move_left_x') || isset_request_var('move_right_x')) {
-		$timespan['current_value_date1'] = get_request_var('date1');
-		$timespan['begin_now']           = strtotime($timespan['current_value_date1']);
-		$timespan['current_value_date2'] = get_request_var('date2');
-		$timespan['end_now']             = strtotime($timespan['current_value_date2']);
+	/* job->hostgraph use datepicker since 10.2 */
+	if (!isempty_request_var('date1') || isset_request_var('move_left_x') || isset_request_var('move_right_x')) {
+		/* the dates have changed, therefore, I am now custom */
+		if (!isempty_request_var('date1') && ($_SESSION['sess_jg_current_date1'] != get_nfilter_request_var('date1') || $_SESSION['sess_jg_current_date2'] != get_nfilter_request_var('date2') || isset_request_var('custom'))) {
+			$timespan['current_value_date1']   = sanitize_search_string(get_nfilter_request_var('date1'));
+			$timespan['begin_now']             = strtotime($timespan['current_value_date1']);
+			$timespan['current_value_date2']   = sanitize_search_string(get_nfilter_request_var('date2'));
+			$timespan['end_now']               = strtotime($timespan['current_value_date2']);
 
-		$_SESSION['sess_jg_current_timespan'] = GT_CUSTOM;
-		$_SESSION['grid_custom']              = 1;
-		set_request_var('predefined_timespan', GT_CUSTOM);
+			$_SESSION['sess_jg_current_timespan'] = GT_CUSTOM;
+			$_SESSION['grid_custom'] = 1;
+			set_request_var('predefined_timespan', GT_CUSTOM);
+		} elseif (!isset_request_var('button_clear')) {
+			/* the default button wasn't pushed */
+			if (!isempty_request_var('date1')) {
+				$timespan['current_value_date1'] = sanitize_search_string(get_nfilter_request_var('date1'));
+				$timespan['begin_now']           = strtotime($timespan['current_value_date1']);
+				$timespan['current_value_date2'] = sanitize_search_string(get_nfilter_request_var('date2'));
+				$timespan['end_now']             = strtotime($timespan['current_value_date2']);
+			} else {
+				$timespan['begin_now']           = $_SESSION['sess_jg_current_timespan_begin_now'];
+				$timespan['current_value_date1'] = $_SESSION['sess_jg_current_date1'];
+				$timespan['end_now']             = $_SESSION['sess_jg_current_timespan_end_now'];
+				$timespan['current_value_date2'] = $_SESSION['sess_jg_current_date2'];
+			}
 
-		/* time shifter: shift left */
-		if (isset_request_var('move_left_x')) {
-			grid_shift_time($timespan, '-', $timeshift);
-		}
-		/* time shifter: shift right */
-		if (isset_request_var('move_right_x')) {
-			grid_shift_time($timespan, '+', $timeshift);
+			/* time shifter: shift left */
+			if (isset_request_var('move_left_x')) {
+				grid_shift_time($timespan, '-', $timeshift);
+			}
+			/* time shifter: shift right */
+			if (isset_request_var('move_right_x')) {
+				grid_shift_time($timespan, '+', $timeshift);
+			}
+			/* custom display refresh */
+			if (isset($_SESSION['grid_custom'])) {
+				$_SESSION['sess_jg_current_timespan'] = GT_CUSTOM;
+			} else {
+				/* refresh the display */
+				$_SESSION['grid_custom'] = 0;
+			}
+		} else {
+			set_jg_preset_timespan($timespan);
 		}
 	} else {
 		if ((isset_request_var('predefined_timespan') &&
 			(get_request_var('predefined_timespan') != GT_CUSTOM)) ||
 			(!isset($_SESSION['grid_custom'])) ||
 			(!isset_request_var('predefined_timespan') && ($_SESSION['grid_custom'] == 0)) ||
-			(!isset($_SESSION['sess_jg_current_date1']))) {
+			(empty($_SESSION['sess_jg_current_date1']))) {
 			set_jg_preset_timespan($timespan);
 		} else {
 			$timespan['current_value_date1'] = $_SESSION['sess_jg_current_date1'];
