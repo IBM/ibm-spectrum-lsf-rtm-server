@@ -13208,8 +13208,10 @@ function grid_view_job_detail($job_page = 'grid_bjobs.php') {
 		$start_time = $timespan['begin_now'];
 
 		if ((cacti_sizeof($job)) && ($job['stat'] != 'PEND')) {
+			$grid_custom = false;
 			if ($end_time < $start_time) {
 				$end_time   = '-150';
+				$grid_custom = true;
 			} elseif (get_request_var('predefined_timespan') == '-99') {
 				$now        = time();
 				$start_time = strtotime($job['start_time']);
@@ -13219,6 +13221,11 @@ function grid_view_job_detail($job_page = 'grid_bjobs.php') {
 				}
 				$timespan['end_now']   = $end_time;
 				$timespan['begin_now'] = $start_time;
+
+				$grid_custom = true;
+
+				$timespan['current_value_date1'] = date('Y-m-d H:i', $timespan['begin_now']);
+				$timespan['current_value_date2'] = date('Y-m-d H:i', $timespan['end_now']);
 			} else {
 				$interval   = $date2 - $date1;
 				$now        = time();
@@ -13237,29 +13244,45 @@ function grid_view_job_detail($job_page = 'grid_bjobs.php') {
 
 						if ($date1 > $start_time) {
 							$start_time = $date1;
+							$grid_custom = true;
 						}
 					} else {
 						if (($end_time - $offset) > $start_time) {
 							$end_time = $end_time - $offset;
+							$grid_custom = true;
 						}
 
 						if (($end_time - $interval) > $start_time) {
 							$start_time = $end_time - $interval;
+							$grid_custom = true;
 						}
 					}
 				} else {
-					$end_time = $date2;
+					if ($end_time !=  $date2) {
+						$end_time = $date2;
+						$grid_custom = true;
+					}
 
 					if (($end_time - $interval) > $start_time) {
 						$start_time = $end_time - $interval;
+						$grid_custom = true;
 					}
 				}
 
 				$timespan['end_now']   = $end_time;
 				$timespan['begin_now'] = $start_time;
 
-				set_request_var('predefined_timespan', GT_CUSTOM);
+				$timespan['current_value_date1'] = date('Y-m-d H:i', $timespan['begin_now']);
+				$timespan['current_value_date2'] = date('Y-m-d H:i', $timespan['end_now']);
+
+				if ($grid_custom == true) {
+					set_request_var('predefined_timespan', GT_CUSTOM);
+				}
 			}
+			$_SESSION['sess_jg_current_timespan_end_now']   = $timespan['end_now'];
+			$_SESSION['sess_jg_current_timespan_begin_now'] = $timespan['begin_now'];
+			$_SESSION['sess_jg_current_date1']              = $timespan['current_value_date1'];
+			$_SESSION['sess_jg_current_date2']              = $timespan['current_value_date2'];
 		}
 	}
 
@@ -16473,6 +16496,7 @@ function graphViewFilter($job_page = 'grid_bjobs.php') {
 				strURL += '&graph_template_id=' + $('#graph_template_id').val();
 				strURL += '&columns=' + $('#columns').val();
 				strURL += '&thumbnails=' + $('#thumbnails').is(':checked');
+				strURL += '&predefined_timespan=' + $('#predefined_timespan').val();
 				strURL += '&date1=' + $('#date1').val();
 				strURL += '&date2=' + $('#date2').val();
 				strURL += '&header=false';
@@ -16669,6 +16693,7 @@ function jobGraphFilter($job, $job_page) {
 				strURL =  graphPage + '?' + pageAction;
 				strURL += '&filter=';
 				strURL += '&graph_template_id=-1';
+				strURL += '&predefined_timespan=-99';
 				strURL += '&rows=-1';
 				strURL += '&host_id=-1';
 				strURL += '&columns=2';
