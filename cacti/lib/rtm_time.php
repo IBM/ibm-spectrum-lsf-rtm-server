@@ -232,7 +232,7 @@ function rtm_shift_time(&$span, $direction, $shift_size, $prefix = 'sess_ldst', 
 	# now custom time settings in effect
 	$_SESSION[$prefix . '_current_timespan'] = GT_CUSTOM;
 	$_SESSION[$prefix . '_custom'] = 1;
-	set_request_var('cont_predefined_timespan',GT_CUSTOM);
+	set_request_var('predefined_timespan',GT_CUSTOM);
 }
 
 ?>
