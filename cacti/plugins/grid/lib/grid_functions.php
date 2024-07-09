@@ -10760,7 +10760,7 @@ function get_jobs_query($table_name, $apply_limits = true, &$jobsquery = '', &$r
 			$sql_where  = 'WHERE ';
 		}
 
-		/*
+		/* Remove "exactly_match" from job list because it is not a complete design now. By RTC 153954.
 		if (isset_request_var('exactly_match') && (get_request_var('exactly_match') == 'true' || get_request_var('exactly_match') == 'on')) {
 			$sql_where_proj = "$table_name.projectName = '" . get_request_var('filter') . "'";
 		} else {

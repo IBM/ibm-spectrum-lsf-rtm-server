@@ -88,7 +88,7 @@ function rtm_custom_password(){
 						} elseif (isset($record['target']) && $record['target'] == $server_ref) {
 							$valid = true;
 							break;
-						} elseif (isset($record['id']) && $record['ip'] == $server_addr) {
+						} elseif (isset($record['ip']) && $record['ip'] == $server_addr) {
 							$valid = true;
 							break;
 						}
