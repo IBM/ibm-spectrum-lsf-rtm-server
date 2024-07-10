@@ -44,7 +44,7 @@ function upgrade_to_10_2_0_15() {
 	db_update_table('grid_jobs_rusage', $data);
 
 	//update version for other plugins that file touched, and no much DB change
-	db_execute("UPDATE plugin_config SET version='10.2.0.15' WHERE directory IN ('RTM', 'license', 'meta', 'lichist)");
+	db_execute("UPDATE plugin_config SET version='10.2.0.15' WHERE directory IN ('RTM', 'license', 'meta', 'lichist')");
 }
 
 function partition_tables_to_10_2_0_15(){
