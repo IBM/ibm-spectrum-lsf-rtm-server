@@ -113,12 +113,12 @@ foreach($parms as $parameter) {
 	}
 }
 
-global $php_bin, $path_grid;
+global $php_bin, $path_grid, $config;
 
 echo "Creating RTM Tree List\n";
 
 $php_bin   = cacti_escapeshellcmd(read_config_option('path_php_binary'));
-$path_web  = cacti_escapeshellarg(read_config_option('base_path'));
+$path_web  = cacti_escapeshellarg($config['base_path']);
 $path_grid = $path_web . '/plugins/grid';
 
 $ctrees	   = get_cluster_trees();
@@ -500,6 +500,10 @@ foreach($clusters as $cluster) {
 	if ($cluster['cacti_host'] != 0) {
 		$cluster_graphs = exec_into_array("$php_bin -q $path_web/cli/add_tree.php --list-graphs --host-id=" . $cluster['cacti_host'] . ' --quiet');
 		$nodler         = get_cluster_tree_nodes($cluster['clustername']);
+		if ($nodler === false){
+			//cluster tree is not created yet. Skipping...
+			continue;
+		}
 		$tree_id        = $nodler[0];
 		$nodler         = $nodler[1];
 
@@ -511,7 +515,7 @@ foreach($clusters as $cluster) {
 			foreach($cluster_graphs as $graph) {
 				if (strlen($graph)) {
 					$tr = explode("\t", $graph);
-					if (cacti_sizeof($tr)) {
+					if (cacti_sizeof($tr) >=3) {
 						/* process each graph on to it's respective node */
 						if (substr_count($tr[2], 'Host Group')) {
 							if ((!graph_on_tree($tr[0], $tree_id)) && substr_count($options, 'H')) {
@@ -675,6 +679,8 @@ foreach($clusters as $cluster) {
 								echo "NOTE: Skipping - Cluster: '" . $cluster['clustername'] . "', Tree: '" . $tree_id . "', Branch: '" . $nodler['jgvmstats'] . "', Graph: '" . $tr[1] . "' Already exists!\n";
 							}
 						}
+					} else {
+						echo "NOTE: 'add_tree.php --list-graphs' output invalid: '$graph'\n";
 					}
 				}
 			}
@@ -695,11 +701,13 @@ function get_cluster_trees() {
 		foreach($cluster_trees as $tree) {
 			if (strlen($tree)) {
 				$tr = explode("\t", $tree);
-				if (cacti_sizeof($tr)) {
+				if (cacti_sizeof($tr) >=3) {
 					if (substr_count($tr[2], 'Cluster -')) {
 						$treeme = str_replace('Cluster -', '', $tr[2]);
 						$ctrees[$tr[0]] = $treeme;
 					}
+				} else {
+					echo "NOTE: 'add_tree.php --list-trees' output invalid: '$tree'\n";
 				}
 			}
 		}
@@ -716,10 +724,12 @@ function get_tree_node($search, $tree_id, $parent_id = 0) {
 		foreach($tree_nodes as $node) {
 			if (strlen($node)) {
 				$tr = explode("\t", $node);
-				if (cacti_sizeof($tr)) {
+				if (cacti_sizeof($tr) >=4) {
 					if (substr_count($tr[3], $search)) {
 						return array($tr[1], $tr[2]);
 					}
+				} else {
+					echo "NOTE: 'add_tree.php --list-nodes' output invalid: '$node'\n";
 				}
 			}
 		}
@@ -751,7 +761,7 @@ function get_cluster_tree_nodes($clustername) {
 		foreach($tree_nodes as $node) {
 			if (strlen($node)) {
 				$tr = explode("\t", $node);
-				if (cacti_sizeof($tr) && $tr[0]=='Header') {
+				if (cacti_sizeof($tr) >=4 && $tr[0]=='Header') {
 					if (substr_count($tr[3], 'Shared Resources')) {
 						$nodeler['shared'] = $tr[1];
 					}else if (substr_count($tr[3], 'Hostgroup Stats')) {
@@ -801,6 +811,8 @@ function get_cluster_tree_nodes($clustername) {
 					}else if (substr_count($tr[3], 'Running Jobs')) {
 						$nodeler['prunning'] = $tr[1];
 					}
+				} else {
+					echo "NOTE: 'add_tree.php --list-nodes' output invalid: '$node'\n";
 				}
 			}
 		}
