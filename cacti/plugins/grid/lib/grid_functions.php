@@ -12745,7 +12745,7 @@ function get_grid_job_x_rusage_total_rows($jobid, $indexid, $clusterid, $submit_
         	return db_fetch_cell($sql_query);
 	}else{
 		$query  = "";
-		$tables = partition_get_partitions_for_query($tbl_name, $submit_time, date("Y-m-d H:i:s"));
+		$tables = partition_get_partitions_for_query($tbl_name, date("Y-m-d H:i:s", $submit_time), date("Y-m-d H:i:s"));
 
 		if (cacti_sizeof($tables)) {
 			foreach($tables as $table) {
@@ -12811,7 +12811,7 @@ function get_grid_job_hosts($rows) {
 			return $job_hosts;
 	} else {
 		$query  = "";
-		$tables = partition_get_partitions_for_query("grid_jobs_host_rusage", get_request_var('submit_time'), date("Y-m-d H:i:s"));
+		$tables = partition_get_partitions_for_query("grid_jobs_host_rusage", date("Y-m-d H:i:s", get_request_var('submit_time')), date("Y-m-d H:i:s"));
 
 		if (cacti_sizeof($tables)) {
 			foreach ($tables as $table) {
@@ -12872,7 +12872,7 @@ function get_grid_job_gpus($row_limit){
         	return $job_gpus;
 	}else{
 		$query  = "";
-		$tables = partition_get_partitions_for_query("grid_jobs_gpu_rusage", get_request_var('submit_time'), date("Y-m-d H:i:s"));
+		$tables = partition_get_partitions_for_query("grid_jobs_gpu_rusage", date("Y-m-d H:i:s", get_request_var('submit_time')), date("Y-m-d H:i:s"));
 
 		if (cacti_sizeof($tables)) {
 			foreach($tables as $table) {
