@@ -303,6 +303,9 @@ function process_jobs($start_date, $end_date, $lichpartno = NULL) {
 	// For each such job......
 	if ($total_jobs > 0) {
 		foreach ($jobs as $job) {
+			if ($job['start_time'] == '0000-00-00 00:00:00') {
+				continue;
+			}
 			$job_start_time = date('Y-m-d H:i:00', strtotime($job['start_time']));
 			$job_end_time   = date('Y-m-d H:i:s', strtotime($job['end_time']));
 
