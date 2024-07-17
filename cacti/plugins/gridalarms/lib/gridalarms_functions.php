@@ -2017,7 +2017,7 @@ function alarm_log($save) {
  * @param $desc				- the message that was entered by the admin
  * @returns					- null
  */
-function ack_logging($id, $desc, $email = false) {
+function alarm_ack_logging($id, $desc, $email = false) {
 	$alarm = get_alarm_by_id($id);
 
 	if (isset($_SESSION['sess_user_id'])) {
@@ -5320,7 +5320,7 @@ function do_alarms($from = 'console') {
 							WHERE id = ?',
 							array($del));
 
-						ack_logging($del, get_nfilter_request_var('message'), get_nfilter_request_var('email'));
+						alarm_ack_logging($del, get_nfilter_request_var('message'), get_nfilter_request_var('email'));
 					}
 				}
 
@@ -5403,7 +5403,7 @@ function do_alarms($from = 'console') {
 							WHERE id = ?',
 							array($del));
 
-						ack_logging($del, __('Acknowledgement Reset', 'gridalarms'));
+						alarm_ack_logging($del, __('Acknowledgement Reset', 'gridalarms'));
 					}
 				}
 
