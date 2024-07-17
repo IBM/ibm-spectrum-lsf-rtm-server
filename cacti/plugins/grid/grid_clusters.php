@@ -1056,7 +1056,6 @@ function api_grid_cluster_remove($clusterid) {
 		'grid_jobs_idled',
 		'grid_jobs_memvio',
 		'grid_jobs_runtime',
-		'grid_queues_distrib',
 		'grid_queues_users_stats',
 		'grid_summary',
 		'grid_summary_timeinstate',
@@ -1070,6 +1069,10 @@ function api_grid_cluster_remove($clusterid) {
 		}
 		foreach ($grid_stats_tables_for_cleanup as $table) {
 			db_execute_prepared("DELETE FROM $table WHERE clusterid= ?", array($clusterid));
+		}
+		//grid_queues_distrib is not a fixed table. It's dropped/created with different LSF data and Web operation 
+		if (!db_table_exists('grid_queues_distrib')) {
+			db_execute_prepared("DELETE FROM grid_queues_distrib WHERE clusterid= ?", array($clusterid));
 		}
 		//Clean poller binary heartbeat
 		db_execute_prepared('DELETE FROM grid_processes WHERE taskid=?', array($clusterid));
