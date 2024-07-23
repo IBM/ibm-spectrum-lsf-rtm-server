@@ -2687,6 +2687,8 @@ function grid_view_queue_fairshare($queue) {
 			applyJS();
 			resizeTreeData();
 			doing_apply_filter = 0;
+			clearTimeout(myRefresh);
+			myRefresh=setTimeout(function() { applyFilter() }, $('#refresh').val()*1000);
 		});
 
 	$(function() {
