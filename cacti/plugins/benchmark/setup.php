@@ -290,8 +290,8 @@ function benchmark_config_arrays() {
 			),
 		'task_num_in_job' => array(
 			'method' => 'textbox',
-			'friendly_name' => __('Task Number (bsub -n number)'),
-			'description' => __('Enter the number of tasks used to allocate the number of slots for a job (bsub -n number).'),
+			'friendly_name' => __('Task Number (bsub -n min_tasks[,max_tasks])'),
+			'description' => __('Enter the number of tasks used to allocate the number of slots for a job (bsub -n min_tasks[,max_tasks]).'),
 			'value' => '|arg1:task_num_in_job|',
 			'max_length' => '64',
 			'size' => 20,
