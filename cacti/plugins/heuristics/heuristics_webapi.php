@@ -1550,7 +1550,7 @@ function show_license_checkouts($export=false, &$header = array(), &$stats = '',
 			SUM(CASE WHEN lsfd.status='queued' THEN tokens_acquired ELSE 0 END) AS queued_tokens,
 			SUM(CASE WHEN lsfd.status='start' THEN UNIX_TIMESTAMP()-UNIX_TIMESTAMP(lsfd.tokens_acquired_date) ELSE 0 END) AS total_time,
 			MAX(CASE WHEN lsfd.status='start' THEN UNIX_TIMESTAMP()-UNIX_TIMESTAMP(lsfd.tokens_acquired_date) ELSE 0 END) AS max_time,
-			AVG(CASE WHEN lsfd.status='start' THEN UNIX_TIMESTAMP()-UNIX_TIMESTAMP(lsfd.tokens_acquired_date) ELSE 0 END) AS avg_time
+			AVG(CASE WHEN lsfd.status='start' THEN UNIX_TIMESTAMP()-UNIX_TIMESTAMP(lsfd.tokens_acquired_date) ELSE NULL END) AS avg_time
 			FROM lic_services AS ls
 			INNER JOIN lic_services_feature_details AS lsfd
 			ON ls.service_id=lsfd.service_id
