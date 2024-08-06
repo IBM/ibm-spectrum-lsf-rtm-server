@@ -12458,7 +12458,8 @@ function create_pending_filter_sqlwhere_ignore() {
 
 	$job_pend_ignore_regexp = read_grid_config_option('general_pending_ignore', true);
 
-	if (strlen($job_pend_ignore_regexp) > 0) {
+	if (isset($job_pend_ignore_regexp) &&
+		strlen($job_pend_ignore_regexp) > 0) {
 		if (strlen($job_pend_proc_sqlwhere_ignore) > 0) {
 			$job_pend_proc_sqlwhere_ignore .= " AND ";
 		}
