@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2023                                          |
+ | Copyright IBM Corp. 2006, 2024                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -404,7 +404,7 @@ function lic_get_quorum_status($id, $flage=true, &$server_title='') {
 		if ($sql_count == 0) {
 			$server_title = "Cannot connect to license server system, Please check your configurations"; //fix no server info is returned.
 			$lic_service_status=db_fetch_row_prepared('SELECT status, server_portatserver FROM lic_services WHERE service_id=?', array($id));
-			if ($lic_service_status['status']==0) {
+			if ($lic_service_status['status'] == 0) {
 				return lic_get_colored_quorum_status('', '');
 			} elseif ($lic_service_status['status'] == 1) {
 				/*flag is for multi server status item show*/
@@ -413,6 +413,8 @@ function lic_get_quorum_status($id, $flage=true, &$server_title='') {
 				} else {
 					return 'N/A';
 				}
+			} else {
+				return 'N/A';
 			}
 		} elseif ($sql_count == 1) {
 			return 'N/A';
