@@ -3,7 +3,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2023                                          |
+ | Copyright IBM Corp. 2006, 2024                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -261,7 +261,7 @@ function gridblstat_check_blstat($log = false, $collector = array()) {
 
 	$blinfo_clusters = trim($blinfo_clusters?:'');
 
-	if (strlen($blinfo_clusters)) {
+	if (rtm_strlen($blinfo_clusters)) {
 		$blinfo_clusters = explode("\n", $blinfo_clusters);
 		$sql_prefix = 'REPLACE INTO grid_blstat_collector_clusters (lsid, clusterid) VALUES ';
 		$sql        = '';
@@ -458,7 +458,7 @@ function gridblstat_check_blstat($log = false, $collector = array()) {
 								$bld_name = $f['feature'];
 								db_execute_prepared("REPLACE INTO settings (name, value) VALUES (?, ?)", array("grid_blstats_flexname_" . $lsid . "_" . $bld_name, $flexstr));
 								foreach($flexs as $flex) {
-									if (strlen($flex)) {
+									if (rtm_strlen($flex)) {
 										db_execute_prepared("REPLACE INTO grid_blstat_feature_map (lsid, bld_feature, lic_feature, present) VALUES (?, ?, ?, 1)", array($lsid, $bld_name, $flex));
 									}
 								}
@@ -539,7 +539,7 @@ function gridblstat_check_blstat($log = false, $collector = array()) {
 				$clust = trim($parts[4]);
 				$start = date("y-m-d H:i:s", strtotime($parts[5] . " " . $parts[6] . " " . $parts[7]));
 				$users[$user] = true;
-			} elseif ($line2 && strlen($record)) {
+			} elseif ($line2 && rtm_strlen($record)) {
 				$parts = preg_split('/[\s]+/', $record);
 
 				$res   = trim($parts[0]);
@@ -894,7 +894,7 @@ function gridblstat_check_blstat($log = false, $collector = array()) {
 	/* parse out the cluster use if the correct version */
 	if ($collector["ls_version"] >= "70") {
 		/* get the feature distribution */
-		if (strlen($blstat_cluse)) {
+		if (rtm_strlen($blstat_cluse)) {
 			$blstat_cluse = explode("\n", $blstat_cluse);
 
 			$in_proj    = false;
@@ -992,7 +992,7 @@ function gridblstat_check_blstat($log = false, $collector = array()) {
 			if ($collector["ls_version"] >= "70") {
 				$blinfo_cluse = shell_exec($blinfo_binary . " |awk '{mode[\$2] = mode[\$2] \" \" \$1} END {print mode[\"Project\"]}' 2> /dev/null");
 				$blinfo_cluse=trim($blinfo_cluse?:'');
-				if (strlen($blinfo_cluse)) {
+				if (rtm_strlen($blinfo_cluse)) {
 					cacti_log("WARNING: blstat cluster returned no information from license scheduler collector:" . $collector['name'], false, "GRIDBLSTAT");
 				}
 			}
@@ -1119,7 +1119,7 @@ function gridblstat_check_blstat($log = false, $collector = array()) {
 function gridblstat_remove_spaces($string) {
 	$string = trim($string);
 
-	if (strlen($string)) {
+	if (rtm_strlen($string)) {
 		if ($string[0] == "*") $string = trim(substr($string, 1));
 	}
 
