@@ -155,7 +155,7 @@ CREATE TABLE `grid_clusters` (
   `lsf_envdir` varchar(255) default '',
   `lsf_confdir` varchar(255) default '',
   `ego_confdir` varchar(255) NOT NULL default '',
-  `lsf_version` int(10) unsigned NOT NULL default '62',
+  `lsf_version` int(10) unsigned NOT NULL default '10',
   `lsf_clustername` varchar(128) NOT NULL default '',
   `lsf_ls_error` int(10) unsigned NOT NULL default '0',
   `lsf_lsb_error` int(10) unsigned NOT NULL default '0',

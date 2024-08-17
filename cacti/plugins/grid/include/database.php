@@ -187,7 +187,7 @@ function grid_create_tables() {
 	$data['columns'][] = array('name' => 'lsf_envdir', 'type' => 'varchar(255)', 'NULL' => true, 'default' => '');
 	$data['columns'][] = array('name' => 'lsf_confdir', 'type' => 'varchar(255)', 'NULL' => true, 'default' => '');
 	$data['columns'][] = array('name' => 'ego_confdir', 'type' => 'varchar(255)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'lsf_version', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '62');
+	$data['columns'][] = array('name' => 'lsf_version', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '10');
 	$data['columns'][] = array('name' => 'lsf_clustername', 'type' => 'varchar(128)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'lsf_ls_error', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
 	$data['columns'][] = array('name' => 'lsf_lsb_error', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
