@@ -1,3 +1,4 @@
+// $Id$
 const loadJSON = (path, callback) => {
   var xobj = new XMLHttpRequest();
   xobj.overrideMimeType("application/json");

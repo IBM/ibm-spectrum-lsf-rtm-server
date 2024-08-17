@@ -1,3 +1,4 @@
+// $Id$
 module.exports = {
   plugins: [
     {
