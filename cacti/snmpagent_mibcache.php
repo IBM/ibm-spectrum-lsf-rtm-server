@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2024 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -42,7 +42,7 @@ $php = cacti_escapeshellcmd(read_config_option('path_php_binary'));
 $extra_args     = ' ' . cacti_escapeshellarg('./snmpagent_mibcachechild.php');
 
 while(1) {
-	if(strstr(PHP_OS, 'WIN')) {
+	if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
 		popen('start "CactiSNMPCacheChild" /I ' . $php . ' ' . $extra_args, 'r');
 	} else {
 		exec($php . ' ' . $extra_args . ' > /dev/null &');

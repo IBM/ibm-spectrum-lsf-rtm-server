@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2024 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -135,6 +135,7 @@ $cacti_version_codes = array(
 	'1.2.24'  => '0103',
 	'1.2.25'  => '0103',
 	'1.2.26'  => '0103',
+	'1.2.27'  => '0103',
 );
 
 $messages = array(
@@ -651,9 +652,12 @@ $snmp_auth_protocols = array(
 $snmp_priv_protocols = array(
 	'[None]' => __('[None]'),
 	'DES'    => __('DES'),
+	'AES'    => __('AES'),
 	'AES128' => __('AES-128'),
 	'AES192' => __('AES-192'),
-	'AES256' => __('AES-256')
+        'AES192C' => __('AES-192-C'),
+        'AES256' => __('AES-256'),
+        'AES256C' => __('AES-256-C')
 );
 
 $banned_snmp_strings = array(
@@ -678,9 +682,10 @@ $availability_options = array(
 );
 
 $ping_methods = array(
-	PING_ICMP => __('ICMP Ping'),
-	PING_TCP  => __('TCP Ping'),
-	PING_UDP  => __('UDP Ping')
+	PING_ICMP        => __('ICMP Ping'),
+	PING_TCP         => __('TCP Ping'),
+	PING_TCP_CLOSED  => __('TCP Ping Closed'),
+	PING_UDP         => __('UDP Ping')
 );
 
 $logfile_verbosity = array(
@@ -1108,8 +1113,8 @@ if ((isset($_SESSION['sess_user_id']))) {
 		if (cacti_sizeof($consoles)) {
 			foreach ($consoles as $page) {
 				if (!$config['is_web'] || is_realm_allowed($page['id']+10000)) {
-					$menuname = (isset($page['extendedstyle']) && $page['extendedstyle'] != '' ? $page['extendedstyle'] : __('External Links'));
-					$menu[$menuname]['link.php?id=' . $page['id']] = $page['title'];
+					$menuname = (isset($page['extendedstyle']) && $page['extendedstyle'] != '' ? html_escape($page['extendedstyle']) : __('External Links'));
+					$menu[$menuname]['link.php?id=' . $page['id']] = html_escape($page['title']);
 				}
 			}
 		}

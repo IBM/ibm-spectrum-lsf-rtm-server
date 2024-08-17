@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2024 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -1291,6 +1291,20 @@ function get_allowed_tree_header_graphs($tree_id, $leaf_id = 0, $sql_where = '',
 		return array();
 	}
 
+	if ($user_id == -1) {
+		$auth_method = 0;
+	} else {
+		$auth_method = read_config_option('auth_method');
+	}
+
+	if ($auth_method > 0 && $user_id == 0) {
+		if (isset($_SESSION['sess_user_id'])) {
+			$user_id = $_SESSION['sess_user_id'];
+		} else {
+			return array();
+		}
+	}
+
 	if ($sql_limit != '' && $sql_limit != -1) {
 		$sql_limit = "LIMIT $sql_limit";
 	} else {
@@ -1307,22 +1321,8 @@ function get_allowed_tree_header_graphs($tree_id, $leaf_id = 0, $sql_where = '',
 
 	$sql_where = "WHERE (gti.graph_tree_id=$tree_id AND gti.parent=$leaf_id)" . $sql_where;
 
-	if (read_user_setting('hide_disabled') == 'on') {
+	if (read_user_setting('hide_disabled', false, false, $user_id) == 'on') {
 		$sql_where .= ($sql_where != '' ? ' AND ':'') . '(h.disabled = "" OR h.disabled IS NULL)';
-	}
-
-	if ($user_id == -1) {
-		$auth_method = 0;
-	} else {
-		$auth_method = read_config_option('auth_method');
-	}
-
-	if ($auth_method > 0 && $user_id == 0) {
-		if (isset($_SESSION['sess_user_id'])) {
-			$user_id = $_SESSION['sess_user_id'];
-		} else {
-			return array();
-		}
 	}
 
 	$graph_auth_method = read_config_option('graph_auth_method');
@@ -1335,7 +1335,7 @@ function get_allowed_tree_header_graphs($tree_id, $leaf_id = 0, $sql_where = '',
 	}
 
 	$graphs = db_fetch_assoc("SELECT gti.id, gti.title, gtg.local_graph_id, h.description,
-		gt.name AS template_name, gtg.title_cache, gtg.width, gtg.height,
+		gt.name AS template_name, gtg.title_cache, gtg.width, gtg.height, gl.host_id, h.disabled,
 		gl.snmp_index, gl.snmp_query_id
 		FROM graph_templates_graph AS gtg
 		INNER JOIN graph_local AS gl
@@ -1385,6 +1385,20 @@ function get_allowed_graphs($sql_where = '', $sql_order = 'gtg.title_cache', $sq
 		return array();
 	}
 
+	if ($user_id == -1) {
+		$auth_method = 0;
+	} else {
+		$auth_method = read_config_option('auth_method');
+	}
+
+	if ($auth_method > 0 && $user_id == 0) {
+		if (isset($_SESSION['sess_user_id'])) {
+			$user_id = $_SESSION['sess_user_id'];
+		} else {
+			return array();
+		}
+	}
+
 	if ($sql_limit != '') {
 		$sql_limit = "LIMIT $sql_limit";
 	} else {
@@ -1399,7 +1413,7 @@ function get_allowed_graphs($sql_where = '', $sql_order = 'gtg.title_cache', $sq
 		$sql_where .= ($sql_where != '' ? ' AND ' : ' ') . " gl.id = $graph_id";
 	}
 
-	if (read_user_setting('hide_disabled') == 'on') {
+	if (read_user_setting('hide_disabled', false, false, $user_id) == 'on') {
 		$sql_where .= ($sql_where != '' ? ' AND ':'') . '(h.disabled = "" OR h.disabled IS NULL)';
 	}
 
@@ -1407,20 +1421,6 @@ function get_allowed_graphs($sql_where = '', $sql_order = 'gtg.title_cache', $sq
 		$sql_where = "WHERE ((h.id > 0 AND h.deleted = '') OR h.id IS NULL) AND $sql_where";
 	} else {
 		$sql_where = "WHERE ((h.id > 0 AND h.deleted = '') OR h.id IS NULL)";
-	}
-
-	if ($user_id == -1) {
-		$auth_method = 0;
-	} else {
-		$auth_method = read_config_option('auth_method');
-	}
-
-	if ($auth_method > 0 && $user_id == 0) {
-		if (isset($_SESSION['sess_user_id'])) {
-			$user_id = $_SESSION['sess_user_id'];
-		} else {
-			return array();
-		}
 	}
 
 	/* see if permissions are simple */
@@ -1437,7 +1437,7 @@ function get_allowed_graphs($sql_where = '', $sql_order = 'gtg.title_cache', $sq
 	}
 
 	$graphs = db_fetch_assoc("SELECT gtg.local_graph_id, h.description, gt.name AS template_name,
-		gtg.title_cache, gtg.width, gtg.height, gl.snmp_index, gl.snmp_query_id,
+		gtg.title_cache, gtg.width, gtg.height, gl.snmp_index, gl.snmp_query_id, gl.host_id, h.disabled,
 		IF(gl.graph_template_id=0, 0, IF(gl.snmp_query_id=0, 2, 1)) AS graph_source
 		FROM graph_templates_graph AS gtg
 		INNER JOIN graph_local AS gl
@@ -1487,6 +1487,20 @@ function get_allowed_aggregate_graphs($sql_where = '', $sql_order = 'gtg.title_c
 		return array();
 	}
 
+	if ($user_id == -1) {
+		$auth_method = 0;
+	} else {
+		$auth_method = read_config_option('auth_method');
+	}
+
+	if ($auth_method > 0 && $user_id == 0) {
+		if (isset($_SESSION['sess_user_id'])) {
+			$user_id = $_SESSION['sess_user_id'];
+		} else {
+			return array();
+		}
+	}
+
 	if ($sql_limit != '' && $sql_limit != -1) {
 		$sql_limit = "LIMIT $sql_limit";
 	} else {
@@ -1501,7 +1515,7 @@ function get_allowed_aggregate_graphs($sql_where = '', $sql_order = 'gtg.title_c
 		$sql_where .= ($sql_where != '' ? ' AND ' : ' ') . " gl.id = $graph_id";
 	}
 
-	if (read_user_setting('hide_disabled') == 'on') {
+	if (read_user_setting('hide_disabled', false, false, $user_id) == 'on') {
 		$sql_where .= ($sql_where != '' ? ' AND ':'') . '(h.disabled = "" OR h.disabled IS NULL)';
 	}
 
@@ -1509,20 +1523,6 @@ function get_allowed_aggregate_graphs($sql_where = '', $sql_order = 'gtg.title_c
 		$sql_where = "WHERE ((h.id > 0 AND h.deleted = '') OR h.id IS NULL) AND $sql_where";
 	} else {
 		$sql_where = "WHERE ((h.id > 0 AND h.deleted = '') OR h.id IS NULL)";
-	}
-
-	if ($user_id == -1) {
-		$auth_method = 0;
-	} else {
-		$auth_method = read_config_option('auth_method');
-	}
-
-	if ($auth_method > 0 && $user_id == 0) {
-		if (isset($_SESSION['sess_user_id'])) {
-			$user_id = $_SESSION['sess_user_id'];
-		} else {
-			return array();
-		}
 	}
 
 	/* see if permissions are simple */
@@ -1539,7 +1539,7 @@ function get_allowed_aggregate_graphs($sql_where = '', $sql_order = 'gtg.title_c
 	}
 
 	$graphs = db_fetch_assoc("SELECT gtg.local_graph_id, '' AS description, gt.name AS template_name,
-		gtg.title_cache, gtg.width, gtg.height, gl.snmp_index, gl.snmp_query_id
+		gtg.title_cache, gtg.width, gtg.height, gl.snmp_index, gl.snmp_query_id, gl.host_id, h.disabled
 		FROM graph_templates_graph AS gtg
 		INNER JOIN (
 			SELECT ag.local_graph_id AS id, gl.host_id, gl.graph_template_id,
@@ -1762,6 +1762,12 @@ function get_allowed_graph_templates($sql_where = '', $sql_order = 'gt.name', $s
 		return array();
 	}
 
+	if ($user_id == -1) {
+		$auth_method = 0;
+	} else {
+		$auth_method = read_config_option('auth_method');
+	}
+
 	if ($user_id == 0) {
 		if (isset($_SESSION['sess_user_id'])) {
 			$user_id = $_SESSION['sess_user_id'];
@@ -1792,20 +1798,6 @@ function get_allowed_graph_templates($sql_where = '', $sql_order = 'gt.name', $s
 	}
 
 	$sql_where = 'WHERE ' . ($sql_where != '' ? $sql_where . ' AND ':' ') . '(gt.id IS NOT NULL) ';
-
-	if ($user_id == -1) {
-		$auth_method = 0;
-	} else {
-		$auth_method = read_config_option('auth_method');
-	}
-
-	if ($auth_method > 0 && $user_id == 0) {
-		if (isset($_SESSION['sess_user_id'])) {
-			$user_id = $_SESSION['sess_user_id'];
-		} else {
-			return array();
-		}
-	}
 
 	/* see if permissions are simple */
 	$simple_perms = get_simple_graph_perms($user_id);
@@ -2733,7 +2725,7 @@ function get_allowed_devices($sql_where = '', $sql_order = 'description', $sql_l
 		$sql_order = "ORDER BY $sql_order";
 	}
 
-	if (read_user_setting('hide_disabled') == 'on') {
+	if (read_user_setting('hide_disabled', false, false, $user_id) == 'on') {
 		$sql_where .= ($sql_where != '' ? ' AND ':'') . '(h.disabled = "" OR h.disabled IS NULL)';
 	}
 
@@ -2920,7 +2912,7 @@ function get_allowed_site_devices($site_id, $sql_where = '', $sql_order = 'descr
 		$sql_order = "ORDER BY $sql_order";
 	}
 
-	if (read_user_setting('hide_disabled') == 'on') {
+	if (read_user_setting('hide_disabled', false, false, $user_id) == 'on') {
 		$sql_where .= ($sql_where != '' ? ' AND ':'') . '(h.disabled = "" OR h.disabled IS NULL)';
 	}
 
@@ -4399,7 +4391,7 @@ function compat_password_verify($password, $hash) {
 
 	$md5 = md5($password);
 
-	return ($md5 == $hash);
+	return ($md5 === $hash);
 }
 
 /**

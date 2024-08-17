@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2024 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -164,7 +164,7 @@ class Net_Ping
 				$result = shell_exec('ping -t ' . ceil($this->timeout/1000) . ' -c ' . $this->retries . ' ' . $this->host['hostname']);
 			} elseif (substr_count(strtolower(PHP_OS), 'freebsd')) {
 				if (strpos($host_ip, ':') !== false) {
-					$result = shell_exec('ping6 -x ' . $this->timeout . ' -c ' . $this->retries . ' ' . $this->host['hostname']);
+					$result = shell_exec('/usr/sbin/ping6 -x ' . $this->timeout . ' -c ' . $this->retries . ' ' . $this->host['hostname']);
 				} else {
 					$result = shell_exec('ping -W ' . $this->timeout . ' -c ' . $this->retries . ' ' . $this->host['hostname']);
 				}
@@ -174,7 +174,7 @@ class Net_Ping
 				$result = shell_exec('ping -w ' . ceil($this->timeout/1000) . ' -c ' . $this->retries . ' ' . $this->host['hostname']);
 			} elseif (substr_count(strtolower(PHP_OS), 'aix')) {
 				$result = shell_exec('ping -i ' . ceil($this->timeout/1000) . ' -c ' . $this->retries . ' ' . $this->host['hostname']);
-			} elseif (substr_count(strtolower(PHP_OS), 'winnt')) {
+			} elseif (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
 				$result = shell_exec('chcp 437 && ping -w ' . $this->timeout . ' -n ' . $this->retries . ' ' . $this->host['hostname']);
 			} else {
 				/* please know, that when running SELinux, httpd will throw
@@ -182,16 +182,16 @@ class Net_Ping
 				 * as it now tries to open an ICMP socket and fails
 				 * $result will be empty, then. */
 				if (strpos($host_ip, ':') !== false) {
-					$result = shell_exec('ping6 -W ' . ceil($this->timeout/1000) . ' -c ' . $this->retries . ' -p ' . $pattern . ' ' . $this->host['hostname']);
+					$result = shell_exec('/usr/sbin/ping6 -W ' . ceil($this->timeout/1000) . ' -c ' . $this->retries . ' -p ' . $pattern . ' ' . $this->host['hostname']);
 				} else {
 					$result = shell_exec('ping -W ' . ceil($this->timeout/1000) . ' -c ' . $this->retries . ' -p ' . $pattern . ' ' . $this->host['hostname'] . ' 2>&1');
 					if ((strpos($result, 'unknown host') !== false || strpos($result, 'Address family') !== false) && file_exists('/bin/ping6')) {
-						$result = shell_exec('ping6 -W ' . ceil($this->timeout/1000) . ' -c ' . $this->retries . ' -p ' . $pattern . ' ' . $this->host['hostname']);
+						$result = shell_exec('/usr/sbin/ping6 -W ' . ceil($this->timeout/1000) . ' -c ' . $this->retries . ' -p ' . $pattern . ' ' . $this->host['hostname']);
 					}
 				}
 			}
 
-			if (strtolower(PHP_OS) != 'winnt') {
+			if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
 				$position = strpos($result, 'min/avg/max');
 
 				if ($position > 0) {
@@ -532,15 +532,26 @@ class Net_Ping
 				$errno = socket_last_error($this->socket);
 
 				if ($errno > 0) {
-					$this->ping_response = __('TCP ping: socket_connect(), reason: %s', socket_strerror($errno));
-					$this->ping_status   = 'down';
+					if ($errno == 111 && $this->ping_type == PING_TCP_CLOSED) {
+						$this->time = $this->get_time($this->precision);
+						$this->ping_status   = 'up';
+						$this->ping_response = __('TCP Ping Success Connection Refused (%s ms)', $this->time*1000);
+						$this->ping_status   = $this->time*1000;
+					} else {
+						$this->ping_response = __('TCP Ping Failed: socket_connect(), reason: %s', socket_strerror($errno));
+						$this->ping_status   = 'down';
+					}
 
 					socket_clear_error($this->socket);
 
 					$this->close_socket();
 					$this->restore_cacti_error_handler();
 
-					return false;
+					if ($this->ping_status == 'down') {
+						return false;
+					} else {
+						return true;
+					}
 				}
 
 				$r = array($this->socket);
@@ -550,7 +561,7 @@ class Net_Ping
 				$num_changed_sockets = socket_select($r, $w, $f, $to_sec, $to_usec);
 
 				if ($num_changed_sockets === false) {
-					$this->ping_response = __('TCP ping: socket_select() failed, reason: %s', socket_strerror(socket_last_error()));
+					$this->ping_response = __('TCP Ping Failed: socket_select() failed, reason: %s', socket_strerror(socket_last_error()));
 					$this->ping_status   = 'down';
 
 					$this->close_socket();
@@ -603,6 +614,7 @@ class Net_Ping
 
 		$this->ping_status   = 'down';
 		$this->ping_response = __('Ping not performed due to setting.');
+		$this->ping_type     = $ping_type;
 		$this->snmp_status   = 'down';
 		$this->snmp_response = 'SNMP not performed due to setting or ping result.';
 		$this->avail_method  = $avail_method;
@@ -647,7 +659,7 @@ class Net_Ping
 				$ping_result = $this->ping_icmp();
 			} elseif ($ping_type == PING_UDP) {
 				$ping_result = $this->ping_udp();
-			} elseif ($ping_type == PING_TCP) {
+			} elseif ($ping_type == PING_TCP || $ping_type == PING_TCP_CLOSED) {
 				$ping_result = $this->ping_tcp();
 			}
 		}

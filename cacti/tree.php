@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2024 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -502,7 +502,7 @@ function form_save() {
 		$save['name']          = form_input_validate(get_nfilter_request_var('name'), 'name', '', false, 3);
 		$save['sort_type']     = form_input_validate(get_nfilter_request_var('sort_type'), 'sort_type', '', true, 3);
 		$save['last_modified'] = date('Y-m-d H:i:s', time());
-		$save['enabled']       = get_nfilter_request_var('enabled') == 'true' ? 'on':'-';
+		$save['enabled']       = isset_request_var('enabled') ? 'on':'';
 		$save['modified_by']   = $_SESSION['sess_user_id'];
 
 		if (isempty_request_var('sequence')) {

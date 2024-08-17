@@ -91,12 +91,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb3"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" title="1"><span class="ex">shell</span><span class="op">&gt;</span> pkg delete cacti</a>
 <a class="sourceLine" id="cb3-2" title="2"><span class="ex">shell</span><span class="op">&gt;</span> pkg install cacti</a></code></pre></div>
 <p>or</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" title="1"><span class="ex">shell</span><span class="op">&gt;</span> portsnap fetch update</a>
-<a class="sourceLine" id="cb4-2" title="2"><span class="ex">shell</span><span class="op">&gt;</span> cd /usr/ports/net-mgmt/cacti</a>
-<a class="sourceLine" id="cb4-3" title="3"><span class="ex">shell</span><span class="op">&gt;</span> make deinstall clean install</a></code></pre></div></li>
+<div class="sourceCode" id="cb4"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" title="1"><span class="ex">shell</span><span class="op">&gt;</span> pkg install git</a>
+<a class="sourceLine" id="cb4-2" title="2"><span class="ex">shell</span><span class="op">&gt;</span> git clone https://git.FreeBSD.org/ports.git /usr/ports</a>
+<a class="sourceLine" id="cb4-3" title="3"><span class="ex">shell</span><span class="op">&gt;</span> git -C /usr/ports pull</a>
+<a class="sourceLine" id="cb4-4" title="4"><span class="ex">shell</span><span class="op">&gt;</span> cd /usr/ports/net-mgmt/cacti</a>
+<a class="sourceLine" id="cb4-5" title="5"><span class="ex">shell</span><span class="op">&gt;</span> make deinstall clean install</a></code></pre></div></li>
 <li><p>If you are using the optional feature Performance -&gt; Image Caching, also recreate the folder and correct the permissions.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" title="1"><span class="ex">shell</span><span class="op">&gt;</span> mkdir cache</a>
-<a class="sourceLine" id="cb5-2" title="2"><span class="ex">shell</span><span class="op">&gt;</span> chown -R cacti cache</a></code></pre></div></li>
+<div class="sourceCode" id="cb5"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" title="1"><span class="ex">shell</span><span class="op">&gt;</span> cd /usr/local/share/cacti</a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="ex">shell</span><span class="op">&gt;</span> mkdir cache</a>
+<a class="sourceLine" id="cb5-3" title="3"><span class="ex">shell</span><span class="op">&gt;</span> chown -R cacti cache</a></code></pre></div></li>
 <li><p>Point your web browser to:</p>
 <p><code>http://your-server/cacti/</code></p>
 <p>Follow the on-screen instructions so your database can be updated to the new version.</p></li>
@@ -105,6 +108,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Note that starting with Cacti 1.0, all <strong>Data Collectors</strong> will upgrade themselves automatically within two polling cycles. If for some reason they do not, upgrade them one at a time.</p>
 </blockquote>
 <hr />
-<p>Copyright (c) 2004-2023 The Cacti Group</p>
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
 </body>
 </html>

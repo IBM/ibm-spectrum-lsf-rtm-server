@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2024 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -696,7 +696,7 @@ function push_out_host($host_id, $local_data_id = 0, $data_template_id = 0) {
 	$sql_where       = '';
 
 	/* setup the sql where, and if using a host, get it's host information */
-	if ($host_id != 0) {
+	if ($host_id > 0) {
 		/* get all information about this host so we can write it to the data source */
 		$hosts[$host_id] = db_fetch_row_prepared('SELECT ' . SQL_NO_CACHE . ' id AS host_id, host.*
 			FROM host WHERE id = ?',
@@ -706,12 +706,12 @@ function push_out_host($host_id, $local_data_id = 0, $data_template_id = 0) {
 	}
 
 	/* sql WHERE for local_data_id */
-	if ($local_data_id != 0) {
+	if ($local_data_id > 0) {
 		$sql_where .= ' AND dl.id = ' . $local_data_id;
 	}
 
 	/* sql WHERE for data_template_id */
-	if ($data_template_id != 0) {
+	if ($data_template_id > 0) {
 		$sql_where .= ' AND dtd.data_template_id = ' . $data_template_id;
 	}
 
@@ -771,7 +771,7 @@ function push_out_host($host_id, $local_data_id = 0, $data_template_id = 0) {
 
 					// Only override if the template value is null as this point
 					if (preg_match('/^' . VALID_HOST_FIELDS . '$/i', $template_field['type_code']) &&
-						$template_field['t_value'] != 'on' && $template_field['value'] == '') {
+						(($template_field['t_value'] != 'on' && $template_field['value'] == '') || $data_source['snmp_query_id'] == 0)) {
 						// It's a valid host type-code
 						$update = true;
 

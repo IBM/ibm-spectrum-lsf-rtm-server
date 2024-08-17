@@ -3,7 +3,7 @@
 --
 /*
   +-------------------------------------------------------------------------+
-  | Copyright (C) 2004-2023 The Cacti Group                                 |
+  | Copyright (C) 2004-2024 The Cacti Group                                 |
   |                                                                         |
   | This program is free software; you can redistribute it and/or           |
   | modify it under the terms of the GNU General Public License             |
@@ -208,7 +208,7 @@ CREATE TABLE `automation_devices` (
   `snmp_password` varchar(50) DEFAULT NULL,
   `snmp_auth_protocol` char(6) DEFAULT '',
   `snmp_priv_passphrase` varchar(200) DEFAULT '',
-  `snmp_priv_protocol` char(6) DEFAULT '',
+  `snmp_priv_protocol` char(7) DEFAULT '',
   `snmp_context` varchar(64) DEFAULT '',
   `snmp_engine_id` varchar(64) DEFAULT '',
   `sysName` varchar(100) NOT NULL DEFAULT '',
@@ -408,7 +408,7 @@ CREATE TABLE `automation_snmp_items` (
   `snmp_password` varchar(50) DEFAULT NULL,
   `snmp_auth_protocol` char(6) DEFAULT '',
   `snmp_priv_passphrase` varchar(200) DEFAULT '',
-  `snmp_priv_protocol` char(6) DEFAULT '',
+  `snmp_priv_protocol` char(7) DEFAULT '',
   `snmp_context` varchar(64) DEFAULT '',
   `snmp_engine_id` varchar(64) DEFAULT '',
   PRIMARY KEY (`id`,`snmp_id`)
@@ -1885,7 +1885,7 @@ CREATE TABLE host (
   snmp_password varchar(50) default NULL,
   snmp_auth_protocol char(6) default '',
   snmp_priv_passphrase varchar(200) default '',
-  snmp_priv_protocol char(6) default '',
+  snmp_priv_protocol char(7) default '',
   snmp_context varchar(64) default '',
   snmp_engine_id varchar(64) default '',
   snmp_port mediumint(8) unsigned NOT NULL default '161',
@@ -2190,7 +2190,7 @@ CREATE TABLE poller_item (
   `snmp_password` varchar(50) NOT NULL default '',
   `snmp_auth_protocol` char(6) NOT NULL default '',
   `snmp_priv_passphrase` varchar(200) NOT NULL default '',
-  `snmp_priv_protocol` char(6) NOT NULL default '',
+  `snmp_priv_protocol` char(7) NOT NULL default '',
   `snmp_context` varchar(64) default '',
   `snmp_engine_id` varchar(64) default '',
   `snmp_port` mediumint(8) unsigned NOT NULL default '161',
@@ -2978,7 +2978,7 @@ CREATE TABLE `snmpagent_managers` (
   `snmp_password` varchar(50) NOT NULL,
   `snmp_auth_protocol` char(6) NOT NULL,
   `snmp_priv_passphrase` varchar(200) NOT NULL,
-  `snmp_priv_protocol` char(6) NOT NULL,
+  `snmp_priv_protocol` char(7) NOT NULL,
   `snmp_engine_id` varchar(64) DEFAULT NULL,
   `snmp_port` mediumint(8) unsigned NOT NULL DEFAULT '161',
   `snmp_message_type` tinyint(4) NOT NULL,

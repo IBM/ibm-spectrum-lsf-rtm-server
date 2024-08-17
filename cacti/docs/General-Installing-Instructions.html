@@ -140,14 +140,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb2-1" title="1"><span class="ex">pkg</span> install cacti</a>
 <a class="sourceLine" id="cb2-2" title="2"><span class="ex">pkg</span> install spine</a></code></pre></div></li>
 <li><p>FreeBSD ports - compilation could last long time, but without invariant dependencies (See <a href="https://www.freebsd.org/doc/handbook/ports-using.html">Howto use ports</a>)</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" title="1"><span class="ex">portsnap</span> fetch extract</a>
-<a class="sourceLine" id="cb3-2" title="2"><span class="ex">portsnap</span> fetch update</a>
-<a class="sourceLine" id="cb3-3" title="3"><span class="bu">cd</span> /usr/ports/databases/mariadb102-server (or mysql57-server)</a>
-<a class="sourceLine" id="cb3-4" title="4"><span class="fu">make</span> install</a>
-<a class="sourceLine" id="cb3-5" title="5"><span class="bu">cd</span> /usr/ports/net-mgmt/cacti</a>
-<a class="sourceLine" id="cb3-6" title="6"><span class="fu">make</span> install</a>
-<a class="sourceLine" id="cb3-7" title="7"><span class="bu">cd</span> /usr/ports/net-mgmt/spine</a>
-<a class="sourceLine" id="cb3-8" title="8"><span class="fu">make</span> install</a></code></pre></div></li>
+<div class="sourceCode" id="cb3"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" title="1"><span class="ex">pkg</span> install git</a>
+<a class="sourceLine" id="cb3-2" title="2"><span class="fu">git</span> clone https://git.FreeBSD.org/ports.git /usr/ports</a>
+<a class="sourceLine" id="cb3-3" title="3"><span class="fu">git</span> -C /usr/ports pull</a>
+<a class="sourceLine" id="cb3-4" title="4"><span class="bu">cd</span> /usr/ports/databases/mariadb106-server (or mysql80-server)</a>
+<a class="sourceLine" id="cb3-5" title="5"><span class="fu">make</span> install</a>
+<a class="sourceLine" id="cb3-6" title="6"><span class="bu">cd</span> /usr/ports/net-mgmt/cacti</a>
+<a class="sourceLine" id="cb3-7" title="7"><span class="fu">make</span> install</a>
+<a class="sourceLine" id="cb3-8" title="8"><span class="bu">cd</span> /usr/ports/net-mgmt/spine</a>
+<a class="sourceLine" id="cb3-9" title="9"><span class="fu">make</span> install</a></code></pre></div></li>
 </ul>
 <p>Apache and other software is possible install with package or Ports too.</p>
 <p>Everything in FreeBSD is installed to /usr/local/ directory! In this documentation you can see paths like /etc/php.ini, /usr/bin/spine, ...</p>
@@ -283,6 +284,6 @@ systemctl status cactid
 <a class="sourceLine" id="cb22-25" title="25"><span class="kw">$proxy_headers</span> = <span class="kw">null</span><span class="ot">;</span></a>
 <a class="sourceLine" id="cb22-26" title="26"></a></code></pre></div>
 <hr />
-<p>Copyright (c) 2004-2023 The Cacti Group</p>
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
 </body>
 </html>

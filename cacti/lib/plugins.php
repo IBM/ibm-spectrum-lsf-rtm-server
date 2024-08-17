@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2024 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -69,6 +69,12 @@ function api_plugin_hook($name) {
 
 	if (!empty($result)) {
 		foreach ($result as $hdata) {
+			// Security check
+			if (strpos($hdata['file'], '..') !== false) {
+				cacti_log("ERROR: Attempted inclusion of not plugin file $plugin_file from $plugin_name with the hook name $name", false, 'SECURITY');
+				continue;
+			}
+
 			$plugin_name = $hdata['name'];
 
 			if (!in_array($plugin_name, $plugins_integrated, true)) {

@@ -3,7 +3,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2024 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -945,7 +945,7 @@ function loadTable($db, &$records) {
 
 function display_version() {
 	if (!defined('COPYRIGHT_YEARS')) {
-		define('COPYRIGHT_YEARS', '2004-2023');
+		define('COPYRIGHT_YEARS', '2004-2024');
 	}
 
 	$version = get_cacti_cli_version();

@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2024 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -426,6 +426,7 @@ function rrdtool_trim_output(&$output) {
 	 */
 	if ($config['cacti_server_os'] == 'win32') {
 		$output = rtrim($output, "OK \n\r");
+		$okpos  = strlen($output);
 	} else {
 		$okpos = strrpos($output, 'OK u:');
 		if ($okpos !== false) {

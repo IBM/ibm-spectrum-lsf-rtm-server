@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2024 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -93,6 +93,15 @@ if ($auth_method != 0) {
 
 			if (cacti_sizeof($current_user)) {
 				$_SESSION['sess_user_id'] = $current_user['id'];;
+
+				$client_addr = get_client_addr();
+
+				cacti_log("LOGIN: User '" . $current_user['username'] . "' authenticated via Basic Authentication from IP Address '" . $client_addr . "'", false, 'AUTH');
+
+				db_execute_prepared('INSERT IGNORE INTO user_log
+					(username, user_id, result, ip, time)
+					VALUES (?, ?, 1, ?, NOW())',
+					array($username, $current_user['id'], $client_addr));
 
 				return true;
 			} else {

@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2024 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -151,13 +151,14 @@ if (get_nfilter_request_var('action') == 'login' || $auth_method == 2) {
 
 	/* We have a valid user, do final checks, log their login attempt, and redirect as required */
 	if (!$error && cacti_sizeof($user)) {
-		if (!$guest_user) {
-			cacti_log("LOGIN: User '" . $user['username'] . "' authenticated", false, 'AUTH');
-		} else {
-			cacti_log("LOGIN: Guest User '" . $user['username'] . "' in use", false, 'AUTH');
-		}
 
 		$client_addr = get_client_addr();
+
+		if (!$guest_user) {
+			cacti_log("LOGIN: User '" . $user['username'] . "' authenticated from IP Address '" . $client_addr . "'", false, 'AUTH');
+		} else {
+			cacti_log("LOGIN: Guest User '" . $user['username'] . "' in use from IP Address '" . $client_addr . "'", false, 'AUTH');
+		}
 
 		db_execute_prepared('INSERT IGNORE INTO user_log
 			(username, user_id, result, ip, time)

@@ -1,5 +1,60 @@
 Cacti CHANGELOG
 
+1.2.28
+-security#GHSA-fgc6-g8gc-wcg5: External Link Console Menu Item not Escaped
+-security#GHSA-49f2-hwx9-qffr: External Link Console Menu Section not Escaped
+-security#GHSA-wh9c-v56x-v77c: It is possible to create XSS with an nafarious External Link
+-security#GHSA-gxq4-mv8h-6qj4: Fix a possible user directed RCE when installing Cacti
+-issue#5772: Login log message unification - add client IP address
+-issue#5773: Update rrd.php missing variable $okpos
+-issue#5777: The Export .CSV only includes the 1st line of Notes
+-issue#5782: Function file_get_contents in file link.php
+-issue#5785: auth_changepassword.php triggers NS_ERROR_REDIRECT_LOOP if server's default IP address is not public
+-issue#5792: Unable to add Graphs to a Report from Cacti List View
+-feature#5796: Due to Conflicting Interpretations of TCP Ping, Introduce new Ping Method
+
+1.2.27
+-security#GHSA-37x7-mfjv-mm7m: Authentication Bypass when using using older password hashes
+-security#GHSA-7cmj-g5qc-pj88: RCE vulnerability when importing packages
+-security#GHSA-cx8g-hvq8-p2rv: RCE vulnerability when plugins include files
+-security#GHSA-gj3f-p326-gh8r: SQL Injection vulnerability when using tree rules through Automation API
+-security#GHSA-grj5-8fcj-34gh: XSS vulnerability when using JavaScript based messaging API
+-security#GHSA-jrxg-8wh8-943x: SQL Injection vulnerability when using form templates
+-security#GHSA-p4ch-7hjw-6m87: XSS vulnerability when reading tree rules with Automation API
+-security#GHSA-rqc8-78cm-85j3: XSS vulnerability when managing data queries
+-security#GHSA-vjph-r677-6pcc: SQL Injection vulnerability when retrieving graphs using Automation API
+-issue#5622: Improve PHP 8.3 support
+-issue#5628: When importing packages via command line, data source profile could not be selected
+-issue#5629: When changing password, returning to previous page does not always work
+-issue#5636: When using LDAP authentication the first time, warnings may appear in logs
+-issue#5638: When editing/viewing devices, add IPv6 info to hostname tooltip
+-issue#5645: Improve speed of polling when Boost is enabled
+-issue#5648: Improve support for Half-Hour time zones
+-issue#5649: Improve support of ping on Windows
+-issue#5655: When user session not found, device lists can be incorrectly returned
+-issue#5660: On import, legacy templates may generate warnings
+-issue#5661: Improve support for alternate locations of Ping
+-issue#5662: Improve PHP 8.1 support for Installer
+-issue#5669: Fix issues with number formatting
+-issue#5677: Improve PHP 8.1 support when SpikeKill is run first time
+-issue#5693: Improve PHP 8.1 support for SpikeKill
+-issue#5696: When using Chinese to search for graphics, garbled characters appear.
+-issue#5701: When importing templates, preview mode will not always load
+-issue#5720: When remote poller is installed, MySQL TimeZone DB checks are not performed
+-issue#5723: When Remote Poller installation completes, no finish button is shown
+-issue#5725: Unauthorized agents should be recorded into logs
+-issue#5726: Poller cache may not always update if hostname changes
+-issue#5727: When using CMD poller, Failure and Recovery dates may have incorrect values
+-issue#5731: Saving a Tree can cause the tree to become unpublished
+-issue#5732: Web Basic Authentication does not record user logins
+-issue#5733: When using Accent-based languages, translations may not work properly
+-issue#5743: Fix automation expressions for device rules
+-issue#5748: Improve PHP 8.1 Support during fresh install with boost
+-feature#5692: Add a device "enabled/disabled" indicator next to the graphs
+-feature#5710: Notify the admin periodically when a remote data collector goes into heartbeat status
+-feature#5716: Add template for Aruba Clearpass
+-feature#5730: Add fliter/sort of Device Templates by Graph Templates
+
 1.2.26
 -security#GHSA-xwqc-7jc4-xm73: XSS vulnerability when importing a template file
 -security#GHSA-pfh9-gwm6-86vp: RCE vulnerability when managing links
@@ -42,7 +97,8 @@ Cacti CHANGELOG
 -issue#5602: When adding a device, using the bulk walk option can make version information appear
 -issue#5609: When parsing a Data Query resource, an error can be reported if no direction is specified
 -issue#5612: Database reconnection can cause errors to be reported incorrectly
--issue#5613: fix returned value if $sau is empty
+-issue#5613: Fix returned value if $sau is empty
+-issue#5641: Cmd poller - add availability test for devices without poller items
 -feature#5358: Upgrade flag-icons to version 6.11.1
 -feature#5577: Add Aruba switch, Aruba controller and HPE iLO templates
 -feature#5597: Add OSCX 6x00 templates
@@ -3939,4 +3995,4 @@ Cacti CHANGELOG
 -initial release
 
 -----------------------------------------------
-Copyright (c) 2004-2023 - The Cacti Group, Inc.
+Copyright (c) 2004-2024 - The Cacti Group, Inc.

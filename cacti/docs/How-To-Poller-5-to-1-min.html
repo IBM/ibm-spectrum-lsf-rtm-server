@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Change poller interval from 5 minutes to 1 minute</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="change-poller-interval-from-5-minutes-to-1-minute">Change poller interval from 5 minutes to 1 minute</h1>
+<p>This howto describes all necessary steps for convert your cacti to 1 minute poller interval. This cause one gap in graphs during the convert. Gap size depends on count of your rrd files.</p>
+<h2 id="prerequisites-and-default-values-used-in-this-howto">Prerequisites and default values used in this howto</h2>
+<ul>
+<li>Cacti installation directory is <strong>/usr/local/share/cacti/</strong></li>
+<li>PHP binary is <strong>/usr/local/bin/php</strong></li>
+<li>RRD files are in <strong>/usr/local/share/cacti/rra</strong></li>
+<li>Poller is running by user <strong>cacti</strong></li>
+<li><strong>Not structured RRDfile paths</strong> (<code>Configuration-&gt;Settings-&gt; Data</code> -&gt; Structured RRDfile Paths). With structured path you will have more works with splice rrd files. You need change splice script.</li>
+<li>Crontab row looks like</li>
+</ul>
+<pre class="shell"><code>*/5    *       *       *       *       cacti   /usr/local/bin/php /usr/local/share/cacti/poller.php 2&gt;&amp;1
+</code></pre>
+<h2 id="backup-your-cacti">Backup your Cacti</h2>
+<p>Before this operation, backup Cacti database and all data in rra folder</p>
+<h2 id="rrdcleaner-optional-step">RRDCleaner (optional step)</h2>
+<p>You can run rrdcleaner and delete unused RRD files. It can decrease converting time. <a href="System-Utilities.html">System Utilities</a></p>
+<h2 id="stop-poller">Stop poller</h2>
+<p>Disable your poller in Crontab or via GUI <code>Console -&gt; Configuration -&gt; Settings -&gt; Poller tab -&gt; Data Collection Enabled</code></p>
+<h2 id="prepare-directory-structure-for-rrd-file-convert">Prepare directory structure for RRD file convert</h2>
+<pre class="shell"><code>mkdir -p /tmp/cacti/rrd_old
+mkdir -p /tmp/cacti/rrd_new
+mkdir -p /tmp/cacti/rrd_fin
+</code></pre>
+<p>Make sure that you have enought space on temporary disk. You need more than twice of rra directory size.</p>
+<h2 id="move-rrd-files">Move rrd files</h2>
+<pre class="shell"><code>mv /usr/local/share/cacti/rra/* /tmp/cacti/rrd_old/
+</code></pre>
+<h2 id="check-or-create-presets---data-profiles">Check or create Presets -&gt; Data profiles</h2>
+<p>Go to <code>Console -&gt; Presets -&gt; Data Profiles</code>. Here should be at least 5 Minute Collection profile (because you are using it until now) and 1 Minute Collection profile. If the second is missing, create it. <img src="images/poller-5-1-preset-1min.png" alt="Presets" /></p>
+<p>Remember Data profile ID - Edit your 1 minute collection again and in URL will be .../data_source_profiles.php?action=edit&amp;<strong>id=3</strong></p>
+<h2 id="switch-to-1-min">Switch to 1 min</h2>
+<p><code>Console -&gt; Configuration -&gt; Settings -&gt; Poller tab</code></p>
+<ul>
+<li>Poller interval = Every minute</li>
+<li>Cron/Daemon interval = Every minute</li>
+</ul>
+<h2 id="update-database-records">Update database records</h2>
+<p>Run these SQL queries:</p>
+<pre class="shell"><code>UPDATE data_template_data SET rrd_step=60 WHERE rrd_step=300;
+UPDATE data_template_rrd SET rrd_heartbeat=600;
+</code></pre>
+<p>Here replace X with ID from Step "Check or create Presets -&gt; Data profiles":</p>
+<pre class="shell"><code>UPDATE data_template_data SET data_source_profile_id=X;
+</code></pre>
+<h2 id="rebuild-poller-cache">Rebuild poller cache</h2>
+<p><code>Console -&gt; Utilities -&gt; System utilities -&gt; Rebuild Poller Cache</code></p>
+<h2 id="set-1-min-data-profile-as-default">Set 1 min Data Profile as default</h2>
+<p><code>Console -&gt; Presets -&gt; Data Profiles</code></p>
+<p>Edit profile <strong>1 min Collection</strong>, checkbox default.</p>
+<p><img src="images/poller-5-1-preset-default.png" alt="Presets" /></p>
+<h2 id="change-profile-for-all-data-templates">Change profile for all Data templates</h2>
+<p><code>Console -&gt; Templates -&gt; Data Source</code></p>
+<p>Select all -&gt; Change Profile</p>
+<p><img src="images/poller-5-1-change-profile.png" alt="Presets" /></p>
+<h2 id="run-the-poller-once">Run the poller once</h2>
+<p>New rrd files with correct 1 min profile will be created in <strong>/usr/local/share/cacti/rra</strong> directory. Cacti log shouldn't contain errors.</p>
+<h2 id="move-new-rrd-files-to-temporary-folder">Move new rrd files to temporary folder</h2>
+<pre class="shell"><code>mv /usr/local/share/cacti/rra/* /tmp/cacti/rrd_new/
+</code></pre>
+<h2 id="run-splice">Run splice</h2>
+<p>You need run splice command for each rrd file. This could be time consuming, depends on number of files. You can use some tool for parallel tasks. The splice_rrd.php file is designed to allow two RRDfiles to be merged. This utility can effectively change the resolution/step of an RRDfile so long as the new RRDfile already has the correct step.</p>
+<p>Basic script:</p>
+<pre class="shell"><code>#!/bin/sh
+
+cd /tmp/cacti/rrd_old/
+for f in *.rrd
+do
+    echo $f
+    /usr/local/bin/php /usr/local/share/cacti/cli/splice_rrd.php --oldrrd=/tmp/cacti/rrd_old/$f --newrrd=/tmp/cacti/rrd_new/$f --finrrd=/tmp/cacti/rrd_fin/$f
+done
+</code></pre>
+<p>Run script and wait. My experience - 5200 files took 100 minutes without paralelisation. Script will be output sometning like:</p>
+<pre class="console"><code>fortigate_1_-_fg200e4q17911506_traffic_in_7317.rrd
+NOTE: Using Native Arrays due to lack of SQLite.
+NOTE: Using RRDtool Version 1.8.0
+NOTE: RRDfile will be written to &#39;/tmp/cacti/rrd_fin/fortigate_1_-_fg200e4q17911506_traffic_in_7317.rrd&#39;
+NOTE: Re-Importing &#39;/tmp/fortigate_1_-_fg200e4q17911506_traffic_in_7317.dump.27482713&#39; to &#39;/tmp/cacti/rrd_fin/fortigate_1_-_fg200e4q17911506_traffic_in_7317.rrd&#39;
+NOTE: Time:0.88, RUsage:18 MB
+</code></pre>
+<h2 id="move-spliced-files-back-to-cacti">Move spliced files back to cacti</h2>
+<pre class="shell"><code>mv /tmp/cacti/rrd_fin/* /usr/local/share/cacti/rra/
+</code></pre>
+<p>File owner should be cacti</p>
+<pre class="shell"><code>chown cacti /usr/local/share/cacti/rra/*
+</code></pre>
+<h2 id="enable-poller-in-cron-again">Enable poller in Cron again</h2>
+<p>Change your cron settings from 5 minutes to 1 minute and enable (uncomment). Old row:</p>
+<pre class="shell"><code>#*/5    *       *       *       *       cacti   /usr/local/bin/php /usr/local/share/cacti/poller.php 2&gt;&amp;1
+</code></pre>
+<p>New row</p>
+<pre class="shell"><code>*    *       *       *       *       cacti   /usr/local/bin/php /usr/local/share/cacti/poller.php 2&gt;&amp;1
+</code></pre>
+</body>
+</html>

@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2024 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -48,6 +48,8 @@ $device_actions = api_plugin_hook_function('device_action_array', $device_action
 
 /* set default action */
 set_default_action();
+
+api_plugin_hook('device_top');
 
 switch (get_request_var('action')) {
 	case 'export':
@@ -587,9 +589,16 @@ function host_export() {
 
 	if (cacti_sizeof($hosts)) {
 		$columns = array_keys($hosts[0]);
+
 		fputcsv($stdout, $columns);
 
 		foreach($hosts as $h) {
+			foreach(array_keys($h) as $hc) {
+				if ($h[$hc] != '' && (strpos($h[$hc], "\n") !== false || strpos($h[$hc], "\r") !== false)) {
+					$h[$hc] = str_replace(array("\n", "\r"), ' ', $h[$hc]);
+				}
+			}
+
 			fputcsv($stdout, $h);
 		}
 	}
@@ -1223,6 +1232,31 @@ function device_javascript() {
 		// Need to set this for global snmpv3 functions to remain sane between edits
 		snmp_security_initialized = false;
 
+		$('#cdialog').remove();
+		$('#main').append("<div id='cdialog' class='cdialog'></div>");
+
+		$('.delete').click(function (event) {
+			event.preventDefault();
+
+			request = $(this).attr('href');
+			$.get(request)
+				.done(function(data) {
+					$('#cdialog').html(data);
+
+					applySkin();
+
+					$('#cdialog').dialog({
+						title: '<?php print __('Delete Item from Device');?>',
+						close: function () { $('.delete').blur(); $('.selectable').removeClass('selected'); },
+						minHeight: 80,
+						minWidth: 500
+					})
+				})
+				.fail(function(data) {
+					getPresentHTTPError(data);
+				});
+		}).css('cursor', 'pointer');
+
 		if (typeof hostInfoHeight != 'undefined') {
 			if ($(window).scrollTop() == 0) {
 				$('.hostInfoHeader').css('height', '');
@@ -1433,13 +1467,23 @@ function get_device_records(&$total_rows, $rows) {
 	if (get_request_var('host_status') == '-1') {
 		/* Show all items */
 	} elseif (get_request_var('host_status') == '-2') {
-		$sql_where .= ($sql_where != '' ? " AND host.disabled='on'" : " WHERE host.disabled='on'");
+		$sql_where .= ($sql_where == '' ? 'WHERE ':' AND ') . " host.disabled = 'on'";
 	} elseif (get_request_var('host_status') == '-3') {
-		$sql_where .= ($sql_where != '' ? " AND host.disabled=''" : " WHERE host.disabled=''");
+		$sql_where .= ($sql_where == '' ? 'WHERE ':' AND ') . " host.disabled = ''";
 	} elseif (get_request_var('host_status') == '-4') {
-		$sql_where .= ($sql_where != '' ? " AND (host.status!='3' OR host.disabled='on')" : " WHERE (host.status!='3' OR host.disabled='on')");
+		if (db_column_exists('host', 'thold_failure_count')) {
+			$sql_where .= ($sql_where == '' ? 'WHERE ':' AND ') .
+				"(host.status != '3' OR host.disabled = 'on' OR (host.status != 2 AND thold_failure_count > 0 AND status_event_count >= thold_failure_count))";
+		} else {
+			$sql_where .= ($sql_where == '' ? 'WHERE ':' AND ') . " (host.status != '3' OR host.disabled = 'on')";
+		}
 	} else {
-		$sql_where .= ($sql_where != '' ? ' AND (host.status=' . get_request_var('host_status') . " AND host.disabled = '')" : 'where (host.status=' . get_request_var('host_status') . " AND host.disabled = '')");
+		if (db_column_exists('host', 'thold_failure_count')) {
+			$sql_where .= ($sql_where == '' ? 'WHERE ':' AND ') .
+				"(host.status = " . get_request_var('host_status') . " OR (host.status != 2 AND thold_failure_count > 0 AND status_event_count >= thold_failure_count) AND host.disabled = '')";
+		} else {
+			$sql_where .= ($sql_where == '' ? 'WHERE ':' AND ') . ' (host.status = ' . get_request_var('host_status') . " AND host.disabled = '')";
+		}
 	}
 
 	if (get_request_var('host_template_id') == '-1') {
@@ -1806,6 +1850,14 @@ function host() {
 		api_plugin_hook_function('device_table_replace', $hosts);
 	} else if (cacti_sizeof($hosts)) {
 		foreach ($hosts as $host) {
+			$disabled = ($host['disabled'] == 'on');
+
+			if (isset($host['thold_failure_count'])) {
+				$host_status = get_colored_device_status($disabled, $host['status'], $host['thold_failure_count'], $host['status_event_count']);
+			} else {
+				$host_status = get_colored_device_status($disabled, $host['status']);
+			}
+
 			if ($host['disabled'] == '' &&
 				($host['status'] == HOST_RECOVERING || $host['status'] == HOST_UP) &&
 				($host['availability_method'] != AVAIL_NONE && $host['availability_method'] != AVAIL_PING)) {
@@ -1831,7 +1883,7 @@ function host() {
 			form_selectable_cell(filter_value($host['id'], get_request_var('filter')), $host['id'], '', 'right');
 			form_selectable_cell('<a class="linkEditMain" href="' . $graphs_url . '">' . number_format_i18n($host['graphs'], '-1') . '</a>', $host['id'], '', 'right');
 			form_selectable_cell('<a class="linkEditMain" href="' . $data_source_url . '">' . number_format_i18n($host['data_sources'], '-1') . '</a>', $host['id'], '', 'right');
-			form_selectable_cell(get_colored_device_status(($host['disabled'] == 'on' ? true : false), $host['status']), $host['id'], '', 'center');
+			form_selectable_cell($host_status, $host['id'], '', 'center');
 			form_selectable_cell(get_timeinstate($host), $host['id'], '', 'right');
 			form_selectable_cell($uptime, $host['id'], '', 'right');
 			form_selectable_cell(round($host['polling_time'],2), $host['id'], '', 'right');

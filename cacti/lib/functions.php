@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2024 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -1046,10 +1046,10 @@ function raise_message($message_id, $message = '', $message_level = MESSAGE_LEVE
 function raise_message_javascript($title, $header, $message) {
 	?>
 	<script type='text/javascript'>
-	var mixedReasonTitle = DOMPurify.sanitize('<?php print $title;?>');
-	var mixedOnPage      = DOMPurify.sanitize('<?php print $header;?>');
+	var mixedReasonTitle = DOMPurify.sanitize(<?php print json_encode($title, JSON_THROW_ON_ERROR);?>);
+	var mixedOnPage      = DOMPurify.sanitize(<?php print json_encode($header, JSON_THROW_ON_ERROR);?>);
 	sessionMessage   = {
-		message: DOMPurify.sanitize('<?php print $message;?>'),
+		message: DOMPurify.sanitize(<?php print json_encode($message, JSON_THROW_ON_ERROR);?>),
 		level: MESSAGE_LEVEL_MIXED
 	};
 
@@ -1626,11 +1626,15 @@ function update_host_status($status, $host_id, &$ping, $ping_availability, $prin
 
 	/* initialize fail and recovery dates correctly */
 	if ($host['status_fail_date'] == '') {
-		$host['status_fail_date'] = strtotime('0000-00-00 00:00:00');
+		$host['status_fail_date'] = 0;
+	} else {
+		$host['status_fail_date'] = strtotime($host['status_fail_date']);;
 	}
 
 	if ($host['status_rec_date'] == '') {
-		$host['status_rec_date'] = strtotime('0000-00-00 00:00:00');
+		$host['status_rec_date'] = 0;
+	} else {
+		$host['status_rec_date'] = strtotime($host['status_rec_date']);;
 	}
 
 	if ($status == HOST_DOWN) {
@@ -5475,7 +5479,7 @@ function poller_maintenance () {
 	$command_string = cacti_escapeshellcmd(read_config_option('path_php_binary'));
 
 	// If its not set, just assume its in the path
-	if (trim($command_string) == '') {
+	if (empty($command_string) || trim($command_string) == '') {
 		$command_string = 'php';
 	}
 
@@ -6085,6 +6089,40 @@ function is_device_debug_enabled($host_id) {
 }
 
 /**
+ * call_remote_data_collector - Call the remote data collector with the correct URI
+ *
+ * @param - string - The hostname
+ * @param string - The URL to query
+ *
+ * @return - The results in raw form
+ */
+function call_remote_data_collector($poller_id, $url, $logtype = 'WEBUI') {
+	$hostname = db_fetch_cell_prepared('SELECT hostname
+		FROM poller
+		WHERE id = ?',
+		array($poller_id));
+
+	if (!is_ipaddress($hostname)) {
+		$ipaddress = gethostbyname($hostname);
+
+		if (!is_ipaddress($ipaddress)) {
+			if (debounce_run_notification('poller_down:' . $poller_id)) {
+				cacti_log(sprintf('WARNING: PollerID:%s has an invalid hostname:%s.  It is not reachable via DNS!', $poller_id, $hostname), false, $logtype);
+
+				admin_email(__('Cacti System Warning'), __('WARNING: PollerID:%s has an invalid hostname:%s.  Is it not reachable via DNS!', $poller_id, $hostname));
+			}
+
+			return '';
+		}
+	}
+
+	$fgc_contextoption = get_default_contextoption();
+	$fgc_context       = stream_context_create($fgc_contextoption);
+
+	return  file_get_contents(get_url_type() .'://' . $hostname . $url, false, $fgc_context);
+}
+
+/**
  * get_url_type - Determines if remote communications are over
  * http or https for remote services.
  *
@@ -6306,6 +6344,21 @@ function repair_system_data_input_methods($step = 'import') {
 						}
 
 						db_execute_prepared('DELETE FROM data_input_fields WHERE hash = ?', array($bhash['hash']));
+					} elseif ($bhash['hash'] == '35637c344d84d8aa3a4dc50e4a120b3f')  {
+						$data_input_field_id = db_fetch_cell_prepared('SELECT *
+							FROM data_input_fields
+							WHERE hash = ?',
+							array('35637c344d84d8aa3a4dc50e4a120b3f'));
+
+						if ($data_input_field_id > 0) {
+							db_execute_prepared('DELETE FROM data_input_fields
+								WHERE id = ?',
+								array($data_input_field_id));
+
+							db_execute_prepared('DELETE FROM data_input_data
+								WHERE data_input_field_id = ?',
+								array($data_input_field_id));
+						}
 					} else {
 						cacti_log('WARNING: Could not find Cacti default matching hash for unknown system hash "' . $bhash['hash'] . '" for ' . $data_input_id . '.  No repair performed.');
 					}
@@ -7259,8 +7312,10 @@ function cacti_time_zone_set($gmt_offset) {
 			$php_offset = $zone;
 			ini_set('date.timezone', $zone);
 		} else {
-			$php_offset = 'Etc/GMT' . ($hours > 0 ? '-':'+') . abs($hours);
-			ini_set('date.timezone', 'Etc/GMT' . ($hours > 0 ? '-':'+') . abs($hours));
+			// Adding the rounding function as some timezones are Etc/GMT+5.5 which is
+			// not supported in PHP yet.
+			$php_offset = 'Etc/GMT' . ($hours > 0 ? '-':'+') . abs(round($hours));
+			ini_set('date.timezone', 'Etc/GMT' . ($hours > 0 ? '-':'+') . abs(round($hours)));
 		}
 
 		$_SESSION['sess_browser_system_tz'] = $sys_offset;

@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2024 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -984,7 +984,7 @@ function api_device_save($id, $device_template_id, $description, $hostname, $snm
 		$save['snmp_password']        = form_input_validate($snmp_password, 'snmp_password', '', true, 3);
 		$save['snmp_auth_protocol']   = form_input_validate($snmp_auth_protocol, 'snmp_auth_protocol', "^\[None\]|MD5|SHA|SHA224|SHA256|SHA392|SHA512$", true, 3);
 		$save['snmp_priv_passphrase'] = form_input_validate($snmp_priv_passphrase, 'snmp_priv_passphrase', '', true, 3);
-		$save['snmp_priv_protocol']   = form_input_validate($snmp_priv_protocol, 'snmp_priv_protocol', "^\[None\]|DES|AES128|AES192|AES256$", true, 3);
+		$save['snmp_priv_protocol']   = form_input_validate($snmp_priv_protocol, 'snmp_priv_protocol', "^\[None\]|DES|AES|AES128|AES192|AES192C|AES256|AES256C$", true, 3);
 		$save['snmp_context']         = form_input_validate($snmp_context, 'snmp_context', '', true, 3);
 		$save['snmp_engine_id']       = form_input_validate($snmp_engine_id, 'snmp_engine_id', '', true, 3);
 
@@ -1490,14 +1490,9 @@ function api_device_ping_device($device_id, $from_remote = false) {
 	$anym = false;
 
 	if ($config['poller_id'] != $host['poller_id'] && $from_remote == false) {
-		$hostname = db_fetch_cell_prepared('SELECT hostname
-			FROM poller
-			WHERE id = ?',
-			array($host['poller_id']));
+		$url = $config['url_path'] . 'remote_agent.php?action=ping&host_id=' . $host['id'];
 
-		$fgc_contextoption = get_default_contextoption();
-		$fgc_context       = stream_context_create($fgc_contextoption);
-		$results           = @file_get_contents(get_url_type() .'://' . $hostname . $config['url_path'] . 'remote_agent.php?action=ping&host_id=' . $host['id'], false, $fgc_context);
+		$results = call_remote_data_collector($host['poller_id'], $url);
 
 		if ($results != '') {
 			print $results;

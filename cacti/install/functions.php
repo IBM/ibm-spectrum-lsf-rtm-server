@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2024 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -478,6 +478,7 @@ function install_setup_get_templates() {
 		'Cacti_Stats.xml.gz',
 		'Cisco_Router.xml.gz',
 		'Citrix_NetScaler_VPX.xml.gz',
+		'Clearpass_policy_manager.xml.gz',
 		'ESXi_Device.xml.gz',
 		'Fortigate.xml.gz',
 		'Generic_SNMP_Device.xml.gz',
@@ -530,8 +531,8 @@ function install_setup_get_templates() {
 			// Loading Template Information from package
 			$myinfo = @json_decode(shell_exec(cacti_escapeshellcmd(read_config_option('path_php_binary')) . ' -q ' . cacti_escapeshellarg($config['base_path'] . '/cli/import_package.php') . ' --filename=' . cacti_escapeshellarg("/$path/$xmlfile") . ' --info-only'), true);
 			$myinfo['filename'] = $xmlfile;
+			$myinfo['name']     = $xmlfile;
 			$info[] = $myinfo;
-			$info[] = array('filename' => $xmlfile, 'name' => $xmlfile);
 		}
 	}
 
@@ -615,15 +616,15 @@ function install_tool_path($name, $defaultPaths) {
 	);
 
 	log_install_debug('file', "$name: Locations ($os), Paths: " . clean_up_lines(var_export($defaultPaths, true)));
-	if (isset($settings) && isset($settings['path']) && isset($settings['path']['path_'.$name])) {
-		$tool = $settings['path']['path_'.$name];
+	if (isset($settings) && isset($settings['path']) && isset($settings['path']['path_' . $name])) {
+		$tool = $settings['path']['path_' . $name];
 	} elseif (isset($settings) && isset($settings['mail']) && isset($settings['mail'][$name])) {
 		$tool = $settings['mail'][$name];
 	}
 
 	$which_tool = '';
 	if (config_value_exists('path_' . $name)) {
-		$which_tool = read_config_option('path_'.$name, true);
+		$which_tool = read_config_option('path_' . $name, true);
 		log_install_high('file', "Using config location: $which_tool");
 	}
 
@@ -670,43 +671,43 @@ function install_file_paths() {
 	/* RRDtool Binary Path */
 	$input['path_rrdtool'] = install_tool_path('rrdtool',
 		array(
-			'unix'  => '/usr/local/bin/rrdtool',
+			'unix'  => '/usr/bin/rrdtool',
 			'win32' => 'c:/rrdtool/rrdtool.exe'
 		));
 
 	/* snmpwalk Binary Path */
 	$input['path_snmpwalk'] = install_tool_path('snmpwalk',
 		array(
-			'unix'  => '/usr/local/bin/snmpwalk',
-			'win32' => 'c:/net-snmp/bin/snmpwalk.exe'
+			'unix'  => '/usr/bin/snmpwalk',
+			'win32' => 'c:/usr/bin/snmpwalk.exe'
 		));
 
 	/* snmpget Binary Path */
 	$input['path_snmpget'] = install_tool_path('snmpget',
 		array(
-			'unix'  => '/usr/local/bin/snmpget',
-			'win32' => 'c:/net-snmp/bin/snmpget.exe'
+			'unix'  => '/usr/bin/snmpget',
+			'win32' => 'c:/usr/bin/snmpget.exe'
 		));
 
 	/* snmpbulkwalk Binary Path */
 	$input['path_snmpbulkwalk'] = install_tool_path('snmpbulkwalk',
 		array(
-			'unix'  => '/usr/local/bin/snmpbulkwalk',
-			'win32' => 'c:/net-snmp/bin/snmpbulkwalk.exe'
+			'unix'  => '/usr/bin/snmpbulkwalk',
+			'win32' => 'c:/usr/bin/snmpbulkwalk.exe'
 		));
 
 	/* snmpgetnext Binary Path */
 	$input['path_snmpgetnext'] = install_tool_path('snmpgetnext',
 		array(
-			'unix'  => '/usr/local/bin/snmpgetnext',
-			'win32' => 'c:/net-snmp/bin/snmpgetnext.exe'
+			'unix'  => '/usr/bin/snmpgetnext',
+			'win32' => 'c:/usr/bin/snmpgetnext.exe'
 		));
 
 	/* snmptrap Binary Path */
 	$input['path_snmptrap'] = install_tool_path('snmptrap',
 		array(
-			'unix'  => '/usr/local/bin/snmptrap',
-			'win32' => 'c:/net-snmp/bin/snmptrap.exe'
+			'unix'  => '/usr/bin/snmptrap',
+			'win32' => 'c:/usr/bin/snmptrap.exe'
 		));
 
 	/* sendmail Binary Path */
@@ -869,6 +870,44 @@ function remote_update_config_file() {
 	}
 
 	return $failure;
+}
+
+/**
+ * set_install_config_option - Set a config option into the local database only
+ *
+ * @param $config_name - the name of the configuration setting as specified $settings array
+ * @param $value       - the values to be saved
+ *
+ * @return null        - nothing is returned
+ */
+function set_install_config_option($name, $value) {
+	global $config, $local_db_cnn_id;
+
+	/* some additional extension checks */
+	switch($name) {
+		case 'path_cactilog':
+			$extension = pathinfo($value, PATHINFO_EXTENSION);
+
+			if ($extension != 'log') {
+				$value = $config['base_path'] . '/log/cacti.log';
+			}
+
+			break;
+		case 'path_stderrlog':
+			$extension = pathinfo($value, PATHINFO_EXTENSION);
+
+			if ($extension != 'log') {
+				$value = $config['base_path'] . '/log/cacti.stderr.log';
+			}
+
+			break;
+	}
+
+	if (is_object($local_db_cnn_id)) {
+		db_execute_prepared('REPLACE INTO settings (name, value) VALUES (?, ?)', array($name, $value), false, $local_db_cnn_id);
+	} else {
+		set_config_option($name, $value);
+	}
 }
 
 function import_colors() {
@@ -1107,9 +1146,11 @@ function install_full_sync() {
 		AND disabled = ""');
 
 	log_install_always('sync', 'Found ' . cacti_sizeof($pollers) . ' poller(s) to sync');
+
 	if (cacti_sizeof($pollers)) {
 		foreach($pollers as $poller) {
 			log_install_debug('sync', 'Poller ' . $poller['id'] . ' has a status of ' . $poller['status'] . ' with gap ' . $poller['gap']);
+
 			if (($poller['status'] == POLLER_STATUS_NEW) ||
 				($poller['status'] == POLLER_STATUS_DOWN) ||
 				($poller['status'] == POLLER_STATUS_DISABLED)) {

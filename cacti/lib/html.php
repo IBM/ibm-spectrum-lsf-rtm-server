@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2024 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -280,6 +280,7 @@ function html_graph_template_multiselect() {
 */
 function html_graph_area(&$graph_array, $no_graphs_message = '', $extra_url_args = '', $header = '', $columns = 0, $tree_id = 0, $branch_id = 0) {
 	global $config;
+
 	$i = 0; $k = 0; $j = 0;
 
 	$num_graphs = cacti_sizeof($graph_array);
@@ -302,12 +303,21 @@ function html_graph_area(&$graph_array, $no_graphs_message = '', $extra_url_args
 		}
 
 		foreach ($graph_array as $graph) {
+			if (!isset($graph['host_id'])) {
+				list($graph['host_id'], $graph['disabled']) = db_fetch_row_prepared('SELECT host_id, disabled
+    					FROM graph_local AS gl
+	 				LEFT JOIN host AS h
+					ON gl.host_id = h.id
+     					WHERE gl.id = ?',
+					array($graph['local_graph_id']));
+			}
+
 			if ($i == 0) {
 				print "<tr class='tableRowGraph'>";
 			}
 
 			?>
-			<td style='width:<?php print round(100 / $columns, 2);?>%;'>
+			<td class='graphWrapperOuter' data-disabled='<?php print ($graph['disabled'] == 'on' ? 'true':'false');?>' style='width:<?php print round(100 / $columns, 2);?>%;'>
 				<div>
 				<table style='text-align:center;margin:auto;'>
 					<tr>
@@ -382,6 +392,15 @@ function html_graph_thumbnail_area(&$graph_array, $no_graphs_message = '', $extr
 
 		$start = true;
 		foreach ($graph_array as $graph) {
+			if (!isset($graph['host_id'])) {
+				list($graph['host_id'], $graph['disabled']) = db_fetch_row_prepared('SELECT host_id, disabled
+    					FROM graph_local AS gl
+	 				LEFT JOIN host AS h
+      					ON gl.host_id = h.id
+	   				WHERE gl.id = ?',
+					array($graph['local_graph_id']));
+			}
+
 			if (isset($graph['graph_template_name'])) {
 				if (isset($prev_graph_template_name)) {
 					if ($prev_graph_template_name != $graph['graph_template_name']) {
@@ -426,7 +445,8 @@ function html_graph_thumbnail_area(&$graph_array, $no_graphs_message = '', $extr
 			}
 
 			?>
-			<td style='width:<?php print round(100 / $columns, 2);?>%;'>
+			<td class='graphWrapperOuter' data-disabled='<?php print ($graph['disabled'] == 'on' ? 'true':'false');?>' style='width:<?php print round(100 / $columns, 2);?>%;'>
+				<div>
 				<table style='text-align:center;margin:auto;'>
 					<tr>
 						<td>
@@ -438,6 +458,7 @@ function html_graph_thumbnail_area(&$graph_array, $no_graphs_message = '', $extr
 						</td><?php } ?>
 					</tr>
 				</table>
+				</div>
 			</td>
 			<?php
 
@@ -1633,19 +1654,23 @@ function DrawMatrixHeaderItem($matrix_name, $matrix_text_color, $column_span = 1
 	<?php
 }
 
-function form_area($text) { ?>
+function form_area($text) {
+	?>
 	<tr>
 		<td class='textArea'>
-			<?php print $text;?>
+			<?php print html_escape($text);?>
 		</td>
 	</tr>
-<?php }
+	<?php
+}
 
-/* is_console_page - determines if current passed url is considered to be
-          a console page
-   @arg url - url to be checked
-   @returns true if console page, false if not
-*/
+/**
+ * is_console_page - determines if current passed url is considered to be a console page
+ *
+ * @param url - url to be checked
+ *
+ * @return true if console page, false if not
+ */
 function is_console_page($url) {
 	global $menu;
 
@@ -1765,7 +1790,7 @@ function html_show_tabs_left() {
 							}
 						}
 
-						print '<a id="tab-link' . $tab['id'] . '" href="' . $config['url_path'] . 'link.php?id=' . $tab['id'] . '"><img src="' . get_classic_tabimage($tab['title'], $down) . '" alt="' . $tab['title'] . '"></a>';
+						print '<a id="tab-link' . $tab['id'] . '" href="' . $config['url_path'] . 'link.php?id=' . $tab['id'] . '"><img src="' . get_classic_tabimage($tab['title'], $down) . '" alt="' . html_escape($tab['title']) . '"></a>';
 					}
 				}
 			}
@@ -2464,7 +2489,7 @@ function html_common_header($title, $selectedTheme = '') {
 		var theme='<?php print $selectedTheme;?>';
 		var hScroll=<?php print read_user_setting('enable_hscroll', '') == 'on' ? 'true':'false';?>;
 		var userSettings=<?php print is_view_allowed('graph_settings') ? 'true':'false';?>;
-		var tableConstraints='<?php print __('Allow or limit the table columns to extend beyond the current windows limits.');?>';
+		var tableConstraints='<?php print __esc('Allow or limit the table columns to extend beyond the current windows limits.');?>';
 		var searchFilter='<?php print __esc('Enter a search term');?>';
 		var searchRFilter='<?php print __esc('Enter a regular expression');?>';
 		var noFileSelected='<?php print __esc('No file selected');?>';

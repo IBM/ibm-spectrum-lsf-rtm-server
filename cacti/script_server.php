@@ -3,7 +3,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2024 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -176,7 +176,7 @@ while (1) {
 	$isParentRunning = true;
 	if (empty($input_string)) {
 		if (!empty($parent_pid)) {
-			if(strncasecmp(PHP_OS, "win", 3) == 0) {
+			if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
 				$out = [];
 				exec("TASKLIST /FO LIST /FI \"PID eq $parent_pid\"", $out);
 

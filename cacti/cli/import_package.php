@@ -3,7 +3,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2024 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -46,6 +46,7 @@ if (cacti_sizeof($parms)) {
 	$preview_only    = false;
 	$info_only       = false;
 	$profile_id      = '';
+	$profile_set     = false;
 
 	foreach($parms as $parameter) {
 		if (strpos($parameter, '=')) {
@@ -58,6 +59,17 @@ if (cacti_sizeof($parms)) {
 		switch ($arg) {
 			case '--filename':
 				$filename = trim($value);
+
+				break;
+			case '--with-profile':
+				if ($profile_set) {
+					print 'The argument --with-profile can not be used in conjunction with --profile-id.' . PHP_EOL;
+					exit(1);
+				}
+
+				$profile_set = true;
+
+				$profile_id = db_fetch_cell('SELECT id FROM data_source_profiles WHERE `default` = "on"');
 
 				break;
 			case '--use-profile':
@@ -73,6 +85,13 @@ if (cacti_sizeof($parms)) {
 
 				break;
 			case '--profile-id':
+				if ($profile_set) {
+					print 'The argument --profile-id can not be used in conjunction with --with-profile.' . PHP_EOL;
+					exit(1);
+				}
+
+				$profile_set = true;
+
 				$profile_id = trim($value);
 
 				break;

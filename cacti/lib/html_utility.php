@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2024 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -431,7 +431,7 @@ function get_filter_request_var($name, $filter = FILTER_VALIDATE_INT, $options =
 				$value = '';
 			} elseif ($filter == FILTER_VALIDATE_IS_REGEX) {
 				if (is_base64_encoded($_REQUEST[$name])) {
-					$_REQUEST[$name] = base64_decode($_REQUEST[$name]);
+					$_REQUEST[$name] = mb_convert_encoding(base64_decode($_REQUEST[$name]), 'UTF-8');
 				}
 
 				$valid = validate_is_regex($_REQUEST[$name]);
@@ -651,7 +651,7 @@ function validate_store_request_vars($filters, $sess_prefix = '') {
 					$value = '';
 				} elseif ($options['filter'] == FILTER_VALIDATE_IS_REGEX) {
 					if (is_base64_encoded($_REQUEST[$variable])) {
-						$_REQUEST[$variable] = base64_decode($_REQUEST[$variable]);
+						$_REQUEST[$variable] = mb_convert_encoding(base64_decode($_REQUEST[$variable]), 'UTF-8');
 					}
 
 					$valid = validate_is_regex($_REQUEST[$variable]);
@@ -919,15 +919,27 @@ function load_current_session_value($request_var_name, $session_var_name, $defau
 	}
 }
 
-/* get_colored_device_status - given a device's status, return the colored text in HTML
-     format suitable for display
-   @arg $disabled (bool) - true if the device is disabled, false is it is not
-   @arg $status - the status type of the device as defined in global_constants.php
-   @returns - a string containing html that represents the device's current status */
-function get_colored_device_status($disabled, $status) {
+/**
+ * get_colored_device_status - given a device's status, return the colored text in HTML
+ * format suitable for display
+ *
+ * @param bool    - true if the device is disabled, false is it is not
+ * @param int     - The device status as defined in global_constants.php
+ * @param int     - The thold failure count is thold is installed
+ * @param int     - The host status event count is thold is installed
+ *
+ * @return - a string containing html that represents the device's current status
+ */
+function get_colored_device_status($disabled, $status, $thold_failure_count = -1, $status_event_count = -1) {
 	if ($disabled) {
 		return "<span class='deviceDisabled'>" . __('Disabled') . "</span>";
 	} else {
+		if ($status != HOST_RECOVERING && $thold_failure_count > 0) {
+			if ($status_event_count >= $thold_failure_count) {
+				return "<span class='deviceDown'>" . __('Down (Thold)') . "</span>";
+			}
+		}
+
 		switch ($status) {
 			case HOST_DOWN:
 				return "<span class='deviceDown'>" . __('Down') . "</span>";

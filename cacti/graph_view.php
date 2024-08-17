@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2024 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -978,14 +978,14 @@ case 'list':
 
 						$(this).dialog('close');
 
-						strURL = 'graph_view.php?action=ajax_reports';
+						strURL = 'graph_view.php?action=ajax_reports' +
 							'&header=false' +
-							'&report_id='   + $('#report_id').val()  +
-							'&timespan='    + $('#timespan').val()   +
-							'&align='       + $('#align').val()      +
+							'&report_id='   + $('#report_id').val()   +
+							'&timespan='    + $('#timespan').val()    +
+							'&align='       + $('#align').val()       +
 							'&graph_list='  + $('#graph_list').val();
 
-						loadPageNoHeader(strURL);
+						loadPageUsingPost(strURL);
 					}
 				}
 			],

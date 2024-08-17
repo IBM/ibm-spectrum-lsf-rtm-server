@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2024 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -26,12 +26,18 @@ if (isset_request_var('error')) {
 	$page  = basename(get_nfilter_request_var('page'));
 	$error = get_filter_request_var('error');
 
-	$message = sprintf('WARNING: Page:%s Generated a Fatal Error:%d', $page, $error);
+	if (isset($_SESSION['sess_user_id'])) {
+		$username = get_username($_SESSION['sess_user_id']);
+	} else {
+		$username = 'unknown';
+	}
+
+	$message = sprintf('WARNING: Cacti Page:%s for User:%s Generated a Fatal Error:%d', $page, $username, $error);
 
 	cacti_log($message, false);
 
 	if (debounce_run_notification('page_error_' . $page)) {
-		admin_email(__('Cacti System Warning'), __('WARNING: Cacti Page: %s Generated a Fatal Error %d!', $page, $error));
+		admin_email(__('Cacti System Warning'), __('WARNING: Cacti Page:%s for User:%s Generated a Fatal Error %d!', $page, $username, $error));
 	}
 } elseif (isset_request_var('page')) {
 	get_filter_request_var('page', FILTER_CALLBACK, array('options' => 'sanitize_search_string'));

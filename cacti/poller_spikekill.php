@@ -3,7 +3,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2024 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -146,22 +146,20 @@ function timeToRun() {
 	$lastrun   = read_config_option('spikekill_lastrun');
 	$frequency = read_config_option('spikekill_batch') * 3600;
 	$basetime  = strtotime(read_config_option('spikekill_basetime'));
-	$baseupper = 300;
-	$baselower = $frequency - 300;
+	$baseupper = $basetime + 300;
+	$baselower = $basetime - 300;
 	$now       = time();
 
 	debug("LastRun:'$lastrun', Frequency:'$frequency', BaseTime:'" . date('Y-m-d H:i:s', $basetime) . "', BaseUpper:'$baseupper', BaseLower:'$baselower', Now:'" . date('Y-m-d H:i:s', $now) . "'");
+
 	if ($frequency > 0 && ($now - $lastrun > $frequency)) {
 		debug("Frequency is '$frequency' Seconds");
 
-		$nowfreq = $now % $frequency;
-		debug("Now Frequency is '$nowfreq'");
-
-		if ((empty($lastrun)) && ($nowfreq > $baseupper) && ($nowfreq < $baselower)) {
+		if (empty($lastrun) && ($now < $baseupper) && ($now > $baselower)) {
 			debug('Time to Run');
 			db_execute_prepared('REPLACE INTO settings (name,value) VALUES ("spikekill_lastrun", ?)', array(time()));
 			return true;
-		} elseif (($now - $lastrun > 3600) && ($nowfreq > $baseupper) && ($nowfreq < $baselower)) {
+		} elseif (($now - $lastrun > $frequency) && ($now < $baseupper) && ($now > $baselower)) {
 			debug('Time to Run');
 			db_execute_prepared('REPLACE INTO settings (name,value) VALUES ("spikekill_lastrun", ?)', array(time()));
 			return true;

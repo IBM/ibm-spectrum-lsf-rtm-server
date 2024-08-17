@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2024 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -511,7 +511,7 @@ function utilities_view_tech() {
 
 						form_alternate_row();
 						print "<td>$name</td>";
-						print '<td>' . __('%0.2f GB', number_format_i18n($value, 2, 1000)) . '</td>';
+						print '<td>' . __('%s GB', number_format_i18n($value, 2, 1000)) . '</td>';
 						form_end_row();
 
 						if ($name == 'MemTotal') {
@@ -644,7 +644,7 @@ function utilities_view_tech() {
 			if ($maxPossibleMyMemory > ($total_memory * 0.8)) {
 				form_alternate_row();
 				print '<td>' . __('Max Total Memory Possible') . '</td>';
-				print '<td class="deviceDown">' . __('%0.2f GB', number_format_i18n($maxPossibleMyMemory, 2, 1000)) . '</td>';
+				print '<td class="deviceDown">' . __('%s GB', number_format_i18n($maxPossibleMyMemory, 2, 1000)) . '</td>';
 				form_end_row();
 				form_alternate_row();
 				print '<td></td>';
@@ -653,13 +653,13 @@ function utilities_view_tech() {
 			} else {
 				form_alternate_row();
 				print '<td>' . __('Max Total Memory Possible') . '</td>';
-				print '<td class="deviceUp">' . __('%0.2f GB', number_format_i18n($maxPossibleMyMemory, 2, 1000)) . '</td>';
+				print '<td class="deviceUp">' . __('%s GB', number_format_i18n($maxPossibleMyMemory, 2, 1000)) . '</td>';
 				form_end_row();
 			}
 		} else {
 			form_alternate_row();
 			print '<td>' . __('Max Total Memory Possible') . '</td>';
-			print '<td>' . __('%0.2f GB', number_format_i18n($maxPossibleMyMemory, 2, 1000)) . '</td>';
+			print '<td>' . __('%s GB', number_format_i18n($maxPossibleMyMemory, 2, 1000)) . '</td>';
 			form_end_row();
 		}
 
@@ -667,12 +667,12 @@ function utilities_view_tech() {
 			if ($systemMemory > ($total_memory * 0.8)) {
 				form_alternate_row();
 				print '<td>' . __('Max Core Memory Possible') . '</td>';
-				print '<td class="deviceDown">' . __('%0.2f GB', number_format_i18n($systemMemory, 2, 1000)) . '&nbsp;&nbsp;(' . __('Reduce Total Core Memory') . '</td>';
+				print '<td class="deviceDown">' . __('%s GB', number_format_i18n($systemMemory, 2, 1000)) . '&nbsp;&nbsp;(' . __('Reduce Total Core Memory') . '</td>';
 				form_end_row();
 			} else {
 				form_alternate_row();
 				print '<td>' . __('Max Core Memory Possible') . '</td>';
-				print '<td class="deviceUp">' . __('%0.2f GB', number_format_i18n($systemMemory, 2, 1000)) . '</td>';
+				print '<td class="deviceUp">' . __('%s GB', number_format_i18n($systemMemory, 2, 1000)) . '</td>';
 				form_end_row();
 			}
 
@@ -684,12 +684,12 @@ function utilities_view_tech() {
 			if ($clientMemory > ($total_memory * 0.8)) {
 				form_alternate_row();
 				print '<td>' . __('Max Connection Memory Possible') . '</td>';
-				print '<td class="deviceDown">' . __('%0.2f GB', number_format_i18n($clientMemory, 2, 1000)) . '&nbsp;&nbsp;(' . __('Reduce Total Client Memory') . ')</td>';
+				print '<td class="deviceDown">' . __('%s GB', number_format_i18n($clientMemory, 2, 1000)) . '&nbsp;&nbsp;(' . __('Reduce Total Client Memory') . ')</td>';
 				form_end_row();
 			} else {
 				form_alternate_row();
 				print '<td>' . __('Max Connection Memory Possible') . '</td>';
-				print '<td class="deviceUp">' . __('%0.2f GB', number_format_i18n($clientMemory, 2, 1000)) . '</td>';
+				print '<td class="deviceUp">' . __('%s GB', number_format_i18n($clientMemory, 2, 1000)) . '</td>';
 				form_end_row();
 			}
 
@@ -700,12 +700,12 @@ function utilities_view_tech() {
 		} else {
 			form_alternate_row();
 			print '<td>' . __('Max Core Memory Possible') . '</td>';
-			print '<td class="deviceUp">' . __('%0.2f GB', number_format_i18n($systemMemory, 2, 1000)) . '</td>';
+			print '<td class="deviceUp">' . __('%s GB', number_format_i18n($systemMemory, 2, 1000)) . '</td>';
 			form_end_row();
 
 			form_alternate_row();
 			print '<td>' . __('Max Connection Memory Possible') . '</td>';
-			print '<td>' . __('%0.2f GB', number_format_i18n($clientMemory, 2, 1000)) . '</td>';
+			print '<td>' . __('%s GB', number_format_i18n($clientMemory, 2, 1000)) . '</td>';
 			form_end_row();
 		}
 

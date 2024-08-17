@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2024 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -98,9 +98,13 @@ case 'view':
 	</tr>
 	<?php
 
-	$graph = db_fetch_row_prepared('SELECT local_graph_id, width, height, graph_template_id
-		FROM graph_templates_graph
-		WHERE local_graph_id = ?',
+	$graph = db_fetch_row_prepared('SELECT gtg.local_graph_id, width, height, title_cache, gtg.graph_template_id, h.id AS host_id, h.disabled
+		FROM graph_templates_graph AS gtg
+		INNER JOIN graph_local AS gl
+		ON gtg.local_graph_id = gl.id
+		LEFT JOIN host AS h
+		ON gl.host_id = h.id
+		WHERE gtg.local_graph_id = ?',
 		array(get_request_var('local_graph_id')));
 
 	$graph_template_id = $graph['graph_template_id'];
@@ -120,7 +124,7 @@ case 'view':
 			?>
 			<tr class='tableRowGraph'>
 				<td class='center'>
-					<table>
+					<table class='graphWrapperOuter' data-disabled='<?php print ($graph['disabled'] == 'on' ? 'true':'false');?>'>
 						<tr>
 							<td>
 								<div class='graphWrapper' id='wrapper_<?php print $graph['local_graph_id'] ?>' graph_id='<?php print $graph['local_graph_id'];?>' rra_id='<?php print $rra['id'];?>' graph_width='<?php print $graph['width'];?>' graph_height='<?php print $graph['height'];?>' graph_start='<?php print $graph_start;?>' graph_end='<?php print $graph_end;?>' title_font_size='<?php print ((read_user_setting('custom_fonts') == 'on') ? read_user_setting('title_size') : read_config_option('title_size'));?>'></div>
@@ -359,9 +363,13 @@ case 'zoom':
 		$graph_start--;
 	}
 
-	$graph = db_fetch_row_prepared('SELECT width, height, title_cache, local_graph_id, graph_template_id
-		FROM graph_templates_graph
-		WHERE local_graph_id = ?',
+	$graph = db_fetch_row_prepared('SELECT gtg.local_graph_id, width, height, title_cache, gtg.graph_template_id, h.id AS host_id, h.disabled
+		FROM graph_templates_graph AS gtg
+		INNER JOIN graph_local AS gl
+		ON gtg.local_graph_id = gl.id
+		LEFT JOIN host AS h
+		ON gl.host_id = h.id
+		WHERE gtg.local_graph_id = ?',
 		array(get_request_var('local_graph_id')));
 
 	$graph_height      = $graph['height'];
@@ -384,7 +392,7 @@ case 'zoom':
 	</tr>
 	<tr class='tableRowGraph'>
 		<td class='center'>
-			<table>
+			<table class='graphWrapperOuter' data-disabled='<?php print ($graph['disabled'] == 'on' ? 'true':'false');?>'>
 				<tr>
 					<td class='center'>
 						<div class='graphWrapper' id='wrapper_<?php print $graph['local_graph_id']?>' graph_id='<?php print $graph['local_graph_id'];?>' rra_id='<?php print $rra['id'];?>' graph_width='<?php print $graph['width'];?>' graph_height='<?php print $graph['height'];?>' title_font_size='<?php print ((read_user_setting('custom_fonts') == 'on') ? read_user_setting('title_size') : read_config_option('title_size'));?>'></div>
