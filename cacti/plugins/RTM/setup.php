@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2023                                          |
+ | Copyright IBM Corp. 2006, 2024                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -50,8 +50,8 @@ function rtm_page_head() {
 	print "<script type='text/javascript'>
 		var brandName='" . __('IBM Spectrum') . "';
 		var brandNameBold='" . __('IBM <b>Spectrum</b>') . "';
-		var productName='" . __('LSF RTM 10.2.0.14') . "';
-		var copyRight='" . __('© Copyright International Business Machines Corp. 1992, 2023. US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp. Portions Copyright © 2004, 2023 The Cacti Group, Inc.') . "';
+		var productName='" . __('LSF RTM 10.2.0.15') . "';
+		var copyRight='" . __('© Copyright International Business Machines Corp. 1992, 2024. US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp. Portions Copyright © 2004, 2024 The Cacti Group, Inc.') . "';
 		</script>";
 }
 

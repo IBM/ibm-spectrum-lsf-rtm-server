@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2023                                          |
+ | Copyright IBM Corp. 2006, 2024                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -6204,7 +6204,7 @@ function grid_config_arrays () {
 	include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
 	include_once($config['base_path'] . '/plugins/grid/lib/grid_validate.php');
 
-	set_config_option('grid_copyright_year', '2006-2022');
+	set_config_option('grid_copyright_year', '2006-2024');
 
 	$elim_data_input_hash = '01cde0749ae68fd14b20fc2710d0d2ee';
 	/* hook define in global_arrays.php for import/export */
