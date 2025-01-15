@@ -294,6 +294,14 @@ function partition_timefor_create($table, $time_field) {
 	include_once($config['base_path'] . '/plugins/grid/lib/grid_functions.php');
 
 	$time_interval = time() - strtotime("-" . read_config_option("grid_partitioning_time_range"));
+	
+	//check time elapsed since last partition time
+	$sql = "SELECT ROUND(UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(IFNULL(MAX(max_time), '1971-02-01'))) 
+			FROM grid_table_partitions where table_name = ?";
+	grid_debug($sql);
+	$db_interval = db_fetch_cell_prepared($sql, array($table));
+	if ($db_interval + 21600 <= $time_interval) return false;
+	
 	$sql = "SELECT UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(MIN($time_field))
 		FROM $table WHERE $time_field>'1971-02-01'";
 

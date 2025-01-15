@@ -45,6 +45,12 @@ function upgrade_to_10_2_0_15() {
 
 	//update version for other plugins that file touched, and no much DB change
 	db_execute("UPDATE plugin_config SET version='10.2.0.15' WHERE directory IN ('RTM', 'license', 'meta', 'lichist')");
+
+	// Patch the cluster host group slot utilization
+	$patch_script = read_config_option('path_webroot') . '/util/support/rtm_tool/scripts/fix_hostgroup_label.sh';
+	if (file_exists($patch_script)) {
+		shell_exec($patch_script);
+	}
 }
 
 function partition_tables_to_10_2_0_15(){
