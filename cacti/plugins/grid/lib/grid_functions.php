@@ -2083,17 +2083,16 @@ function perform_grid_db_maint($start_time, $optimize = false) {
 				alter_table_engine('grid_jobs_host_rusage', 'Innodb');
 			}
 
-			if (partition_timefor_create("grid_jobs_gpu_rusage", "update_time")) {
+			// if a new grid_jobs_finished partition created and grid_jobs_gpu_rusage table not empty, then create grid_jobs_gpu_rusage partition
+			if ($job_finished_partition_version != -1 && !isEmptyTable("grid_jobs_gpu_rusage")) {
 				partition_create("grid_jobs_gpu_rusage", "submit_time", "update_time");
 
 				//TODO: Should take similar action for grid_jobs_rusage/grid_jobs_host_rusage
 				//      To Keep one job rusage data into one partition table.
 				foreach($new_partition_tables as $new_partition_table){
-					if(strstr($new_partition_table , "grid_jobs_gpu_rusage")){
+					if(strstr($new_partition_table, "grid_jobs_gpu_rusage")){
 						//keep history for the requeue job which use less GPU after requeue.
-						$new_grid_jobs_finished = "grid_jobs_finished";
-						if($job_finished_partition_version != -1)
-							$new_grid_jobs_finished .= "_v" . $job_finished_partition_version;
+						$new_grid_jobs_finished = "grid_jobs_finished_v" . $job_finished_partition_version;
 						db_execute("INSERT IGNORE INTO grid_jobs_gpu_rusage (clusterid, jobid, indexid, submit_time,
 							start_time, update_time, host, gpu_id, exec_time, energy, sm_ut_avg, sm_ut_max,
 							sm_ut_min, mem_ut_avg, mem_ut_max, mem_ut_min, gpu_mused_max)
@@ -2116,6 +2115,29 @@ function perform_grid_db_maint($start_time, $optimize = false) {
 							AND grid_jobs.indexid=gjgr.indexid
 							AND grid_jobs.submit_time=gjgr.submit_time
 							WHERE grid_jobs.jobid IS NULL;");
+							
+						 $gpu_partition = substr($new_partition_table, -3);
+						 if (isEmptyTable($new_partition_table)) {
+						 	db_execute('DROP TABLE IF EXISTS ' . $new_partition_table);
+						 	db_execute_prepared("DELETE FROM grid_table_partitions WHERE table_name=? and `partition` = ?", 
+						 		array("grid_jobs_gpu_rusage", $gpu_partition));
+						 	$curmax = db_fetch_row_prepared("SELECT `partition`, max_time FROM grid_table_partitions 
+						 		WHERE table_name=? ORDER BY max_time DESC LIMIT 1", array("grid_jobs_gpu_rusage"));
+						 		
+						 	if (cacti_sizeof($curmax)) {
+						 		db_execute_prepared('UPDATE settings set value = ? where name = ?',
+						 			array($curmax, 'grid_jobs_gpu_rusage_partitioning_version'));
+						 	} else {
+						 		db_execute_prepared('DELETE FROM settings where name = ?',
+						 			array('grid_jobs_gpu_rusage_partitioning_version'));
+						 	}
+						 } else {
+						 	$gpu_min_time = db_fetch_cell("SELECT MIN(submit_time) FROM $new_partition_table WHERE submit_time > '1971-02-01'");
+						 	$gpu_max_time = db_fetch_cell("SELECT MAX(update_time) FROM $new_partition_table");
+						 	db_execute_prepared("UPDATE grid_table_partitions SET min_time = ?, max_time = ? 
+						 		WHERE table_name = 'grid_jobs_gpu_rusage' and `partition` = ?", 
+						 		array($gpu_min_time, $gpu_max_time, $gpu_partition));
+						 }
 					}
 				}
 
@@ -20507,4 +20529,10 @@ function grid_get_lsf_conf_variable_value($lsf_envdir, $arg) {
 	}
 
 	return '';
+}
+
+function isEmptyTable($table_name) {
+        $rows_in_table = db_fetch_cell('SELECT * FROM ' . $table_name . ' LIMIT 1');
+        if (cacti_sizeof($rows_in_table)) return false;
+        return true;
 }
