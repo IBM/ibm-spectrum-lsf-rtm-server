@@ -19,3 +19,4 @@ By making a contribution to this project, I certify that:
 Then you just add a line saying:
 
 	Signed-off-by: Random J Developer random@developer.org>
+
