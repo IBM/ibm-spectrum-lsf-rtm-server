@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright IBM Corp. 2006, 2025                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -6722,6 +6722,8 @@ function grid_config_arrays () {
 		'3months' => __('%d Months', 3, 'grid'),
 		'4months' => __('%d Months', 4, 'grid'),
 		'6months' => __('%d Months', 6, 'grid'),
+		'8months' => __('%d Months', 8, 'grid'),
+		'10months' => __('%d Months', 10, 'grid'),
 		'1year'   => __('%d Year', 1, 'grid')
 	);
 
@@ -6735,6 +6737,8 @@ function grid_config_arrays () {
 		'3months' => __('%d Months', 3, 'grid'),
 		'4months' => __('%d Months', 4, 'grid'),
 		'6months' => __('%d Months', 6, 'grid'),
+		'8months' => __('%d Months', 8, 'grid'),
+		'10months' => __('%d Months', 10, 'grid'),
 		'1year'   => __('%d Year', 1, 'grid'),
 		'2years'  => __('%d Years', 2, 'grid'),
 		'3years'  => __('%d Years', 3, 'grid'),

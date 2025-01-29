@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright IBM Corp. 2006, 2025                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -473,7 +473,7 @@ function grid_view_export_jobs() {
 	array_push($xport_array, grid_jobs_build_export_header());
 
 	if (!empty($jobs)) {
-		foreach($jobs as $job) {
+		foreach(array_unique_multidimensional($jobs) as $job) {
 			array_push($xport_array, grid_jobs_build_export_row($job, $queue_nice_levels));
 		}
 	}
@@ -1252,7 +1252,7 @@ function grid_view_jobs() {
 			strURL += '&jobid=' + $('#jobid').val();
 			strURL += '&dynamic_updates=' + $('#dynamic_updates').is(':checked');
 			if (typeof $('#resource_str').val() != 'undefined') {
-				strURL += '&resource_str=' + escape($('#resource_str').val());
+				strURL += '&resource_str=' + encodeURIComponent($('#resource_str').val());
 			}
 			if (typeof $('#resource_str_search_by').val() != 'undefined') {
 				strURL += '&resource_str_search_by=' + $('#resource_str_search_by').val();
@@ -1411,7 +1411,7 @@ function grid_view_jobs() {
 				strURL += '&jobid=' + $('#jobid').val();
 				strURL += '&dynamic_updates=' + $('#dynamic_updates').is(':checked');
 				if (typeof $('#resource_str').val() != 'undefined') {
-					strURL += '&resource_str=' + escape($('#resource_str').val());
+					strURL += '&resource_str=' + encodeURIComponent($('#resource_str').val());
 				}
 				if (typeof $('#resource_str_search_by').val() != 'undefined') {
 					strURL += '&resource_str_search_by=' + $('#resource_str_search_by').val();
@@ -1541,7 +1541,7 @@ function grid_view_jobs() {
 				strURL += '&jobid=' + $('#jobid').val();
 				strURL += '&dynamic_updates=' + $('#dynamic_updates').is(':checked');
 				if (typeof $('#resource_str').val() != 'undefined') {
-					strURL += '&resource_str=' + escape($('#resource_str').val());
+					strURL += '&resource_str=' + encodeURIComponent($('#resource_str').val());
 				}
 				if (typeof $('#resource_str_search_by').val() != 'undefined') {
 					strURL += '&resource_str_search_by=' + $('#resource_str_search_by').val();
@@ -1640,7 +1640,7 @@ function grid_view_jobs() {
 				strURL += '&jobid=' + $('#jobid').val();
 				strURL += '&dynamic_updates=' + $('#dynamic_updates').is(':checked');
 				if (typeof $('#resource_str').val() != 'undefined') {
-					strURL += '&resource_str=' + escape($('#resource_str').val());
+					strURL += '&resource_str=' + encodeURIComponent($('#resource_str').val());
 				}
 				if (typeof $('#resource_str_search_by').val() != 'undefined') {
 					strURL += '&resource_str_search_by=' + $('#resource_str_search_by').val();
@@ -1683,7 +1683,7 @@ function grid_view_jobs() {
 
 	$jobs_page = $config['url_path'] . 'plugins/grid/grid_bjobs.php';
 
-	display_job_results($jobs_page, $table_name, $job_results, $rows, $total_rows);
+	display_job_results($jobs_page, $table_name, array_unique_multidimensional($job_results), $rows, $total_rows);
 
 	display_job_legend();
 

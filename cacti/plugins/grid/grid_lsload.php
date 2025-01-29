@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2023                                          |
+ | Copyright IBM Corp. 2006, 2025                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -533,9 +533,9 @@ function grid_view_load() {
 		strURL += '&status=' + $('#status').val();
 		strURL += '&filter=' + $('#filter').val();
 		strURL += '&type=' + $('#type').val();
-		strURL += '&hgroup=' + $('#hgroup').val();
+		strURL += '&hgroup=' + encodeURIComponent($('#hgroup').val());
 		strURL += '&model=' + $('#model').val();
-		strURL += '&resource_str=' + escape($('#resource_str').val());
+		strURL += '&resource_str=' + encodeURIComponent($('#resource_str').val());
 		strURL += '&refresh=' + $('#refresh').val();
 		strURL += '&rows=' + $('#rows').val();
 		loadPageNoHeader(strURL);
