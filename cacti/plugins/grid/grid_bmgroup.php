@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2023                                          |
+ | Copyright IBM Corp. 2006, 2025                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -233,7 +233,7 @@ function grid_view_hgroups() {
 		strURL  = 'grid_bmgroup.php?header=false';
 		strURL += '&clusterid=' + $('#clusterid').val();
 		strURL += '&filter=' + $('#filter').val();
-		strURL += '&hgroup=' + $('#hgroup').val();
+		strURL += '&hgroup=' + encodeURIComponent($('#hgroup').val());
 		strURL += '&rows=' + $('#rows').val();
 		loadPageNoHeader(strURL);
 	}

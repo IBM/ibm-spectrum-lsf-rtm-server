@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2023                                          |
+ | Copyright IBM Corp. 2006, 2025                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -1492,7 +1492,7 @@ function grid_view_bhosts() {
 	function applyFilter() {
 		strURL  = 'grid_bhosts_closed.php?header=false';
 		strURL += '&clusterid=' + $('#clusterid').val();
-		strURL += '&resource_str=' + escape($('#resource_str').val());
+		strURL += '&resource_str=' + encodeURIComponent($('#resource_str').val());
 		strURL += '&filter=' + $('#filter').val();
 		strURL += '&type=' + $('#type').val();
 		strURL += '&model=' + $('#model').val();

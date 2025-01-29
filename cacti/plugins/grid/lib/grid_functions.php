@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright IBM Corp. 2006, 2025                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -13412,7 +13412,7 @@ print '</tr></table>';
 					<?php print __('Job ID', 'grid');?>
 				</td>
 				<td width='35%'>
-					<?php print $job['jobid']; if ($job['indexid'] > 0) print '[' . $job['indexid'] . ']'; if (isset($job['remote_jobid']) && isset($job['remote_clusterid'])) print ' (' . "<a class='pic linkEditMain nowrap' title='" . html_escape($job['remote_jobid']) . "' href='" . html_escape($job_page . '?action=viewjob&clusterid=' . $job['remote_clusterid'] . '&indexid=0&jobid=' . $job['remote_jobid'] . '&submit_time=' . strtotime($job['submit_time'])) . "' class='linkEditMain'>" . $job['remote_jobid'] . '</a>)'; ?>
+					<?php print $job['jobid']; if ($job['indexid'] > 0) print '[' . $job['indexid'] . ']'; if (isset($job['remote_jobid']) && isset($job['remote_clusterid'])) print ' (' . $job['remote_jobid'] . ')'; ?>
 				</td>
 				<td width='15%'>
 					<?php print __('Status', 'grid');?>
@@ -20529,6 +20529,19 @@ function grid_get_lsf_conf_variable_value($lsf_envdir, $arg) {
 	}
 
 	return '';
+}
+
+/**
+ * Remove duplicate entries from a multi-dimensional array
+ *
+ * @param array $input original multi-dimensional array
+ * @return array multi-dimensional array without duplicates
+ */
+function array_unique_multidimensional($input)
+{
+    $serialized = array_map('serialize', $input);
+    $unique = array_unique($serialized);
+    return array_intersect_key($input, $unique);
 }
 
 function isEmptyTable($table_name) {
