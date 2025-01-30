@@ -1079,6 +1079,7 @@ function dialog_client(event) {
 				case 'FreeBSD':
 				case 'RedHat':
 				case 'SUSE':
+				case 'AlmaLinux':
 				case 'Ubuntu':
 					env.os.icon = 'fab fa-' + env.os.name.toLowerCase();
 					break;
