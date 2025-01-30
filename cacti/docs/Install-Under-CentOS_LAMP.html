@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>Cacti – Installing on CentOS/RHEL/ROCKY</title>
+  <title>Cacti – Installing on CentOS/RHEL/ROCKY/AlmaLinux</title>
   <style type="text/css">
       code{white-space: pre-wrap;}
       span.smallcaps{font-variant: small-caps;}
@@ -77,7 +77,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <link rel="stylesheet" href="Cacti-Github.css" />
 </head>
 <body>
-<h1 id="installing-on-centosrhelrocky">Installing on CentOS/RHEL/ROCKY</h1>
+<h1 id="installing-on-centosrhelrocky">Installing on CentOS/RHEL/ROCKY/AlmaLinux</h1>
 <h2 id="lamp-linux-apache-mysqlmariadb-php-required-packages">LAMP (Linux, Apache, MySQL/MariaDB, PHP) Required packages</h2>
 <h3 id="web-server-apache">Web Server (Apache)</h3>
 <ol>
@@ -336,7 +336,7 @@ systemctl status cactid
 <h4 id="spine">Spine</h4>
 <ol>
 <li><p>Install the necessary packages to compile and install spine</p>
-<p>For RHEL/CENTOS/ROCKY 8+, you must enable the powertools repo first before downloading the below packages</p>
+<p>For RHEL/CENTOS/ROCKY/ALMA 8+, you must enable the powertools repo first before downloading the below packages</p>
 <pre class="console"><code>yum config-manager --set-enabled powertools
 </code></pre>
 <p>For RHEL/CENTOS/ROCKY 7.x and below</p>
