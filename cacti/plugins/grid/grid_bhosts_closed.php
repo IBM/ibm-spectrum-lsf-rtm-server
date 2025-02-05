@@ -1416,7 +1416,7 @@ function validate_bhosts_closed_request_vars() {
 			'options' => array('options' => 'sanitize_search_string')
 			),
 		'hgroup' => array(
-			'filter' => FILTER_CALLBACK,
+			'filter' => FILTER_SANITIZE_STRING,
 			'pageset' => true,
 			'default' => '-1',
 			'options' => array('options' => 'sanitize_search_string')
