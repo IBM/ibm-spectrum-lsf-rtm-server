@@ -114,9 +114,8 @@ function validate_bhosts_request_vars() {
 			'pageset' => true
 			),
 		'hgroup' => array(
-			'filter' => FILTER_CALLBACK,
+			'filter' => FILTER_DEFAULT,
 			'default' => '-1',
-			'options' => array('options' => 'sanitize_search_string'),
 			'pageset' => true
 			),
 		'status' => array(
@@ -966,7 +965,7 @@ function grid_view_bhosts() {
 		strURL += '&queue=' + $('#queue').val();
 
 		if ($('#resource_str').length) {
-			strURL += '&resource_str=' + escape($('#resource_str').val());
+			strURL += '&resource_str=' + encodeURIComponent($('#resource_str').val());
 		}
 
 		strURL += '&filter=' + $('#filter').val();

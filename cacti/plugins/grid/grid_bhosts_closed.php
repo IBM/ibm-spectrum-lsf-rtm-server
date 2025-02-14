@@ -1416,10 +1416,9 @@ function validate_bhosts_closed_request_vars() {
 			'options' => array('options' => 'sanitize_search_string')
 			),
 		'hgroup' => array(
-			'filter' => FILTER_CALLBACK,
+			'filter' => FILTER_DEFAULT,
 			'pageset' => true,
 			'default' => '-1',
-			'options' => array('options' => 'sanitize_search_string')
 			),
 		'filter' => array(
 			'filter' => FILTER_CALLBACK,
@@ -1492,7 +1491,7 @@ function grid_view_bhosts() {
 	function applyFilter() {
 		strURL  = 'grid_bhosts_closed.php?header=false';
 		strURL += '&clusterid=' + $('#clusterid').val();
-		strURL += '&resource_str=' + escape($('#resource_str').val());
+		strURL += '&resource_str=' + encodeURIComponent($('#resource_str').val());
 		strURL += '&filter=' + $('#filter').val();
 		strURL += '&type=' + $('#type').val();
 		strURL += '&model=' + $('#model').val();

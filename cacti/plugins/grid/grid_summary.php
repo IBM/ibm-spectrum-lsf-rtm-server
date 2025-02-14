@@ -2117,7 +2117,7 @@ function summary_alarm_log() {
 		strURL += '&cacti='        + $('#cacti').val();
 		strURL += '&hgroup='       + encodeURIComponent($('#hgroup').val());
 		strURL += '&refresh='      + $('#refresh').val();
-		strURL += '&resource_str=' + escape($('#resource_str').val());
+		strURL += '&resource_str=' + encodeURIComponent($('#resource_str').val());
 		strURL += '&lstatus='      + $('#lstatus').val();
 		strURL += '&bstatus='      + $('#bstatus').val();
 		strURL += '&tholds='       + $('#tholds').val();
@@ -2887,7 +2887,7 @@ function summary_host() {
 		strURL += '&order='        + $('#order').val();
 		strURL += '&hgroup='       + encodeURIComponent($('#hgroup').val());
 		strURL += '&refresh='      + $('#refresh').val();
-		strURL += '&resource_str=' + escape($('#resource_str').val());
+		strURL += '&resource_str=' + encodeURIComponent($('#resource_str').val());
 		strURL += '&lstatus='      + $('#lstatus').val();
 		strURL += '&bstatus='      + $('#bstatus').val();
 		strURL += '&tholds='       + $('#tholds').val();

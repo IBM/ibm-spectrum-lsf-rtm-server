@@ -447,10 +447,9 @@ function validate_lsload_request_vars() {
 			'options' => array('options' => 'sanitize_search_string')
 			),
 		'hgroup' => array(
-			'filter' => FILTER_CALLBACK,
+			'filter' => FILTER_DEFAULT,
 			'pageset' => true,
 			'default' => '-1',
-			'options' => array('options' => 'sanitize_search_string')
 			),
 		'type' => array(
 			'filter' => FILTER_CALLBACK,
@@ -533,9 +532,9 @@ function grid_view_load() {
 		strURL += '&status=' + $('#status').val();
 		strURL += '&filter=' + $('#filter').val();
 		strURL += '&type=' + $('#type').val();
-		strURL += '&hgroup=' + $('#hgroup').val();
+		strURL += '&hgroup=' + encodeURIComponent($('#hgroup').val());
 		strURL += '&model=' + $('#model').val();
-		strURL += '&resource_str=' + escape($('#resource_str').val());
+		strURL += '&resource_str=' + encodeURIComponent($('#resource_str').val());
 		strURL += '&refresh=' + $('#refresh').val();
 		strURL += '&rows=' + $('#rows').val();
 		loadPageNoHeader(strURL);

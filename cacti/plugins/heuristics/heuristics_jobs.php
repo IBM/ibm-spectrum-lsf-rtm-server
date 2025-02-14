@@ -851,7 +851,7 @@ function grid_view_jobs() {
 			strURL += '&filter=' + $('#filter').val();
 			strURL += '&jobid=' + $('#jobid').val();
 			strURL += '&dynamic_updates=' + $('#dynamic_updates').is(':checked');
-			strURL += '&resource_str=' + escape($('input[id="resource_str"]').val());
+			strURL += '&resource_str=' + encodeURIComponent($('input[id="resource_str"]').val());
 			strURL += '&timespan=' + $('#timespan').val();
 			loadPageNoHeader(strURL);
 		}

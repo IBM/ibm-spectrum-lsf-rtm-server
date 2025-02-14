@@ -171,10 +171,9 @@ function grid_validate_bmgroup_variables() {
 			'default' => '1'
 			),
 		'hgroup' => array(
-			'filter' => FILTER_CALLBACK,
+			'filter' => FILTER_DEFAULT,
 			'pageset' => true,
 			'default' => '-1',
-			'options' => array('options' => 'sanitize_search_string')
 			),
 		'filter' => array(
 			'filter' => FILTER_CALLBACK,
@@ -233,7 +232,7 @@ function grid_view_hgroups() {
 		strURL  = 'grid_bmgroup.php?header=false';
 		strURL += '&clusterid=' + $('#clusterid').val();
 		strURL += '&filter=' + $('#filter').val();
-		strURL += '&hgroup=' + $('#hgroup').val();
+		strURL += '&hgroup=' + encodeURIComponent($('#hgroup').val());
 		strURL += '&rows=' + $('#rows').val();
 		loadPageNoHeader(strURL);
 	}

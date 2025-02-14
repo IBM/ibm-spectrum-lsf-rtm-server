@@ -252,8 +252,7 @@ function grid_validate_job_request_variables() {
 			'default' => '-1'
 			),
 		'hgroup' => array(
-			'filter' => FILTER_CALLBACK,
-			'options' => array('options' => 'sanitize_search_string'),
+			'filter' => FILTER_DEFAULT,
 			'pageset' => true,
 			'default' => '-1'
 			),
@@ -1252,7 +1251,7 @@ function grid_view_jobs() {
 			strURL += '&jobid=' + $('#jobid').val();
 			strURL += '&dynamic_updates=' + $('#dynamic_updates').is(':checked');
 			if (typeof $('#resource_str').val() != 'undefined') {
-				strURL += '&resource_str=' + escape($('#resource_str').val());
+				strURL += '&resource_str=' + encodeURIComponent($('#resource_str').val());
 			}
 			if (typeof $('#resource_str_search_by').val() != 'undefined') {
 				strURL += '&resource_str_search_by=' + $('#resource_str_search_by').val();
@@ -1411,7 +1410,7 @@ function grid_view_jobs() {
 				strURL += '&jobid=' + $('#jobid').val();
 				strURL += '&dynamic_updates=' + $('#dynamic_updates').is(':checked');
 				if (typeof $('#resource_str').val() != 'undefined') {
-					strURL += '&resource_str=' + escape($('#resource_str').val());
+					strURL += '&resource_str=' + encodeURIComponent($('#resource_str').val());
 				}
 				if (typeof $('#resource_str_search_by').val() != 'undefined') {
 					strURL += '&resource_str_search_by=' + $('#resource_str_search_by').val();
@@ -1541,7 +1540,7 @@ function grid_view_jobs() {
 				strURL += '&jobid=' + $('#jobid').val();
 				strURL += '&dynamic_updates=' + $('#dynamic_updates').is(':checked');
 				if (typeof $('#resource_str').val() != 'undefined') {
-					strURL += '&resource_str=' + escape($('#resource_str').val());
+					strURL += '&resource_str=' + encodeURIComponent($('#resource_str').val());
 				}
 				if (typeof $('#resource_str_search_by').val() != 'undefined') {
 					strURL += '&resource_str_search_by=' + $('#resource_str_search_by').val();
@@ -1640,7 +1639,7 @@ function grid_view_jobs() {
 				strURL += '&jobid=' + $('#jobid').val();
 				strURL += '&dynamic_updates=' + $('#dynamic_updates').is(':checked');
 				if (typeof $('#resource_str').val() != 'undefined') {
-					strURL += '&resource_str=' + escape($('#resource_str').val());
+					strURL += '&resource_str=' + encodeURIComponent($('#resource_str').val());
 				}
 				if (typeof $('#resource_str_search_by').val() != 'undefined') {
 					strURL += '&resource_str_search_by=' + $('#resource_str_search_by').val();

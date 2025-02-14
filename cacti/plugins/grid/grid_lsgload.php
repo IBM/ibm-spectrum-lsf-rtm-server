@@ -66,10 +66,9 @@ function validate_lsgload_request_vars() {
 			'options' => array('options' => 'sanitize_search_string')
 			),
 		'hgroup' => array(
-			'filter' => FILTER_CALLBACK,
+			'filter' => FILTER_DEFAULT,
 			'pageset' => true,
 			'default' => '-1',
-			'options' => array('options' => 'sanitize_search_string')
 			),
 		'filter' => array(
 			'filter' => FILTER_CALLBACK,
@@ -510,6 +509,9 @@ function grid_view_load() {
 			}
 
 			form_alternate_row();
+			
+			//handle special chars in host group name like &
+			$groupName = urlencode($groupName);
 
 			?>
 			<td class='nowrap' style='width:1%;'>
