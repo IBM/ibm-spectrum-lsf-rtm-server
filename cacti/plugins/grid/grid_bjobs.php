@@ -252,8 +252,7 @@ function grid_validate_job_request_variables() {
 			'default' => '-1'
 			),
 		'hgroup' => array(
-			'filter' => FILTER_SANITIZE_STRING,
-			'options' => array('options' => 'sanitize_search_string'),
+			'filter' => FILTER_DEFAULT,
 			'pageset' => true,
 			'default' => '-1'
 			),

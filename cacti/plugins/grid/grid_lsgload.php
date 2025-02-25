@@ -66,10 +66,9 @@ function validate_lsgload_request_vars() {
 			'options' => array('options' => 'sanitize_search_string')
 			),
 		'hgroup' => array(
-			'filter' => FILTER_SANITIZE_STRING,
+			'filter' => FILTER_DEFAULT,
 			'pageset' => true,
 			'default' => '-1',
-			'options' => array('options' => 'sanitize_search_string')
 			),
 		'filter' => array(
 			'filter' => FILTER_CALLBACK,

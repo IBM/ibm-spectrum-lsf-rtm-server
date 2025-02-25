@@ -114,9 +114,8 @@ function validate_bhosts_request_vars() {
 			'pageset' => true
 			),
 		'hgroup' => array(
-			'filter' => FILTER_SANITIZE_STRING,
+			'filter' => FILTER_DEFAULT,
 			'default' => '-1',
-			'options' => array('options' => 'sanitize_search_string'),
 			'pageset' => true
 			),
 		'status' => array(
