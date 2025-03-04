@@ -4221,6 +4221,46 @@ function delete_records_from_jobs_table($start_time, $start) {
 	db_execute("DROP TABLE IF EXISTS $temp_table");
 }
 
+/**
+ * grid_pump_infile - function that runs an ETL using MariaDB/MySQL's INFILE
+ * function to reduce implicit locking when using INSERT INTO SELECT * FROM ..
+ * type queries
+ *
+ * @param $table - the table that you are inserting into
+ * @param $sql - The SQL that you need to execute to load the OUTFILE
+ * @param $params - For prepared statements, the columns that need to be prepared
+ * @param $format - The insert columns if there are any
+ * @param $ignore - True if you want to ignore insert errors
+ */
+function grid_pump_infile($table, $sql, $params = array(), $format = array(), $ignore = false) {
+	$columns  = '';
+	$tmp_file = '/tmp/rtm/' . $table . '_' . time() . '.txt';
+	
+	if (!is_dir('/tmp/rtm')) {
+		mkdir('/tmp/rtm');
+	}
+	
+	if (file_exists($tmp_file)) {
+		unlink($tmp_file);
+	}
+	
+	if (cacti_sizeof($format)) {
+		$columns = '(`' . implode('`,`', $format) . '`)';
+	}
+	
+	// Create the OUTFILE - It will exist on the Database Server if remote
+	db_execute_prepared($sql . " INTO OUTFILE '$tmp_file'", $params);
+	
+	// Create the OUTFILE - It will exist on the Database Server if remote
+	db_execute_prepared("LOAD DATA INFILE '$tmp_file' " . ($ignore ? ' IGNORE ':'') . "INTO TABLE $table $columns");
+	
+	if (file_exists($tmp_file)) {
+		unlink($tmp_file);
+	}
+	
+	return db_affected_rows();
+}
+
 function grid_pump_records($records, $table, $format = array(), $ignore = false, $duplicate = "") {
 	global $cnn_id;
 
@@ -7242,7 +7282,9 @@ function update_hostgroups_stats() {
 
 	/* limit the clusters */
 	$clsql = get_cluster_list('ghg.clusterid');
+	$clsql_new = "";
 	if (strlen($clsql)) {
+		$clsql_new = "WHERE ".$clsql;
 		$clsql = " AND $clsql";
 	}
 	$clsql_j = str_replace("ghg.clusterid", "clusterid", $clsql);
@@ -7273,19 +7315,41 @@ function update_hostgroups_stats() {
 			AND rset2.queue=rset.queue
 			GROUP BY rset.clusterid, rset.groupName");
 	} else {
-		$records = db_fetch_assoc("SELECT ghg.clusterid, ghg.groupName, SUM(num_cpus) AS numPEND,
-			NOW() AS last_updated, '1' as present
-			FROM grid_jobs AS gj
-			INNER JOIN grid_jobs_reqhosts AS gjrh
-				ON gjrh.jobid = gj.jobid
-				AND gjrh.clusterid = gj.clusterid
-				AND gjrh.indexid = gj.indexid
-				AND gjrh.submit_time = gj.submit_time
-			INNER JOIN grid_hostgroups AS ghg
-				ON ghg.clusterid = gjrh.clusterid
-				AND (ghg.host = gjrh.host OR ghg.groupName = gjrh.host)
-			WHERE gj.stat = 'PEND' $clsql
-			GROUP BY ghg.clusterid, ghg.groupName");
+		$temp_table = "uhs_temp".time();
+		$sql = "SELECT gj.clusterid, host, num_cpus, gj.jobid, gj.indexid, gj.submit_time
+			FROM grid_jobs AS gj 
+			INNER JOIN grid_jobs_reqhosts AS gjrh 
+			ON gjrh.jobid = gj.jobid 
+			AND gjrh.clusterid = gj.clusterid 
+			AND gjrh.indexid = gj.indexid 
+			AND gjrh.submit_time = gj.submit_time 
+			WHERE gj.stat = 'PEND'";
+			
+		db_execute("CREATE TEMPORARY TABLE $temp_table (
+			`clusterid` int(10) unsigned NOT NULL,
+			`jobid` int(10) unsigned NOT NULL,
+			`indexid` int(10) unsigned NOT NULL,
+			`submit_time` timestamp NOT NULL default '0000-00-00 00:00:00',
+			`host` varchar(64) NOT NULL,
+			`num_cpus` int(10) unsigned NOT NULL,
+			PRIMARY KEY  (`clusterid`,`jobid`,`indexid`, `submit_time`, `host`))
+			ENGINE=InnoDB
+			ROW_FORMAT=Dynamic");
+		
+		$num_record = grid_pump_infile($temp_table, $sql);
+		
+		if ($num_record > 0) {
+			$records = db_fetch_assoc("SELECT ghg.clusterid, ghg.groupName, SUM(num_cpus) AS numPEND,
+				NOW() AS last_updated, '1' as present 
+				FROM $temp_table as gjrh
+				INNER JOIN grid_hostgroups AS ghg
+					ON ghg.clusterid = gjrh.clusterid
+					AND (ghg.host = gjrh.host OR ghg.groupName = gjrh.host)
+				".$clsql_new."
+				GROUP BY ghg.clusterid, ghg.groupName");
+		} else {
+			$records = array();
+		}
 	}
 	db_execute("UPDATE grid_hostgroups_stats SET present=0 WHERE present=1");
 	grid_pump_records($records, "grid_hostgroups_stats", $format, false, $duplicate);
