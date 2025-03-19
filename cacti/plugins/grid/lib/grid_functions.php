@@ -7147,61 +7147,60 @@ function update_queues() {
 function update_hostgroups_stats() {
 	grid_debug("Updating Host Group Stats - Begin");
 	$job_pend_hostgroup = read_config_option('grid_job_pend_hostgroup');
-	if ($job_pend_hostgroup == 'disable') {
-		grid_debug("Updating Host Group Stats - Disabled - Complete");
-		return;
+	if ($job_pend_hostgroup !== 'disable') {
+		grid_debug("Updating Host Group Stats - update number of pending jobs - Bgin");
+	        /* limit the clusters */
+        	$clsql = get_cluster_list('ghg.clusterid');
+	        if (strlen($clsql)) {
+        	        $clsql = " AND $clsql";
+        	}
+	        $clsql_j = str_replace("ghg.clusterid", "clusterid", $clsql);
+
+        	$format = array("clusterid", "groupName", "numPEND", "last_updated", "present");
+
+	        $duplicate = "ON DUPLICATE KEY UPDATE numPEND=VALUES(numPEND),
+        	        last_updated=VALUES(last_updated), present=VALUES(present)";
+
+	        // numPEND for Host Group Statistics
+       		 if ($job_pend_hostgroup == 'queuemap'){
+                	$records = db_fetch_assoc("SELECT rset.clusterid, rset.groupName, SUM(num_cpus) AS numPEND,
+                        	NOW() AS last_updated, '1' as present
+                        	FROM (
+                                	SELECT DISTINCT ghg.groupName, gqh.queue, gqh.clusterid
+                               		FROM grid_hostgroups AS ghg
+	                                INNER JOIN grid_queues_hosts AS gqh
+	                                ON gqh.host=ghg.host
+	                                AND gqh.clusterid=ghg.clusterid
+	                        ) AS rset
+	                        INNER JOIN (
+	                                SELECT clusterid, queue, SUM(num_cpus) AS num_cpus
+	                                FROM grid_jobs AS gj
+	                                WHERE stat='PEND' $clsql_j
+	                                GROUP BY clusterid, queue
+	                        ) AS rset2
+	                        ON rset2.clusterid=rset.clusterid
+	                        AND rset2.queue=rset.queue
+	                        GROUP BY rset.clusterid, rset.groupName");
+	        } else {
+	                $records = db_fetch_assoc("SELECT ghg.clusterid, ghg.groupName, SUM(num_cpus) AS numPEND,
+	                        NOW() AS last_updated, '1' as present
+	                        FROM grid_jobs AS gj
+	                        INNER JOIN grid_jobs_reqhosts AS gjrh
+	                                ON gjrh.jobid = gj.jobid
+	                                AND gjrh.clusterid = gj.clusterid
+	                                AND gjrh.indexid = gj.indexid
+	                                AND gjrh.submit_time = gj.submit_time
+	                        INNER JOIN grid_hostgroups AS ghg
+	                                ON ghg.clusterid = gjrh.clusterid
+	                                AND (ghg.host = gjrh.host OR ghg.groupName = gjrh.host)
+	                        WHERE gj.stat = 'PEND' $clsql
+	                        GROUP BY ghg.clusterid, ghg.groupName");
+	        }
+	        db_execute("UPDATE grid_hostgroups_stats SET present=0 WHERE present=1");
+	        grid_pump_records($records, "grid_hostgroups_stats", $format, false, $duplicate);
+	        db_execute("UPDATE grid_hostgroups_stats SET numPEND=0 WHERE present=0");
+		grid_debug("Updating Host Group Stats - update number of pending jobs - Complete");
 	}
-
-	/* limit the clusters */
-	$clsql = get_cluster_list('ghg.clusterid');
-	if (strlen($clsql)) {
-		$clsql = " AND $clsql";
-	}
-	$clsql_j = str_replace("ghg.clusterid", "clusterid", $clsql);
-
-	$format = array("clusterid", "groupName", "numPEND", "last_updated", "present");
-
-	$duplicate = "ON DUPLICATE KEY UPDATE numPEND=VALUES(numPEND),
-		last_updated=VALUES(last_updated), present=VALUES(present)";
-
-	// numPEND for Host Group Statistics
-	if ($job_pend_hostgroup == 'queuemap'){
-		$records = db_fetch_assoc("SELECT rset.clusterid, rset.groupName, SUM(num_cpus) AS numPEND,
-			NOW() AS last_updated, '1' as present
-			FROM (
-				SELECT DISTINCT ghg.groupName, gqh.queue, gqh.clusterid
-				FROM grid_hostgroups AS ghg
-				INNER JOIN grid_queues_hosts AS gqh
-				ON gqh.host=ghg.host
-				AND gqh.clusterid=ghg.clusterid
-			) AS rset
-			INNER JOIN (
-				SELECT clusterid, queue, SUM(num_cpus) AS num_cpus
-				FROM grid_jobs AS gj
-				WHERE stat='PEND' $clsql_j
-				GROUP BY clusterid, queue
-			) AS rset2
-			ON rset2.clusterid=rset.clusterid
-			AND rset2.queue=rset.queue
-			GROUP BY rset.clusterid, rset.groupName");
-	} else {
-		$records = db_fetch_assoc("SELECT ghg.clusterid, ghg.groupName, SUM(num_cpus) AS numPEND,
-			NOW() AS last_updated, '1' as present
-			FROM grid_jobs AS gj
-			INNER JOIN grid_jobs_reqhosts AS gjrh
-				ON gjrh.jobid = gj.jobid
-				AND gjrh.clusterid = gj.clusterid
-				AND gjrh.indexid = gj.indexid
-				AND gjrh.submit_time = gj.submit_time
-			INNER JOIN grid_hostgroups AS ghg
-				ON ghg.clusterid = gjrh.clusterid
-				AND (ghg.host = gjrh.host OR ghg.groupName = gjrh.host)
-			WHERE gj.stat = 'PEND' $clsql
-			GROUP BY ghg.clusterid, ghg.groupName");
-	}
-	db_execute("UPDATE grid_hostgroups_stats SET present=0 WHERE present=1");
-	grid_pump_records($records, "grid_hostgroups_stats", $format, false, $duplicate);
-	db_execute("UPDATE grid_hostgroups_stats SET numPEND=0 WHERE present=0");
 
 	$format = array("clusterid", "groupName", "memSlotUtil", "slotUtil", "cpuUtil",
 		"last_updated", "present");
