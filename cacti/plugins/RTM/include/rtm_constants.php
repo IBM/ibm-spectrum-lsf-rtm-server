@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright IBM Corp. 2006, 2025                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -22,8 +22,8 @@ define('RTM_BRAND_NAME', 'IBM Spectrum');
 define('RTM_BRAND_NAME_BOLD', 'IBM <b>Spectrum</b>');
 define('RTM_PRODUCT_NAME', 'LSF RTM');
 define('RTM_VERSION', '10.2.0.15');
-define('RTM_COPYRIGHT', '© Copyright International Business Machines Corp. 1992, 2024. US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp. Portions Copyright © 2004, 2024 The Cacti Group, Inc.');
-define('RTM_COPYRIGHT_YEAR', '2006-2024');
+define('RTM_COPYRIGHT', '© Copyright International Business Machines Corp. 1992, 2025. US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp. Portions Copyright © 2004, 2024 The Cacti Group, Inc.');
+define('RTM_COPYRIGHT_YEAR', '2006-2025');
 define('RTM_VERSION_SUPPORTED_MIN', '8.3');
 define('RTM_VERSION_LATEST_GA', '10.2');
 
