@@ -3447,6 +3447,20 @@ function grid_config_settings () {
 				'queuemap' => __('Host groups associated with queues', 'grid')
 			)
 		),
+		'grid_job_pend_pump_infile' => array(
+			'friendly_name' => __('Hostgroup Pend Jobs Data Save to Temp File', 'grid'),
+			'description' => __('Save the hostgroup intermediate pend jobs data to temp file before load to DB. Need to grant RTM DB user \'FILE\' privilege.', 'grid'),
+			'default' => '',
+			'method' => 'checkbox'
+		),
+		'grid_job_pump_infile_dir' => array(
+			'friendly_name' => __('Temp Directory to Save Hostgroup Pend Jobs Data', 'grid'),
+			'description' => __('The directory on DB server to save temp files, \'mysql\' user needs full access to the directory. Please clean up old temp files in the directory regularly.', 'grid'),
+			'method' => 'dirpath',
+			'default' => '',
+			'size' => '60',
+			'max_length' => '255'
+		)
 	);
 
 	$grid_settings_system['grid_paths'] = array(

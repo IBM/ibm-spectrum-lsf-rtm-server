@@ -26,6 +26,10 @@ function upgrade_to_10_2_0_15() {
 	include_once(dirname(__FILE__) . '/../../../lib/rtm_db_upgrade.php');
 	include_once(dirname(__FILE__) . '/../../../lib/plugins.php');
 	include_once(dirname(__FILE__) . '/../../../lib/utility.php');
+	include_once(dirname(__FILE__) . '/../../../lib/import.php');
+	include_once(dirname(__FILE__) . '/../../../lib/template.php');
+	include_once(dirname(__FILE__) . '/../../../lib/api_device.php');
+	include_once(dirname(__FILE__) . '/../../../lib/api_data_source.php');
 
 	$column_arr= array(
 		'cpuPeak' => "ADD COLUMN `cpuPeak` decimal(9,5) NOT NULL default '0.00000' AFTER `isLoaningGSLA`",
@@ -65,7 +69,7 @@ function upgrade_to_10_2_0_15() {
 	cacti_log('Templates import complete.', true, 'UPGRADE');	
 
 	//update version for other plugins that file touched, and no much DB change
-	db_execute("UPDATE plugin_config SET version='10.2.0.15' WHERE directory IN ('RTM', 'license', 'meta', 'lichist')");
+	db_execute("UPDATE plugin_config SET version='10.2.0.15' WHERE directory IN ('RTM', 'license', 'meta', 'lichist', 'gridpend', 'gridcstat')");
 
 	// Patch the cluster host group slot utilization
 	$patch_script = read_config_option('path_webroot') . '/util/support/rtm_tool/scripts/fix_hostgroup_label.sh';
