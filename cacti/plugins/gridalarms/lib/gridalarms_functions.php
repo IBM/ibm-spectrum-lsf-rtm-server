@@ -309,7 +309,7 @@ function gridalarms_build_email_list($alarm) {
 			}
 		}
 
-		if (strlen(trim($alarm['notify_extra']))) {
+		if (isset($alarm['notify_extra']) && strlen(trim($alarm['notify_extra']))) {
 			$emails = explode(',', $alarm['notify_extra']);
 			foreach ($emails as $e) {
 				$e = trim($e);

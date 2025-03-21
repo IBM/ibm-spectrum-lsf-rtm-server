@@ -2241,7 +2241,7 @@ function thold_edit() {
 	draw_edit_form(
 		array(
 			'config' => array('no_form_tag' => true),
-			'fields' => $form_array
+			'fields' => inject_form_variables($form_array, cacti_sizeof($thold_data) ? $thold_data : array())
 		)
 	);
 

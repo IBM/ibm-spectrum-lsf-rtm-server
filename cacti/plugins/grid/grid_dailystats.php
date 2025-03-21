@@ -625,7 +625,7 @@ function dailyStatsFilter() {
 				strURL = strURL + '&project=' + $('#project').val();
 				strURL = strURL + '&exec_host=' + $('#exec_host').val();
 				strURL = strURL + '&units=' + $('#units').val();
-				strURL = strURL + '&filter=' + base64_encode($('#filter').val());
+				strURL = strURL + '&filter=' + $('#filter').val();
 				if ($('#date1').val() == date1 && $('#date2').val() == date2 && $('#predefined_timespan').val() != 0) {
 					strURL = strURL + '&predefined_timespan=' + $('#predefined_timespan').val();
 				} else {
@@ -969,9 +969,10 @@ function grid_view_dstats_request_vars() {
 			'default' => '1'
 			),
 		'filter' => array(
-			'filter' => FILTER_VALIDATE_IS_REGEX,
+			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
-			'default' => ''
+			'default' => '',
+			'options' => array('options' => 'sanitize_search_string')
 			),
 		'sort_column' => array(
 			'filter' => FILTER_CALLBACK,
@@ -1383,7 +1384,7 @@ function grid_invalid_regex($regex) {
     $track_errors = ini_get('track_errors');
     ini_set('track_errors', 1);
 
-    if (@preg_match("'".$regex."'", '') !== false) {
+    if (@preg_match("'".$regex."'", null) !== false) {
         ini_set('track_errors', $track_errors);
         return false;
     }
