@@ -1058,7 +1058,7 @@ function display_ut($value, $round = 2) {
 }
 
 function display_job_effic($value, $run_time, $round = 2) {
-	if (($value <= 0) || ($run_time == 0)) {
+	if (($value < 0) || ($run_time == 0)) {
 		return '-';
 	} else {
 		return add_dec($value,$round) . '%';
