@@ -39,9 +39,9 @@ $alert_items_column = getenv('GALERT_ITEMS_COLUMN');
 //For example, "1,lsf101_xili,17,0,2016-01-20 16:48:06,PEND,300,430258|1,lsf101_xili,22,0,2016-01-25 15:37:19,PEND,240,2505"
 $alert_items_list = getenv('GALERT_ITEMS_LIST');
 
-force_kill_jobs();
+kill_jobs();
 
-function force_kill_jobs() {
+function kill_jobs() {
 	global $config, $messages;
 	global $alert_items_column, $alert_items_list, $alert_name, $alert_id;
 
@@ -95,7 +95,7 @@ function force_kill_jobs() {
 
 	$json_cluster_info = array (
 		'key' => $advocate_key,
-		'action' => 'forcekill',
+		'action' => 'kill',
 		'target' => $json_return_format,
 	);
 
@@ -107,7 +107,7 @@ function force_kill_jobs() {
 		cacti_log('GRIDALERTS ERROR: ' . $messages[135]['message'], false, 'SYSTEM');
 	} else {
 		if ($curl_output['http_code'] == 200) {
-			cacti_log("GRIDALERTS STATS: Alert:$alert_id - '$alert_name' Force Kill Jobs List (JobID:ClusterID) (" . implode(',', $selected_items_whole) . ').', false, 'SYSTEM');
+			cacti_log("GRIDALERTS STATS: Alert:$alert_id - '$alert_name' Kill Jobs List (JobID:ClusterID) (" . implode(',', $selected_items_whole) . ').', false, 'SYSTEM');
 		} else {
 			cacti_log('GRIDALERTS ERROR: ' . $messages[136]['message'], false, 'SYSTEM');
 		}
@@ -141,7 +141,7 @@ function force_kill_jobs() {
 						$count_ok ++;
 					} else {
 						$count_fail ++;
-						cacti_log("GRIDALERTS ERROR: Alert:$alert_id - '$alert_name' Job Force Kill Failed JobID:$faild_jobid ClusterID:$faild_clusterid lsberrno:$faild_lsberrno lserror:$faild_lserrno Message:$faild_status_message", false, 'SYSTEM');
+						cacti_log("GRIDALERTS ERROR: Alert:$alert_id - '$alert_name' Job Kill Failed JobID:$faild_jobid ClusterID:$faild_clusterid lsberrno:$faild_lsberrno lserror:$faild_lserrno Message:$faild_status_message", false, 'SYSTEM');
 					}
 				}
 			}
@@ -150,7 +150,7 @@ function force_kill_jobs() {
 	}
 
 	$count_total = $count_ok+$count_fail;
-	cacti_log("GRIDALERTS STATS: Alert:$alert_id - '$alert_name' Total Jobs:$count_total Force Kill Failed Jobs:$count_fail", false, 'SYSTEM');
+	cacti_log("GRIDALERTS STATS: Alert:$alert_id - '$alert_name' Total Killed Jobs:$count_total, Kill Failed Jobs:$count_fail", false, 'SYSTEM');
 
 }
 
