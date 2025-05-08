@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2024 The Cacti Group                                 |
@@ -13,6 +12,11 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDtool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -136,6 +140,9 @@ $cacti_version_codes = array(
 	'1.2.25'  => '0103',
 	'1.2.26'  => '0103',
 	'1.2.27'  => '0103',
+	'1.2.28'  => '0103',
+	'1.2.29'  => '0103',
+	'1.2.30'  => '0103',
 );
 
 $messages = array(
@@ -471,12 +478,15 @@ $phperrors = array (
 	E_USER_ERROR => 'USER_ERROR',
 	E_USER_WARNING => 'USER_WARNING',
 	E_USER_NOTICE  => 'USER_NOTICE',
-	E_STRICT => 'STRICT',
 	E_RECOVERABLE_ERROR  => 'RECOVERABLE_ERROR',
 	E_DEPRECATED => 'DEPRECATED',
 	E_USER_DEPRECATED  => 'USER_DEPRECATED',
 	E_ALL => 'ALL'
 );
+
+if (version_compare(PHP_VERSION, '8.4', '<')) {
+	$phperrors[E_STRICT] = 'STRICT';
+}
 
 if (cacti_version_compare(get_rrdtool_version(), '1.8.0', '>=')) {
 	$cdef_functions[] = 'ROUND';
@@ -1328,7 +1338,6 @@ $user_auth_realm_filenames = array(
 	'help.php' => -1
 );
 
-//Do not touch array order to avoid "Unmet Dependency" Error
 $hash_type_codes = array(
 	'round_robin_archive' => '15',
 	'cdef' => '05',

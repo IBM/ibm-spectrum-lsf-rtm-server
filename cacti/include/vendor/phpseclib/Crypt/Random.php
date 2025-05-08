@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 /**
  * Random Number Generator

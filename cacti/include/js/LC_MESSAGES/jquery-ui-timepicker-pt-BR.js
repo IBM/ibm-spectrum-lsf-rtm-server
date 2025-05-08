@@ -1,4 +1,3 @@
-// $Id$
 /* Brazilian Portuguese translation for the jQuery Timepicker Addon */
 /* Written by Diogo Damiani (diogodamiani@gmail.com) */
 (function ($) {

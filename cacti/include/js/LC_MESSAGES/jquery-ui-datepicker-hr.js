@@ -1,4 +1,3 @@
-// $Id$
 /* Croatian i18n for the jQuery UI date picker plugin. */
 /* Written by Vjekoslav Nesek. */
 ( function( factory ) {

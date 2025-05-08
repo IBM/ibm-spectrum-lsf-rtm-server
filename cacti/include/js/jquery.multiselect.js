@@ -1,4 +1,3 @@
-// $Id$
 /* jshint forin:true, noarg:true, noempty:true, eqeqeq:true, boss:true, undef:true, curly:true, browser:true, jquery:true */
 /*
  * jQuery UI MultiSelect Widget 3.0.0

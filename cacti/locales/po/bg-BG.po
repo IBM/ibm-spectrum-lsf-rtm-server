@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Cacti\n"
 "Report-Msgid-Bugs-To: developers@cacti.net\n"
-"POT-Creation-Date: 2024-05-12 19:29+0000\n"
+"POT-Creation-Date: 2024-04-20 18:16-0400\n"
 "PO-Revision-Date: 2024-04-20 18:23-0400\n"
 "Last-Translator: Anonymous <anonymous@cacti.net>\n"
 "Language-Team: Bulgarian <http://translate.cacti.net/projects/cacti/core-v1-2-x/bg/>\n"
@@ -2539,7 +2539,7 @@ msgstr "Не са намерени правила за дърво"
 #: cactid.php:44 help.php:44 lib/functions.php:5943 lib/functions.php:6012
 #: lib/functions.php:6102 lib/functions.php:6671 poller.php:392 poller.php:542
 #: poller.php:607 poller.php:647 poller.php:789 poller.php:895
-#: poller_automation.php:53 poller_boost.php:355
+#: poller_automation.php:53 poller_boost.php:351
 msgid "Cacti System Warning"
 msgstr "Предупреждение за кактуси"
 
@@ -12451,7 +12451,7 @@ msgstr "Елемент на правило [нов елемент на прав�
 msgid "Added by Cacti Automation"
 msgstr "Добавено от Cacti Automation"
 
-#: lib/api_automation.php:3270
+#: lib/api_automation.php:3272
 msgid "ERROR: IP ranges in the form of range1-range2 are no longer supported."
 msgstr "ГРЕШКА: IP диапазоните под формата на range1-range2 вече не се поддържат."
 
@@ -17165,7 +17165,7 @@ msgstr "Главен Администратор на Кактуси"
 msgid "Cacti Automation Report requires an html based Email client"
 msgstr "Cacti Automation Report изисква HTML базиран имейл клиент"
 
-#: poller_boost.php:355
+#: poller_boost.php:351
 msgid "WARNING: Detected Poller Boost Overrun, Possible Boost Poller Crash"
 msgstr "ПРЕДУПРЕЖДЕНИЕ: Открито превишаване на усилването на Poller, възможно срив на Poller Boost"
 

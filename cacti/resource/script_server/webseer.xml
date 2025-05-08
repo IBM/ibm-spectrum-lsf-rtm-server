@@ -1,4 +1,3 @@
-<!-- $Id$ -->
 <webseer>
 	<name>Web Service Checks Data Query</name>
 	<script_path>|path_cacti|/scripts/ss_webseer.php</script_path>

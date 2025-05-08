@@ -1,4 +1,3 @@
-<!-- $Id$ -->
 <interface>
 	<name>Get Unix Mounted Partitions</name>
 	<description>Queries a list of mounted partitions on a unix-based host with the 'df' command.</description>

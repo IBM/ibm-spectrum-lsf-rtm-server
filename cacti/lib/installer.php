@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2024 The Cacti Group                                 |
@@ -13,6 +12,11 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDTool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -2389,7 +2393,7 @@ class Installer implements JsonSerializable {
 				$code = '';
 				foreach($paths as $path => $valid) {
 					if (!$valid) {
-						$code .= sprintf("chown -R %s.%s %s<br />", $running_user, $running_user, $path);
+						$code .= sprintf('chown -R %s:%s %s<br />', $running_user, $running_user, $path);
 					}
 				}
 			} else {
@@ -2569,7 +2573,15 @@ class Installer implements JsonSerializable {
 			$name = (isset($p['name']) && !empty($p['name'])) ? $p['name'] : '';
 			$description = (isset($p['description']) && !empty($p['description'])) ? $p['description'] : '';
 			$author = (isset($p['author']) && !empty($p['author'])) ? $p['author'] : '';
-			$homepage = (isset($p['homepage']) && !empty($p['homepage'])) ? '<a href="'. $p['homepage'] . '" target=_new>' . $p['homepage'] . '</a>' : '';
+			
+			if (isset($p['homepage']) && !empty($p['homepage'])) {
+				if (strncmp($p['homepage'], 'http://', 7) !== 0 && strncmp($p['homepage'], 'http://', 8) !== 0) {
+					$p['homepage'] = 'https://' . $p['homepage'];
+				}
+				$homepage = '<a href="'. $p['homepage'] . '" target=_new>' . $p['homepage'] . '</a>';
+			} else {
+				$homepage = '';
+			}
 
 			form_alternate_row('line' . $id, true);
 			form_selectable_cell($name, $id);
@@ -3612,10 +3624,10 @@ class Installer implements JsonSerializable {
 		if ($status['total'] == 0) {
 			log_install_always('sync', __('No Remote Data Collectors found for full synchronization'));
 		} else {
-			Installer::fullSyncDataCollectorLog($status['timeout'], 'Remote Data Collector with name \'%s\' and id %d previous timed out.  Please manually Sync when once online to complete upgrade.');
-			Installer::fullSyncDataCollectorLog($status['skipped'], 'Remote Data Collector with name \'%s\' and id %d is not available to sync.  Please manually Sync when once online to complete upgrade.');
-			Installer::fullSyncDataCollectorLog($status['failed'], 'Remote Data Collector with name \'%s\' and id %d failed Full Sync.  Please manually Sync when once online to complete upgrade.');
-			Installer::fullSyncDataCollectorLog($status['success'], 'Remote Data Collector with name \'%s\' and id %d completed Full Sync.');
+			Installer::fullSyncDataCollectorLog($status['timeout'], "Remote Data Collector with name '%s' and id %d previous timed out.  Please manually Sync when once online to complete upgrade.");
+			Installer::fullSyncDataCollectorLog($status['skipped'], "Remote Data Collector with name '%s' and id %d is not available to sync.  Please manually Sync when once online to complete upgrade.");
+			Installer::fullSyncDataCollectorLog($status['failed'], "Remote Data Collector with name '%s' and id %d failed Full Sync.  Please manually Sync when once online to complete upgrade.");
+			Installer::fullSyncDataCollectorLog($status['success'], "Remote Data Collector with name '%s' and id %d completed Full Sync.");
 		}
 	}
 

@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2024 The Cacti Group                                 |
@@ -13,6 +12,11 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDtool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -1186,8 +1190,8 @@ function display_matching_trees ($rule_id, $rule_type, $item, $url) {
 		$sql_field = $item['field'] . ' AS source ';
 	} else {
 		$sql_field = '"SQL Injection" AS source ';
-		cacti_log('Attempted SQL Injection found in Tree Automation for the field variable.', false, 'AUTOM8');
-		raise_message('sql_injection', __('Attempted SQL Injection found in Tree Automation for the field variable.'), MESSAGE_LEVEL_ERROR);
+		cacti_log("Attempted SQL Injection found in Tree Automation for the field variable {$item['field']}.", false, 'AUTOM8');
+		raise_message('sql_injection', __("Attempted SQL Injection found in Tree Automation for the field variable {$item['field']}."), MESSAGE_LEVEL_ERROR);
 	}
 
 	/* now we build up a new query for counting the rows */
@@ -1275,7 +1279,7 @@ function display_matching_trees ($rule_id, $rule_type, $item, $url) {
 }
 
 function api_automation_column_exists($column, $tables) {
-	$column = str_replace(array('h.', 'ht.', 'gt.', 'gl.', 'gtg.'), '', 1);
+	$column = str_replace(array('h.', 'ht.', 'gt.', 'gl.', 'gtg.'), array('', '', '', '', ''), $column);
 
 	if (cacti_sizeof($tables)) {
 		foreach($tables as $table) {
@@ -1450,7 +1454,7 @@ function display_tree_rule_items($title, $rule_id, $item_type, $rule_type, $modu
 			form_alternate_row();
 			$form_data = '<td><a class="linkEditMain" href="' . html_escape($module . '?action=item_edit&id=' . $rule_id. '&item_id=' . $item['id'] . '&rule_type=' . $rule_type) . '">' . __('Item#%d', $i+1) . '</a></td>';
 			$form_data .= '<td>' . 	$item['sequence'] . '</td>';
-			$form_data .= '<td>' . 	$field_name . '</td>';
+			$form_data .= '<td>' . 	html_escape($field_name) . '</td>';
 			$form_data .= '<td>' . 	$tree_sort_types[$item['sort_type']] . '</td>';
 			$form_data .= '<td>' . 	($item['propagate_changes'] ? __('Yes'):__('No')) . '</td>';
 			$form_data .= '<td>' . 	html_escape($item['search_pattern']) . '</td>';
@@ -3082,13 +3086,30 @@ function automation_add_tree($host_id, $tree) {
 function automation_find_os($sysDescr, $sysObject, $sysName) {
 	$sql_where  = '';
 
-	$sql_where .= "WHERE (? REGEXP sysDescr OR ? LIKE CONCAT('%', sysDescr, '%'))";
-	$sql_where .= " AND (? REGEXP sysOid OR ? LIKE CONCAT('%', sysOid, '%'))";
-	$sql_where .= " AND (? REGEXP sysName OR ? LIKE CONCAT('%', sysName, '%'))";
+	if ($sysDescr != '') {
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . "(? REGEXP CONCAT('/', sysDescr, '/') OR ? LIKE CONCAT('%%', sysDescr, '%%'))";
+
+		$params[] = $sysDescr;
+		$params[] = $sysDescr;
+	}
+
+	if ($sysObject != '') {
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . "(? REGEXP CONCAT('/', sysOid, '/') OR ? LIKE CONCAT('%%', sysOid, '%%'))";
+
+		$params[] = $sysObject;
+		$params[] = $sysObject;
+	}
+
+	if ($sysName != '') {
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . "(? REGEXP CONCAT('/', sysName, '/') OR ? LIKE CONCAT('%%', sysName, '%%'))";
+
+		$params[] = $sysName;
+		$params[] = $sysName;
+	}
 
 	$params = array($sysDescr, $sysDescr, $sysObject, $sysObject, $sysName, $sysName);
 
-	$result = db_fetch_row_prepared("SELECT at.*,ht.name
+	$result = db_fetch_row_prepared("SELECT at.*, ht.name
 		FROM automation_templates AS at
 		INNER JOIN host_template AS ht
 		ON ht.id=at.host_template

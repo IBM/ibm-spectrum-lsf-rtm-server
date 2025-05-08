@@ -1,4 +1,3 @@
-/* $Id$ */
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2024 The Cacti Group                                 |
@@ -12,6 +11,11 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDtool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -567,32 +571,35 @@ label {
 
 .reloadquery {
 	cursor: pointer;
-	padding: 2px;
+	padding: 1px;
 	vertical-align: middle;
 	color: rgba(148, 179, 107, 0.8);
 	font-size: 14px;
+	margin-right: 10px;
 }
 
 .verbosequery {
 	cursor: pointer;
-	padding: 2px;
+	padding: 1px;
 	vertical-align: middle;
 	color: rgba(255, 204, 0, 0.8);
 	font-size: 14px;
+	margin-right: 10px;
 }
 
 .deletequery {
 	cursor: pointer;
-	padding: 2px;
+	padding: 1px;
 	vertical-align: middle;
 	color: red;
 	font-size: 14px;
+	margin-right: 10px;
 }
 
 .deletequery:hover {
 	color: red;
 	text-decoration: none;
-	padding: 2px;
+	padding: 1px;
 	vertical-align: middle;
 }
 
@@ -697,7 +704,7 @@ label {
 }
 
 .cactiGraphPageHeadBackdrop {
-	background: transparent;
+	background: transparent url("./images/cacti_logo.svg") no-repeat scroll left 40% / 380px auto;
 	padding-bottom: 0px;
 	float: right;
 	width: 400px;
@@ -709,7 +716,7 @@ label {
 }
 
 .cactiConsolePageHeadBackdrop {
-	background: transparent;
+	background: transparent url("./images/cacti_logo.svg") no-repeat scroll left 40% / 380px auto;
 	padding-bottom: 0px;
 	float: right;
 	width: 400px;
@@ -911,7 +918,7 @@ ul#breadcrumbs {
 }
 
 .cactiLogo {
-	background: #161616;
+	background: #161616 url('./images/cacti_logo.svg') no-repeat 30px;
 	display: block;
 	cursor: pointer;
 	padding-bottom: 178px;
@@ -950,7 +957,7 @@ ul#breadcrumbs {
 .cactiLoginLogo, .cactiLogoutLogo {
 	position: relative;
 	float: right;
-	background: transparent;
+	background: transparent url('./images/cacti_logo.svg') no-repeat center;
 	width: 120px;
 	height: 148px;
 	z-index: 2;
@@ -1925,7 +1932,7 @@ td#tabs {
 }
 
 .cactiGraphHeaderBackground {
-	background: transparent;
+	background: transparent url("./images/cacti_logo.svg") no-repeat scroll left 10% / 380px auto;
 	height: 35px;
 	width: 500px;
 	float: right;
@@ -2104,6 +2111,26 @@ tr.selectable:hover:not(.selected) a {
 
 tr.selected a {
 	color: black !important;
+}
+
+tr td:last-child .checkbox {
+	margin-right: 10px !important;
+}
+
+tr th:last-child .checkbox {
+	margin-right: 10px !important;
+}
+
+.fa-angle-double-up, .fa-angle-double-down {
+	margin-right: 10px;
+}
+
+.fa-plus, .fa-question-circle {
+	margin-right: 10px;
+}
+
+.fa-compress, .fa-expand {
+	margin-right: 10px;
 }
 
 #nav li a.pic:hover, #nav li a.selected {
@@ -2421,6 +2448,7 @@ tr#realtime td:first-child {
 	left: 4px;
 	bottom: 4px;
 	background-color: white;
+	background-image: url('./images/cacti_logo.svg');
 	background-repeat: no-repeat;
 	background-size: 7px;
 	background-position: center;
@@ -2509,6 +2537,7 @@ input:checked + .checkboxSlider:before {
 	left: 4px;
 	bottom: 4px;
 	background-color: white;
+	background-image: url('./images/cacti_logo.svg');
 	background-repeat: no-repeat;
 	background-size: 7px;
 	background-position: center;

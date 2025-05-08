@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: developers@cacti.net\n"
-"POT-Creation-Date: 2024-05-12 19:29+0000\n"
+"POT-Creation-Date: 2024-04-20 18:16-0400\n"
 "PO-Revision-Date: 2024-04-20 18:56-0400\n"
 "Last-Translator: Anonymous <anonymous@cacti.net>\n"
 "Language-Team: Hindi <http://translate.cacti.net/projects/cacti/core-v1-2-x/hi/>\n"
@@ -2544,7 +2544,7 @@ msgstr "कोई ट्री नियम नहीं मिला"
 #: cactid.php:44 help.php:44 lib/functions.php:5943 lib/functions.php:6012
 #: lib/functions.php:6102 lib/functions.php:6671 poller.php:392 poller.php:542
 #: poller.php:607 poller.php:647 poller.php:789 poller.php:895
-#: poller_automation.php:53 poller_boost.php:355
+#: poller_automation.php:53 poller_boost.php:351
 msgid "Cacti System Warning"
 msgstr "कैक्टि सिस्टम वार्निंग"
 
@@ -12456,7 +12456,7 @@ msgstr "नियम आइटम [ %s के लिए नया नियम �
 msgid "Added by Cacti Automation"
 msgstr "Cacti स्वचालन द्वारा जोड़ा गया"
 
-#: lib/api_automation.php:3270
+#: lib/api_automation.php:3272
 msgid "ERROR: IP ranges in the form of range1-range2 are no longer supported."
 msgstr "त्रुटि: श्रेणी1-श्रेणी2 के रूप में IP श्रेणियां अब समर्थित नहीं हैं।"
 
@@ -17171,7 +17171,7 @@ msgstr "कैक्टि प्राथमिक प्रशासन"
 msgid "Cacti Automation Report requires an html based Email client"
 msgstr "Cacti स्वचालन रिपोर्ट के लिए HTML आधारित ईमेल क्लाइंट की आवश्यकता होती है"
 
-#: poller_boost.php:355
+#: poller_boost.php:351
 msgid "WARNING: Detected Poller Boost Overrun, Possible Boost Poller Crash"
 msgstr "चेतावनी: पता चला पोलर बूस्ट ओवररन, संभावित बूस्ट पोलर क्रैश"
 

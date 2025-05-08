@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2024 The Cacti Group                                 |
@@ -13,6 +12,11 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDtool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -69,7 +73,7 @@ function upgrade_to_0_8_4() {
 
 	if ($users !== false && cacti_sizeof($users) > 0) {
 		foreach ($users as $user) {
-			$realms_results = db_install_fetch_assoc("SELECT realm_id FROM user_auth_realm WHERE user_id=?", array($user["id"]), false);
+			$realms = db_install_fetch_assoc("SELECT realm_id FROM user_auth_realm WHERE user_id=?", array($user["id"]), false);
 			if ($realms !== false && cacti_sizeof($realms) == 13) {
 				db_install_execute("INSERT INTO user_auth_realm (user_id,realm_id) VALUES (?,4)", array($user["id"]));
 				db_install_execute("INSERT INTO user_auth_realm (user_id,realm_id) VALUES (?,16)", array($user["id"]));
@@ -897,4 +901,14 @@ function upgrade_to_0_8_4() {
 				array(get_hash_round_robin_archive($item[$i]["id"]), $item[$i]["id"]));
 		}
 	}
+}
+
+
+function get_hash_round_robin_archive($rra_id) {
+    $hash = db_fetch_cell_prepared('SELECT hash FROM rra WHERE id = ?', array($rra_id));
+    if (preg_match('/[a-fA-F0-9]{32}/', $hash)) {
+        return $hash;
+    } else {
+        return generate_hash();
+    }
 }

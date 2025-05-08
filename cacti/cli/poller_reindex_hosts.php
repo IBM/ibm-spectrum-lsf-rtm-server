@@ -1,6 +1,5 @@
 #!/usr/bin/env php
 <?php
-// $Id$
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2024 The Cacti Group                                 |
@@ -14,6 +13,11 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDtool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -215,7 +219,7 @@ function display_help () {
 	display_version();
 	print 'usage: poller_reindex_hosts.php --id=[host_id|all] [--qid=[ID|all]]' . PHP_EOL;
 	print '   [--host-descr=[description]] [--debug]' . PHP_EOL . PHP_EOL;
-	print '--id=host_id             - The host_id to have data queries reindexed or \'all\' to reindex all hosts\n' . PHP_EOL;
+	print '--id=host_id             - The host_id to have data queries reindexed or \'all\' to reindex all hosts' . PHP_EOL;
 	print '--qid=query_id           - Only index on a specific data query id; defaults to \'all\'' . PHP_EOL;
 	print '--host-descr=description - The host description to filter by (SQL filters acknowledged)' . PHP_EOL;
 	print '--force                  - Force Graph and Data Source Suggested Name Re-mapping for all items' . PHP_EOL;

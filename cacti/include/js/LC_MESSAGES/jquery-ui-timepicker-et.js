@@ -1,4 +1,3 @@
-// $Id$
 /* Estonian translation for the jQuery Timepicker Addon */
 /* Written by Karl Sutt (karl@sutt.ee) */
 (function($) {

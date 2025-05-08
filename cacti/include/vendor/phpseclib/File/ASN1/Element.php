@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /**
  * Pure-PHP ASN.1 Parser
  *

@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2024 The Cacti Group                                 |
@@ -13,6 +12,11 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDtool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -792,23 +796,25 @@ function get_selected_theme() {
 			array($_SESSION['sess_user_id']), '', false);
 
 		// user has a theme
-		if (! empty($user_theme)) {
+		if (!empty($user_theme)) {
 			$theme = $user_theme;;
 		}
 	}
 
 	if (!file_exists($config['base_path'] . '/include/themes/' . $theme . '/main.css')) {
 		foreach($themes as $t => $name) {
-			if (file_exists($config['base_path'] . '/include/themes/' . $t . '/main.css')) {
-				$theme = $t;
+			if ($t != 'classic') {
+				if (file_exists($config['base_path'] . '/include/themes/' . $t . '/main.css')) {
+					$theme = $t;
 
-				db_execute_prepared('UPDATE settings_user
-					SET value = ?
-					WHERE user_id = ?
-					AND name="selected_theme"',
-					array($theme, $_SESSION['sess_user_id']));
+					db_execute_prepared('UPDATE settings_user
+						SET value = ?
+						WHERE user_id = ?
+						AND name = "selected_theme"',
+						array($theme, $_SESSION['sess_user_id']));
 
-				break;
+					break;
+				}
 			}
 		}
 	}
@@ -823,14 +829,14 @@ function get_selected_theme() {
  * form_input_validate - validates the value of a form field and Takes the appropriate action if the input
  * is not valid
  *
- * @param $field_value - the value of the form field
- * @param $field_name - the name of the $_POST field as specified in the HTML
- * @param $regexp_match - (optionally) enter a regular expression to match the value against
- * @param $allow_nulls - (bool) whether to allow an empty string as a value or not
- * @param $custom_message - (int) the ID of the message to raise upon an error which is defined in the
+ * @param string $field_value    value of the form field
+ * @param string $field_name     name of the $_POST field as specified in the HTML
+ * @param string $regexp_match   (optionally) enter a regular expression to match the value against
+ * @param bool $allow_nulls      whether to allow an empty string as a value or not
+ * @param int $custom_message    the ID of the message to raise upon an error which is defined in the
  *   $messages array in 'include/global_arrays.php'
  *
- * @return - the original $field_value
+ * @return string                the original $field_value
  */
 function form_input_validate($field_value, $field_name, $regexp_match, $allow_nulls, $custom_message = 3) {
 	global $messages;
@@ -2498,10 +2504,10 @@ function test_data_source($data_template_id, $host_id, $snmp_query_id = 0, $snmp
 								$prepend = $script_queries['arg_prepend'];
 							}
 
-							$script_path = read_config_option('path_php_binary') . ' -q ' . get_script_query_path(trim($prepend . ' ' . $script_queries['arg_get'] . ' ' . $identifier . ' ' . $snmp_index), $script_queries['script_path'], $host_id);
+							$script_path = read_config_option('path_php_binary') . ' -q ' . get_script_query_path(trim($prepend . ' ' . $script_queries['arg_get'] . ' ' . $identifier . ' "' . $snmp_index . '"'), $script_queries['script_path'], $host_id);
 						} else {
 							$action = POLLER_ACTION_SCRIPT;
-							$script_path = get_script_query_path(trim((isset($script_queries['arg_prepend']) ? $script_queries['arg_prepend'] : '') . ' ' . $script_queries['arg_get'] . ' ' . $identifier . ' ' . $snmp_index), $script_queries['script_path'], $host_id);
+							$script_path = get_script_query_path(trim((isset($script_queries['arg_prepend']) ? $script_queries['arg_prepend'] : '') . ' ' . $script_queries['arg_get'] . ' ' . $identifier . ' "' . $snmp_index . '"'), $script_queries['script_path'], $host_id);
 						}
 					}
 
@@ -4556,9 +4562,14 @@ function cacti_escapeshellarg($string, $quote = true) {
 		return $string;
 	}
 
-	/* we must use an apostrophe to escape community names under Unix in case the user uses
-	characters that the shell might interpret. the ucd-snmp binaries on Windows flip out when
-	you do this, but are perfectly happy with a quotation mark. */
+	/* remove any carriage returns or line feeds from the argument */
+	$string = str_replace(array("\n", "\r"), array('', ''), $string);
+
+	/*
+	 * we must use an apostrophe to escape community names under Unix in case the user uses
+	 * characters that the shell might interpret. the ucd-snmp binaries on Windows flip out when
+	 * you do this, but are perfectly happy with a quotation mark.
+	 */
 	if ($config['cacti_server_os'] == 'unix') {
 		$string = escapeshellarg($string);
 		if ($quote) {
@@ -4568,12 +4579,14 @@ function cacti_escapeshellarg($string, $quote = true) {
 			return substr($string, 1, (strlen($string)-2));
 		}
 	} else {
-		/* escapeshellarg takes care of different quotation for both linux and windows,
+		/**
+		 * escapeshellarg takes care of different quotation for both linux and windows,
 		 * but unfortunately, it blanks out percent signs
 		 * we want to keep them, e.g. for GPRINT format strings
 		 * so we need to create our own escapeshellarg
 		 * on windows, command injection requires to close any open quotation first
-		 * so we have to escape any quotation here */
+		 * so we have to escape any quotation here
+		 */
 		if (substr_count($string, CACTI_ESCAPE_CHARACTER)) {
 			$string = str_replace(CACTI_ESCAPE_CHARACTER, "\\" . CACTI_ESCAPE_CHARACTER, $string);
 		}
@@ -4584,20 +4597,6 @@ function cacti_escapeshellarg($string, $quote = true) {
 		} else {
 			return $string;
 		}
-	}
-}
-
-/**
- * error_no_deprecated, show php all error message 
- * but suppress deprecated warnings
- *
- * @deprecated
- */
-function error_no_deprecated(){
-	if (defined("E_DEPRECATED")) {
-		error_reporting(E_ALL ^ E_DEPRECATED);
-	}else{
-		error_reporting(E_ALL);
 	}
 }
 
@@ -4887,13 +4886,13 @@ function mailer($from, $to, $cc, $bcc, $replyto, $subject, $body, $body_text = '
 
 	if (empty($from['email'])) {
 		if (isset($_SERVER['HOSTNAME'])) {
-			$from['email'] = 'RTM-Admin@' . $_SERVER['HOSTNAME'];
+			$from['email'] = 'Cacti@' . $_SERVER['HOSTNAME'];
 		} else {
-			$from['email'] = 'RTM-Admin@localhost.localdomain';
+			$from['email'] = 'Cacti@cacti.net';
 		}
 
 		if (empty($from['name'])) {
-			$from['name'] = 'RTM Admin';
+			$from['name'] = 'Cacti';
 		}
 	}
 
@@ -6372,19 +6371,42 @@ function repair_system_data_input_methods($step = 'import') {
 
 if (isset($config['cacti_server_os']) && $config['cacti_server_os'] == 'win32' && !function_exists('posix_kill')) {
 	function posix_kill($pid, $signal = SIGTERM) {
+		if (!defined('SIGTERM')) {
+			define('SIGTERM', 15);
+		}
+
+		if (!defined('SIGKILL')) {
+			define('SIGKILL', 9);
+		}
+
+		if (!defined('SIGHUP')) {
+			define('SIGHUP', 1);
+		}
+
+		if (!defined('SIGINT')) {
+			define('SIGINT', 2);
+		}
+
 		$wmi   = new COM("winmgmts:{impersonationLevel=impersonate}!\\\\.\\root\\cimv2");
 		$procs = $wmi->ExecQuery("SELECT ProcessId FROM Win32_Process WHERE ProcessId='" . $pid . "'");
 
 		if (cacti_sizeof($procs)) {
-			if ($signal == SIGTERM) {
+			if ($signal == 0) {
+				return true;  // The process is running
+			} elseif ($signal == SIGTERM || $signal == SIGINT || $signal == SIGKILL) {
 				foreach($procs as $proc) {
 					$proc->Terminate();
 				}
+			} elseif ($signal == SIGHUP) {
+				cacti_log("WARNING: SIGHUP Signal for pid: $pid is not supported on Windows", false, 'POLLER');
 			} else {
-				return true;
+				cacti_log("WARNING: Unknown Signal Number $signal in posix_kill", false, 'POLLER');
+				return false;
 			}
-		} else {
+		} elseif ($signal == 0) {
 			return false;
+		} else {
+			return true;
 		}
 	}
 }
@@ -6917,6 +6939,33 @@ function get_client_addr() {
 	return $client_addr;
 }
 
+/**
+ * get_cacti_base_tables - Extracts all the base Cacti tables from the
+ * cacti.sql file in the base Cacti directory.
+ */
+function get_cacti_base_tables() {
+	global $config;
+
+	$base_tables = array();
+
+	if (file_exists($config['base_path'] . '/cacti.sql')) {
+		$schema = file($config['base_path'] . '/cacti.sql');
+	} else {
+		return $base_tables;
+	}
+
+	if (cacti_sizeof($schema)) {
+		foreach($schema as $line) {
+			if (strpos($line, 'CREATE TABLE') !== false) {
+				$table = str_replace(array('CREATE TABLE', '`', '(', ' '), '', $line);
+				$base_tables[] = trim($table);
+			}
+		}
+	}
+
+	return $base_tables;
+}
+
 function cacti_pton($ipaddr) {
 	// Strip out the netmask, if there is one.
 	$subnet_pos = strpos($ipaddr, '/');
@@ -7412,3 +7461,20 @@ function cacti_unserialize($strobj) {
 		return unserialize($strobj);
 	}
 }
+
+function cacti_format_ipv6_colon($address) {
+	if (!filter_var($address, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+		return $address;
+	}
+
+	if (strpos($address, '[') !== false) {
+		return $address;
+	}
+
+	if (strpos($address, ':') !== false) {
+		return '[' . $address . ']';
+	}
+
+	return($address);
+}
+

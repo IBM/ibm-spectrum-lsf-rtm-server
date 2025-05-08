@@ -1,4 +1,3 @@
-<!-- $Id$ -->
 <gexport>
 	<name>Graph Export Data Query</name>
 	<script_path>|path_cacti|/scripts/ss_gexport.php</script_path>

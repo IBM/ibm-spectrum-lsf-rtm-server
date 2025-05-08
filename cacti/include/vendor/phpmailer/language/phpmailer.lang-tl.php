@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /**
  * Tagalog PHPMailer language file: refer to English translation for definitive list
  *

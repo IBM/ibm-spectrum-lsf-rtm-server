@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2024 The Cacti Group                                 |
@@ -13,6 +12,11 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDtool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -66,7 +70,7 @@ function api_data_source_remove($local_data_id) {
 			WHERE local_data_id = ?', array($local_data_id));
 
 		if (cacti_sizeof($dsinfo)) {
-			$filename = str_replace('<path_cacti>/', '', $dsinfo['data_source_path']);
+			$filename = str_replace('<path_rra>/', '', $dsinfo['data_source_path']);
 			db_execute_prepared('INSERT INTO data_source_purge_action
 				(local_data_id, name, action) VALUES (?, ?, ?)
 				ON DUPLICATE KEY UPDATE action=VALUES(action)',
@@ -233,6 +237,15 @@ function api_data_source_remove_multi($local_data_ids) {
 
 		}
 
+		/* prepare auto-clean if enabled */
+		if ($autoclean == 'on') {
+			db_execute("INSERT INTO data_source_purge_action (local_data_id, name, action)
+				SELECT local_data_id, REPLACE(data_source_path, '<path_rra>/', ''), '" . $acmethod . "'
+				FROM data_template_data
+				WHERE local_data_id IN (" . $ids_to_delete . ')
+				ON DUPLICATE KEY UPDATE action=VALUES(action)');
+		}
+
 		/* core data */
 		db_execute('DELETE FROM data_template_data
 			WHERE local_data_id IN (' . $ids_to_delete . ')');
@@ -277,14 +290,6 @@ function api_data_source_remove_multi($local_data_ids) {
 
 		db_execute('DELETE FROM poller_output_boost
 			WHERE local_data_id IN (' . $ids_to_delete . ')');
-
-		if ($autoclean == 'on') {
-			db_execute("INSERT INTO data_source_purge_action (local_data_id, name, action)
-				SELECT local_data_id, REPLACE(data_source_path, '<path_cacti>/', ''), '" . $acmethod . "'
-				FROM data_template_data
-				WHERE local_data_id IN (" . $ids_to_delete . ')
-				ON DUPLICATE KEY UPDATE action=VALUES(action)');
-		}
 
 		if (cacti_sizeof($poller_ids)) {
 			foreach ($poller_ids as $poller_id) {

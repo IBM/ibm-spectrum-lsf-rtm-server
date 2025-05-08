@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2024 The Cacti Group                                 |
@@ -13,6 +12,11 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDtool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -320,11 +324,11 @@ $selectedTheme = get_selected_theme();
 								$realms = api_plugin_hook_function('login_realms',
 									array(
 										'1' => array(
-											'name' => __('Local'),
+											'name'     => __('Local'),
 											'selected' => false
 										),
 										'2' => array(
-											'name' => __('LDAP'),
+											'name'     => __('LDAP'),
 											'selected' => true
 										)
 									)

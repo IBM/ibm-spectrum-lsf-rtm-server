@@ -1,4 +1,3 @@
-<!-- $Id$ -->
 <poller>
 	<name>Cacti Data Collector Settings and Stats Data Query</name>
 	<script_path>|path_cacti|/scripts/ss_cpoller.php</script_path>

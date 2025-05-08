@@ -110,7 +110,7 @@ if (detect_and_correct_running_processes(0, 'LICHIST', $poller_interval*3) || $f
 		db_execute('CREATE TABLE lic_services_feature_history LIKE lic_services_feature_history_template;');
 		db_execute('ALTER TABLE lic_services_feature_history ENGINE=InnoDB');
 	}
-
+	
 	if (!$custom) {
 		// Partition the history and the job mapping tables
 		$partitionver = do_partitions();
@@ -118,7 +118,7 @@ if (detect_and_correct_running_processes(0, 'LICHIST', $poller_interval*3) || $f
 			$partno = $partitionver;
 		}
 	}
-	
+
 	// Process Finished Jobs
 	list($job_count, $hist_count) = process_jobs($start_date, $end_date, $partno);
 

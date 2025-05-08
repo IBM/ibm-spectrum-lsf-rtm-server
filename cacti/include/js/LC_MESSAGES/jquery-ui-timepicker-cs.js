@@ -1,4 +1,3 @@
-// $Id$
 /* Czech translation for the jQuery Timepicker Addon */
 /* Written by Ondřej Vodáček */
 (function($) {

@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2024 The Cacti Group                                 |
@@ -13,6 +12,11 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDtool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -515,13 +519,13 @@ function get_auth_realms($login = false) {
 		if (cacti_sizeof($drealms)) {
 			if ($login) {
 				$new_realms['0'] = array(
-					'name' => __('Local'),
+					'name'     => __('Local'),
 					'selected' => false
 				);
 
 				foreach($drealms as $realm) {
 					$new_realms[1000+$realm['domain_id']] = array(
-						'name' => $realm['domain_name'],
+						'name'     => $realm['domain_name'],
 						'selected' => false
 					);
 				}
@@ -545,13 +549,18 @@ function get_auth_realms($login = false) {
 
 			return $new_realms;
 		}
+	} elseif ($login) {
+		return array(
+			'0' => array('name' => __('Local')),
+			'3' => array('name' => __('LDAP'))
+		);
+	} else {
+		return array(
+			'0' => __('Local'),
+			'3' => __('LDAP'),
+			'2' => __('Web Basic'),
+		);
 	}
-
-	return array(
-		'0' => __('Local'),
-		'3' => __('LDAP'),
-		'2' => __('Web Basic')
-	);
 }
 
 /**
@@ -898,12 +907,15 @@ function is_tree_branch_empty($tree_id, $parent = 0) {
 		), 'site_id', 'site_id'
 	);
 
+	$total_rows = -1;
+
 	if (!cacti_sizeof($sites)) {
-		if (cacti_sizeof($hosts) && cacti_sizeof(get_allowed_devices('h.id IN(' . implode(',', $hosts) . ')'), 'description', '', -1) > 0) {
+		if (cacti_sizeof($hosts) && cacti_sizeof(get_allowed_devices('h.id IN(' . implode(',', $hosts) . ')', 'description', '', $total_rows)) > 0) {
 			return false;
 		}
 	} else {
 		$site_hosts = array();
+
 		foreach($sites as $site) {
 			$site_hosts += array_rekey(
 				db_fetch_assoc_prepared('SELECT id
@@ -914,7 +926,7 @@ function is_tree_branch_empty($tree_id, $parent = 0) {
 			);
 		}
 
-		if (cacti_sizeof($site_hosts) && cacti_sizeof(get_allowed_devices('h.id IN(' . implode(',', $site_hosts) . ')'), 'description', '', -1) > 0) {
+		if (cacti_sizeof($site_hosts) && cacti_sizeof(get_allowed_devices('h.id IN(' . implode(',', $site_hosts) . ')', 'description', '', $total_rows)) > 0) {
 			return false;
 		}
 	}
@@ -3862,7 +3874,7 @@ function domains_login_process($username) {
 							array($realm-1000));
 
 						if ($cn_full_name != '' || $cn_email != '') {
-							$ldap_cn_search_response = cacti_ldap_search_cn($username, array($cn_full_name, $cn_email));
+							$ldap_cn_search_response = domains_ldap_search_cn($username, array($cn_full_name, $cn_email), $realm);
 
 							if (isset($ldap_cn_search_response['cn'])) {
 								$data_override = array();
@@ -3910,7 +3922,7 @@ function domains_login_process($username) {
 				cacti_log('LOGIN FAILED: LDAP Error: ' . $ldap_auth_response['error_text'], false, 'AUTH');
 
 				if ($ldap_auth_response['error_text'] == 1) {
-					auth_lockout_process($username, $realm);
+					auth_process_lockout($username, $realm);
 				}
 			}
 		}
@@ -4051,6 +4063,64 @@ function domains_ldap_search_dn($username, $realm) {
 			$ldap->host = $ldap_server;
 
 			$response = $ldap->Search();
+
+			if ($response['error_num'] == 0) {
+				return $response;
+			}
+		}
+
+		return $response;
+	} else {
+		return false;
+	}
+}
+
+function domains_ldap_search_cn($username, $cn = array(), $realm = 0) {
+	$ldap = new Ldap;
+
+	if (!empty($username)) $ldap->username = $username;
+
+	$ld = db_fetch_row_prepared('SELECT *
+		FROM user_domains_ldap
+		WHERE domain_id = ?',
+		array($realm-1000));
+
+	if (cacti_sizeof($ld)) {
+		if (!empty($ld['dn']))                $ldap->dn                = $ld['dn'];
+		if (!empty($ld['server']))            $ldap->host              = $ld['server'];
+		if (!empty($ld['port']))              $ldap->port              = $ld['port'];
+		if (!empty($ld['port_ssl']))          $ldap->port_ssl          = $ld['port_ssl'];
+		if (!empty($ld['proto_version']))     $ldap->version           = $ld['proto_version'];
+		if (!empty($ld['encryption']))        $ldap->encryption        = $ld['encryption'];
+		if (!empty($ld['referrals']))         $ldap->referrals         = $ld['referrals'];
+
+		if (!empty($ld['mode']))              $ldap->mode              = $ld['mode'];
+		if (!empty($ld['search_base']))       $ldap->search_base       = $ld['search_base'];
+		if (!empty($ld['search_filter']))     $ldap->search_filter     = $ld['search_filter'];
+		if (!empty($ld['specific_dn']))       $ldap->specific_dn       = $ld['specific_dn'];
+		if (!empty($ld['specific_password'])) $ldap->specific_password = $ld['specific_password'];
+
+		$ldap->cn = $cn;
+
+		if ($ld['group_require'] == 'on') {
+			$ldap->group_require = true;
+		} else {
+			$ldap->group_require = false;
+		}
+
+		if (!empty($ld['group_dn']))          $ldap->group_dn          = $ld['group_dn'];
+		if (!empty($ld['group_attrib']))      $ldap->group_attrib      = $ld['group_attrib'];
+		if (!empty($ld['group_member_type'])) $ldap->group_member_type = $ld['group_member_type'];
+
+		/* If the server list is a space delimited set of servers
+		 * process each server until you get a bind, or fail
+		 */
+		$ldap_servers = preg_split('/\s+/', $ldap->host);
+
+		foreach($ldap_servers as $ldap_server) {
+			$ldap->host = $ldap_server;
+
+			$response = $ldap->Getcn();
 
 			if ($response['error_num'] == 0) {
 				return $response;
@@ -4681,7 +4751,7 @@ function auth_login_create_user_from_template($username, $realm) {
 			if ($cn_full_name != '' || $cn_email != '') {
 				$ldap_cn_search_response = cacti_ldap_search_cn($username, array($cn_full_name, $cn_email));
 
-  					if (isset($ldap_cn_search_response['cn'])) {
+				if (isset($ldap_cn_search_response['cn'])) {
 					$data_override = array();
 
 					if (array_key_exists($cn_full_name, $ldap_cn_search_response['cn'])) {
@@ -4741,7 +4811,7 @@ function auth_login_create_user_from_template($username, $realm) {
  * @return (bool) Returns false on failure to set user account, otherwise redirects
  */
 function check_reset_no_authentication($auth_method) {
-	global $error, $error_msg;
+	global $config, $error, $error_msg;
 
 	if ($auth_method == 0) {
 		$admin_id = db_execute_prepared('SELECT id

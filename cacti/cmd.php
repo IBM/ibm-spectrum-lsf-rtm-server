@@ -1,6 +1,5 @@
 #!/usr/bin/env php
 <?php
-// $Id$
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2024 The Cacti Group                                 |
@@ -14,6 +13,11 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDtool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -760,7 +764,7 @@ function collect_device_data(&$item, &$error_ds) {
 		default:
 			$error_ds[$ds] = $ds;
 
-			cacti_log("Device[$host_id] DS[$ds] ERROR: Invalid polling option: " . $item['action'], $stdout, 'POLLER');
+			cacti_log("Device[$host_id] DS[$ds] ERROR: Invalid polling option: " . $item['action'], $print_data_to_stdout, 'POLLER');
 	}
 
 	return $output;

@@ -1,4 +1,3 @@
-// $Id$
 /* Indonesian initialisation for the jQuery UI date picker plugin. */
 /* Written by Deden Fathurahman (dedenf@gmail.com). */
 ( function( factory ) {

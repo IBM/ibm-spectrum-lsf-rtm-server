@@ -1,4 +1,3 @@
-// $Id$
 /* Chinese translation for the jQuery Timepicker Addon */
 /* Written by Alang.lin */
 (function($) {

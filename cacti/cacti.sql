@@ -1,6 +1,3 @@
---
--- $Id$
---
 /*
   +-------------------------------------------------------------------------+
   | Copyright (C) 2004-2024 The Cacti Group                                 |
@@ -15,6 +12,11 @@
   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
   | GNU General Public License for more details.                            |
   +-------------------------------------------------------------------------+
+  | Cacti: The Complete RRDTool-based Graphing Solution                     |
+  +-------------------------------------------------------------------------+
+  | This code is designed, written, and maintained by the Cacti Group. See  |
+  | about.php and/or the AUTHORS file for specific developer information.   |
+  +-------------------------------------------------------------------------+
   | http://www.cacti.net/                                                   |
   +-------------------------------------------------------------------------+
 */
@@ -27,6 +29,8 @@ DELIMITER //
 
 SET @sqlmode= "";
 SET SESSION sql_mode = @sqlmode;
+
+ALTER DATABASE DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 --
 -- Table structure for table `aggregate_graph_templates`
@@ -208,7 +212,7 @@ CREATE TABLE `automation_devices` (
   `snmp_password` varchar(50) DEFAULT NULL,
   `snmp_auth_protocol` char(6) DEFAULT '',
   `snmp_priv_passphrase` varchar(200) DEFAULT '',
-  `snmp_priv_protocol` char(7) DEFAULT '',
+  `snmp_priv_protocol` char(6) DEFAULT '',
   `snmp_context` varchar(64) DEFAULT '',
   `snmp_engine_id` varchar(64) DEFAULT '',
   `sysName` varchar(100) NOT NULL DEFAULT '',
@@ -408,7 +412,7 @@ CREATE TABLE `automation_snmp_items` (
   `snmp_password` varchar(50) DEFAULT NULL,
   `snmp_auth_protocol` char(6) DEFAULT '',
   `snmp_priv_passphrase` varchar(200) DEFAULT '',
-  `snmp_priv_protocol` char(7) DEFAULT '',
+  `snmp_priv_protocol` char(6) DEFAULT '',
   `snmp_context` varchar(64) DEFAULT '',
   `snmp_engine_id` varchar(64) DEFAULT '',
   PRIMARY KEY (`id`,`snmp_id`)
@@ -2978,7 +2982,7 @@ CREATE TABLE `snmpagent_managers` (
   `snmp_password` varchar(50) NOT NULL,
   `snmp_auth_protocol` char(6) NOT NULL,
   `snmp_priv_passphrase` varchar(200) NOT NULL,
-  `snmp_priv_protocol` char(7) NOT NULL,
+  `snmp_priv_protocol` char(6) NOT NULL,
   `snmp_engine_id` varchar(64) DEFAULT NULL,
   `snmp_port` mediumint(8) unsigned NOT NULL DEFAULT '161',
   `snmp_message_type` tinyint(4) NOT NULL,

@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2024 The Cacti Group                                 |
@@ -13,6 +12,11 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDtool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -1363,7 +1367,26 @@ function rrdtool_function_graph($local_graph_id, $rra_id, $graph_data_array, $rr
 	}
 
 	if (empty($graph_data_array['graph_end'])) {
-		$graph_data_array['graph_end']   = -300;
+		$main_last_run = read_config_option('poller_lastrun_1');
+		$now_time      = time();
+		$default_delta = (int) read_config_option('poller_interval') * -1;
+
+		if (!empty($main_last_run)) {
+			$delta_time = $main_last_run - $now_time;
+
+			/* DST time change detected */
+			if ($delta_time > 0) {
+				$delta_time = $default_delta;
+			}
+		} else {
+			$delta_time = $default_delta;
+		}
+
+		if ($delta_time <= $graph_data_array['graph_start']) {
+			$delta_time = $now_time;
+		}
+
+		$graph_data_array['graph_end'] = $delta_time;
 	}
 
 	$local_data_ids = array_rekey(
@@ -2943,9 +2966,9 @@ function rrdtool_cacti_compare($data_source_id, &$info) {
 					/* cacti knows this ds, but the rrd file does not */
 					$info['ds'][$data_source_name]['type'] = $data_source['type'];
 					$info['ds'][$data_source_name]['minimal_heartbeat'] = $data_source['minimal_heartbeat'];
-					$info['ds'][$ds_name]['min'] = $data_source['min'];
-					$info['ds'][$ds_name]['max'] = $data_source['max'];
-					$info['ds'][$ds_name]['seen'] = true;
+					$info['ds'][$data_source_name]['min'] = $data_source['min'];
+					$info['ds'][$data_source_name]['max'] = $data_source['max'];
+					$info['ds'][$data_source_name]['seen'] = true;
 
 					continue;
 				}
@@ -3392,7 +3415,7 @@ function rrd_datasource_add($file_array, $ds_array, $debug) {
 		/* now start XML processing */
 		foreach ($ds_array as $ds) {
 			/* first, append the <DS> structure in the rrd header */
-			if ($ds['type'] === $data_source_types[DATA_SOURCE_TYPE_COMPUTE]) {
+			if ($ds['type'] === $data_source_types[5]) {
 				rrd_append_compute_ds($dom, $version, $ds['name'], $ds['type'], $ds['cdef']);
 			} else {
 				rrd_append_ds($dom, $version, $ds['name'], $ds['type'], $ds['heartbeat'], $ds['min'], $ds['max']);

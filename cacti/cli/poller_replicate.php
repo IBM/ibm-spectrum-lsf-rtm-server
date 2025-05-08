@@ -1,6 +1,5 @@
 #!/usr/bin/env php
 <?php
-// $Id$
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2024 The Cacti Group                                 |
@@ -14,6 +13,11 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDtool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -102,16 +106,23 @@ if ($poller_id < 0) {
 }
 
 if (cacti_sizeof($pollers)) {
+	if (!register_process_start('psync', "POLLER:$poller_id", 0, 900)) {
+		cacti_log("WARNING: Another Sync Operations is already running", true, 'POLLER');
+		exit(0);
+	}
+
 	foreach ($pollers as $poller) {
+		replicate_out($poller['id'], $class);
+
 		db_execute_prepared('UPDATE poller
 			SET last_sync = NOW(), requires_sync=""
 			WHERE id = ?',
 			array($poller['id']));
 
-		replicate_out($poller['id'], $class);
-
 		cacti_log('STATS: Poller ID ' . $poller['id'] . ' fully Replicated', false, 'POLLER');
 	}
+
+	unregister_process('psync', "POLLER:$poller_id", 0);
 } else {
 	print 'FATAL: The poller specified ' . $poller_id . ' is either disabled, or does not exist!' . PHP_EOL;
 	exit(1);

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Cacti\n"
 "Report-Msgid-Bugs-To: developers@cacti.net\n"
-"POT-Creation-Date: 2024-05-12 19:29+0000\n"
+"POT-Creation-Date: 2024-04-20 18:16-0400\n"
 "PO-Revision-Date: 2024-04-20 18:51-0400\n"
 "Last-Translator: Nicolas BUTIN <nb1dev@free.fr>\n"
 "Language-Team: French <http://translate.cacti.net/projects/cacti/core-v1-2-x/fr/>\n"
@@ -2539,7 +2539,7 @@ msgstr "Aucune règle d'arbre trouvée"
 #: cactid.php:44 help.php:44 lib/functions.php:5943 lib/functions.php:6012
 #: lib/functions.php:6102 lib/functions.php:6671 poller.php:392 poller.php:542
 #: poller.php:607 poller.php:647 poller.php:789 poller.php:895
-#: poller_automation.php:53 poller_boost.php:355
+#: poller_automation.php:53 poller_boost.php:351
 msgid "Cacti System Warning"
 msgstr "Avertissement du système Cacti"
 
@@ -12451,7 +12451,7 @@ msgstr "Élément de règle [new rule item for %s : %s]"
 msgid "Added by Cacti Automation"
 msgstr "Ajouté par Cacti Automation"
 
-#: lib/api_automation.php:3270
+#: lib/api_automation.php:3272
 msgid "ERROR: IP ranges in the form of range1-range2 are no longer supported."
 msgstr "ERREUR : les plages d'adresses IP au format range1-range2 ne sont plus prises en charge."
 
@@ -17165,7 +17165,7 @@ msgstr "Cacti Primary Admin"
 msgid "Cacti Automation Report requires an html based Email client"
 msgstr "Cacti Automation Report nécessite un client de messagerie en html"
 
-#: poller_boost.php:355
+#: poller_boost.php:351
 msgid "WARNING: Detected Poller Boost Overrun, Possible Boost Poller Crash"
 msgstr "AVERTISSEMENT : Dépassement du Poller Boost détecté, crash possible du Poller Poller"
 

@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2024 The Cacti Group                                 |
@@ -13,6 +12,11 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDtool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -483,6 +487,7 @@ function install_setup_get_templates() {
 		'Fortigate.xml.gz',
 		'Generic_SNMP_Device.xml.gz',
 		'HPE_iLO.xml.gz',
+		'HPE_NimbleAlletra_storage.xml.gz',
 		'Local_Linux_Machine.xml.gz',
 		'MikroTik_Device.xml.gz',
 		'MikroTik_Switch_SWOS.xml.gz',
@@ -541,46 +546,44 @@ function install_setup_get_templates() {
 
 function install_setup_get_tables() {
 	/* ensure all tables are utf8 enabled */
-	$db_tables = db_fetch_assoc("SHOW TABLES");
+	$db_tables = get_cacti_base_tables();
 	if ($db_tables === false) {
 		return false;
 	}
 
 	$t = array();
-	foreach ($db_tables as $tables) {
-		foreach ($tables as $table) {
-			$table_status = db_fetch_row("SHOW TABLE STATUS LIKE '$table'");
+	foreach ($db_tables as $table) {
+		$table_status = db_fetch_row("SHOW TABLE STATUS LIKE '$table'");
 
-			$collation  = '';
-			$engine     = '';
-			$rows       = 0;
-			$row_format = '';
+		$collation  = '';
+		$engine     = '';
+		$rows       = 0;
+		$row_format = '';
 
-			if ($table_status !== false) {
-				if (isset($table_status['Collation']) && $table_status['Collation'] != 'utf8mb4_unicode_ci') {
-					$collation = $table_status['Collation'];
-				}
-
-				if (isset($table_status['Engine']) && $table_status['Engine'] == 'MyISAM') {
-					$engine = $table_status['Engine'];
-				}
-
-				if (isset($table_status['Rows'])) {
-					$rows = $table_status['Rows'];
-				}
-
-				if (isset($table_status['Row_format']) && $table_status['Row_format'] == 'Compact' && $table_status['Engine'] == 'InnoDB') {
-					$row_format = 'Dynamic';
-				}
+		if ($table_status !== false) {
+			if (isset($table_status['Collation']) && $table_status['Collation'] != 'utf8mb4_unicode_ci') {
+				$collation = $table_status['Collation'];
 			}
 
-			if ($table_status === false || $collation != '' || $engine != '' || $row_format != '') {
-				$t[$table]['Name']       = $table;
-				$t[$table]['Collation']  = $table_status['Collation'];
-				$t[$table]['Engine']     = $table_status['Engine'];
-				$t[$table]['Rows']       = $rows;
-				$t[$table]['Row_format'] = $table_status['Row_format'];
+			if (isset($table_status['Engine']) && $table_status['Engine'] == 'MyISAM') {
+				$engine = $table_status['Engine'];
 			}
+
+			if (isset($table_status['Rows'])) {
+				$rows = $table_status['Rows'];
+			}
+
+			if (isset($table_status['Row_format']) && $table_status['Row_format'] == 'Compact' && $table_status['Engine'] == 'InnoDB') {
+				$row_format = 'Dynamic';
+			}
+		}
+
+		if ($table_status === false || $collation != '' || $engine != '' || $row_format != '') {
+			$t[$table]['Name']       = $table;
+			$t[$table]['Collation']  = $table_status['Collation'];
+			$t[$table]['Engine']     = $table_status['Engine'];
+			$t[$table]['Rows']       = $rows;
+			$t[$table]['Row_format'] = $table_status['Row_format'];
 		}
 	}
 
@@ -1140,7 +1143,7 @@ function install_full_sync() {
 	$skipped   = array();
 	$timeout   = array();
 
-	$pollers = db_fetch_assoc('SELECT id, status, UNIX_TIMESTAMP() - UNIX_TIMESTAMP(last_update) as gap
+	$pollers = db_fetch_assoc('SELECT id, status, UNIX_TIMESTAMP() - UNIX_TIMESTAMP(last_update) AS gap
 		FROM poller
 		WHERE id > 1
 		AND disabled = ""');
@@ -1153,6 +1156,8 @@ function install_full_sync() {
 
 			if (($poller['status'] == POLLER_STATUS_NEW) ||
 				($poller['status'] == POLLER_STATUS_DOWN) ||
+				($poller['status'] == POLLER_STATUS_HEARTBEAT) ||
+				($poller['status'] == POLLER_STATUS_RECOVERING) ||
 				($poller['status'] == POLLER_STATUS_DISABLED)) {
 				$skipped[] = $poller['id'];
 			} elseif ($poller['gap'] < $gap_time) {
@@ -1174,6 +1179,7 @@ function install_full_sync() {
 			}
 		}
 	}
+
 	log_install_debug('sync', 'Success: ' . cacti_sizeof($success) . ', Failed: ' . cacti_sizeof($failed) . ', Skipped: ' . cacti_sizeof($skipped) . ', Total: ' . cacti_sizeof($pollers));
 
 	return array(

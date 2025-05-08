@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2024 The Cacti Group                                 |
@@ -13,6 +12,11 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDtool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -2173,6 +2177,46 @@ function html_site_filter($site_id = '-1', $call_back = 'applyFilter', $sql_wher
 	<?php
 }
 
+function html_location_filter($location = '', $call_back = 'applyFilter', $sql_where = '', $noany = false, $nonone = false) {
+	$theme = get_selected_theme();
+
+	if (strpos($call_back, '()') === false) {
+		$call_back .= '()';
+	}
+
+	?>
+	<td>
+		<?php print __('Location');?>
+	</td>
+	<td>
+		<select id='location' onChange='<?php print $call_back;?>'>
+			<?php if (!$noany) {?><option value='-1'<?php if ($location == '-1') {?> selected<?php }?>><?php print __('Any');?></option><?php }?>
+			<?php if (!$nonone) {?><option value='0'<?php if ($location == '0') {?> selected<?php }?>><?php print __('None');?></option><?php }?>
+			<?php
+
+			$locations = array_rekey(
+				db_fetch_assoc("SELECT DISTINCT location
+					FROM host
+					$sql_where
+					ORDER BY location ASC"),
+				'location', 'location'
+			);
+
+			if (cacti_sizeof($locations)) {
+				foreach ($locations as $l) {
+					if ($l == '') {
+						continue;
+					}
+
+					print "<option value='" . html_escape($l) . "'"; if ($location == $l) { print ' selected'; } print '>' . html_escape($l) . '</option>';
+				}
+			}
+			?>
+		</select>
+	</td>
+	<?php
+}
+
 function html_spikekill_actions() {
 	switch(get_nfilter_request_var('action')) {
 		case 'spikemenu':
@@ -2677,7 +2721,7 @@ function html_help_page($page) {
 	$help = array(
 		'aggregates.php'              => 'Aggregates.html',
 		'aggregate_templates.php'     => 'Aggregate-Templates.html',
-		'automation_networks.php'     => 'Automation-Networks.php',
+		'automation_networks.php'     => 'Automation-Networks.html',
 		'cdef.php'                    => 'CDEFs.html',
 		'color_templates.php'         => 'Color-Templates.html',
 		'color.php'                   => 'Colors.html',

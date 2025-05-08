@@ -1,6 +1,5 @@
 #!/usr/bin/env php
 <?php
-// $Id$
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2024 The Cacti Group                                 |
@@ -14,6 +13,11 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDtool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -501,21 +505,25 @@ function report_audit_results($output = true) {
 
 								/* work around MySQL 8.x simplified int columns */
 								if (strpos($dbc[$dbcol], 'int(') !== false) {
-									$adbccol = preg_replace('/\([^(]*\d{1,2}\)/', '', $dbc[$dbcol]);
+									// Get the integer first
+									$parts = explode('(', $dbc[$dbcol]);
+									$adbccol = $parts[0];
+
+									// Get attributes next
+									$parts = explode(' ', $parts[1], 2);
+									if (isset($parts[1])) {
+										$adbccol .= ' ' . $parts[1];
+									}
+
+									$adbccol = trim($adbccol);
 								} else {
 									$adbccol = $dbc[$dbcol];
-								}
-
-								if (strpos($c[$col], 'int(') !== false) {
-									$accol = preg_replace('/\([^(]*\d{1,2}\)/', '', $c[$col]);
-								} else {
-									$accol = $c[$col];
 								}
 
 								/* Work Around for MySQL 8 */
 								$c[$col] = trim(str_replace('DEFAULT_GENERATED', '', $c[$col]));
 
-								if (($c[$col] != $dbc[$dbcol] && $accol != $adbccol) && $c[$col] != 'mediumtext') {
+								if (($c[$col] != $dbc[$dbcol] && $c[$col] != $adbccol) && $c[$col] != 'mediumtext') {
 									if ($output) {
 										if ($col != 'Key') {
 											print PHP_EOL . 'ERROR Col: \'' . $c['Field'] . '\', Attribute \'' . $col . '\' invalid. Should be: \'' . $dbc[$dbcol] . '\', Is: \'' . $c[$col] . '\'';

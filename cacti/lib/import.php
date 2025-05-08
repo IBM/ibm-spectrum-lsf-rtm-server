@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2024 The Cacti Group                                 |
@@ -14,6 +13,11 @@
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
  +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDtool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
+ +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
 */
@@ -23,7 +27,6 @@ function import_xml_data(&$xml_data, $import_as_new, $profile_id, $remove_orphan
 	global $import_debug_info, $import_messages, $legacy_template;
 
 	include_once($config['library_path'] . '/xml.php');
-	include_once($config['library_path'] . '/utility.php');
 
 	$info_array       = array();
 	$files            = array();
@@ -392,12 +395,12 @@ function import_package_get_details($xmlfile) {
 function import_read_package_data($xmlfile, &$public_key) {
 	$public_key = import_package_get_public_key($xmlfile);
 
+	$filename = "compress.zlib://$xmlfile";
+
 	if (!is_cacti_public_key($public_key)) {
 		cacti_log('FATAL: Package Public Key is not Official Cacti Public Key for Package ' . $filename, true, 'IMPORT', POLLER_VERBOSITY_LOW);
 		return false;
 	}
-
-	$filename = "compress.zlib://$xmlfile";
 
 	$f   = fopen($filename, 'r');
 	$xml = '';

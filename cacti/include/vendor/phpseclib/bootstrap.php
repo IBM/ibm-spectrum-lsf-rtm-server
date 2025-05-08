@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /**
  * Bootstrapping File for phpseclib
  *

@@ -1,4 +1,3 @@
-// $Id$
 /* Afrikaans translation for the jQuery Timepicker Addon */
 /* Written by Deon Heyns */
 (function($) {

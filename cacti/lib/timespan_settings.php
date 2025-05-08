@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2024 The Cacti Group                                 |
@@ -13,6 +12,11 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDtool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -177,11 +181,28 @@ function set_preset_timespan(&$timespan) {
 		$_SESSION['sess_current_timespan'] = read_user_setting('default_timespan');
 	}
 
+	if (preg_match('/graph/i', get_current_page())) {
+		$graph = true;
+	} else {
+		$graph = false;
+	}
+
 	/* get config option for first-day-of-the-week */
 	$first_weekdayid = read_user_setting('first_weekdayid');
 
+	/* operate like graphs if graphs is set */
+	if ($graph) {
+		$time = read_config_option('poller_lastrun_1', true);
+
+		if (empty($time)) {
+			$time = time();
+		}
+	} else {
+		$time = time();
+	}
+
 	/* get start/end time-since-epoch for actual time (now()) and given current-session-timespan */
-	get_timespan($timespan, time(), $_SESSION['sess_current_timespan'], $first_weekdayid);
+	get_timespan($timespan, $time, $_SESSION['sess_current_timespan'], $first_weekdayid);
 
 	$_SESSION['custom'] = 0;
 }

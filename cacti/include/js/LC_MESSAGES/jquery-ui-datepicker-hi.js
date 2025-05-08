@@ -1,4 +1,3 @@
-// $Id$
 /* Hindi initialisation for the jQuery UI date picker plugin. */
 /* Written by Michael Dawart. */
 ( function( factory ) {

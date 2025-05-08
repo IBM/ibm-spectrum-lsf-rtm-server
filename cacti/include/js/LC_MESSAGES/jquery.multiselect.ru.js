@@ -1,4 +1,3 @@
-// $Id$
 /* Russian initialisation for the jQuery UI multiselect plugin. */
 /* Written by Artem Packhomov (gorblnu4@gmail.com). */
 

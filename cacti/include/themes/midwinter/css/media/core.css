@@ -1,4 +1,3 @@
-/* $Id$ */
 /* main styles */
 ::-webkit-scrollbar {
     width: 12px;
@@ -943,7 +942,7 @@ ul#breadcrumbs {
 }
 
 .cactiLogo {
-    background: transparent;
+    background: transparent url('./../../images/cacti_logo.svg') no-repeat 30px;
     display:none;
     cursor: pointer;
     padding-bottom: 140px;
@@ -970,7 +969,7 @@ ul#breadcrumbs {
 .cactiLoginLogo, .cactiLogoutLogo {
     position: relative;
     float: left;
-    background: var(--text-color-highlight-a);
+    background: var(--text-color-highlight-a) url(./../../images/cacti_logo.svg) no-repeat scroll 50% 50% / 20px auto;
     border-radius: 50%;
     border: 1px solid var(--box-shadow-color);
     width: 50px;

@@ -1,4 +1,3 @@
-// $Id$
 /* Spanish initialisation for the jQuery UI multiselect plugin. */
 /* Written by Vinius Fontoura Correa(vinusfc@gmail.com). */
 

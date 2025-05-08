@@ -1,4 +1,3 @@
-// $Id$
 /* Welsh/UK initialisation for the jQuery UI date picker plugin. */
 /* Written by William Griffiths. */
 ( function( factory ) {

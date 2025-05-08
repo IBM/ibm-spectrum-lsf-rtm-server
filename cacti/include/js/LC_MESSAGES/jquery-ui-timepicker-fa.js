@@ -1,4 +1,3 @@
-// $Id$
 /* Persian translation for the jQuery Timepicker Addon */
 /* Written by Meysam Pour Ganji */
 (function($) {
