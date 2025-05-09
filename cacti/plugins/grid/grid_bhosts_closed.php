@@ -234,13 +234,13 @@ function grid_bhosts_closed_event_records(&$total_rows, $apply_limits = true, $r
 		$date1 = get_request_var('date1');
 		$date2 = get_request_var('date2');
 
-		$sql_where2 = $sql_where . ($sql_where != '' ? ' AND ':'WHERE ') . " ((event_time BETWEEN '$date1' AND '$date2') OR (event_time < '$date1' AND (end_time > '$date1')))";
-		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . " ((event_time BETWEEN '$date1' AND '$date2') OR (event_time < '$date1' AND (end_time > '$date1' OR end_time = '0000-00-00 00:00:00')))";
+		$sql_where2 = $sql_where . ($sql_where != '' ? ' AND ':'WHERE ') . " ((event_time BETWEEN ? AND ?) OR (event_time < ? AND (end_time > ?)))";
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . " ((event_time BETWEEN ? AND ?) OR (event_time < ? AND (end_time > ? OR end_time = '0000-00-00 00:00:00')))";
 
 		$sql_params[] = $date1;
 		$sql_params[] = $date2;
 		$sql_params[] = $date1;
-		$sql_params[] = $date2;
+		$sql_params[] = $date1;
 
 		$sql_params2  = $sql_params;
 	} else {
@@ -287,7 +287,7 @@ function grid_bhosts_closed_event_records(&$total_rows, $apply_limits = true, $r
 					FROM grid_host_closure_events_finished
 					$sql_where2 " : "") . "
 				) AS a
-				$group_by", $sql_params + $sql_params2);
+				$group_by", array_merge($sql_params, $sql_params2));
 
 			if (cacti_sizeof($total_rows_array)) {
 				$total_rows = sizeof($total_rows_array);
@@ -302,7 +302,7 @@ function grid_bhosts_closed_event_records(&$total_rows, $apply_limits = true, $r
 				$sql_where2 " : "") . "
 				$sql_order";
 
-			$total_rows = db_fetch_cell_prepared("SELECT COUNT(*)
+			$rows_query = "SELECT COUNT(*)
 				FROM (
 					SELECT clusterid, host, lockid
 					FROM grid_host_closure_events
@@ -311,7 +311,9 @@ function grid_bhosts_closed_event_records(&$total_rows, $apply_limits = true, $r
 					SELECT clusterid, host, lockid
 					FROM grid_host_closure_events_finished
 					$sql_where2 " : "") . "
-				) AS a", $sql_params + $sql_params2);
+				) AS a";
+
+			$total_rows = db_fetch_cell_prepared($rows_query, array_merge($sql_params, $sql_params2));
 		}
 	} else {
 		if (get_request_var('type') == 'all') {
@@ -329,7 +331,7 @@ function grid_bhosts_closed_event_records(&$total_rows, $apply_limits = true, $r
 				$sql_query .= " UNION ALL $select FROM $table $sql_where2";
 				$rowsquery .= " UNION ALL SELECT clusterid, host, lockid FROM $table $sql_where2";
 
-				$uparams += $sql_params2;
+				$uparams = array_merge($uparams, $sql_params2);
 			}
 		}
 
@@ -344,7 +346,6 @@ function grid_bhosts_closed_event_records(&$total_rows, $apply_limits = true, $r
 		} else {//no group by
 			$sql_query = "$sql_query $sql_order";
 
-			//cacti_log("total_rows SELECT COUNT(*) FROM ($rowsquery) AS a");
 			$total_rows = db_fetch_cell_prepared("SELECT COUNT(*) FROM ($rowsquery) AS a", $uparams);
 		}
 	}
@@ -354,7 +355,8 @@ function grid_bhosts_closed_event_records(&$total_rows, $apply_limits = true, $r
 	}
 
 	//print $sql_query;
-	return db_fetch_assoc($sql_query);
+
+	return db_fetch_assoc_prepared($sql_query, array_merge($sql_params, $sql_params2));
 }
 
 function closureEventsFilter() {
