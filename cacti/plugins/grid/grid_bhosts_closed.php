@@ -30,6 +30,9 @@ include_once($config['base_path'] . '/lib/rtm_functions.php');
 include_once($config['base_path'] . '/lib/rtm_plugins.php');
 include('./lib/rtm_timespan_settings.php');
 
+/* correct gridhres crashing mariadb */
+db_execute('SET SESSION optimizer_switch="split_materialized=off"');
+
 $title = __('IBM Spectrum LSF RTM - Closed Admin Hosts', 'grid');
 
 $grid_host_control_actions = array(
@@ -65,6 +68,9 @@ switch (get_request_var('action')) {
 	break;
 }
 
+/* correct gridhres crashing mariadb */
+db_execute('SET SESSION optimizer_switch="split_materialized=on"');
+
 function grid_view_closed() {
 	global $config;
 
@@ -89,71 +95,76 @@ function grid_closure_events_request_vars() {
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '-1'
-			),
+		),
 		'page' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'default' => '1'
-			),
+		),
 		'filter' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'sort_column' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => 'host',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'sort_direction' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => 'DESC',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'refresh' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => read_grid_config_option('refresh_interval')
-			),
+		),
 		'summarize' => array(
 			'filter' => FILTER_CALLBACK,
 			'options' => array('options' => 'sanitize_search_string'),
 			'pageset' => true,
 			'default' => 'false'
-			),
+		),
 		'exec_host' => array(
 			'filter' => FILTER_CALLBACK,
 			'options' => array('options' => 'sanitize_search_string'),
 			'pageset' => true,
 			'default' => '0'
-			),
+		),
+		'drain' => array(
+			'filter' => FILTER_VALIDATE_INT,
+			'pageset' => true,
+			'default' => '-1'
+		),
 		'type' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => 'all',
 			'options' => array('options' => 'sanitize_search_string'),
 			'pageset' => true
-			),
+		),
 		'lockid' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => 'all',
 			'options' => array('options' => 'sanitize_search_string'),
 			'pageset' => true
-			),
+		),
 		'drp_action' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '',
 			'options' => array('options' => 'sanitize_search_string')
-			)
+		)
 	);
 
 	validate_store_request_vars($filters, 'sess_grid_closure_event');
 
 	$filters = array(
 		'clusterid' => array(
-			'filter' => FILTER_VALIDATE_INT,
+			'filter'  => FILTER_VALIDATE_INT,
 			'default' => read_grid_config_option('default_grid')
-			)
+		)
 	);
 	validate_store_request_vars($filters, 'sess_grid');
 	/* ==================================================== */
@@ -162,84 +173,76 @@ function grid_closure_events_request_vars() {
 	$timespan = rtm_initialize_timespan($grid_timespans, $grid_timeshifts, 'sess_grid_closure_event', 'read_grid_config_option', 'Y-m-d H:i:s');
 	$timeshift = rtm_set_timeshift($grid_timeshifts, 'sess_grid_closure_event', 'read_grid_config_option');
 
-   	/* process the timespan/timeshift settings */
+	/* process the timespan/timeshift settings */
 	rtm_process_html_variables($grid_timespans, $grid_timeshifts, 'sess_grid_closure_event', 'read_grid_config_option');
 	rtm_process_user_input($timespan, $timeshift, $grid_timespans, 'sess_grid_closure_event', 'read_grid_config_option', 'Y-m-d H:i:s');
 
-   	/* save session variables */
+	/* save session variables */
 	rtm_finalize_timespan($timespan, $grid_timespans, 'sess_grid_closure_event', 'read_grid_config_option', 'Y-m-d H:i:s');
 
 	set_request_var('date1', $_SESSION['sess_grid_closure_event_current_date1']);
 	set_request_var('date2', $_SESSION['sess_grid_closure_event_current_date2']);
 }
 
-function grid_bhosts_closed_event_records(&$total_rows, $apply_limits = true, $rows = 30) {
+function grid_bhosts_closed_event_records(&$total_rows, $apply_limits = true, $rows = 30, $sql_params = array()) {
 	global $grid_out_of_services;
 	global $grid_timespans, $grid_timeshifts, $grid_weekdays, $timespan;
 
-	$rowsquery = '';
-	$sql_where = '';
+	$rowsquery   = '';
+	$sql_where   = '';
+	$sql_params2 = array();
 
 	/* request validation */
 	get_filter_request_var('clusterid');
 
 
 	/* user id sql where */
-	if (get_request_var('clusterid') == '0') {
-		/* Show all items */
-	} else {
-		$sql_where .= 'WHERE (clusterid=' . get_filter_request_var('clusterid') . ')';
+	if (get_request_var('clusterid') != '0') {
+		$sql_where   .= 'WHERE clusterid = ?';
+		$sql_params[] = get_filter_request_var('clusterid');
 	}
 
 	/* exec_host sql where */
 	if (get_request_var('exec_host') == '0') {
 		/* Show all items */
 	} else {
-		if (strlen($sql_where)) {
-			$sql_where .= ' AND (host=' . db_qstr(get_request_var('exec_host')) . ')';
-		} else {
-			$sql_where = 'WHERE (host=' . db_qstr(get_request_var('exec_host')) . ')';
-		}
+		$sql_where   .= ($sql_where != '' ? ' AND ':'WHERE ') . ' host = ?';
+		$sql_params[] = get_request_var('exec_host');
 	}
 
 	/* type sql where */
-	if (get_request_var('type') == 'all') {
-		/* Show all items */
-	} else {
-		if (strlen($sql_where)) {
-			$sql_where .= ' AND (end_time="0000-00-00 00:00:00")';
-		} else {
-			$sql_where = 'WHERE (end_time="0000-00-00 00:00:00")';
-		}
+	if (get_request_var('type') != 'all') {
+		$sql_where   .= ($sql_where != '' ? ' AND ':'WHERE ') . ' end_time="0000-00-00 00:00:00"';
 	}
 
 	/* lockid sql where */
-	if (get_request_var('lockid') == 'all') {
-		/* Show all items */
-	} else {
-		if (strlen($sql_where)) {
-			$sql_where .= ' AND (lockid=' . db_qstr(get_request_var('lockid')) . ')';
-		} else {
-			$sql_where = 'WHERE (lockid=' . db_qstr(get_request_var('lockid')) . ')';
-		}
+	if (get_request_var('lockid') != 'all') {
+		$sql_where   .= ($sql_where != '' ? ' AND ':'WHERE ') . ' lockid = ?';
+		$sql_params[] = get_request_var('lockid');
 	}
 
 	/* execution host sql where */
 	if (get_request_var('filter') != '') {
-		$sql_where .= (strlen($sql_where) ? ' AND':'WHERE') . " ((host LIKE '%" . get_request_var('filter') . "%') OR (hCtrlMsg LIKE '%" . get_request_var('filter') . "%'))";
+		$sql_where .= ($sql_where != '' ? ' AND':'WHERE ') . " (host LIKE ? OR hCtrlMsg LIKE ?)";
+
+		$sql_params[] = '%' . get_request_var('filter') . '%';
+		$sql_params[] = '%' . get_request_var('filter') . '%';
 	}
 
 	/* timespan sql where , put this as last where to get a sql_where2 for no '0000-00-00 00:00:00' */
 	if (isset_request_var('date1') && isset_request_var('date2')) {
 		$date1 = get_request_var('date1');
 		$date2 = get_request_var('date2');
-		if (strlen($sql_where)) {
-			$sql_where2 = $sql_where . " AND ((event_time BETWEEN '$date1' AND '$date2') OR (event_time < '$date1' AND (end_time > '$date1')))";
-			$sql_where .= " AND ((event_time BETWEEN '$date1' AND '$date2') OR (event_time < '$date1' AND (end_time > '$date1' OR end_time = '0000-00-00 00:00:00')))";
-		} else {
-			$sql_where2 = "WHERE ((event_time BETWEEN '$date1' AND '$date2') OR (event_time < '$date1' AND (end_time > '$date1')))";
-			$sql_where = "WHERE ((event_time BETWEEN '$date1' AND '$date2') OR (event_time < '$date1' AND (end_time > '$date1' OR end_time = '0000-00-00 00:00:00')))";
-		}
+
+		$sql_where2 = $sql_where . ($sql_where != '' ? ' AND ':'WHERE ') . " ((event_time BETWEEN '$date1' AND '$date2') OR (event_time < '$date1' AND (end_time > '$date1')))";
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . " ((event_time BETWEEN '$date1' AND '$date2') OR (event_time < '$date1' AND (end_time > '$date1' OR end_time = '0000-00-00 00:00:00')))";
+
+		$sql_params[] = $date1;
+		$sql_params[] = $date2;
+		$sql_params[] = $date1;
+		$sql_params[] = $date2;
+
+		$sql_params2  = $sql_params;
 	} else {
 		$current_time = time();
 		$date1 = date('Y-m-d H:i:s', $current_time);
@@ -250,6 +253,7 @@ function grid_bhosts_closed_event_records(&$total_rows, $apply_limits = true, $r
 	if (isset_request_var('summarize') && ((get_request_var('summarize') == 'true') || (get_request_var('summarize') == 'on'))) {
 		$interval = "'N/A' as admin, 'N/A' as hCtrlMsg, 'N/A' as event_time, 'N/A' as end_time";
 		$group_by = 'GROUP BY clusterid, host, lockid';
+
 		$summarize_checked = true;
 	} else {
 		$interval = "admin, hCtrlMsg, event_time, end_time";
@@ -260,7 +264,7 @@ function grid_bhosts_closed_event_records(&$total_rows, $apply_limits = true, $r
 
 	$select = "SELECT clusterid, host, lockid, $interval";
 	if (read_config_option('grid_partitioning_enable') == '') {
-		if($summarize_checked){
+		if ($summarize_checked) {
 			$sql_query = "SELECT * FROM (
 				$select
 				FROM grid_host_closure_events
@@ -272,20 +276,21 @@ function grid_bhosts_closed_event_records(&$total_rows, $apply_limits = true, $r
 				) AS a
 				$group_by
 				$sql_order";
-			/* cacti_log("total_rows SELECT clusterid FROM (
-						SELECT clusterid, host, lockid FROM grid_host_closure_events $sql_where
-						UNION ALL
-						SELECT clusterid, host, lockid FROM grid_host_closure_events_finished $sql_where2
-					) AS a
-					$group_by"); */
-			$total_rows_array = db_fetch_assoc("SELECT clusterid FROM (
-						SELECT clusterid, host, lockid FROM grid_host_closure_events $sql_where " . (get_request_var('type') == 'all' ? "
-						UNION ALL
-						SELECT clusterid, host, lockid FROM grid_host_closure_events_finished $sql_where2 " : "") . "
-					) AS a
-					$group_by");
-			if(cacti_sizeof($total_rows_array)){
-				$total_rows = cacti_sizeof($total_rows_array);
+
+			$total_rows_array = db_fetch_assoc_prepared("SELECT clusterid
+				FROM (
+					SELECT clusterid, host, lockid
+					FROM grid_host_closure_events
+					$sql_where " . (get_request_var('type') == 'all' ? "
+					UNION ALL
+					SELECT clusterid, host, lockid
+					FROM grid_host_closure_events_finished
+					$sql_where2 " : "") . "
+				) AS a
+				$group_by", $sql_params + $sql_params2);
+
+			if (cacti_sizeof($total_rows_array)) {
+				$total_rows = sizeof($total_rows_array);
 			}
 		} else {//no group by
 			$sql_query = "$select
@@ -296,16 +301,17 @@ function grid_bhosts_closed_event_records(&$total_rows, $apply_limits = true, $r
 				FROM grid_host_closure_events_finished
 				$sql_where2 " : "") . "
 				$sql_order";
-			/* cacti_log("total_rows SELECT COUNT(*) FROM (
-						SELECT clusterid, host, lockid FROM grid_host_closure_events $sql_where
-						UNION ALL
-						SELECT clusterid, host, lockid FROM grid_host_closure_events_finished $sql_where2
-					) AS a"); */
-			$total_rows = db_fetch_cell("SELECT COUNT(*) FROM (
-						SELECT clusterid, host, lockid FROM grid_host_closure_events $sql_where " . (get_request_var('type') == 'all' ? "
-						UNION ALL
-						SELECT clusterid, host, lockid FROM grid_host_closure_events_finished $sql_where2 " : "") . "
-					) AS a");
+
+			$total_rows = db_fetch_cell_prepared("SELECT COUNT(*)
+				FROM (
+					SELECT clusterid, host, lockid
+					FROM grid_host_closure_events
+					$sql_where " . (get_request_var('type') == 'all' ? "
+					UNION ALL
+					SELECT clusterid, host, lockid
+					FROM grid_host_closure_events_finished
+					$sql_where2 " : "") . "
+				) AS a", $sql_params + $sql_params2);
 		}
 	} else {
 		if (get_request_var('type') == 'all') {
@@ -313,34 +319,41 @@ function grid_bhosts_closed_event_records(&$total_rows, $apply_limits = true, $r
 		} else {
 			$union_tables = array(); //active, no need check finished tables.
 		}
+
 		$sql_query = "$select FROM grid_host_closure_events $sql_where";
 		$rowsquery =  "SELECT clusterid, host, lockid FROM grid_host_closure_events $sql_where";
+		$uparams   = $sql_params;
+
 		if (cacti_sizeof($union_tables)) {
 			foreach ($union_tables as $table) {
 				$sql_query .= " UNION ALL $select FROM $table $sql_where2";
 				$rowsquery .= " UNION ALL SELECT clusterid, host, lockid FROM $table $sql_where2";
+
+				$uparams += $sql_params2;
 			}
 		}
-		if($summarize_checked){
+
+		if ($summarize_checked) {
 			$sql_query = "SELECT * FROM ($sql_query) AS a $group_by $sql_order";
 
-			//cacti_log("total_rows SELECT clusterid FROM ($rowsquery) AS a $group_by");
-			$total_rows_array = db_fetch_assoc("SELECT clusterid FROM ($rowsquery) AS a $group_by");
-			if(cacti_sizeof($total_rows_array)){
-				$total_rows = cacti_sizeof($total_rows_array);
+			$total_rows_array = db_fetch_assoc_prepared("SELECT clusterid FROM ($rowsquery) AS a $group_by", $uparams);
+
+			if (cacti_sizeof($total_rows_array)) {
+				$total_rows = sizeof($total_rows_array);
 			}
 		} else {//no group by
 			$sql_query = "$sql_query $sql_order";
 
 			//cacti_log("total_rows SELECT COUNT(*) FROM ($rowsquery) AS a");
-			$total_rows = db_fetch_cell("SELECT COUNT(*) FROM ($rowsquery) AS a");
+			$total_rows = db_fetch_cell_prepared("SELECT COUNT(*) FROM ($rowsquery) AS a", $uparams);
 		}
 	}
+
 	if ($apply_limits) {
 		$sql_query .= ' LIMIT ' . ($rows*(get_request_var('page')-1)) . ',' . $rows;
 	}
 
-	//echo $sql_query;
+	//print $sql_query;
 	return db_fetch_assoc($sql_query);
 }
 
@@ -357,13 +370,6 @@ function closureEventsFilter() {
 
 			date1='<?php print $_SESSION['sess_grid_closure_event_current_date1'];?>'
 			date2='<?php print $_SESSION['sess_grid_closure_event_current_date2'];?>'
-
-			function stopRKey(evt) {
-				var evt  = (evt) ? evt : ((event) ? event : null);
-				var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
-				if ((evt.keyCode == 13) && (node.type=='text')) { return false; }
-			}
-			document.onkeypress = stopRKey;
 
 			function applyFilterChangePDTS() {
 				strURL = 'grid_bhosts_closed.php?header=false&tab=closure_event&predefined_timespan=' + $('#predefined_timespan').val();
@@ -490,7 +496,9 @@ function closureEventsFilter() {
 						<select id='clusterid'>
 							<option value='0'<?php if (get_request_var('clusterid') == '0') {?> selected<?php }?>>All</option>
 							<?php
-							$clusters = grid_get_clusterlist();
+							$clusters = db_fetch_assoc('SELECT clusterid, clustername
+								FROM grid_clusters
+								ORDER BY clustername');
 
 							if (cacti_sizeof($clusters)) {
 								foreach ($clusters as $cluster) {
@@ -720,14 +728,39 @@ function grid_closure_events() {
 	$results = grid_bhosts_closed_event_records($total_rows, true, $rows);
 
 	$display_text = array(
-		'nosort0' => array( 'display' => __('Cluster', 'grid'), 'align' => 'left'),
-		'host'    	=> array('display' => __('Host', 'grid'), 'align' => 'left', 'sort' => 'ASC'),
-		//'clusterid' => array( 'display' => __('Cluster ID', 'grid'), 'align' => 'left', 'sort'    => 'ASC'),
-		'lockid'      => array('display' => __('LockId', 'grid'), 'align' => 'left', 'sort' => 'ASC'),
-		'event_time'  => array('display' => __('Event Time', 'grid'), 'align' => 'right', 'sort' => 'DESC'),
-		'admin'        => array('display' => __('Admin', 'grid'), 'align' => 'left', 'sort' => 'ASC'),
-		'nosort'      => array('display' => __('Message', 'grid'), 'align' => 'left'),
-		'end_time'  => array('display' => __('End Time', 'grid'), 'align' => 'right', 'sort' => 'DESC')
+		'nosort0' => array(
+			'display' => __('Cluster', 'grid'),
+			'align'   => 'left'
+		),
+		'host' => array(
+			'display' => __('Host', 'grid'),
+			'align'   => 'left',
+			'sort'    => 'ASC'
+		),
+		'lockid' => array(
+			'display' => __('LockId', 'grid'),
+			'align'   => 'left',
+			'sort'    => 'ASC'
+		),
+		'event_time' => array(
+			'display' => __('Event Time', 'grid'),
+			'align'   => 'right',
+			'sort'    => 'DESC'
+		),
+		'admin' => array(
+			'display' => __('Admin', 'grid'),
+			'align'   => 'left',
+			'sort'    => 'ASC'
+		),
+		'nosort' => array(
+			'display' => __('Message', 'grid'),
+			'align'   => 'left'
+		),
+		'end_time' => array(
+			'display' => __('End Time', 'grid'),
+			'align'   => 'right',
+			'sort'    => 'DESC'
+		)
 	);
 
 	$nav = html_nav_bar('grid_bhosts_closed.php?tab=closure_event&filter=' . get_request_var('filter'), MAX_DISPLAY_PAGES, get_request_var('page'), $rows, $total_rows, cacti_sizeof($display_text)+1, __('Events', 'grid'), 'page', 'main');
@@ -744,8 +777,6 @@ function grid_closure_events() {
 			form_alternate_row();
 			form_selectable_cell(grid_get_clustername($row['clusterid']), $i);
 			form_selectable_cell_metadata('simple', 'host', $row['clusterid'], $row['host'], '', '', html_escape($row['host']), true);
-			//form_selectable_cell($row['clusterid'], $i);
-			//form_selectable_cell(html_escape($row['host']), $i);
 			form_selectable_cell(html_escape($row['lockid']), $i);
 			form_selectable_cell($row['event_time'], $i, '', 'right');
 			form_selectable_cell($row['admin'], $i);
@@ -764,6 +795,7 @@ function grid_closure_events() {
 		form_end_row();
 		html_end_box(false);
 	}
+
 	bottom_footer();
 }
 
@@ -787,9 +819,9 @@ function form_action() {
 	if (isset_request_var('selected_items') && read_config_option('grid_management_clusters') == 'on') {
 		form_input_validate(trim(get_request_var('message')), 'message', '', false, 'error_mandatory_input_field');
 	}
+
 	if (isset_request_var('message')) {
 		form_input_validate(get_nfilter_request_var('message'),   'message', '^[A-Za-z0-9\._\\\@\ \/-]+$', true, '148');
-
 	}
 
 	/* if we are to save this form, instead of display it */
@@ -801,6 +833,7 @@ function form_action() {
 		} else {
 			$message = '';
 		}
+
 		if (isset_request_var('action_lockid') && trim(get_request_var('action_lockid')) != '') { //change $message to array.
 			$message_array = array();
 			$message_array['message'] = $message;
@@ -818,105 +851,115 @@ function form_action() {
 		$selected_items_whole = rtm_sanitize_unserialize_selected_items(get_request_var('selected_items_whole'), false);
 		$rsp_content = array();
 		$advocate_max = 30;
+
 		if ($selected_items_whole != false) {
-		for($i=0; $i<cacti_sizeof($selected_items_whole); $i+=$advocate_max){
-			$selected_items = array_slice($selected_items_whole, $i, $advocate_max);
-			if(cacti_sizeof($selected_items)<=0) break;
-			//print_r($selected_items_whole);
-			$json_return_format = sorting_json_format($selected_items, $message, $action_level); //sort the variables into required format
+			for ($i=0; $i < cacti_sizeof($selected_items_whole); $i+=$advocate_max) {
+				$selected_items = array_slice($selected_items_whole, $i, $advocate_max);
 
-			$advocate_key = session_auth();
+				if (cacti_sizeof($selected_items) <= 0) {
+					break;
+				}
 
-			$json_host_info = array (
+				//print_r($selected_items_whole);
+				$json_return_format = sorting_json_format($selected_items, $message, $action_level); //sort the variables into required format
+
+				$advocate_key = session_auth();
+
+				$json_host_info = array (
 					'key' => $advocate_key,
 					'action' => $host_action,
 					'target' => $json_return_format,
-			);
+				);
 
-			$output = json_encode($json_host_info);
+				$output = json_encode($json_host_info);
 
-			$curl_output =  exec_curl($action_level, $output); //pass to advocate for processing
+				$curl_output =  exec_curl($action_level, $output); //pass to advocate for processing
 
-			if ($curl_output['http_code'] == 400)
-				raise_message(134);
-			else if ($curl_output['http_code'] == 500)
-				raise_message(135);
-			else{
-				if ($curl_output['http_code'] == 200) {
+				if ($curl_output['http_code'] == 400) {
+					raise_message(134);
+				} elseif ($curl_output['http_code'] == 500) {
+					raise_message(135);
+				} elseif ($curl_output['http_code'] == 200) {
 					// log_action permanently be 'Open' currently
 					$log_action = $grid_host_control_actions[get_request_var('drp_action')];
 					$json_output = json_decode($output);
 					$username_log = get_username($_SESSION['sess_user_id']);
+
 					foreach ($json_output->target as $target) {
-					    $action_message = get_request_var('message');
-					    cacti_log("Host '{$target->name}', {$log_action} by '{$username_log}', comment: '{$action_message}'.", false, 'LSFCONTROL');
+						$action_message = get_request_var('message');
+						cacti_log("Host '{$target->name}', {$log_action} by '{$username_log}', comment: '{$action_message}'.", false, 'LSFCONTROL');
 					}
 				} else {
 					raise_message(136);
 				}
+
+				$content_response = $curl_output['content']; //return response from advocate in json format
+
+				$json_decode_content_response = json_decode($content_response,true);
+
+				$rsp_content_temp = $json_decode_content_response['rsp'];
+
+				if (is_array($rsp_content_temp)) {
+					$rsp_content = array_merge($rsp_content, $rsp_content_temp);
+				}
 			}
 
-			$content_response = $curl_output['content']; //return response from advocate in json format
-
-			$json_decode_content_response = json_decode($content_response,true);
-
-			$rsp_content_temp = $json_decode_content_response['rsp'];
-			if(is_array($rsp_content_temp)){
-				$rsp_content = array_merge($rsp_content, $rsp_content_temp);
+			for ($k=0;$k<count($rsp_content);$k++) {
+				$key_sort[$k] = $rsp_content[$k]['clusterid'];
 			}
-		}
-		}
 
-		for ($k=0;$k<count($rsp_content);$k++) {
-			$key_sort[$k] = $rsp_content[$k]['clusterid'];
-		}
+			$output_message = '';
 
-		$output_message='';
-		if(isset($key_sort)){
-			asort($key_sort);
-			if(cacti_sizeof($key_sort)){
-			foreach( $key_sort as $key => $val) {
-				foreach ($rsp_content as $key_rsp_content => $value) {
-					if ($key_rsp_content == $key) {
-						if (strchr($value['name'], '|')) {
-							$messages = explode("|", $value['status_message']);
-							foreach ($messages as $message) {
-								if(strlen($message) > 0) {
-									if(strstr($message, "Unable to")) {
-										$count_fail ++;
-										$return_status = __('Failed. Status Code: %d', $value['status_code'], 'grid');
-									} else {
-										$return_status = __('Ok');
-										$count_ok ++;
+			if (isset($key_sort)) {
+				asort($key_sort);
+
+				if (cacti_sizeof($key_sort)) {
+					foreach( $key_sort as $key => $val) {
+						foreach ($rsp_content as $key_rsp_content => $value) {
+							if ($key_rsp_content == $key) {
+								if (strchr($value['name'], '|')) {
+									$messages = explode("|", $value['status_message']);
+									foreach ($messages as $message) {
+										if (strlen($message) > 0) {
+											if (strstr($message, "Unable to")) {
+												$count_fail ++;
+												$return_status = __('Failed. Status Code: %d', $value['status_code'], 'grid');
+											} else {
+												$return_status = __('Ok');
+												$count_ok ++;
+											}
+
+											$message        = 'Status:' . $return_status . ' - Cluster Name:' . grid_get_clustername($value['clusterid']) . ' - ' . $message . '<br/>';
+											$output_message = $output_message.$message;
+										}
 									}
-									$message='Status:' . $return_status . ' - Cluster Name:' . grid_get_clustername($value['clusterid']) . ' - '.$message.'<br/>';
-									$output_message=$output_message.$message;
+								} else {
+									if ($value['status_code'] == 0) {
+										$return_status = 'OK';
+										$count_ok ++;
+									} else{
+										$count_fail ++;
+										$return_status = 'Failed. Status Code: ' . $value['status_code'];
+									}
+
+									$message        = 'Status:' . $return_status . ' - Cluster Name:' . grid_get_clustername($value['clusterid']) . ' - ' . $value['status_message'] . '<br/>';
+									$output_message = $output_message.$message;
 								}
 							}
-						} else {
-							if ($value['status_code'] == 0) {
-								$return_status = 'OK';
-								$count_ok ++;
-							}
-							else{
-								$count_fail ++;
-								$return_status = 'Failed. Status Code: '.$value['status_code'];
-							}
-							$message='Status:' . $return_status . ' - Cluster Name:' . grid_get_clustername($value['clusterid']) . ' - '.$value['status_message'].'<br/>';
-				                        $output_message=$output_message.$message;
 						}
+					}
+
+					if ($count_fail>0) {
+						raise_message('mymessage', $output_message, MESSAGE_LEVEL_ERROR);
+					} else {
+						raise_message('mymessage', $output_message, MESSAGE_LEVEL_INFO);
 					}
 				}
 			}
-				if($count_fail>0)
-              				raise_message('mymessage', $output_message, MESSAGE_LEVEL_ERROR);
-           			 else
-             				raise_message('mymessage', $output_message, MESSAGE_LEVEL_INFO);
-			}
-		}
 
-		header('Location: grid_bhosts_closed.php?header=false');
-		exit;
+			header('Location: grid_bhosts_closed.php?header=false');
+			exit;
+		}
 	}
 
 	/* setup some variables */
@@ -1054,7 +1097,7 @@ function form_action() {
 	bottom_footer();
 }
 
-function grid_view_get_bhosts_records(&$sql_where, $apply_limits = true, $rows = 30) {
+function grid_view_get_bhosts_records(&$sql_where, $apply_limits = true, $rows = 30, $sql_params = array()) {
 	global $grid_out_of_services;
 
 	/* request validation */
@@ -1077,16 +1120,13 @@ function grid_view_get_bhosts_records(&$sql_where, $apply_limits = true, $rows =
 	}
 
 	/* user id sql where */
-	if (get_request_var('clusterid') == '0') {
-		/* Show all items */
-	} else {
-		$sql_where .= 'WHERE (gh.clusterid=' . get_filter_request_var('clusterid') . ')';
+	if (get_request_var('clusterid') != '0') {
+		$sql_where   .= ($sql_where != '' ? ' AND ':'WHERE ') . ' gh.clusterid = ?';
+		$sql_params[] = get_filter_request_var('clusterid');
 	}
 
 	/* host group sql where */
-	if (get_request_var('hgroup') == '-1') {
-		/* Show all items */
-	} else {
+	if (get_request_var('hgroup') != '-1') {
 		if (get_request_var('clusterid') == 0) {
 			$hosts = db_fetch_assoc_prepared('SELECT host
 				FROM grid_hostgroups
@@ -1183,37 +1223,37 @@ function grid_view_get_bhosts_records(&$sql_where, $apply_limits = true, $rows =
 		}
 	}
 
-	/* hostType sql where */
-	if (get_request_var('type') == '-1') {
+	/* drain sql where */
+	if (get_request_var('drain') == '-1') {
 		/* Show all items */
+	} elseif (get_request_var('drain') == '1') {
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . ' (numJobs = 0)';
 	} else {
-		if (strlen($sql_where)) {
-			$sql_where .= ' AND (hostType=' . db_qstr(get_request_var('type')) . ')';
-		} else {
-			$sql_where = 'WHERE (hostType=' . db_qstr(get_request_var('type')) . ')';
-		}
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . ' (numJobs > 0)';
+	}
+
+	/* hostType sql where */
+	if (get_request_var('type') != '-1') {
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . ' (hostType = ?';
+		$sql_params[] = get_request_var('type');
 	}
 
 	/* hostModel sql where */
-	if (get_request_var('model') == '-1') {
-		/* Show all items */
-	} else {
-		if (strlen($sql_where)) {
-			$sql_where .= ' AND (hostModel=' . db_qstr(get_request_var('model')) . ')';
-		} else {
-			$sql_where = 'WHERE (hostModel=' . db_qstr(get_request_var('model')) . ')';
-		}
+	if (get_request_var('model') != '-1') {
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . ' (hostModel = ?';
+		$sql_params[] = get_request_var('model');
 	}
 
-	$sql_where .= (strlen($sql_where) ? ' AND ':'WHERE ') . '(gh.status="Closed-Admin")';
+	$sql_where .= (strlen($sql_where) ? ' AND ':'WHERE ') . '(gh.status = "Closed-Admin")';
 
 	/* execution host sql where */
 	if (get_request_var('filter') != '') {
-		$sql_where .= (strlen($sql_where) ? ' AND':'WHERE') . " ((gh.host LIKE '%" . get_request_var('filter') . "%') OR
-			(gh.hCtrlMsg LIKE '%" . get_request_var('filter') . "%') OR
-			(ghi.hostType LIKE '%" . get_request_var('filter') . "%') OR
-			(ghi.hostModel LIKE '%" . get_request_var('filter') . "%'))";
+		$sql_where .= (strlen($sql_where) ? ' AND':'WHERE') . " (gh.host LIKE ? OR gh.hCtrlMsg LIKE ? OR ghi.hostType LIKE ? OR ghi.hostModel LIKE ?)";
 
+		$sql_params[] = '%' . get_request_var('filter') . '%';
+		$sql_params[] = '%' . get_request_var('filter') . '%';
+		$sql_params[] = '%' . get_request_var('filter') . '%';
+		$sql_params[] = '%' . get_request_var('filter') . '%';
 	}
 
 	$sql_order = get_order_string();
@@ -1226,10 +1266,17 @@ function grid_view_get_bhosts_records(&$sql_where, $apply_limits = true, $rows =
 		gl.pg, gh.cpuFactor, gh.maxJobs, gh.numJobs, gh.numRun, gh.numSSUSP,
 		gh.numUSUSP, gh.numUSUSP+gh.numSSUSP AS numSUSP, gh.numRESERVE, gh.time_in_state, gh.hCtrlMsg
 		FROM grid_hosts AS gh
-		INNER JOIN grid_clusters AS gc ON gc.clusterid = gh.clusterid
-		INNER JOIN grid_hostinfo AS ghi ON ghi.clusterid = gh.clusterid AND ghi.host = gh.host
-		INNER JOIN grid_load AS gl ON gl.clusterid = gh.clusterid AND gh.host = gl.host
-		LEFT JOIN grid_host_closure_events AS ghce ON ghce.clusterid = gh.clusterid AND gh.host = ghce.host
+		INNER JOIN grid_clusters AS gc
+		ON gc.clusterid = gh.clusterid
+		INNER JOIN grid_hostinfo AS ghi
+		ON ghi.clusterid = gh.clusterid
+		AND ghi.host = gh.host
+		INNER JOIN grid_load AS gl
+		ON gl.clusterid = gh.clusterid
+		AND gh.host = gl.host
+		LEFT JOIN grid_host_closure_events AS ghce
+		ON ghce.clusterid = gh.clusterid
+		AND gh.host = ghce.host
 		$sql_where
 		GROUP BY gh.clusterid, gh.host
 		$sql_order";
@@ -1237,7 +1284,8 @@ function grid_view_get_bhosts_records(&$sql_where, $apply_limits = true, $rows =
 	if ($apply_limits) {
 		$sql_query .= ' LIMIT ' . ($rows*(get_request_var('page')-1)) . ',' . $rows;
 	}
-	return db_fetch_assoc($sql_query);
+
+	return db_fetch_assoc_prepared($sql_query, $sql_params);
 }
 
 function bhostsFilter() {
@@ -1256,7 +1304,7 @@ function bhostsFilter() {
 						<select id='clusterid'>
 							<option value='0'<?php if (get_request_var('clusterid') == '0') {?> selected<?php }?>><?php print __('All', 'grid');?></option>
 							<?php
-							$clusters = grid_get_clusterlist();
+							$clusters = db_fetch_assoc('SELECT * FROM grid_clusters ORDER BY clustername');
 							if (cacti_sizeof($clusters)) {
 								foreach ($clusters as $cluster) {
 									print '<option value="' . $cluster['clusterid'] .'"'; if (get_request_var('clusterid') == $cluster['clusterid']) { print ' selected'; } print '>' . $cluster['clustername'] . '</option>';
@@ -1291,6 +1339,26 @@ function bhostsFilter() {
 			</table>
 			<table class='filterTable'>
 				<tr>
+					<td>
+						<?php print __('Drained', 'grid');?>
+					</td>
+					<td>
+						<select id='drain'>
+							<?php
+							$drains = array(
+								'-1' => __esc('All', 'grid'),
+								'1'  => __esc('Drained', 'grid'),
+								'2'  => __esc('Not Drained', 'grid'),
+							);
+
+							if (cacti_sizeof($drains)) {
+								foreach ($drains as $key => $value) {
+									print '<option value="' . $key . '"'; if (get_request_var('drain') == $key) { print ' selected'; } print '>' . $value . '</option>';
+								}
+							}
+							?>
+						</select>
+					</td>
 					<td>
 						<?php print __('Model', 'grid');?>
 					</td>
@@ -1387,61 +1455,67 @@ function bhostsFilter() {
 }
 
 function validate_bhosts_closed_request_vars() {
-    /* ================= input validation and session storage ================= */
-    $filters = array(
+	/* ================= input validation and session storage ================= */
+	$filters = array(
 		'rows' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '-1'
-			),
+		),
 		'page' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'default' => '1'
-			),
+		),
 		'refresh' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => read_grid_config_option('refresh_interval'),
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
+		'drain' => array(
+			'filter' => FILTER_VALIDATE_INT,
+			'pageset' => true,
+			'default' => '-1'
+		),
 		'type' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '-1',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'model' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '-1',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'hgroup' => array(
-			'filter' => FILTER_DEFAULT,
+			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '-1',
-			),
+			'options' => array('options' => 'sanitize_search_string')
+		),
 		'filter' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'sort_column' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => 'numRun',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'sort_direction' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => 'DESC',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'drp_action' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '',
 			'options' => array('options' => 'sanitize_search_string')
-			)
+		)
 	);
 
 	validate_store_request_vars($filters, 'sess_gbhc');
@@ -1452,9 +1526,11 @@ function validate_bhosts_closed_request_vars() {
 			'default' => read_grid_config_option('default_grid')
 			)
 	);
+
 	validate_store_request_vars($filters, 'sess_grid');
 	/* ================= input validation ================= */
 }
+
 function grid_view_bhosts() {
 	global $title, $report, $grid_search_types, $grid_rows_selector, $grid_refresh_interval,
 		$minimum_user_refresh_intervals, $config, $grid_host_control_actions;
@@ -1464,11 +1540,13 @@ function grid_view_bhosts() {
 	grid_set_minimum_page_refresh();
 
 	general_header();
+
 	/* present a tabbed interface */
 	$tabs_gridhost = array(
-		'host'  => __('Closed Hosts', 'grid'),
+		'host'          => __('Closed Hosts', 'grid'),
 		'closure_event' => __('Closure Events', 'grid')
 	);
+
 	/* draw the tabs */
 	print "<table><tr><td style='padding-bottom:0px;'>";
 	print "<div class='tabs' style='float:left;'><nav><ul role='tablist'>";
@@ -1495,6 +1573,7 @@ function grid_view_bhosts() {
 		strURL += '&filter=' + $('#filter').val();
 		strURL += '&type=' + $('#type').val();
 		strURL += '&model=' + $('#model').val();
+		strURL += '&drain=' + $('#drain').val();
 		strURL += '&hgroup=' + encodeURIComponent($('#hgroup').val());
 		strURL += '&refresh=' + $('#refresh').val();
 		strURL += '&rows=' + $('#rows').val();
@@ -1512,7 +1591,7 @@ function grid_view_bhosts() {
 			applyFilter();
 		});
 
-		$('#clusterid, #type, #hgroup, #model, #refresh, #rows, #filter').change(function() {
+		$('#clusterid, #type, #drain, #hgroup, #model, #refresh, #rows, #filter').change(function() {
 			applyFilter();
 		});
 
@@ -1526,7 +1605,8 @@ function grid_view_bhosts() {
 	</script>
 	<?php
 
-	$sql_where = '';
+	$sql_where  = '';
+	$sql_params = array();
 
 	if (get_request_var('rows') == -1) {
 		$rows = read_grid_config_option('grid_records');
@@ -1536,7 +1616,7 @@ function grid_view_bhosts() {
 		$rows = get_request_var('rows');
 	}
 
-	$bhosts_results = grid_view_get_bhosts_records($sql_where, true, $rows);
+	$bhosts_results = grid_view_get_bhosts_records($sql_where, true, $rows, $sql_params);
 
 	$debug_log = debug_log_return('grid_admin');
 
@@ -1565,12 +1645,17 @@ function grid_view_bhosts() {
 
 	html_start_box('', '100%', '', '3', 'center', '');
 
-	$total_rows = db_fetch_cell("SELECT COUNT(*)
+	$total_rows = db_fetch_cell_prepared("SELECT COUNT(*)
 		FROM grid_hosts AS gh
-		INNER JOIN grid_clusters AS gc ON gc.clusterid = gh.clusterid
-		INNER JOIN grid_hostinfo AS ghi ON ghi.clusterid = gh.clusterid AND ghi.host = gh.host
-		INNER JOIN grid_load AS gl ON gl.clusterid = gh.clusterid AND gh.host = gl.host
-		$sql_where");
+		INNER JOIN grid_clusters AS gc
+		ON gc.clusterid = gh.clusterid
+		INNER JOIN grid_hostinfo AS ghi
+		ON ghi.clusterid = gh.clusterid
+		AND ghi.host = gh.host
+		INNER JOIN grid_load AS gl
+		ON gl.clusterid = gh.clusterid
+		AND gh.host = gl.host
+		$sql_where", $sql_params);
 
 	$display_text = array(
 		'nosort0' => array(
@@ -1585,22 +1670,6 @@ function grid_view_bhosts() {
 			'dbname'  => 'host_cluster',
 			'sort'    => 'ASC'
 		),
-		'hostType'    => array(
-			'display' => __('Type', 'grid'),
-			'tip'     => __('Auto-detected or user defined Type of the host as defined in lsf.cluster file.', 'grid'),
-			'sort'    => 'ASC',
-			'dbname'  => 'host_type'
-		),
-		'hostModel'   => array(
-			'display' => __('Model', 'grid'),
-			'tip'     => __('Auto-detected or user defined Model of the host as defined in lsf.cluster file.', 'grid'),
-			'sort'    => 'ASC',
-			'dbname'  => 'host_model'
-		),
-		'lockid_count' => array(
-			'display' => __('Current LockId Count', 'grid'),
-			'sort'    => 'ASC'
-		),
 		'hCtrlMsg' => array(
 			'display' => __('Host Control Message', 'grid'),
 			'sort'    => 'ASC'
@@ -1608,6 +1677,11 @@ function grid_view_bhosts() {
 		'time_in_state' => array(
 			'display' => __('TIS', 'grid'),
 			'dbname'  => 'show_time_in_state',
+			'align'   => 'right',
+			'sort'    => 'ASC'
+		),
+		'lockid_count' => array(
+			'display' => __('Lock Count', 'grid'),
 			'align'   => 'right',
 			'sort'    => 'ASC'
 		),
@@ -1699,9 +1773,9 @@ function grid_view_bhosts() {
 
 			?>
 			<td class='nowrap' style='width:1%'>
-				<?php if (grid_checkouts_enabled() && db_fetch_cell_prepared("SELECT COUNT(*) FROM lic_services_feature_details WHERE hostname=?", array($bhosts["host"]))) {?>
+				<?php if (grid_checkouts_enabled() && db_fetch_cell("SELECT COUNT(*) FROM lic_services_feature_details WHERE hostname='" . $bhosts["host"] . "'")) {?>
 				<a class='pic' href='<?php print html_escape($config['url_path'] . 'plugins/license/lic_checkouts.php?reset=1&host=' . $bhosts['host'] . '&page=1');?>'><img src='<?php print $config['url_path'];?>plugins/grid/images/view_checkouts.gif' alt='' title='<?php print __esc('View License Checkouts');?>'></a>
-				<?php } if ($host_graphs > 0) {?><a class='pic' href='<?php print html_escape($config['url_path'] . 'graph_view.php?action=preview&graph_template_id=-1&rfilter=&host_id=' . $host_id);?>'><img src='<?php print $config['url_path'];?>plugins/grid/images/view_graphs.gif' alt='' title='<?php print __esc('View Host Graphs');?>'></a><?php }?>
+				<?php } if ($host_graphs > 0) {?><a class='pic' href='<?php print html_escape($config['url_path'] . 'graph_view.php?action=preview&reset=1&graph_template_id=-1&filter=&host_id=' . $host_id . '&filter=');?>'><img src='<?php print $config['url_path'];?>plugins/grid/images/view_graphs.gif' alt='' title='<?php print __esc('View Host Graphs');?>'></a><?php }?>
 				<?php api_plugin_hook_function('grid_bhost_action_insert', $bhosts); ?>
 			</td>
 			<?php
@@ -1714,25 +1788,31 @@ function grid_view_bhosts() {
 
 			form_selectable_cell_metadata('simple', 'host', $bhosts['clusterid'], $bhosts['host'], '', '', html_escape($bhosts['host']), true, $url);
 			form_selectable_cell_visible($bhosts['clustername'], 'host_cluster');
-			form_selectable_cell_visible(filter_value($bhosts['hostType'], get_request_var('filter')), 'host_type');
-			form_selectable_cell_visible(filter_value($bhosts['hostModel'], get_request_var('filter')), 'host_model');
 
 			$url = html_escape($config['url_path'] . 'plugins/grid/grid_bhosts_closed.php' .
-				'?header=false&tab=closure_event' .
+				'?reset=true' .
+				'&header=false' .
+				'&tab=closure_event' .
 				'&clusterid=' . $bhosts['clusterid'] .
 				'&exec_host=' . $bhosts['host'] .
 				'&type=active&lockid=all' .
 				'&predefined_timespan=7');
-			form_selectable_cell(filter_value($bhosts['lockid_count'], get_request_var('filter'), $url), '', $bl, 'nowrap');
-			form_selectable_cell(filter_value($bhosts['hCtrlMsg'], get_request_var('filter')), '', $bl, 'nowrap');
-			form_selectable_cell_visible(display_time_in_state($bhosts['time_in_state']), 'show_time_in_state', $bl, '', 'right');
+
+			$hCtrlMsg = str_replace(array(' Cdescription='), array("\ndescription="), $bhosts['hCtrlMsg']);
+
+			form_selectable_cell(filter_value($hCtrlMsg, get_request_var('filter')), '', $bl, 'white-space:pre-wrap');
+			form_selectable_cell_visible(display_time_in_state($bhosts['time_in_state']), 'show_time_in_state', $bl, 'right');
+			form_selectable_cell(filter_value($bhosts['lockid_count'], get_request_var('filter'), $url), '', $bl, 'right');
 
 			form_selectable_cell_visible(number_format_i18n($bhosts['numRun'], -1), '', $bl, 'right');
 			form_selectable_cell_visible(number_format_i18n($bhosts['numSUSP'], -1), 'host_ssusp_slots', $bl, 'right');
+
 			form_selectable_cell_visible(display_ut($bhosts['ut']), 'host_ut', $bl, 'right');
 			form_selectable_cell_visible(display_load($bhosts['r1m']), 'host_r1m', $bl, 'right');
+
 			form_selectable_cell_visible(($bhosts['memUsage'] > 0 ? round($bhosts['memUsage'], 2):'0').'%', 'host_mem', $bl, 'right');
 			form_selectable_cell_visible(($bhosts['swpUsage'] > 0 ? round($bhosts['swpUsage'], 2):'0').'%', 'host_swap', $bl, 'right');
+
 			form_selectable_cell_visible(display_pg($bhosts['pg'],0), 'host_pagerate', $bl, 'right');
 
 			if (api_plugin_user_realm_auth('LSF_Cluster_Control')) {

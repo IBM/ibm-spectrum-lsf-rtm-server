@@ -39,43 +39,12 @@ switch (get_request_var('action')) {
 			$sql_where = 'clusterid = ' . get_request_var('clusterid');
 		}
 		rtm_autocomplete_ajax('grid_lsload.php', 'hgroup', $sql_where);
+
 		break;
 	default:
 		grid_view_load();
-	break;
-}
 
-function get_custom_elim_columns() {
-	static $cols;
-
-	if (!is_array($cols)) {
-		$cols    = array();
-		$columns = db_fetch_assoc_prepared("SELECT name
-			FROM grid_settings
-			WHERE user_id = ?
-			AND name LIKE 'host_elim_%'
-			AND value='on'
-			ORDER BY name", array($_SESSION['sess_user_id']));
-
-		if (cacti_sizeof($columns)) {
-			$elimvals  = array_rekey(db_fetch_assoc("SELECT DISTINCT resource_name
-				FROM grid_hosts_resources
-				WHERE resource_name NOT IN ('r15s','r1m','r15m','ut','pg','io','ls','it','tmp','swp','mem')
-				AND host <> 'ALLHOSTS'
-				ORDER BY resource_name"), "resource_name", "resource_name");
-
-			foreach($columns as $c) {
-				$resource_name = str_replace('host_elim_', '', $c['name']);
-				if (isset($elimvals[$resource_name])) {
-					$cols[] = $resource_name;
-				}
-			}
-
-			return $cols;
-		}
-	} else {
-		return $cols;
-	}
+		break;
 }
 
 function grid_view_get_load_records(&$sql_where, $apply_limits = true, $rows = 30, &$sql_params = array()) {
@@ -87,25 +56,25 @@ function grid_view_get_load_records(&$sql_where, $apply_limits = true, $rows = 3
 
 	/* hostType sql where */
 	if (get_request_var('type') != '-1') {
-		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . 'hostType=?';
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . 'hostType = ?';
 		$sql_params[] = get_request_var('type');
 	}
 
 	/* hgroup sql where */
 	if (get_request_var('hgroup') != '-1') {
-		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . 'groupName=?';
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . 'groupName = ?';
 		$sql_params[] = get_request_var('hgroup');
 	}
 
 	/* hostModel sql where */
 	if (get_request_var('model') != '-1') {
-		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . ' hostModel=?';
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . ' hostModel = ?';
 		$sql_params[] = get_request_var('model');
 	}
 
 	/* status sql where */
 	if (get_request_var('status') != '-1') {
-		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . ' grid_load.status=?';
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . ' grid_load.status = ?';
 		$sql_params[] = get_request_var('status');
 	}
 
@@ -175,68 +144,76 @@ function grid_view_get_load_records(&$sql_where, $apply_limits = true, $rows = 3
 			grid_load.status LIKE ? OR
 			grid_hostinfo.hostType LIKE ? OR
 			grid_hostinfo.hostModel LIKE ?)";
+
 		$sql_params[] = '%'. get_request_var('filter') . '%';
 		$sql_params[] = '%'. get_request_var('filter') . '%';
 		$sql_params[] = '%'. get_request_var('filter') . '%';
 		$sql_params[] = '%'. get_request_var('filter') . '%';
 	}
 
+	// Perform elim magic
+	$columns   = get_custom_elim_columns();
 	$sql_order = get_order_string();
+	$sql_order = grid_elim_order_string($sql_order, $columns);
+	$sql_col   = '';
 
-	$columns = get_custom_elim_columns();
-	$sql_col = '';
-	if (cacti_sizeof($columns)) {
-		foreach($columns as $c) {
-			$sql_col .= ", MAX(CASE WHEN ghr.resource_name='$c' THEN totalValue ELSE NULL END) AS \"$c\"";
-		}
+    if (isset($columns['cols']) && cacti_sizeof($columns['cols'])) {
+		$ghr_join = 'INNER JOIN (' . get_elim_custom_join(get_request_var('clusterid')) . ') AS ghr
+			ON gh.clusterid = ghr.clusterid
+			AND gh.host = ghr.host';
+
+        foreach($columns['cols'] as $c) {
+            $sql_col .= ", `$c`";
+        }
+    } else {
+		$ghr_join = '';
 	}
 
 	if (get_request_var('hgroup') == -1) {
 		$sql_query = "SELECT *
 			FROM (
-				SELECT DISTINCT grid_clusters.clusterid, grid_clusters.clustername, grid_load.host, grid_hostinfo.hostType,
-				grid_hostinfo.hostModel, grid_load.time_in_state, grid_load.status, grid_load.r15s, grid_load.r1m,
-				grid_load.r15m, grid_load.ut, grid_load.pg, grid_load.io, grid_load.ls, grid_load.it,
-				grid_load.tmp, grid_load.swp, grid_load.mem $sql_col
-				FROM grid_clusters
-				INNER JOIN grid_hosts
-				ON grid_clusters.clusterid=grid_hosts.clusterid
-				INNER JOIN grid_hostinfo
-				ON grid_clusters.clusterid = grid_hostinfo.clusterid
-				AND grid_hosts.host=grid_hostinfo.host
-				INNER JOIN grid_load
-				ON grid_clusters.clusterid = grid_load.clusterid
-				AND grid_hosts.host = grid_load.host
-				INNER JOIN grid_hosts_resources AS ghr
-				ON grid_clusters.clusterid = ghr.clusterid
-				AND grid_hosts.host=ghr.host
+				SELECT DISTINCT gc.clusterid, gc.clustername, gl.host, ghi.hostType,
+				ghi.hostModel, gl.time_in_state, gl.status, gl.r15s, gl.r1m,
+				gl.r15m, gl.ut, gl.pg, gl.io, gl.ls, gl.it,
+				gl.tmp, gl.swp, gl.mem $sql_col
+				FROM grid_clusters AS gc
+				INNER JOIN grid_hosts AS gh
+				ON gc.clusterid = gh.clusterid
+				INNER JOIN grid_hostinfo AS ghi
+				ON gc.clusterid = ghi.clusterid
+				AND gh.host = ghi.host
+				INNER JOIN grid_load AS gl
+				ON gc.clusterid = gl.clusterid
+				AND gh.host = gl.host
+				$ghr_join
 				$sql_where
-				GROUP BY grid_hosts.clusterid, grid_hosts.host
+				GROUP BY gh.clusterid, gh.host
 			) AS rs
 			$sql_order";
 	} else {
 		$sql_query = "SELECT *
 			FROM (
-				SELECT DISTINCT grid_clusters.clusterid, grid_clusters.clustername, grid_load.host, grid_hostgroups.groupName,
-				grid_hostinfo.hostType, grid_hostinfo.hostModel, grid_load.time_in_state, grid_load.status, grid_load.r15s,
-				grid_load.r1m, grid_load.r15m, grid_load.ut, grid_load.pg, grid_load.io, grid_load.ls, grid_load.it,
-				grid_load.tmp, grid_load.swp, grid_load.mem $sql_col
-				FROM grid_clusters
-				INNER JOIN grid_hosts
-				ON grid_clusters.clusterid=grid_hosts.clusterid
-				INNER JOIN grid_hostinfo
-				ON grid_clusters.clusterid = grid_hostinfo.clusterid
-				AND grid_hosts.host=grid_hostinfo.host
-				INNER JOIN grid_load
-				ON grid_clusters.clusterid = grid_load.clusterid
-				AND grid_hosts.host = grid_load.host
-				LEFT JOIN grid_hostgroups
-				ON grid_clusters.clusterid=grid_hostgroups.clusterid
-				AND grid_hosts.host=grid_hostgroups.host
+				SELECT DISTINCT gc.clusterid, gc.clustername, gl.host, ghg.groupName,
+				ghi.hostType, ghi.hostModel, gl.time_in_state, gl.status, gl.r15s,
+				gl.r1m, gl.r15m, gl.ut, gl.pg, gl.io, gl.ls, gl.it,
+				gl.tmp, gl.swp, gl.mem $sql_col
+				FROM grid_clusters AS gc
+				INNER JOIN grid_hosts AS gh
+				ON gc.clusterid = gh.clusterid
+				INNER JOIN grid_hostinfo AS ghi
+				ON gc.clusterid = ghi.clusterid
+				AND gh.host = ghi.host
+				INNER JOIN grid_load AS gl
+				ON gc.clusterid = gl.clusterid
+				AND gh.host = gl.host
+				LEFT JOIN grid_hostgroups AS ghg
+				ON gc.clusterid = ghg.clusterid
+				AND gh.host = ghg.host
 				INNER JOIN grid_hosts_resources AS ghr
-				ON grid_clusters.clusterid = ghr.clusterid AND grid_hosts.host=ghr.host
+				ON gc.clusterid = ghr.clusterid AND gh.host=ghr.host
+				$ghr_join
 				$sql_where
-				GROUP BY grid_hosts.clusterid, grid_hosts.host
+				GROUP BY gh.clusterid, gh.host
 			) AS rs
 			$sql_order";
 	}
@@ -430,71 +407,72 @@ function validate_lsload_request_vars() {
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '-1'
-			),
+		),
 		'page' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'default' => '1'
-			),
+		),
 		'refresh' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => read_grid_config_option('refresh_interval'),
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'status' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '-1',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'hgroup' => array(
 			'filter' => FILTER_DEFAULT,
 			'pageset' => true,
 			'default' => '-1',
-			),
+		),
 		'type' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '-1',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'model' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '-1',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'resource_str' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => '',
 			'options' => array('options' => 'resource_sanitize_search_string'),
 			'pageset' => true
-			),
+		),
 		'filter' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'sort_column' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => 'ut',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'sort_direction' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => 'DESC',
 			'options' => array('options' => 'sanitize_search_string')
-			)
+		)
 	);
 
 	validate_store_request_vars($filters, 'sess_glsl');
 
 	$filters = array(
 		'clusterid' => array(
-			'filter' => FILTER_VALIDATE_INT,
+			'filter'  => FILTER_VALIDATE_INT,
 			'default' => read_grid_config_option('default_grid')
-			)
+		)
 	);
+
 	validate_store_request_vars($filters, 'sess_grid');
 	/* ================= input validation ================= */
 }
@@ -566,27 +544,25 @@ function grid_view_load() {
 	<?php
 
 	if (get_request_var('hgroup') == "-1") {
-		$rows_query_string = "SELECT
-			COUNT(*)
-			FROM (grid_clusters
-			INNER JOIN grid_hostinfo
-			ON grid_clusters.clusterid=grid_hostinfo.clusterid)
-			INNER JOIN grid_load
-			ON (grid_hostinfo.host=grid_load.host)
-			AND (grid_clusters.clusterid=grid_load.clusterid)
+		$rows_query_string = "SELECT COUNT(*)
+			FROM grid_clusters AS gc
+			INNER JOIN grid_hostinfo AS ghi
+			ON gc.clusterid = ghi.clusterid
+			INNER JOIN grid_load AS gl
+			ON ghi.host = gl.host
+			AND gc.clusterid = gl.clusterid
 			$sql_where";
 	} else {
-		$rows_query_string = "SELECT
-			COUNT(*)
-			FROM (grid_clusters
-			INNER JOIN grid_hostinfo
-			ON grid_clusters.clusterid=grid_hostinfo.clusterid)
-			INNER JOIN grid_load
-			ON (grid_hostinfo.host=grid_load.host)
-			AND (grid_clusters.clusterid=grid_load.clusterid)
-			LEFT JOIN grid_hostgroups
-			ON (grid_load.host=grid_hostgroups.host)
-			AND (grid_clusters.clusterid=grid_hostgroups.clusterid)
+		$rows_query_string = "SELECT COUNT(*)
+			FROM grid_clusters AS gc
+			INNER JOIN grid_hostinfo AS ghi
+			ON gc.clusterid = ghi.clusterid
+			INNER JOIN grid_load AS gl
+			ON ghi.host=gl.host
+			AND gc.clusterid = gl.clusterid
+			LEFT JOIN grid_hostgroups AS ghg
+			ON gl.host = ghg.host
+			AND gc.clusterid = ghg.clusterid
 			$sql_where";
 	}
 
@@ -695,8 +671,9 @@ function grid_view_load() {
 	);
 
 	$columns = get_custom_elim_columns();
-	if (cacti_sizeof($columns)) {
-		foreach($columns as $c) {
+
+	if (isset($columns['cols']) && cacti_sizeof($columns['cols'])) {
+		foreach($columns['cols'] as $c) {
 			$display_text += array(
 				$c => array(
 					'display' => ucfirst($c),
@@ -778,8 +755,8 @@ function grid_view_load() {
 
 			$columns = get_custom_elim_columns();
 			$sql_col = '';
-			if (cacti_sizeof($columns)) {
-				foreach($columns as $c) {
+			if (isset($columns['cols']) && cacti_sizeof($columns['cols'])) {
+				foreach($columns['cols'] as $c) {
 					form_selectable_cell($load[$c] == '' ? '-':(is_numeric($load[$c]) ? number_format($load[$c]):$load[$c]), $i, '', 'right');
 				}
 			}

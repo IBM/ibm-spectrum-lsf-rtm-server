@@ -33,6 +33,9 @@ $grid_host_control_actions = array(
 	2 => __('Close', 'grid')
 );
 
+/* correct gridhres crashing mariadb */
+db_execute('SET SESSION optimizer_switch="split_materialized=off"');
+
 $title = __('IBM Spectrum LSF RTM - Batch Host Management', 'grid');
 
 set_default_action();
@@ -62,6 +65,9 @@ switch (get_request_var('action')) {
 	break;
 }
 
+/* correct gridhres crashing mariadb */
+db_execute('SET SESSION optimizer_switch="split_materialized=on"');
+
 function validate_bhosts_request_vars() {
 	/* ================= input validation and session storage ================= */
 	$filters = array(
@@ -69,88 +75,88 @@ function validate_bhosts_request_vars() {
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '-1'
-			),
+		),
 		'page' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'default' => '1'
-			),
+		),
 		'filter' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'sort_column' => array(
 			'filter' => FILTER_CALLBACK,
-			'default' => 'numRun',
+			'default' => 'pg',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'sort_direction' => array(
 			'filter' => FILTER_CALLBACK,
-			'default' => 'ASC',
+			'default' => 'DESC',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'refresh' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => read_grid_config_option('refresh_interval')
-			),
+		),
 		'type' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => '-1',
 			'options' => array('options' => 'sanitize_search_string'),
 			'pageset' => true
-			),
+		),
 		'model' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => '-1',
 			'options' => array('options' => 'sanitize_search_string'),
 			'pageset' => true
-			),
+		),
 		'job_user' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => '-1',
 			'options' => array('options' => 'sanitize_search_string'),
 			'pageset' => true
-			),
+		),
 		'hgroup' => array(
 			'filter' => FILTER_DEFAULT,
 			'default' => '-1',
 			'pageset' => true
-			),
+		),
 		'status' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => '-1',
 			'options' => array('options' => 'sanitize_search_string'),
 			'pageset' => true
-			),
+		),
 		'queue' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => '-1',
 			'options' => array('options' => 'sanitize_search_string'),
 			'pageset' => true
-			),
+		),
 		'resource_str' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => '',
 			'options' => array('options' => 'resource_sanitize_search_string'),
 			'pageset' => true
-			),
+		),
 		'load_page' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => '-1',
 			'options' => array('options' => 'sanitize_search_string'),
 			'pageset' => true
-			)
+		)
 	);
 
 	validate_store_request_vars($filters, 'sess_gbh');
 
 	$filters = array(
 		'clusterid' => array(
-			'filter' => FILTER_VALIDATE_INT,
+			'filter'  => FILTER_VALIDATE_INT,
 			'default' => read_grid_config_option('default_grid')
-			)
+		)
 	);
 	validate_store_request_vars($filters, 'sess_grid');
 	/* ==================================================== */
@@ -208,74 +214,81 @@ function form_action() {
 		$rsp_content = array();
 		$advocate_max = 30;
 		if ($selected_items_whole != false) {
-		for($i=0; $i<cacti_sizeof($selected_items_whole); $i+=$advocate_max){
-			$selected_items = array_slice($selected_items_whole, $i, $advocate_max);
-			if(cacti_sizeof($selected_items)<=0) break;
-			$json_return_format = sorting_json_format($selected_items, $message, $action_level); //sort the variables into required format
+			for($i=0; $i < cacti_sizeof($selected_items_whole); $i+=$advocate_max){
+				$selected_items = array_slice($selected_items_whole, $i, $advocate_max);
 
-			$advocate_key = session_auth();
+				if (cacti_sizeof($selected_items) <= 0) {
+					break;
+				}
 
-			$json_host_info = array (
-				'key'    => $advocate_key,
-				'action' => $host_action,
-				'target' => $json_return_format,
-			);
-			$output = json_encode($json_host_info);
+				$json_return_format = sorting_json_format($selected_items, $message, $action_level); //sort the variables into required format
 
-			$curl_output = exec_curl($action_level, $output); //pass to advocate for processing
+				$advocate_key = session_auth();
 
-			if ($curl_output['http_code'] == 400) {
-				raise_message(134);
-			} else if ($curl_output['http_code'] == 500) {
-				raise_message(135);
-			} else {
-				if ($curl_output['http_code'] == 200) {
-					$log_action = $grid_host_control_actions[get_request_var('drp_action')];
-					$json_output = json_decode($output);
-					$username_log = get_username($_SESSION['sess_user_id']);
-					foreach ($json_output->target as $target) {
-					    $action_message = get_request_var('message');
-					    cacti_log("Host '{$target->name}', {$log_action} by '{$username_log}', comment: '{$action_message}'.", false, 'LSFCONTROL');
-					}
+				$json_host_info = array (
+					'key'    => $advocate_key,
+					'action' => $host_action,
+					'target' => $json_return_format,
+				);
+				$output = json_encode($json_host_info);
+
+				$curl_output = exec_curl($action_level, $output); //pass to advocate for processing
+
+				if ($curl_output['http_code'] == 400) {
+					raise_message(134);
+				} else if ($curl_output['http_code'] == 500) {
+					raise_message(135);
 				} else {
-					raise_message(136);
+					if ($curl_output['http_code'] == 200) {
+						$log_action = $grid_host_control_actions[get_request_var('drp_action')];
+						$json_output = json_decode($output);
+						$username_log = get_username($_SESSION['sess_user_id']);
+						foreach ($json_output->target as $target) {
+						    $action_message = get_request_var('message');
+						    cacti_log("Host '{$target->name}', {$log_action} by '{$username_log}', comment: '{$action_message}'.", false, 'LSFCONTROL');
+						}
+					} else {
+						raise_message(136);
+					}
+				}
+
+				$content_response = $curl_output['content']; //return response from advocate in json format
+
+				$json_decode_content_response = json_decode($content_response,true);
+
+				$rsp_content_temp = $json_decode_content_response['rsp'];
+				if (is_array($rsp_content_temp)){
+					$rsp_content = array_merge($rsp_content, $rsp_content_temp);
 				}
 			}
-
-			$content_response = $curl_output['content']; //return response from advocate in json format
-
-			$json_decode_content_response = json_decode($content_response,true);
-
-			$rsp_content_temp = $json_decode_content_response['rsp'];
-			if(is_array($rsp_content_temp)){
-				$rsp_content = array_merge($rsp_content, $rsp_content_temp);
-			}
-		}
 		}
 
 		for ($k=0;$k<count($rsp_content);$k++) {
 			$key_sort[$k] = $rsp_content[$k]['clusterid'];
 		}
 
-                $output_message='';
-		if(isset($key_sort)){
+		$output_message = '';
+
+		if (isset($key_sort)){
 			asort($key_sort);
+
 			foreach( $key_sort as $key => $val) {
 				foreach ($rsp_content as $key_rsp_content => $value) {
 					if ($key_rsp_content == $key) {
 						if (strchr($value['name'], '|')) {
 							$messages = explode("|", $value['status_message']);
 							foreach ($messages as $message) {
-								if(strlen($message) > 0) {
-									if(strstr($message, "Unable to")) {
+								if (strlen($message) > 0) {
+									if (strstr($message, "Unable to")) {
 										$count_fail ++;
 										$return_status = __('Failed. Status Code: %d', $value['status_code'], 'grid');
 									} else {
 										$return_status = __('Ok');
 										$count_ok ++;
 									}
-									$message='Status:' . $return_status . ' - Cluster Name:' . grid_get_clustername($value['clusterid']) . ' - '.$message.'<br/>';
-									$output_message=$output_message.$message;
+
+									$message        = 'Status:' . $return_status . ' - Cluster Name:' . grid_get_clustername($value['clusterid']) . ' - ' . $message . '<br/>';
+									$output_message = $output_message . $message;
 								}
 							}
 						} else {
@@ -286,17 +299,21 @@ function form_action() {
 								$count_fail ++;
 								$return_status = __('Failed. Status Code: %d', $value['status_code'], 'grid');
 							}
-				                        $message='Status:' . $return_status . ' - Cluster Name:' . grid_get_clustername($value['clusterid']) . ' - '.$value['status_message'].'<br/>';
-				                        $output_message=$output_message.$message;
+
+							$message        = 'Status:' . $return_status . ' - Cluster Name:' . grid_get_clustername($value['clusterid']) . ' - ' . $value['status_message'] . '<br/>';
+							$output_message = $output_message . $message;
 						}
 					}
 				}
 			}
-			if($count_fail>0)
-              			raise_message('mymessage', $output_message, MESSAGE_LEVEL_ERROR);
-            		else
-              			raise_message('mymessage', $output_message, MESSAGE_LEVEL_INFO);
+
+			if ($count_fail > 0) {
+				raise_message('mymessage', $output_message, MESSAGE_LEVEL_ERROR);
+			} else {
+				raise_message('mymessage', $output_message, MESSAGE_LEVEL_INFO);
+			}
 		}
+
 		header('Location: grid_bhosts.php');
 		exit;
 	}
@@ -365,20 +382,25 @@ function form_action() {
 				<div class='itemlist'><ul>$host_list</ul></div>
 			</td>
 		</tr>";
-		if($action == 'open'){
+
+		if ($action == 'open'){
 			print "<tr>
 				<td>Select LockId<br>"
 					. __('LockId that are appended to LSF with the -i option.', 'grid')
 					. "<br>Select the LockId for $action. Default value all. </td>
 				<td><select name='action_lockid'><option value='all' selected>all</option>";
-				$action_lockid_old= '';
-				if (isset_request_var('action_lockid')) {
-					$action_lockid_old= sanitize_search_string(get_nfilter_request_var('action_lockid'));
-				}
-				$lockid_result = db_fetch_assoc("SELECT DISTINCT lockid FROM grid_host_closure_lockids");
-				foreach($lockid_result as $result) {
-					print '<option value="'.$result['lockid'].'"'. ($action_lockid_old==$result['lockid'] ? ' selected':'') . '>'. $result['lockid'] . '</option>'."\n";
-				}
+
+			$action_lockid_old= '';
+			if (isset_request_var('action_lockid')) {
+				$action_lockid_old= sanitize_search_string(get_nfilter_request_var('action_lockid'));
+			}
+
+			$lockid_result = db_fetch_assoc("SELECT DISTINCT lockid FROM grid_host_closure_lockids");
+
+			foreach($lockid_result as $result) {
+				print '<option value="'.$result['lockid'].'"'. ($action_lockid_old==$result['lockid'] ? ' selected':'') . '>'. $result['lockid'] . '</option>'."\n";
+			}
+
 			print "</select><br></td></tr>";
 		} else {
 			print "<tr>
@@ -386,49 +408,54 @@ function form_action() {
 					. __('LockId that are appended to LSF with the -i option. Characters in [A-Za-z0-9]', 'grid')
 					. "<br>This option will be ignored for the old LSF, which do not support -i option. </td>
 				<td><input ";
+
 				if (isset($_SESSION['sess_error_fields']['message']) || isset($_SESSION['sess_error_fields']['action_lockid'])) {
 					if (isset_request_var('action_lockid')) {
 						print " value='". sanitize_search_string(get_nfilter_request_var('action_lockid')) . "' ";
 					}
 				}
+
 				if (isset($_SESSION['sess_error_fields']['action_lockid'])) {
 					print " class='txtErrorTextBox' ";
 				}
 			print "type=text name='action_lockid' maxlength='512'>";
 			print "</td></tr>";
 		}
+
 		print "<tr>
 			<td class='textArea'>
 				" . __('Comments that are appended to LSF with the -C option.', 'grid');
 
-			if (read_config_option('grid_management_clusters') != 'on') {
-				print '<br>' . __('Leave BLANK if no comment is required.', 'grid');
-			}
+		if (read_config_option('grid_management_clusters') != 'on') {
+			print '<br>' . __('Leave BLANK if no comment is required.', 'grid');
+		}
 
-			print '<br>' . __('&lt;RTM&lt; %s &gt;&gt; will be appended after your comments.', get_username($_SESSION['sess_user_id']), 'grid') . '</td>';
+		print '<br>' . __('&lt;RTM&lt; %s &gt;&gt; will be appended after your comments.', get_username($_SESSION['sess_user_id']), 'grid') . '</td>';
 
-			print '<td class="textArea"><input ';
+		print '<td class="textArea"><input ';
 
-			if (isset($_SESSION['sess_error_fields']['message']) || isset($_SESSION['sess_error_fields']['action_lockid'])) {
-				if (isset_request_var('message')) {
-					print " value='". sanitize_search_string(get_nfilter_request_var('message')) . "' ";
-				}
+		if (isset($_SESSION['sess_error_fields']['message']) || isset($_SESSION['sess_error_fields']['action_lockid'])) {
+			if (isset_request_var('message')) {
+				print " value='". sanitize_search_string(get_nfilter_request_var('message')) . "' ";
 			}
-			if (isset($_SESSION['sess_error_fields']['message'])) {
-				print " class='txtErrorTextBox' ";
-				unset($_SESSION['sess_error_fields']['message']);
-			}
-			if (isset($_SESSION['sess_error_fields']['action_lockid'])) { //delay unset action_lockid.
-				unset($_SESSION['sess_error_fields']['action_lockid']);
-			}
+		}
 
-			print "type=text name='message' col='255' size='40' maxlength='512'></td>
-			</tr>
-			<tr>
-				<td colspan=2 class='deviceDown'>" .
-					__('NOTE: Wait for the next polling cycle to see the changes on RTM after confirmation.', 'grid') . "
-				</td>
-			</tr>";
+		if (isset($_SESSION['sess_error_fields']['message'])) {
+			print " class='txtErrorTextBox' ";
+			unset($_SESSION['sess_error_fields']['message']);
+		}
+
+		if (isset($_SESSION['sess_error_fields']['action_lockid'])) { //delay unset action_lockid.
+			unset($_SESSION['sess_error_fields']['action_lockid']);
+		}
+
+		print "type=text name='message' col='255' size='40' maxlength='512'></td>
+		</tr>
+		<tr>
+			<td colspan=2 class='deviceDown'>" .
+				__('NOTE: Wait for the next polling cycle to see the changes on RTM after confirmation.', 'grid') . "
+			</td>
+		</tr>";
 	}
 
 	if (!isset($host_array)) {
@@ -491,7 +518,7 @@ function grid_view_get_bhosts_records(&$sql_where, $apply_limits = true, $rows =
 
 	/* user id sql where */
 	if (get_request_var('clusterid') != '0') {
-		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . 'gh.clusterid=?';
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . 'gh.clusterid = ?';
 		$sql_params[] = get_request_var('clusterid');
 	}
 
@@ -590,13 +617,13 @@ function grid_view_get_bhosts_records(&$sql_where, $apply_limits = true, $rows =
 
 	/* hostType sql where */
 	if (get_request_var('type') != '-1') {
-		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . 'hostType=?';
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . 'hostType = ?';
 		$sql_params[] = get_request_var('type');
 	}
 
 	/* hostModel sql where */
 	if (get_request_var('model') != '-1') {
-		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . 'hostModel=?';
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . 'hostModel = ?';
 		$sql_params[] = get_request_var('model');
 	}
 
@@ -616,7 +643,7 @@ function grid_view_get_bhosts_records(&$sql_where, $apply_limits = true, $rows =
 			$lstat = $stats[0];
 			$bstat = $stats[1];
 
-			$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . ' (gh.status=?) AND (gl.status=?)';
+			$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . ' (gh.status = ?) AND (gl.status = ?)';
 			$sql_params[] = $bstat;
 			$sql_params[] = $lstat;
 		}
@@ -627,64 +654,80 @@ function grid_view_get_bhosts_records(&$sql_where, $apply_limits = true, $rows =
 		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') .
 			"(gh.host LIKE ? OR
 			gh.status LIKE ? OR
+			(busySched > 0 AND ght.resource_name LIKE ?) OR
 			ghi.hostType LIKE ? OR
 			ghi.hostModel LIKE ?)";
-		$sql_params[] = '%'. get_request_var('filter') . '%';
-		$sql_params[] = '%'. get_request_var('filter') . '%';
-		$sql_params[] = '%'. get_request_var('filter') . '%';
-		$sql_params[] = '%'. get_request_var('filter') . '%';
+
+			$sql_params[] = '%' . get_request_var('filter') . '%';
+			$sql_params[] = '%' . get_request_var('filter') . '%';
+			$sql_params[] = '%' . get_request_var('filter') . '%';
+			$sql_params[] = '%' . get_request_var('filter') . '%';
+			$sql_params[] = '%' . get_request_var('filter') . '%';
 	}
 
-	/* queue sql where */
-	if (get_request_var('queue') != '-1') {
-		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . 'queue=?';
-		$sql_params[] = get_request_var('queue');
-	}
+	// Perform elim magic
+	$columns   = get_custom_elim_columns();
+	$sql_col   = '';
 
-	$columns = get_custom_elim_columns();
-	$sql_col = '';
-	if (!empty($columns)) {
-		foreach($columns as $c) {
-			$sql_col .= ", MAX(CASE WHEN ghr.resource_name='$c' THEN totalValue ELSE NULL END) AS \"$c\"";
+	if (isset($columns['cols']) && cacti_sizeof($columns['cols'])) {
+		$ghr_join = 'INNER JOIN (' . get_elim_custom_join(get_request_var('clusterid')) . ') AS ghr
+			ON gh.clusterid = ghr.clusterid
+			AND gh.host = ghr.host';
+
+		foreach($columns['cols'] as $c) {
+			$sql_col .= ", $c";
 		}
+	} else {
+		$ghr_join = '';
+	}
+
+	if (get_request_var('queue') == -1) {
+		$qjoin = '';
+	} else {
+		$qjoin = 'LEFT JOIN (SELECT clusterid, host
+			FROM grid_queues_hosts AS gqh
+			WHERE clusterid = ' . get_request_var('clusterid') . '
+			AND queue = ' . db_qstr(get_request_var('queue')) . ') AS gqh
+			ON gl.clusterid = gqh.clusterid
+			AND gl.host = gqh.host';
 	}
 
 	$sql_order = get_order_string();
+	$sql_order = grid_elim_order_string($sql_order, $columns);
+
 	if ($apply_limits) {
 		$sql_limit = ' LIMIT ' . ($rows*(get_request_var('page')-1)) . ',' . $rows;
 	}
 
-	$sql_query = "SELECT *
-		FROM (
-			SELECT DISTINCT gc.clusterid, gc.clustername, gh.host, ghi.hostType, ghi.hostModel, ghi.maxCpus, ghi.ngpus AS ghi_ngpus, ghi.gMaxFactor,
-			CONCAT_WS('',gl.status,':',gh.status) AS status, gl.ut, gl.r1m,
-			(CASE WHEN gl.status NOT LIKE 'U%' THEN ((ghi.maxMem - gl.mem) / ghi.maxMem) * 100 ELSE 0 END) AS memUsage,
-			(CASE WHEN gl.status NOT LIKE 'U%' THEN ((ghi.maxSwap - gl.swp) / ghi.maxSwap) * 100 ELSE 0 END) AS swpUsage,
-			gl.pg, gh.cpuFactor, gh.maxJobs, gh.numJobs, gh.numRun, gh.numSSUSP, gh.numUSUSP, gh.numRESERVE, gh.time_in_state
-			$sql_col
-			FROM grid_clusters AS gc
-			INNER JOIN grid_hosts AS gh
-			ON gc.clusterid=gh.clusterid
-			INNER JOIN grid_hostinfo AS ghi
-			ON gc.clusterid=ghi.clusterid
-			AND gh.host=ghi.host".(get_request_var('queue') != '-1'?
-			" LEFT JOIN grid_queues_hosts AS gqh
-			ON gc.clusterid=gqh.clusterid
-			AND gh.host = gqh.host ":" ")
-			."INNER JOIN grid_load AS gl
-			ON gc.clusterid = gl.clusterid
-			AND gh.host = gl.host
-			INNER JOIN grid_hosts_resources AS ghr
-			ON gc.clusterid = ghr.clusterid
-			AND gh.host=ghr.host
-			$sql_where
-			GROUP BY gh.clusterid, gh.host
-		) AS rs
+	$sql_query = "SELECT gc.clusterid, gc.clustername, gh.host, ghi.hostType,
+		ghi.hostModel, ghi.maxCpus, ghi.ngpus AS ghi_ngpus, ghi.gMaxFactor,
+		CONCAT_WS('',gl.status,':',gh.status) AS status, gl.ut, gl.r1m,
+		(CASE WHEN gl.status NOT LIKE 'U%' THEN ((ghi.maxMem - gl.mem) / ghi.maxMem) * 100 ELSE 0 END) AS memUsage,
+		(CASE WHEN gl.status NOT LIKE 'U%' THEN ((ghi.maxSwap - gl.swp) / ghi.maxSwap) * 100 ELSE 0 END) AS swpUsage,
+		gl.pg, gh.cpuFactor, gh.maxJobs, gh.numJobs, gh.numRun, gh.numSSUSP, gh.numUSUSP, gh.numRESERVE, gh.time_in_state, GROUP_CONCAT(DISTINCT IF(busySched>0, ght.resource_name, null)) AS threshold
+		$sql_col
+		FROM grid_clusters AS gc
+		INNER JOIN grid_hosts AS gh
+		ON gc.clusterid=gh.clusterid
+		INNER JOIN grid_hostinfo AS ghi
+		ON gc.clusterid=ghi.clusterid
+		AND gh.host=ghi.host
+		INNER JOIN grid_load AS gl
+		ON gc.clusterid = gl.clusterid
+		AND gh.host = gl.host
+		LEFT JOIN grid_host_threshold AS ght
+		ON ght.clusterid = gl.clusterid
+		AND ght.hostname = gl.host
+		$qjoin
+		$ghr_join
+		$sql_where
+		GROUP BY gh.clusterid, gh.host
 		$sql_order
 		$sql_limit";
 
 	//cacti_log("DEBUG: SQL: $sql_query");
-	return db_fetch_assoc_prepared($sql_query, $sql_params);
+
+	return db_fetch_assoc($sql_query);
 }
 
 function bhostsFilter() {
@@ -703,7 +746,10 @@ function bhostsFilter() {
 						<select id='clusterid'>
 							<option value='0'<?php if (get_request_var('clusterid') == '0') {?> selected<?php }?>><?php print __('All', 'grid');?></option>
 							<?php
-							$clusters = grid_get_clusterlist();
+							$clusters = db_fetch_assoc('SELECT *
+								FROM grid_clusters
+								WHERE disabled = ""
+								ORDER BY clustername');
 
 							if (!empty($clusters)) {
 								foreach ($clusters as $cluster) {
@@ -876,9 +922,9 @@ function bhostsFilter() {
 						<select id='rows'>
 						<?php
 							if (cacti_sizeof($grid_rows_selector)) {
-							foreach ($grid_rows_selector as $key => $value) {
-								print '<option value="' . $key . '"'; if (get_request_var('rows') == $key) { print ' selected'; } print '>' . $value . '</option>';
-							}
+								foreach ($grid_rows_selector as $key => $value) {
+									print '<option value="' . $key . '"'; if (get_request_var('rows') == $key) { print ' selected'; } print '>' . $value . '</option>';
+								}
 							}
 						?>
 						</select>
@@ -902,42 +948,8 @@ function bhostsFilter() {
 	<?php
 }
 
-function get_custom_elim_columns() {
-	static $cols;
-
-	if (!is_array($cols)) {
-		$cols    = array();
-		$columns = db_fetch_assoc_prepared("SELECT name
-			FROM grid_settings
-			WHERE user_id = ?
-			AND name LIKE 'host_elim_%'
-			AND value='on'
-			ORDER BY name", array($_SESSION['sess_user_id']));
-
-		if (cacti_sizeof($columns)) {
-			$elimvals  = array_rekey(db_fetch_assoc("SELECT DISTINCT resource_name
-				FROM grid_hosts_resources
-				WHERE resource_name NOT IN ('r15s','r1m','r15m','ut','pg','io','ls','it','tmp','swp','mem')
-				AND host <> 'ALLHOSTS'
-				ORDER BY resource_name"), "resource_name", "resource_name");
-
-			foreach($columns as $c) {
-				$resource_name = str_replace('host_elim_', '', $c['name']);
-				if (isset($elimvals[$resource_name])) {
-					$cols[] = $resource_name;
-				}
-			}
-
-			return $cols;
-		}
-	} else {
-		return $cols;
-	}
-}
-
 function grid_view_bhosts() {
 	global $title, $report, $grid_search_types, $grid_rows_selector, $grid_refresh_interval, $minimum_user_refresh_intervals, $config, $grid_host_control_actions;
-	$sql_params = array();
 
 	grid_set_minimum_page_refresh();
 
@@ -951,7 +963,7 @@ function grid_view_bhosts() {
 		$rows = get_request_var('rows');
 	}
 
-	$bhosts_results = grid_view_get_bhosts_records($sql_where, true, $rows, $sql_params);
+	$bhosts_results = grid_view_get_bhosts_records($sql_where, true, $rows);
 
 	general_header();
 
@@ -965,7 +977,7 @@ function grid_view_bhosts() {
 		strURL += '&queue=' + $('#queue').val();
 
 		if ($('#resource_str').length) {
-			strURL += '&resource_str=' + encodeURIComponent($('#resource_str').val());
+			strURL += '&resource_str=' + escape($('#resource_str').val());
 		}
 
 		strURL += '&filter=' + $('#filter').val();
@@ -1047,23 +1059,43 @@ function grid_view_bhosts() {
 
 	html_start_box('', '100%', '', '3', 'center', '');
 
-	$total_rows = db_fetch_cell_prepared("SELECT COUNT(DISTINCT gh.host, gh.clusterid)
+	$columns   = get_custom_elim_columns();
+	if (cacti_sizeof($columns)) {
+		$distinct  = 'DISTINCT';
+		$elim_join = "INNER JOIN grid_hosts_resources AS ghr
+			ON gh.clusterid = ghr.clusterid
+			AND gh.host=ghr.host";
+	} else {
+		$distinct  = '';
+		$elim_join = '';
+
+	}
+
+	if (get_request_var('queue') == -1) {
+		$qjoin = '';
+	} else {
+		$distinct = 'DISTINCT';
+		$qjoin = 'LEFT JOIN grid_queues_hosts AS gqh
+			ON gc.clusterid = gqh.clusterid
+			AND gh.host = gqh.host';
+	}
+
+	$total_rows = db_fetch_cell("SELECT COUNT($distinct gh.host)
 		FROM grid_clusters AS gc
 		INNER JOIN grid_hosts AS gh
 		ON gc.clusterid = gh.clusterid
 		INNER JOIN grid_hostinfo AS ghi
 		ON gh.clusterid = ghi.clusterid
-		AND gh.host = ghi.host".(get_request_var('queue') != '-1'?
-		" LEFT JOIN grid_queues_hosts AS gqh
-		ON gc.clusterid=gqh.clusterid
-		AND gh.host = gqh.host ":" ")
-		."INNER JOIN grid_load as gl
+		AND gh.host = ghi.host
+		$qjoin
+		INNER JOIN grid_load as gl
 		ON gh.clusterid = gl.clusterid
 		AND gh.host = gl.host
-		INNER JOIN grid_hosts_resources AS ghr
-		ON gh.clusterid = ghr.clusterid
-		AND gh.host=ghr.host
-		$sql_where", $sql_params);
+		LEFT JOIN grid_host_threshold AS ght
+		ON ght.clusterid = gl.clusterid
+		AND ght.hostname = gl.host
+		$elim_join
+		$sql_where");
 
 	$display_text = array(
 		'nosort0' => array(
@@ -1091,6 +1123,11 @@ function grid_view_bhosts() {
 		'status' => array(
 			'display' => __('Load/Batch'),
 			'dbname'  => 'host_status',
+			'sort'    => 'DESC'
+		),
+		'threshold' => array(
+			'display' => __('Tholds'),
+			'align'   => 'right',
 			'sort'    => 'DESC'
 		),
 		'time_in_state' => array(
@@ -1186,8 +1223,9 @@ function grid_view_bhosts() {
 	);
 
 	$columns = get_custom_elim_columns();
-	if (!empty($columns)) {
-		foreach($columns as $c) {
+
+	if (isset($columns['cols']) && cacti_sizeof($columns['cols'])) {
+		foreach($columns['cols'] as $c) {
 			$display_text += array(
 				$c => array(
 					'display' => ucfirst($c),
@@ -1249,9 +1287,9 @@ function grid_view_bhosts() {
 			<td class='nowrap' style='width:20px'>
 				<a class='pic' href='<?php print html_escape($config['url_path'] . 'plugins/grid/grid_bjobs.php?action=viewlist&reset=1&clusterid=' . $bhosts['clusterid'] .'&ajax_host_query=' .$bhosts['host'] . '&exec_host=' . $bhosts['host'] . '&status=ACTIVE&page=1');?>'><img src='<?php print $config['url_path'];?>plugins/grid/images/view_jobs.gif' alt='' title='<?php print __esc('View Active Jobs');?>'></a>
 				<a class='pic' href='<?php print html_escape($config['url_path'] . 'plugins/grid/grid_bzen.php?reset=1&action=zoom&clusterid=' . $bhosts['clusterid'] . '&exec_host=' . $bhosts['host'] . '&page=1');?>'><img src='<?php print $config['url_path'];?>plugins/grid/images/view_hjobdetail.gif' alt='' title='<?php print __esc('View Host Job Detail');?>'></a>
-				<?php if (grid_checkouts_enabled() && db_fetch_cell_prepared("SELECT COUNT(*) FROM lic_services_feature_details WHERE hostname=?", array($bhosts["host"]))) {?>
+				<?php if (grid_checkouts_enabled() && db_fetch_cell("SELECT COUNT(*) FROM lic_services_feature_details WHERE hostname='" . $bhosts["host"] . "'")) {?>
 				<a class='pic' href='<?php print html_escape($config['url_path'] . 'plugins/license/lic_checkouts.php?reset=1&host=' . $bhosts['host'] . '&page=1');?>'><img src='<?php print $config['url_path'];?>plugins/grid/images/view_checkouts.gif' alt='' title='<?php print __esc('View License Checkouts');?>'></a>
-				<?php } if ($host_graphs > 0) {?><a class='pic' href='<?php print html_escape($config['url_path'] . 'graph_view.php?action=preview&reset=1&graph_template_id=-1&rfilter=&host_id=' . $host_id);?>'><img src='<?php print $config['url_path'];?>plugins/grid/images/view_graphs.gif' alt='' title='<?php print __esc('View Host Graphs');?>'></a><?php }?>
+				<?php } if ($host_graphs > 0) {?><a class='pic' href='<?php print html_escape($config['url_path'] . 'graph_view.php?reset=1&action=preview&graph_template_id=-1&filter=&host_id=' . $host_id . '&ajax_host_query=' . $bhosts['host'] . '&filter=');?>'><img src='<?php print $config['url_path'];?>plugins/grid/images/view_graphs.gif' alt='' title='<?php print __esc('View Host Graphs');?>'></a><?php }?>
 				<?php api_plugin_hook_function('grid_bhost_action_insert', $bhosts); ?>
 			</td>
 			<?php
@@ -1270,6 +1308,7 @@ function grid_view_bhosts() {
 			form_selectable_cell_visible(filter_value($bhosts['hostType'], get_request_var('filter')), 'host_type', $bhl);
 			form_selectable_cell_visible(filter_value($bhosts['hostModel'], get_request_var('filter')), 'host_model', $bhl);
 			form_selectable_cell_visible($lstat . ':' . $bstat, 'host_status', $bhl);
+			form_selectable_cell($bhosts['threshold'], $bhl, '', 'right');
 			form_selectable_cell_visible(display_time_in_state($bhosts['time_in_state']), 'show_time_in_state', $bhl, 'right');
 			form_selectable_cell_visible($bhosts['cpuFactor'], 'host_cpu_factor', $bhl, 'right');
 			form_selectable_cell_visible(display_ut($bhosts['ut']), 'host_ut', $bhl, 'right');
@@ -1320,8 +1359,9 @@ function grid_view_bhosts() {
 
 			$columns = get_custom_elim_columns();
 			$sql_col = '';
-			if (!empty($columns)) {
-				foreach($columns as $c) {
+
+			if (isset($columns['cols']) && cacti_sizeof($columns['cols'])) {
+				foreach($columns['cols'] as $c) {
 					form_selectable_cell(($bhosts[$c] == '' ? '-':(is_numeric($bhosts[$c]) ? number_format($bhosts[$c]):$bhosts[$c])), $bhl, '', 'right');
 				}
 			}
@@ -1352,3 +1392,4 @@ function grid_view_bhosts() {
 
 	bottom_footer();
 }
+
