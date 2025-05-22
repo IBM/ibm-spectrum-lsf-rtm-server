@@ -1,4 +1,3 @@
-// $Id$
 /* Italian translation for the jQuery Timepicker Addon */
 /* Written by Marco "logicoder" Del Tongo */
 (function($) {

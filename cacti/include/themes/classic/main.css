@@ -1,4 +1,3 @@
-/* $Id$ */
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2024 The Cacti Group                                 |
@@ -12,6 +11,11 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDtool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -602,35 +606,38 @@ label {
 
 .reloadquery {
 	cursor: pointer;
-	padding: 2px;
+	padding: 1px;
 	vertical-align: middle;
 	color: lime;
 	font-weight: bold;
 	font-size: 14px;
+	margin-right: 10px;
 }
 
 .verbosequery {
 	cursor: pointer;
-	padding: 2px;
+	padding: 1px;
 	vertical-align: middle;
 	color: rgba(255, 204, 0, 0.8);
 	font-size: 14px;
+	margin-right: 10px;
 }
 
 .deletequery {
 	cursor: pointer;
-	padding: 2px;
+	padding: 1px;
 	vertical-align: middle;
 	text-decoration: none;
 	color: red !important;
 	font-weight: bold;
 	font-size: 14px;
+	margin-right: 10px;
 }
 
 .deletequery:hover {
 	color: red !important;
 	text-decoration: none;
-	padding: 2px;
+	padding: 1px;
 	vertical-align: middle;
 }
 
@@ -725,7 +732,7 @@ label {
 }
 
 .cactiPageHead {
-	background: #A9A9A9;
+	background: #A9A9A9 url("./images/cacti_logo.svg") no-repeat scroll right 40% / 400px auto;
 	border-bottom: 1px solid #00438C;
 	height: 36px;
 	width: 100%;
@@ -852,7 +859,7 @@ ul#breadcrumbs {
 
 .cactiLogo {
 	padding-top: 20px;
-	background: #F5F5F5;
+	background: #F5F5F5 url('./images/cacti_logo.svg') no-repeat 30px;
 	display: block;
 	cursor: pointer;
 	height: 140px;
@@ -1799,6 +1806,27 @@ div#gtabs {
 	margin: 0;
 	padding: 0;
 }
+
+tr td:last-child .checkbox {
+	margin-right: 10px !important;
+}
+
+tr th:last-child .checkbox {
+	margin-right: 10px !important;
+}
+
+.fa-angle-double-up, .fa-angle-double-down {
+	margin-right: 10px;
+}
+
+.fa-plus, .fa-question-circle {
+	margin-right: 10px;
+}
+
+.fa-compress, .fa-expand {
+	margin-right: 10px;
+}
+
 
 /* Navigation Area */
 #nav {

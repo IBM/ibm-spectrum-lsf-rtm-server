@@ -1,17 +1,80 @@
 Cacti CHANGELOG
 
+1.2.30
+-issue#6089: Unable to add new users
+-issue#6090: When using Automation Rules, specifying graph criteria may cause issues
+-issue#6099: When transferring a system from a backup if the poller has not run recently rrdtool issues are found
+-issue#6172: When translating, quotes may cause incorrect text to appear
+-issue#6173: When using Boost for the first time, warnings may appear
+-issue#6183: When refreshing forms, items may be checked incorrectly by xmacan
+
+1.2.29
+-security#GHSA-c5j8-jxj3-hh36: Authenticated RCE via multi-line SNMP responses
+-security#GHSA-f9c7-7rc3-574c: SQL Injection vulnerability when using tree rules through Automation API
+-security#GHSA-fh3x-69rr-qqpp: SQL Injection vulnerability when request automation devices
+-security#GHSA-fxrq-fr7h-9rqq: Arbitrary File Creation leading to RCE
+-security#GHSA-pv2c-97pp-vxwg: Local File Inclusion (LFI) Vulnerability via Poller Standard Error Log Path
+-security#GHSA-vj9g-P7F2-4wqj: SQL Injection vulnerability when view host template
+-issue#5843: Temporary table names may incorrectly think they have a schema
+-issue#5847: When using Preset Time to view graphs, it is using a fixed point rather than relative time
+-issue#5848: Fix issue where RRA files are not automatically removed
+-issue#5856: Fix invalid help link for Automation Networks
+-issue#5867: Unable to disable a tree within the GUI
+-issue#5868: When removing graphs, RRA files may be left behind
+-issue#5869: Improve compatibility with ping under FreeBSD
+-issue#5870: Improve compatibility wtih Slice RRD tool under PHP 8.x
+-issue#5874: Allow IPv6 formats to use colons without port
+-issue#5884: Update Fortigate, Aruba OSCX and Clearpass templates
+-issue#5927: When a plugin is disabled, unable to use GUI to enable it again
+-issue#5932: When upgrading, ensure that replication only runs as necessary
+-issue#5961: Improve caching and syncing issues with replication
+-issue#5963: Improve caching techniques for database calls
+-issue#5986: Improve compatibility for Error constants under PHP 8.4
+-issue#5987: When running the upgrade database script, cursor is left in the middle of the row
+-issue#6065: Guest page does not automatically refresh
+-issue#6078: When installing, conversion of tables may produce collation errors
+-feature#5921: Add HPE Nimble/Alletra template
+-feature#5933: When installing, only convert core cacti tables
+
 1.2.28
--security#GHSA-fgc6-g8gc-wcg5: External Link Console Menu Item not Escaped
--security#GHSA-49f2-hwx9-qffr: External Link Console Menu Section not Escaped
--security#GHSA-wh9c-v56x-v77c: It is possible to create XSS with an nafarious External Link
--security#GHSA-gxq4-mv8h-6qj4: Fix a possible user directed RCE when installing Cacti
--issue#5772: Login log message unification - add client IP address
--issue#5773: Update rrd.php missing variable $okpos
--issue#5777: The Export .CSV only includes the 1st line of Notes
--issue#5782: Function file_get_contents in file link.php
--issue#5785: auth_changepassword.php triggers NS_ERROR_REDIRECT_LOOP if server's default IP address is not public
--issue#5792: Unable to add Graphs to a Report from Cacti List View
--feature#5796: Due to Conflicting Interpretations of TCP Ping, Introduce new Ping Method
+-security#GHSA-49f2-hwx9-qffr: XSS vulnerability when creating external links with the consolenewsection parameter
+-security#GHSA-fgc6-g8gc-wcg5: XSS vulnerability when creating external links with the title parameter
+-security#GHSA-gxq4-mv8h-6qj4: RCE vulnerability can be executed via Log Poisoning
+-security#GHSA-wh9c-v56x-v77c: XSS vulnerability when creating external links with the fileurl parameter
+-issue#5636: When using LDAP authentication the first time, warnings may appear in logs
+-issue#5754: When installing, a replication loop for plugin_realms may occur
+-issue#5759: When installing, remote poller may attempt to sync with other pollers
+-issue#5768: When a Data Query has a space, indexes may not be properly escaped
+-issue#5771: Boost does not always order data source records properly
+-issue#5772: Add IP address to the login audit for successful logins
+-issue#5773: Undefined variable error may sometimes occur when dealing with RRD output
+-issue#5777: When export to CSV, only the first line of notes is included
+-issue#5780: When rendering forms, missing default value can cause errors
+-issue#5782: Allow hosted content to be executable for the links page
+-issue#5783: When closing database connections, some may linger incorrectly
+-issue#5785: When changing passwords, an infinite loop may occur
+-issue#5790: When using Cacti Daemon, a "Cron out of sync" message may be reported
+-issue#5791: Add ability to filter/sort users by group or last login time
+-issue#5792: When using List View, unable to add Graphs to a Report
+-issue#5797: When using SNMPv3, some devices may show polling issues
+-issue#5802: Limit table conversion to Cacti core tables
+-issue#5806: Fix issues with posix-based kills on Windows
+-issue#5813: When installing, password changes may fail on new installations
+-issue#5814: When using structured RRD folders, permission issues may be flagged incorrectly
+-issue#5823: When unable to locate a valid theme, new default will be Modern
+-issue#5824: Properly cache the data source information for dsstats processing
+-issue#5840: When reindexing, verify all fields may not work as intended
+-feature#5784: Add ability to log database connections/disconnections
+-feature#5796: Add Ping Method where connection refused assumes host is up
+-feature#5819: When displaying graphs, default end time does not show full 24 hour period
+-feature#5825: Add --id to remove_device.php
+-feature#5828: Add Location and Site to Graph List View
+-feature#5830: Add more verbose logging to Boost
+-feature: Update jQuery to 3.7.1
+-feature: Update jQueryUI to 1.14.0
+-feature: Update Purify.js to 3.1.6
+-feature: Update billboard.js to 3.13.0
+-feature: Improve the performance of the repopulation of the poller cache
 
 1.2.27
 -security#GHSA-37x7-mfjv-mm7m: Authentication Bypass when using using older password hashes
@@ -63,7 +126,6 @@ Cacti CHANGELOG
 -security#GHSA-q7g7-gcf6-wh4x: XSS vulnerability when viewing data sources in debug mode
 -security#GHSA-w85f-7c4w-7594: SQL Injection vulnerability when managing SNMP Notification Receivers
 -issue#5464: When viewing data sources, an undefined variable error may be seen
--issue#5468: ensure user DN is searchable and equal to value of specified group attribute
 -issue#5478: Improvements for Poller Last Run Date
 -issue#5481: Attempting to edit a Data Query that does not exist throws warnings and not an GUI error
 -issue#5483: Improve PHP 8.1 support when adding devices
@@ -99,7 +161,7 @@ Cacti CHANGELOG
 -issue#5612: Database reconnection can cause errors to be reported incorrectly
 -issue#5613: Fix returned value if $sau is empty
 -issue#5641: Cmd poller - add availability test for devices without poller items
--feature#5358: Upgrade flag-icons to version 6.11.1
+-issue#6194: Latest PHP 8.4 causes deprecation warnings in plugins
 -feature#5577: Add Aruba switch, Aruba controller and HPE iLO templates
 -feature#5597: Add OSCX 6x00 templates
 
@@ -176,7 +238,6 @@ Cacti CHANGELOG
 -issue#5426: When importing legacy Data Query Templates, the Template can become unusable
 -issue#5427: Provide ability to raise an event when extending the settings form
 -issue#5434: Prevent unsupported SQL Mode flags from being set
--issue#5438: Improve compatibility for Unserialize under PHP 5.x
 -issue#5439: The DSStats summary does not always display expected values
 -issue#5440: When performing a fresh install, device classification may be missing.
 -issue#5446: Duplication functions for Graph/Template and Data Source/Template do not return and id
@@ -677,7 +738,6 @@ Cacti CHANGELOG
 -issue#3977: Database upgrade may fail when using upgrade_database.php
 -issue#3978: Input Validation was not handled correctly when displaying graph trees
 -issue#3981: Missing API include leads to runtime errors in Automation
--issue#3982: Technical Support-->PHP Info should not removed normal hyperlink
 -issue#3985: Collation was not always handled correctly in the database library
 -issue#3988: Automation raises errors when default snmp options is set to none
 -issue#3990: PHP Information was not being displayed properly under Tech Support

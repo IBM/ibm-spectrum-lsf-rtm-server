@@ -1,4 +1,3 @@
-<!-- $Id$ -->
 <interface>
 	<name>Get Host MIB Partitions</name>
 	<script_path>|path_cacti|/scripts/ss_host_disk.php</script_path>

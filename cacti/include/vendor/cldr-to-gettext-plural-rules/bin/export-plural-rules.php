@@ -1,5 +1,4 @@
 <?php
-// $Id$
 use Gettext\Languages\Exporter\Exporter;
 use Gettext\Languages\Language;
 

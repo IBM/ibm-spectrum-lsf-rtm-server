@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2024 The Cacti Group                                 |
@@ -13,6 +12,11 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDtool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -109,7 +113,7 @@ if ($hasEverything) {
 	print Installer::sectionTitle(__('Initializing'));
 	print Installer::sectionNormal(__('Please wait while the installation system for Cacti Version %s initializes. You must have JavaScript enabled for this to work.', CACTI_VERSION));
 } else {
-	print '<div class="installErrorImage"></div>';
+	print '<div class="installErrorImage"><img src=\'../images/cacti_logo.svg\'></div>';
 	print '<div class="installErrorText">';
 	print '<p>' . __('FATAL: We are unable to continue with this installation. In order to install Cacti, PHP must be at version 5.4 or later.') . '</p>';
 	print '<ul>';
@@ -125,7 +129,7 @@ if ($hasEverything) {
 ?>
 			</div>
 			<div class='cactiInstallLoader' id='installLoader'>
-				<div class='cactiInstallLoaderLogo'></div>
+				<div class='cactiInstallLoaderLogo'><img src='../images/cacti_logo.svg' /></div>
 				<div class='cactiInstallLoaderSpinnerTheme cactiInstallLoaderSpinner'></div>
 			</div>
 		</div>

@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /**
  * Unified diff generator for PHP DiffLib.
  *

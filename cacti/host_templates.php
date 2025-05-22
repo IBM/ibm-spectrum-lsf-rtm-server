@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2024 The Cacti Group                                 |
@@ -13,6 +12,11 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDtool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -723,9 +727,9 @@ function template() {
 									) AS rs
 									ORDER BY name');
 							} else {
-								$graph_templates = db_fetch_assoc_prepared('SELECT DISTINCT id, name
+								$graph_templates = db_fetch_assoc_prepared('SELECT DISTINCT ht.id, ht.name
 									FROM (
-										SELECT gt.id, gt.name, hgt.host_template_id
+										SELECT gt.id, gt.name, htg.host_template_id
 										FROM graph_templates AS gt
 										INNER JOIN host_template_graph AS htg
 										ON htg.graph_template_id = gt.id
@@ -846,7 +850,7 @@ function template() {
 	}
 
 	if (get_request_var('graph_template') != '-1') {
-		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . '(gt_id = ' . get_request_var('graph_template') . ')';
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . '(gt_id = ' . get_filter_request_var('graph_template') . ')';
 		$sql_join   = "INNER JOIN (
 			SELECT DISTINCT host_template_id, id AS gt_id
 			FROM (

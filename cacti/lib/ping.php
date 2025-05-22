@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2024 The Cacti Group                                 |
@@ -13,6 +12,11 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDtool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -35,6 +39,9 @@ class Net_Ping
 	var $precision;
 	var $time;
 	var $timer_start_time;
+	var $sqn;
+	var $avail_method;
+	var $ping_type;
 
 	function __construct() {
 		$this->port = 33439;
@@ -143,7 +150,7 @@ class Net_Ping
 
 				if (!$this->is_ipaddress($host_ip)) {
 					cacti_log('WARNING: ICMP Ping Error: cacti_gethostbyname failed for ' . $this->host['hostname']);
-					$this->response = 'ICMP Ping Error: cacti_gethostbyname failed for ' . $this->host['hostname'];
+					$this->ping_response = 'ICMP Ping Error: cacti_gethostbyname failed for ' . $this->host['hostname'];
 					return false;
 				}
 			}
@@ -164,9 +171,9 @@ class Net_Ping
 				$result = shell_exec('ping -t ' . ceil($this->timeout/1000) . ' -c ' . $this->retries . ' ' . $this->host['hostname']);
 			} elseif (substr_count(strtolower(PHP_OS), 'freebsd')) {
 				if (strpos($host_ip, ':') !== false) {
-					$result = shell_exec('/usr/sbin/ping6 -x ' . $this->timeout . ' -c ' . $this->retries . ' ' . $this->host['hostname']);
+					$result = shell_exec('ping6 -t ' . ceil($this->timeout/1000) . ' -c ' . $this->retries . ' ' . $this->host['hostname']);
 				} else {
-					$result = shell_exec('ping -W ' . $this->timeout . ' -c ' . $this->retries . ' ' . $this->host['hostname']);
+					$result = shell_exec('ping -t ' . ceil($this->timeout/1000) . ' -c ' . $this->retries . ' ' . $this->host['hostname']);
 				}
 			} elseif (substr_count(strtolower(PHP_OS), 'darwin')) {
 				$result = shell_exec('ping -t ' . ceil($this->timeout/1000) . ' -c ' . $this->retries . ' ' . $this->host['hostname']);
@@ -182,11 +189,20 @@ class Net_Ping
 				 * as it now tries to open an ICMP socket and fails
 				 * $result will be empty, then. */
 				if (strpos($host_ip, ':') !== false) {
-					$result = shell_exec('/usr/sbin/ping6 -W ' . ceil($this->timeout/1000) . ' -c ' . $this->retries . ' -p ' . $pattern . ' ' . $this->host['hostname']);
+					$result = shell_exec('ping -6 -W ' . ceil($this->timeout/1000) . ' -c ' . $this->retries . ' -p ' . $pattern . ' ' . $this->host['hostname']);
 				} else {
 					$result = shell_exec('ping -W ' . ceil($this->timeout/1000) . ' -c ' . $this->retries . ' -p ' . $pattern . ' ' . $this->host['hostname'] . ' 2>&1');
-					if ((strpos($result, 'unknown host') !== false || strpos($result, 'Address family') !== false) && file_exists('/bin/ping6')) {
-						$result = shell_exec('/usr/sbin/ping6 -W ' . ceil($this->timeout/1000) . ' -c ' . $this->retries . ' -p ' . $pattern . ' ' . $this->host['hostname']);
+
+					if (strpos($result, 'unknown host') !== false || strpos($result, 'Address family') !== false) {
+						if (file_exists('/usr/bin/ping6')) {
+							$ping_path = '/usr/bin/ping6';
+						} elseif (file_exists('/usr/sbin/ping6')) {
+							$ping_path = '/usr/sbin/ping6';
+						} else {
+							$ping_path = '/bin/ping6';
+						}
+
+						$result = shell_exec($ping_path . ' -W ' . ceil($this->timeout/1000) . ' -c ' . $this->retries . ' -p ' . $pattern . ' ' . $this->host['hostname']);
 					}
 				}
 			}
@@ -204,7 +220,7 @@ class Net_Ping
 
 					return true;
 				} else {
-					$this->status = 'down';
+					$this->ping_status = 'down';
 					$this->ping_response = __('ICMP ping Timed out');
 
 					return false;
@@ -222,7 +238,7 @@ class Net_Ping
 
 					return true;
 				} else {
-					$this->status = 'down';
+					$this->ping_status = 'down';
 					$this->ping_response = __('ICMP ping Timed out');
 
 					return false;
@@ -352,7 +368,7 @@ class Net_Ping
 
 				if (!$this->is_ipaddress($host_ip)) {
 					cacti_log('WARNING: UDP Ping Error: cacti_gethostbyname failed for ' . $this->host['hostname']);
-					$this->response = 'UDP Ping Error: cacti_gethostbyname failed for ' . $this->host['hostname'];
+					$this->ping_response = 'UDP Ping Error: cacti_gethostbyname failed for ' . $this->host['hostname'];
 					$this->restore_cacti_error_handler();
 
 					return false;
@@ -394,7 +410,7 @@ class Net_Ping
 			$retry_count = 0;
 			while (true) {
 				if ($retry_count >= $this->retries) {
-					$this->status = 'down';
+					$this->ping_status = 'down';
 					$this->ping_response = __('UDP ping error: %s', $error);
 					$this->close_socket();
 					$this->restore_cacti_error_handler();
@@ -489,7 +505,7 @@ class Net_Ping
 
 				if (!$this->is_ipaddress($host_ip)) {
 					cacti_log('WARNING: TCP Ping Error: cacti_gethostbyname failed for ' . $this->host['hostname']);
-					$this->response = 'TCP Ping Error: cacti_gethostbyname failed for ' . $this->host['hostname'];
+					$this->ping_response = 'TCP Ping Error: cacti_gethostbyname failed for ' . $this->host['hostname'];
 					$this->restore_cacti_error_handler();
 
 					return false;
@@ -738,6 +754,9 @@ class Net_Ping
 			$ip_address = str_replace('tcp:', '', strtolower($ip_address));
 		} elseif (strpos($ip_address, 'udp:') !== false) {
 			$ip_address = str_replace('udp:', '', strtolower($ip_address));
+		} elseif (strpos($ip_address, '[') !== false) {
+			$parts = explode(']', $ip_address);
+			$ip_address = trim($parts[0], '[');
 		}
 
 		return $ip_address;

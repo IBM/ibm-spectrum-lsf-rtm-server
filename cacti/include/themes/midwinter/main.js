@@ -1,4 +1,3 @@
-// $Id$
 /*
   +-------------------------------------------------------------------------+
   | Copyright (C) 2004-2024 The Cacti Group                                 |
@@ -12,6 +11,11 @@
   | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
   | GNU General Public License for more details.                            |
+  +-------------------------------------------------------------------------+
+  | Cacti: The Complete RRDTool-based Graphing Solution                     |
+  +-------------------------------------------------------------------------+
+  | This code is designed, written, and maintained by the Cacti Group. See  |
+  | about.php and/or the AUTHORS file for specific developer information.   |
   +-------------------------------------------------------------------------+
   | http://www.cacti.net/                                                   |
   +-------------------------------------------------------------------------+
@@ -1079,7 +1083,6 @@ function dialog_client(event) {
 				case 'FreeBSD':
 				case 'RedHat':
 				case 'SUSE':
-				case 'AlmaLinux':
 				case 'Ubuntu':
 					env.os.icon = 'fab fa-' + env.os.name.toLowerCase();
 					break;

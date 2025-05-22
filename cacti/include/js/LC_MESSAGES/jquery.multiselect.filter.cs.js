@@ -1,4 +1,3 @@
-// $Id$
 /* Czech initialisation for the jQuery UI multiselect plugin. */
 /* Written by Michi (michi.m@gmail.com). */
 

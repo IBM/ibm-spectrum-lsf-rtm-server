@@ -1,4 +1,3 @@
-// $Id$
 /* Polish initialisation for the jQuery UI date picker plugin. */
 /* Written by Jacek Wysocki (jacek.wysocki@gmail.com). */
 ( function( factory ) {

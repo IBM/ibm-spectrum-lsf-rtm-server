@@ -1,4 +1,3 @@
-// $Id$
 /* Basque trannslation for JQuery Timepicker Addon */
 /* Translated by Xabi Fer */
 /* Fixed by Asier Iturralde Sarasola - iametza interaktiboa */

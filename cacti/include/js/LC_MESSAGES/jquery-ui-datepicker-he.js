@@ -1,4 +1,3 @@
-// $Id$
 /* Hebrew initialisation for the UI Datepicker extension. */
 /* Written by Amir Hardon (ahardon at gmail dot com). */
 ( function( factory ) {

@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 /**
  * Pure-PHP arbitrary precision integer arithmetic library.

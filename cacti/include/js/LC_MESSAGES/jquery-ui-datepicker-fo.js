@@ -1,4 +1,3 @@
-// $Id$
 /* Faroese initialisation for the jQuery UI date picker plugin */
 /* Written by Sverri Mohr Olsen, sverrimo@gmail.com */
 ( function( factory ) {

@@ -1,4 +1,3 @@
-// $Id$
 // https://d3js.org v7.8.2 Copyright 2010-2023 Mike Bostock
 (function (global, factory) {
 typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :

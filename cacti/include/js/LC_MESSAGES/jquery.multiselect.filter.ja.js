@@ -1,4 +1,3 @@
-// $Id$
 /* Japanese initialisation for the jQuery UI multiselect plugin. */
 /* Written by Daisuke (daisuketaniwaki@gmail.com). */
 

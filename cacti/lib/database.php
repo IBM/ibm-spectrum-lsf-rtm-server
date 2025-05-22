@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2024 The Cacti Group                                 |
@@ -13,6 +12,11 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDtool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -45,6 +49,10 @@ function db_connect_real($device, $user, $pass, $db_name, $db_type = 'mysql', $p
 
 	$i = 0;
 	if (isset($database_sessions["$device:$port:$db_name"])) {
+		if (!empty($config['DEBUG_SQL_CONNECT'])) {
+			error_log(sprintf('NOTE: Connect using cached connection %s:%s/%s.', $device, $port, $db_name));
+		}
+
 		return $database_sessions["$device:$port:$db_name"];
 	}
 
@@ -103,6 +111,10 @@ function db_connect_real($device, $user, $pass, $db_name, $db_type = 'mysql', $p
 				$cnn_id = new PDO("$db_type:host=$device;port=$port;dbname=$db_name;charset=utf8", $user, $pass, $flags);
 			}
 			$cnn_id->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
+
+			if (!empty($config['DEBUG_SQL_CONNECT'])) {
+				error_log(sprintf('NOTE: New connection to %s:%s/%s.', $device, $port, $db_name));
+			}
 
 			$bad_modes = array(
 				'STRICT_TRANS_TABLES',
@@ -350,20 +362,47 @@ function db_get_active_replicas() {
  *
  * @return (bool) the result of the close command
  */
-function db_close($db_conn = false) {
-	global $database_sessions, $database_default, $database_hostname, $database_port;
+function db_close(&$db_conn = false) {
+	global $database_sessions, $error_logged, $database_default, $database_hostname, $database_port, $database_details;
 
 	/* check for a connection being passed, if not use legacy behavior */
 	if (!is_object($db_conn)) {
+		if (!empty($config['DEBUG_SQL_CONNECT'])) {
+			error_log(sprintf('NOTE: Disconnecting from %s:%s/%s.', $database_hostname, $database_port, $database_default));
+		}
+
 		$db_conn = $database_sessions["$database_hostname:$database_port:$database_default"];
 
 		if (!is_object($db_conn)) {
+			if (!empty($config['DEBUG_SQL_CONNECT'])) {
+				error_log(sprintf('WARNING: Disconnect issues.  Non-object for %s:%s/%s.', $database_hostname, $database_port, $database_default));
+			}
+
 			return false;
+		}
+
+		$database_sessions["$database_hostname:$database_port:$database_default"] = null;
+
+		if (isset($error_logged["$database_hostname:$database_port:$database_default"])) {
+			unset($error_logged["$database_hostname:$database_port:$database_default"]);
+		}
+	} elseif (!empty($config['DEBUG_SQL_CONNECT'])) {
+		$id   = spl_object_id($db_conn);
+		$hash = spl_object_hash($db_conn);
+		if (isset($database_details[$hash])) {
+			$det = $database_details[$hash];
+
+			error_log(sprintf('NOTE: Disconnecting from %s:%s/%s.', $det['database_hostname'], $det['database_port'], $det['database_default']));
+		} else {
+			error_log("WARNING: Disconnecting from unregistered Object ID: $id.");
+		}
+
+		if (isset($error_logged[$id])) {
+			unset($error_logged[$id]);
 		}
 	}
 
 	$db_conn = null;
-	$database_sessions["$database_hostname:$database_port:$database_default"] = null;
 
 	return true;
 }
@@ -396,7 +435,7 @@ function db_execute($sql, $log = true, $db_conn = false) {
  * @return (bool) '1' for success, false for failed
  */
 function db_execute_prepared($sql, $params = array(), $log = true, $db_conn = false, $execute_name = 'Exec', $default_value = true, $return_func = 'no_return_function', $return_params = array()) {
-	global $database_sessions, $database_default, $config, $database_hostname, $database_port, $database_total_queries, $database_last_error, $database_log, $affected_rows;
+	global $database_sessions, $error_logged, $database_default, $config, $database_hostname, $database_port, $database_total_queries, $database_last_error, $database_log, $affected_rows, $database_details;
 
 	$database_total_queries++;
 
@@ -408,11 +447,36 @@ function db_execute_prepared($sql, $params = array(), $log = true, $db_conn = fa
 	if (!is_object($db_conn)) {
 		if (isset($database_sessions["$database_hostname:$database_port:$database_default"])) {
 			$db_conn = $database_sessions["$database_hostname:$database_port:$database_default"];
+		} elseif (!isset($error_logged["$database_hostname:$database_port:$database_default"])) {
+			if (!empty($config['DEBUG_SQL_CONNECT'])) {
+				error_log(sprintf('WARNING: Execute unable to find connection for %s:%s/%s.', $database_hostname, $database_port, $database_default));
+				$error_logged["$database_hostname:$database_port:$database_default"] = true;
+			}
 		}
 
 		if (!is_object($db_conn)) {
+			if (!empty($config['DEBUG_SQL_CONNECT'])) {
+				error_log('FATAL: Unable to find connection Object ID.');
+			}
+
 			$database_last_error = 'DB ' . $execute_name . ' -- No connection found';
+
 			return false;
+		}
+	} elseif (!empty($config['DEBUG_SQL_CONNECT'])) {
+		$id   = spl_object_id($db_conn);
+		$hash = spl_object_hash($db_conn);
+
+		if (!isset($error_logged[$id])) {
+			if (isset($database_details[$hash])) {
+				$det = $database_details[$hash];
+
+				error_log(sprintf("NOTE: Execute Using %s:%s/%s.", $det['database_hostname'], $det['database_port'], $det['database_default']));
+			} else {
+				error_log("WARNING: Execute Using Object ID: $id.");
+			}
+
+			$error_logged[$id] = true;
 		}
 	}
 
@@ -437,6 +501,7 @@ function db_execute_prepared($sql, $params = array(), $log = true, $db_conn = fa
 		}
 
 		set_error_handler('db_warning_handler',E_WARNING | E_NOTICE);
+
 		try {
 			if (empty($params) || cacti_count($params) == 0) {
 				$query->execute();
@@ -1042,8 +1107,14 @@ function db_index_matches($table, $index, $columns, $log = true, $db_conn = fals
 function db_table_exists($table, $log = true, $db_conn = false) {
 	static $results;
 
-	if (isset($results[$table]) && !defined('IN_CACTI_INSTALL') && !defined('IN_PLUGIN_INSTALL')) {
-		return $results[$table];
+	if ($db_conn == false) {
+		$index = '-1';
+	} else {
+		$index = md5(json_encode($db_conn));
+	}
+
+	if (isset($results[$index][$table]) && !defined('IN_CACTI_INSTALL') && !defined('IN_PLUGIN_INSTALL')) {
+		return $results[$index][$table];
 	}
 
 	// Separate the database from the table and remove backticks
@@ -1052,9 +1123,9 @@ function db_table_exists($table, $log = true, $db_conn = false) {
 	if ($matches !== false && array_key_exists('table', $matches)) {
 		$sql = 'SHOW TABLES LIKE \'' . $matches['table'] . '\'';
 
-		$results[$table] = (db_fetch_cell($sql, '', $log, $db_conn) ? true : false);
+		$results[$index][$table] = (db_fetch_cell($sql, '', $log, $db_conn) ? true : false);
 
-		return $results[$table];
+		return $results[$index][$table];
 	}
 
 	return false;
@@ -1113,13 +1184,19 @@ function db_cacti_initialized($is_web = true) {
 function db_column_exists($table, $column, $log = true, $db_conn = false) {
 	static $results = array();
 
-	if (isset($results[$table][$column]) && !defined('IN_CACTI_INSTALL') && !defined('IN_PLUGIN_INSTALL')) {
-		return $results[$table][$column];
+	if ($db_conn == false) {
+		$index = '-1';
+	} else {
+		$index = md5(json_encode($db_conn));
 	}
 
-	$results[$table][$column] = (db_fetch_cell("SHOW columns FROM `$table` LIKE '$column'", '', $log, $db_conn) ? true : false);
+	if (isset($results[$index][$table][$column]) && !defined('IN_CACTI_INSTALL') && !defined('IN_PLUGIN_INSTALL')) {
+		return $results[$index][$table][$column];
+	}
 
-	return $results[$table][$column];
+	$results[$index][$table][$column] = (db_fetch_cell("SHOW columns FROM `$table` LIKE '$column'", '', $log, $db_conn) ? true : false);
+
+	return $results[$index][$table][$column];
 }
 
 /**
@@ -1502,7 +1579,7 @@ function db_table_create($table, $data, $log = true, $db_conn = false) {
 
 		if (db_execute($sql, $log, $db_conn)) {
 			if (isset($data['charset'])) {
-				db_execute("ALLTER TABLE `$table` CHARSET = " . $data['charset']);
+				db_execute("ALTER TABLE `$table` CHARSET = " . $data['charset']);
 			}
 
 			if (isset($data['collate'])) {

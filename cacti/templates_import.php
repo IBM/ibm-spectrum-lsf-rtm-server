@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2024 The Cacti Group                                 |
@@ -13,6 +12,11 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDtool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -321,7 +325,7 @@ function display_template_data(&$templates) {
 					$dep_details['unmet'] = __('Unmet: %d', $unmet_count);
 				}
 
-				form_selectable_cell(implode(', ', $diff_details), $id, '', 'white-space:pre-wrap');
+				form_selectable_cell(implode(', ', $dep_details), $id, '', 'white-space:pre-wrap');
 			} else {
 				form_selectable_cell(__('None'), $id);
 			}

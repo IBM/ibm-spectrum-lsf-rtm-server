@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 spl_autoload_register(function ($class) {
     if (strpos($class, 'Gettext\\') !== 0) {

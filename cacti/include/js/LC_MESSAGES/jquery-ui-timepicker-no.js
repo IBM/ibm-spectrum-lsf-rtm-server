@@ -1,4 +1,3 @@
-// $Id$
 /* Norwegian translation for the jQuery Timepicker Addon */
 /* Written by Morten Hauan (http://hauan.me) */
 (function($) {

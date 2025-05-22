@@ -1,4 +1,3 @@
-/* $Id$ */
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2024 The Cacti Group                                 |
@@ -12,6 +11,11 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDtool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -660,33 +664,36 @@ label.ui-state-hover > span {
 
 .reloadquery {
 	cursor: pointer;
-	padding: 2px;
+	padding: 1px;
 	vertical-align: middle;
 	color: #32CD32;
 	font-weight: bold;
 	font-size: 14px;
+	padding-right: 15px !important;
 }
 
 .verbosequery {
 	cursor: pointer;
-	padding: 2px;
+	padding: 1px;
 	vertical-align: middle;
 	color: orange;
 	font-size: 14px;
+	padding-right: 15px;
 }
 
 .deletequery {
 	cursor: pointer;
-	padding: 2px;
+	padding: 1px;
 	vertical-align: middle;
 	color: red !important;
 	font-size: 14px;
+	padding-right: 15px;
 }
 
 .deletequery:hover {
 	color: red !important;
 	text-decoration: none;
-	padding: 2px;
+	padding: 1px;
 	vertical-align: middle;
 }
 
@@ -923,7 +930,7 @@ label.ui-state-hover > span {
 }
 
 .cactiLogo {
-	background: transparent;
+	background: transparent url('./images/cacti_logo.svg') no-repeat 30px;
 	display:none;
 	cursor: pointer;
 	padding-bottom: 140px;
@@ -2097,6 +2104,27 @@ div.submenu span {
 	padding: 0;
 }
 
+tr td:last-child .formCheckboxLabel {
+	margin-right: 10px !important;
+}
+
+tr th:last-child .formCheckboxLabel {
+	margin-right: 10px !important;
+}
+
+.fa-angle-double-up, .fa-angle-double-down {
+	margin-right: 10px;
+}
+
+.fa-plus, .fa-question-circle {
+	margin-right: 10px;
+}
+
+.fa-compress, .fa-expand {
+	margin-right: 10px;
+}
+
+
 /* Navigation Area */
 #nav {
 	float: left;
@@ -2625,6 +2653,7 @@ tr#realtime td:first-child {
 	left: 4px;
 	bottom: 3px;
 	background-color: white;
+	background-image: url('./images/cacti_logo.svg');
 	background-repeat: no-repeat;
 	background-size: 7px;
 	background-position: center;
@@ -2711,6 +2740,7 @@ input:checked + .checkboxSlider:before {
 	left: 4px;
 	bottom: 4px;
 	background-color: white;
+	background-image: url('./images/cacti_logo.svg');
 	background-repeat: no-repeat;
 	background-size: 7px;
 	background-position: center;

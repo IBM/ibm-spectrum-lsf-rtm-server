@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2024 The Cacti Group                                 |
@@ -13,6 +12,11 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDtool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -188,7 +192,7 @@ function rrdcheck_display_problems() {
 			form_selectable_cell(filter_value($problem['name_cache'], get_request_var('filter')), $problem['local_data_id']);
 			form_selectable_cell(filter_value($problem['local_data_id'], get_request_var('filter')), $problem['local_data_id'], '', 'center');
 			form_selectable_cell(filter_value($problem['message'], get_request_var('filter')), $problem['local_data_id']);
-			form_selectable_cell($problem['test_date'], $file['local_data_id'], '', 'right');
+			form_selectable_cell($problem['test_date'], $problem['local_data_id'], '', 'right');
 
 			form_end_row();
 		}
@@ -198,7 +202,7 @@ function rrdcheck_display_problems() {
 
 	html_end_box(false);
 
-	if (cacti_sizeof($file_list)) {
+	if (cacti_sizeof($problems)) {
 		print $nav;
 	}
 

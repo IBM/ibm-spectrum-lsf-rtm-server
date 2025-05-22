@@ -1,4 +1,3 @@
-// $Id$
 /*!
  * Chart.js v2.9.4
  * https://www.chartjs.org

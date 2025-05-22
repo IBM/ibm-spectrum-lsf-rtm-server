@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 /**
  * Base Class for all \phpseclib\Crypt\* cipher classes

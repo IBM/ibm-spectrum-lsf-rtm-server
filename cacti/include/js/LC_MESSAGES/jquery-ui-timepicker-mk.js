@@ -1,4 +1,3 @@
-// $Id$
 /* Macedonian cyrilic translation for the jQuery Timepicker Addon */
 /* Written by Vlatko Ristovski */
 (function($) {

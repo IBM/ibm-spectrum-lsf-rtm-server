@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: developers@cacti.net\n"
-"POT-Creation-Date: 2024-05-12 19:29+0000\n"
+"POT-Creation-Date: 2024-04-20 18:16-0400\n"
 "PO-Revision-Date: 2023-03-07 13:34+0000\n"
 "Last-Translator: Linya Huang <linya0405@gmail.com>\n"
 "Language-Team: Chinese (Traditional) <http://translate.cacti.net/projects/cacti/core-v1-2-x/zh_Hant/>\n"
@@ -2544,7 +2544,7 @@ msgstr "找不到樹規則"
 #: cactid.php:44 help.php:44 lib/functions.php:5943 lib/functions.php:6012
 #: lib/functions.php:6102 lib/functions.php:6671 poller.php:392 poller.php:542
 #: poller.php:607 poller.php:647 poller.php:789 poller.php:895
-#: poller_automation.php:53 poller_boost.php:355
+#: poller_automation.php:53 poller_boost.php:351
 msgid "Cacti System Warning"
 msgstr "仙人掌系統警告"
 
@@ -12420,7 +12420,7 @@ msgstr "規則項[％s的新規則項：％s]"
 msgid "Added by Cacti Automation"
 msgstr "由Cacti Automation添加"
 
-#: lib/api_automation.php:3270
+#: lib/api_automation.php:3272
 msgid "ERROR: IP ranges in the form of range1-range2 are no longer supported."
 msgstr "錯誤：不再支持採用 range1-range2 形式的 IP 範圍。"
 
@@ -17131,7 +17131,7 @@ msgstr "Cacti Primary Admin"
 msgid "Cacti Automation Report requires an html based Email client"
 msgstr "Cacti Automation Report需要一個基於html的電子郵件客戶端"
 
-#: poller_boost.php:355
+#: poller_boost.php:351
 msgid "WARNING: Detected Poller Boost Overrun, Possible Boost Poller Crash"
 msgstr "警告：檢測到 Poller Boost Overrun，可能 Boost Poller 崩潰"
 

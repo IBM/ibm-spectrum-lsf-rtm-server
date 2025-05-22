@@ -1,4 +1,3 @@
-// $Id$
 /* Swedish translation for the jQuery Timepicker Addon */
 /* Written by Nevon */
 (function($) {

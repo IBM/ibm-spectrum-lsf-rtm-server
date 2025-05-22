@@ -1,4 +1,3 @@
-// $Id$
 /* Armenian translation for the jQuery Timepicker Addon */
 /* Written by Artavazd Avetisyan artavazda@hotmail.com */
 (function($) {

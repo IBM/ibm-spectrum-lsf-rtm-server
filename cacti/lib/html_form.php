@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2024 The Cacti Group                                 |
@@ -13,6 +12,11 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDtool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -48,9 +52,15 @@ function draw_edit_form($array) {
 		foreach ($fields_array as $field_name => $field_array) {
 			if ($field_array['method'] == 'hidden') {
 				if (!isset($field_array['value'])) {
-					cacti_log("WARNING: Cacti Form field '$field_name' does not include a 'value' Column.  Using default", false);
+					cacti_log("WARNING: Cacti Form field '$field_name' does not include a 'value' Column.  Using default.", false);
 					cacti_debug_backtrace('form_edit');
-					$field_array['value'] = $field_array['default'];
+
+					if (isset($field_array['default'])) {
+						$field_array['value'] = $field_array['default'];
+					} else {
+						cacti_log("WARNING: Cacti Form field '$field_name' does not include a 'default' Column.  Using empty string.", false);
+						$field_array['value'] = '';
+					}
 				}
 
 				print '<div class="hidden formRow">';
@@ -58,9 +68,15 @@ function draw_edit_form($array) {
 				print '</div>';
 			} elseif ($field_array['method'] == 'hidden_zero') {
 				if (!isset($field_array['value'])) {
-					cacti_log("WARNING: Cacti Form field '$field_name' does not include a 'value' Column.  Using default", false);
+					cacti_log("WARNING: Cacti Form field '$field_name' does not include a 'value' Column.  Using default.", false);
 					cacti_debug_backtrace('form_edit');
-					$field_array['value'] = $field_array['default'];
+
+					if (isset($field_array['default'])) {
+						$field_array['value'] = $field_array['default'];
+					} else {
+						cacti_log("WARNING: Cacti Form field '$field_name' does not include a 'default' Column.  Using '0'.", false);
+						$field_array['value'] = '0';
+					}
 				}
 
 				print '<div class="hidden formRow">';
@@ -94,7 +110,13 @@ function draw_edit_form($array) {
 					if (!isset($field_array['sub_checkbox']['value'])) {
 						cacti_log("WARNING: Cacti Form field '$field_name' does not include a sub_checkbox 'value' Column.  Using default", false);
 						cacti_debug_backtrace('form_edit');
-						$field_array['sub_checkbox']['value'] = $field_array['default'];
+
+						if (isset($field_array['sub_checkbox']['default'])) {
+							$field_array['sub_checkbox']['value'] = $field_array['default'];
+						} else {
+							cacti_log("WARNING: Cacti Form field '$field_name' does not include a 'default' Column.  Using ''.", false);
+							$field_array['sub_checkbox']['value'] = '';
+						}
 					}
 
 					form_checkbox($field_array['sub_checkbox']['name'],
@@ -943,7 +965,7 @@ function form_callback($form_name, $classic_sql, $column_display, $column_id, $c
 	}
 }
 
-/** form_checkbox - draws a standard html checkbox
+/* form_checkbox - draws a standard html checkbox
    @param string $form_name - the name of this form element
    @param string $form_previous_value - the current value of this form element
    @param string $form_caption - the text to display to the right of the checkbox
@@ -958,7 +980,7 @@ function form_callback($form_name, $classic_sql, $column_display, $column_id, $c
    @param boolean $show_label - show the form caption in the checkbox
 */
 function form_checkbox($form_name, $form_previous_value, $form_caption, $form_default_value, $current_id = 0, $class = '', $on_change = '', $title = '', $show_label = false) {
-	if (($form_previous_value == '') && (empty($current_id))) {
+	if (($form_previous_value === null) && (empty($current_id))) {
 		$form_previous_value = $form_default_value;
 	}
 
@@ -1396,7 +1418,7 @@ function form_end($ajax = true) {
 			title='<?php print __esc('Warning Unsaved Form Data');?>';
 			returnStr = '<div id="messageContainer" style="display:none">' +
 				'<h4><?php print __('Unsaved Changes Detected');?></h4>' +
-				'<p style="display:table-cell;overflow:auto"><?php print __('You have unsaved changes on this form.  If you press &#39;Continue&#39; these changes will be discarded.  Press &#39;Cancel&#39; to continue editing the form.');?></p>' +
+				'<p style="display:table-cell;overflow:auto"><?php print __esc("You have unsaved changes on this form.  If you press 'Continue' these changes will be discarded.  Press 'Cancel' to continue editing the form.");?></p>' +
 				'</div>';
 
 			$('#messageContainer').remove();

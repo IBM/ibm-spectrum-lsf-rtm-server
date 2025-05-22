@@ -1,4 +1,3 @@
-// $Id$
 /* Czech initialisation for the jQuery UI date picker plugin. */
 /* Written by Tomas Muller (tomas@tomas-muller.net). */
 ( function( factory ) {

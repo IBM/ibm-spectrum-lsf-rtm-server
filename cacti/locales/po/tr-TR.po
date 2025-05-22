@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: developers@cacti.net\n"
-"POT-Creation-Date: 2024-05-12 19:29+0000\n"
+"POT-Creation-Date: 2024-04-20 18:16-0400\n"
 "PO-Revision-Date: 2024-04-20 19:24-0400\n"
 "Last-Translator: San IPE <sanipe1949@krunsea.com>\n"
 "Language-Team: Turkish <http://translate.cacti.net/projects/cacti/core-v1-2-x/tr/>\n"
@@ -2544,7 +2544,7 @@ msgstr "Ağaç Kuralı Bulunamadı"
 #: cactid.php:44 help.php:44 lib/functions.php:5943 lib/functions.php:6012
 #: lib/functions.php:6102 lib/functions.php:6671 poller.php:392 poller.php:542
 #: poller.php:607 poller.php:647 poller.php:789 poller.php:895
-#: poller_automation.php:53 poller_boost.php:355
+#: poller_automation.php:53 poller_boost.php:351
 msgid "Cacti System Warning"
 msgstr "Kaktüsler Sistemi Uyarısı"
 
@@ -12459,7 +12459,7 @@ msgstr "Kural Öğesi [ %s için yeni kural öğesi: %s]"
 msgid "Added by Cacti Automation"
 msgstr "Cacti Automation tarafından eklendi"
 
-#: lib/api_automation.php:3270
+#: lib/api_automation.php:3272
 msgid "ERROR: IP ranges in the form of range1-range2 are no longer supported."
 msgstr "HATA: Aralık1-aralık2 biçimindeki IP aralıkları artık desteklenmiyor."
 
@@ -17173,7 +17173,7 @@ msgstr "Kaktüsler Birincil Yönetici"
 msgid "Cacti Automation Report requires an html based Email client"
 msgstr "Kaktüsler Otomasyon Raporu, html tabanlı bir E-posta istemcisi gerektirir."
 
-#: poller_boost.php:355
+#: poller_boost.php:351
 msgid "WARNING: Detected Poller Boost Overrun, Possible Boost Poller Crash"
 msgstr "UYARI: Algılanan Poller Boost Taşması, Olası Boost Poller Crash"
 

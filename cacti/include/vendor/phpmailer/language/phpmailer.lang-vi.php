@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /**
  * Vietnamese (Tiếng Việt) PHPMailer language file: refer to English translation for definitive list.
  * @package PHPMailer

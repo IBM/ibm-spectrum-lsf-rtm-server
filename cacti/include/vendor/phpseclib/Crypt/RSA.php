@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 /**
  * Pure-PHP PKCS#1 (v2.1) compliant implementation of RSA.

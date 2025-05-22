@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2024 The Cacti Group                                 |
@@ -13,6 +12,11 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDtool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -1130,10 +1134,29 @@ function api_device_save($id, $device_template_id, $description, $hostname, $snm
 
 	if ($device_id > 0) {
 		if (read_config_option('extended_paths') == 'on'){
-			$host_dir = $config['rra_path'] . '/' . $device_id;
+			$pattern  = read_config_option('extended_paths_type');
+			$maxdirs  = read_config_option('extended_paths_hashes');
+   			if (empty($maxdirs) || $maxdirs < 0 || !is_numeric($maxdirs)) {
+				$maxdirs = 100;
+			}
+
+			$hash_id = $device_id % $maxdirs;
+
+			if ($pattern == 'device' || $pattern == '') {
+				$host_dir = $config['rra_path'] . "/$device_id";
+			} elseif ($pattern == 'device_dq') {
+				$host_dir = $config['rra_path'] . "/$device_id";
+			} elseif ($pattern == 'hash_device') {
+				$host_dir = $config['rra_path'] . "/$hash_id/$device_id";
+			} elseif ($pattern == 'hash_device_dq') {
+				$host_dir = $config['rra_path'] . "/$hash_id/$device_id";
+			} else {
+				$host_dir = $config['rra_path'] . "/$device_id";
+			}
+
 			if (!is_dir($host_dir)){
 				if (is_writable($config['rra_path'])) {
-					if (mkdir($host_dir, 0775)) {
+					if (mkdir($host_dir, 0775, true)) {
 						if ($config['cacti_server_os'] != 'win32') {
 							$owner_id      = fileowner($config['rra_path']);
 							$group_id      = filegroup($config['rra_path']);
@@ -1367,7 +1390,7 @@ function api_device_update_host_template($device_id, $device_template_id) {
 						raise_message('poller_down_' . $poller_id, __('Remote Poller %s is Down, you will need to perform a FullSync once it is up again', $poller_id), MESSAGE_LEVEL_WARN);
 						$raised[$poller_id] = true;
 					}
-				} elseif (!$isset($raised[$poller_id])) {
+				} elseif (!isset($raised[$poller_id])) {
 					raise_message('poller_down_' . $poller_id, __('Remote Poller %s is Down, you will need to perform a FullSync once it is up again', $poller_id), MESSAGE_LEVEL_WARN);
 					$raised[$poller_id] = true;
 				}
@@ -2219,7 +2242,7 @@ function api_clone_device_template_check_for_errors($device_template_id, $device
 					WHERE name = ?',
 					array($name . $suffix));
 
-				if ($exits > 0) {
+				if ($exists > 0) {
 					$warnings++;
 					$return['warnings'][] = sprintf('WARNING: Data Template Data Input Method \'%s\' already exists.', $name . $suffix);
 				}

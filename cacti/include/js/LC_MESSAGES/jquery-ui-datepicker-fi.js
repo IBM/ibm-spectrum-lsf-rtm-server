@@ -1,4 +1,3 @@
-// $Id$
 /* Finnish initialisation for the jQuery UI date picker plugin. */
 /* Written by Harri Kilpiö (harrikilpio@gmail.com). */
 ( function( factory ) {

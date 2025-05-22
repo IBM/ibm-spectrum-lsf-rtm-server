@@ -1,4 +1,3 @@
-// $Id$
 /* Turkish initialisation for the jQuery UI date picker plugin. */
 /* Written by Izzet Emre Erkan (kara@karalamalar.net). */
 ( function( factory ) {

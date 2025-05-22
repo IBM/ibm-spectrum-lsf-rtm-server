@@ -1,4 +1,3 @@
-// $Id$
 /* Portuguese translation for the jQuery Timepicker Addon */
 /* Written by Luan Almeida */
 (function($) {

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: developers@cacti.net\n"
-"POT-Creation-Date: 2024-05-12 19:29+0000\n"
+"POT-Creation-Date: 2024-04-20 18:16-0400\n"
 "PO-Revision-Date: 2024-04-20 19:06-0400\n"
 "Last-Translator: Anonymous <anonymous@cacti.net>\n"
 "Language-Team: Korean <http://translate.cacti.net/projects/cacti/core-v1-2-x/ko/>\n"
@@ -2544,7 +2544,7 @@ msgstr "트리 규칙 없음"
 #: cactid.php:44 help.php:44 lib/functions.php:5943 lib/functions.php:6012
 #: lib/functions.php:6102 lib/functions.php:6671 poller.php:392 poller.php:542
 #: poller.php:607 poller.php:647 poller.php:789 poller.php:895
-#: poller_automation.php:53 poller_boost.php:355
+#: poller_automation.php:53 poller_boost.php:351
 msgid "Cacti System Warning"
 msgstr "선인장 시스템 경고"
 
@@ -12423,7 +12423,7 @@ msgstr "규칙 항목 [ %s의 새 규칙 항목 :  %s]"
 msgid "Added by Cacti Automation"
 msgstr "Cacti Automation에 의해 추가됨"
 
-#: lib/api_automation.php:3270
+#: lib/api_automation.php:3272
 msgid "ERROR: IP ranges in the form of range1-range2 are no longer supported."
 msgstr "오류: range1-range2 형식의 IP 범위는 더 이상 지원되지 않습니다."
 
@@ -17134,7 +17134,7 @@ msgstr "선인장 기본 관리자"
 msgid "Cacti Automation Report requires an html based Email client"
 msgstr "Cacti Automation Report는 HTML 기반 이메일 클라이언트가 필요합니다"
 
-#: poller_boost.php:355
+#: poller_boost.php:351
 msgid "WARNING: Detected Poller Boost Overrun, Possible Boost Poller Crash"
 msgstr "경고: 감지된 폴러 부스트 오버런, 가능한 부스트 폴러 충돌"
 

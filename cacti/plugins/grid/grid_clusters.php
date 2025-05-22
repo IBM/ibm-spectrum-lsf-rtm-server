@@ -1071,7 +1071,7 @@ function api_grid_cluster_remove($clusterid) {
 			db_execute_prepared("DELETE FROM $table WHERE clusterid= ?", array($clusterid));
 		}
 		//grid_queues_distrib is not a fixed table. It's dropped/created with different LSF data and Web operation 
-		if (!db_table_exists('grid_queues_distrib')) {
+		if (db_table_exists('grid_queues_distrib')) {
 			db_execute_prepared("DELETE FROM grid_queues_distrib WHERE clusterid= ?", array($clusterid));
 		}
 		//Clean poller binary heartbeat

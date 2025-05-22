@@ -1,9 +1,8 @@
 #!/usr/bin/env php
 <?php
-// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -14,6 +13,11 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
+ +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDtool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -218,8 +222,8 @@ function ss_net_snmp_disk_io($host_id_or_hostname = '') {
 			}
 		}
 
-		$data = "'" . json_encode($current) . "'";
-		shell_exec("echo $data > $tmpdir/$tmpfile");
+		$data = json_encode($current);
+		file_put_contents("$tmpdir/$tmpfile", $data);
 	}
 
 	if ($found) {

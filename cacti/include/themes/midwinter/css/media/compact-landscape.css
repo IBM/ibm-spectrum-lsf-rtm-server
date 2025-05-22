@@ -1,4 +1,3 @@
-/* $Id$ */
 /* Compact BreadCrumbBar with Cacti Logo */
 html[data-theme-mode='compact'] .breadCrumbBar {
     display: flex;
@@ -39,7 +38,7 @@ html[data-theme-mode='compact'] #navTitle mark[data-markjs='true'] {
 
 html[data-theme-mode='compact'] #cactiConsoleBackdrop {
     display: block;
-    background: transparent url(./../../images/rtm_logo.svg) no-repeat scroll 50% 50% / 20px auto;
+    background: transparent url(./../../images/cacti_logo.svg) no-repeat scroll 50% 50% / 20px auto;
     background-color: var(--background-navigation);
     padding-bottom: 0;
     float: left;
