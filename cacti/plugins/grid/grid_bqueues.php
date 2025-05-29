@@ -2474,8 +2474,8 @@ function grid_view_queue_fairshare($queue) {
 		});
 
 		var charts_height = $('#charts').children('option').length * 28;
-		$('#charts').multiselect({ height: charts_height, minWidth: 180, header: 'Choose your charts' });
 
+		$('#charts').multiselect({ height: charts_height, minWidth: 180, header: 'Choose your charts' });
 	});
 
 	function buildFilterRequest(action) {
@@ -2513,7 +2513,8 @@ function grid_view_queue_fairshare($queue) {
 		});
 
 		var strURL = buildFilterRequest(action);
-		strURL = strURL + '&corder=' + corder;
+
+		strURL += '&corder=' + corder;
 
 		for (var i = 0; i < all_charts.length; i++) {
 			strURL = strURL + '&'+all_charts[i]+'=' + $('#charts option[value='+all_charts[i]+']').is(':selected');
@@ -2523,7 +2524,7 @@ function grid_view_queue_fairshare($queue) {
 	}
 
 	function filterSave() {
-		strURL = buildRequest('ajaxsave');
+		var strURL = buildRequest('ajaxsave');
 
 		$('#status').show();
 
@@ -2561,32 +2562,36 @@ function grid_view_queue_fairshare($queue) {
 		});
 
 		var url_get_group_count = 'grid_bqueues.php?action=ajaxheight&queue='+queue+'&clusterid='+clusterid+'&shareacctpath='+current_leaf+'&unused='+$('#unused').is(':checked')+'&filter='+$('#filter').val();
+
 		$('#status').show();
+
 		$.get(url_get_group_count, function(data) {
 			var fh = data;
 			prev_div = 'template';
 			if ($('#template').length > 0) { //fix xxx_fusion.render() Error, Unable to find the container DOM element
-			for (var i = 0; i < cur_charts.length; i++) {
-				show_fairshare_chart(prev_div, clusterid, queue, current_leaf, $('#timespan').val(), cur_charts[i], $('#filter').val(), $('#unused').is(':checked'), fh);
-				prev_div = 'graphs_'+cur_charts[i];
+				for (var i = 0; i < cur_charts.length; i++) {
+					show_fairshare_chart(prev_div, clusterid, queue, current_leaf, $('#timespan').val(), cur_charts[i], $('#filter').val(), $('#unused').is(':checked'), fh);
+					prev_div = 'graphs_'+cur_charts[i];
+				}
 			}
-			}
+
 			$('#status').hide();
 		});
-
 	}
 
 	function show_fairshare_chart(prev_div, clusterid, queue, shareacctpath, timespan, metric, filter_str, unused, fh) {
 		var fw = '98%';
 		fh = fh || 210;
 
-		url=escape('grid_bqueues.php?action=ajaxcharts&queue='+queue+'&clusterid='+clusterid+'&shareacctpath='+shareacctpath+'&metric='+metric+'&timespan='+timespan+'&unused='+unused+'&filter='+filter_str);
+		var url = encodeURIComponent('grid_bqueues.php?action=ajaxcharts&queue='+queue+'&clusterid='+clusterid+'&shareacctpath='+shareacctpath+'&metric='+metric+'&timespan='+timespan+'&unused='+unused+'&filter='+filter_str);
 
 		//FusionCharts.debugMode.enabled(true);
 		//FusionCharts.debugMode.outputTo(console.log);
 		//FusionCharts.setCurrentRenderer('javascript');
 
-		if (FusionCharts(metric+ '_fusion')) FusionCharts(metric+ '_fusion').dispose();
+		if (FusionCharts(metric+ '_fusion')) {
+			FusionCharts(metric+ '_fusion').dispose();
+		}
 
 		$('#template').clone().insertAfter('#'+prev_div);
 		$('#'+prev_div).next('div').attr('id', 'graphs_'+metric);
@@ -2596,9 +2601,9 @@ function grid_view_queue_fairshare($queue) {
 		$('#graphs_'+metric).show();
 
 		var myChart = new FusionCharts('StackedArea2D', metric+ '_fusion', fw, fh);
+
 		myChart.setXMLUrl(url);
 		myChart.render('graphs_'+metric);
-
 	}
 
 	function applyFilter(sort_column, sort_direction, remove_sort_column, page) {
@@ -2607,16 +2612,21 @@ function grid_view_queue_fairshare($queue) {
 		remove_sort_column = remove_sort_column || '';
 		page = page || 0;
 
-		if (doing_apply_filter > 0) return;
+		if (doing_apply_filter > 0) {
+			return;
+		}
+
 		doing_apply_filter = 1;
 
 		if ($('#show').val() == 1) {  //show tables and graphs
 			$('#charts').multiselect("enable");
+
 			if ($('#timespan').selectmenu('instance') !== undefined) {
 				$('#timespan').selectmenu('enable');
 			}
 		} else {  //only show tables;
 			$('#charts').multiselect("disable");
+
 			if ($('#timespan').selectmenu('instance') !== undefined) {
 				$('#timespan').selectmenu('disable');
 			}
@@ -2634,6 +2644,7 @@ function grid_view_queue_fairshare($queue) {
 				}
 			}
 		})
+
 		// save current charts order to variable pre_charts for recovering charts order when display filter is switched from "1 - table" to "3 - table and graphs"
 		if (cur_charts.length > 0) prev_charts = cur_charts;
 
@@ -2727,8 +2738,9 @@ function grid_view_queue_fairshare($queue) {
 		}
 
 	}
+
 	function clearFilter() {
-		strURL = 'grid_bqueues.php?clear=1&action=viewqueue&header=false&tab=share&queue=<?php print get_request_var('queue');?>&clusterid=<?php print get_request_var('clusterid');?>';
+		var strURL = 'grid_bqueues.php?clear=1&action=viewqueue&header=false&tab=share&queue=<?php print get_request_var('queue');?>&clusterid=<?php print get_request_var('clusterid');?>';
 		loadPageNoHeader(strURL);
 	}
 
@@ -2739,8 +2751,8 @@ function grid_view_queue_fairshare($queue) {
 		$('a.linkOverDark').unbind().click(function(event) {
 			event.preventDefault();
 
-			url_vars = getUrlVars($(this).attr('href'));
-			page = url_vars["page"];
+			var url_vars = getUrlVars($(this).attr('href'));
+			var page = url_vars["page"];
 
 			applyFilter("", "", "", page);
 		});
@@ -2749,7 +2761,7 @@ function grid_view_queue_fairshare($queue) {
 		$('a.col_user_group').unbind().click(function(event) {
 			event.preventDefault();
 
-			url_vars = getUrlVars($(this).attr('href'));
+			var url_vars = getUrlVars($(this).attr('href'));
 			var ugroup = url_vars["ugroup"];
 			var new_node = current_leaf + "/" + ugroup;
 
@@ -2807,13 +2819,13 @@ function grid_view_queue_fairshare($queue) {
 
 		//console.log('menuHeight:'+menuHeight+', menuTop:'+menuTop+', positionTop:'+positionTop+', relMenuHeight:'+relMenuHeight);
 
-		new_height = menuHeight - (positionTop - menuTop) - 108;
+		var new_height = menuHeight - (positionTop - menuTop) - 108;
 		$('#jstree_container').css('border', '1px thin black');
 
-		width_menu = $('#grid_menu').outerWidth(true);
-		width_jstree = $('#jstree_container').outerWidth(true);
+		var width_menu = $('#grid_menu').outerWidth(true);
+		var width_jstree = $('#jstree_container').outerWidth(true);
 
-		new_width = screen.width - width_menu - width_jstree - 30;
+		var new_width = screen.width - width_menu - width_jstree - 30;
 
 		$("#jstree_right_area_filter_table").css('width', new_width +"px");
 		$("#jstree_right_area_charts").css('width', new_width +"px");

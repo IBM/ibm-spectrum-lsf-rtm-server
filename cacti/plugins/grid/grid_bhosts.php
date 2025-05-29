@@ -978,7 +978,7 @@ function grid_view_bhosts() {
 		strURL += '&queue=' + $('#queue').val();
 
 		if ($('#resource_str').length) {
-			strURL += '&resource_str=' + escape($('#resource_str').val());
+			strURL += '&resource_str=' + encodeURIComponent($('#resource_str').val());
 		}
 
 		strURL += '&filter=' + $('#filter').val();
