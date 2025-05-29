@@ -50,7 +50,7 @@ switch (get_request_var('action')) {
 function grid_view_get_load_records(&$sql_where, $apply_limits = true, $rows = 30, &$sql_params = array()) {
 	/* user id sql where */
 	if (get_request_var('clusterid') != '0') {
-		$sql_where .= 'WHERE grid_load.clusterid=?';
+		$sql_where .= 'WHERE gl.clusterid=?';
 		$sql_params[] = get_request_var('clusterid');
 	}
 
@@ -74,7 +74,7 @@ function grid_view_get_load_records(&$sql_where, $apply_limits = true, $rows = 3
 
 	/* status sql where */
 	if (get_request_var('status') != '-1') {
-		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . ' grid_load.status = ?';
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . ' gl.status = ?';
 		$sql_params[] = get_request_var('status');
 	}
 
@@ -102,22 +102,22 @@ function grid_view_get_load_records(&$sql_where, $apply_limits = true, $rows = 3
 				if (!$ret_val) {
 					if (strlen($res_hosts)) {
 						if (strlen($sql_where)) {
-							$sql_where .= " AND grid_load.host IN ($res_hosts)";
+							$sql_where .= " AND gl.host IN ($res_hosts)";
 						} else {
-							$sql_where = "WHERE grid_load.host IN ($res_hosts)";
+							$sql_where = "WHERE gl.host IN ($res_hosts)";
 						}
 					} else {
 						if (strlen($sql_where)) {
-							$sql_where .= ' AND grid_load.host IS NULL';
+							$sql_where .= ' AND gl.host IS NULL';
 						} else {
-							$sql_where = 'WHERE grid_load.host IN NULL';
+							$sql_where = 'WHERE gl.host IN NULL';
 						}
 					}
 				} else {
 					if (strlen($sql_where)) {
-						$sql_where .= ' AND grid_load.host IS NULL';
+						$sql_where .= ' AND gl.host IS NULL';
 					} else {
-						$sql_where = 'WHERE grid_load.host IN NULL';
+						$sql_where = 'WHERE gl.host IN NULL';
 					}
 
 					if ($ret_val == 96) {
@@ -140,10 +140,10 @@ function grid_view_get_load_records(&$sql_where, $apply_limits = true, $rows = 3
 	/* filter sql where */
 	if (get_request_var('filter') != '') {
 		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') .
-			"(grid_load.host LIKE ? OR
-			grid_load.status LIKE ? OR
-			grid_hostinfo.hostType LIKE ? OR
-			grid_hostinfo.hostModel LIKE ?)";
+			"(gl.host LIKE ? OR
+			gl.status LIKE ? OR
+			ghi.hostType LIKE ? OR
+			ghi.hostModel LIKE ?)";
 
 		$sql_params[] = '%'. get_request_var('filter') . '%';
 		$sql_params[] = '%'. get_request_var('filter') . '%';
