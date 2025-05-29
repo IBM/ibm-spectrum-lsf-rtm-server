@@ -163,7 +163,7 @@ function gridlimits_setup_table_new() {
 		last_updated timestamp NOT NULL default CURRENT_timestamp ON UPDATE CURRENT_timestamp,
 		PRIMARY KEY (sequenceid),
 		INDEX clusterid_limit_name_last_updated(clusterid, limit_name, last_updated))
-		ENGINE=InnoDB
+		ENGINE=Aria
 		ROW_FORMAT=Dynamic");
 
 	db_execute("CREATE TABLE IF NOT EXISTS grid_limits_history (
@@ -193,7 +193,7 @@ function gridlimits_setup_table_new() {
 		resources blob,
 		last_seen timestamp DEFAULT '0000-00-00',
 		PRIMARY KEY (clusterid, limit_name, users, queues, hosts, projects, lic_projects, clusters, apps))
-		ENGINE=InnoDB
+		ENGINE=Aria
 		ROW_FORMAT=Dynamic");
 }
 

@@ -30,8 +30,9 @@ To install the gridlimits plugin, follow the steps below:
    RTM data collector directories.  The default location for the RTM 
    data collectors is /opt/IBM/rtm/lsf*/bin.
 
-3. For users who may not have access to this feature, grant them
-   access either through group membership or to the users directly.
+3. Users with 'General LSF Data' permission will automatically be
+   able to view the Limits data under the Cluster top tab under
+   Reports > Limits page.
 
 4. Review the Cacti log for errors.  If you find errors report them
    to IBM or submit a pull request to make updates.
