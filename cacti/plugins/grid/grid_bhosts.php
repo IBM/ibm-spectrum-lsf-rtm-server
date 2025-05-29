@@ -727,7 +727,7 @@ function grid_view_get_bhosts_records(&$sql_where, $apply_limits = true, $rows =
 
 	//cacti_log("DEBUG: SQL: $sql_query");
 
-	return db_fetch_assoc($sql_query);
+	return db_fetch_assoc_prepared($sql_query, $sql_params);
 }
 
 function bhostsFilter() {
@@ -953,7 +953,8 @@ function grid_view_bhosts() {
 
 	grid_set_minimum_page_refresh();
 
-	$sql_where = '';
+	$sql_where  = '';
+	$sql_params = array();
 
 	if (get_request_var('rows') == -1) {
 		$rows = read_config_option('num_rows_table');
@@ -963,7 +964,7 @@ function grid_view_bhosts() {
 		$rows = get_request_var('rows');
 	}
 
-	$bhosts_results = grid_view_get_bhosts_records($sql_where, true, $rows);
+	$bhosts_results = grid_view_get_bhosts_records($sql_where, true, $rows, $sql_params);
 
 	general_header();
 
@@ -1080,7 +1081,7 @@ function grid_view_bhosts() {
 			AND gh.host = gqh.host';
 	}
 
-	$total_rows = db_fetch_cell("SELECT COUNT($distinct gh.host)
+	$total_rows = db_fetch_cell_prepared("SELECT COUNT($distinct gh.host)
 		FROM grid_clusters AS gc
 		INNER JOIN grid_hosts AS gh
 		ON gc.clusterid = gh.clusterid
@@ -1095,7 +1096,7 @@ function grid_view_bhosts() {
 		ON ght.clusterid = gl.clusterid
 		AND ght.hostname = gl.host
 		$elim_join
-		$sql_where");
+		$sql_where", $sql_params);
 
 	$display_text = array(
 		'nosort0' => array(
