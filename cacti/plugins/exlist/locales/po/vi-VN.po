@@ -1,0 +1,161 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: developers@cacti.net\n"
+"POT-Creation-Date: 2024-10-03 18:53-0400\n"
+"PO-Revision-Date: 2024-10-03 18:14-0400\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: vi_VN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.4\n"
+
+#: exlists.php:29
+msgid "Delete"
+msgstr "Xóa"
+
+#: exlists.php:154
+msgid "Cancel"
+msgstr "Hủy"
+
+#: exlists.php:154
+msgid "Continue"
+msgstr "Tiếp tục"
+
+#: exlists.php:182
+#, php-format
+msgid "Exception Filter [edit: %s]"
+msgstr "Bộ lọc ngoại lệ [sửa: %s]"
+
+#: exlists.php:184
+msgid "Exception Filter [new]"
+msgstr "Bộ lọc ngoại lệ [mới]"
+
+#: exlists.php:220
+msgid "Filter Name"
+msgstr "Tên bộ lọc"
+
+#: exlists.php:221
+msgid "Name this filter.  It will appear as both the dropdown and Legend value"
+msgstr "Đặt tên cho bộ lọc này.  Nó sẽ xuất hiện dưới dạng cả menu thả xuống và giá trị Chú giải"
+
+#: exlists.php:228
+msgid "Enable Filter"
+msgstr "Bật Bộ lọc"
+
+#: exlists.php:229
+msgid "When checked this Exception Filter will be enabled."
+msgstr "Khi được chọn, Bộ lọc Ngoại lệ này sẽ được bật."
+
+#: exlists.php:235
+msgid "Database SQL Where"
+msgstr "Cơ sở dữ liệu SQL trong đó"
+
+#: exlists.php:236
+msgid "The SQL Where Clause to use for the Exception list.  For example <b>\"max_memory>65000000 AND num_cpus>20\"</b>. The Exceoption Filter is combined with all other Filters on the Job details page."
+msgstr "Điều khoản SQL Where để sử dụng cho danh sách Ngoại lệ.  Ví dụ: <b>\"max_memory>650000000 VÀ num_cpus>20\".</b> Bộ lọc Exceoption được kết hợp với tất cả các Bộ lọc khác trên trang Chi tiết công việc."
+
+#: exlists.php:252
+msgid "Select Column name to Append to SQL Where"
+msgstr "Chọn Tên cột để Chắp thêm vào SQL Trong đó"
+
+#: exlists.php:286 exlists.php:288 exlists.php:291 exlists.php:297
+#: exlists.php:299
+msgid "Check SQL Syntax"
+msgstr "Kiểm tra cú pháp SQL"
+
+#: exlists.php:369
+msgid "Job Detail Exception Lists"
+msgstr "Danh sách ngoại lệ chi tiết công việc"
+
+#: exlists.php:378
+msgid "Search"
+msgstr "Tìm kiếm"
+
+#: exlists.php:384
+msgid "Rows"
+msgstr "Hàng"
+
+#: exlists.php:388
+msgid "Default"
+msgstr "Mặc định"
+
+#: exlists.php:399
+msgid "Go"
+msgstr "Đi"
+
+#: exlists.php:399
+msgid "Set/Refresh Filters"
+msgstr "Đặt / Làm mới Bộ lọc"
+
+#: exlists.php:402
+msgid "Clear"
+msgstr "Xóa"
+
+#: exlists.php:402
+msgid "Clear Filters"
+msgstr "Xóa bộ lọc"
+
+#: exlists.php:435
+msgid "List Name"
+msgstr "Danh sách tên"
+
+#: exlists.php:439
+msgid "Enabled"
+msgstr "Bật"
+
+#: exlists.php:443
+msgid "SQL Where"
+msgstr "SQL trong đó"
+
+#: exlists.php:448
+msgid "Filters"
+msgstr "Bộ lọc"
+
+#: exlists.php:463
+msgid "No"
+msgstr "Không"
+
+#: exlists.php:463
+msgid "Yes"
+msgstr "Có"
+
+#: exlists.php:469
+msgid "No Job Detail Exception Filters Found"
+msgstr "Không tìm thấy bộ lọc ngoại lệ chi tiết công việc"
+
+#: setup.php:146
+msgid "Data Collection"
+msgstr "Thu thập dữ liệu"
+
+#: setup.php:147
+msgid "Clusters"
+msgstr "Cụm"
+
+#: setup.php:147
+msgid "Custom Job Filters"
+msgstr "Bộ lọc công việc tùy chỉnh"
+
+#: setup.php:158 setup.php:163
+msgid "Undefined"
+msgstr "Mùi không xác định"
+
+#: setup.php:180
+msgid "Job Detail Exception Filters"
+msgstr "Bộ lọc ngoại lệ chi tiết công việc"
+
+#: setup.php:187
+msgid "(edit)"
+msgstr "(chinnhr sửa)"
+
+#: setup.php:194
+#, fuzzy
+msgid "(actions)"
+msgstr "Hành động"
