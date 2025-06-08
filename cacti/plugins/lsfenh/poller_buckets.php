@@ -140,12 +140,12 @@ function add_data_to_raw_table($table, $sql, $date) {
 	);
 
 	if ($table == 'grid_jobs_finished') {
-		db_execute('DELETE FROM analytics_sla_finished_memory_buckets
+		db_execute('DELETE FROM grid_sla_finished_memory_buckets
 			WHERE table_name = "grid_jobs_finished"');
 	}
 
 	$exists = db_fetch_cell_prepared('SELECT COUNT(*)
-		FROM analytics_sla_finished_memory_buckets
+		FROM grid_sla_finished_memory_buckets
 		WHERE table_name = ?',
 		array($table));
 
@@ -171,7 +171,7 @@ function add_data_to_raw_table($table, $sql, $date) {
 				$max         = $r[$prefix . 'max'];
 				$requested   = $r[$prefix . 'requested'];
 
-				db_execute_prepared('INSERT INTO analytics_sla_finished_memory_buckets
+				db_execute_prepared('INSERT INTO grid_sla_finished_memory_buckets
 					(clusterid, sla, table_name, year_day, memory_size, mem_requested, mem_reserved, max_memory, doneJobs, doneArrays, exitJobs, exitArrays, present, last_updated)
 					VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 					ON DUPLICATE KEY UPDATE
