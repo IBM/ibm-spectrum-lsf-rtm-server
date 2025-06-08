@@ -1,0 +1,161 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: developers@cacti.net\n"
+"POT-Creation-Date: 2024-10-03 18:53-0400\n"
+"PO-Revision-Date: 2024-10-03 18:09-0400\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: he_IL\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.4\n"
+
+#: exlists.php:29
+msgid "Delete"
+msgstr "מחק"
+
+#: exlists.php:154
+msgid "Cancel"
+msgstr "ביטול"
+
+#: exlists.php:154
+msgid "Continue"
+msgstr "המשך"
+
+#: exlists.php:182
+#, php-format
+msgid "Exception Filter [edit: %s]"
+msgstr "מסנן חריגים [עריכה: %s]"
+
+#: exlists.php:184
+msgid "Exception Filter [new]"
+msgstr "מסנן חריגים [חדש]"
+
+#: exlists.php:220
+msgid "Filter Name"
+msgstr "שם הסינון"
+
+#: exlists.php:221
+msgid "Name this filter.  It will appear as both the dropdown and Legend value"
+msgstr "תן שם למסנן זה.  הוא יופיע הן כערך הנפתח והן כערך המקרא"
+
+#: exlists.php:228
+msgid "Enable Filter"
+msgstr "הפעילי מסנן"
+
+#: exlists.php:229
+msgid "When checked this Exception Filter will be enabled."
+msgstr "בעת ביצוע אפשרות זו, מסנן חריגים זה יופעל."
+
+#: exlists.php:235
+msgid "Database SQL Where"
+msgstr "מסד נתונים SQL כאשר"
+
+#: exlists.php:236
+msgid "The SQL Where Clause to use for the Exception list.  For example <b>\"max_memory>65000000 AND num_cpus>20\"</b>. The Exceoption Filter is combined with all other Filters on the Job details page."
+msgstr "משפט SQL Where לשימוש עבור הרשימה חריגים.  לדוגמה, <b>\"max_memory>65000000 AND num_cpus>20\".</b> מסנן Exceoption משולב עם כל המסננים האחרים בדף פרטי משימה."
+
+#: exlists.php:252
+msgid "Select Column name to Append to SQL Where"
+msgstr "בחר שם עמודה כדי לצרף ל- SQL כאשר"
+
+#: exlists.php:286 exlists.php:288 exlists.php:291 exlists.php:297
+#: exlists.php:299
+msgid "Check SQL Syntax"
+msgstr "בדוק תחביר SQL"
+
+#: exlists.php:369
+msgid "Job Detail Exception Lists"
+msgstr "רשימות חריגות של פרטי משרה"
+
+#: exlists.php:378
+msgid "Search"
+msgstr "חיפוש"
+
+#: exlists.php:384
+msgid "Rows"
+msgstr "שורות"
+
+#: exlists.php:388
+msgid "Default"
+msgstr "ברירת מחדל"
+
+#: exlists.php:399
+msgid "Go"
+msgstr "עבור"
+
+#: exlists.php:399
+msgid "Set/Refresh Filters"
+msgstr "הגדרה/רענון של מסננים"
+
+#: exlists.php:402
+msgid "Clear"
+msgstr "נקה"
+
+#: exlists.php:402
+msgid "Clear Filters"
+msgstr "מחיקת מסננים"
+
+#: exlists.php:435
+msgid "List Name"
+msgstr "שם"
+
+#: exlists.php:439
+msgid "Enabled"
+msgstr "מאופשר"
+
+#: exlists.php:443
+msgid "SQL Where"
+msgstr "SQL כאשר"
+
+#: exlists.php:448
+msgid "Filters"
+msgstr "מסננים"
+
+#: exlists.php:463
+msgid "No"
+msgstr "לא"
+
+#: exlists.php:463
+msgid "Yes"
+msgstr "כן"
+
+#: exlists.php:469
+msgid "No Job Detail Exception Filters Found"
+msgstr "לא נמצאו מסנני חריגה של פרטי עבודה"
+
+#: setup.php:146
+msgid "Data Collection"
+msgstr "איסוף נתונים"
+
+#: setup.php:147
+msgid "Clusters"
+msgstr "אשכולות"
+
+#: setup.php:147
+msgid "Custom Job Filters"
+msgstr "מסנני משימות מותאמים אישית"
+
+#: setup.php:158 setup.php:163
+msgid "Undefined"
+msgstr "לא מוגדר"
+
+#: setup.php:180
+msgid "Job Detail Exception Filters"
+msgstr "מסנני חריגה של פרטי משימה"
+
+#: setup.php:187
+msgid "(edit)"
+msgstr "(עריכה)"
+
+#: setup.php:194
+#, fuzzy
+msgid "(actions)"
+msgstr "פעולות"

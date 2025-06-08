@@ -1,0 +1,164 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: developers@cacti.net\n"
+"POT-Creation-Date: 2024-10-03 18:53-0400\n"
+"PO-Revision-Date: 2024-10-03 18:13-0400\n"
+"Last-Translator: tql <fttx31@126.com>\n"
+"Language-Team: Chinese (Simplified) <http://translate.cacti.net/projects/cacti/exlist/zh_Hans/>\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 3.4.4\n"
+
+#: exlists.php:29
+msgid "Delete"
+msgstr "删除"
+
+#: exlists.php:154
+msgid "Cancel"
+msgstr "取消"
+
+#: exlists.php:154
+msgid "Continue"
+msgstr "继续"
+
+#: exlists.php:182
+#, php-format
+msgid "Exception Filter [edit: %s]"
+msgstr "异常过滤器 [编辑： %s]"
+
+#: exlists.php:184
+msgid "Exception Filter [new]"
+msgstr "异常过滤器 [new]"
+
+#: exlists.php:220
+msgid "Filter Name"
+msgstr "过滤器名称"
+
+#: exlists.php:221
+msgid "Name this filter.  It will appear as both the dropdown and Legend value"
+msgstr "为此筛选器命名。 它将同时显示为下拉列表和图例值"
+
+#: exlists.php:228
+msgid "Enable Filter"
+msgstr "启用过滤器"
+
+#: exlists.php:229
+msgid "When checked this Exception Filter will be enabled."
+msgstr "选中后，将启用此 Exception Filter。"
+
+#: exlists.php:235
+msgid "Database SQL Where"
+msgstr "数据库 SQL，其中"
+
+#: exlists.php:236
+msgid "The SQL Where Clause to use for the Exception list.  For example <b>\"max_memory>65000000 AND num_cpus>20\"</b>. The Exceoption Filter is combined with all other Filters on the Job details page."
+msgstr "用于 Exception 列表的 SQL Where 子句。 例如 <b>，“max_memory>65000000 AND num_cpus>20”。</b>Exceoption Filter 与 Job details （任务详细信息） 页面上的所有其他 Filter （筛选条件） 组合在一起。"
+
+#: exlists.php:252
+msgid "Select Column name to Append to SQL Where"
+msgstr "选择要附加到 SQL 的列名，其中"
+
+#: exlists.php:286 exlists.php:288 exlists.php:291 exlists.php:297
+#: exlists.php:299
+msgid "Check SQL Syntax"
+msgstr "检查 SQL 语法"
+
+#: exlists.php:369
+msgid "Job Detail Exception Lists"
+msgstr "作业详细信息异常列表"
+
+#: exlists.php:378
+msgid "Search"
+msgstr "搜索"
+
+#: exlists.php:384
+#, fuzzy
+msgid "Rows"
+msgstr "行数:"
+
+#: exlists.php:388
+msgid "Default"
+msgstr "默认"
+
+#: exlists.php:399
+#, fuzzy
+msgid "Go"
+msgstr "Go"
+
+#: exlists.php:399
+msgid "Set/Refresh Filters"
+msgstr "设置/刷新过滤器"
+
+#: exlists.php:402
+msgid "Clear"
+msgstr "清除"
+
+#: exlists.php:402
+msgid "Clear Filters"
+msgstr "清除过滤器"
+
+#: exlists.php:435
+msgid "List Name"
+msgstr "列表名称"
+
+#: exlists.php:439
+msgid "Enabled"
+msgstr "启用"
+
+#: exlists.php:443
+msgid "SQL Where"
+msgstr "SQL 其中"
+
+#: exlists.php:448
+msgid "Filters"
+msgstr "过滤器"
+
+#: exlists.php:463
+#, fuzzy
+msgid "No"
+msgstr "否"
+
+#: exlists.php:463
+msgid "Yes"
+msgstr "是"
+
+#: exlists.php:469
+msgid "No Job Detail Exception Filters Found"
+msgstr "未找到作业详细信息异常筛选器"
+
+#: setup.php:146
+msgid "Data Collection"
+msgstr "数据采集"
+
+#: setup.php:147
+msgid "Clusters"
+msgstr "集群"
+
+#: setup.php:147
+msgid "Custom Job Filters"
+msgstr "自定义作业筛选条件"
+
+#: setup.php:158 setup.php:163
+msgid "Undefined"
+msgstr "未定义"
+
+#: setup.php:180
+msgid "Job Detail Exception Filters"
+msgstr "作业详细信息异常筛选器"
+
+#: setup.php:187
+msgid "(edit)"
+msgstr "（编辑）"
+
+#: setup.php:194
+msgid "(actions)"
+msgstr "（动作）"
