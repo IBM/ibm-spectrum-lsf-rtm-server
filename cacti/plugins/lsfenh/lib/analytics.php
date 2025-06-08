@@ -273,6 +273,8 @@ function create_required_tables() {
 		ENGINE=InnoDB ROW_FORMAT=DYNAMIC
 		COMMENT='Holds Cluster/SLA memory bucket usage for finished jobs'");
 
+	db_execute('CREATE TABLE `grid_sla_finished_memory_buckets` LIKE `grid_sla_memory_buckets`');
+
 	db_execute("CREATE TABLE IF NOT EXISTS `grid_hostgroups_definitions` (
 		`clusterid` int(10) unsigned NOT NULL DEFAULT 0,
 		`groupName` varchar(64) NOT NULL DEFAULT '',
