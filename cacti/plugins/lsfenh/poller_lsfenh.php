@@ -127,7 +127,7 @@ if ($force || grid_detect_and_correct_running_processes(0, 'LSFENHDATA', '7200')
 
 	$end = microtime(true);
 
-	cacti_log(sprintf('LSFENH CORE STATS: Time:%4.2f', $end - $start), false, 'SYSTEM');
+	cacti_log(sprintf('LSFENH Core STATS: Time:%4.2f', $end - $start), false, 'SYSTEM');
 
 	exit(0);
 } else {

@@ -143,7 +143,7 @@ if ($clusterid !== false && $clusterid > 0) {
 				printf('NOTE:  %s - The total time to run the collector was %4.2f seconds with %s jobs.' . PHP_EOL, date('H:i:s'), $total_time, $jobs);
 
 				if ($jobs > 0) {
-					cacti_log(sprintf('LSFENH Cluster: Total:%4.2f, ClusterID:%s, Jobs:%s', $total_time, $clusterid, $jobs), false, 'SYSTEM');
+					cacti_log(sprintf('LSFENH Cluster STATS: Total:%4.2f, ClusterID:%s, Jobs:%s', $total_time, $clusterid, $jobs), false, 'SYSTEM');
 				}
 			} else {
 				printf('NOTE:  %s - The LSF cluster did not repond, or we requested too quickly.' . PHP_EOL, date('H:i:s'));
