@@ -38,12 +38,10 @@ array_shift($parms);
 ini_set('memory_limit', '-1');
 ini_set('max_execution_time', '0');
 
-global $debug, $start, $force, $rrdtool;
+global $debug, $start, $force;
 
 $debug = false;
 $force = false;
-
-$rrdtool = read_config_option('path_rrdtool');
 
 /* we need long group concats */
 db_execute('SET SESSION group_concat_max_len = 1000000');
@@ -52,7 +50,12 @@ db_execute('SET SESSION group_concat_max_len = 1000000');
 $start = microtime(true);
 
 foreach($parms as $parameter) {
-	@list($arg, $value) = @explode('=', $parameter);
+	if (strpos($parameter, '=')) {
+		list($arg, $value) = explode('=', $parameter, 2);
+	} else {
+		$arg = $parameter;
+		$value = '';
+	}
 
 	switch ($arg) {
 	case '-d':
@@ -162,18 +165,19 @@ function add_data_to_raw_table($table, $sql, $date) {
 			}
 
 			foreach($column_prefixes as $prefix) {
-				$bucket      = trim($prefix, '_');
-				$doneJobs    = $r[$prefix . 'doneJobs'];
-				$doneArrays  = $r[$prefix . 'doneArrays'];
-				$exitJobs    = $r[$prefix . 'exitJobs'];
-				$exitArrays  = $r[$prefix . 'exitArrays'];
-				$reserved    = $r[$prefix . 'reserved'];
-				$max         = $r[$prefix . 'max'];
-				$requested   = $r[$prefix . 'requested'];
+				$bucket         = trim($prefix, '_');
+				$doneJobs       = $r[$prefix . 'doneJobs'];
+				$doneArrays     = $r[$prefix . 'doneArrays'];
+				$exitJobs       = $r[$prefix . 'exitJobs'];
+				$exitArrays     = $r[$prefix . 'exitArrays'];
+				$finishArrayStd = $r[$prefix . 'finishArrayStd'];
+				$reserved       = $r[$prefix . 'reserved'];
+				$max            = $r[$prefix . 'max'];
+				$requested      = $r[$prefix . 'requested'];
 
 				db_execute_prepared('INSERT INTO grid_sla_finished_memory_buckets
-					(clusterid, sla, table_name, year_day, memory_size, mem_requested, mem_reserved, max_memory, doneJobs, doneArrays, exitJobs, exitArrays, present, last_updated)
-					VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+					(clusterid, sla, table_name, year_day, memory_size, mem_requested, mem_reserved, max_memory, doneJobs, doneArrays, exitJobs, exitArrays, finishArrayStd, present, last_updated)
+					VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 					ON DUPLICATE KEY UPDATE
 						mem_requested = VALUES(mem_requested),
 						mem_reserved = VALUES(mem_reserved),
@@ -182,6 +186,7 @@ function add_data_to_raw_table($table, $sql, $date) {
 						doneArrays = VALUES(doneArrays),
 						exitJobs = VALUES(exitJobs),
 						exitArrays = VALUES(exitArrays),
+						finishArryStd = VALUES(finishArryStd),
 						present = VALUES(present),
 						last_updated = VALUES(last_updated)',
 					array(
@@ -197,6 +202,7 @@ function add_data_to_raw_table($table, $sql, $date) {
 						$doneArrays,
 						$exitJobs,
 						$exitArrays,
+						$finishArrayStd,
 						1,
 						$date
 					)
