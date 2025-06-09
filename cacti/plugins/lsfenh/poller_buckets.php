@@ -186,7 +186,7 @@ function add_data_to_raw_table($table, $sql, $date) {
 						doneArrays = VALUES(doneArrays),
 						exitJobs = VALUES(exitJobs),
 						exitArrays = VALUES(exitArrays),
-						finishArryStd = VALUES(finishArryStd),
+						finishArrayStd = VALUES(finishArrayStd),
 						present = VALUES(present),
 						last_updated = VALUES(last_updated)',
 					array(
@@ -202,7 +202,7 @@ function add_data_to_raw_table($table, $sql, $date) {
 						$doneArrays,
 						$exitJobs,
 						$exitArrays,
-						$finishArrayStd,
+						$finishArrayStd ?? 0,
 						1,
 						$date
 					)
