@@ -120,7 +120,7 @@ if ($clusterid !== false && $clusterid > 0) {
 
 			if ($total_time !== false) {
 				printf('The total time to run the collector was %4.2f seconds.', $total_time) . PHP_EOL;
-				cacti_log(sprintf('GRID PEND JOB STATS: Total:%4.2f ClusterID:%s', $total_time, $clusterid), false, 'SYSTEM');
+				cacti_log(sprintf('LSFENH Pending STATS: Total:%4.2f ClusterID:%s', $total_time, $clusterid), false, 'SYSTEM');
 			} else {
 				printf('The LSF cluster did not repond or the LSF_SERVERDIR could not be detected.') . PHP_EOL;
 			}
