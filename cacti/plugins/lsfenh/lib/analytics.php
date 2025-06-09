@@ -1687,7 +1687,7 @@ function grid_collect_jobs_remote($clusterid) {
 		grid_debug('Finished inserting Job records for ClusterID:' . $clusterid);
 
 		// Collect pending reason data this is commented out for now
-		//grid_collect_pend($clusterid);
+		grid_collect_pend($clusterid);
 
 		// Pool, SLA and Done Job Statistics
 
