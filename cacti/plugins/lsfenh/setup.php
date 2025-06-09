@@ -70,9 +70,6 @@ function lsfenh_poller_bottom() {
 
 	$extra_args_add_resreq = '-q ' . $config['base_path'] . '/plugins/lsfenh/poller_pend.php';
 	exec_background($command_string, $extra_args_add_resreq);
-
-	$extra_args_add_resreq = '-q ' . $config['base_path'] . '/plugins/lsfenh/poller_buckets.php';
-	exec_background($command_string, $extra_args_add_resreq);
 }
 
 function lsfenh_config_form() {

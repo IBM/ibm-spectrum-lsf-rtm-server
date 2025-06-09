@@ -275,6 +275,9 @@ function create_required_tables() {
 
 	if (!db_table_exists('grid_sla_finished_memory_buckets')) {
 		db_execute('CREATE TABLE `grid_sla_finished_memory_buckets` LIKE `grid_sla_memory_buckets`');
+		db_execute('ALTER TABLE `grid_sla_finished_memory_buckets`
+			ADD COLUMN table_name varchar(40) NOT NULL DEFAULT "" AFTER sla,
+			ADD COLUMN year_day int(10) unsigned NOT NULL DEFAULT 0 AFTER table_name');
 	}
 
 	db_execute("CREATE TABLE IF NOT EXISTS `grid_hostgroups_definitions` (
@@ -2665,6 +2668,9 @@ function grid_sla_bucket_range_sql($start_time, $end_time, $tables) {
 			$sql .= " SUM(CASE WHEN mem_reserved $range_sql AND stat = 'EXIT' THEN 1 ELSE 0 END) AS {$prefix}_exitJobs,";
 			$sql .= " SUM(CASE WHEN mem_reserved $range_sql AND stat = 'DONE' AND indexid > 0 THEN 1 ELSE 0 END) AS {$prefix}_doneArrays,";
 			$sql .= " SUM(CASE WHEN mem_reserved $range_sql AND stat = 'EXIT' AND indexid > 0 THEN 1 ELSE 0 END) AS {$prefix}_exitArrays,";
+			$sql .= " STD(CASE WHEN mem_reserved $range_sql AND stat = 'EXIT' AND indexid > 0 THEN 1 ELSE 0 END) AS {$prefix}_exitArrays,";
+			$sql .= " STDDEV(CASE WHEN mem_reserved $range_sql AND stat IN ('EXIT', 'DONE') AND indexid > 0 THEN max_memory ELSE NULL END) AS {$prefix}_finishArrayStd,";
+
 		}
 
 		$sql  = trim($sql, ',');
