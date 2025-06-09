@@ -1764,7 +1764,14 @@ function grid_collect_jobs($clusterid) {
 
 	cacti_log('NOTE: Bjobs command starting for ClusterID:' . $clusterid, false, 'LSFENH', POLLER_VERBOSITY_MEDIUM);
 
-	$jobs = json_decode(shell_exec($config['base_path'] . "/plugins/grid/bin/bjobs -uall -o 'jobid jobindex user project app stat queue sla:60 first_host slots min_req_proc max_req_proc cpu_used max_mem mem run_time submit_time start_time finish_time effective_resreq combined_resreq' -json 2>/dev/null"), true);
+	$jobs = shell_exec($config['base_path'] . "/plugins/grid/bin/bjobs -uall -o 'jobid jobindex user project app stat queue sla:60 first_host slots min_req_proc max_req_proc cpu_used max_mem mem run_time submit_time start_time finish_time effective_resreq combined_resreq' -json 2>/dev/null");
+
+	if ($jobs != '') {
+		$jobs = json_decode($jobs, true);
+	} else {
+		cacti_log("WARNING: Job information was not returned from Cluster $clusterid", false, 'LSFENH');
+		return false;
+	}
 
 	$bjend = microtime(true);
 
