@@ -38,12 +38,10 @@ array_shift($parms);
 ini_set('memory_limit', '-1');
 ini_set('max_execution_time', '0');
 
-global $debug, $start, $force, $rrdtool;
+global $debug, $start, $force;
 
 $debug = false;
 $force = false;
-
-$rrdtool = read_config_option('path_rrdtool');
 
 /* we need long group concats */
 db_execute('SET SESSION group_concat_max_len = 1000000');
@@ -92,6 +90,9 @@ if (!db_table_exists('grid_jobs')) {
 
 $poller_interval = read_config_option('poller_interval');
 
+/* create required tables */
+create_required_tables();
+
 if ($force || grid_detect_and_correct_running_processes(0, 'LSFENHJOBS', '300')) {
 	// Run background jobs collectors
 	run_background_jobs_collectors();
@@ -114,7 +115,7 @@ if ($force || grid_detect_and_correct_running_processes(0, 'LSFENHDATA', '7200')
 	make_ls_features_key_features();
 
 	// Aggregate Reasons for Graphing
-	grid_aggregate_reasons();
+	$num_reasons = grid_aggregate_reasons();
 
 	// Update cpu counts by hostModel
 	update_hosts_model_stats();
@@ -127,7 +128,7 @@ if ($force || grid_detect_and_correct_running_processes(0, 'LSFENHDATA', '7200')
 
 	$end = microtime(true);
 
-	cacti_log(sprintf('LSFENH Core STATS: Time:%4.2f', $end - $start), false, 'SYSTEM');
+	cacti_log(sprintf('LSFENH Core STATS: Time:%4.2f Reasons:%d', $end - $start, $num_reasons), false, 'SYSTEM');
 
 	exit(0);
 } else {
