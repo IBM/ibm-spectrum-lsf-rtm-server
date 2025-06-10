@@ -706,11 +706,11 @@ function grid_collect_pend($clusterid) {
 	}
 
 	// Get summary pending reasons
-	$reasons = shell_exec($config['base_path'] . '/plugins/grid/bin/bjobs -psum -p1 -uall 2>&1');
+	$reasons = shell_exec($config['base_path'] . '/plugins/lsfenh/bin/bjobs -psum -p1 -uall 2>&1');
 	grid_process_reasons($clusterid, $reasons, 'cluster', 0);
 
 	// Get summary suspended reasons
-	$suspend = shell_exec($config['base_path'] . '/plugins/grid/bin/bjobs -uall -s 2>&1');
+	$suspend = shell_exec($config['base_path'] . '/plugins/lsfenh/bin/bjobs -uall -s 2>&1');
 
 	$pend = microtime(true);
 
@@ -775,7 +775,7 @@ function grid_collect_sla_reasons($sla, $clusterid) {
 
 	// Get summary pending reasons
 	if ($remote != 'on') {
-		$reasons = shell_exec($config['base_path'] . "/plugins/grid/bin/bjobs -psum -p1 -uall -sla $sla 2>&1");
+		$reasons = shell_exec($config['base_path'] . "/plugins/lsfenh/bin/bjobs -psum -p1 -uall -sla $sla 2>&1");
 		grid_process_reasons($clusterid, $reasons, 'sla_' . $sla, 0);
 	}
 }
@@ -785,7 +785,7 @@ function grid_update_job_groups($clusterid) {
 
 	$job_lines     = array();
 	$slot_lines    = array();
-	$bjgroup_jobs  = shell_exec($config['base_path'] . "/plugins/grid/bin/bjgroup -s 2>&1");
+	$bjgroup_jobs  = shell_exec($config['base_path'] . "/plugins/lsfenh/bin/bjgroup -s 2>&1");
 	$jsql = $ssql  = array();
 
 	grid_debug('Job Group Length ' . strlen($bjgroup_jobs) . ' Job Group Length in ClusterID:' . $clusterid);
@@ -794,7 +794,7 @@ function grid_update_job_groups($clusterid) {
 		$job_lines = explode("\n", $bjgroup_jobs);
 
 		if (strpos($job_lines[0], 'No job group found') === false && strpos($job_lines[0], 'Failed in an LSF library') === false) {
-			$bjgroup_slots = shell_exec($config['base_path'] . "/plugins/grid/bin/bjgroup -N 2>&1");
+			$bjgroup_slots = shell_exec($config['base_path'] . "/plugins/lsfenh/bin/bjgroup -N 2>&1");
 
 			if ($bjgroup_slots != '') {
 				$slot_lines = explode("\n", $bjgroup_slots);
@@ -835,6 +835,7 @@ function grid_update_job_groups($clusterid) {
 		(clusterid, groupName, numJobs, pendJobs, runJobs, suspJobs, finishJobs, sla, limitUsed, limitTotal, owner, last_updated, present) VALUES ';
 
 	$errors = 0;
+	$logged = false;
 
 	if (cacti_sizeof($job_lines)) {
 		foreach($job_lines as $line) {
@@ -848,10 +849,16 @@ function grid_update_job_groups($clusterid) {
 
 			$parts = preg_split('/[\s]+/', $line);
 
-			if (cacti_sizeof($parts) != 10) {
+			if (cacti_sizeof($parts) > 10) {
 				$nparts = cacti_sizeof($parts);
-				cacti_log("Job: Elements: $nparts, $line", false, 'LSFENH');
+
+				if (!$logged) {
+					cacti_log("Job: Cluster: $clusterid Elements: $nparts, $line", false, 'LSFENH');
+					$logged = true;
+				}
+
 				$errors++;
+
 				continue;
 			}
 
@@ -901,6 +908,8 @@ function grid_update_job_groups($clusterid) {
 	$sprefix = 'INSERT INTO grid_job_groups
 		(clusterid, groupName, numSlots, pendSlots, runSlots, suspSlots, rsvSlots, last_updated, present) VALUES ';
 
+	$logged = false;
+
 	if (cacti_sizeof($slot_lines)) {
 		foreach($slot_lines as $line) {
 			$line = trim($line);
@@ -913,10 +922,16 @@ function grid_update_job_groups($clusterid) {
 
 			$parts = preg_split('/[\s]+/', $line);
 
-			if (cacti_sizeof($parts) != 9) {
+			if (cacti_sizeof($parts) > 10) {
 				$nparts = cacti_sizeof($parts);
-				cacti_log("Slot: Elements: $nparts, $line", false, 'LSFENH');
+
+				if (!$logged) {
+					cacti_log("Slot: Cluster: $clusterid Elements: $nparts, $line", false, 'LSFENH');
+					$logged = true;
+				}
+
 				$errors++;
+
 				continue;
 			}
 
@@ -963,11 +978,11 @@ function grid_update_job_groups($clusterid) {
 function grid_hostgroup_sla_definitions($clusterid) {
 	global $config;
 
-	$bmgroup = shell_exec($config['base_path'] . "/plugins/grid/bin/bmgroup -w 2>&1");
+	$bmgroup = shell_exec($config['base_path'] . "/plugins/lsfenh/bin/bmgroup -w 2>&1");
 
 	grid_process_bmgroup($clusterid, $bmgroup);
 
-	$bresources = shell_exec($config['base_path'] . "/plugins/grid/bin/bresources -g 2>&1");
+	$bresources = shell_exec($config['base_path'] . "/plugins/lsfenh/bin/bresources -g 2>&1");
 
 	if ($bresources != '') {
 		$lines = explode("\n", $bresources);
@@ -991,7 +1006,7 @@ function grid_hostgroup_sla_definitions($clusterid) {
 function grid_process_bresources($clusterid, $group) {
 	global $config;
 
-	$bresources = shell_exec($config['base_path'] . "/plugins/grid/bin/bresources -g -l $group 2>&1 | grep 'HOSTS:'");
+	$bresources = shell_exec($config['base_path'] . "/plugins/lsfenh/bin/bresources -g -l $group 2>&1 | grep 'HOSTS:'");
 
 	if ($bresources != '') {
 		if (!db_column_exists('grid_guarantee_pool', 'hosts')) {
@@ -1334,7 +1349,7 @@ function grid_collect_shared_descriptions($clusterid) {
 
 	// Get summary pending reasons
 	if ($remote != 'on') {
-		$lsinfo = shell_exec($config['base_path'] . "/plugins/grid/bin/lsinfo -w 2>&1");
+		$lsinfo = shell_exec($config['base_path'] . "/plugins/lsfenh/bin/lsinfo -w 2>&1");
 		grid_process_lsinfo($clusterid, $lsinfo);
 	}
 }
@@ -1390,8 +1405,12 @@ function grid_process_lsinfo($clusterid, &$lsinfo) {
 }
 
 function grid_translate_reason($reason) {
+	// Record the original reason
+	$oreason = $reason;
+
 	// Clean up nasty long pending reasons and case issues
 	$reason = str_replace('Resource limit defined on', '', $reason);
+	$reason = str_replace('Jobs requirements for resource reservation not satisfied', 'Job Reservation not satisfied', $reason);
 	$reason = str_replace('(Resource:', '(Res:', $reason);
 	$reason = str_replace('Limit Name:', 'Name:', $reason);
 	$reason = str_replace('Limit Value:', 'Value:', $reason);
@@ -1404,7 +1423,35 @@ function grid_translate_reason($reason) {
 	$reason = str_replace("'", '', $reason);
 	$reason = str_replace('has been reached', 'Limit Reached', $reason);
 	$reason = str_replace('has reached', 'Reached', $reason);
-	$reason = str_replace('requirements for resource reservation not satisfied', 'Resource Reservation not satisfied', $reason);
+
+	// Host Reasons are fist
+	if (str_contains($reason, ' (Host:')) {
+		$reason = db_fetch_cell("SELECT TRIM(SUBSTRING_INDEX(reason,' (Host:',1)) AS reason
+			FROM (SELECT " . db_qstr($reason) . " AS reason HAVING reason LIKE '% (Host:%') AS rs");
+	}
+
+	// Job level Reasons
+	if (str_contains($reason, 'job <')) {
+		$reason = db_fetch_cell("SELECT TRIM(SUBSTRING_INDEX(reason,'<', 1)) AS reason,
+			FROM (SELECT " . db_qstr($reason) . " AS reason HAVING reason LIKE '%job <%') AS rs");
+	}
+
+
+	// Limit Value
+	if (str_contains($reason, ' (Limit Value:')) {
+		$reason = db_fetch_cell("SELECT TRIM(SUBSTRING_INDEX(reason,' (Limit Value:', 1)) AS reason,
+			FROM (SELECT " . db_qstr($reason) . " AS reason HAVING reason LIKE '% (Limit Value:%') AS rs");
+	}
+
+	// Remaining pending reasons
+	if (str_contains($reason, ' (Limit Value:')) {
+		$reason = db_fetch_cell("SELECT TRIM(REPLACE(REPLACE(reason, \"'\", \"\"), 'Limit: ', '')) AS reason,
+			FROM (SELECT " . db_qstr($reason) . " AS reason
+			HAVING reason NOT LIKE '% (Limit Value:%'
+			AND reason NOT LIKE '% (Host:%'
+			AND reason NOT LIKE '%job <%') AS rs");
+	}
+
 	$reason = str_replace(
 		array(
 			'job', 'dependency', 'condition', 'user', 'host', 'group', 'guarantee',
@@ -1415,6 +1462,9 @@ function grid_translate_reason($reason) {
 			'Threshold', 'Reached', 'Slot', 'Limit', 'Reserved', 'Honor', 'Retry', 'Start', 'Time'
 		), $reason
 	);
+
+	// Debugging
+	//cacti_log("O:'$oreason' T:'$reason'");
 
 	return trim($reason);
 }
@@ -1518,73 +1568,41 @@ function grid_aggregate_reasons() {
 			}
 		}
 
-		$sql_where = ' AND clusterid NOT IN (' . implode(',', $exclude_clusters) . ')';
+		$sql_where = ' WHERE clusterid NOT IN (' . implode(',', $exclude_clusters) . ')';
 	}
 
-	// Host Reasons are fist
-	db_execute("INSERT INTO grid_jobs_reason_summary
-		(clusterid, issusp, level, type, reason, jobs_occurrences, present, last_updated)
-		SELECT clusterid, issusp, level, type,
-		TRIM(SUBSTRING_INDEX(reason,' (Host:',1)) AS reason,
-		SUM(jobs_occurrences) AS jobs_occurrences,
-		'1' AS present, MAX(last_updated) AS last_updated
-		FROM grid_jobs_reason_details
-		WHERE reason LIKE '% (Host:%'
-		$sql_where
-		GROUP BY clusterid, issusp, level, type, TRIM(SUBSTRING_INDEX(reason, ' (Host:',1))
-		ON DUPLICATE KEY UPDATE
-			jobs_occurrences = VALUES(jobs_occurrences),
-			last_updated = VALUES(last_updated),
-			present = 1");
+	$reasons = db_fetch_assoc("SELECT * FROM grid_jobs_reason_details $sql_where");
 
-	// Job level Reasons
-	db_execute("INSERT INTO grid_jobs_reason_summary
-		(clusterid, issusp, level, type, reason, jobs_occurrences, present, last_updated)
-		SELECT clusterid, issusp, level, type,
-		TRIM(SUBSTRING_INDEX(reason,'<', 1)) AS reason,
-		SUM(jobs_occurrences) AS jobs_occurrences,
-		'1' AS present, MAX(last_updated) AS last_updated
-		FROM grid_jobs_reason_details
-		WHERE reason LIKE '%job <%'
-		$sql_where
-		GROUP BY clusterid, issusp, level, type, TRIM(SUBSTRING_INDEX(reason, 'job <',1))
-		ON DUPLICATE KEY UPDATE
-			jobs_occurrences = VALUES(jobs_occurrences),
-			last_updated = VALUES(last_updated),
-			present = 1");
+	$num_reasons = cacti_sizeof($reasons);
 
-	// Limit Value
-	db_execute("INSERT INTO grid_jobs_reason_summary
-		(clusterid, issusp, level, type, reason, jobs_occurrences, present, last_updated)
-		SELECT clusterid, issusp, level, type,
-		TRIM(SUBSTRING_INDEX(reason,' (Limit Value:', 1)) AS reason,
-		SUM(jobs_occurrences) AS jobs_occurrences,
-		'1' AS present, MAX(last_updated) AS last_updated
-		FROM grid_jobs_reason_details
-		WHERE reason LIKE '% (Limit Value:%'
-		$sql_where
-		GROUP BY clusterid, issusp, level, type, TRIM(SUBSTRING_INDEX(reason, ' (Limit Value:',1))
-		ON DUPLICATE KEY UPDATE
-			jobs_occurrences = VALUES(jobs_occurrences),
-			last_updated = VALUES(last_updated),
-			present = 1");
+	/* translate the reasons into something readable */
+	if (cacti_sizeof($reasons)) {
+		foreach($reasons as $index => $r) {
+			$reasons[$index]['reason'] = grid_translate_reason($r['reason']);
+		}
+	}
 
-	// Remaining pending reasons
-	db_execute("INSERT INTO grid_jobs_reason_summary
-		(clusterid, issusp, level, type, reason, jobs_occurrences, present, last_updated)
-		SELECT clusterid, issusp, level, type, TRIM(REPLACE(REPLACE(reason, \"'\", \"\"), 'Limit: ', '')) AS reason,
-		jobs_occurrences, present, last_updated
-		FROM grid_jobs_reason_details
-		WHERE reason NOT LIKE '% (Limit Value:%'
-		AND reason NOT LIKE '% (Host:%'
-		AND reason NOT LIKE '%job <%'
-		$sql_where
-		ON DUPLICATE KEY UPDATE
-			jobs_occurrences = VALUES(jobs_occurrences),
-			last_updated = VALUES(last_updated),
-			present = 1");
+	$format = array(
+		'clusterid',
+		'issusp',
+		'level',
+		'type',
+		'reason',
+		'jobs_occurrences',
+		'present',
+		'last_updated'
+	);
+
+	$duplicate = " ON DUPLICATE KEY UPDATE
+		jobs_occurrences = VALUES(jobs_occurrences),
+		last_updated = VALUES(last_updated),
+		present = 1";
+
+	grid_pump_records($reasons, 'grid_jobs_reason_summary', $format, false, $duplicate);
 
 	db_execute('UPDATE grid_jobs_reason_summary SET jobs_occurrences = 0 WHERE present = 0');
+
+	return $num_reasons;
 }
 
 function grid_collect_jobs_remote($clusterid) {
@@ -1764,7 +1782,7 @@ function grid_collect_jobs($clusterid) {
 
 	cacti_log('NOTE: Bjobs command starting for ClusterID:' . $clusterid, false, 'LSFENH', POLLER_VERBOSITY_MEDIUM);
 
-	$jobs = shell_exec($config['base_path'] . "/plugins/grid/bin/bjobs -uall -o 'jobid jobindex user project app stat queue sla:60 first_host slots min_req_proc max_req_proc cpu_used max_mem mem run_time submit_time start_time finish_time effective_resreq combined_resreq' -json 2>/dev/null");
+	$jobs = shell_exec($config['base_path'] . "/plugins/lsfenh/bin/bjobs -uall -o 'jobid jobindex user project app stat queue sla:60 first_host slots min_req_proc max_req_proc cpu_used max_mem mem run_time submit_time start_time finish_time effective_resreq combined_resreq' -json 2>/dev/null");
 
 	if ($jobs != '') {
 		$jobs = json_decode($jobs, true);
@@ -2012,7 +2030,7 @@ function grid_collect_jobs($clusterid) {
 function grid_planner_jobs($clusterid) {
 	global $config;
 
-	$jobs = file(shell_exec($config['base_path'] . "/plugins/grid/bin/bjobs -uall -UF -plan 2>/dev/null"));
+	$jobs = file(shell_exec($config['base_path'] . "/plugins/lsfenh/bin/bjobs -uall -UF -plan 2>/dev/null"));
 }
 
 function grid_update_djob_stats($clusterid, $time) {
@@ -2026,6 +2044,7 @@ function grid_update_djob_stats($clusterid, $time) {
 	$start    = time();
 
 	$format = array('clusterid', 'host', 'mem_reserved', 'mem_used', 'runJobs', 'maxJobs', 'maxMemory');
+
 	$duplicate = 'ON DUPLICATE KEY UPDATE
 		mem_reserved = IF(VALUES(maxMemory) < VALUES(mem_reserved) AND VALUES(maxMemory) > 0, VALUES(maxMemory), VALUES(mem_reserved)),
 		mem_used = VALUES(mem_used),
@@ -2082,6 +2101,7 @@ function grid_update_djob_stats($clusterid, $time) {
 
 	// Stats by SLA
 	$format = array('clusterid', 'sla', 'dmem_reserved', 'dmem_used', 'djob_efficiency', 'djob_cputime', 'djob_walltime', 'present');
+
 	$duplicate = 'ON DUPLICATE KEY UPDATE
 		dmem_reserved = VALUES(dmem_reserved),
 		dmem_used = VALUES(dmem_used),
@@ -2110,6 +2130,7 @@ function grid_update_djob_stats($clusterid, $time) {
 
 	// SLA Throughput
 	$format = array('clusterid', 'sla', 'hourly_started_jobs', 'hourly_done_jobs', 'hourly_exit_jobs', 'present');
+
 	$duplicate = 'ON DUPLICATE KEY UPDATE
 		hourly_done_jobs = VALUES(hourly_done_jobs),
 		hourly_exit_jobs = VALUES(hourly_exit_jobs),
@@ -2133,6 +2154,7 @@ function grid_update_djob_stats($clusterid, $time) {
 
 	// Host Loaning Phase 1
 	$format = array('clusterid', 'sla', 'hostl_hosts_total', 'hostl_hosts_busy', 'hostl_slots_total', 'hostl_slots_used', 'hostl_slots_busy', 'present');
+
 	$duplicate = 'ON DUPLICATE KEY UPDATE
 		hostl_hosts_total = VALUES(hostl_hosts_total),
 		hostl_hosts_busy  = VALUES(hostl_hosts_busy),
