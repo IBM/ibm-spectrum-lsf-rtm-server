@@ -110,6 +110,30 @@ function getRequested($data) {
 	return 0;
 }
 
+function update_lsf_events() {
+	db_execute("CREATE TABLE IF NOT EXISTS `grid_clusters_events` (
+		`clusterid` int(10) unsigned NOT NULL DEFAULT 0,
+		`type` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+		`event_time` timestamp NOT NULL DEFAULT current_timestamp(),
+		`event_seen` timestamp NOT NULL DEFAULT current_timestamp(),
+		PRIMARY KEY (`clusterid`,`type`,`event_time`))
+		ENGINE=InnoDB
+		ROW_FORMAT=COMPACT
+		COMMENT='Keeps Track of Cluster Events'");
+
+	db_execute("INSERT INTO grid_clusters_events
+		(clusterid, type, event_time)
+		SELECT clusterid, 'mbdstart' as type, last_mbatchd_start as `lasttime`
+		FROM grid_clusters_perfmon_status
+		UNION
+		SELECT clusterid, 'mbdreconfig' AS type, last_mbatchd_reconfig as `lasttime`
+		FROM grid_clusters_perfmon_status
+		WHERE last_mbatchd_reconfig != '0000-00-00'
+		ON DUPLICATE KEY UPDATE type=VALUES(type)");
+
+	db_execute("DELETE FROM grid_clusters_events WHERE event_time < DATE_SUB(NOW(), INTERVAL 180 DAY)")
+}
+
 function create_required_tables() {
 	if (!db_table_exists('grid_reason_classes')) {
 		db_execute('CREATE TABLE IF NOT EXISTS `grid_reason_classes` (
@@ -861,6 +885,8 @@ function grid_update_job_groups($clusterid) {
 				$errors++;
 
 				continue;
+			} elseif (cacti_sizeof($parts) < 9) {
+				continue;
 			}
 
 			$numJobs    = is_numeric($parts[1]) ? $parts[1]:0;
@@ -870,8 +896,13 @@ function grid_update_job_groups($clusterid) {
 			$sJobs      = is_numeric($parts[5]) ? $parts[5]:0;
 			$suspJobs   = $uJobs + $sJobs;
 			$finishJobs = is_numeric($parts[6]) ? $parts[6]:0;
-			$limit      = explode('/', $parts[8]);
 			$sla        = trim($parts[7], '()');
+
+			if (isset($parts[8])) {
+				$limit = explode('/', $parts[8]);
+			} else {
+				$limit = '';
+			}
 
 			if ($limit[0] == '-') {
 				$limitUsed = '-1';
@@ -890,18 +921,18 @@ function grid_update_job_groups($clusterid) {
 			}
 
 			$jsql[] = '(' .
-				$clusterid            . ',' .
-				db_qstr($parts[0])    . ', ' .
-				db_qstr($numJobs)     . ', ' .
-				db_qstr($pendJobs)    . ', ' .
-				db_qstr($runJobs)     . ', ' .
-				db_qstr($suspJobs)    . ', ' .
-				db_qstr($finishJobs)  . ', ' .
-				db_qstr($sla)         . ', ' .
-				db_qstr($limitUsed)   . ', ' .
-				db_qstr($limitTotal)  . ', ' .
-				db_qstr($parts[9])    . ', ' .
-				db_qstr($update_time) . ', ' .
+				$clusterid               . ',' .
+				db_qstr($parts[0])       . ', ' .
+				db_qstr($numJobs)        . ', ' .
+				db_qstr($pendJobs)       . ', ' .
+				db_qstr($runJobs)        . ', ' .
+				db_qstr($suspJobs)       . ', ' .
+				db_qstr($finishJobs)     . ', ' .
+				db_qstr($sla)            . ', ' .
+				db_qstr($limitUsed)      . ', ' .
+				db_qstr($limitTotal)     . ', ' .
+				db_qstr($parts[9] ?? '') . ', ' .
+				db_qstr($update_time)    . ', ' .
 				'1)';
 		}
 	}
@@ -933,6 +964,8 @@ function grid_update_job_groups($clusterid) {
 
 				$errors++;
 
+				continue;
+			} elseif (cacti_sizeof($parts) < 9) {
 				continue;
 			}
 

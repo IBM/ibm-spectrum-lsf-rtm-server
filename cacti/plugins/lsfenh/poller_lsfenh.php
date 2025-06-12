@@ -123,6 +123,9 @@ if ($force || grid_detect_and_correct_running_processes(0, 'LSFENHDATA', '7200')
 	// Optimize key analytics table
 	grid_analytics_optimize();
 
+	// Get cluster change events
+	update_lsf_events();
+
 	// Remove interlock
 	grid_remove_process_entry(0, 'LSFENHDATA');
 
