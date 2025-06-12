@@ -487,6 +487,7 @@ function create_required_tables() {
 		`type` tinyint(3) unsigned NOT NULL DEFAULT 0,
 		`reason` varchar(255) NOT NULL DEFAULT '',
 		`jobs_occurrences` int(10) unsigned NOT NULL DEFAULT 0,
+		`limit_value` varchar(10) NOT NULL DEFAULT '',
 		`present` tinyint(3) unsigned NOT NULL DEFAULT 1,
 		`last_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
 		PRIMARY KEY (`id`),
@@ -849,7 +850,7 @@ function grid_update_job_groups($clusterid) {
 
 			$parts = preg_split('/[\s]+/', $line);
 
-			if (cacti_sizeof($parts) > 10) {
+			if (cacti_sizeof($parts) > 11) {
 				$nparts = cacti_sizeof($parts);
 
 				if (!$logged) {
@@ -922,7 +923,7 @@ function grid_update_job_groups($clusterid) {
 
 			$parts = preg_split('/[\s]+/', $line);
 
-			if (cacti_sizeof($parts) > 10) {
+			if (cacti_sizeof($parts) > 11) {
 				$nparts = cacti_sizeof($parts);
 
 				if (!$logged) {
@@ -1423,33 +1424,34 @@ function grid_translate_reason($reason) {
 	$reason = str_replace("'", '', $reason);
 	$reason = str_replace('has been reached', 'Limit Reached', $reason);
 	$reason = str_replace('has reached', 'Reached', $reason);
+	$reason = str_replace('defined for the', 'for', $reason);
+	$reason = str_replace('The specified Job Group', 'Job Group', $reason);
 
-	// Host Reasons are fist
+	if (str_contains($reason, 'Value:')) {
+		$value  = trim(explode('Value:', $reason)[1], ' )');
+		$reason = trim(explode(', Value:', $reason)[0]) . ')';
+	} else {
+		$value = 'N/A';
+	}
+
+	/* remove the ', Name:' as it's meaningless for analytics */
+	if (str_contains($reason, ', Name:')) {
+		$reason = trim(explode(', Name:', $reason)[0]) . ')';
+	}
+
+	// Host Reasons, peel off the host
 	if (str_contains($reason, ' (Host:')) {
-		$reason = db_fetch_cell("SELECT TRIM(SUBSTRING_INDEX(reason,' (Host:',1)) AS reason
-			FROM (SELECT " . db_qstr($reason) . " AS reason HAVING reason LIKE '% (Host:%') AS rs");
+		$reason = trim(explode(' (Host:', $reason)[0]);
 	}
 
-	// Job level Reasons
+	// Job Group Reasons, peel off the host
+	if (str_contains($reason, ' (Job Group:')) {
+		$reason = trim(explode(' (Job Group:', $reason)[0]);
+	}
+
+	// Job level Reasons, peel off the jobid
 	if (str_contains($reason, 'job <')) {
-		$reason = db_fetch_cell("SELECT TRIM(SUBSTRING_INDEX(reason,'<', 1)) AS reason,
-			FROM (SELECT " . db_qstr($reason) . " AS reason HAVING reason LIKE '%job <%') AS rs");
-	}
-
-
-	// Limit Value
-	if (str_contains($reason, ' (Limit Value:')) {
-		$reason = db_fetch_cell("SELECT TRIM(SUBSTRING_INDEX(reason,' (Limit Value:', 1)) AS reason,
-			FROM (SELECT " . db_qstr($reason) . " AS reason HAVING reason LIKE '% (Limit Value:%') AS rs");
-	}
-
-	// Remaining pending reasons
-	if (str_contains($reason, ' (Limit Value:')) {
-		$reason = db_fetch_cell("SELECT TRIM(REPLACE(REPLACE(reason, \"'\", \"\"), 'Limit: ', '')) AS reason,
-			FROM (SELECT " . db_qstr($reason) . " AS reason
-			HAVING reason NOT LIKE '% (Limit Value:%'
-			AND reason NOT LIKE '% (Host:%'
-			AND reason NOT LIKE '%job <%') AS rs");
+		$reason = trim(explode('job <', $reason)[0]);
 	}
 
 	$reason = str_replace(
@@ -1466,7 +1468,9 @@ function grid_translate_reason($reason) {
 	// Debugging
 	//cacti_log("O:'$oreason' T:'$reason'");
 
-	return trim($reason);
+	$reason = trim($reason);
+
+	return array('reason' => $reason, 'value' => $value);;
 }
 
 
@@ -1573,14 +1577,35 @@ function grid_aggregate_reasons() {
 
 	$reasons = db_fetch_assoc("SELECT * FROM grid_jobs_reason_details $sql_where");
 
-	$num_reasons = cacti_sizeof($reasons);
-
 	/* translate the reasons into something readable */
+	$freasons = array();
+
 	if (cacti_sizeof($reasons)) {
 		foreach($reasons as $index => $r) {
-			$reasons[$index]['reason'] = grid_translate_reason($r['reason']);
+			$rdata = grid_translate_reason($r['reason']);
+
+			$new_reason = $rdata['reason'];
+			$value      = $rdata['value'];
+
+			/* move the structure over, accumulate similar translated reasons */
+			if (isset($freasons[$new_reason])) {
+				$freasons[$new_reason]['jobs_occurrences'] += $r['jobs_occurrences'];
+			} else {
+				$freasons[$new_reason]['jobs_occurrences']  = $r['jobs_occurrences'];
+			}
+
+			$freasons[$new_reason]['reason']       = $new_reason;
+			$freasons[$new_reason]['clusterid']    = $r['clusterid'];
+			$freasons[$new_reason]['issusp']       = $r['issusp'];
+			$freasons[$new_reason]['level']        = $r['level'];
+			$freasons[$new_reason]['type']         = $r['type'];
+			$freasons[$new_reason]['limit_value']  = $value;
+			$freasons[$new_reason]['present']      = $r['present'];
+			$freasons[$new_reason]['last_updated'] = $r['last_updated'];
 		}
 	}
+
+	$num_reasons = cacti_sizeof($freasons);
 
 	$format = array(
 		'clusterid',
@@ -1589,6 +1614,7 @@ function grid_aggregate_reasons() {
 		'type',
 		'reason',
 		'jobs_occurrences',
+		'limit_value',
 		'present',
 		'last_updated'
 	);
@@ -1598,7 +1624,7 @@ function grid_aggregate_reasons() {
 		last_updated = VALUES(last_updated),
 		present = 1";
 
-	grid_pump_records($reasons, 'grid_jobs_reason_summary', $format, false, $duplicate);
+	grid_pump_records($freasons, 'grid_jobs_reason_summary', $format, false, $duplicate);
 
 	db_execute('UPDATE grid_jobs_reason_summary SET jobs_occurrences = 0 WHERE present = 0');
 
