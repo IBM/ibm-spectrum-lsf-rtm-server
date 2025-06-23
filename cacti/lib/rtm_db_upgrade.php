@@ -244,20 +244,21 @@ function rtm_plugin_upgrade($before_upgrade, $after_upgrade, $plugin_name = 'gri
 	}
 
 	$prev_version = $before_upgrade;
-	$plugin_dir = $config['base_path'] . '/plugins/' . $plugin_name;
+	$plugin_dir   = $config['base_path'] . '/plugins/' . $plugin_name;
 
 	cacti_log("NOTE: Upgrading $plugin_name plugin database ...", true, 'UPGRADE');
 
-	foreach($rtm_version_numbers as $curr_version){
-		if(rtm_version_compare($curr_version, $supported_min) <= 0 ){
+	foreach ($rtm_version_numbers as $curr_version){
+		if (rtm_version_compare($curr_version, $supported_min) <= 0) {
 			continue;
 		}
-		if(rtm_version_compare($before_upgrade, $curr_version) >= 0 ){
+
+		if (rtm_version_compare($before_upgrade, $curr_version) >= 0) {
 			continue;
 		}
 
 		// construct version upgrade include path
-		$upgrade_file = $plugin_dir . '/upgrades/' . str_replace('.', '_', $curr_version) . '.php';
+		$upgrade_file     = $plugin_dir . '/upgrades/' . str_replace('.', '_', $curr_version) . '.php';
 		$upgrade_function = 'upgrade_to_' . str_replace('.', '_', $curr_version);
 
 		// check for upgrade version file, then include, check for function and execute
@@ -265,6 +266,7 @@ function rtm_plugin_upgrade($before_upgrade, $after_upgrade, $plugin_name = 'gri
 			cacti_log("NOTE: Upgrading $plugin_name from v$prev_version to v$curr_version", true, 'UPGRADE');
 
 			include($upgrade_file);
+
 			if (function_exists($upgrade_function)) {
 				call_user_func($upgrade_function);
 				$status = DB_STATUS_SUCCESS;
@@ -278,17 +280,22 @@ function rtm_plugin_upgrade($before_upgrade, $after_upgrade, $plugin_name = 'gri
 			}
 		}
 
-		db_execute("REPLACE INTO settings set name='" . $plugin_name . "_version', value='$curr_version'");
-		db_execute("UPDATE plugin_config SET version='$curr_version' WHERE directory ='$plugin_name'");
+		set_config_option($plugin_name . '_version', $curr_version);
+
+		db_execute_prepared('UPDATE plugin_config SET version = ? WHERE directory = ?',
+			array($curr_version, $plugin_name));
+
 		$prev_version = $curr_version;
 
 		if ($after_upgrade == $curr_version) {
 			break;
 		}
 	}
+
 	if ($status != DB_STATUS_ERROR) {
 		cacti_log("NOTE: Plugin '$plugin_name' Database Upgrade Complete.", true, 'UPGRADE');
 	}
+
 	return $status;
 }
 

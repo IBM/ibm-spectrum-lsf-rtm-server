@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright IBM Corp. 2006, 2025                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -19,16 +19,19 @@
 */
 
 global $config;
+
 include_once($config['library_path'] . '/rtm_functions.php');
 include_once(dirname(__FILE__) . '/../setup.php');
 
 /**
  * takes a string of text, and performs variable replacement on it
- * @param $script 		- the string to evaluate
- * @param $alarm	 	- the array containing Alert or template information
- * @returns 			- the modified script
+ *
+ * @param string  $script - the string to evaluate
+ * @param array   $alarm - the array containing Alert or template information
+ *
+ * @return string the modified script
  */
-function do_script_variable_replacement($script, $alarm) {
+function do_script_variable_replacement(string $script, array $alarm) : string {
 	$result_script = $script;
 
 	if ($alarm['clusterid'] > 0) {
@@ -50,10 +53,10 @@ function do_script_variable_replacement($script, $alarm) {
 
 /**
  * purges old entries from the alert log
- * @param 					- none
- * @returns 				- null
+ *
+ * @return null
  */
-function gridalarms_alarm_log_cleanup() {
+function gridalarms_alarm_log_cleanup() : void {
 	/* keep days of logs based on the setting of gridalarms_alarm_log_cleanup in console->setting->alerting/thold*/
 
 	$alarm_log_retention = read_config_option('gridalarms_alarm_log_cleanup');
@@ -71,10 +74,12 @@ function gridalarms_alarm_log_cleanup() {
 
 /**
  * returns columns available for an alert expression
- * @param $expression_id	- the id of the expression to query
- * @returns					- an array of column names
+ *
+ * @param int - $expression_id - the id of the expression to query
+ *
+ * @return array - an array of column names
  */
-function gridalarms_get_sql_columns($expression_id) {
+function gridalarms_get_sql_columns(int $expression_id) : array {
 	$sql = db_fetch_cell_prepared('SELECT sql_query
 		FROM gridalarms_expression
 		WHERE id = ?',
@@ -93,10 +98,12 @@ function gridalarms_get_sql_columns($expression_id) {
 
 /**
  * returns columns available for an template expression
- * @param $expression_id	- the id of the expression to query
- * @returns					- an array of column names
+ *
+ * @param int $expression_id - the id of the expression to query
+ *
+ * @return array - an array of column names
  */
-function gridalarms_get_template_sql_columns($expression_id) {
+function gridalarms_get_template_sql_columns(int $expression_id) : array {
 	$sql = db_fetch_cell_prepared('SELECT sql_query
 		FROM gridalarms_template_expression
 		WHERE id = ?',
@@ -115,6 +122,7 @@ function gridalarms_get_template_sql_columns($expression_id) {
 
 /**
  * logs an entry to the local systems syslog facility
+ *
  * @param $syslog_level		- the severity/priority of the syslog message
  * @param $syslog_facility	- the facility to log the event to
  * @param $name				- the name of the event
@@ -123,9 +131,10 @@ function gridalarms_get_template_sql_columns($expression_id) {
  * @param $currentval		- the currently measured value
  * @param $trigger			- unused, the threshold trigger count
  * @param $triggerct		- unused, the current trigger count
- * @returns					- none
+ *
+ * @return null
  */
-function rtm_logger($syslog_level, $syslog_facility, $name, $breach_up, $threshld, $currentval, $trigger, $triggerct) {
+function rtm_logger(int $syslog_level, int $syslog_facility, string $name, int $breach_up, mixed $threshld, mixed $currentval, int $trigger, int $triggerct) : void {
 	if (function_exists('define_syslog_variables')) define_syslog_variables();
 
 	if (!isset($syslog_level)) {
@@ -151,15 +160,21 @@ function rtm_logger($syslog_level, $syslog_facility, $name, $breach_up, $threshl
 
 /**
  * sends an alert event to the Email recipients
- * @param $to				- the list of addresses the Email will go to
- * @param $from				- the senders Email address
- * @param $subject			- the Email subject
- * @param $message			- the Email body
- * @param $textonly			- a boolean defining if simple text should be forced
- * @returns					- null upon success, or error on failure
+ *
+ * @param $to          - the list of addresses the Email will go to
+ * @param $from        - the senders Email address
+ * @param $subject     - the Email subject
+ * @param $message     - the Email body
+ * @param $format_file - a boolean defining if simple text should be forced
+ * @param $textonly    - display mail as text (not used)
+ *
+ * @return null|string null upon success, or error on failure
  */
-function alarm_mail($to, $from, $subject, $message, $textonly = false) {
+function alarm_mail(mixed $to, mixed $from, string $subject, string $message, string $format_file = '', bool $textonly = false) : ?string {
 	global $config;
+
+	include_once('./lib/reports.php');
+
 	$subject = trim($subject);
 	$message = str_replace('<SUBJECT>', $subject, $message);
 
@@ -174,15 +189,35 @@ function alarm_mail($to, $from, $subject, $message, $textonly = false) {
 	}
 
 	$html = $message;
-	/* apply for format css */
-	if (file_exists($config['base_path'] . '/plugins/gridalarms/formats/alert.format')) {
+
+	if ($format_file != '') {
+		$format_data = '';
+		$report_tag  = false;
+		$format_ok   = false;
+		$theme       = 'classic';
+
+		$format_ok = reports_load_format_file($format_file, $format_data, $report_tag, $theme);
+
+		if ($format_ok) {
+			if ($report_tag) {
+				$html = str_replace('<REPORT>', $message, $format_data);
+			} else {
+				$html = $format_data . PHP_EOL . $message;
+			}
+		} else {
+			$html = $outstr;
+		}
+	} elseif (file_exists($config['base_path'] . '/plugins/gridalarms/formats/alert.format')) {
 		$format = file_get_contents($config['base_path'] . '/plugins/gridalarms/formats/alert.format');
+
 		$html = str_replace('<REPORT>', $message, $format);
 		$html = str_ireplace('bgcolor="#00438C"', '', $html);
 		$html = str_ireplace('bgcolor="#E1E1E1"', '', $html);
 		$html = str_ireplace("bgcolor='#6d88ad'", '', $html);
 	}
+
 	$text = array('text' => '', 'html' => '');
+
 	if ($textonly) {
 		$text['html'] = $message . '<br>';
 
@@ -226,11 +261,14 @@ function alarm_mail($to, $from, $subject, $message, $textonly = false) {
 
 /**
  * returns columns available for an template expression
+ *
  * @param $expression_id	- the id of the expression to query
- * @returns					- an array of column names
+ *
+ * @return - an array of column names
  */
-function plugin_alarm_duration_convert($data, $type) {
+function plugin_alarm_duration_convert(string $data, string $type) : string{
 	global $repeatarray, $alertarray, $timearray;
+
 	/* handle a null data value */
 	if ($data == '') {
 		return '';
@@ -253,14 +291,21 @@ function plugin_alarm_duration_convert($data, $type) {
 
 /**
  * return a comma delimited list of admin Email addresses for the cluster
+ *
  * @param $clusterid		- the id of the cluster in question
- * @returns					- a string of the cluster admins emails
+ *
+ * @return - a string of the cluster admins emails
  */
-function get_cluster_admins($clusterid) {
+function get_cluster_admins(int $clusterid) : string {
 	if ($clusterid > 0) {
-		$rows  = db_fetch_assoc_prepared('SELECT email_admin FROM grid_clusters WHERE clusterid = ?', array($clusterid));
+		$rows = db_fetch_assoc_prepared('SELECT email_admin
+			FROM grid_clusters
+			WHERE clusterid = ?',
+			array($clusterid));
 	} else {
-		$rows  = db_fetch_assoc('SELECT email_admin FROM grid_clusters');
+		$rows = db_fetch_assoc('SELECT DISTINCT email_admin
+			FROM grid_clusters
+			ORDER BY email_admin');
 	}
 
 	$all_cluster_emails = array();
@@ -270,7 +315,7 @@ function get_cluster_admins($clusterid) {
 		foreach ($rows as $row) {
 			$one_cluster_emails = explode(',', $row['email_admin']);
 			foreach ($one_cluster_emails as $e) {
-				if (strlen(trim($e)) >0) {
+				if (strlen(trim($e)) > 0) {
 					$all_cluster_emails[$e] = $e;
 				}
 			}
@@ -287,10 +332,12 @@ function get_cluster_admins($clusterid) {
 
 /**
  * return a comma delimited list of Email addresses for an alarm
+ *
  * @param $alarm			- the alarm to be used to construct the Email list
- * @returns					- a string of the cluster admins emails
+ *
+ * @return - a string of the cluster admins emails
  */
-function gridalarms_build_email_list($alarm) {
+function gridalarms_build_email_list(array $alarm) : string {
 	$alarm_emails = array();
 
 	if (read_config_option('gridalarm_disable_legacy') != 'on') {
@@ -309,8 +356,9 @@ function gridalarms_build_email_list($alarm) {
 			}
 		}
 
-		if (isset($alarm['notify_extra']) && strlen(trim($alarm['notify_extra']))) {
+		if (isset($alarm['notify_extra']) && $alarm['notify_extra'] != '') {
 			$emails = explode(',', $alarm['notify_extra']);
+
 			foreach ($emails as $e) {
 				$e = trim($e);
 				$alarm_emails[$e] = $e;
@@ -320,9 +368,11 @@ function gridalarms_build_email_list($alarm) {
 
 	if ($alarm['notify_cluster_admin'] == 1) {
 		$emails = explode(',', get_cluster_admins($alarm['clusterid']));
+
 		if (cacti_sizeof($emails) > 0) {
 			foreach ($emails as $e) {
-			$e = trim($e);
+				$e = trim($e);
+
 				$alarm_emails[$e] = $e;
 			}
 		}
@@ -351,10 +401,12 @@ function gridalarms_build_email_list($alarm) {
 
 /**
  * return a properly formated breach details for an alarm script
- * @param $alarm			- the alarm to be used to construct the Email list
- * @returns					- formatted list of breached items
+ *
+ * @param $alarm        the alarm to be used to construct the Email list
+ *
+ * @return string|array formatted list of breached items
  */
-function get_alarm_breach_details_for_script($alarm) {
+function get_alarm_breach_details_for_script(array $alarm) : string|array {
 	$expression = get_expression_by_id($alarm['expression_id']);
 
 	if (cacti_sizeof($expression)) {
@@ -366,10 +418,12 @@ function get_alarm_breach_details_for_script($alarm) {
 
 /**
  * return a properly formated header for breach details
- * @param $alarm			- the alarm to be used to construct the Email list
- * @returns					- formatted list breached item header
+ *
+ * @param $alarm        the alarm to be used to construct the Email list
+ *
+ * @return string|array formatted list breached item header
  */
-function get_alarm_breach_details_headers_for_script($alarm) {
+function get_alarm_breach_details_headers_for_script(array $alarm) : string|array {
 	/* expression type */
 	$expression = get_expression_by_alarm_id($alarm['id']);
 
@@ -395,10 +449,12 @@ function get_alarm_breach_details_headers_for_script($alarm) {
 
 /**
  * return a properly formated db columns name for breach details
- * @param $alarm			- the alarm to be used to construct the Email list
- * @returns					- formatted list breached item db columns name
+ *
+ * @param $alarm      the alarm to be used to construct the Email list
+ *
+ * @return string|array formatted list breached item db columns name
  */
-function get_alarm_breach_details_columns_for_script($alarm) {
+function get_alarm_breach_details_columns_for_script(array $alarm) : string|array {
 	/* expression type */
 	$expression = get_expression_by_alarm_id($alarm['id']);
 
@@ -424,12 +480,14 @@ function get_alarm_breach_details_columns_for_script($alarm) {
 
 /**
  * do tag subsitution on special variables for gridalarms scripts
- * @param $script			- the script to update
- * @param $currentval		- the current value of the alert
- * @param $alarm			- the alarm to be used to construct the Email list
- * @returns					- updated script
+ *
+ * @param string  $script the script to update
+ * @param mixed   $currentval the current value of the alert
+ * @param array   $alarm the alarm to be used to construct the Email list
+ *
+ * @return string updated script
  */
-function gridalarms_script_replace($script, $currentval, $alarm) {
+function gridalarms_script_replace(string $script, mixed $currentval, array $alarm) : string {
 	global $alarm_types;
 
 	/* the current values */
@@ -464,13 +522,15 @@ function gridalarms_script_replace($script, $currentval, $alarm) {
 
 /**
  * do tag subsitution on special variables for gridalarms messages
- * @param $alarm_text		- the alarm text to update
- * @param $currentval		- the current value of the alert
- * @param $alarm			- the alarm to be used to construct the Email list
- * @param $admin			- the are we performing replacement for the admin
- * @returns					- updated alert text
+ *
+ * @param string  $alarm_text the alarm text to update
+ * @param mixed   $currentval the current value of the alert
+ * @param array   $alarm the alarm to be used to construct the Email list
+ * @param bool    $admin the are we performing replacement for the admin
+ *
+ * @return string updated alert text
  */
-function gridalarms_text_replace($alarm_text, $currentval, $alarm, $bitems = '', $admin = false) {
+function gridalarms_text_replace(string $alarm_text, mixed $currentval, array $alarm, string $bitems = '', bool $admin = false) : string {
 	global $config, $alarm_types;
 
 	/* the current values */
@@ -518,7 +578,7 @@ function gridalarms_text_replace($alarm_text, $currentval, $alarm, $bitems = '',
 	return $alarm_text;
 }
 
-function gridalarms_replace_custom_input($expression_id, $text) {
+function gridalarms_replace_custom_input(int $expression_id, string $text) : string {
 	$items = db_fetch_assoc_prepared('SELECT name, value
 		FROM gridalarms_expression_input
 		WHERE expression_id = ?',
@@ -533,7 +593,7 @@ function gridalarms_replace_custom_input($expression_id, $text) {
 	return $text;
 }
 
-function gridalarms_template_replace_custom_input($expression_id, $text) {
+function gridalarms_template_replace_custom_input(int $expression_id, string $text) : string {
 	$items = db_fetch_assoc_prepared('SELECT name, value
 		FROM gridalarms_template_expression_input
 		WHERE expression_id = ?',
@@ -550,10 +610,12 @@ function gridalarms_template_replace_custom_input($expression_id, $text) {
 
 /**
  * run the properly formatted script and discard results
- * @param $script			- the script to execute
- * @returns					- null
+ *
+ * @param string $script the script to execute
+ *
+ * @return null
  */
-function gridalarms_exec_scripts($script) {
+function gridalarms_exec_scripts(string $script) : void {
 	global $config;
 
 	$script    = str_replace('<CACTI_ROOT>', $config['base_path'], $script);
@@ -565,19 +627,21 @@ function gridalarms_exec_scripts($script) {
 		exec($command, $output, $exit_code);
 
 		if ($exit_code != 0) {
-			cacti_log("WARNING: Unable to execute Command: '" . $command ."', Output: '" . implode(', ', $output), false, 'GRIDALERTS');
+			cacti_log("WARNING: Unable to execute Command: '" . $command ."', Output: '" . implode(', ', $output) . "'", false, 'GRIDALERTS');
 		}
 	}
 }
 
 /**
  * function to check an alarm based upon the alarm entry
- * @param $alarm			- the alarm to be used to construct the Email list
- * @param $force			- ignore frequency settings and run forcibly
- * @returns					- null
+ *
+ * @param array  $alarm the alarm to be used to construct the Email list
+ * @param bool   $force ignore frequency settings and run forcibly
+ *
+ * @return null
  */
-function gridalarms_check_alarm($alarm, $force = false) {
-	global $config, $debug, $alarm_types, $gridalarms_types;
+function gridalarms_check_alarm(array $alarm, bool $force = false) : void {
+	global $config, $debug, $alarm_types, $gridalarms_types, $plugins;
 
 	include_once($config['base_path'] . '/lib/variables.php');
 
@@ -605,10 +669,38 @@ function gridalarms_check_alarm($alarm, $force = false) {
 	/* Get all the info about the item from the database */
 	$expression = get_expression_by_id($alarm['expression_id']);
 
+	/* check for general exemptions */
+	$alert_exempt = read_config_option('alert_exempt');
+
+	$weekday = date('l');
+	if (($weekday == 'Saturday' || $weekday == 'Sunday') && $alert_exempt == 'on') {
+		gridalarms_debug('Alert checking is disabled by global weekend exemption');
+		return;
+	}
+
 	/* Check for the weekend exemption on the threshold level */
 	if (($weekday == 'Saturday' || $weekday == 'Sunday') && $alarm['exempt'] == 'on') {
 		gridalarms_debug('NOTE   - Weekend Exemption in Affect (Current Alert) - Exiting');
 		return;
+	}
+
+	/**
+	 * Don't alert for this Cluster if it's selected for maintenance
+	 * this is more difficult with alerts that cover multiple clusters
+	 * so only support cluster specific checks for now.
+	 */
+	if ((api_plugin_is_enabled('maint') || in_array('maint', $plugins)) && $alarm['clusterid'] > 0) {
+		include_once($config['base_path'] . '/plugins/maint/functions.php');
+
+		$host_id = db_fetch_cell_prepared('SELECT cacti_host
+			FROM grid_clusters
+			WHERE clusterid = ?',
+			array($alarm['clusterid']));
+
+		if (plugin_maint_check_cacti_host($host_id)) {
+			gridalarms_debug('Alert checking is disabled for Cluster by maintenance schedule');
+			return;
+		}
 	}
 
 	/* measure the current value */
@@ -697,11 +789,11 @@ function gridalarms_check_alarm($alarm, $force = false) {
 	db_execute_prepared('UPDATE gridalarms_alarm
 		SET lastread = ?
 		WHERE id = ?',
-		array($currentval, $alarm['id']));
+		array($currentval, $id));
 
 	/* get the breached items for logging */
 	gridalarms_debug('NOTE:  - Getting Breached Items');
-	$bitems = alarm_breached_items($alarm['id'], true);
+	$bitems = alarm_breached_items($id, true);
 	gridalarms_debug('NOTE:  - Getting Breached Items Completed');
 
 	/* variables for sysloging */
@@ -758,9 +850,7 @@ function gridalarms_check_alarm($alarm, $force = false) {
 				}
 
 				if (trim($alarm_emails) != '') {
-					//cacti_log('DEBUG: Email list =' . $alarm_emails);
-
-					alarm_mail($alarm_emails, '', $subject, $msg);
+					alarm_mail($alarm_emails, '', $subject, $msg, $alarm['format_file']);
 				}
 
 				// After the alarm is breached(up or down) , notify admin and notify job users.
@@ -770,7 +860,7 @@ function gridalarms_check_alarm($alarm, $force = false) {
 					db_execute_prepared('UPDATE gridalarms_alarm
 						SET acknowledgement="on"
 						WHERE id = ?',
-						array($alarm['id']));
+						array($id));
 				}
 
 				/*When "Run the Event Triggering Command on the Retriggered Alert" checked,  high/low post scripts are alowed to run in re-alert*/
@@ -809,15 +899,15 @@ function gridalarms_check_alarm($alarm, $force = false) {
 			/* don't log notice events for now.  log becomes quite chatty */
 			if ($status != 3) {
 				alarm_log(array(
-					'type' => 0,
-					'time' => time(),
-					'alarm_id' => $alarm['id'],
+					'type'        => 0,
+					'time'        => time(),
+					'alarm_id'    => $id,
 					'alarm_value' => ($breach_up ? $alarm['alarm_hi'] : $alarm['alarm_low']),
-					'current' => $currentval,
-					'status' => $status,
+					'current'     => $currentval,
+					'status'      => $status,
 					'description' => $logmsg,
-					'emails' => $alarm_emails,
-					'details' => $bitems)
+					'emails'      => $alarm_emails,
+					'details'     => $bitems)
 				);
 			}
 
@@ -825,11 +915,11 @@ function gridalarms_check_alarm($alarm, $force = false) {
 				FROM gridalarms_alarm_layout
 				WHERE alarm_id = ?
 				AND column_name IN ("host", "hostname", "exec_host", "from_host")',
-				array($alarm['id']));
+				array($id));
 
 			if ($db_columns) {
 				$alarm_logs = db_fetch_assoc_prepared('SELECT a.clusterid, MIN(c.time) AS time,
-					b.name, b.email_subject,a.alarm_id,
+					b.name, b.email_subject, a.alarm_id,
 					a.host AS  alarmhost
 					FROM gridalarms_alarm_log_items AS a
 					INNER JOIN gridalarms_alarm AS b
@@ -839,12 +929,12 @@ function gridalarms_check_alarm($alarm, $force = false) {
 					WHERE a.alarm_id = ?
 					AND a.host != ""
 					GROUP BY alarm_id, alarmhost, clusterid',
-					array($alarm['id']));
+					array($id));
 
 				if (cacti_sizeof($alarm_logs)) {
 					foreach ($alarm_logs as $log) {
-						$log['email_subject']=$subject;
-						api_plugin_hook_function('gridalarms_update_hostsalarm',$log);
+						$log['email_subject'] = $subject;
+						api_plugin_hook_function('gridalarms_update_hostsalarm', $log);
 					}
 				}
 			}
@@ -869,7 +959,7 @@ function gridalarms_check_alarm($alarm, $force = false) {
 						$status = 0;
 
 						if (trim($alarm_emails) != '') {
-							alarm_mail($alarm_emails, '', $subject, $msg);
+							alarm_mail($alarm_emails, '', $subject, $msg, $alarm['format_file']);
 						}
 
 						// After the alarm is breached(up or down) , notify admin and notify job users.
@@ -882,19 +972,19 @@ function gridalarms_check_alarm($alarm, $force = false) {
 						db_execute_prepared('UPDATE gridalarms_alarm
 							SET acknowledgement="on"
 							WHERE id = ?',
-							array($alarm['id']));
+							array($id));
 					}
 
 					alarm_log(array(
-						'type' => 0,
-						'time' => time(),
-						'alarm_id' => $alarm['id'],
+						'type'        => 0,
+						'time'        => time(),
+						'alarm_id'    => $id,
 						'alarm_value' => '',
-						'current' => $currentval,
-						'status' => $status,
+						'current'     => $currentval,
+						'status'      => $status,
 						'description' => $logmsg,
-						'emails' => $alarm_emails,
-						'details' => $bitems)
+						'emails'      => $alarm_emails,
+						'details'     => $bitems)
 					);
 
 					/* execute post restoration script */
@@ -936,7 +1026,7 @@ function gridalarms_check_alarm($alarm, $force = false) {
 			WHERE alarm_id = ?
 			AND status NOT IN (0,4,99)
 			AND time > ?',
-			array($alarm['id'], $time));
+			array($id, $time));
 
 		if ($alarm['alarm_alert']) {
 			$failures += $alarm['alarm_fail_count'];
@@ -950,7 +1040,7 @@ function gridalarms_check_alarm($alarm, $force = false) {
 				WHERE alarm_id = ?
 				AND (status = 1 OR status = 2)
 				ORDER BY time DESC
-				LIMIT 1', array($alarm['id']));
+				LIMIT 1', array($id));
 
 			$ra     = ($failures > $trigger && $alarm['repeat_alert'] != 0 && $lastemailtime > 1 && ($lastemailtime < $realerttime));
 			$status = 3;
@@ -968,7 +1058,7 @@ function gridalarms_check_alarm($alarm, $force = false) {
 					FROM gridalarms_alarm_log
 					WHERE alarm_id = ?
 					ORDER BY time DESC',
-					array($alarm['id']));
+					array($id));
 
 				if (($lastalert['status'] == 1 || $lastalert['status'] == 2) && $time> $lastalert['time']) {
 					$status = 3;
@@ -993,7 +1083,7 @@ function gridalarms_check_alarm($alarm, $force = false) {
 				}
 
 				if (trim($alarm_emails) != '') {
-					alarm_mail($alarm_emails, '', $subject, $msg);
+					alarm_mail($alarm_emails, '', $subject, $msg, $alarm['format_file']);
 				}
 
 				// After the alarm is breached(up or down) , notify admin and notify job users.
@@ -1003,7 +1093,7 @@ function gridalarms_check_alarm($alarm, $force = false) {
 					db_execute_prepared('UPDATE gridalarms_alarm
 						SET acknowledgement="on"
 						WHERE id = ?',
-						array($alarm['id']));
+						array($id));
 				}
 
 				/* When "Run the Event Triggering Command on the Retriggered Alert" checked,
@@ -1040,22 +1130,22 @@ function gridalarms_check_alarm($alarm, $force = false) {
 			}
 
 			alarm_log(array(
-				'type' => 1,
-				'time' => time(),
-				'alarm_id' => $alarm['id'],
+				'type'        => 1,
+				'time'        => time(),
+				'alarm_id'    => $id,
 				'alarm_value' => ($breach_up ? $alarm['time_hi'] : $alarm['time_low']),
-				'current' => $currentval,
-				'status' => $status,
+				'current'     => $currentval,
+				'status'      => $status,
 				'description' => $logmsg,
-				'emails' => $alarm_emails,
-				'details' => $bitems)
+				'emails'      => $alarm_emails,
+				'details'     => $bitems)
 			);
 
-			$db_columns = db_fetch_cell_prepared('SELECT count(*)
+			$db_columns = db_fetch_cell_prepared('SELECT COUNT(*)
 				FROM gridalarms_alarm_layout
 				WHERE alarm_id = ?
 				AND column_name IN ("host", "hostname", "exec_host", "from_host")',
-				array($alarm['id']));
+				array($id));
 
  			if ($db_columns) {
 				$alarm_logs = db_fetch_assoc_prepared('SELECT a.clusterid, MIN(c.time) AS time,
@@ -1068,12 +1158,13 @@ function gridalarms_check_alarm($alarm, $force = false) {
 					WHERE a.alarm_id = ?
 					AND a.host != ""
 					GROUP BY alarm_id, alarmhost, clusterid',
-					array($alarm['id']));
+					array($id));
 
 				if (cacti_sizeof($alarm_logs)) {
 					foreach ($alarm_logs as $log) {
-						$log['email_subject']=$subject;
-						api_plugin_hook_function('gridalarms_update_hostsalarm',$log);
+						$log['email_subject'] = $subject;
+
+						api_plugin_hook_function('gridalarms_update_hostsalarm', $log);
 					}
 				}
  			}
@@ -1093,9 +1184,11 @@ function gridalarms_check_alarm($alarm, $force = false) {
 
 				if ($alarm['restored_alert'] != 'on') {
 					$status = 0;
+
 					if (trim($alarm_emails) != '') {
-						alarm_mail($alarm_emails, '', $subject, $msg);
+						alarm_mail($alarm_emails, '', $subject, $msg, $alarm['format_file']);
 					}
+
 					// After the alarm is breached(up or down) , notify admin and notify job users.
 					notify_job_users($subject, $alarm, $currentval, $alarm_emails);
 				} else {
@@ -1106,7 +1199,7 @@ function gridalarms_check_alarm($alarm, $force = false) {
 					db_execute_prepared('UPDATE gridalarms_alarm
 						SET acknowledgement="on"
 						WHERE id = ?',
-						array($alarm['id']));
+						array($id));
 				}
 
 				/* execute post restoration script */
@@ -1122,15 +1215,15 @@ function gridalarms_check_alarm($alarm, $force = false) {
 
 				/* run event trigger */
 				alarm_log(array(
-					'type' => 1,
-					'time' => time(),
-					'alarm_id' => $alarm['id'],
+					'type'        => 1,
+					'time'        => time(),
+					'alarm_id'    => $id,
 					'alarm_value' => '',
-					'current' => $currentval,
-					'status' => $status,
+					'current'     => $currentval,
+					'status'      => $status,
 					'description' => $logmsg,
-					'emails' => $alarm_emails,
-					'details' => $bitems)
+					'emails'      => $alarm_emails,
+					'details'     => $bitems)
 				);
 
 				db_execute_prepared('UPDATE gridalarms_alarm
@@ -1160,8 +1253,7 @@ function gridalarms_check_alarm($alarm, $force = false) {
 		array($end_time - $start_time,  $start_date, $id));
 }
 
-
-function notify_job_users($subject, $alarm, $currentval, $sent_emails) {
+function notify_job_users(string $subject, array $alarm, mixed $currentval, mixed $sent_emails) : void {
 	if (!($alarm['notify_cluster_admin'] == 1 || $alarm['notify_users'] == 'on')) return;
 
 	$poller_interval = read_config_option('poller_interval') ;
@@ -1170,15 +1262,16 @@ function notify_job_users($subject, $alarm, $currentval, $sent_emails) {
 	}
 
 	$total_gal_id_array = array();
-	$gal_id_array = array();
+	$gal_id_array       = array();
+	$id                 = $alarm['id'];
 
 	$columns = array_rekey(
-		db_fetch_assoc_prepared('SELECT column_name, display_name
+		db_fetch_assoc_prepared('SELECT column_name, display_name, type, units, align, digits, autoscale
 			FROM gridalarms_alarm_layout
 			WHERE alarm_id = ?
 			ORDER BY sequence ASC',
 			array($alarm['id'])),
-		'column_name', 'display_name'
+		'column_name', array('display_name', 'type', 'units', 'align', 'digits', 'autoscale')
 	);
 
 	// when notify_cluster_admin is checked, send all jobs to admin email
@@ -1248,75 +1341,81 @@ function notify_job_users($subject, $alarm, $currentval, $sent_emails) {
 			AND gal.jobid > 0
 			AND (gal.last_reported="0000-00-00" OR (ga.repeat_alert>0 AND gal.last_reported<now()))
 			GROUP BY clusterid',
-			array($alarm['id'], $alarm['id'], $alarm['id'], $alarm['id']));
+			array($id, $id, $id, $id));
 
 		if (cacti_sizeof ($cluster_groups)) {
 			foreach ($cluster_groups as $cluster_group) {
 				//ToDo merge follow 4 SQL as two with OR/| expression.
-				$job_items = db_fetch_assoc_prepared ("SELECT gal.*, gj.mailuser, gal.user AS job_user
+				$job_items = db_fetch_assoc_prepared("SELECT gal.*, gj.mailuser, gal.user AS job_user
 					FROM gridalarms_alarm_log_items AS gal
 					INNER JOIN grid_jobs AS gj
-					ON gj.exec_host=gal.host
-					AND gj.clusterid=gal.clusterid
-					AND gj.jobid=gal.jobid
-					AND gj.indexid=gal.indexid
-					AND gj.submit_time=gal.submit_time
+					ON gj.exec_host = gal.host
+					AND gj.clusterid = gal.clusterid
+					AND gj.jobid = gal.jobid
+					AND gj.indexid = gal.indexid
+					AND gj.submit_time = gal.submit_time
 					INNER JOIN gridalarms_alarm AS ga
-					ON ga.id=gal.alarm_id
-					WHERE ga.id= ?
-					AND ga.alarm_alert>0
-					AND gal.type & 2 >0
-					AND gj.clusterid= ?
-					AND (gal.last_reported='0000-00-00' OR (ga.repeat_alert>0 AND gal.last_reported<now()))
+					ON ga.id = gal.alarm_id
+					WHERE ga.id = ?
+					AND ga.alarm_alert > 0
+					AND gal.type & 2 > 0
+					AND gj.clusterid = ?
+					AND (gal.last_reported = '0000-00-00' OR (ga.repeat_alert > 0 AND gal.last_reported < NOW()))
 					UNION
 					SELECT gal.*, gj.mailuser, gal.user AS job_user
 					FROM gridalarms_alarm_log_items AS gal
 					INNER JOIN grid_jobs_finished AS gj
-					ON gj.exec_host=gal.host
-					AND gj.clusterid=gal.clusterid
-					AND gj.jobid=gal.jobid
-					AND gj.indexid=gal.indexid
-					AND gj.submit_time=gal.submit_time
+					ON gj.exec_host = gal.host
+					AND gj.clusterid = gal.clusterid
+					AND gj.jobid = gal.jobid
+					AND gj.indexid = gal.indexid
+					AND gj.submit_time = gal.submit_time
 					INNER JOIN gridalarms_alarm AS ga
-					ON ga.id=gal.alarm_id
-					WHERE ga.id= ?
-					AND ga.alarm_alert>0
-					AND gal.type & 2 >0
-					AND gj.clusterid= ?
-					AND (gal.last_reported='0000-00-00' OR (ga.repeat_alert>0 AND gal.last_reported<now()))
+					ON ga.id = gal.alarm_id
+					WHERE ga.id = ?
+					AND ga.alarm_alert > 0
+					AND gal.type & 2 > 0
+					AND gj.clusterid = ?
+					AND (gal.last_reported = '0000-00-00' OR (ga.repeat_alert > 0 AND gal.last_reported < NOW()))
 					UNION
 					SELECT gal.*, gj.mailuser, gal.user AS job_user
 					FROM gridalarms_alarm_log_items AS gal
 					INNER JOIN grid_jobs AS gj
-					ON gj.clusterid=gal.clusterid
-					AND gj.jobid=gal.jobid
-					AND gj.indexid=gal.indexid
-					AND gj.submit_time=gal.submit_time
+					ON gj.clusterid = gal.clusterid
+					AND gj.jobid = gal.jobid
+					AND gj.indexid = gal.indexid
+					AND gj.submit_time = gal.submit_time
 					INNER JOIN gridalarms_alarm AS ga
-					ON ga.id=gal.alarm_id
-					WHERE ga.id= ?
-					AND ga.alarm_alert>0
-					AND gal.type & 1 >0
+					ON ga.id = gal.alarm_id
+					WHERE ga.id = ?
+					AND ga.alarm_alert > 0
+					AND gal.type & 1 > 0
 					AND gal.jobid > 0
-					AND gal.clusterid= ?
-					AND (gal.last_reported='0000-00-00' OR (ga.repeat_alert>0 AND gal.last_reported<now()))
+					AND gal.clusterid = ?
+					AND (gal.last_reported = '0000-00-00' OR (ga.repeat_alert > 0 AND gal.last_reported < NOW()))
 					UNION
 					SELECT gal.*, gj.mailuser, gal.user AS job_user
 					FROM gridalarms_alarm_log_items AS gal
 					INNER JOIN grid_jobs_finished AS gj
-					ON gj.clusterid=gal.clusterid
-					AND gj.jobid=gal.jobid
-					AND gj.indexid=gal.indexid
-					AND gj.submit_time=gal.submit_time
+					ON gj.clusterid = gal.clusterid
+					AND gj.jobid = gal.jobid
+					AND gj.indexid = gal.indexid
+					AND gj.submit_time = gal.submit_time
 					INNER JOIN gridalarms_alarm AS ga
 					ON ga.id=gal.alarm_id
-					WHERE ga.id= ?
-					AND ga.alarm_alert>0
-					AND gal.type & 1 >0
+					WHERE ga.id = ?
+					AND ga.alarm_alert > 0
+					AND gal.type & 1 > 0
 					AND gal.jobid > 0
-					AND gal.clusterid= ?
-					AND (gal.last_reported='0000-00-00' OR (ga.repeat_alert>0 AND gal.last_reported<now()))",
-					array($alarm['id'], $cluster_group['clusterid'], $alarm['id'], $cluster_group['clusterid'], $alarm['id'], $cluster_group['clusterid'], $alarm['id'], $cluster_group['clusterid']));
+					AND gal.clusterid = ?
+					AND (gal.last_reported = '0000-00-00' OR (ga.repeat_alert > 0 AND gal.last_reported < NOW()))",
+					array(
+						$id, $cluster_group['clusterid'],
+						$id, $cluster_group['clusterid'],
+						$id, $cluster_group['clusterid'],
+						$id, $cluster_group['clusterid']
+					)
+				);
 
 				// send Email per cluster
 				$gal_id_array = do_items($subject, $alarm, $currentval, $job_items, $columns, true, $sent_emails);
@@ -1336,143 +1435,144 @@ function notify_job_users($subject, $alarm, $currentval, $sent_emails) {
 		$cluster_user_groups = db_fetch_assoc_prepared("SELECT gj.clusterid, gj.user AS job_user, count(*)
 			FROM gridalarms_alarm_log_items AS gal
 			INNER JOIN grid_jobs AS gj
-			ON gj.exec_host=gal.host
-			AND gj.clusterid=gal.clusterid
-			AND gj.jobid=gal.jobid
-			AND gj.indexid=gal.indexid
-			AND gj.submit_time=gal.submit_time
+			ON gj.exec_host = gal.host
+			AND gj.clusterid = gal.clusterid
+			AND gj.jobid = gal.jobid
+			AND gj.indexid = gal.indexid
+			AND gj.submit_time = gal.submit_time
 			INNER JOIN gridalarms_alarm AS ga
-			ON ga.id=gal.alarm_id
-			WHERE ga.id= ?
-			AND ga.alarm_alert>0
-			AND gal.type & 2 >0
-			AND (gal.last_reported='0000-00-00' OR (ga.repeat_alert>0 AND gal.last_reported<now()))
+			ON ga.id = gal.alarm_id
+			WHERE ga.id = ?
+			AND ga.alarm_alert > 0
+			AND gal.type & 2 > 0
+			AND (gal.last_reported = '0000-00-00' OR (ga.repeat_alert > 0 AND gal.last_reported < NOW()))
 			GROUP BY clusterid,job_user
 			UNION
 			SELECT gj.clusterid, gj.user AS job_user, count(*)
 			FROM gridalarms_alarm_log_items AS gal
 			INNER JOIN grid_jobs_finished AS gj
-			ON gj.exec_host=gal.host
-			AND gj.clusterid=gal.clusterid
-			AND gj.jobid=gal.jobid
-			AND gj.indexid=gal.indexid
-			AND gj.submit_time=gal.submit_time
+			ON gj.exec_host = gal.host
+			AND gj.clusterid = gal.clusterid
+			AND gj.jobid = gal.jobid
+			AND gj.indexid = gal.indexid
+			AND gj.submit_time = gal.submit_time
 			INNER JOIN gridalarms_alarm AS ga
 			ON ga.id=gal.alarm_id
-			WHERE ga.id= ?
-			AND ga.alarm_alert>0
-			AND gal.type & 2 >0
-			AND (gal.last_reported='0000-00-00' OR (ga.repeat_alert>0 AND gal.last_reported<now()))
+			WHERE ga.id = ?
+			AND ga.alarm_alert > 0
+			AND gal.type & 2 > 0
+			AND (gal.last_reported = '0000-00-00' OR (ga.repeat_alert > 0 AND gal.last_reported < NOW()))
 			GROUP BY clusterid,job_user
 			UNION
 			SELECT gal.clusterid,gal.user AS job_user,count(*)
 			FROM gridalarms_alarm_log_items AS gal
 			INNER JOIN grid_jobs AS gj
-			ON gj.clusterid=gal.clusterid
-			AND gj.jobid=gal.jobid
-			AND gj.indexid=gal.indexid
-			AND gj.submit_time=gal.submit_time
+			ON gj.clusterid = gal.clusterid
+			AND gj.jobid = gal.jobid
+			AND gj.indexid = gal.indexid
+			AND gj.submit_time = gal.submit_time
 			INNER JOIN gridalarms_alarm AS ga
-			ON ga.id=gal.alarm_id
-			WHERE ga.id= ?
-			AND ga.alarm_alert>0
-			AND gal.type & 1 >0
+			ON ga.id = gal.alarm_id
+			WHERE ga.id = ?
+			AND ga.alarm_alert > 0
+			AND gal.type & 1 > 0
 			AND gal.jobid > 0
-			AND (gal.last_reported='0000-00-00' OR (ga.repeat_alert>0 AND gal.last_reported<now()))
+			AND (gal.last_reported = '0000-00-00' OR (ga.repeat_alert > 0 AND gal.last_reported < NOW()))
 			GROUP BY clusterid,job_user
 			UNION
 			SELECT gal.clusterid,gal.user AS job_user,count(*)
 			FROM gridalarms_alarm_log_items AS gal
 			INNER JOIN grid_jobs_finished AS gj
-			ON gj.clusterid=gal.clusterid
-			AND gj.jobid=gal.jobid
-			AND gj.indexid=gal.indexid
-			AND gj.submit_time=gal.submit_time
+			ON gj.clusterid = gal.clusterid
+			AND gj.jobid = gal.jobid
+			AND gj.indexid = gal.indexid
+			AND gj.submit_time = gal.submit_time
 			INNER JOIN gridalarms_alarm AS ga
-			ON ga.id=gal.alarm_id
-			WHERE ga.id= ?
-			AND ga.alarm_alert>0
-			AND gal.type & 1 >0
+			ON ga.id = gal.alarm_id
+			WHERE ga.id = ?
+			AND ga.alarm_alert > 0
+			AND gal.type & 1 > 0
 			AND gal.jobid > 0
-			AND (gal.last_reported='0000-00-00' OR (ga.repeat_alert>0 AND gal.last_reported<now()))
+			AND (gal.last_reported = '0000-00-00' OR (ga.repeat_alert > 0 AND gal.last_reported < NOW()))
 			GROUP BY clusterid,job_user",
-			array($alarm['id'], $alarm['id'], $alarm['id'], $alarm['id']));
+			array($id, $id, $id, $id));
 
 		if (cacti_sizeof ($cluster_user_groups)) {
 			foreach ($cluster_user_groups as $cluster_user_group) {
-				$job_items = db_fetch_assoc_prepared ("SELECT gal.*, gj.mailuser, gal.user AS job_user
+				$job_items = db_fetch_assoc ("SELECT gal.*, gj.mailuser, gal.user AS job_user
 					FROM gridalarms_alarm_log_items AS gal
 					INNER JOIN grid_jobs AS gj
-					ON gj.exec_host=gal.host
-					AND gj.clusterid=gal.clusterid
-					AND gj.jobid=gal.jobid
-					AND gj.indexid=gal.indexid
-					AND gj.submit_time=gal.submit_time
+					ON gj.exec_host = gal.host
+					AND gj.clusterid = gal.clusterid
+					AND gj.jobid = gal.jobid
+					AND gj.indexid = gal.indexid
+					AND gj.submit_time = gal.submit_time
 					INNER JOIN gridalarms_alarm AS ga
-					ON ga.id=gal.alarm_id
-					WHERE ga.id= ?
-					AND ga.alarm_alert>0
-					AND gal.type & 2 >0
-					AND gj.clusterid= ?
-					AND gj.user= ?
-					AND (gal.last_reported='0000-00-00' OR (ga.repeat_alert>0 AND gal.last_reported<now()))
+					ON ga.id = gal.alarm_id
+					WHERE ga.id = ?
+					AND ga.alarm_alert > 0
+					AND gal.type & 2 > 0
+					AND gj.clusterid = ?
+					AND gj.user = ?
+					AND (gal.last_reported = '0000-00-00' OR (ga.repeat_alert > 0 AND gal.last_reported < NOW()))
 					UNION
 					SELECT gal.*, gj.mailuser, gal.user AS job_user
 					FROM gridalarms_alarm_log_items AS gal
 					INNER JOIN grid_jobs_finished AS gj
-					ON gj.exec_host=gal.host
-					AND gj.clusterid=gal.clusterid
-					AND gj.jobid=gal.jobid
-					AND gj.indexid=gal.indexid
-					AND gj.submit_time=gal.submit_time
+					ON gj.exec_host = gal.host
+					AND gj.clusterid = gal.clusterid
+					AND gj.jobid = gal.jobid
+					AND gj.indexid = gal.indexid
+					AND gj.submit_time = gal.submit_time
 					INNER JOIN gridalarms_alarm AS ga
-					ON ga.id=gal.alarm_id
-					WHERE ga.id= ?
-					AND ga.alarm_alert>0
-					AND gal.type & 2 >0
-					AND gj.clusterid= ?
-					AND gj.user= ?
-					AND (gal.last_reported='0000-00-00' OR (ga.repeat_alert>0 AND gal.last_reported<now()))
+					ON ga.id = gal.alarm_id
+					WHERE ga.id = ?
+					AND ga.alarm_alert > 0
+					AND gal.type & 2 > 0
+					AND gj.clusterid = ?
+					AND gj.user = ?
+					AND (gal.last_reported = '0000-00-00' OR (ga.repeat_alert > 0 AND gal.last_reported < NOW()))
 					UNION
 					SELECT gal.*, gj.mailuser, gal.user AS job_user
 					FROM gridalarms_alarm_log_items AS gal
 					INNER JOIN grid_jobs AS gj
-					ON gj.clusterid=gal.clusterid
-					AND gj.jobid=gal.jobid
-					AND gj.indexid=gal.indexid
-					AND gj.submit_time=gal.submit_time
+					ON gj.clusterid = gal.clusterid
+					AND gj.jobid = gal.jobid
+					AND gj.indexid = gal.indexid
+					AND gj.submit_time = gal.submit_time
 					INNER JOIN gridalarms_alarm AS ga
-					ON ga.id=gal.alarm_id
-					WHERE ga.id= ?
-					AND ga.alarm_alert>0
-					AND gal.type & 1 >0
+					ON ga.id = gal.alarm_id
+					WHERE ga.id = ?
+					AND ga.alarm_alert > 0
+					AND gal.type & 1 > 0
 					AND gal.jobid > 0
-					AND gal.clusterid= ?
-					AND gal.user= ?
-					AND (gal.last_reported='0000-00-00' OR (ga.repeat_alert>0 AND gal.last_reported<now()))
+					AND gal.clusterid = ?
+					AND gal.user = ?
+					AND (gal.last_reported = '0000-00-00' OR (ga.repeat_alert > 0 AND gal.last_reported < NOW()))
 					UNION
 					SELECT gal.*, gj.mailuser, gal.user AS job_user
 					FROM gridalarms_alarm_log_items AS gal
 					INNER JOIN grid_jobs_finished AS gj
-					ON gj.clusterid=gal.clusterid
-					AND gj.jobid=gal.jobid
-					AND gj.indexid=gal.indexid
-					AND gj.submit_time=gal.submit_time
+					ON gj.clusterid = gal.clusterid
+					AND gj.jobid = gal.jobid
+					AND gj.indexid = gal.indexid
+					AND gj.submit_time = gal.submit_time
 					INNER JOIN gridalarms_alarm AS ga
-					ON ga.id=gal.alarm_id
-					WHERE ga.id= ?
-					AND ga.alarm_alert>0
-					AND gal.type & 1 >0
+					ON ga.id = gal.alarm_id
+					WHERE ga.id = ?
+					AND ga.alarm_alert > 0
+					AND gal.type & 1 > 0
 					AND gal.jobid > 0
-					AND gal.clusterid= ?
-					AND gal.user= ?
-					AND (gal.last_reported='0000-00-00' OR (ga.repeat_alert>0 AND gal.last_reported<now()))",
+					AND gal.clusterid = ?
+					AND gal.user = ?
+					AND (gal.last_reported = '0000-00-00' OR (ga.repeat_alert > 0 AND gal.last_reported < NOW()))",
 					array(
-						$alarm['id'],$cluster_user_group['clusterid'],$cluster_user_group['job_user'],
-						$alarm['id'],$cluster_user_group['clusterid'],$cluster_user_group['job_user'],
-						$alarm['id'],$cluster_user_group['clusterid'],$cluster_user_group['job_user'],
-						$alarm['id'],$cluster_user_group['clusterid'],$cluster_user_group['job_user']
-					));
+						$id, $cluster_user_group['clusterid'], $cluster_user_group['job_user'],
+						$id, $cluster_user_group['clusterid'], $cluster_user_group['job_user'],
+						$id, $cluster_user_group['clusterid'], $cluster_user_group['job_user'],
+						$id, $cluster_user_group['clusterid'], $cluster_user_group['job_user'],
+					)
+				);
 
 				// send emails per cluster and user.
 				$gal_id_array = do_items($subject, $alarm, $currentval, $job_items, $columns, false, $sent_emails);
@@ -1486,76 +1586,122 @@ function notify_job_users($subject, $alarm, $currentval, $sent_emails) {
 		}
 
 		// Get job items for host based alerts not associated with a job directly
-		$cluster_hosts = db_fetch_assoc_prepared("SELECT gal.id, gal.clusterid, gal.host AS host, count(*)
+		$cluster_hosts = db_fetch_assoc_prepared("SELECT gal.id, gal.clusterid, gal.host AS host, COUNT(*)
 			FROM gridalarms_alarm_log_items AS gal
 			INNER JOIN gridalarms_alarm AS ga
-			ON ga.id=gal.alarm_id
-			WHERE ga.id= ?
-			AND gal.host!=''
-			AND gal.jobid=0
-			AND ga.alarm_alert>0
-			AND gal.type & 2 >0
-			AND (gal.last_reported='0000-00-00' OR (ga.repeat_alert>0 AND gal.last_reported<now()))
-			GROUP BY clusterid,host", array($alarm['id']));
+			ON ga.id = gal.alarm_id
+			WHERE ga.id = ?
+			AND gal.host != ''
+			AND gal.jobid = 0
+			AND ga.alarm_alert > 0
+			AND gal.type & 2 > 0
+			AND (gal.last_reported = '0000-00-00' OR (ga.repeat_alert > 0 AND gal.last_reported < NOW()))
+			GROUP BY clusterid,host", array($id));
 
 		$newcols = array(
-			'host' => 'Host',
-			'clustername' => 'Cluster Name',
-			'jobid' => 'JobID',
-			'indexid' => 'Job Index',
-			'submit_time' => 'Submit Time',
-			'user' => 'Job User'
+			'host' => array(
+				'display_name' => __('Host', 'gridalarms'),
+				'type'         => 'string',
+				'align'        => 'left',
+				'units'        => '',
+				'digits'       => '0',
+				'autoscale'    => '1'
+			),
+			'clustername' => array(
+				'display_name' => __('Cluster Name', 'gridalarms'),
+				'type'         => 'string',
+				'align'        => 'left',
+				'units'        => '',
+				'digits'       => '0',
+				'autoscale'    => '1'
+			),
+			'jobid' => array(
+				'display_name' => __('JobID', 'gridalarms'),
+				'type'         => 'string',
+				'align'        => 'left',
+				'units'        => '',
+				'digits'       => '0',
+				'autoscale'    => '1'
+			),
+			'indexid' => array(
+				'display_name' => __('Job Index', 'gridalarms'),
+				'type'         => 'string',
+				'align'        => 'left',
+				'units'        => '',
+				'digits'       => '0',
+				'autoscale'    => '1'
+			),
+			'submit_time' => array(
+				'display_name' => __('Submit Time', 'gridalarms'),
+				'type'         => 'string',
+				'align'        => 'left',
+				'units'        => '',
+				'digits'       => '0',
+				'autoscale'    => '1'
+			),
+			'user' => array(
+				'display_name' => __('Job User', 'gridalarms'),
+				'type'         => 'string',
+				'align'        => 'left',
+				'units'        => '',
+				'digits'       => '0',
+				'autoscale'    => '1'
+			),
 		);
 
 		$job_items = array();
 
 		if (cacti_sizeof($cluster_hosts)) {
 			foreach ($cluster_hosts as $ch) {
-				$job_items += db_fetch_assoc_prepared ("SELECT '" . $ch['id'] . "' AS id, gj.clusterid, gj.exec_host AS host,
+				$job_items += db_fetch_assoc_prepared("SELECT '" . $ch['id'] . "' AS id, gj.clusterid, gj.exec_host AS host,
 					gc.clustername AS clustername, gj.jobid, gj.indexid, gj.submit_time, gj.user AS job_user, gj.mailuser
 					FROM gridalarms_alarm_log_items AS gal
 					INNER JOIN grid_jobs AS gj
-					ON gj.exec_host=gal.host
-					AND gj.clusterid=gal.clusterid
+					ON gj.exec_host = gal.host
+					AND gj.clusterid = gal.clusterid
 					LEFT JOIN grid_jobs_jobhosts AS gjh
-					ON gj.clusterid=gjh.clusterid
-					AND gj.jobid=gjh.jobid
-					AND gj.indexid=gjh.indexid
-					AND gj.submit_time=gjh.submit_time
+					ON gj.clusterid = gjh.clusterid
+					AND gj.jobid = gjh.jobid
+					AND gj.indexid = gjh.indexid
+					AND gj.submit_time = gjh.submit_time
 					INNER JOIN gridalarms_alarm AS ga
 					ON ga.id=gal.alarm_id
 					INNER JOIN grid_clusters AS gc
-					ON gc.clusterid=gj.clusterid
-					WHERE ga.id= ?
+					ON gc.clusterid = gj.clusterid
+					WHERE ga.id = ?
 					AND gjh.jobid IS NULL
-					AND ga.alarm_alert>0
-					AND gal.type & 2 >0
-					AND gj.clusterid= ?
-					AND gj.exec_host= ?
-					AND (gal.last_reported='0000-00-00' OR (ga.repeat_alert>0 AND gal.last_reported<now()))
+					AND ga.alarm_alert > 0
+					AND gal.type & 2 > 0
+					AND gj.clusterid = ?
+					AND gj.exec_host = ?
+					AND (gal.last_reported = '0000-00-00' OR (ga.repeat_alert > 0 AND gal.last_reported < NOW()))
 					UNION
 					SELECT '" . $ch['id'] . "' AS id, gj.clusterid, gjh.exec_host AS host, gc.clustername AS clustername,
 					gj.jobid, gj.indexid, gj.submit_time, gj.user AS job_user, gj.mailuser
 					FROM gridalarms_alarm_log_items AS gal
 					INNER JOIN grid_jobs_jobhosts AS gjh
-					ON gal.clusterid=gjh.clusterid
-					AND gal.host=gjh.exec_host
+					ON gal.clusterid = gjh.clusterid
+					AND gal.host = gjh.exec_host
 					INNER JOIN grid_jobs AS gj
-					ON gj.clusterid=gjh.clusterid
-					AND gj.jobid=gjh.jobid
-					AND gj.indexid=gjh.indexid
-					AND gj.submit_time=gjh.submit_time
+					ON gj.clusterid = gjh.clusterid
+					AND gj.jobid = gjh.jobid
+					AND gj.indexid = gjh.indexid
+					AND gj.submit_time = gjh.submit_time
 					INNER JOIN gridalarms_alarm AS ga
-					ON ga.id=gal.alarm_id
+					ON ga.id = gal.alarm_id
 					INNER JOIN grid_clusters AS gc
-					ON gc.clusterid=gj.clusterid
-					WHERE ga.id= ?
-					AND ga.alarm_alert>0
-					AND gal.type & 2 >0
-					AND gj.clusterid= ?
-					AND gjh.exec_host= ?
-					AND (gal.last_reported='0000-00-00' OR (ga.repeat_alert>0 AND gal.last_reported<now()))",
-					array($alarm['id'], $ch['clusterid'], $ch['host'], $alarm['id'], $ch['clusterid'], $ch['host']));
+					ON gc.clusterid = gj.clusterid
+					WHERE ga.id = ?
+					AND ga.alarm_alert > 0
+					AND gal.type & 2 > 0
+					AND gj.clusterid = ?
+					AND gjh.exec_host = ?
+					AND (gal.last_reported = '0000-00-00' OR (ga.repeat_alert > 0 AND gal.last_reported < NOW()))",
+					array(
+						$id, $ch['clusterid'], $ch['host'],
+						$id, $ch['clusterid'], $ch['host']
+					)
+				);
 			}
 
 			if (cacti_sizeof($job_items)) {
@@ -1592,53 +1738,63 @@ function notify_job_users($subject, $alarm, $currentval, $sent_emails) {
 	}
 }
 
-function do_items($subject, $alarm, $currentval, $job_items, $columns, $if_admin, $sent_emails) {
+function do_items(string $subject, array $alarm, mixed $currentval, mixed $job_items, mixed $columns, bool $if_admin, mixed $sent_emails) : bool|array {
 	global $config, $cnn_id;
 
-	//print_r($columns);
-	//print_r($job_items);
-
-	if (empty($job_items)) return;
+	if (empty($job_items)) {
+		return false;
+	}
 
 	/* use thold's base url */
 	$httpurl = read_config_option('base_url');
 
 	$display_text = array();
 
-	foreach ($columns as $c) {
-		$display_text[] = $c;
+	foreach ($columns as $column_name => $data) {
+		$display_text[] = array(
+			'display' => $data['display_name'],
+			'align'   => $data['align']
+		);
 	}
 
 	ob_start();
 
-	$i=0;
+	$i = 0;
+
 	/* build new header */
-	html_start_box(__('First %s Threshold Breaching Items', read_config_option('gridalarm_alert_limit')), '100%', '', '3', 'center', '');
+	html_start_box(__('First %s Alert Breaching Items', read_config_option('gridalarm_alert_limit')), '100%', '', '3', 'center', '');
+
 	html_header($display_text);
 
 	foreach ($job_items as $item) {
 		form_alternate_row();
 
 		$j = 1;
-		foreach ($columns as $column_name => $display_name) {
+		foreach ($columns as $column_name => $data) {
+			if ($data['align'] == '') {
+				$data['align'] = 'left';
+			}
+
+			$class = $data['align'];
+
 			switch(strtolower($column_name)) {
 			case 'user':
 			case 'username':
 				if (isset($item['clusterid'])) {
-					print "<td><a href='" . html_escape($httpurl . 'plugins/grid/grid_busers.php?query=1&clusterid=' .
-						$item['clusterid'] . '&filter=' . $item['job_user']) . "'>" . $item['job_user'] . "</a></td>\n";
+					print "<td class='$class nowrap'><a href='" . html_escape($httpurl . 'plugins/grid/grid_busers.php?query=1&clusterid=' .
+						$item['clusterid'] . '&filter=' . $item['job_user']) . "'>" . $item['job_user'] . "</a></td>";
 				} else {
-					print '<td>' . (isset($item['job_user']) ? $item['job_user']:'Not Found') . "</td>\n";
+					print "<td class='$class nowrap'>" . (isset($item['job_user']) ? $item['job_user']:__('Not Found', 'gridalarms')) . "</td>";
 				}
 
 				break;
 			case 'jobid':
 				if (isset($item['indexid']) && isset($item['submit_time']) && isset($item['clusterid'])) {
-					print "<td><a href='" . html_escape($httpurl . 'plugins/grid/grid_bjobs.php?query=1&action=viewjob&clusterid=' .
+					print "<td class='$class nowrap'><a href='" . html_escape($httpurl . 'plugins/grid/grid_bjobs.php?query=1&action=viewjob&clusterid=' .
 						$item['clusterid'] . '&indexid=' . $item['indexid'] . '&jobid=' . $item['jobid'] . '&submit_time=' .
-						strtotime($item['submit_time']) . "' title='". $item['jobid']) . "'>" .	$item['jobid'] . "</a></td>\n";
+						strtotime($item['submit_time']) . "' title='". $item['jobid']) . "'>" .	$item['jobid'] . "</a></td>";
 				} else {
-					print '<td>' . (isset($item['jobid']) ? $item['jobid']:'Not Found') . "</td>\n";
+					print "<td class='$class nowrap'>" . (isset($item['jobid']) ? $item['jobid']:__('Not Found', 'gridalarms')) . "</td>";
 				}
 
 				break;
@@ -1647,10 +1803,10 @@ function do_items($subject, $alarm, $currentval, $job_items, $columns, $if_admin
 				$queue = $item['column' . substr('0' . $j, -2)];
 
 				if (isset($item['clusterid'])) {
-					print "<td><a href='" . html_escape($httpurl . 'plugins/grid/grid_bqueues.php?action=&clusterid=' .
-						$item['clusterid'] . '&filter=' . $queue) . "'>$queue</a></td>\n";
+					print "<td class='$class nowrap'><a href='" . html_escape($httpurl . 'plugins/grid/grid_bqueues.php?action=&clusterid=' .
+						$item['clusterid'] . '&filter=' . $queue) . "'>$queue</a></td>";
 				} else {
-					print "<td>$queue</td>\n";
+					print "<td class='$class nowrap'>$queue</td>";
 				}
 
 				break;
@@ -1658,7 +1814,7 @@ function do_items($subject, $alarm, $currentval, $job_items, $columns, $if_admin
 			case 'hostname':
 			case 'host':
 				if (isset($item['column' . substr('0' . $j, -2)])) {
-					$host = ($item['column' . substr('0' . $j, -2)] != 'NULL' ? $item['column' . substr('0' . $j, -2)]:'Not Found');
+					$host = ($item['column' . substr('0' . $j, -2)] != 'NULL' ? $item['column' . substr('0' . $j, -2)]:__('Not Found', 'gridalarms'));
 				} elseif (isset($item['hostname'])) {
 					$host = $item['hostname'];
 				} elseif (isset($item['exec_host'])) {
@@ -1668,20 +1824,20 @@ function do_items($subject, $alarm, $currentval, $job_items, $columns, $if_admin
 				}
 
 				if (isset($item['clusterid'])) {
-					print "<td><a href='" . html_escape($httpurl . 'plugins/grid/grid_bzen.php?action=zoom&clusterid=' .
-					$item['clusterid'] . '&exec_host=' . $host) . "'>" . grid_strip_domain($host) . "</a></td>\n";
+					print "<td class='$class nowrap'><a href='" . html_escape($httpurl . 'plugins/grid/grid_bzen.php?action=zoom&clusterid=' .
+					$item['clusterid'] . '&exec_host=' . $host) . "'>" . grid_strip_domain($host) . "</a></td>";
 				} else {
-					print '<td>' . grid_strip_domain($host) . "</td>\n";
+					print "<td class='$class nowrap'>" . grid_strip_domain($host) . "</td>";
 				}
 
 				break;
 			default:
 				if (isset($item['column' . substr('0' . $j, -2)])) {
-					print '<td>' . $item['column' . substr('0' . $j, -2)] . "</td>\n";
+					print "<td class='$class nowrap'>" . $item['column' . substr('0' . $j, -2)] . "</td>";
 				} elseif (isset($item[$column_name])) {
-					print '<td>' . $item[$column_name] . "</td>\n";
+					print "<td class='$class nowrap'>" . html_escape($item[$column_name]) . "</td>";
 				} else {
-					print "<td>Not Found</td>\n";
+					print "<td class='$class nowrap'>" . __('Not Found', 'gridalarms') . "</td>";
 				}
 				break;
 			}
@@ -1696,30 +1852,32 @@ function do_items($subject, $alarm, $currentval, $job_items, $columns, $if_admin
 
 	//get the new alert message content
 	$email_content = ob_get_clean();
-	$new_msg = gridalarms_text_replace($alarm['email_body'], $currentval, $alarm, $email_content);
+	$new_msg       = gridalarms_text_replace($alarm['email_body'], $currentval, $alarm, $email_content);
 
 	/* obtain user emails, index is clusterid_user */
 	$email_addresses = get_user_emails($job_items, $if_admin, $sent_emails);
-	$email_list = implode (',',$email_addresses);
+	$email_list      = implode (',', $email_addresses);
+
 	gridalarms_debug("email_addresses = '" . $email_list ."'");
 	//gridalarms_debug(str_replace("\n","",$new_msg));
 
 	if (trim($email_list) != '') {
-		alarm_mail($email_list, '', $subject, $new_msg);
+		alarm_mail($email_list, '', $subject, $new_msg, $alarm['format_file']);
 	}
 
 	$gal_id_array = array();
+
 	foreach ($job_items as $item) {
 		$gal_id_array[$item['id']] = $item['id'];
 	}
 
-	return $gal_id_array ;
+	return $gal_id_array;
 }
 
-function get_user_emails($ajobs,$if_admin, $sent_emails='') {
-	$emails = array();
+function get_user_emails(array $ajobs, bool $if_admin, string $sent_emails = '') : array {
+	$emails        = array();
 	$email_domains = array();
-	$method = read_config_option('gridalarm_user_map');
+	$method        = read_config_option('gridalarm_user_map');
 
 	if (cacti_sizeof($ajobs)) {
 		foreach ($ajobs as $j) {
@@ -1779,29 +1937,32 @@ function get_user_emails($ajobs,$if_admin, $sent_emails='') {
 		}
 	}
 
-	//remove duplicate emails from sent emails
+	/* remove duplicate emails from sent emails */
 	if (!empty($sent_emails)) {
 		$sent_emails_array = explode(',', $sent_emails);
+
 		foreach ($emails as $new_email_key => $new_email_value) {
 			if (array_search(strtolower($new_email_value), array_map('strtolower', $sent_emails_array)) !== false) {
 				unset($emails[$new_email_key]);
 			}
 		}
 	}
+
 	return $emails;
 }
 
 /**
  * function to check all alarms
- * @param 					- none
- * @returns					- total alarms checked
+ *
+ * @return int|bool total alarms checked
  */
-function gridalarms_check_all_alarms() {
+function gridalarms_check_all_alarms() : int|bool {
 	global $config;
 
 	// Do not proceed if we have chosen to globally disable all alerts
 	if (read_config_option('thold_disable_all') == 'on') {
 		gridalarms_debug('Grid Alert checking is disabled globally');
+
 		return false;
 	}
 
@@ -1813,7 +1974,8 @@ function gridalarms_check_all_alarms() {
 	$total_alarms = cacti_sizeof($alarms);
 
 	gridalarms_debug("START  - Processing $total_alarms Alert");
-	api_plugin_hook('gridalarms_reset_hostsalarm');
+
+	api_plugin_hook_function('gridalarms_reset_hostsalarm');
 
 	if (cacti_sizeof($alarms)) {
 		foreach ($alarms as $alarm) {
@@ -1829,11 +1991,13 @@ function gridalarms_check_all_alarms() {
 
 /**
  * sets the pollers environment with gridalarm environment variables prior to script launch
- * @param $currentval		- the alarms current value
- * @param $alarm			- the alarm to be used to construct the environment
- * @returns					- total alarms checked
+ *
+ * @param  mixed $currentval the alarms current value
+ * @param  array $alarm the alarm to be used to construct the environment
+ *
+ * @return void
  */
-function gridalarms_set_execenv($currentval, $alarm) {
+function gridalarms_set_execenv(mixed $currentval, array $alarm) : void {
 	/* the current values */
 	putenv('GALERT_NAME=' . $alarm['name']);
 	putenv('GALERT_ID='   . $alarm['id']);
@@ -1851,15 +2015,14 @@ function gridalarms_set_execenv($currentval, $alarm) {
 	putenv('GALERT_ITEMS_HEADER=' . get_alarm_breach_details_headers_for_script($alarm));
 	putenv('GALERT_ITEMS_LIST='   . get_alarm_breach_details_for_script($alarm));
 	putenv('GALERT_ITEMS_COLUMN=' . get_alarm_breach_details_columns_for_script($alarm));
-
 }
 
 /**
  * the main function that spawns the various alerts
- * @param 					- none
- * @returns					- null
+ *
+ * @return void
  */
-function gridalarms_alarm_poller () {
+function gridalarms_alarm_poller() : void {
 	/* record the start time */
 	$start = microtime(true);
 
@@ -1872,14 +2035,14 @@ function gridalarms_alarm_poller () {
 	$end = microtime(true);
 
 	/* log statistics */
-	$gridalarms_alarm_stats = sprintf('Time:%01.4f Alerts:%s', $end - $start, ($alarms === false ? 'checking disabled' : $alarms));
+	$gridalarms_alarm_stats = sprintf('Time:%01.4f Alerts:%s', $end - $start, $alarms);
 
 	cacti_log('GRIDALERTS STATS: ' . $gridalarms_alarm_stats, false, 'SYSTEM');
 
 	set_config_option('stats_gridalarms_alarm', $gridalarms_alarm_stats);
 }
 
-function alarm_cacti_log($string) {
+function alarm_cacti_log(string $string) : void {
 	global $config;
 
 	$environ = 'ALERT';
@@ -1952,11 +2115,14 @@ function alarm_cacti_log($string) {
 
 /**
  * logs events for the alarm for later reference by the operator
- * @param $save				- the cacti specific save array for the insert
- * @returns					- null
+ *
+ * @param array $save the cacti specific save array for the insert
+ *
+ * @return array
  */
-function alarm_log($save) {
+function alarm_log(array $save) : array {
 	$save['id'] = 0;
+
 	if (read_config_option('thold_log_cacti') == 'on') {
 		$alarm = db_fetch_row_prepared('SELECT *
 			FROM gridalarms_alarm
@@ -1976,23 +2142,27 @@ function alarm_log($save) {
 
 		$desc .= '  Type: ' . $types[$alarm['alarm_type']];
 		$desc .= '  Enabled: ' . $alarm['alarm_enabled'];
+
 		switch ($alarm['alarm_type']) {
-		case 0:
-			$desc .= '  Current: ' . $save['current'];
-			$desc .= '  High: ' . $alarm['alarm_hi'];
-			$desc .= '  Low: ' . $alarm['alarm_low'];
-			$desc .= '  Trigger: ' . plugin_alarm_duration_convert($alarm['alarm_fail_trigger'], 'alert');
-			break;
-		case 1:
-			$desc .= '  Current: ' . $save['current'];
-			break;
-		case 2:
-			$desc .= '  Current: ' . $save['current'];
-			$desc .= '  High: ' . $alarm['time_hi'];
-			$desc .= '  Low: ' . $alarm['time_low'];
-			$desc .= '  Trigger: ' . $alarm['time_fail_trigger'];
-			$desc .= '  Time: ' . plugin_alarm_duration_convert($alarm['time_fail_length'], 'time');
-			break;
+			case 0:
+				$desc .= '  Current: ' . $save['current'];
+				$desc .= '  High: ' . $alarm['alarm_hi'];
+				$desc .= '  Low: ' . $alarm['alarm_low'];
+				$desc .= '  Trigger: ' . plugin_alarm_duration_convert($alarm['alarm_fail_trigger'], 'alert');
+
+				break;
+			case 1:
+				$desc .= '  Current: ' . $save['current'];
+
+				break;
+			case 2:
+				$desc .= '  Current: ' . $save['current'];
+				$desc .= '  High: ' . $alarm['time_hi'];
+				$desc .= '  Low: ' . $alarm['time_low'];
+				$desc .= '  Trigger: ' . $alarm['time_fail_trigger'];
+				$desc .= '  Time: ' . plugin_alarm_duration_convert($alarm['time_fail_length'], 'time');
+
+				break;
 		}
 
 		$desc .= '  SentTo: ' . $save['emails'];
@@ -2009,15 +2179,21 @@ function alarm_log($save) {
 	}
 
 	$id = sql_save($save, 'gridalarms_alarm_log');
+
+	api_plugin_hook_function('gridalarms_action', $save);
+
+	return $save;
 }
 
 /**
  * logs acknowledgement messages from alarms that have been acknowledged
- * @param $id				- the id of the alarm to be acknowledged
- * @param $desc				- the message that was entered by the admin
- * @returns					- null
+ *
+ * @param int    $id the id of the alarm to be acknowledged
+ * @param string $desc the message that was entered by the admin
+ *
+ * @return void
  */
-function alarm_ack_logging($id, $desc, $email = false) {
+function alarm_ack_logging(int $id, string $desc, bool $email = false) : void {
 	$alarm = get_alarm_by_id($id);
 
 	if (isset($_SESSION['sess_user_id'])) {
@@ -2046,14 +2222,14 @@ function alarm_ack_logging($id, $desc, $email = false) {
 	}
 
 	alarm_log(array(
-		'type' => $alarm['alarm_type'],
-		'time' => time(),
-		'alarm_id' => $id,
+		'type'        => $alarm['alarm_type'],
+		'time'        => time(),
+		'alarm_id'    => $id,
 		'alarm_value' => '',
-		'current' => $alarm['lastread'],
-		'status' => 99,
+		'current'     => $alarm['lastread'],
+		'status'      => 99,
 		'description' => $desc,
-		'emails' => '')
+		'emails'      => '')
 	);
 
 	if ($email) {
@@ -2065,7 +2241,7 @@ function alarm_ack_logging($id, $desc, $email = false) {
 		$message .= '<tr><td>' . $desc . '</td></tr>';
 
 		if (trim($alarm_emails) != '') {
-			alarm_mail($alarm_emails, '', $subject, $message);
+			alarm_mail($alarm_emails, '', $subject, $message, $alarm['format_file']);
 		}
 	}
 
@@ -2076,10 +2252,12 @@ function alarm_ack_logging($id, $desc, $email = false) {
 
 /**
  * get the current threshold value for a script based data source
- * @param $alarm			- the alarm to run
- * @returns					- the return value
+ *
+ * @param  array $alarm the alarm to run
+ *
+ * @return mixed the return value
  */
-function get_current_value_by_script($alarm) {
+function get_current_value_by_script(array $alarm) : mixed {
 	$expression = get_expression_by_id($alarm['expression_id']);
 
 	if (cacti_sizeof($expression)) {
@@ -2103,10 +2281,12 @@ function get_current_value_by_script($alarm) {
 
 /**
  * get the current threshold value for an expression based data source
- * @param $alarm			- the alarm to run
- * @returns					- the return value
+ *
+ * @param  array $alarm the alarm to run
+ *
+ * @return mixed the return value
  */
-function get_current_value_by_expression($alarm) {
+function get_current_value_by_expression(array $alarm) : mixed {
 	global $aggregation;
 
 	$expression     = get_expression_by_id($alarm['expression_id']);
@@ -2152,10 +2332,12 @@ function get_current_value_by_expression($alarm) {
 
 /**
  * get the current threshold value for an sql query based data source
- * @param $alarm			- the alarm to run
- * @returns					- the return value
+ *
+ * @param  array $alarm the alarm to run
+ *
+ * @return mixed the return value
  */
-function get_current_value_by_sql($alarm) {
+function get_current_value_by_sql(array $alarm) : mixed {
 	global $aggregation;
 
 	$expression = get_expression_by_id($alarm['expression_id']);
@@ -2196,10 +2378,12 @@ function get_current_value_by_sql($alarm) {
 
 /**
  * get the name of the cluster for a specific clusterid
- * @param $clusterid		- the clusterid to check
- * @returns					- the name of the cluster
+ *
+ * @param  int $clusterid the clusterid to check
+ *
+ * @return bool|string the name of the cluster
  */
-function get_clustername($clusterid) {
+function get_clustername(int $clusterid) : bool|string {
 	return db_fetch_cell_prepared('SELECT clustername
 		FROM grid_clusters
 		WHERE clusterid = ?',
@@ -2208,27 +2392,27 @@ function get_clustername($clusterid) {
 
 /**
  * get an associative array of clusterid, clustername combinations
- * @param 					- none
- * @returns					- array of all clusterids, and clusternames
+ *
+ * @return mixed all clusters names and ids
  */
-function get_clusters() {
+function get_clusters() : bool|array {
 	return db_fetch_assoc('SELECT clusterid, clustername
 		FROM grid_clusters');
 }
 
 /**
  * create an array of dropdown compatible clusterid/name for Cacti dropdown function
- * @param 					- none
- * @returns					- formatted array for cacti api
+ *
+ * @return array of formatted array for cacti api
  */
-function get_clusters_for_form_dropdown() {
-	$clusters = get_clusters();
+function get_clusters_for_form_dropdown() : array {
+	$clusters     = get_clusters();
 	$cluster_list = array('0' => __('N/A', 'gridalarms'));
 
 	if (cacti_sizeof($clusters)) {
-	foreach ($clusters as $cluster) {
-		$cluster_list[$cluster['clusterid']] = $cluster['clustername'];
-	}
+		foreach ($clusters as $cluster) {
+			$cluster_list[$cluster['clusterid']] = $cluster['clustername'];
+		}
 	}
 
 	return $cluster_list;
@@ -2236,10 +2420,12 @@ function get_clusters_for_form_dropdown() {
 
 /**
  * function to print debug messages to console when running cli's
- * @param $message			- string message with or without trailing line breaks
- * @returns					- null
+ *
+ * @param  string $message string message with or without trailing line breaks
+ *
+ * @return void
  */
-function gridalarms_debug($message) {
+function gridalarms_debug(string $message) : void {
 	global $debug;
 
 	if (defined('CACTI_DATE_TIME_FORMAT')) {
@@ -2255,10 +2441,13 @@ function gridalarms_debug($message) {
 
 /**
  * builds a SQL statment from the expression syntax created for the alert
- * @param $expression_id	- the expression to build syntax for
- * @returns					- null, or formatted sql statment
+ *
+ * @param int    $expression_id the expression to build syntax for
+ @ @param string $where_extra any extra SQL where to use
+ *
+ * @return mixed the sql query
  */
-function build_expression_string_for_sql_from_where($expression_id, $where_extra = '') {
+function build_expression_string_for_sql_from_where(int $expression_id, string $where_extra = '') : string {
 	$items = db_fetch_assoc_prepared('SELECT *
 		FROM gridalarms_expression_item
 		WHERE expression_id = ?
@@ -2268,13 +2457,14 @@ function build_expression_string_for_sql_from_where($expression_id, $where_extra
 	$expression = get_expression_by_id($expression_id);
 
 	$i = 0;
+
 	$gridalarms_expression_string = ' FROM ' . $expression['db_table'];
 
-	if(strlen($where_extra) > 0 || cacti_sizeof($items) > 0){
+	if (strlen($where_extra) > 0 || cacti_sizeof($items) > 0) {
 		$gridalarms_expression_string .= ' WHERE ';
 	}
 
-	if(strlen($where_extra) > 0 && cacti_sizeof($items) > 0){
+	if (strlen($where_extra) > 0 && cacti_sizeof($items) > 0) {
 		$where_extra .= ' AND ';
 	}
 
@@ -2328,10 +2518,13 @@ function build_expression_string_for_sql_from_where($expression_id, $where_extra
 
 /**
  * builds a SQL statment from the expression syntax created for the template
- * @param $expression_id	- the expression to build syntax for
- * @returns					- null, or formatted sql statment
+ *
+ * @param int     $expression_id the expression to build syntax for
+ @ @param string $where_extra any extra SQL where to use
+ *
+ * @return string the formatted sql statment
  */
-function build_template_expression_string_for_sql_from_where($expression_id, $where_extra = '') {
+function build_template_expression_string_for_sql_from_where(int $expression_id, string $where_extra = '') : string {
 	$items = db_fetch_assoc_prepared('SELECT *
 		FROM gridalarms_template_expression_item
 		WHERE expression_id = ?
@@ -2344,11 +2537,11 @@ function build_template_expression_string_for_sql_from_where($expression_id, $wh
 
 	$gridalarms_expression_string = ' FROM ' . $expression['db_table'];
 
-	if(strlen($where_extra) > 0 || cacti_sizeof($items) > 0){
+	if (strlen($where_extra) > 0 || cacti_sizeof($items) > 0) {
 		$gridalarms_expression_string .= ' WHERE ';
 	}
 
-	if(strlen($where_extra) > 0 && cacti_sizeof($items) > 0){
+	if (strlen($where_extra) > 0 && cacti_sizeof($items) > 0) {
 		$where_extra .= ' AND ';
 	}
 
@@ -2401,17 +2594,21 @@ function build_template_expression_string_for_sql_from_where($expression_id, $wh
 
 /**
  * build the expression string for viewing in alert data source page
- * @param $expression_id	- the expression to build syntax for
- * @returns					- string of formatted expression
+ *
+ * @param int     $expression_id the expression to build syntax for
+ *
+ * @return string of formatted expression
  */
-function get_gridalarms_expression_string($expression_id) {
+function get_gridalarms_expression_string(int $expression_id) : string {
 	$items = db_fetch_assoc_prepared('SELECT *
 		FROM gridalarms_expression_item
 		WHERE expression_id = ?
 		ORDER BY sequence',
 		array($expression_id));
 
-	$i = 0; $gridalarms_expression_string = '';
+	$gridalarms_expression_string = '';
+
+	$i = 0;
 
 	if (cacti_sizeof($items)) {
 		foreach ($items as $item) {
@@ -2430,14 +2627,17 @@ function get_gridalarms_expression_string($expression_id) {
 					case 'clusterid':
 					case 'clustername':
 						$gridalarms_expression_string .= '|alert_' . $item['value'] . "|";
+
 						break;
 					default:
 						$gridalarms_expression_string .= '|input_' . $item['value'] . "|";
+
 						break;
 				}
 			} else {
 				$gridalarms_expression_string .= $item['value'];
 			}
+
 			$i++;
 		}
 	}
@@ -2447,17 +2647,21 @@ function get_gridalarms_expression_string($expression_id) {
 
 /**
  * build the expression string for viewing in template data source page
- * @param $expression_id	- the expression to build syntax for
- * @returns					- string of formatted expression
+ *
+ * @param  int    $expression_id the expression to build syntax for
+ *
+ * @return string of formatted expression
  */
-function get_gridalarms_template_expression_string($expression_id) {
+function get_gridalarms_template_expression_string(int $expression_id) : string {
 	$items = db_fetch_assoc_prepared('SELECT *
 		FROM gridalarms_template_expression_item
 		WHERE expression_id = ?
 		ORDER BY sequence',
 		array($expression_id));
 
-	$i = 0; $gridalarms_expression_string = '';
+	$gridalarms_expression_string = '';
+
+	$i = 0;
 
 	if (cacti_sizeof($items)) {
 		foreach ($items as $item) {
@@ -2468,39 +2672,48 @@ function get_gridalarms_template_expression_string($expression_id) {
 			/* string value append quotes */
 			if ($item['type'] == 5) {
 				$gridalarms_expression_string .= "'" . trim($item['value'], '"\'') . "'";
+
 				cacti_log("DEBUG: Value '" . $item['value'] . "', Final '" . $gridalarms_expression_string . "'", false, 'GRIDALERTS', POLLER_VERBOSITY_DEBUG);
 			} elseif ($item['type'] == 3) {
 				$metric = get_template_metric($item['value']);
 				$gridalarms_expression_string .= $metric['name'];
+
 				cacti_log("DEBUG: PValue '" . $item['value'] . "', Final '" . $gridalarms_expression_string . "'", false, 'GRIDALERTS', POLLER_VERBOSITY_DEBUG);
 			} elseif ($item['type'] == 7) {
 				switch($item['value']) {
 					case 'clusterid':
 					case 'clustername':
 						$gridalarms_expression_string .= '|alert_' . $item['value'] . "|";
+
 						break;
 					default:
 						$gridalarms_expression_string .= '|input_' . $item['value'] . "|";
+
 						break;
 				}
 			} else {
-				cacti_log("DEBUG: EValue '" . $item['value'] . "', Final '" . $gridalarms_expression_string . "'", false, 'GRIDALERTS', POLLER_VERBOSITY_DEBUG);
 				$gridalarms_expression_string .= $item['value'];
+
+				cacti_log("DEBUG: EValue '" . $item['value'] . "', Final '" . $gridalarms_expression_string . "'", false, 'GRIDALERTS', POLLER_VERBOSITY_DEBUG);
 			}
+
+			cacti_log("DEBUG: gridalarms_expression_string: $gridalarms_expression_string", false, 'GRIDALERTS', POLLER_VERBOSITY_DEBUG);
+
 			$i++;
 		}
 	}
-	cacti_log("DEBUG: gridalarms_expression_string: $gridalarms_expression_string", false, 'GRIDALERTS', POLLER_VERBOSITY_DEBUG);
 
 	return $gridalarms_expression_string;
 }
 
 /**
  * get all metrics from grid_template_metrics where the metric belongs to a particular table
- * @param $table			- the table to operate on
- * @returns					- array of columns
+ *
+ * @param  string $table the table to operate on
+ *
+ * @return array of columns
  */
-function get_gridalarms_template_metrics($table) {
+function get_gridalarms_template_metrics(string $table) : array {
 	$metrics = db_fetch_assoc_prepared('SELECT id, name
 		FROM gridalarms_template_metric
 		WHERE db_table = ?',
@@ -2519,10 +2732,12 @@ function get_gridalarms_template_metrics($table) {
 
 /**
  * get all column names for a templates expression
- * @param $expression_id	- the table to operate on
- * @returns					- array of columns
+ *
+ * @param  int $expression_id the table to operate on
+ *
+ * @return array of columns
  */
-function get_template_expression_db_columns($expression_id) {
+function get_template_expression_db_columns(int $expression_id) : array {
 	$metric_ids = db_fetch_assoc_prepared('SELECT value
 		FROM gridalarms_template_expression_item
 		WHERE expression_id = ?
@@ -2547,53 +2762,56 @@ function get_template_expression_db_columns($expression_id) {
 
 /**
  * Get expression item from grid_template_expression_item based on id.
- * @param Integer $id
+ *
+ * @param  int   $expression_id The expression id
+ *
+ * @return bool|array Row of expression items or false
  */
-function get_template_expression_item($id) {
+function get_template_expression_item(int $expression_id) : bool|array {
 	return db_fetch_row_prepared('SELECT *
 		FROM gridalarms_template_expression_item
 		WHERE id = ?',
-		array($id));
+		array($expression_id));
 }
 
-function get_template_metrics_from_expression_by_id($id) {
-	$expression = get_template_expression_by_id($id);
+function get_template_metrics_from_expression_by_id(int $expression_id) : bool|array {
+	$expression = get_template_expression_by_id($expression_id);
 
 	if ($expression['ds_type'] == '0') {
 		return get_table_columns($expression['db_table']);
 	} elseif ($expression['ds_type'] == '1') {
-		return get_columns_from_sql($expression['sql_query'], 'template', $id);
+		return get_columns_from_sql($expression['sql_query'], 'template', $expression_id);
 	}
 }
 
-function get_template_metrics_from_expression_by_alarm_id($id) {
-	$alarm = get_template_by_id($id);
-	if (cacti_sizeof($alarm)) {
-		return get_template_metrics_from_expression_by_id($alarm['expression_id']);
-	}
-}
-
-function get_template_expressions() {
+function get_template_expressions() : bool|array {
 	return db_fetch_assoc('SELECT * FROM gridalarms_template_expression');
 }
 
 /**
  * Get expression from grid_template_expression based on id
- * @param Integer $id
+ *
+ * @param  int  $id
+ *
+ * @return array Row of expressions or false
  */
-function get_template_expression_by_id($id) {
+function get_template_expression_by_id(int $expression_id) : bool|array {
 	return db_fetch_row_prepared('SELECT *
 		FROM gridalarms_template_expression
 		WHERE id = ?',
-		array($id));
+		array($expression_id));
 }
 
 /**
  * Get expression from grid_template_expression_by_alarm_id based on an alarm id
- * @param Integer $id
+ *
+ * @param  int $alarm_id
+ *
+ * @return array - An array of a template definition
  */
-function get_template_expression_by_alarm_id($id) {
-	$alarm = get_template_by_id($id);
+function get_template_expression_by_alarm_id(int $alarm_id) : ?array {
+	$alarm = get_template_by_id($alarm_id);
+
 	if (cacti_sizeof($alarm)) {
 		return get_template_expression_by_id($alarm['expression_id']);
 	}
@@ -2601,7 +2819,10 @@ function get_template_expression_by_alarm_id($id) {
 
 /**
  * Get alarm from gridalarms_template based on id
+ *
  * @param Integer $id
+ *
+ * @return array - Row of an alert template
  */
 function get_template_by_id($id) {
 	return db_fetch_row_prepared('SELECT *
@@ -2626,9 +2847,12 @@ function get_all_template_metrics() {
 
 /**
  * Get a metric from the gridalarms_metric table based on id
- * @param Integer $id
+ *
+ * @param  int $id
+ *
+ * @return array - Row of a template metric
  */
-function get_template_metric($id) {
+function get_template_metric(int $id) : bool|array {
 	return db_fetch_row_prepared('SELECT *
 		FROM gridalarms_template_metric
 		WHERE id = ?',
@@ -2637,9 +2861,12 @@ function get_template_metric($id) {
 
 /**
  * Get all metrics from grid_metrics where the metric belongs to a particular table
- * @param String $table
+ *
+ * @param  string $table the table name
+ *
+ * @return array An array of metrics
  */
-function get_gridalarms_metrics($table) {
+function get_gridalarms_metrics(string $table) : array {
 	$metrics = db_fetch_assoc_prepared('SELECT id, name
 		FROM gridalarms_metric
 		WHERE db_table = ?',
@@ -2656,7 +2883,7 @@ function get_gridalarms_metrics($table) {
 	return $metrics_array;
 }
 
-function get_expression_db_columns($expression_id) {
+function get_expression_db_columns(int $expression_id) : array {
 	$metric_ids = db_fetch_assoc_prepared('SELECT value
 		FROM gridalarms_expression_item
 		WHERE expression_id = ?
@@ -2679,53 +2906,56 @@ function get_expression_db_columns($expression_id) {
 
 /**
  * Get expression item from grid_expression_item based on id.
+ *
  * @param Integer $id
+ *
+ * @return array - An row of expression items
  */
-function get_expression_item($id) {
+function get_expression_item(int $id) : bool|array {
 	return db_fetch_row_prepared('SELECT *
 		FROM gridalarms_expression_item
 		WHERE id = ?',
 		array($id));
 }
 
-function get_metrics_from_expression_by_id($id) {
-	$expression = get_expression_by_id($id);
+function get_metrics_from_expression_by_id(int $expression_id) : bool|array{
+	$expression = get_expression_by_id($expression_id);
 
 	if ($expression['ds_type'] == '0') {
 		return get_table_columns($expression['db_table']);
 	} elseif ($expression['ds_type'] == '1') {
-		return get_columns_from_sql($expression['sql_query'], 'alarm', $id);
+		return get_columns_from_sql($expression['sql_query'], 'alarm', $expression_id);
 	}
 }
 
-function get_metrics_from_expression_by_alarm_id($id) {
-	$alarm = get_alarm_by_id($id);
-	if (cacti_sizeof($alarm)) {
-		return get_metrics_from_expression_by_id($alarm['expression_id']);
-	}
-}
-
-function get_expressions() {
+function get_expressions() : bool|array {
 	return db_fetch_assoc('SELECT * FROM gridalarms_expression');
 }
 
 /**
  * Get expression from grid_expression based on id
- * @param Integer $id
+ *
+ * @param  int $expression_id The rexpression to query
+ *
+ * @return array A row of an expression
  */
-function get_expression_by_id($id) {
+function get_expression_by_id(int $expression_id) : bool|array {
 	return db_fetch_row_prepared('SELECT *
 		FROM gridalarms_expression
 		WHERE id = ?',
-		array($id));
+		array($expression_id));
 }
 
 /**
  * Get expression from grid_expression based on an alarm id
- * @param Integer $id
+ *
+ * @param  int $alarm_id the alarm to query
+ *
+ * @return array A row of an expression
  */
-function get_expression_by_alarm_id($id) {
-	$alarm = get_alarm_by_id($id);
+function get_expression_by_alarm_id(int $alarm_id) : bool|array {
+	$alarm = get_alarm_by_id($alarm_id);
+
 	if (cacti_sizeof($alarm)) {
 		return get_expression_by_id($alarm['expression_id']);
 	}
@@ -2733,20 +2963,24 @@ function get_expression_by_alarm_id($id) {
 
 /**
  * Get alarm from gridalarms_expression based on id
- * @param Integer $id
+ *
+ * @param  int   $alarm_id
+ *
+ * @return array A row of an alert
  */
-function get_alarm_by_id($id) {
+function get_alarm_by_id(int $alarm_id) : bool|array {
 	return db_fetch_row_prepared('SELECT *
 		FROM gridalarms_alarm
 		WHERE id = ?',
-		array($id));
+		array($alarm_id));
 }
 
 /**
  * Get all the metrics from the gridalarms_metric table
  */
-function get_all_metrics() {
+function get_all_metrics() : bool|array {
 	$sort_order = '';
+
 	if (isset_request_var('sort_column_array') && cacti_sizeof(get_request_var('sort_column_array')) > 0) {
 		$sort_order =  ' ORDER BY ' . gridalarms_build_order_string(get_request_var('sort_column_array'), get_request_var('sort_direction_array'));
 	}
@@ -2758,20 +2992,23 @@ function get_all_metrics() {
 
 /**
  * Get a metric from the gridalarms_metric table based on id
- * @param Integer $id
+ *
+ * @param  int   $metric_id
+ *
+ * @return array A metric row
  */
-function get_metric($id) {
+function get_metric(int $metric_id) : bool|array {
 	return db_fetch_row_prepared('SELECT *
 		FROM gridalarms_metric
 		WHERE id = ?',
-		array($id));
+		array($metric_id));
 }
 
 /**
  * Get all the tables in the database
  */
-function get_tables_in_db() {
-	$tables = array();
+function get_tables_in_db() : array {
+	$tables       = array();
 	$tables_query = db_fetch_assoc('SHOW TABLES');
 
 	foreach ($tables_query as $table) {
@@ -2788,14 +3025,17 @@ function get_tables_in_db() {
 
 /**
  * Get the table columns for the specified table
- * @param Array $table
+ *
+ * @param  string $table
+ *
+ * @return array The table columns
  */
-function get_table_columns($table) {
+function get_table_columns(string $table) : bool|array {
 	if (!isset($table) || empty($table) || $table == '') {
 		return array();
 	}
 
-	$table_columns = array();
+	$table_columns       = array();
 	$table_columns_query = db_fetch_assoc('DESCRIBE ' . $table);
 
 	foreach ($table_columns_query as $column) {
@@ -2809,9 +3049,15 @@ function get_table_columns($table) {
 
 /**
  * Get the table columns for the specified table
- * @param Array $table
+ *
+ * @param  int    $expression_id The expression to search
+ * @param  string $table The table to search
+ * @param  string $type The type of query
+ * @param  int    $metric_id The metric_id to query
+ *
+ * @return array of table columns
  */
-function get_free_expression_table_columns($expression_id, $table, $type, $metric_id = 0) {
+function get_free_expression_table_columns(int $expression_id, string $table, string $type, int $metric_id = 0) : array {
 	if (!isset($table) || empty($table) || $table == '') {
 		return array();
 	}
@@ -2864,7 +3110,7 @@ function get_free_expression_table_columns($expression_id, $table, $type, $metri
 	return $table_columns;
 }
 
-function get_primary_key_from_table($table) {
+function get_primary_key_from_table(string $table) : array {
 	if (!isset($table) || empty($table) || $table == '') {
 		return array();
 	}
@@ -2883,14 +3129,19 @@ function get_primary_key_from_table($table) {
 	return $table_columns;
 }
 
-/*
-Replace last 'WHERE' part
-
-1. If case insensitive string patern 'WHERE+<any characters>+)+<any white spaces>+AS' is found, replace it with 'LIMIT 1) AS'
-2. Otherwise cut off the last 'WHERE' part
-*/
-function replace_where_from_sql($sql) {
+/**
+ * Replace last 'WHERE' part
+ *
+ * 1. If case insensitive string patern 'WHERE+<any characters>+)+<any white spaces>+AS' is found, replace it with 'LIMIT 1) AS'
+ * 2. Otherwise cut off the last 'WHERE' part
+ *
+ * @param  string The base sql query
+ *
+ * @return string The adjusted query
+ */
+function replace_where_from_sql(string $sql) : string {
 	$last_where_pos = strripos($sql, 'WHERE');
+
 	if (!$last_where_pos) {
 		return $sql;
 	}
@@ -2911,44 +3162,75 @@ function replace_where_from_sql($sql) {
 	return($sql1 . $sql2);
 }
 
-function get_columns_from_sql($sql, $type, $expression_id = 0) {
+function get_columns_from_sql(string $sql, string $type, int $expression_id = 0, bool $force = false) : array {
 	global $gl_clusterid, $gl_clustername;
 
-	$sql_columns = array();
-	$results     = array();
-
 	if ($type == 'alarm') {
-		$sql = gridalarms_replace_custom_input($expression_id, $sql);
-	} elseif ($type == 'template') {
-		$sql = gridalarms_template_replace_custom_input($expression_id, $sql);
-	}
-
-	$tmp_cluster = db_fetch_row('SELECT clusterid, clustername
-		FROM grid_clusters
-		LIMIT 1');
-
-	if (!empty($gl_clusterid)) {
-		$sql = str_replace('|alert_clusterid|', $gl_clusterid, $sql);
-		$sql = str_replace('|alert_clustername|', $gl_clustername, $sql);
+		$column_data = db_fetch_cell_prepared('SELECT column_data
+			FROM gridalarms_expression
+			WHERE id = ?',
+			array($expression_id));
 	} else {
-		if (!empty($tmp_cluster['clusterid'])) {
-			$sql = str_replace('|alert_clusterid|', $tmp_cluster['clusterid'], $sql);
-			$sql = str_replace('|alert_clustername|', $tmp_cluster['clustername'], $sql);
+		$column_data = db_fetch_cell_prepared('SELECT column_data
+			FROM gridalarms_template_expression
+			WHERE id = ?',
+			array($expression_id));
+	}
+
+	$sql_columns = array();
+	$column_data = trim($column_data);
+
+	if ($column_data != '' && !$force) {
+		$columns = json_decode($column_data, true);
+
+		if (cacti_sizeof($columns)) {
+			foreach($columns as $column) {
+				$sql_columns[$column] = $column;
+			}
 		}
 	}
 
-	if (strlen($sql)) {
-		$sql = replace_where_from_sql($sql);
-		$sql_columns_query = $sql . ' LIMIT 1';
-		$results = db_fetch_assoc($sql_columns_query);
-	}
+	if (!sizeof($sql_columns)) {
+		$results = array();
 
-	if (cacti_sizeof($results)) {
-		$columns = array_keys($results[0]);
-
-		foreach ($columns as $column) {
-			$sql_columns[$column] = $column;
+		if ($type == 'alarm') {
+			$sql = gridalarms_replace_custom_input($expression_id, $sql);
+		} elseif ($type == 'template') {
+			$sql = gridalarms_template_replace_custom_input($expression_id, $sql);
 		}
+
+		$tmp_cluster = db_fetch_row('SELECT clusterid, clustername
+			FROM grid_clusters
+			LIMIT 1');
+
+		if (!empty($gl_clusterid)) {
+			$sql = str_replace('|alert_clusterid|', $gl_clusterid, $sql);
+			$sql = str_replace('|alert_clustername|', $gl_clustername, $sql);
+		} else {
+			if (!empty($tmp_cluster['clusterid'])) {
+				$sql = str_replace('|alert_clusterid|', $tmp_cluster['clusterid'], $sql);
+				$sql = str_replace('|alert_clustername|', $tmp_cluster['clustername'], $sql);
+			}
+		}
+
+		if (strlen($sql)) {
+			$sql = replace_where_from_sql($sql);
+			$sql_columns_query = $sql . ' LIMIT 1';
+			$results = db_fetch_assoc($sql_columns_query);
+		}
+
+		if (cacti_sizeof($results)) {
+			$columns = array_keys($results[0]);
+
+			foreach ($columns as $column) {
+				$sql_columns[$column] = $column;
+			}
+		}
+
+		db_execute_prepared('UPDATE gridalarms_expression
+			SET column_data = ?
+			WHERE id = ?',
+			array(json_encode($sql_columns), $expression_id));
 	}
 
 	return $sql_columns;
@@ -2956,9 +3238,12 @@ function get_columns_from_sql($sql, $type, $expression_id = 0) {
 
 /**
  * Return the list of tables based on the type selected in the form.
- * @param String $type
+ *
+ * @param  string $type The class of tables to return
+ *
+ * @return array The tables by class
  */
-function get_db_tables_form($type) {
+function get_db_tables_form(string $type) : array {
 	global $metric_types, $license_tables, $cluster_tables, $host_tables, $queue_tables, $user_tables, $job_tables;
 
 	$db_tables = array();
@@ -2994,10 +3279,11 @@ function get_db_tables_form($type) {
 	return $db_tables;
 }
 
-function alarm_log_legend() {
+function alarm_log_legend() : void {
 	global $alarm_log_bgcolors;
 
     html_start_box('', '100%', '', '3', 'center', '');
+
     print '<tr>';
     print '<td class="gridalarmsAlertNotify">'     . __('Alert Notify', 'gridalarms')     . '</td>';
     print '<td class="gridalarmsReTriggerNotify">' . __('ReTrigger Notify', 'gridalarms') . '</td>';
@@ -3006,11 +3292,13 @@ function alarm_log_legend() {
     print '<td class="gridalarmsRestoralNotify">'  . __('Restoral Notify', 'gridalarms')  . '</td>';
     print '<td class="gridalarmsRestoralEvent">'   . __('Restoral Event', 'gridalarms')   . '</td>';
     print '</tr>';
+
     html_end_box(false);
 }
 
-function alarm_legend() {
+function alarm_legend() : void {
 	html_start_box('', '100%', '', '3', 'center', '');
+
 	print '<tr>';
 	print '<td class="gridalarmsAlert">'           . __('Alert', 'gridalarms')                    . '</td>';
 	print '<td class="gridalarmsAcknowledgementRequired">' . __('Acknowledgement Required', 'gridalarms') . '</td>';
@@ -3018,10 +3306,11 @@ function alarm_legend() {
 	print '<td class="gridalarmsOk">'              . __('Ok', 'gridalarms')                       . '</td>';
 	print '<td class="gridalarmsDisabled">'        . __('Disabled', 'gridalarms')                 . '</td>';
 	print '</tr>';
+
 	html_end_box(false);
 }
 
-function list_alarm_log_detail() {
+function list_alarm_log_detail() : void {
 	global $log_types, $log_types_display;
 
 	$logid = get_request_var('logid');
@@ -3036,30 +3325,37 @@ function list_alarm_log_detail() {
 
 	html_start_box(__('Alert Log Entry Details', 'gridalarms'), '100%', '', '3', 'center', '');
 
-	$i = 0;
 	if (cacti_sizeof($details)) {
 		form_alternate_row();
-		print "<td style='white-space:nowrap;width:10%;'><b>Name:</b></td><td>" . html_escape($alarm['name']) . "</td>\n";
+		print "<td style='white-space:nowrap;width:10%;'><b>Name:</b></td><td>" . html_escape($alarm['name']) . "</td>";
 		form_end_row();
 
 		form_alternate_row();
-		print "<td style='white-space:nowrap;width:10%;'><b>Alert Trigger Value:</b></td><td>" . html_escape($details['alarm_value']) . "</td>\n";
+		print "<td style='white-space:nowrap;width:10%;'><b>Alert Trigger Value:</b></td><td>" . html_escape($details['alarm_value']) . "</td>";
 		form_end_row();
 
 		form_alternate_row();
-		print "<td style='white-space:nowrap;width:10%;'><b>Measured Value:</b></td><td>" . html_escape($details['current']) . "</td>\n";
+		print "<td style='white-space:nowrap;width:10%;'><b>Measured Value:</b></td><td>" . html_escape($details['current']) . "</td>";
 		form_end_row();
 
 		form_alternate_row();
-		print "<td style='white-space:nowrap;width:10%;'><b>Log Time:</b></td><td>" . date("Y-m-d H:i:s", $details['time']) . "</td>\n";
+		print "<td style='white-space:nowrap;width:10%;'><b>Log Time:</b></td><td>" . date("Y-m-d H:i:s", $details['time']) . "</td>";
 		form_end_row();
 
 		form_alternate_row();
-		print "<td style='white-space:nowrap;width:10%;'><b>Status:</b></td><td>" . ucfirst($log_types_display[$details['status']]) . "</td>\n";
+		print "<td style='white-space:nowrap;width:10%;'><b>Status:</b></td><td>" . ucfirst($log_types_display[$details['status']]) . "</td>";
 		form_end_row();
 
 		form_alternate_row();
-		print "<td style='white-space:nowrap;width:10%;'><b>Log Message:</b></td><td>". html_escape($details['description']) . "</td>\n";
+		print "<td style='white-space:nowrap;width:10%;'><b>Log Message:</b></td><td>". html_escape($details['description']) . "</td>";
+		form_end_row();
+
+		form_alternate_row();
+		print "<td style='white-space:nowrap;width:10%;'><b>External ID:</b></td><td>" . html_escape($alarm['external_id']) . "</td>";
+		form_end_row();
+
+		form_alternate_row();
+		print "<td style='white-space:nowrap;width:10%;'><b>Operator Notes:</b></td><td>" . $alarm['notes'] . "</td>";
 		form_end_row();
 
 		html_end_box();
@@ -3071,9 +3367,10 @@ function list_alarm_log_detail() {
 	}
 }
 
-function list_alarm_log($admin = true) {
+function list_alarm_log(bool $admin = true) : void {
 	global $alarm_bgcolors, $config, $gridalarms_platform_cols, $gridalarms_types,
 		$alarm_types, $log_types, $log_types_display, $alarm_log_bgcolors, $grid_rows_selector;
+
 	$sql_params = array();
 
 	alarm_log_request_validation();
@@ -3095,23 +3392,23 @@ function list_alarm_log($admin = true) {
 
 	$sql_where = '';
 	if (get_request_var('alarm_type') >= 0) {
-		$sql_where = 'WHERE ga.alarm_type=?';
+		$sql_where = 'WHERE ga.alarm_type = ?';
 		$sql_params[] = get_request_var('alarm_type');
 	}
 
 	if (get_request_var('id') > 0) {
-		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . 'alarm_id=?';
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . 'alarm_id = ?';
 		$sql_params[] = get_request_var('id');
 	}
 
 	if (get_request_var('status') != -1) {
-		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . 'status=?';
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . 'status = ?';
 		$sql_params[] = get_request_var('status');
 	}
 
 	if (get_request_var('filter') != '') {
-		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . "description LIKE ?";
-		$sql_params[] = '%'. get_request_var('filter') . '%';
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . 'description LIKE ?';
+		$sql_params[] = '%' . get_request_var('filter') . '%';
 	}
 
 	$sql_order = get_order_string();
@@ -3128,6 +3425,7 @@ function list_alarm_log($admin = true) {
 	$result = db_fetch_assoc_prepared($sql, $sql_params);
 
 	html_start_box(__('Alert Logs', 'gridalarms'), '100%', '', '3', 'center', '');
+
 	?>
 	<tr class='noprint even'>
 		<td>
@@ -3167,7 +3465,7 @@ function list_alarm_log($admin = true) {
 						<?php print __('Search', 'gridalarms');?>
 					</td>
 					<td>
-						<input type='text' id='filter' size='25' value='<?php print html_escape_request_var('filter');?>'>
+						<input type='text' id='filter' size='25' value='<?php print html_escape(get_request_var('filter'));?>'>
 					</td>
 					<td>
 						<?php print __('Alert', 'gridalarms');?>
@@ -3243,7 +3541,7 @@ function list_alarm_log($admin = true) {
 							<?php
 							if (cacti_sizeof($grid_rows_selector)) {
 								foreach ($grid_rows_selector as $key => $value) {
-									print '<option value="' . $key . '"'; if (get_request_var('rows') == $key) { print ' selected'; } print '>' . html_escape($value) . "</option>\n";
+									print '<option value="' . $key . '"'; if (get_request_var('rows') == $key) { print ' selected'; } print '>' . html_escape($value) . "</option>";
 								}
 							}
 							?>
@@ -3265,13 +3563,32 @@ function list_alarm_log($admin = true) {
 		$sql_where", $sql_params);
 
 	$display_text = array(
-		'name'        => array('display' => 'Name', 'sort' => 'ASC'),
-		'time'        => array('display' => 'Event Time', 'sort' => 'DESC'),
-		'alarm_value' => array('display' => 'Alert Value', 'sort' => 'ASC'),
-		'current'     => array('display' => 'Current Value', 'sort' => 'ASC'),
-		'status'      => array('display' => 'Status', 'sort' => 'ASC'),
-		'type'        => array('display' => 'Type', 'sort' => 'ASC'),
-		'description' => array('display' => 'Event Description', 'sort' => 'ASC')
+		'name' => array(
+			'display' => __('Name', 'gridalarms'),
+			'sort' => 'ASC'
+		),
+		'time' => array(
+			'display' => __('Event Time', 'gridalarms'),
+			'sort' => 'DESC'
+		),
+		'status' => array(
+			'display' => __('Status', 'gridalarms'),
+			'sort' => 'ASC'
+		),
+		'type' => array(
+			'display' => __('Type', 'gridalarms'),
+			'sort' => 'ASC'
+		),
+		'alarm_value' => array(
+			'display' => __('Alert Value', 'gridalarms'),
+			'align' => 'right',
+			'sort' => 'ASC'
+		),
+		'current' => array(
+			'display' => __('Current Value', 'gridalarms'),
+			'align' => 'right',
+			'sort' => 'ASC'
+		),
 	);
 
 	html_start_box('', '100%', '', '4', 'center', '');
@@ -3293,12 +3610,11 @@ function list_alarm_log($admin = true) {
 			$name = ($row['name'] != '' ? $row['name']:__('Alert Removed', 'gridalarms'));
 
 			$tmp_row_color = $alarm_log_bgcolors[$log_types[$row['status']]];
+
 			rtm_form_alternate_row_color($tmp_row_color, $tmp_row_color);
 
 			form_selectable_cell(filter_value($name, get_request_var('filter'), $url), $row['id'], '', '');
 			form_selectable_cell(date('Y-m-d H:i:s', $row['time']), $row['id'], '', '');
-			form_selectable_cell(html_escape($row['alarm_value']), $row['id'], '', '');
-			form_selectable_cell(html_escape($row['current']), $row['id'], '', '');
 			form_selectable_cell(ucfirst($log_types_display[$row['status']]), $row['id'], '', '');
 
 			if ($row['type'] == '99') {
@@ -3307,7 +3623,14 @@ function list_alarm_log($admin = true) {
 				form_selectable_cell($alarm_types[$row['type']], $row['id'], '', '');
 			}
 
-			form_selectable_cell(html_escape($row['description']), $row['id'], '', '');
+			if ($row['alarm_value'] == '') {
+				form_selectable_cell('-', $row['id'], '', 'right');
+			} else {
+				form_selectable_cell(html_escape($row['alarm_value']), $row['id'], '', 'right');
+			}
+
+			form_selectable_cell(html_escape($row['current']), $row['id'], '', 'right');
+
 			form_end_row();
 		}
 	} else {
@@ -3323,49 +3646,49 @@ function list_alarm_log($admin = true) {
 	alarm_log_legend();
 }
 
-function alarm_log_request_validation() {
+function alarm_log_request_validation() : void {
 	/* ================= input validation and session storage ================= */
 	$filters = array(
 		'rows' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '-1'
-			),
+		),
 		'page' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'default' => '1'
-			),
+		),
 		'filter' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'sort_column' => array(
 			'filter' => FILTER_CALLBACK,
-			'default' => 'description',
+			'default' => 'time',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'sort_direction' => array(
 			'filter' => FILTER_CALLBACK,
-			'default' => 'ASC',
+			'default' => 'DESC',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'alarm_type' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '-1'
-			),
+		),
 		'status' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '-1'
-			),
+		),
 		'id' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '-1'
-			)
+		)
 	);
 
 	validate_store_request_vars($filters, 'sess_galog');
@@ -3376,45 +3699,45 @@ function alarm_log_request_validation() {
  *  This is a generic funtion for this page that makes sure that
  *  we have a good request.  We want to protect against people who
  *  like to create issues with Cacti.
-*/
-function alarm_template_request_validation() {
+ */
+function alarm_template_request_validation() : void {
 	/* ================= input validation and session storage ================= */
 	$filters = array(
 		'rows' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '-1'
-			),
+		),
 		'page' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'default' => '1'
-			),
+		),
 		'filter' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'sort_column' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => 'name',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'sort_direction' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => 'ASC',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'alarm_type' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '-1'
-			),
+		),
 		'clusterid' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '0'
-			)
+		)
 	);
 
 	validate_store_request_vars($filters, 'sess_gatp');
@@ -3425,62 +3748,67 @@ function alarm_template_request_validation() {
  *  This is a generic funtion for this page that makes sure that
  *  we have a good request.  We want to protect against people who
  *  like to create issues with Cacti.
-*/
-function alarm_request_validation() {
+ */
+function alarm_request_validation() : void {
 	/* ================= input validation and session storage ================= */
 	$filters = array(
 		'rows' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '-1'
-			),
+		),
 		'page' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'default' => '1'
-			),
+		),
 		'clusterid' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '0'
-			),
+		),
+		'template_id' => array(
+			'filter' => FILTER_VALIDATE_INT,
+			'pageset' => true,
+			'default' => '0'
+		),
 		'filter' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'sort_column' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => 'name',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'sort_direction' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => 'ASC',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'alarm_type' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '-1'
-			),
+		),
 		'alarm_ds_type' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '-1'
-			),
+		),
 		'state' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'default' => 2,
 			'pageset' => true,
-			)
+		)
 	);
 
 	validate_store_request_vars($filters, 'sess_ga');
 	/* ================= input validation and session storage ================= */
 }
 
-function populate_template_default_layout(&$alarm) {
+function populate_template_default_layout(array &$alarm) : void {
 	$expression = get_template_expression_by_id($alarm['expression_id']);
 
 	if ($expression['ds_type'] == '0') {
@@ -3488,12 +3816,25 @@ function populate_template_default_layout(&$alarm) {
 
 		/* do the primary key first, and sort on it */
 		$i = 1;
+
 		if (cacti_sizeof($primary_key_array)) {
 			foreach ($primary_key_array as $metric) {
 				db_execute_prepared("REPLACE INTO gridalarms_template_layout
-					(alarm_id, hash, display_name, column_name, sequence, sortposition, sortdirection)
-					VALUES (?, ?, ?, ?, ?, ?, 0)",
-					array($alarm['id'], get_hash_alert_template(0, 'layout_item'), ucfirst($metric), $metric, $i, $i));
+					(alarm_id, hash, display_name, column_name, sequence, sortposition, sortdirection, type, align)
+					VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+					array(
+						$alarm['id'],
+						get_hash_alert_template(0, 'layout_item'),
+						ucfirst($metric),
+						$metric,
+						$i,
+						$i,
+						0,
+						'general',
+						'left'
+					)
+				);
+
 				$i++;
 			}
 		}
@@ -3519,31 +3860,59 @@ function populate_template_default_layout(&$alarm) {
 		if (cacti_sizeof($other_metrics2)) {
 			foreach ($other_metrics2 as $metric) {
 				db_execute_prepared("REPLACE INTO gridalarms_template_layout
-					(alarm_id, hash, display_name, column_name, sequence, sortposition, sortdirection)
-					VALUES (?, ?, ?, ?, ?, 0, 0)",
-					array($alarm['id'], get_hash_alert_template(0, 'layout_item'), ucfirst($metric), $metric, $i));
+					(alarm_id, hash, display_name, column_name, sequence, sortposition, sortdirection, type, align)
+					VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+					array(
+						$alarm['id'],
+						get_hash_alert_template(0, 'layout_item'),
+						ucfirst($metric),
+						$metric,
+						$i,
+						0,
+						0,
+						'general',
+						'left'
+					)
+				);
+
 				$i++;
 			}
 		}
 	} elseif ($expression['ds_type'] == '1') {
-		$columns = get_columns_from_sql($expression['sql_query'],"template",$alarm['expression_id']);
+		$columns = get_columns_from_sql($expression['sql_query'], 'template', $alarm['expression_id']);
 
 		/* populate this first 8 columns, leave the rest to the user */
 		$i = 1;
+
 		if (cacti_sizeof($columns)) {
 			foreach ($columns as $metric) {
 				db_execute_prepared("REPLACE INTO gridalarms_template_layout
-					(alarm_id, hash, display_name, column_name, sequence, sortposition, sortdirection)
-					VALUES (?, ?, ?, ?, ?, ?, 0)",
-					array($alarm['id'], get_hash_alert_template(0, 'layout_item'), ucfirst($metric), $metric, $i,  ($i < 4 ? $i:0)));
+					(alarm_id, hash, display_name, column_name, sequence, sortposition, sortdirection, type, align)
+					VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+					array(
+						$alarm['id'],
+						get_hash_alert_template(0, 'layout_item'),
+						ucfirst($metric),
+						$metric,
+						$i,
+						($i < 4 ? $i:0),
+						0,
+						'general',
+						'left'
+					)
+				);
+
 				$i++;
-				if ($i > 8) break;
+
+				if ($i > 8) {
+					break;
+				}
 			}
 		}
 	}
 }
 
-function populate_default_layout(&$alarm) {
+function populate_default_layout(array &$alarm) : void {
 	$expression = get_expression_by_id($alarm['expression_id']);
 
 	if ($expression['ds_type'] == '0') {
@@ -3551,12 +3920,24 @@ function populate_default_layout(&$alarm) {
 
 		/* do the primary key first, and sort on it */
 		$i = 1;
+
 		if (cacti_sizeof($primary_key_array)) {
 			foreach ($primary_key_array as $metric) {
-				db_execute_prepared("REPLACE INTO gridalarms_alarm_layout
-					(alarm_id, display_name, column_name, sequence, sortposition, sortdirection)
-					VALUES (?, ?, ?, ?, ?, 0)",
-					array($alarm['id'], ucfirst($metric), $metric, $i, $i));
+				db_execute_prepared('REPLACE INTO gridalarms_alarm_layout
+					(alarm_id, display_name, column_name, sequence, sortposition, sortdirection, type, align)
+					VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+					array(
+						$alarm['id'],
+						ucfirst($metric),
+						$metric,
+						$i,
+						$i,
+						0,
+						'general',
+						'left'
+					)
+				);
+
 				$i++;
 			}
 		}
@@ -3571,6 +3952,7 @@ function populate_default_layout(&$alarm) {
 		}
 
 		$other_metrics2 = array();
+
 		if (cacti_sizeof($other_metrics)) {
 			foreach ($other_metrics as $metric) {
 				if (($key_found = array_search($metric, $primary_key_array)) === false) {
@@ -3581,26 +3963,52 @@ function populate_default_layout(&$alarm) {
 
 		if (cacti_sizeof($other_metrics2)) {
 			foreach ($other_metrics2 as $metric) {
-				db_execute_prepared("REPLACE INTO gridalarms_alarm_layout
-					(alarm_id, display_name, column_name, sequence, sortposition, sortdirection)
-					VALUES (?, ?, ?, ?, 0, 0)",
-					array($alarm['id'], ucfirst($metric), $metric, $i));
+				db_execute_prepared('REPLACE INTO gridalarms_alarm_layout
+					(alarm_id, display_name, column_name, sequence, sortposition, sortdirection, type, align)
+					VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+					array(
+						$alarm['id'],
+						ucfirst($metric),
+						$metric,
+						$i,
+						0,
+						0,
+						'general',
+						'left'
+					)
+				);
+
 				$i++;
 			}
 		}
 	} elseif ($expression['ds_type'] == '1') {
-		$columns = get_columns_from_sql($expression['sql_query'],"alarm",$alarm['expression_id']);
+		$columns = get_columns_from_sql($expression['sql_query'], 'alarm', $alarm['expression_id']);
 
 		/* populate this first 8 columns, leave the rest to the user */
 		$i = 1;
+
 		if (cacti_sizeof($columns)) {
 			foreach ($columns as $metric) {
-				db_execute_prepared("REPLACE INTO gridalarms_alarm_layout
-					(alarm_id, display_name, column_name, sequence, sortposition, sortdirection)
-					VALUES (?, ?, ?, ?, ?, 0)",
-					array($alarm['id'], ucfirst($metric), $metric, $i, ($i < 4 ? $i:0)));
+				db_execute_prepared('REPLACE INTO gridalarms_alarm_layout
+					(alarm_id, display_name, column_name, sequence, sortposition, sortdirection, type, align)
+					VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+					array(
+						$alarm['id'],
+						ucfirst($metric),
+						$metric,
+						$i,
+						($i < 4 ? $i:0),
+						0,
+						'general',
+						'left'
+					)
+				);
+
 				$i++;
-				if ($i > 8) break;
+
+				if ($i > 8) {
+					break;
+				}
 			}
 		}
 	}
@@ -3609,7 +4017,7 @@ function populate_default_layout(&$alarm) {
 /**
  * alarm_breached_items - function returns the list of breached items for alarming
  */
-function alarm_breached_items($id, $return_details = false, $limits = true, $forenv = false, $istemplate = false) {
+function alarm_breached_items(int $id, bool $return_details = false, bool $limits = true, bool $forenv = false, bool $istemplate = false) : string {
 	global $config, $cnn_id;
 
 	/* ================= input validation ================= */
@@ -3630,34 +4038,83 @@ function alarm_breached_items($id, $return_details = false, $limits = true, $for
 
 	if (!$istemplate && $id > 0) {
 		$alarm = get_alarm_by_id($id);
+
 		if (cacti_sizeof($alarm)) {
 			$expression = get_expression_by_id($alarm['expression_id']);
 		}
 	} else {
-		$alarm      = get_template_by_id($id);
+		$alarm = get_template_by_id($id);
+
 		if (cacti_sizeof($alarm)) {
-			$expression = get_template_expression_by_id($alarm["expression_id"]);
+			$expression = get_template_expression_by_id($alarm['expression_id']);
 		}
 	}
 
-	if (cacti_sizeof($expression)) {
-	if ($expression['ds_type'] == 1 || $expression['ds_type'] == 0) {
+	if (!cacti_sizeof($expression)) {
+		// shorten the path, make readable for merge
+	} elseif ($expression['ds_type'] == 1 || $expression['ds_type'] == 0) {
 		if (!$istemplate) {
-			$nocolumns = db_fetch_cell_prepared('SELECT count(*) FROM  gridalarms_alarm_layout WHERE alarm_id=?', array($alarm['id']));
+			$nocolumns = db_fetch_cell_prepared('SELECT COUNT(*)
+				FROM gridalarms_alarm_layout
+				WHERE alarm_id = ?',
+				array($alarm['id']));
+
 			if (!$nocolumns) {
 				populate_default_layout($alarm);
 			}
-			$columns = db_fetch_assoc_prepared('SELECT * FROM gridalarms_alarm_layout WHERE alarm_id=? ORDER BY sequence ASC', array($alarm['id']));
-			$sorts   = db_fetch_assoc_prepared('SELECT * FROM gridalarms_alarm_layout WHERE alarm_id=? AND sortposition>0 ORDER BY sortposition ASC', array($alarm['id']));
-			$displays = array_rekey(db_fetch_assoc_prepared('SELECT * FROM gridalarms_alarm_layout WHERE alarm_id=? ORDER BY sequence ASC', array($alarm['id'])), 'column_name', 'display_name');
+
+			$columns = db_fetch_assoc_prepared('SELECT *
+				FROM gridalarms_alarm_layout
+				WHERE alarm_id = ?
+				ORDER BY sequence ASC',
+				array($alarm['id']));
+
+			$sorts = db_fetch_assoc_prepared('SELECT *
+				FROM gridalarms_alarm_layout
+				WHERE alarm_id = ?
+				AND sortposition > 0
+				ORDER BY sortposition ASC',
+				array($alarm['id']));
+
+			$displays = array_rekey(
+				db_fetch_assoc_prepared('SELECT *
+					FROM gridalarms_alarm_layout
+					WHERE alarm_id = ?
+					ORDER BY sequence ASC',
+					array($alarm['id'])),
+				'column_name', 'display_name'
+			);
 		} else {
-			$nocolumns = db_fetch_cell_prepared('SELECT count(*) FROM  gridalarms_template_layout WHERE alarm_id=?', array($alarm['id']));
+			$nocolumns = db_fetch_cell_prepared('SELECT COUNT(*)
+				FROM gridalarms_template_layout
+				WHERE alarm_id = ?',
+				array($alarm['id']));
+
 			if (!$nocolumns) {
 				populate_template_default_layout($alarm);
 			}
-			$columns = db_fetch_assoc_prepared('SELECT * FROM gridalarms_template_layout WHERE alarm_id=? ORDER BY sequence ASC', array($alarm['id']));
-			$sorts   = db_fetch_assoc_prepared('SELECT * FROM gridalarms_template_layout WHERE alarm_id=? AND sortposition>0 ORDER BY sortposition ASC', array($alarm['id']));
-			$displays = array_rekey(db_fetch_assoc_prepared('SELECT * FROM gridalarms_template_layout WHERE alarm_id=? ORDER BY sequence ASC', array($alarm['id'])), 'column_name', 'display_name');
+
+			$columns = db_fetch_assoc_prepared('SELECT *
+				FROM gridalarms_template_layout
+				WHERE alarm_id = ?
+				ORDER BY sequence ASC',
+				array($alarm['id']));
+
+			$sorts = db_fetch_assoc_prepared('SELECT *
+				FROM gridalarms_template_layout
+				WHERE alarm_id = ?
+				AND sortposition > 0
+				ORDER BY sortposition ASC',
+				array($alarm['id']));
+
+			$displays = array_rekey(
+				db_fetch_assoc_prepared('SELECT *
+					FROM gridalarms_template_layout
+					WHERE alarm_id = ?
+					ORDER BY sequence ASC',
+					array($alarm['id'])),
+				'column_name', 'display_name'
+			);
 		}
 
 		$display_text = array();
@@ -3671,7 +4128,13 @@ function alarm_breached_items($id, $return_details = false, $limits = true, $for
 		if (cacti_sizeof($columns)) {
 			foreach ($columns as $c) {
 				$column_names[$c['column_name']] = $c['column_name'];
-				$display_text['nosort' . $count] = array($displays[$c['column_name']], 'ASC');
+
+				$display_text['nosort' . $count] = array(
+					'display' => $displays[$c['column_name']],
+					'sort'    => 'ASC',
+					'align'   => ($c['align'] != '' ? $c['align']:'left')
+				);
+
 				$count++;
 
 				if ($c['column_name'] != 'clustername' || $expression['ds_type'] == 1) {
@@ -3718,6 +4181,7 @@ function alarm_breached_items($id, $return_details = false, $limits = true, $for
 			} else {
 				$sql_query = gridalarms_template_replace_custom_input($expression['id'], $expression['sql_query']);
 			}
+
 			$sql_query = do_script_variable_replacement($sql_query, $alarm);
 
 			if (!$limits) {
@@ -3728,6 +4192,7 @@ function alarm_breached_items($id, $return_details = false, $limits = true, $for
 		} else {
 			/* append clusterid to where clause if found in table primary keys */
 			$sql_from_where_extra = "";
+
 			if ($alarm['clusterid'] != 0 && ($clusterid)) {
 				$sql_from_where_extra = "clusterid=" . $alarm['clusterid'];
 			}
@@ -3756,81 +4221,182 @@ function alarm_breached_items($id, $return_details = false, $limits = true, $for
 					form_alternate_row();
 				}
 
-				foreach ($column_names as $c) {
+				foreach ($columns as $c) {
+					$class       = $c['align'] != '' ? $c['align']:'left';
+					$column_name = $c['column_name'];
+
+					// Many of these column names are string and general
+					// So we can ignore all but alignment for them.
 					if (!$forenv) {
-						switch(strtolower($c)) {
+						switch(strtolower($c['column_name'])) {
 						case 'clustername':
 							if (isset($item['clusterid'])) {
 								$cluster_name = get_clustername($item['clusterid']);
 								$cluster_name = !empty($cluster_name)? $cluster_name : __('N/A', 'gridalarms');
-								print "<td style='white-space:nowrap;'>" . html_escape($cluster_name) . "</td>\n";
+
+								print "<td class='$class nowrap'>" . html_escape($cluster_name) . "</td>";
 							} else {
-								print "<td style='white-space:nowrap;'>" . (isset($item[$c]) ? html_escape($item[$c]):'Not Found') . "</td>\n";
+								print "<td class='$class nowrap'" . (isset($item[$column_name]) ? html_escape($item[$column_name]):__('Not Found', 'gridalarms')) . "</td>";
 							}
+
 							break;
 						case 'jobid':
 							if (isset($column_names['indexid']) && isset($column_names['submit_time']) && isset($column_names['clusterid'])) {
 								$href_str = $httpurl . 'plugins/grid/grid_bjobs.php?query=1&action=viewjob&clusterid=' .  $item['clusterid'] . '&indexid=' . $item['indexid'] . '&jobid=' . $item['jobid'] . '&submit_time=' .  strtotime($item['submit_time']) . '&title='. $item['jobid'];
+
 								if (isset($item['start_time'])) {
 									$href_str .= (strtotime($item['start_time'])? '&start_time=' . strtotime($item['start_time']) : '');
 								}
+
 								if (isset($item['end_time'])) {
 									$href_str .= (strtotime($item['end_time'])? '&end_time=' . strtotime($item['end_time']) : '');
 								}
-								print "<td style='white-space:nowrap;'><a href='" . html_escape($href_str) . "'>" .
-									$item['jobid'] . "</a></td>\n";
+
+								print "<td class='$class nowrap'><a href='" . html_escape($href_str) . "'>" . $item['jobid'] . "</a></td>";
 							} else {
-								print "<td style='white-space:nowrap;'>" . (isset($item[$c]) ? html_escape($item[$c]):'Not Found') . "</td>";
+								print "<td class='$class nowrap'>" . (isset($item[$column_name]) ? html_escape($item[$column_name]):__('Not Found', 'gridalarms')) . "</td>";
 							}
+
 							break;
 						case 'queue':
 						case 'queuename':
 							if (isset($column_names['clusterid'])) {
-								if ('lost_and_found'== $item[$c]) {
-									print "<td style='white-space:nowrap;'><a class='pic'>" . html_escape($item[$c]) . "</a></td>\n";
+								if ('lost_and_found'== $item[$column_name]) {
+									print "<td class='$class nowrap'><a class='pic'>" . html_escape($item[$column_name]) . "</a></td>";
 								} else {
-									print "<td style='white-space:nowrap;'><a href='" . html_escape($httpurl . 'plugins/grid/grid_bqueues.php?query=1&action=&clusterid=' .
-									$item['clusterid'] . '&filter=' . $item[$c]) . "'>" .
-									html_escape($item[$c]) . "</a></td>\n";
+									print "<td class='$class nowrap'><a href='" . html_escape($httpurl . 'plugins/grid/grid_bqueues.php?query=1&action=&clusterid=' .
+									$item['clusterid'] . '&filter=' . $item[$column_name]) . "'>" .
+									html_escape($item[$column_name]) . "</a></td>";
 								}
 							} else {
-								print "<td style='white-space:nowrap;'>" . (isset($item[$c]) ? html_escape($item[$c]):'Not Found') . "</td>\n";
+								print "<td class='$class nowrap'>" . (isset($item[$column_name]) ? html_escape($item[$column_name]):__('Not Found', 'gridalarms')) . "</td>";
 							}
+
 							break;
 						case 'exec_host':
 						case 'from_host':
 						case 'host':
 							if (isset($item['clusterid'])) {
-								print "<td style='white-space:nowrap;'><a href='" . html_escape($httpurl . 'plugins/grid/grid_bzen.php?action=zoom&clusterid=' .
-									$item['clusterid'] . '&exec_host=' . $item[$c]) . "'>" .
-									html_escape($item[$c]) . "</a></td>\n";
+								print "<td class='$class nowrap'><a href='" . html_escape($httpurl . 'plugins/grid/grid_bzen.php?action=zoom&clusterid=' .
+									$item['clusterid'] . '&exec_host=' . $item[$column_name]) . "'>" .
+									html_escape($item[$column_name]) . "</a></td>";
 							} else {
-								print "<td style='white-space:nowrap;'>" . (isset($item[$c]) ? html_escape($item[$c]):'Not Found') . "</td>\n";
+								print "<td class='$class nowrap'>" . (isset($item[$column_name]) ? html_escape($item[$column_name]):__('Not Found', 'gridalarms')) . "</td>";
 							}
+
 							break;
 						case 'feature_name':
-							print "<td style='white-space:nowrap;'><a href='" . html_escape($httpurl . 'plugins/license/lic_checkouts.php?query=1&filter=' .
-								html_escape($item[$c])) . "'>" .
-								html_escape($item[$c]) . "</a></td>\n";
+							print "<td class='$class nowrap'><a href='" . html_escape($httpurl . 'plugins/license/lic_checkouts.php?query=1&filter=' .
+								html_escape($item[$column_name])) . "'>" .
+								html_escape($item[$column_name]) . "</a></td>";
+
 							break;
 						case 'user':
 						case 'username':
 							if (isset($item['clusterid'])) {
-								print "<td style='white-space:nowrap;'><a href='" . html_escape($httpurl . 'plugins/grid/grid_busers.php?query=1&noactivity=true&clusterid=' .
-									$item['clusterid'] . '&filter=' . $item[$c]) . "'>" .
-									html_escape($item[$c]) . "</a></td>\n";
+								print "<td class='$class nowrap'><a href='" . html_escape($httpurl . 'plugins/grid/grid_busers.php?query=1&noactivity=true&clusterid=' .
+									$item['clusterid'] . '&filter=' . $item[$column_name]) . "'>" .
+									html_escape($item[$column_name]) . "</a></td>";
 							} else {
-								print "<td style='white-space:nowrap;'>" . (isset($item[$c]) ? html_escape($item[$c]):'Not Found') . "</td>\n";
+								print "<td class='$class nowrap'>" . (isset($item[$column_name]) ? html_escape($item[$column_name]):__('Not Found', 'gridalarms')) . "</td>";
 							}
+
 							break;
 						default:
-							print "<td style='white-space:nowrap;'>" . (isset($item[$c]) ? html_escape($item[$c]):'Not Found') . "</td>\n";
+							if ($c['type'] == 'general' || $c['type'] == 'string' || $c['type'] == 'date') {
+								print "<td class='$class nowrap'>" . (isset($item[$column_name]) ? html_escape($item[$column_name]):__('Not Found', 'gridalarms')) . "</td>";
+							} elseif ($c['type'] == 'integer' || $c['type'] == 'double') {
+								if (!isset($item[$column_name])) {
+									print "<td class='$class nowrap'>" . __('Not Found', 'gridalarms') . '</td>';
+								} elseif (is_numeric($item[$column_name])) {
+									$suffix = '';
+									switch($c['units']) {
+										case 'bytes':
+											if ($c['autoscale'] == '-1' || $c['autoscale'] == '0') {
+												$value = display_job_memory($item[$column_name] / 1000, $c['digits']);
+											} else {
+												$value = number_format_i18n($item[$column_name], $c['digits']) . ' B';
+											}
+										case 'kbytes':
+											if ($c['autoscale'] == '-1' || $c['autoscale'] == '0') {
+												$value = display_job_memory($item[$column_name], $c['digits']);
+											} else {
+												$value = number_format_i18n($item[$column_name], $c['digits']) . ' KB';
+											}
+											break;
+										case 'mbytes':
+											if ($c['autoscale'] == '-1' || $c['autoscale'] == '0') {
+												$value = display_job_memory($item[$column_name] * 1000, $c['digits']);
+											} else {
+												$value = number_format_i18n($item[$column_name], $c['digits']) . ' MB';
+											}
+											break;
+										case 'gbytes':
+											if ($c['autoscale'] == '-1' || $c['autoscale'] == '0') {
+												$value = display_job_memory($item[$column_name] * 1000000, $c['digits']);
+											} else {
+												$value = number_format_i18n($item[$column_name], $c['digits']) . ' GB';
+											}
+											break;
+										case 'tbytes':
+											if ($c['autoscale'] == '-1' || $c['autoscale'] == '0') {
+												$value = display_job_memory($item[$column_name] * 1000000000, $c['digits']);
+											} else {
+												$value = number_format_i18n($item[$column_name], $c['digits']) . ' TB';
+											}
+											break;
+										case 'pbytes':
+											if ($c['autoscale'] == '-1' || $c['autoscale'] == '0') {
+												$value = display_job_memory($item[$column_name] * 1000000000000, $c['digits']);
+											} else {
+												$value = number_format_i18n($item[$column_name], $c['digits']) . ' PB';
+											}
+											break;
+										case 'xbytes':
+											if ($c['autoscale'] == '-1' || $c['autoscale'] == '0') {
+												$value = display_job_memory($item[$column_name] * 1000000000000000, $c['digits']);
+											} else {
+												$value = number_format_i18n($item[$column_name], $c['digits']) . ' EB';
+											}
+											break;
+										case 'jobs':
+											$value = $item[$column_name];
+											$suffix = ' Jobs';
+											break;
+										case 'slots':
+											$value = $item[$column_name];
+											$suffix = ' Slots';
+											break;
+										case 'seconds':
+											$value = display_job_time($item[$column_name] * 60, $c['digits'], false);
+											break;
+										case 'minutes':
+											$value = display_job_time($item[$column_name] * 60, $c['digits'], false);
+											break;
+										case 'hours':
+											$value = display_job_time($item[$column_name] * 3600, $c['digits'], false);
+											break;
+										case 'days':
+											$value = display_job_time($item[$column_name] * 86400, $c['digits'], false);
+											break;
+										default:
+											$value = $item[$column_name];
+											break;
+									}
+
+									print "<td class='$class nowrap'>" . html_escape($value . $suffix) . "</td>";
+								} else {
+									print "<td class='$class nowrap'>" . html_escape($item[$column_name]) . '</td>';
+								}
+							} elseif ($c['type'] == 'fpercent') {
+							} elseif ($c['type'] == 'wpercent') {
+							}
 						}
 					} else {
 						if ($c == 'clustername' && $expression['ds_type'] == 0) {
 							$line .= (strlen($line) ? ',':'') . (html_escape(get_clustername($item['clusterid'])));
 						} else {
-							$line .= (strlen($line) ? ',':'') . (isset($item[$c]) ? html_escape($item[$c]):'Not Found');
+							$line .= (strlen($line) ? ',':'') . (isset($item[$column_name]) ? html_escape($item[$column_name]):__('Not Found', 'gridalarms'));
 						}
 					}
 				}
@@ -3844,9 +4410,13 @@ function alarm_breached_items($id, $return_details = false, $limits = true, $for
 
 			/* storing items into the log_items table */
 			if ($return_details) {
-				$sql_insert = "INSERT INTO gridalarms_alarm_log_items ";
+				$sql_insert = 'INSERT INTO gridalarms_alarm_log_items ';
 
-				db_execute_prepared("UPDATE gridalarms_alarm_log_items SET present=0 WHERE alarm_id=? AND present=1", array($id));
+				db_execute_prepared('UPDATE gridalarms_alarm_log_items
+					SET present = 0
+					WHERE alarm_id = ?
+					AND present = 1',
+					array($id));
 
 				$j=0;
 
@@ -3867,71 +4437,90 @@ function alarm_breached_items($id, $return_details = false, $limits = true, $for
 						}
 
 						switch(strtolower($c)) {
-						case 'clustername': // Type 16
-							$ltype = $ltype | 16;
-							if (isset($item['clusterid'])) {
-								$sql .= (strlen($sql) ? ',':'') . db_qstr(get_clustername($item['clusterid']));
-								$csql .= (strlen($csql) ? ' AND ':'') . 'column' . substr('00' . $i, -2) . '=' . db_qstr(get_clustername($item['clusterid']));
-							} else {
-								$sql .= (strlen($sql) ? ',':'') . db_qstr(isset($item[$c]) ? $item[$c]:'Not Found');
-								if (isset($item[$c])) {
-									$csql .= (strlen($csql) ? ' AND ':'') . 'column' . substr('00' . $i, -2) . '=' . db_qstr($item[$c]);
+							case 'clustername': // Type 16
+								$ltype = $ltype | 16;
+
+								if (isset($item['clusterid'])) {
+									$sql .= (strlen($sql) ? ',':'') . db_qstr(get_clustername($item['clusterid']));
+									$csql .= (strlen($csql) ? ' AND ':'') . 'column' . substr('00' . $i, -2) . '=' . db_qstr(get_clustername($item['clusterid']));
+								} else {
+									$sql .= (strlen($sql) ? ',':'') . db_qstr(isset($item[$column_name]) ? $item[$column_name]:__('Not Found', 'gridalarms'));
+
+									if (isset($item[$column_name])) {
+										$csql .= (strlen($csql) ? ' AND ':'') . 'column' . substr('00' . $i, -2) . '=' . db_qstr($item[$column_name]);
+									}
 								}
-							}
-							break;
-						case 'jobid': // Type 1
-							if (isset($column_names['indexid']) && isset($column_names['submit_time']) && isset($column_names['clusterid'])) {
-								$ltype = $ltype | 1;
-							}
-							if (isset($item[$c])) {
-								$csql .= (strlen($csql) ? ' AND ':'') . 'column' . substr('00' . $i, -2) . '=' . db_qstr($item[$c]);
-							}
-							$sql .= (strlen($sql) ? ',':'') . db_qstr(isset($item[$c]) ? $item[$c]:'Not Found');
-							break;
-						case 'queue': // Type 4
-						case 'queuename':
-							if (isset($column_names['clusterid'])) {
-								$ltype = $ltype | 4;
-							}
-							if (isset($item[$c])) {
-								$csql .= (strlen($csql) ? ' AND ':'') . 'column' . substr('00' . $i, -2) . '=' . db_qstr($item[$c]);
-							}
-							$sql .= (strlen($sql) ? ',':'') . db_qstr(isset($item[$c]) ? $item[$c]:'Not Found');
-							break;
-						case 'exec_host': // Type 2
-						case 'from_host':
-						case 'host':
-						case 'hostname':
-							if (isset($item['clusterid'])) {
-								$ltype = $ltype | 2;
-							}
-							if (isset($item[$c])) {
-								$csql .= (strlen($csql) ? ' AND ':'') . 'column' . substr('00' . $i, -2) . '=' . db_qstr($item[$c]);
-							}
-							$sql .= (strlen($sql) ? ',':'') . db_qstr(isset($item[$c]) ? $item[$c]:'Not Found');
-							break;
-						case 'feature_name':
-							$ltype = $ltype | 32;
-							if (isset($item[$c])) {
-								$csql .= (strlen($csql) ? ' AND ':'') . 'column' . substr('00' . $i, -2) . '=' . db_qstr($item[$c]);
-							}
-							$sql .= (strlen($sql) ? ',':'') . db_qstr(isset($item[$c]) ? $item[$c]:'Not Found');
-							break;
-						case 'user':
-						case 'username':
-							if (isset($item['clusterid'])) {
-								$ltype = $ltype | 8;
-							}
-							if (isset($item[$c])) {
-								$csql .= (strlen($csql) ? ' AND ':'') . 'column' . substr('00' . $i, -2) . '=' . db_qstr($item[$c]);
-							}
-							$sql .= (strlen($sql) ? ',':'') . db_qstr(isset($item[$c]) ? $item[$c]:'Not Found');
-							break;
-						default:
-							if (isset($item[$c])) {
-								$csql .= (strlen($csql) ? ' AND ':'') . 'column' . substr('00' . $i, -2) . '=' . db_qstr($item[$c]);
-							}
-							$sql .= (strlen($sql) ? ',':'') . db_qstr(isset($item[$c]) ? $item[$c]:'Not Found');
+
+								break;
+							case 'jobid': // Type 1
+								if (isset($column_names['indexid']) && isset($column_names['submit_time']) && isset($column_names['clusterid'])) {
+									$ltype = $ltype | 1;
+								}
+
+								if (isset($item[$column_name])) {
+									$csql .= (strlen($csql) ? ' AND ':'') . 'column' . substr('00' . $i, -2) . '=' . db_qstr($item[$column_name]);
+								}
+
+								$sql .= (strlen($sql) ? ',':'') . db_qstr(isset($item[$column_name]) ? $item[$column_name]:__('Not Found', 'gridalarms'));
+
+								break;
+							case 'queue': // Type 4
+							case 'queuename':
+								if (isset($column_names['clusterid'])) {
+									$ltype = $ltype | 4;
+								}
+
+								if (isset($item[$column_name])) {
+									$csql .= (strlen($csql) ? ' AND ':'') . 'column' . substr('00' . $i, -2) . '=' . db_qstr($item[$column_name]);
+								}
+
+								$sql .= (strlen($sql) ? ',':'') . db_qstr(isset($item[$column_name]) ? $item[$column_name]:__('Not Found', 'gridalarms'));
+
+								break;
+							case 'exec_host': // Type 2
+							case 'from_host':
+							case 'host':
+							case 'hostname':
+								if (isset($item['clusterid'])) {
+									$ltype = $ltype | 2;
+								}
+
+								if (isset($item[$column_name])) {
+									$csql .= (strlen($csql) ? ' AND ':'') . 'column' . substr('00' . $i, -2) . '=' . db_qstr($item[$column_name]);
+								}
+
+								$sql .= (strlen($sql) ? ',':'') . db_qstr(isset($item[$column_name]) ? $item[$column_name]:__('Not Found', 'gridalarms'));
+
+								break;
+							case 'feature_name':
+								$ltype = $ltype | 32;
+
+								if (isset($item[$column_name])) {
+									$csql .= (strlen($csql) ? ' AND ':'') . 'column' . substr('00' . $i, -2) . '=' . db_qstr($item[$column_name]);
+								}
+
+								$sql .= (strlen($sql) ? ',':'') . db_qstr(isset($item[$column_name]) ? $item[$column_name]:__('Not Found', 'gridalarms'));
+
+								break;
+							case 'user':
+							case 'username':
+								if (isset($item['clusterid'])) {
+									$ltype = $ltype | 8;
+								}
+
+								if (isset($item[$column_name])) {
+									$csql .= (strlen($csql) ? ' AND ':'') . 'column' . substr('00' . $i, -2) . '=' . db_qstr($item[$column_name]);
+								}
+
+								$sql .= (strlen($sql) ? ',':'') . db_qstr(isset($item[$column_name]) ? $item[$column_name]:__('Not Found', 'gridalarms'));
+
+								break;
+							default:
+								if (isset($item[$column_name])) {
+									$csql .= (strlen($csql) ? ' AND ':'') . 'column' . substr('00' . $i, -2) . '=' . db_qstr($item[$column_name]);
+								}
+
+								$sql .= (strlen($sql) ? ',':'') . db_qstr(isset($item[$column_name]) ? $item[$column_name]:__('Not Found', 'gridalarms'));
 						}
 
 						$i++;
@@ -3947,20 +4536,34 @@ function alarm_breached_items($id, $return_details = false, $limits = true, $for
 						$ltype = 64;
 					}
 
-					$clusterid = 0;
-					$jobid = 0;
-					$indexid = 0;
-					$submit_time = '';
-					$queue = '';
-					$host = '';
+					$clusterid    = 0;
+					$jobid        = 0;
+					$indexid      = 0;
+					$submit_time  = '';
+					$queue        = '';
+					$host         = '';
 					$feature_name = '';
-					$user = '';
+					$user         = '';
 
-					if (isset($item['clusterid'])) $clusterid = $item['clusterid'];
-					if (isset($item['jobid'])) $jobid = $item['jobid'];
-					if (isset($item['indexid'])) $indexid = $item['indexid'];
-					if (isset($item['submit_time'])) $submit_time = $item['submit_time'];
-					if (isset($item['feature_name'])) $feature_name = $item['feature_name'];
+					if (isset($item['clusterid'])) {
+						$clusterid = $item['clusterid'];
+					}
+
+					if (isset($item['jobid'])) {
+						$jobid = $item['jobid'];
+					}
+
+					if (isset($item['indexid'])) {
+						$indexid = $item['indexid'];
+					}
+
+					if (isset($item['submit_time'])) {
+						$submit_time = $item['submit_time'];
+					}
+
+					if (isset($item['feature_name'])) {
+						$feature_name = $item['feature_name'];
+					}
 
 					if (isset($item['queue'])) {
 						$queue = $item['queue'];
@@ -3984,33 +4587,44 @@ function alarm_breached_items($id, $return_details = false, $limits = true, $for
 						$host = $item['from_host'];
 					}
 
-					$sql_array[$j]['sql'] = '(' . $id . "," . $ltype . "," . $clusterid . "," . $jobid . "," . $indexid . ",'" . $submit_time . "','"
-											. $queue . "','" . $host . "','" . $feature_name . "','" . $user . "'," . $sql . ",1, NOW())";
+					$sql_array[$j]['sql'] = '(' . $id . ',' . $ltype . ',' . $clusterid . ',' . $jobid . ',' . $indexid . ',' . db_qstr($submit_time) . ','
+						. db_qstr($queue) . ',' . db_qstr($host) . ',' . db_qstr($feature_name) . ',' . db_qstr($user) . ',' . $sql . ', 1, NOW())';
 
 					$sql_array[$j]['csql'] = "(alarm_id=$id AND clusterid=$clusterid AND host='$host' AND $csql)";
 					$j++;
 				}
 
 				if (cacti_sizeof($sql_array)) {
-				foreach ($sql_array as $a) {
-					$exists = db_fetch_cell("SELECT id FROM gridalarms_alarm_log_items WHERE " . $a['csql'], '', false);
-					if (!$exists) {
-						db_execute($sql_insert . $values . $a['sql']);
-					} else {
-						db_execute_prepared("UPDATE gridalarms_alarm_log_items SET last_updated=NOW(), present=1 WHERE id=?", array($exists));
+					foreach ($sql_array as $a) {
+						$exists = db_fetch_cell("SELECT id
+							FROM gridalarms_alarm_log_items
+							WHERE " . $a['csql'], '', false);
+
+						if (!$exists) {
+							db_execute($sql_insert . $values . $a['sql']);
+						} else {
+							db_execute_prepared('UPDATE gridalarms_alarm_log_items
+								SET last_updated = NOW(), present = 1
+								WHERE id = ?',
+								array($exists));
+						}
 					}
 				}
-				}
 
-				db_execute_prepared("DELETE FROM gridalarms_alarm_log_items WHERE alarm_id=? AND present=0", array($id));
+				db_execute_prepared('DELETE FROM gridalarms_alarm_log_items
+					WHERE alarm_id = ?
+					AND present = 0',
+					array($id));
 			}
 		} else {
 			if (!$forenv) {
-				print "<tr><td colspan='" . cacti_sizeof($column_names) . "'><em>No Threshold Breaching Items</em></td></tr>";
+				print "<tr><td colspan='" . cacti_sizeof($column_names) . "'><em>" . __('No Breached Items Found', 'gridalarms') . '</em></td></tr>';
 			}
 
 			if ($return_details) {
-				db_execute_prepared("DELETE FROM gridalarms_alarm_log_items WHERE alarm_id=?", array($id));
+				db_execute_prepared('DELETE FROM gridalarms_alarm_log_items
+					WHERE alarm_id = ?',
+					array($id));
 			}
 		}
 
@@ -4023,6 +4637,7 @@ function alarm_breached_items($id, $return_details = false, $limits = true, $for
 		} else {
 			$script_data = gridalarms_template_replace_custom_input($expression['id'], $expression['script_data']);
 		}
+
 		$script_data = do_script_variable_replacement($script_data, $alarm);
 		$script_data = "(" . str_replace("\r", "", str_replace("\n", "", $script_data)) . ")";
 
@@ -4105,7 +4720,6 @@ function alarm_breached_items($id, $return_details = false, $limits = true, $for
 			html_end_box(false);
 		}
 	}
-	}
 
 	if ($return_details && !$forenv) {
 		return ob_get_clean();
@@ -4114,7 +4728,7 @@ function alarm_breached_items($id, $return_details = false, $limits = true, $for
 	}
 }
 
-function my_str_getcsv($input, $delimiter = ',', $enclosure = '"', $escape = '\\', $eol = '\n') {
+function my_str_getcsv(string $input, string $delimiter = ',', string $enclosure = '"', string $escape = '\\', string $eol = '\n') : bool|string {
 	if (is_string($input) && !empty($input)) {
 		$output = array();
 		$tmp    = preg_split("/".$eol."/", $input);
@@ -4165,7 +4779,7 @@ function my_str_getcsv($input, $delimiter = ',', $enclosure = '"', $escape = '\\
 	}
 }
 
-function alarm_tabs($admin = true) {
+function alarm_tabs(bool $admin = true) : void {
 	global $config;
 
 	get_filter_request_var('id');
@@ -4211,62 +4825,62 @@ function alarm_tabs($admin = true) {
 	print '</ul></nav></div>';
 }
 
-function alarm_enabled($id) {
+function alarm_enabled(int $alarm_id) : bool|int {
 	return db_fetch_cell_prepared('SELECT
 		IF(alarm_enabled="on",1,0)
 		FROM gridalarms_alarm WHERE id = ?',
-		array($id));
+		array($alarm_id));
 }
 
-function alarm_acknowledge_enabled($id) {
+function alarm_acknowledge_enabled(int $alarm_id) : bool|int {
 	return db_fetch_cell_prepared('SELECT
 		IF(req_ack="on",1,0)
 		FROM gridalarms_alarm WHERE id = ?',
-		array($id));
+		array($alarm_id));
 }
 
-function alarm_breached($id) {
+function alarm_breached(int $alarm_id) : bool|int {
 	return db_fetch_cell_prepared('SELECT IF(alarm_alert>1,1,0)
 		FROM gridalarms_alarm
 		WHERE id = ?',
-		array($id));
+		array($alarm_id));
 }
 
-function alarm_acknowledge_required($id) {
+function alarm_acknowledge_required(int $alarm_id) : bool|int {
 	return db_fetch_cell_prepared('SELECT IF(acknowledgement="on",1,0)
 		FROM gridalarms_alarm
 		WHERE id = ?',
-		array($id));
+		array($alarm_id));
 }
 
-function alarm_disable_prepared($id) {
+function alarm_disable_prepared(int $alarm_id) : bool|int {
 	db_execute_prepared('UPDATE gridalarms_alarm
 		SET alarm_enabled="off"
 		WHERE id = ?',
-		array($id));
+		array($alarm_id));
 }
 
-function alarm_enable_prepared($id) {
+function alarm_enable_prepared(int $alarm_id) : bool|int {
 	db_execute_prepared('UPDATE gridalarms_alarm
 		SET alarm_enabled="on"
 		WHERE id = ?',
-		array($id));
+		array($alarm_id));
 }
 
-function alarm_acknowledge($id) {
+function alarm_acknowledge(int $alarm_id) : bool|int{
 	db_execute_prepared('UPDATE gridalarms_alarm
 		SET acknowledgement="" WHERE id = ?',
-		array($id));
+		array($alarm_id));
 }
 
-function alarm_reset($id) {
+function alarm_reset(int $alarm_id) : bool|int {
 	db_execute_prepared('UPDATE gridalarms_alarm
 		SET acknowledgement="on"
 		WHERE id = ?',
-		array($id));
+		array($alarm_id));
 }
 
-function list_templates($admin = true) {
+function list_templates(bool $admin = true) {
 	global $alarm_bgcolors, $config, $template_actions, $alarm_types,
 		$frequencies, $grid_rows_selector, $gridalarms_types, $gridalarms_severities;
 
@@ -4290,7 +4904,7 @@ function list_templates($admin = true) {
 
 		// check gridalarms template xml
 		$dup_alarm_array = array();
-		$ret= check_import_xml_gridalarms_template($xml_data, $dup_alarm_array);
+		$ret = check_import_xml_gridalarms_template($xml_data, $dup_alarm_array);
 
 		if ($ret < 0) {                                   //show error message
 			raise_message(40, __("Invalid file."), MESSAGE_LEVEL_ERROR);
@@ -4336,7 +4950,6 @@ function list_templates($admin = true) {
 
 			exit;
 		}
-
 	} elseif (isset_request_var('import')) {  //display import page
 		top_header();
 
@@ -4366,6 +4979,7 @@ function list_templates($admin = true) {
 		form_end(false);
 
 		bottom_footer();
+
 		exit;
 	}
 
@@ -4373,21 +4987,21 @@ function list_templates($admin = true) {
 
 	$statefilter = '';
 	$sql_where   = '';
-	$sql_params = array();
+	$sql_params  = array();
 
 	if (isset_request_var('alarm_type') && get_request_var('alarm_type') != '-1') {
-		$sql_where .= ($sql_where == '' ? 'WHERE ' : ' AND ') . 'gridalarms_template.alarm_type=?';
+		$sql_where .= ($sql_where == '' ? 'WHERE ' : ' AND ') . 'gat.alarm_type = ?';
 		$sql_params[] = get_request_var('alarm_type');
 	}
 
 	if (isset_request_var('clusterid') && get_request_var('clusterid') != '0') {
-		$sql_where .= ($sql_where == '' ? 'WHERE ' : ' AND ') . 'gridalarms_template.clusterid=?';
+		$sql_where .= ($sql_where == '' ? 'WHERE ' : ' AND ') . 'gat.clusterid = ?';
 		$sql_params[] = get_request_var('clusterid');
 	}
 
 	if (isset_request_var('filter') && get_request_var('filter') != '') {
-		$sql_where .= ($sql_where == '' ? 'WHERE ' : ' AND ') . 'gridalarms_template.name LIKE ?';
-		$sql_params[] = '%'. get_request_var('filter') . '%';
+		$sql_where .= ($sql_where == '' ? 'WHERE ' : ' AND ') . 'gat.name LIKE ?';
+		$sql_params[] = '%' . get_request_var('filter') . '%';
 	}
 
 	if (get_request_var('rows') <= 0) {
@@ -4399,19 +5013,18 @@ function list_templates($admin = true) {
 	$sql_order = get_order_string();
 	$sql_limit = ' LIMIT ' . ($rows*(get_request_var('page')-1)) . ",$rows";
 
-	$sql = "SELECT gridalarms_template.*, gridalarms_template_expression.ds_type
-		FROM gridalarms_template
-		LEFT JOIN gridalarms_template_expression
-		ON gridalarms_template.expression_id=gridalarms_template_expression.id
+	$sql = "SELECT gat.*, gate.ds_type, SUM(IF(ga.id IS NOT NULL,1,0)) AS alerts
+		FROM gridalarms_template AS gat
+		LEFT JOIN gridalarms_alarm AS ga
+		ON ga.template_id = gat.id
+		LEFT JOIN gridalarms_template_expression AS gate
+		ON gat.expression_id = gate.id
 		$sql_where
+		GROUP BY gat.id
 		$sql_order
 		$sql_limit";
 
 	$result = db_fetch_assoc_prepared($sql, $sql_params);
-
-	?>
-
-	<?php
 
 	html_start_box(__('Alert Template Management', 'gridalarms') . rtm_hover_help('rtm_alert_templates.html', __esc('Learn More', 'gridalarms')), '100%', '', '3', 'center', 'gridalarms_template_edit.php?tab=general&id=');
 
@@ -4421,12 +5034,6 @@ function list_templates($admin = true) {
 		<form id='listalarm' action='gridalarms_templates.php' method='get'>
 			<table class='filterTable'>
 				<tr>
-					<td>
-						<?php print __('Search', 'gridalarms');?>
-					</td>
-					<td>
-						<input type='text' size='25' id='filter' value='<?php print html_escape_request_var('filter');?>'>
-					</td>
 					<td>
 						<?php print __('Cluster', 'gridalarms');?>
 					</td>
@@ -4449,6 +5056,32 @@ function list_templates($admin = true) {
 						</select>
 					</td>
 					<td>
+						<?php print __('Template', 'gridalarms');?>
+					</td>
+					<td>
+						<select id='template_id' onChange='applyFilter()'>
+							<option value='0' <?php if (!isset_request_var('template_id') || get_request_var('template_id') == '0') print 'selected';?>>All</option>
+							<option value='-1' <?php if (!isset_request_var('template_id') || get_request_var('template_id') == '-1') print 'selected';?>>None</option>
+							<?php
+							$templates = db_fetch_assoc('SELECT DISTINCT gat.id, gat.name
+								FROM gridalarms_template AS gat
+								INNER JOIN gridalarms_alarm AS gaa
+								ON gat.id = gaa.template_id
+								ORDER BY gat.name');
+
+							if (cacti_sizeof($templates)) {
+								foreach ($templates as $t) {
+									if (isset_request_var('template_id') && (get_request_var('template_id') == $t['id'])) {
+										print "<option value='" . $t['id'] . "' selected>"  . html_escape($t['name']) . '</option>';
+									} else {
+										print "<option value='" . $t['id'] . "'>"  . html_escape($t['name']) . '</option>';
+									}
+								}
+							}
+							?>
+						</select>
+					</td>
+					<td>
 						<?php print __('Type', 'gridalarms');?>
 					</td>
 					<td>
@@ -4457,6 +5090,27 @@ function list_templates($admin = true) {
 							<option value='0' <?php if (get_request_var('alarm_type') == '0') print "selected";?>>Hi/Low</option>
 							<option value='1' <?php if (get_request_var('alarm_type') == '1') print "selected";?>>Time-Based</option>
 						</select>
+					</td>
+					<td>
+						<span>
+							<input type='button' id='go' value='<?php print __('Go', 'gridalarms');?>' title='<?php print __('Search for Alert', 'gridalarms');?>'>
+							<input type='button' id='clear' value='<?php print __('Clear', 'gridalarms');?>' title='<?php print __('Clear Filters', 'gridalarms');?>'>
+							<input type='button' id='import' value='<?php print __('Import', 'gridalarms');?>' title='<?php print __('Import Templates', 'gridalarms');?>'>
+						</span>
+					</td>
+					<td>
+						<input type='hidden' id='tab' value='alarms'>
+						<input type='hidden' id='search' value='search'>
+					</td>
+				</tr>
+			</table>
+			<table class='filterTable'>
+				<tr>
+					<td>
+						<?php print __('Search', 'gridalarms');?>
+					</td>
+					<td>
+						<input type='text' size='25' id='filter' value='<?php print html_escape(get_request_var('filter'));?>'>
 					</td>
 					<td>
 						<?php print __('Alerts', 'gridalarms');?>
@@ -4472,19 +5126,6 @@ function list_templates($admin = true) {
 						?>
 						</select>
 					</td>
-					<td>
-						<input type='button' id='go' value='<?php print __('Go', 'gridalarms');?>' title='<?php print __('Search for Alert', 'gridalarms');?>'>
-					</td>
-					<td>
-						<input type='button' id='clear' value='<?php print __('Clear', 'gridalarms');?>' title='<?php print __('Clear Filters', 'gridalarms');?>'>
-					</td>
-					<td>
-						<input type='button' id='import' value='<?php print __('Import', 'gridalarms');?>' title='<?php print __('Import Templates', 'gridalarms');?>'>
-					</td>
-					<td>
-						<input type='hidden' id='tab' value='alarms'>
-						<input type='hidden' id='search' value='search'>
-					</td>
 				</tr>
 			</table>
 		</form>
@@ -4493,6 +5134,7 @@ function list_templates($admin = true) {
 			strURL  = 'gridalarms_templates.php?tab=alarms&header=false';
 			strURL += '&alarm_type=' + $('#alarm_type').val();
 			strURL += '&rows=' + $('#rows').val();
+			strURL += '&template_id=' + $('#template_id').val();
 			strURL += '&clusterid=' + $('#clusterid').val();
 			strURL += '&filter=' + $('#filter').val();
 			loadPageNoHeader(strURL);
@@ -4530,22 +5172,78 @@ function list_templates($admin = true) {
 
 	html_end_box();
 
-	$total_rows = db_fetch_cell_prepared("SELECT count(*)
-		FROM gridalarms_template
+	$total_rows = db_fetch_cell_prepared("SELECT COUNT(*)
+		FROM gridalarms_template AS gat
 		$sql_where", $sql_params);
 
 	$display_text = array(
-		'name'               => array('display' => __('Name', 'gridalarms'),         'sort' => 'ASC'),
-		'nosort1'            => array('display' => __('Cluster', 'gridalarms'),      'sort' => 'ASC'),
-		'syslog_priority'    => array('display' => __('Severity', 'gridalarms'),     'sort' => 'ASC'),
-		'nosort2'            => array('display' => __('Alert Type', 'gridalarms'),   'sort' => 'ASC'),
-		'frequency'          => array('display' => __('Check Freq', 'gridalarms'),   'sort' => 'ASC'),
-		'alarm_type'         => array('display' => __('Value Type', 'gridalarms'),   'sort' => 'ASC'),
-		'alarm_hi'           => array('display' => __('High', 'gridalarms'),         'sort' => 'ASC', 'align' => 'right'),
-		'alarm_low'          => array('display' => __('Low', 'gridalarms'),          'sort' => 'ASC', 'align' => 'right'),
-		'alarm_fail_trigger' => array('display' => __('Trigger', 'gridalarms'),      'sort' => 'ASC'),
-		'time_fail_length'   => array('display' => __('Duration', 'gridalarms'),     'sort' => 'ASC'),
-		'repeat_alert'       => array('display' => __('Repeat Alert', 'gridalarms'), 'sort' => 'ASC')
+		'name' => array(
+			'display' => __('Name', 'gridalarms'),
+			'sort' => 'ASC'
+		),
+		'external_id' => array(
+			'display' => __('External ID', 'gridalarms'),
+			'sort' => 'ASC'
+		),
+		'nosort1' => array(
+			'display' => __('Template Cluster', 'gridalarms'),
+			'sort' => 'ASC'
+		),
+		'id' => array(
+			'display' => __('ID', 'gridalarms'),
+			'sort'    => 'ASC',
+			'align' => 'right'
+		),
+		'alerts' => array(
+			'display' => __('Alerts', 'gridalarms'),
+			'sort'    => 'DESC',
+			'align' => 'right'
+		),
+		'syslog_priority' => array(
+			'display' => __('Severity', 'gridalarms'),
+			'sort' => 'ASC',
+			'align' => 'right'
+		),
+		'nosort2' => array(
+			'display' => __('Alert Type', 'gridalarms'),
+			'sort' => 'ASC',
+			'align' => 'right'
+		),
+		'frequency' => array(
+			'display' => __('Check Freq', 'gridalarms'),
+			'sort' => 'DESC',
+			'align' => 'right'
+		),
+		'alarm_type' => array(
+			'display' => __('Value Type', 'gridalarms'),
+			'sort' => 'DESC',
+			'align' => 'right'
+		),
+		'alarm_hi' => array(
+			'display' => __('High', 'gridalarms'),
+			'sort' => 'DESC',
+			'align' => 'right'
+		),
+		'alarm_low' => array(
+			'display' => __('Low', 'gridalarms'),
+			'sort' => 'DESC',
+			'align' => 'right'
+		),
+		'alarm_fail_trigger' => array(
+			'display' => __('Trigger', 'gridalarms'),
+			'sort' => 'DESC',
+			'align' => 'right'
+		),
+		'time_fail_length' => array(
+			'display' => __('Duration', 'gridalarms'),
+			'sort' => 'DESC',
+			'align' => 'right'
+		),
+		'repeat_alert' => array(
+			'display' => __('Repeat Alert', 'gridalarms'),
+			'sort' => 'DESC',
+			'align' => 'right'
+		)
 	);
 
 	$nav = html_nav_bar('gridalarms_templates.php', MAX_DISPLAY_PAGES, get_request_var('page'), $rows, $total_rows, cacti_sizeof($display_text) + 1, __('Alert Templates'), 'page', 'main');
@@ -4577,6 +5275,10 @@ function list_templates($admin = true) {
 			form_alternate_row('line' . $row['id'], false);
 			form_selectable_cell(filter_value($name, get_request_var('filter'), 'gridalarms_template_edit.php?tab=general&id=' . $row['id']), $row['id'], '', '');
 
+			form_selectable_cell($row['external_id'], $row['id']);
+
+			$url = $config['url_path'] . 'plugins/gridalarms/gridalarms_alarm.php?template_id=' . $row['id'];
+
 			if ($row['clusterid'] == '0') {
 				form_selectable_cell(__('N/A', 'gridalarms'), $row['id'], '', '');
 			} else {
@@ -4585,21 +5287,24 @@ function list_templates($admin = true) {
 				form_selectable_cell($cluster_name, $row['id'], '', '');
 			}
 
-			form_selectable_cell($gridalarms_severities[$row['syslog_priority']], $row['id'], '', '');
-			form_selectable_cell($row['ds_type'] != '' ? $gridalarms_types[$row['ds_type']] : __('Not Defined', 'gridalarms'), $row['id'], '', '');
-			form_selectable_cell($frequencies[$row['frequency']], $row['id'], '', '');
-			form_selectable_cell($alarm_types[$row['alarm_type']], $row['id'], '', '');
+			form_selectable_cell($row['id'], $row['id'], '', 'right');
+			form_selectable_cell(filter_value($row['alerts'], '', $url), $row['id'], '', 'right');
+
+			form_selectable_cell($gridalarms_severities[$row['syslog_priority']], $row['id'], '', 'right');
+			form_selectable_cell($row['ds_type'] != '' ? $gridalarms_types[$row['ds_type']] : __('Not Defined', 'gridalarms'), $row['id'], '', 'right');
+			form_selectable_cell($frequencies[$row['frequency']], $row['id'], '', 'right');
+			form_selectable_cell($alarm_types[$row['alarm_type']], $row['id'], '', 'right');
 			form_selectable_cell(($row['alarm_type'] == 0 ? $row['alarm_hi'] : ($row['alarm_type'] == 1 ? $row['time_hi'] : '')), $row['id'], '', 'right');
 			form_selectable_cell(($row['alarm_type'] == 0 ? $row['alarm_low'] : ($row['alarm_type'] == 1 ? $row['time_low'] : '')), $row['id'], '', 'right');
-			form_selectable_cell(($row['alarm_type'] == 0 ? ('<i>' . plugin_alarm_duration_convert($row['alarm_fail_trigger'], 'alert') . '</i>') : ($row['alarm_type'] == 1 ? ('<i>' . __('%d Triggers', $row['time_fail_trigger']) . '</i>') : '')), $row['id'], '', '');
-			form_selectable_cell(($row['alarm_type'] == 1 ? plugin_alarm_duration_convert($row['time_fail_length'], 'time') : ''), $row['id'], '', '');
-			form_selectable_cell(($row['repeat_alert'] == '' ? '' : plugin_alarm_duration_convert($row['repeat_alert'], 'repeat')), $row['id'], '', '');
+			form_selectable_cell(($row['alarm_type'] == 0 ? ('<i>' . plugin_alarm_duration_convert($row['alarm_fail_trigger'], 'alert') . '</i>') : ($row['alarm_type'] == 1 ? ('<i>' . __('%d Triggers', $row['time_fail_trigger']) . '</i>') : '')), $row['id'], '', 'right');
+			form_selectable_cell(($row['alarm_type'] == 1 ? plugin_alarm_duration_convert($row['time_fail_length'], 'time') : ''), $row['id'], '', 'right');
+			form_selectable_cell(($row['repeat_alert'] == '' ? '' : plugin_alarm_duration_convert($row['repeat_alert'], 'repeat')), $row['id'], '', 'right');
 
 			form_checkbox_cell($row['name'], $row['id'], '', '');
 			form_end_row();
 		}
 	} else {
-		print '<tr><td colspan=15><em>No Templates Found</em></td></tr>';
+		print '<tr><td colspan=15><em>' . __('No Alert Templates Found', 'gridalarms') . '</em></td></tr>';
 	}
 
 	html_end_box(false);
@@ -4616,28 +5321,28 @@ function list_templates($admin = true) {
 	}
 }
 
-function list_alarms($admin = true) {
+function list_alarms(bool $admin = true) : void {
 	global $alarm_bgcolors, $config, $alarm_actions, $alarm_types,
 		$frequencies, $grid_rows_selector, $gridalarms_types, $gridalarms_severities;
-	$sql_params = array();
 
 	alarm_request_validation($admin);
 
 	$statefilter = '';
 	$sql_where   = '';
+	$sql_params  = array();
 
 	if (isset_request_var('state')) {
 		if (get_request_var('state') != 0) {
 			if (get_request_var('state') == 1) {
-				$statefilter = "gridalarms_alarm.alarm_enabled='off'";
+				$statefilter = "gridalarms_alarm.alarm_enabled = 'off'";
 			}
 
 			if (get_request_var('state') == 2) {
-				$statefilter = "gridalarms_alarm.alarm_enabled='on'";
+				$statefilter = "gridalarms_alarm.alarm_enabled = 'on'";
 			}
 
 			if (get_request_var('state') == 3) {
-				$statefilter = 'gridalarms_alarm.alarm_alert!=0';
+				$statefilter = 'gridalarms_alarm.alarm_alert != 0';
 			}
 
 			if ($statefilter != '') {
@@ -4652,18 +5357,27 @@ function list_alarms($admin = true) {
 	}
 
 	if (isset_request_var('alarm_type') && get_request_var('alarm_type') != '-1') {
-		$sql_where .= ($sql_where == '' ? 'WHERE ' : ' AND ') . 'gridalarms_alarm.alarm_type=?';
+		$sql_where .= ($sql_where == '' ? 'WHERE ' : ' AND ') . 'gridalarms_alarm.alarm_type = ?';
 		$sql_params[] = get_request_var('alarm_type');
 	}
 
 	if (isset_request_var('clusterid') && get_request_var('clusterid') != '0') {
-		$sql_where .= ($sql_where == '' ? 'WHERE ' : ' AND ') . 'gridalarms_alarm.clusterid=?';
+		$sql_where .= ($sql_where == '' ? 'WHERE ' : ' AND ') . 'gridalarms_alarm.clusterid = ?';
 		$sql_params[] = get_request_var('clusterid');
+	}
+
+	if (isset_request_var('template_id')) {
+		if (get_request_var('template_id') > '0') {
+			$sql_where .= ($sql_where == '' ? 'WHERE ' : ' AND ') . 'gridalarms_alarm.template_id = ?';
+			$sql_params[] = get_request_var('template_id');
+		} elseif (get_request_var('template_id') == '-1') {
+			$sql_where .= ($sql_where == '' ? 'WHERE ' : ' AND ') . 'gridalarms_alarm.template_id = 0';
+		}
 	}
 
 	if (isset_request_var('filter') && get_request_var('filter') != '') {
 		$sql_where .= ($sql_where == '' ? 'WHERE ' : ' AND ') . 'gridalarms_alarm.name LIKE ?';
-		$sql_params[] = '%'. get_request_var('filter') . '%';
+		$sql_params[] = '%' . get_request_var('filter') . '%';
 	}
 
 	/* if the number of rows is -1, set it to the default */
@@ -4687,18 +5401,13 @@ function list_alarms($admin = true) {
 	$result = db_fetch_assoc_prepared($sql, $sql_params);
 
 	html_start_box(__('Alert Management', 'gridalarms') . rtm_hover_help('rtm_grid_alerts_create.html', __esc('Learn More', 'gridalarms')), '100%', '', '3', 'center', ($admin ? 'gridalarms_alarm_edit.php?action=select_template':''));
+
 	?>
 	<tr class='noprint even'>
 		<td>
 		<form id='listalarm' action='<?php print ($admin ? 'gridalarms_alarm.php':'grid_alarmdb.php');?>' method='get'>
 			<table class='filterTable'>
 				<tr>
-					<td>
-						<?php print __('Search', 'gridalarms');?>
-					</td>
-					<td>
-						<input type='text' id='filter' size='25' value='<?php print html_escape_request_var('filter');?>'>
-					</td>
 					<td>
 						<?php print __('Cluster', 'gridalarms');?>
 					</td>
@@ -4714,6 +5423,32 @@ function list_alarms($admin = true) {
 										print "<option value='" . $cluster["clusterid"] . "' selected>"  . html_escape($cluster["clustername"]) . "</option>";
 									} else {
 										print "<option value='" . $cluster["clusterid"] . "'>"  . html_escape($cluster["clustername"]) . "</option>";
+									}
+								}
+							}
+							?>
+						</select>
+					</td>
+					<td>
+						<?php print __('Template', 'gridalarms');?>
+					</td>
+					<td>
+						<select id='template_id' onChange='applyFilter()'>
+							<option value='0' <?php if (!isset_request_var('template_id') || get_request_var('template_id') == '0') print 'selected';?>>All</option>
+							<option value='-1' <?php if (!isset_request_var('template_id') || get_request_var('template_id') == '-1') print 'selected';?>>None</option>
+							<?php
+							$templates = db_fetch_assoc('SELECT DISTINCT gat.id, gat.name
+								FROM gridalarms_template AS gat
+								INNER JOIN gridalarms_alarm AS gaa
+								ON gat.id = gaa.template_id
+								ORDER BY gat.name');
+
+							if (cacti_sizeof($templates)) {
+								foreach ($templates as $t) {
+									if (isset_request_var('template_id') && (get_request_var('template_id') == $t['id'])) {
+										print "<option value='" . $t['id'] . "' selected>"  . html_escape($t['name']) . '</option>';
+									} else {
+										print "<option value='" . $t['id'] . "'>"  . html_escape($t['name']) . '</option>';
 									}
 								}
 							}
@@ -4741,6 +5476,12 @@ function list_alarms($admin = true) {
 			</table>
 			<table class='filterTable'>
 				<tr>
+					<td>
+						<?php print __('Search', 'gridalarms');?>
+					</td>
+					<td>
+						<input type='text' id='filter' size='25' value='<?php print html_escape(get_request_var('filter'));?>'>
+					</td>
 					<td>
 						<?php print __('Type', 'gridalarms');?>
 					</td>
@@ -4771,7 +5512,7 @@ function list_alarms($admin = true) {
 						</select>
 					</td>
 					<td>
-						Alerts
+						<?php print __('Alerts', 'gridalarms');?>
 					</td>
 					<td width='1'>
 						<select id='rows' onChange='applyFilter()'>
@@ -4793,6 +5534,7 @@ function list_alarms($admin = true) {
 			strURL += '&state=' + $('#state').val();
 			strURL += '&alarm_ds_type=' + $('#alarm_ds_type').val();
 			strURL += '&alarm_type=' + $('#alarm_type').val();
+			strURL += '&template_id=' + $('#template_id').val();
 			strURL += '&rows=' + $('#rows').val();
 			strURL += '&clusterid=' + $('#clusterid').val();
 			strURL += '&filter=' + $('#filter').val();
@@ -4826,28 +5568,99 @@ function list_alarms($admin = true) {
 	html_end_box();
 
 	$display_text = array(
-		'nosort0'            => array('display' => __('Actions', 'gridalarms'),      'sort' => 'ASC'),
-		'name'               => array('display' => __('Name', 'gridalarms'),         'sort' => 'ASC'),
-		'nosort1'            => array('display' => __('Cluster', 'gridalarms'),      'sort' => 'ASC'),
-		'syslog_priority'    => array('display' => __('Severity', 'gridalarms'),     'sort' => 'ASC'),
-		'frequency'          => array('display' => __('Check Freq', 'gridalarms'),   'sort' => 'ASC'),
-		'alarm_type'         => array('display' => __('Value Type', 'gridalarms'),   'sort' => 'ASC'),
-		'alarm_hi'           => array('display' => __('High', 'gridalarms'),         'sort' => 'ASC',  'align' => 'right'),
-		'alarm_low'          => array('display' => __('Low', 'gridalarms'),          'sort' => 'ASC',  'align' => 'right'),
-		'lastread'           => array('display' => __('Current', 'gridalarms'),      'sort' => 'ASC',  'align' => 'right'),
-		'alarm_fail_trigger' => array('display' => __('Trigger', 'gridalarms'),      'sort' => 'ASC'),
-		'time_fail_length'   => array('display' => __('Duration', 'gridalarms'),     'sort' => 'ASC'),
-		'repeat_alert'       => array('display' => __('Repeat Alert', 'gridalarms'), 'sort' => 'ASC'),
-		'last_runtime'       => array('display' => __('Last Checked', 'gridalarms'), 'sort' => 'DESC'),
-		'last_duration'      => array('display' => __('Run Time', 'gridalarms'),     'sort' => 'DESC', 'align' => 'right')
+		'nosort0' => array(
+			'display' => __('Actions', 'gridalarms'),
+			'sort' => 'ASC'
+		),
+		'name' => array(
+			'display' => __('Name', 'gridalarms'),
+			'sort' => 'ASC'
+		),
+		'nosort1' => array(
+			'display' => __('Cluster', 'gridalarms'),
+			'sort' => 'ASC'
+		),
+		'id' => array(
+			'display' => __('ID', 'gridalarms'),
+			'sort' => 'ASC',
+			'align' => 'right'
+		),
+		'syslog_priority' => array(
+			'display' => __('Severity', 'gridalarms'),
+			'sort' => 'ASC',
+			'align' => 'right'
+		),
+		'frequency' => array(
+			'display' => __('Check Freq', 'gridalarms'),
+			'sort' => 'ASC',
+			'align' => 'right'
+		),
+		'alarm_type' => array(
+			'display' => __('Value Type', 'gridalarms'),
+			'sort' => 'ASC',
+			'align' => 'right'
+		),
+		'alarm_hi' => array(
+			'display' => __('High', 'gridalarms'),
+			'sort' => 'DESC',
+			'align' => 'right'
+		),
+		'alarm_low' => array(
+			'display' => __('Low', 'gridalarms'),
+			'sort' => 'DESC',
+			'align' => 'right'
+		),
+		'lastread' => array(
+			'display' => __('Current', 'gridalarms'),
+			'sort' => 'DESC',
+			'align' => 'right'
+		),
+		'alarm_fail_trigger' => array(
+			'display' => __('Trigger', 'gridalarms'),
+			'sort' => 'DESC',
+			'align' => 'right'
+		),
+		'time_fail_length' => array(
+			'display' => __('Duration', 'gridalarms'),
+			'sort' => 'DESC',
+			'align' => 'right'
+		),
+		'repeat_alert' => array(
+			'display' => __('Repeat Alert', 'gridalarms'),
+			'sort' => 'DESC',
+			'align' => 'right'
+		)
+	);
+
+	if ($admin) {
+		$display_text += array(
+			'template_enabled' => array(
+				'display' => __('Templated', 'gridalarms'),
+				'sort' => 'DESC',
+				'align' => 'right'
+			)
+		);
+	}
+
+	$display_text += array(
+		'last_runtime' => array(
+			'display' => __('Last Checked', 'gridalarms'),
+			'sort' => 'DESC',
+			'align' => 'right'
+		),
+		'last_duration' => array(
+			'display' => __('Run Time', 'gridalarms'),
+			'sort' => 'DESC',
+			'align' => 'right'
+		)
 	);
 
 	$total_rows = db_fetch_cell_prepared("SELECT count(*) FROM gridalarms_alarm
 		LEFT JOIN gridalarms_expression
-		ON gridalarms_alarm.expression_id=gridalarms_expression.id
+		ON gridalarms_alarm.expression_id = gridalarms_expression.id
 		$sql_where", $sql_params);
 
-	$nav = html_nav_bar(($admin ? 'gridalarms_alarm.php':'grid_alarmdb.php'), MAX_DISPLAY_PAGES, get_request_var('page'), $rows, $total_rows, cacti_sizeof($display_text) + 1, __('Alerts'), 'page', 'main');
+	$nav = html_nav_bar(($admin ? 'gridalarms_alarm.php':'grid_alarmdb.php'), MAX_DISPLAY_PAGES, get_request_var('page'), $rows, $total_rows, cacti_sizeof($display_text) + 1, __('Alerts', 'gridalarms'), 'page', 'main');
 
 	if ($admin) {
 		form_start('gridalarms_alarm.php', 'chk');
@@ -4863,22 +5676,23 @@ function list_alarms($admin = true) {
 		html_header_sort($display_text, get_request_var('sort_column'), get_request_var('sort_direction'));
 	}
 
-	$i=0;
-	$c=0;
+	$i = 0;
+	$c = 0;
+
 	if (cacti_sizeof($result)) {
 		foreach ($result as $row) {
 			$c++;
 
 			if ($row['alarm_alert'] != 0) {
-				$alertstat='yes';
+				$alertstat = 'yes';
 				if ($row["alarm_type"] == 0) {
-					$bgcolor=($row['alarm_fail_count'] >= $row['alarm_fail_trigger'] ? 'red' : 'yellow');
+					$bgcolor = ($row['alarm_fail_count'] >= $row['alarm_fail_trigger'] ? 'red' : 'yellow');
 				} else {
-					$bgcolor=($row['alarm_fail_count'] >= $row['time_fail_trigger'] ? 'red' : 'yellow');
+					$bgcolor = ($row['alarm_fail_count'] >= $row['time_fail_trigger'] ? 'red' : 'yellow');
 				}
 			} else {
-				$alertstat='no';
-				$bgcolor='green';
+				$alertstat = 'no';
+				$bgcolor = 'green';
 			}
 
 			if ($row['req_ack'] == 'on') {
@@ -4893,20 +5707,58 @@ function list_alarms($admin = true) {
 
 			if ($admin) {
 				if ($row['alarm_enabled'] == 'off') {
-					rtm_form_alternate_row_color($alarm_bgcolors['grey'], $alarm_bgcolors['grey'], 'line' . $row["id"], true);
+					rtm_form_alternate_row_color($alarm_bgcolors['grey'], $alarm_bgcolors['grey'], 'line' . $row["id"], false);
 				} else {
-					rtm_form_alternate_row_color($alarm_bgcolors[$bgcolor], $alarm_bgcolors[$bgcolor], 'line' . $row["id"], true);
+					rtm_form_alternate_row_color($alarm_bgcolors[$bgcolor], $alarm_bgcolors[$bgcolor], 'line' . $row["id"], false);
 				}
 
 				if ($row['expression_id'] > 0) {
 					print "<td class='nowrap' style='width:1%;'>";
-					print "<a class='pic' href='" . html_escape(($admin ? 'gridalarms_alarm.php?':'grid_alarmdb.php?') . "&action=details&tab=details&id=" . $row['id']) . "'><img title='" . __esc('View Currently Breached Items', 'gridalarms') . "' src='" . $config["url_path"] . "plugins/gridalarms/images/view_alarm_details.gif'></a>";
-					print "<a class='pic' href='" . html_escape(($admin ? 'gridalarms_alarm.php?':'grid_alarmdb.php?') . 'tab=log&id=' . $row['id'] . '&status=-1&alarm_type=-1&filter=') . "'><img title='" . __esc('View Alert History', 'gridalarms') . "' src='" . $config["url_path"] . "plugins/gridalarms/images/view_log.gif'></a>";
-					print "<a class='pic' href='" . html_escape(($admin ? 'gridalarms_alarm.php?':'grid_alarmdb.php?') . 'action=' . (alarm_enabled($row['id']) ? 'disable':'enable') . '&id=' . $row['id']) . "'><img title='" . (alarm_enabled($row['id']) ? __esc('Disable Alert Details', 'gridalarms'):__esc('Enable Alert Details', 'gridalarms')) . "' src='" . $config["url_path"] . "plugins/gridalarms/images/alarm_" . (alarm_enabled($row['id']) ? 'disable':'enable') . ".png'></a>";
-					print (alarm_acknowledge_enabled($row['id']) && alarm_acknowledge_required($row['id']) ? "<a class='pic' href='" . html_escape(($admin ? 'gridalarms_alarm.php?':'grid_alarmdb.php?') . 'action=' . (alarm_acknowledge_required($row['id']) ? 'acknowledge':'resetack') . '&id=' . $row['id']) . "'><img title='" . (alarm_acknowledge_required($row['id']) ? __esc('Acknowledge Alert', 'gridalarms'):__esc('Reset Alert Acknowledgement', 'gridalarms')) . "' src='" . $config["url_path"] . 'plugins/gridalarms/images/alarm_' . (alarm_acknowledge_required($row['id']) ? 'ack':'reset') . ".png'></a>":'');
-					print "</td>\n";
+
+					print "<a class='pic' href='" . html_escape(($admin ? 'gridalarms_alarm.php?':'grid_alarmdb.php?') .
+						"&action=details&tab=details&id=" . $row['id']) . "' title='" . __esc('View Currently Breached Items', 'gridalarms') . "'>
+						<i class='fas fa-search-plus'></i>
+					</a>";
+
+					print "<a class='pic' href='" . html_escape(($admin ? 'gridalarms_alarm.php?':'grid_alarmdb.php?') .
+						'tab=log&id=' . $row['id'] .
+						'&status=-1&alarm_type=-1&filter=') . "' title='" . __esc('View Alert History', 'gridalarms') . "'>
+						<i class='tholdGlyphLog fas fa-exclamation-triangle'></i>
+					</a>";
+
+					if (alarm_enabled($row['id'])) {
+						print "<a class='pic' href='" . html_escape(($admin ? 'gridalarms_alarm.php?':'grid_alarmdb.php?') .
+							'action=disable' .
+							'&id=' . $row['id']) . "' title='" . __esc('Disable Alert Details', 'gridalarms') . "'>
+							<i class='tholdGlyphDisable fas fa-stop-circle'></i>
+						</a>";
+					} else {
+						print "<a class='pic' href='" . html_escape(($admin ? 'gridalarms_alarm.php?':'grid_alarmdb.php?') .
+							'action=enable' .
+							'&id=' . $row['id']) . "' title='" . __esc('Enable Alert Details', 'gridalarms') . "'>
+							<i class='tholdGlyphEnable fas fa-play-circle'></i>
+						</a>";
+					}
+
+					if (alarm_acknowledge_enabled($row['id']) && alarm_acknowledge_required($row['id'])) {
+						if (alarm_acknowledge_required($row['id'])) {
+							print "<a class='pic' href='" . html_escape(($admin ? 'gridalarms_alarm.php?':'grid_alarmdb.php?') .
+								'action=acknowledge' .
+								'&id=' . $row['id']) . "' title='" . __esc('Acknowledge Alert', 'gridalarms') . "'>
+								<i class='tholdGlyphAcknowledge fas fa-clipboard-check'></i>
+							</a>";
+						} else {
+							print "<a class='pic' href='" . html_escape(($admin ? 'gridalarms_alarm.php?':'grid_alarmdb.php?') .
+								'action=resetack' .
+								'&id=' . $row['id']) . "' title='" . __esc('Reset Alert Acknowledgement', 'gridalarms') . "'>
+								<i class='tholdGlyphAcknowledgeResume fas fa-clipboard-check'></i>
+							</a>";
+						}
+					}
+
+					print "</td>";
 				} else {
-					print "<td></td>\n";
+					print "<td></td>";
 				}
 
 				$name = ($row['name'] != '' ? $row['name'] : __('Unknown [%s]', $row['data_source_name'], 'gridalarms'));
@@ -4922,68 +5774,123 @@ function list_alarms($admin = true) {
 					form_selectable_cell($cluster_name, $row['id'], '', '');
 				}
 
-				form_selectable_cell($gridalarms_severities[$row['syslog_priority']], $row['id'], '', '');
-				form_selectable_cell($frequencies[$row['frequency']], $row['id'], '', '');
-				form_selectable_cell($alarm_types[$row['alarm_type']], $row['id'], '', '');
+				form_selectable_cell($row['id'], $row['id'], '', 'right');
+
+				form_selectable_cell($gridalarms_severities[$row['syslog_priority']], $row['id'], '', 'right');
+				form_selectable_cell($frequencies[$row['frequency']], $row['id'], '', 'right');
+				form_selectable_cell($alarm_types[$row['alarm_type']], $row['id'], '', 'right');
 				form_selectable_cell(($row['alarm_type'] == 0 ? $row['alarm_hi'] : ($row['alarm_type'] == 1 ? $row['time_hi'] : '')), $row['id'], '', 'right');
 				form_selectable_cell(($row['alarm_type'] == 0 ? $row['alarm_low'] : ($row['alarm_type'] == 1 ? $row['time_low'] : '')), $row['id'], '', 'right');
 				form_selectable_cell($row['lastread'], $row['id'], '', 'right');
-				form_selectable_cell(($row['alarm_type'] == 0 ? ('<i>' . plugin_alarm_duration_convert($row['alarm_fail_trigger'], 'alert') . '</i>') : ($row['alarm_type'] == 1 ? ('<i>' . __('%d Triggers', $row['time_fail_trigger'], 'gridalarms') . '</i>') : '')), $row['id'], '', '');
+				form_selectable_cell(($row['alarm_type'] == 0 ? ('<i>' . plugin_alarm_duration_convert($row['alarm_fail_trigger'], 'alert') . '</i>') : ($row['alarm_type'] == 1 ? ('<i>' . __('%d Triggers', $row['time_fail_trigger'], 'gridalarms') . '</i>') : '')), $row['id'], '', 'right');
 
-				form_selectable_cell(($row['alarm_type'] == 1 ? plugin_alarm_duration_convert($row['time_fail_length'], 'time') : ''), $row['id'], '', '');
-				form_selectable_cell(($row['repeat_alert'] == '' ? '' : plugin_alarm_duration_convert($row['repeat_alert'], 'repeat')), $row['id'], '', '');
+				form_selectable_cell(($row['alarm_type'] == 1 ? plugin_alarm_duration_convert($row['time_fail_length'], 'time') : ''), $row['id'], '', 'right');
+				form_selectable_cell(($row['repeat_alert'] == '' ? '' : plugin_alarm_duration_convert($row['repeat_alert'], 'repeat')), $row['id'], '', 'right');
 
-				form_selectable_cell(($row['last_runtime'] == '0000-00-00 00:00:00' ? __('N/A', 'gridalarms'):$row['last_runtime']), $row['id'], '', '');
-				form_selectable_cell(($row['last_runtime'] == '0000-00-00 00:00:00' ? __('N/A', 'gridalarms'):round($row['last_duration'], 3) . ' sec'), $row['id'], '', 'right');
+				form_selectable_cell(($row['template_enabled'] == 'on' ? __('Yes', 'gridalarms'):__('No', 'gridalarms')), $row['id'], '', 'right');
+
+				form_selectable_cell(($row['last_runtime'] == '0000-00-00 00:00:00' ? __('N/A', 'gridalarms'):$row['last_runtime']), $row['id'], '', 'right');
+				form_selectable_cell(($row['last_runtime'] == '0000-00-00 00:00:00' ? __('N/A', 'gridalarms'):round($row['last_duration'], 2) . ' sec'), $row['id'], '', 'right');
+
 				form_checkbox_cell($row['name'], $row['id'], '', '');
+
 				form_end_row();
 			} else {
 				if ($row['alarm_enabled'] == 'off') {
-					rtm_form_alternate_row_color($alarm_bgcolors['grey'], $alarm_bgcolors['grey']);
+					rtm_form_alternate_row_color($alarm_bgcolors['grey'], $alarm_bgcolors['grey'], 'line' . $row['id'], false);
 				} else {
-					rtm_form_alternate_row_color($alarm_bgcolors[$bgcolor], $alarm_bgcolors[$bgcolor]);
+					rtm_form_alternate_row_color($alarm_bgcolors[$bgcolor], $alarm_bgcolors[$bgcolor], 'line' . $row['id'], false);
 				}
 
 				$hasAuth = api_user_realm_auth('gridalarms_alarm_edit.php');
 
 				if ($row['expression_id'] > 0) {
 					print "<td class='nowrap' style='width:1%;'>";
-					print $hasAuth ? "<a class='pic' href='" . html_escape("gridalarms_alarm_edit.php?tab=general&id=" . $row['id']) . "'><img title='Edit Alert' src='" . $config["url_path"] . "plugins/gridalarms/images/edit_object.png'></a>":'';
-					print "<a class='pic' href='" . html_escape(($admin ? 'gridalarms_alarm.php?':'grid_alarmdb.php?') . 'action=details&tab=details&id=' . $row['id']) . "'><img title='" . __esc('View Currently Breached Items', 'gridalarms') . "' src='" . $config["url_path"] . "plugins/gridalarms/images/view_alarm_details.gif'></a>";
-					print "<a class='pic' href='" . html_escape(($admin ? 'gridalarms_alarm.php?':'grid_alarmdb.php?') . 'tab=log&id=' . $row['id'] . '&status=-1&alarm_type=-1&filter=') . "'><img title='" . __esc('View Alert History', 'gridalarms') . "' src='" . $config["url_path"] . "plugins/gridalarms/images/view_log.gif'></a>";
 
-					if (api_user_realm_auth('gridalarms_alarm.php')) {
-						print "<a class='pic' href='" . html_escape(($admin ? 'gridalarms_alarm.php?':'grid_alarmdb.php?') . 'action=' . (alarm_enabled($row['id']) ? 'disable':'enable') . '&id=' . $row['id']) . "'><img title='" . (alarm_enabled($row['id']) ? __esc('Disable Alert Details', 'gridalarms'): __esc('Enable Alert Details', 'gridalarms')) . "' src='" . $config["url_path"] . 'plugins/gridalarms/images/alarm_' . (alarm_enabled($row['id']) ? 'disable':'enable') . ".png'></a>";
-						print (alarm_acknowledge_enabled($row['id']) && alarm_acknowledge_required($row['id']) ? "<a class='pic' href='" . html_escape(($admin ? 'gridalarms_alarm.php?':'grid_alarmdb.php?') . 'action=' . (alarm_acknowledge_required($row['id']) ? 'acknowledge':'resetack') . '&id=' . $row['id']) . "'><img title='" . (alarm_acknowledge_required($row['id']) ? __esc('Acknowledge Alert', 'gridalarms'):__esc('Reset Alert Acknowledgement', 'gridalarms')) . "' src='" . $config["url_path"] . 'plugins/gridalarms/images/alarm_' . (alarm_acknowledge_required($row['id']) ? 'ack':'reset') . ".png'></a>":'');
+					if ($hasAuth) {
+						print "<a class='pic' href='" . html_escape("gridalarms_alarm_edit.php?tab=general&id=" . $row['id']) . "' title='" . __esc('Edit Alert', 'gridalarms') . "'>
+						<i class='tholdGlyphEdit fas fa-wrench'></i>
+						</a>";
 					}
 
-					print "</td>\n";
+					print "<a class='pic' href='" . html_escape(($admin ? 'gridalarms_alarm.php?':'grid_alarmdb.php?') .
+						'action=details&tab=details&id=' . $row['id']) . "' title='" . __esc('View Currently Breached Items', 'gridalarms') . "'>
+						<i class='fas fa-search-plus'></i>
+					</a>";
+
+					print "<a class='pic' href='" . html_escape(($admin ? 'gridalarms_alarm.php?':'grid_alarmdb.php?') .
+						'tab=log&id=' . $row['id'] . '&status=-1&alarm_type=-1&filter=') . "' title='" . __esc('View Alert History', 'gridalarms') . "'>
+						<i class='tholdGlyphLog fas fa-exclamation-triangle'></i>
+					</a>";
+
+					if (api_user_realm_auth('gridalarms_alarm.php')) {
+						if (alarm_enabled($row['id'])) {
+							print "<a class='pic' href='" . html_escape(($admin ? 'gridalarms_alarm.php?':'grid_alarmdb.php?') .
+								'action=disable' .
+								'&id=' . $row['id']) . "' title='" . __esc('Disable Alert Details', 'gridalarms') . "'>
+								<i class='tholdGlyphDisable fas fa-stop-circle'></i>
+							</a>";
+						} else {
+							print "<a class='pic' href='" . html_escape(($admin ? 'gridalarms_alarm.php?':'grid_alarmdb.php?') .
+								'action=enable' .
+								'&id=' . $row['id']) . "' title='" . __esc('Enable Alert Details', 'gridalarms') . "'>
+								<i class='tholdGlyphEnable fas fa-play-circle'></i>
+							</a>";
+						}
+
+						if (alarm_acknowledge_enabled($row['id']) && alarm_acknowledge_required($row['id'])) {
+							if (alarm_acknowledge_required($row['id'])) {
+								print "<a class='pic' href='" . html_escape(($admin ? 'gridalarms_alarm.php?':'grid_alarmdb.php?') .
+									'action=acknowledge' .
+									'&id=' . $row['id']) . "' title='" . __esc('Acknowledge Alert', 'gridalarms') . "'>
+									<i class='tholdGlyphAcknowledge fas fa-clipboard-check'></i>
+								</a>";
+							} else {
+								print "<a class='pic' href='" . html_escape(($admin ? 'gridalarms_alarm.php?':'grid_alarmdb.php?') .
+									'action=resetack' .
+									'&id=' . $row['id']) . "' title='" . __esc('Reset Alert Acknowledgement', 'gridalarms') . "'>
+									<i class='tholdGlyphAcknowledgeResume fas fa-clipboard-check'></i>
+								</a>";
+							}
+						}
+					}
+
+					print "</td>";
+				} elseif ($hasAuth) {
+					print "<td class='nowrap' style='width:1%;'><a class='pic' href='" . html_escape("gridalarms_alarm_edit.php?tab=general&id=" . $row['id']) . "' title='" . __('Edit Alert', 'gridalarms') . "'>
+						<i class='tholdGlyphEdit fas fa-wrench'></i>
+					</a></td>";
 				} else {
-					print "<td class='nowrap' style='width:1%;'>" . ($hasAuth ? "<a class='pic' href='" . html_escape("gridalarms_alarm_edit.php?tab=general&id=" . $row['id']) . "'><img title='Edit Alert' src='" . $config["url_path"] . "plugins/gridalarms/images/edit_object.png'></a>":"") . "</td>\n";
+					print "<td class='nowrap' style='width:1%;'></td>";
 				}
 
-				print "<td>" . ($row["name"] != "" ? html_escape($row["name"]) : " [" . html_escape($row['data_source_name']) . "]") . "</td>\n";
+				form_selectable_cell(($row['name'] != '' ? html_escape($row['name']):' [' . html_escape($row['data_source_name']) . ']'), $row['id']);
 
 				if ($row["clusterid"] == '0') {
-					print "<td style=''>" . __('N/A', 'gridalarms') . "</td>\n";
+					form_selectable_cell( __('N/A', 'gridalarms'), $row['id']);
 				} else {
 					$cluster_name = get_clustername($row['clusterid']);
 					$cluster_name = isset($cluster_name)? $cluster_name:__('N/A', 'gridalarms');
-					print "<td>" . html_escape($cluster_name) . "</td>\n";
+					form_selectable_cell(html_escape($cluster_name), $row['id']);
 				}
 
-				print "<td>" . $gridalarms_severities[$row['syslog_priority']] . "</td>\n";
-				print "<td>" . $frequencies[$row['frequency']] . "</td>\n";
-				print "<td>" . $alarm_types[$row['alarm_type']] . "</td>\n";
-				print "<td class='right'>" . ($row['alarm_type'] == 0 ? $row['alarm_hi'] : ($row['alarm_type'] == 1 ? $row['time_hi'] : '')) . "</td>\n";
-				print "<td class='right'>" . ($row['alarm_type'] == 0 ? $row['alarm_low'] : ($row['alarm_type'] == 1 ? $row['time_low'] : '')) . "</td>\n";
-				print "<td class='right'>" . $row['lastread'] . "</td>\n";
-				print "<td>" . ($row['alarm_type'] == 0 ? ("<i>" . plugin_alarm_duration_convert($row['alarm_fail_trigger'], 'alert') . "</i>") : ($row['alarm_type'] == 1 ? ("<i>" . $row['time_fail_trigger'] . " Triggers</i>") : '')) . "</td>\n";
-				print "<td>" . ($row['alarm_type'] == 1 ? plugin_alarm_duration_convert($row['time_fail_length'], 'time') : '') . "</td>\n";
-				print "<td>" . ($row['repeat_alert'] == '' ? '' : plugin_alarm_duration_convert($row['repeat_alert'], 'repeat')) . "</td>\n";
+				form_selectable_cell($row['id'], $row['id'], '', 'right');
 
-				print "<td>" . ($row['last_runtime'] == '0000-00-00 00:00:00' ? __('N/A', 'gridalarms'):$row['last_runtime']) . "</td>\n";
-				print "<td class='right'>" . ($row['last_runtime'] == '0000-00-00 00:00:00' ? __('N/A', 'gridalarms'):round($row['last_duration'], 4) . " sec") . "</td>\n";
+				form_selectable_cell($gridalarms_severities[$row['syslog_priority']], $row['id'], '', 'right');
+				form_selectable_cell($frequencies[$row['frequency']], $row['id'], '', 'right');
+				form_selectable_cell($alarm_types[$row['alarm_type']], $row['id'], '', 'right');
+
+				form_selectable_cell(($row['alarm_type'] == 0 ? $row['alarm_hi'] : ($row['alarm_type'] == 1 ? $row['time_hi'] : '')), $row['id'], '', 'right');
+				form_selectable_cell(($row['alarm_type'] == 0 ? $row['alarm_low'] : ($row['alarm_type'] == 1 ? $row['time_low'] : '')), $row['id'], '', 'right');
+				form_selectable_cell($row['lastread'], $row['id'], '', 'right');
+
+				form_selectable_cell(($row['alarm_type'] == 0 ? ("<i>" . plugin_alarm_duration_convert($row['alarm_fail_trigger'], 'alert') . "</i>") : ($row['alarm_type'] == 1 ? ("<i>" . $row['time_fail_trigger'] . " Triggers</i>") : '')), $row['id'], '', 'right');
+
+				form_selectable_cell(($row['alarm_type'] == 1 ? plugin_alarm_duration_convert($row['time_fail_length'], 'time') : ''), $row['id'], '', 'right');
+				form_selectable_cell(($row['repeat_alert'] == '' ? '' : plugin_alarm_duration_convert($row['repeat_alert'], 'repeat')), $row['id'], '', 'right');
+
+				form_selectable_cell(($row['last_runtime'] == '0000-00-00 00:00:00' ? __('N/A', 'gridalarms'):$row['last_runtime']), $row['id'], '', 'right');
+				form_selectable_cell(($row['last_runtime'] == '0000-00-00 00:00:00' ? __('N/A', 'gridalarms'):round($row['last_duration'], 2) . " sec"), $row['id'], '', 'right');
 			}
 		}
 	} else {
@@ -5004,89 +5911,16 @@ function list_alarms($admin = true) {
 	}
 }
 
-function alarm_log_purge() {
-	db_execute("TRUNCATE gridalarms_alarm_log");
+function alarm_log_purge() : void {
+	db_execute('TRUNCATE gridalarms_alarm_log');
 }
 
-function api_alarm_remove($alarm_id){
-	$expression_id = db_fetch_cell_prepared('SELECT expression_id
-		FROM gridalarms_alarm
-		WHERE id = ?',
-		array($alarm_id));
-
-	/* delete non relational data first */
-	db_execute_prepared('DELETE FROM gridalarms_alarm
-		WHERE id = ?',
-		array($alarm_id));
-
-	db_execute_prepared('DELETE FROM gridalarms_alarm_contacts
-		WHERE alarm_id = ?',
-		array($alarm_id));
-
-	db_execute_prepared('DELETE FROM gridalarms_alarm_layout
-		WHERE alarm_id = ?',
-		array($alarm_id));
-
-	db_execute_prepared('DELETE FROM gridalarms_alarm_log
-		WHERE alarm_id = ?',
-		array($alarm_id));
-
-	db_execute_prepared('DELETE FROM gridalarms_alarm_log_items
-		WHERE alarm_id = ?',
-		array($alarm_id));
-
-	api_plugin_hook_function('gridalarms_delete_hostsalarm',$alarm_id);
-
-	/* delete the expression next */
-	if (!empty($expression_id)) {
-		db_execute_prepared('DELETE FROM gridalarms_expression
-			WHERE id = ?',
-			array($expression_id));
-
-		db_execute_prepared('DELETE FROM gridalarms_expression_input
-			WHERE expression_id = ?',
-			array($expression_id));
-
-		db_execute_prepared('DELETE FROM gridalarms_expression_item
-			WHERE expression_id = ?',
-			array($expression_id));
-
-		/* remove any non-shared metrics */
-		$metrics = db_fetch_assoc_prepared('SELECT metric_id
-			FROM gridalarms_metric_expression
-			WHERE expression_id = ?',
-			array($expression_id));
-
-		if (cacti_sizeof($metrics)) {
-			foreach ($metrics as $m) {
-				$shared_metric = db_fetch_cell_prepared('SELECT COUNT(*)
-					FROM gridalarms_metric_expression
-					WHERE metric_id = ?
-					AND expression_id != ?',
-					array($m['metric_id'], $expression_id));
-
-				if (!$shared_metric) {
-					db_execute_prepared('DELETE FROM gridalarms_metric
-						WHERE id = ?',
-						array($m['metric_id']));
-				}
-			}
-		}
-
-		/* remove any relationship of the expression to the metric */
-		db_execute_prepared('DELETE FROM gridalarms_metric_expression WHERE expression_id=?', array($expression_id));
-	}
-}
-
-function api_alarm_remove_multi(){
-	;
-}
-
-function do_alarms($from = 'console') {
+function do_alarms(string $from = 'console') : void {
 	global $config;
 
-	$alarms = array();
+	$alarms   = array();
 	$question = "";
+
 	foreach ($_POST as $var => $val) {
 		if (preg_match("/^chk_(.*)$/", $var, $matches)) {
 			$del = $matches[1];
@@ -5096,6 +5930,7 @@ function do_alarms($from = 'console') {
 				array($del));
 
 			input_validate_input_number($del);
+
 			$alarms[$del] = $rra;
 		}
 	}
@@ -5107,11 +5942,80 @@ function do_alarms($from = 'console') {
 
 				if ($alarm != false) {
 					foreach ($alarm as $del => $me) {
-						api_alarm_remove($del);
+						$expression_id = db_fetch_cell_prepared('SELECT expression_id
+							FROM gridalarms_alarm
+							WHERE id = ?',
+							array($del));
+
+						/* delete non relational data first */
+						db_execute_prepared('DELETE FROM gridalarms_alarm
+							WHERE id = ?',
+							array($del));
+
+						db_execute_prepared('DELETE FROM gridalarms_alarm_contacts
+							WHERE alarm_id = ?',
+							array($del));
+
+						db_execute_prepared('DELETE FROM gridalarms_alarm_layout
+							WHERE alarm_id = ?',
+							array($del));
+
+						db_execute_prepared('DELETE FROM gridalarms_alarm_log
+							WHERE alarm_id = ?',
+							array($del));
+
+						db_execute_prepared('DELETE FROM gridalarms_alarm_log_items
+							WHERE alarm_id = ?',
+							array($del));
+
+						api_plugin_hook_function('gridalarms_delete_hostsalarm',$del);
+
+						/* delete the expression next */
+						if (!empty($expression_id)) {
+							db_execute_prepared('DELETE FROM gridalarms_expression
+								WHERE id = ?',
+								array($expression_id));
+
+							db_execute_prepared('DELETE FROM gridalarms_expression_input
+								WHERE expression_id = ?',
+								array($expression_id));
+
+							db_execute_prepared('DELETE FROM gridalarms_expression_item
+								WHERE expression_id = ?',
+								array($expression_id));
+
+							/* remove any non-shared metrics */
+							$metrics = db_fetch_assoc_prepared('SELECT metric_id
+								FROM gridalarms_metric_expression
+								WHERE expression_id = ?',
+								array($expression_id));
+
+							if (cacti_sizeof($metrics)) {
+								foreach ($metrics as $m) {
+									$shared_metric = db_fetch_cell_prepared('SELECT COUNT(*)
+										FROM gridalarms_metric_expression
+										WHERE metric_id = ?
+										AND expression_id != ?',
+										array($m['metric_id'], $expression_id));
+
+									if (!$shared_metric) {
+										db_execute_prepared('DELETE FROM gridalarms_metric
+											WHERE id = ?',
+											array($m['metric_id']));
+									}
+								}
+							}
+
+							/* remove any relationship of the expression to the metric */
+							db_execute_prepared('DELETE FROM gridalarms_metric_expression
+								WHERE expression_id = ?',
+								array($expression_id));
+						}
 					}
 				}
 
 				header('Location:gridalarms_alarm.php');
+
 				exit;
 			}
 
@@ -5122,7 +6026,7 @@ function do_alarms($from = 'console') {
 			if (cacti_sizeof($alarms) == 0) {
 				raise_message(40, __("You must select at least one alert."), MESSAGE_LEVEL_ERROR);
 				header('Location: gridalarms_alarm.php?header=false');
-				// header('Location: gridalarms_template_edit.php?action=edit&header=false&id=' . get_request_var('id') . '&tab=' . get_request_var('tab'));
+
 				exit;
 			} else {
 				$alarm_list = '';
@@ -5178,13 +6082,17 @@ function do_alarms($from = 'console') {
 				if ($alarm != false) {
 					foreach ($alarm as $del => $rra) {
 						//plugin_alarm_log_changes($del, 'disabled_alarm', array('id' => $del));
-						db_execute_prepared("UPDATE gridalarms_alarm SET alarm_enabled='off' WHERE id=?", array($del));
+						db_execute_prepared("UPDATE gridalarms_alarm
+							SET alarm_enabled='off'
+							WHERE id = ?",
+							array($del));
 					}
 				}
 
 				header('Location:gridalarms_alarm.php');
 				exit;
 			}
+
 			top_header();
 
 			form_start('gridalarms_alarm.php');
@@ -5192,7 +6100,7 @@ function do_alarms($from = 'console') {
 			if (cacti_sizeof($alarms) == 0) {
 				raise_message(40, __("You must select at least one alert."), MESSAGE_LEVEL_ERROR);
 				header('Location: gridalarms_alarm.php?header=false');
-				// header('Location: gridalarms_alarm.php?action=edit&header=false&id=' . get_request_var('id') . '&tab=' . get_request_var('tab'));
+
 				exit;
 			} else {
 				$alarm_list = '';
@@ -5215,7 +6123,7 @@ function do_alarms($from = 'console') {
 					<td class='textArea'>
 						<p>" . __('Click \'Continue\' to Disable the following Alert(s).', 'gridalarms') . "</p>
 						<div class='itemlist'>
-							<ul> $alarm_list</ul>
+							<ul>$alarm_list</ul>
 						</div>";
 
 				print "</td></tr>\n";
@@ -5244,10 +6152,12 @@ function do_alarms($from = 'console') {
 				$alarm = sanitize_unserialize_selected_items(get_nfilter_request_var('selected_items'), false);
 
 				if ($alarm != false) {
-				foreach ($alarm as $del => $rra) {
-					//plugin_alarm_log_changes($del, 'enabled_alarm', array('id' => $del));
-					db_execute_prepared("UPDATE gridalarms_alarm SET alarm_enabled='on' WHERE id=?", array($del));
-				}
+					foreach ($alarm as $del => $rra) {
+						db_execute("UPDATE gridalarms_alarm
+							SET alarm_enabled='on'
+							WHERE id = ?",
+							array($del));
+					}
 				}
 
 				header('Location:gridalarms_alarm.php');
@@ -5261,7 +6171,7 @@ function do_alarms($from = 'console') {
 			if (cacti_sizeof($alarms) == 0) {
 				raise_message(40, __("You must select at least one alert."), MESSAGE_LEVEL_ERROR);
 				header('Location: gridalarms_alarm.php?header=false');
-				// header('Location: gridalarms_alarm.php?action=edit&header=false&id=' . get_request_var('id') . '&tab=' . get_request_var('tab'));
+
 				exit;
 			} else {
 				$alarm_list = '';
@@ -5477,15 +6387,16 @@ function do_alarms($from = 'console') {
 	}
 }
 
-function do_templates() {
+function do_templates() : void {
 	global $config;
 
-	$alarms = array();
+	$alarms   = array();
 	$question = "";
+
 	foreach ($_POST as $var => $val) {
 		if (preg_match("/^chk_(.*)$/", $var, $matches)) {
 			$del = $matches[1];
-			$rra = db_fetch_cell_prepared('SELECT id FROM gridalarms_template WHERE id=?', array($del));
+			$rra = db_fetch_cell('SELECT id FROM gridalarms_template WHERE id=' . $del);
 
 			input_validate_input_number($del);
 			$alarms[$del] = $rra;
@@ -5499,36 +6410,54 @@ function do_templates() {
 
 				if ($alarm != false) {
 					foreach ($alarm as $del => $me) {
-						$expression_id = db_fetch_cell_prepared('SELECT expression_id FROM gridalarms_template WHERE id=?', array($del));
+						$expression_id = db_fetch_cell_prepared('SELECT expression_id
+							FROM gridalarms_template
+							WHERE id = ?',
+							array($del));
 
 						/* delete non relational data first */
-						db_execute_prepared('DELETE FROM gridalarms_template WHERE id=?', array($del));
-						db_execute_prepared('DELETE FROM gridalarms_template_contacts WHERE alarm_id=?', array($del));
-						db_execute_prepared('DELETE FROM gridalarms_template_layout WHERE alarm_id=?', array($del));
+						db_execute_prepared('DELETE FROM gridalarms_template WHERE id = ?', array($del));
+						db_execute_prepared('DELETE FROM gridalarms_template_contacts WHERE alarm_id = ?', array($del));
+						db_execute_prepared('DELETE FROM gridalarms_template_layout WHERE alarm_id = ?', array($del));
 
 						/* delete the expression next */
 						if (!empty($expression_id)) {
-							db_execute_prepared('DELETE FROM gridalarms_template_expression WHERE id=?', array($expression_id));
-							db_execute_prepared('DELETE FROM gridalarms_template_expression_input WHERE expression_id=?', array($expression_id));
-							db_execute_prepared('DELETE FROM gridalarms_template_expression_item WHERE expression_id=?', array($expression_id));
+							db_execute_prepared('DELETE FROM gridalarms_template_expression WHERE id = ?', array($expression_id));
+							db_execute_prepared('DELETE FROM gridalarms_template_expression_input WHERE expression_id = ?', array($expression_id));
+							db_execute_prepared('DELETE FROM gridalarms_template_expression_item WHERE expression_id = ?', array($expression_id));
 
 							/* remove any non-shared metrics */
-							$metrics = db_fetch_assoc_prepared('SELECT metric_id FROM gridalarms_template_metric_expression WHERE expression_id=?', array($expression_id));
+							$metrics = db_fetch_assoc_prepared('SELECT metric_id
+								FROM gridalarms_template_metric_expression
+								WHERE expression_id = ?',
+								array($expression_id));
+
 							if (cacti_sizeof($metrics)) {
 								foreach ($metrics as $m) {
-									$shared_metric = db_fetch_cell_prepared('SELECT count(*) FROM gridalarms_template_metric_expression WHERE metric_id=? AND expression_id!=?', array($m['metric_id'], $expression_id));
+									$shared_metric = db_fetch_cell_prepared('SELECT COUNT(*)
+										FROM gridalarms_template_metric_expression
+										WHERE metric_id = ?
+										AND expression_id != ?',
+										array($m['metric_id'], $expression_id));
 
 									if (!$shared_metric) {
-										db_execute_prepared('DELETE FROM gridalarms_template_metric WHERE id=?', array($m['metric_id']));
+										db_execute_prepared('DELETE FROM gridalarms_template_metric
+											WHERE id = ?',
+											array($m['metric_id']));
 									}
 								}
 							}
 
 							/* remove any relationship of the expression to the metric */
-							db_execute_prepared('DELETE FROM gridalarms_template_metric_expression WHERE expression_id=?', array($expression_id));
+							db_execute_prepared('DELETE FROM gridalarms_template_metric_expression
+								WHERE expression_id = ?',
+								array($expression_id));
 
 							/* untemplate all alarms */
-							db_execute_prepared("UPDATE gridalarms_alarm SET template_id=0, template_enabled='' WHERE template_id=?", array($del));
+							db_execute_prepared("UPDATE gridalarms_alarm
+								SET template_id = 0, template_enabled = ''
+								WHERE template_id = ?",
+								array($del));
 						}
 					}
 				}
@@ -5673,6 +6602,7 @@ function do_templates() {
 				// header('Location: gridalarms_templates.php?action=edit&header=false&id=' . get_request_var('id') . '&tab=' . get_request_var('tab'));
 				exit;
 			}
+
 			top_header();
 
 			print '<script text="text/javascript">
@@ -5692,11 +6622,12 @@ function do_templates() {
 			<iframe id="download_iframe" style="display:none;"></iframe>';
 
 			bottom_footer();
+
 			exit;
 	}
 }
 
-function check_import_xml_gridalarms_template($xml_data, &$dup_alarm_array) {
+function check_import_xml_gridalarms_template(string $xml_data, array &$dup_alarm_array) : int {
 	global $config, $hash_type_codes, $hash_version_codes;
 
 	include_once($config['library_path'] . '/xml.php');
@@ -5749,10 +6680,11 @@ function check_import_xml_gridalarms_template($xml_data, &$dup_alarm_array) {
 
 	//restore the hash_type_codes
 	$hash_type_codes = $hash_type_codes_bak;
+
 	return cacti_sizeof($dup_alarm_array);
 }
 
-function import_xml_gridalarms_template($xml_data) {
+function import_xml_gridalarms_template(string $xml_data) : void {
 	global $config, $hash_type_codes, $hash_version_codes;
 
 	include_once($config['library_path'] . '/xml.php');
@@ -5773,7 +6705,7 @@ function import_xml_gridalarms_template($xml_data) {
 	if (cacti_sizeof($xml_array) == 0) {
 		raise_message(7); /* xml parse error */
 		$hash_type_codes = $hash_type_codes_bak;
-		return ;
+		return;
 	}
 
 	foreach ($xml_array as $hash => $hash_array) {
@@ -5803,11 +6735,12 @@ function import_xml_gridalarms_template($xml_data) {
 			return;
 		}
 	}
+
 	//restore the hash_type_codes
 	$hash_type_codes = $hash_type_codes_bak;
 }
 
-function import_single_template($alarm_hash,$hash_array,&$ret) {
+function import_single_template(string $alarm_hash,array $hash_array, int &$ret) : void {
 	global $config;
 	global $struct_gridalarms_template, $struct_gridalarms_template_contacts, $struct_gridalarms_template_expression;
 	global $struct_gridalarms_template_expression_input,$struct_gridalarms_template_expression_item, $struct_gridalarms_template_layout;
@@ -6109,7 +7042,7 @@ function import_single_template($alarm_hash,$hash_array,&$ret) {
 	}
 }
 
-function export_gridalarms_template($alarm) {
+function export_gridalarms_template(array $alarm) : string {
 	global $struct_gridalarms_template, $struct_gridalarms_template_contacts, $struct_gridalarms_template_expression;
 	global $struct_gridalarms_template_expression_input,$struct_gridalarms_template_expression_item, $struct_gridalarms_template_layout;
 	global $struct_gridalarms_template_metric, $struct_gridalarms_template_metric_expression;
@@ -6300,10 +7233,11 @@ function export_gridalarms_template($alarm) {
 
 	//restore the hash_type_codes
 	$hash_type_codes = $hash_type_codes_bak;
+
 	return $xml_text;
 }
 
-function duplicate_gridalarms_template($alarm,$title_format) {
+function duplicate_gridalarms_template(array $alarm, string $title_format) : void {
 	$save = array();
 
 	//1. duplicate gridalarms_template_expression
@@ -6423,7 +7357,7 @@ function duplicate_gridalarms_template($alarm,$title_format) {
 	}
 }
 
-function template_propagation($type, $id) {
+function template_propagation(string $type, int $id) : ?bool {
 	$struct_gridalarms_template_prop = array(
 		'type',
 		'aggregation',
@@ -6436,7 +7370,10 @@ function template_propagation($type, $id) {
 		'syslog_priority',
 		'syslog_facility',
 		'syslog_enabled',
-		'tcheck'
+		'format_file',
+		'tcheck',
+		'external_id',
+		'notes'
 	);
 
 	$struct_gridalarms_template_expression_prop = array(
@@ -6532,8 +7469,8 @@ function template_propagation($type, $id) {
 
 		$template_expression_id = $gridalarms_template['expression_id'];
 
-		cacti_log('DEBUG: template_id=' . $template_id .' instance_id=' . $instance_id, false, 'GRIDALERTS', POLLER_VERBOSITY_DEBUG);
-		cacti_log('DEBUG: template_expression_id=' . $template_expression_id . ' instance_expression_id=' . $instance_expression_id, false, 'GRIDALERTS', POLLER_VERBOSITY_DEBUG);
+		//cacti_log('DEBUG: template_id=' . $template_id .' instance_id=' . $instance_id);
+		//cacti_log('DEBUG: template_expression_id=' . $template_expression_id . ' instance_expression_id=' . $instance_expression_id);
 
 		foreach ($struct_gridalarms_template_prop as $field_name) {
 			$gridalarms_alarm[$field_name] = $gridalarms_template[$field_name];
@@ -6592,8 +7529,9 @@ function template_propagation($type, $id) {
 			array($instance_id, $template_id));
 
 		db_execute_prepared("INSERT INTO gridalarms_alarm_layout
+			(id, alarm_id, template_id, display_name, column_name, sequence, sortposition, sortdirection, type, units, align, digits, autoscale)
 			SELECT 0, $instance_id, $template_id, display_name,
-			column_name,sequence, sortposition, sortdirection
+			column_name, sequence, sortposition, sortdirection, type, units, align, digits, autoscale
 			FROM gridalarms_template_layout
 			WHERE alarm_id = ?",
 			array($template_id));
@@ -6645,7 +7583,7 @@ function template_propagation($type, $id) {
 	}
 }
 
-function push_out_layout($alarm_id, $template_id) {
+function push_out_layout(int $alarm_id, int $template_id) : void {
 	/* remove any existing entries */
 	db_execute_prepared('DELETE FROM gridalarms_alarm_layout
 		WHERE alarm_id = ?',
@@ -6672,7 +7610,7 @@ function push_out_layout($alarm_id, $template_id) {
 	}
 }
 
-function push_out_metrics_items($template_expression_id, $expression_id, $alarm_id, $template_id) {
+function push_out_metrics_items(int $template_expression_id, int $expression_id, int $alarm_id, int $template_id) : void {
 	/* handle metrics first, it will simplify things */
 	$metrics = db_fetch_assoc_prepared('SELECT gtm.*
 		FROM gridalarms_template_metric AS gtm
@@ -6692,10 +7630,11 @@ function push_out_metrics_items($template_expression_id, $expression_id, $alarm_
 			unset($save['hash']);
 
 			/* check to see if the metric already exists */
-			$mid = db_fetch_cell_prepared("SELECT id
+			$mid = db_fetch_cell_prepared('SELECT id
 				FROM gridalarms_metric
-				WHERE db_table=?
-				AND db_column=?", array($m['db_table'], $m['db_column']));
+				WHERE db_table = ?
+				AND db_column = ?',
+				array($m['db_table'], $m['db_column']));
 
 			if (empty($mid)) {
 				$new_name   = $save['name'];
@@ -6714,7 +7653,7 @@ function push_out_metrics_items($template_expression_id, $expression_id, $alarm_
 			/* add to the mapping table */
 			db_execute_prepared('REPLACE INTO gridalarms_metric_expression
 				(metric_id, expression_id) VALUES
-				(?, ?, ?)',
+				(?, ?)',
 				array($mid, $expression_id));
 
 			/* we keep mappings so we can handle expressions type=3 */
@@ -6788,10 +7727,14 @@ function push_out_metrics_items($template_expression_id, $expression_id, $alarm_
 
 /**
  * this function will re-template an alarm, which can be distructive
- * @parm alarm_id			- (int) defines the alarm to retemplate
- * @returns					- null
+ *
+ * @param  array $alarm defines the alarm to retemplate
+ * @param  int   $template_id the template id of the object
+ @ @param  bool  $repush should the object be repushed
+ *
+ * @return int the id pushed out
  */
-function push_out_template_to_alarm($alarm, $template_id = 0, $repush = false) {
+function push_out_template_to_alarm(array $alarm, int $template_id = 0, bool $repush = false) : int {
 	$columns = array_rekey(
 		db_fetch_assoc('SHOW COLUMNS
 			FROM gridalarms_alarm'),
@@ -6799,6 +7742,7 @@ function push_out_template_to_alarm($alarm, $template_id = 0, $repush = false) {
 	);
 
 	$id = 0;
+
 	if (cacti_sizeof($alarm)) {
 		if ((isset($alarm['template_id']) && isset($alarm['id'])) || (!empty($template_id))) {
 			/* get the template */
@@ -6813,20 +7757,23 @@ function push_out_template_to_alarm($alarm, $template_id = 0, $repush = false) {
 					WHERE id = ?',
 					array($alarm['id']));
 
-        		$save['id']               = $alarm['id'];
-		        $save['template_id']      = isset($alarm['template_id']) ? $alarm['template_id']:$oldalarm['template_id'];
+				$save['id']               = $alarm['id'];
+				$save['template_id']      = isset($alarm['template_id'])    ? $alarm['template_id']:$oldalarm['template_id'];
 				$save['template_enabled'] = 'on';
-       			$save['name']             = isset($alarm['name']) ? $alarm['name']:$oldalarm['name'];
-				$save['clusterid']        = isset($alarm['clusterid']) ? $alarm['clusterid']:$oldalarm['clusterid'];
-				$save['expression_id']    = isset($alarm['expression_id']) ? $alarm['expression_id']:$oldalarm['expression_id'];
-				$save['email_subject']    = isset($alarm['email_subject']) ? $alarm['email_subject']:$oldalarm['email_subject'];
-				$save['email_body']       = isset($alarm['email_body']) ? $alarm['email_body']:$oldalarm['email_body'];
-				$save['notify_users']     = isset($alarm['notify_users']) ? $alarm['notify_users']:$oldalarm['notify_users'];
-				$save['notify_alert']     = isset($alarm['notify_alert']) ? $alarm['notify_alert']:$oldalarm['notify_alert'];
-				$save['notify_extra']     = isset($alarm['notify_extra']) ? $alarm['notify_extra']:$oldalarm['notify_extra'];
-				$save['req_ack']          = isset($alarm['req_ack']) ? $alarm['req_ack']:$oldalarm['req_ack'];
+				$save['name']             = isset($alarm['name'])           ? $alarm['name']:$oldalarm['name'];
+				$save['clusterid']        = isset($alarm['clusterid'])      ? $alarm['clusterid']:$oldalarm['clusterid'];
+				$save['expression_id']    = isset($alarm['expression_id'])  ? $alarm['expression_id']:$oldalarm['expression_id'];
+				$save['email_subject']    = isset($alarm['email_subject'])  ? $alarm['email_subject']:$oldalarm['email_subject'];
+				$save['email_body']       = isset($alarm['email_body'])     ? $alarm['email_body']:$oldalarm['email_body'];
+				$save['format_file']      = isset($alarm['format_file'])    ? $alarm['format_file']:$oldalarm['format_file'];
+				$save['notify_users']     = isset($alarm['notify_users'])   ? $alarm['notify_users']:$oldalarm['notify_users'];
+				$save['notify_alert']     = isset($alarm['notify_alert'])   ? $alarm['notify_alert']:$oldalarm['notify_alert'];
+				$save['notify_extra']     = isset($alarm['notify_extra'])   ? $alarm['notify_extra']:$oldalarm['notify_extra'];
+				$save['req_ack']          = isset($alarm['req_ack'])        ? $alarm['req_ack']:$oldalarm['req_ack'];
 				$save['syslog_enabled']   = isset($alarm['syslog_enabled']) ? $alarm['syslog_enabled']:$oldalarm['syslog_enabled'];
-				$save['exempt']           = isset($alarm['exempt']) ? $alarm['exempt']:$oldalarm['exempt'];
+				$save['exempt']           = isset($alarm['exempt'])         ? $alarm['exempt']:$oldalarm['exempt'];
+				$save['external_id']      = isset($alarm['external_id'])    ? $alarm['external_id']:$oldalarm['external_id'];
+				$save['notes']            = isset($alarm['notes'])          ? $alarm['notes']:$oldalarm['notes'];
 				$alarm = array();
 
 				/* unset non used variables */
@@ -6857,6 +7804,7 @@ function push_out_template_to_alarm($alarm, $template_id = 0, $repush = false) {
 				unset($save['expression_id']);
 			}
 
+			// Colunns that always follow the template
 			foreach ($columns as $column) {
 				switch($column) {
 				case 'id':
@@ -6884,6 +7832,7 @@ function push_out_template_to_alarm($alarm, $template_id = 0, $repush = false) {
 						input_validate_input_number($alarm[$column]);
 						$save[$column] = $alarm[$column];
 					}
+
 					break;
 				case 'name':
 				case 'base_time_display':
@@ -6893,10 +7842,14 @@ function push_out_template_to_alarm($alarm, $template_id = 0, $repush = false) {
 				case 'trigger_cmd_norm':
 				case 'notify_extra':
 				case 'email_body':
+				case 'format_file':
 				case 'email_subject':
+				case 'external_id':
+				case 'notes':
 					if (isset($alarm[$column])) {
 						$save[$column] = $alarm[$column];
 					}
+
 					break;
 				case 'notify_users':
 				case 'req_ack':
@@ -6907,6 +7860,7 @@ function push_out_template_to_alarm($alarm, $template_id = 0, $repush = false) {
 					} else {
 						$save[$column] = '';
 					}
+
 					break;
 				case 'syslog_enabled':
 				case 'cmd_retrigger_enabled':
@@ -6917,6 +7871,7 @@ function push_out_template_to_alarm($alarm, $template_id = 0, $repush = false) {
 							$save[$column] = '';
 						}
 					}
+
 					break;
 				case 'notify_cluster_admin':
 					if (isset($alarm['notify_cluster_admin']) && $alarm['notify_cluster_admin'] == 'on') {
@@ -6924,17 +7879,18 @@ function push_out_template_to_alarm($alarm, $template_id = 0, $repush = false) {
 					} else {
 						$save['notify_cluster_admin'] = 0;
 					}
-					break;
 
+					break;
 				}
 			}
 		}
 
 		if (isset($save['alarm_hi']) && isset($save['alarm_low']) &&
 			trim($save['alarm_hi']) != '' && trim($save['alarm_low']) != '' &&
-			round($save['alarm_low'], 4) >= round($save['alarm_hi'], 4)) {
+			round($save['alarm_low'], 2) >= round($save['alarm_hi'], 2)) {
 
 			raise_message('gridalarms_alarm_hilo_imp');
+
 			if (!empty($alarm['id'])) {
 				header('Location: gridalarms_alarm_edit.php?header=false&tab=' . $alarm['tab'] . '&id=' . $alarm['id']);
 			} else {
@@ -6968,9 +7924,9 @@ function push_out_template_to_alarm($alarm, $template_id = 0, $repush = false) {
 			}
 		}
 
-		$save ['trigger_cmd_high'] 	= str_replace('"','\'', $save ['trigger_cmd_high']);
-		$save ['trigger_cmd_low'] 	= str_replace('"','\'', $save ['trigger_cmd_low']);
-		$save ['trigger_cmd_norm'] 	= str_replace('"','\'', $save ['trigger_cmd_norm']);
+		$save['trigger_cmd_high'] 	= str_replace('"','\'', $save['trigger_cmd_high']);
+		$save['trigger_cmd_low'] 	= str_replace('"','\'', $save['trigger_cmd_low']);
+		$save['trigger_cmd_norm'] 	= str_replace('"','\'', $save['trigger_cmd_norm']);
 
 		$id = sql_save($save , 'gridalarms_alarm');
 
@@ -7118,11 +8074,13 @@ function push_out_template_to_alarm($alarm, $template_id = 0, $repush = false) {
 }
 
 /**
- * $alarm                   - POST value when creating a alert
- * return value             - = 1, do the title replacement successfully,
-                              = -1, failed to do the title replacement.
+ * Replaces the title from an alarms components
+ *
+ * @param  array    $alarm the alarm
+ *
+ * @return bool|int 1 - title replacement successful, -1 - failed to do the title replacement.
  */
-function do_title_replacement(&$alarm) {
+function do_title_replacement(array &$alarm) : bool|int {
 	$title     = $alarm['name'];
 	$ret_title = '';
 
@@ -7172,12 +8130,15 @@ function do_title_replacement(&$alarm) {
 	return true;
 }
 
-/** returns the current unique hash for a alert template
- * @arg $id					- (int) the ID of the alert template to return a hash for
- * @arg $sub_type			- (optional) return the hash for a particlar sub-type of this type
- * @returns 				- a 128-bit, hexadecimal hash
+/**
+ * returns the current unique hash for a alert template
+ *
+ * @param  int    $id the ID of the alert template to return a hash for
+ * @param  string $sub_type the hash for a particlar sub-type of this type
+ *
+ * @return string the hash of the template
  */
-function get_hash_alert_template($id, $sub_type = 'alert_template') {
+function get_hash_alert_template(int $id, string $sub_type = 'alert_template') : string {
 	if (!empty($id)) {
 		if ($sub_type == 'alert_template') {
 			$hash = db_fetch_cell_prepared('SELECT hash
@@ -7219,7 +8180,7 @@ function get_hash_alert_template($id, $sub_type = 'alert_template') {
 	return generate_hash();
 }
 
-function check_gridalarms_db_upgrade() {
+function check_gridalarms_db_upgrade() : void {
 	if (read_config_option('gridalarms_db_upgrade', true) == '1') {
 		unset_request_var('drp_action');
 		unset_request_var('action');
@@ -7229,7 +8190,7 @@ function check_gridalarms_db_upgrade() {
 /* gridalarms_save_button - takes a form name and encode fields array and submits the form with the
 	selected form fields base64 encoded
 */
-function gridalarms_save_button($form_name, $encode_fields) {
+function gridalarms_save_button(string $form_name, bool $encode_fields) : void {
 	?>
 	<table class='cactiTable'>
 		<tr>
@@ -7298,7 +8259,7 @@ function gridalarms_save_button($form_name, $encode_fields) {
 	<?php
 }
 
-function gridalarms_do_import($xml_file) {
+function gridalarms_do_import(string $xml_file) : int {
     $fp = fopen($xml_file, 'r');
     $xml_data = fread($fp, filesize($xml_file));
     fclose($fp);
@@ -7311,13 +8272,15 @@ function gridalarms_do_import($xml_file) {
     $ret = check_import_xml_gridalarms_template($xml_data, $dup_alarm_array);
 
     if ($ret <0) {                                   //show error message
-        $debug_data=-1;
+        $debug_data = -1;
     } elseif ($ret == 0) {                          // no duplicate alert hash code, do the import
         import_xml_gridalarms_template($xml_data);
-        $debug_data=0;
+
+        $debug_data = 0;
     } else {
         import_xml_gridalarms_template($xml_data);
-        $debug_data=1;
+
+        $debug_data = 1;
     }
 
     return $debug_data;
@@ -7326,7 +8289,7 @@ function gridalarms_do_import($xml_file) {
 /**
  * call back function to print column options
  */
-function getcolumns() {
+function getcolumns() : void {
 	$db_columns = array();
 
 	if (isset_request_var('db_table')) {
@@ -7345,7 +8308,7 @@ function getcolumns() {
 /**
  * Callback function to return the tables base on the type selected
  */
-function gettables() {
+function gettables() : void {
 	$db_tables = array();
 
 	if (isset_request_var('type')) {

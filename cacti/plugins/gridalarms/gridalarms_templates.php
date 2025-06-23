@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2022                                          |
+ | Copyright IBM Corp. 2006, 2025                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -53,8 +53,6 @@ function template_export() {
 	    $alarms = sanitize_unserialize_selected_items(get_nfilter_request_var('alarms'));
 
 	    if ($alarms != false) {
-
-
 			$first_flag = true;
 			$first_alarm_name = '';
 

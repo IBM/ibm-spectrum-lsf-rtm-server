@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright IBM Corp. 2006, 2025                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -25,16 +25,16 @@ function gridalarms_th_edit_save_thold($save) {
 
 		// Host actions
 		$save['host_action_high'] = get_request_var('host_action_high');
-		if($save['host_action_high'] == 1) {//open
+		if ($save['host_action_high'] == 1) {//open
 			$save['host_action_high_lockid'] = get_request_var('host_action_high_open_lockid');
-		} else if($save['host_action_high'] == 2) {//close
+		} else if ($save['host_action_high'] == 2) {//close
 			form_input_validate(trim(get_nfilter_request_var('host_action_high_close_lockid')),   'host_action_high_close_lockid', '^[A-Za-z0-9]+$', true, '148');
 			$save['host_action_high_lockid'] = get_request_var('host_action_high_close_lockid');
 		}
 		$save['host_action_low']  = get_request_var('host_action_low');
-		if($save['host_action_low'] == 1) {//open
+		if ($save['host_action_low'] == 1) {//open
 			$save['host_action_low_lockid'] = get_request_var('host_action_low_open_lockid');
-		} else if($save['host_action_low'] == 2) {//close
+		} else if ($save['host_action_low'] == 2) {//close
 			form_input_validate(trim(get_nfilter_request_var('host_action_low_close_lockid')),   'host_action_low_close_lockid', '^[A-Za-z0-9]+$', true, '148');
 			$save['host_action_low_lockid'] = get_request_var('host_action_low_close_lockid');
 		}
@@ -298,121 +298,123 @@ function gridalarms_th_edit_form_array($form_array) {
 function gridalarms_th_edit_javascript($thold_data) {
 	global $thold_oob_templates;
 ?>
-function switchLSFEventType() {
-			var action_level = $('#gridadmin_action_level').val();
-			$('#row_event_trigger_gridadmin_host').hide();
-			$('#row_host_action_high').hide();
-			$('#row_host_action_high_open_lockid').hide();
-			$('#row_host_action_high_close_lockid').hide();
-			$('#row_host_action_low').hide();
-			$('#row_host_action_low_open_lockid').hide();
-			$('#row_host_action_low_close_lockid').hide();
-			$('#row_event_trigger_gridadmin_job').hide();
-			$('#row_job_action_high').hide();
-			$('#row_job_target_high').hide();
-			$('#row_job_signal_high').hide();
-			$('#row_job_action_low').hide();
-			$('#row_job_target_low').hide();
-			$('#row_job_signal_low').hide();
+	function switchLSFEventType() {
+		var action_level = $('#gridadmin_action_level').val();
 
-			switch(action_level) {
-				case 'job':
-					$('#row_job_action_high').show();
-					$('#row_job_action_low').show();
+		$('#row_event_trigger_gridadmin_host').hide();
+		$('#row_host_action_high').hide();
+		$('#row_host_action_high_open_lockid').hide();
+		$('#row_host_action_high_close_lockid').hide();
+		$('#row_host_action_low').hide();
+		$('#row_host_action_low_open_lockid').hide();
+		$('#row_host_action_low_close_lockid').hide();
+		$('#row_event_trigger_gridadmin_job').hide();
+		$('#row_job_action_high').hide();
+		$('#row_job_target_high').hide();
+		$('#row_job_signal_high').hide();
+		$('#row_job_action_low').hide();
+		$('#row_job_target_low').hide();
+		$('#row_job_signal_low').hide();
 
-					if ($('#job_action_high').val() == '1') { // Bswitch
-						$('#row_job_target_high').show();
-					} else if ($('#job_action_high').val() == '4') {
-						$('#row_job_signal_high').show();
-					}
+		switch(action_level) {
+			case 'job':
+				$('#row_job_action_high').show();
+				$('#row_job_action_low').show();
 
-					if ($('#job_action_low').val() == '1') { // Bswitch
-						$('#row_job_target_low').show();
-					} else if ($('#job_action_low').val() == '4') {
-						$('#row_job_signal_low').show();
-					}
+				if ($('#job_action_high').val() == '1') { // Bswitch
+					$('#row_job_target_high').show();
+				} else if ($('#job_action_high').val() == '4') {
+					$('#row_job_signal_high').show();
+				}
 
-					break;
-				case 'host':
-					$('#row_event_trigger_gridadmin_host').show();
-					$('#row_host_action_high').show();
-					var host_action_high = $('#host_action_high').val();
-					if(host_action_high ==1 ){
-						$('#row_host_action_high_open_lockid').show();
-					} else if (host_action_high ==2 ) {
-						$('#row_host_action_high_close_lockid').show();
-					}
-					$('#row_host_action_low').show();
-					var host_action_low = $('#host_action_low').val();
-					if(host_action_low ==1 ){
-						$('#row_host_action_low_open_lockid').show();
-					} else if (host_action_low ==2 ) {
-						$('#row_host_action_low_close_lockid').show();
-					}
-					break;
-			}
-		};
+				if ($('#job_action_low').val() == '1') { // Bswitch
+					$('#row_job_target_low').show();
+				} else if ($('#job_action_low').val() == '4') {
+					$('#row_job_signal_low').show();
+				}
 
-		$('#gridadmin_action_level, #job_action_high, #job_action_low, #host_action_high, #host_action_low').off('change').on('change', function() {
-			switchLSFEventType();
-		});
+				break;
+			case 'host':
+				$('#row_event_trigger_gridadmin_host').show();
+				$('#row_host_action_high').show();
 
-		$('#template_enabled').on('change', function() {
-			var status = $('#template_enabled').is(':checked');
+				var host_action_high = $('#host_action_high').val();
+				if (host_action_high == 1) {
+					$('#row_host_action_high_open_lockid').show();
+				} else if (host_action_high ==2 ) {
+					$('#row_host_action_high_close_lockid').show();
+				}
+				$('#row_host_action_low').show();
+				var host_action_low = $('#host_action_low').val();
+				if (host_action_low == 1) {
+					$('#row_host_action_low_open_lockid').show();
+				} else if (host_action_low ==2 ) {
+					$('#row_host_action_low_close_lockid').show();
+				}
+				break;
+		}
+	};
+
+	$('#gridadmin_action_level, #job_action_high, #job_action_low, #host_action_high, #host_action_low').off('change').on('change', function() {
+		switchLSFEventType();
+	});
+
+	$('#template_enabled').on('change', function() {
+		var status = $('#template_enabled').is(':checked');
 	<?php
 	if (read_config_option('gridalarm_thold_detail') != 'on'
 		&& isset($thold_data['data_template_hash'])
-		&& !array_key_exists($thold_data['data_template_hash'], $thold_oob_templates)){
+		&& !array_key_exists($thold_data['data_template_hash'], $thold_oob_templates)) {
 		//Only enable LSF event triggering type drop-down list with out-of-box templates
 	?>
-		$('#gridadmin_action_level').attr('disabled', true);
-		if($('#gridadmin_action_level').selectmenu('instance')) {
-			$('#gridadmin_action_level').selectmenu('disable');
-		}
+	$('#gridadmin_action_level').attr('disabled', true);
+	if ($('#gridadmin_action_level').selectmenu('instance')) {
+		$('#gridadmin_action_level').selectmenu('disable');
+	}
 	<?php
 	} else {?>
-		$('#gridadmin_action_level').prop('disabled', status);
+	$('#gridadmin_action_level').prop('disabled', status);
 	<?php
 	}?>
-		$('#row_host_action_high').prop('disabled', status);
-			$('#row_host_action_high_open_lockid').prop('disabled', status);
-			$('#row_host_action_high_close_lockid').prop('disabled', status);
-			$('#row_host_action_low').prop('disabled', status);
-			$('#row_host_action_low_open_lockid').prop('disabled', status);
-			$('#row_host_action_low_close_lockid').prop('disabled', status);
-			$('#job_action_high').prop('disabled', status);
-			$('#job_target_high').prop('disabled', status);
-			$('#job_signal_high').prop('disabled', status);
-			$('#job_action_low').prop('disabled', status);
-			$('#job_target_low').prop('disabled', status);
-			$('#job_signal_low').prop('disabled', status);
+	$('#row_host_action_high').prop('disabled', status);
+		$('#row_host_action_high_open_lockid').prop('disabled', status);
+		$('#row_host_action_high_close_lockid').prop('disabled', status);
+		$('#row_host_action_low').prop('disabled', status);
+		$('#row_host_action_low_open_lockid').prop('disabled', status);
+		$('#row_host_action_low_close_lockid').prop('disabled', status);
+		$('#job_action_high').prop('disabled', status);
+		$('#job_target_high').prop('disabled', status);
+		$('#job_signal_high').prop('disabled', status);
+		$('#job_action_low').prop('disabled', status);
+		$('#job_target_low').prop('disabled', status);
+		$('#job_signal_low').prop('disabled', status);
 
-			if (status) {
-				$('input:not(:button):not(:submit), textarea, select').each(function() {
-					$(this).addClass('ui-state-disabled');
-					if ($(this).selectmenu('instance')) {
-						$(this).selectmenu('disable');
-					}
-				});
-			} else {
-				$('input:not(:button):not(:submit), textarea, select').each(function() {
-					$(this).removeClass('ui-state-disabled');
-					if ($(this).selectmenu('instance')) {
+		if (status) {
+			$('input:not(:button):not(:submit), textarea, select').each(function() {
+				$(this).addClass('ui-state-disabled');
+				if ($(this).selectmenu('instance')) {
+					$(this).selectmenu('disable');
+				}
+			});
+		} else {
+			$('input:not(:button):not(:submit), textarea, select').each(function() {
+				$(this).removeClass('ui-state-disabled');
+				if ($(this).selectmenu('instance')) {
 						$(this).selectmenu('enable');
-					}
-				});
-			}
-		});
+				}
+			});
+		}
+	});
 
 	$(function() {
 <?php
 	if (read_config_option('gridalarm_thold_detail') != 'on'
 		&& isset($thold_data['data_template_hash'])
-		&& !array_key_exists($thold_data['data_template_hash'], $thold_oob_templates)){
+		&& !array_key_exists($thold_data['data_template_hash'], $thold_oob_templates)) {
 	//Only enable LSF event triggering type drop-down list with out-of-box templates
 	?>
 		$('#gridadmin_action_level').attr('disabled', true);
-		if($('#gridadmin_action_level').selectmenu('instance')) {
+		if ($('#gridadmin_action_level').selectmenu('instance')) {
 			$('#gridadmin_action_level').selectmenu('disable');
 		}
 <?php
@@ -533,7 +535,7 @@ function gridalarms_thold_gridcontrol_exec($save) {
 
 	foreach($breach_info as $breachinfo) {  //populating data to be parse to the function sorting_json_format
 		$keysvalue = array_keys($breachinfo);
-		foreach($keysvalue as $keys){
+		foreach($keysvalue as $keys) {
 			if ($keys == 'HostName') {
 				$targetvalue[] = $breachinfo['HostName'] . ':' . $clusterid;
 			} elseif ($keys == 'JobID') {
@@ -628,7 +630,7 @@ function gridalarms_thold_gridcontrol_exec($save) {
 	}
 }
 
-function gridalarms_fetch_breached_info($local_data_id){
+function gridalarms_fetch_breached_info($local_data_id) {
 	global $called_by_script_server;
 
 	$type_id = db_fetch_cell_prepared('SELECT di.type_id
@@ -653,7 +655,7 @@ function gridalarms_fetch_breached_info($local_data_id){
 			include_once($length[0]);
 
 			$input_parameter = cacti_sizeof($length) - 2 ;
-			for($i=1; $i<=cacti_sizeof($length)-1; $i++){
+			for($i=1; $i<=cacti_sizeof($length)-1; $i++) {
 				$length[$i] = trim($length[$i], "' \t\n\r\0\x0B");
 			}
 
@@ -726,7 +728,7 @@ function gridalarms_thold_graph_actions_url($data) {
 		if ($thold_data['gridadmin_action_level'] == ''
 			|| $thold_data['gridadmin_action_level'] == 'none'
 			|| (read_config_option('gridalarm_thold_detail') != 'on'
-				&& !array_key_exists($thold_data['data_template_hash'], $thold_oob_templates))){
+				&& !array_key_exists($thold_data['data_template_hash'], $thold_oob_templates))) {
 			//Show breach item icon with out-of-box templates or global enabled
 			return $data;
 		}
