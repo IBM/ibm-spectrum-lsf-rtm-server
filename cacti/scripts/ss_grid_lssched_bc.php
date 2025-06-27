@@ -206,7 +206,7 @@ function ss_grid_lssched_bc_getinfo($host_id, $info_requested) {
 		$arr = db_fetch_assoc_prepared("SELECT CONCAT_WS('', lsid, '|', feature, '|', project, '|', cluster, '') AS qry_index,
 			CONCAT_WS('', lsid, '|', feature, '|', project, '|', cluster, '') AS qry_value
 			FROM grid_blstat_cluster_use
-			WHERE lsid='$lsid'
+			WHERE lsid = ?
 			ORDER BY CONCAT_WS('', lsid, '|', feature, '|', project, '|', cluster, '')",
 			array($lsid));
 	} elseif ($info_requested == 'cluster') {
