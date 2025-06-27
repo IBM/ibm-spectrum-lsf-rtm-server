@@ -4725,6 +4725,8 @@ function alarm_breached_items(int $id, bool $return_details = false, bool $limit
 		return ob_get_clean();
 	} elseif ($forenv) {
 		return $env;
+	} else {
+		return '';
 	}
 }
 
