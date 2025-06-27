@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2022                                          |
+ | Copyright IBM Corp. 2006, 2025                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -26,8 +26,8 @@ $old_realm = $old_realm + 100;
 $new_realm = $new_realm + 100;
 
 //For pre-10.2 to 10.2 only
-echo "Migrate notify_lists.php permission from gridalarms[$old_realm] to thold[$new_realm].\n";
+print "Migrate notify_lists.php permission from gridalarms[$old_realm] to thold[$new_realm].\n";
 
-if($old_realm != 100 && $new_realm != 100){
+if ($old_realm != 100 && $new_realm != 100) {
 	db_execute_prepared('INSERT IGNORE INTO user_auth_realm (realm_id, user_id) SELECT ? realm_id, user_id FROM user_auth_realm WHERE realm_id=?', array($new_realm, $old_realm));
 }
