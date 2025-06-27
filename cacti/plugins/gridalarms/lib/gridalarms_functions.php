@@ -2781,6 +2781,8 @@ function get_template_metrics_from_expression_by_id(int $expression_id) : bool|a
 		return get_table_columns($expression['db_table']);
 	} elseif ($expression['ds_type'] == '1') {
 		return get_columns_from_sql($expression['sql_query'], 'template', $expression_id);
+	} else {
+		return false;
 	}
 }
 
