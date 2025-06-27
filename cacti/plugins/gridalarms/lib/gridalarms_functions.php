@@ -3735,6 +3735,11 @@ function alarm_template_request_validation() : void {
 			'pageset' => true,
 			'default' => '-1'
 		),
+		'ds_type' => array(
+			'filter' => FILTER_VALIDATE_INT,
+			'pageset' => true,
+			'default' => '-1'
+		),
 		'clusterid' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
@@ -5003,6 +5008,11 @@ function list_templates(bool $admin = true) {
 		$sql_params[] = get_request_var('clusterid');
 	}
 
+	if (isset_request_var('ds_type') && get_request_var('ds_type') >= 0) {
+		$sql_where .= ($sql_where == '' ? 'WHERE ' : ' AND ') . 'gate.ds_type = ?';
+		$sql_params[] = get_request_var('ds_type');
+	}
+
 	if (isset_request_var('filter') && get_request_var('filter') != '') {
 		$sql_where .= ($sql_where == '' ? 'WHERE ' : ' AND ') . 'gat.name LIKE ?';
 		$sql_params[] = '%' . get_request_var('filter') . '%';
@@ -5060,33 +5070,18 @@ function list_templates(bool $admin = true) {
 						</select>
 					</td>
 					<td>
-						<?php print __('Template', 'gridalarms');?>
+						<?php print __('Data Type', 'gridalarms');?>
 					</td>
 					<td>
-						<select id='template_id' onChange='applyFilter()'>
-							<option value='0' <?php if (!isset_request_var('template_id') || get_request_var('template_id') == '0') print 'selected';?>>All</option>
-							<option value='-1' <?php if (!isset_request_var('template_id') || get_request_var('template_id') == '-1') print 'selected';?>>None</option>
-							<?php
-							$templates = db_fetch_assoc('SELECT DISTINCT gat.id, gat.name
-								FROM gridalarms_template AS gat
-								INNER JOIN gridalarms_alarm AS gaa
-								ON gat.id = gaa.template_id
-								ORDER BY gat.name');
-
-							if (cacti_sizeof($templates)) {
-								foreach ($templates as $t) {
-									if (isset_request_var('template_id') && (get_request_var('template_id') == $t['id'])) {
-										print "<option value='" . $t['id'] . "' selected>"  . html_escape($t['name']) . '</option>';
-									} else {
-										print "<option value='" . $t['id'] . "'>"  . html_escape($t['name']) . '</option>';
-									}
-								}
-							}
-							?>
+						<select id='ds_type' onChange='applyFilter()'>
+							<option value='-1' <?php if (!isset_request_var('ds_type') || get_request_var('ds_type') == '-1') print "selected";?>>All</option>
+							<option value='0' <?php if (get_request_var('ds_type') == '0') print "selected";?>>Table</option>
+							<option value='1' <?php if (get_request_var('ds_type') == '1') print "selected";?>>SQL Query</option>
+							<option value='2' <?php if (get_request_var('ds_type') == '2') print "selected";?>>Script</option>
 						</select>
 					</td>
 					<td>
-						<?php print __('Type', 'gridalarms');?>
+						<?php print __('Threshold Type', 'gridalarms');?>
 					</td>
 					<td>
 						<select id='alarm_type' onChange='applyFilter()'>
@@ -5137,10 +5132,10 @@ function list_templates(bool $admin = true) {
 		function applyFilter() {
 			strURL  = 'gridalarms_templates.php?tab=alarms&header=false';
 			strURL += '&alarm_type=' + $('#alarm_type').val();
-			strURL += '&rows=' + $('#rows').val();
-			strURL += '&template_id=' + $('#template_id').val();
-			strURL += '&clusterid=' + $('#clusterid').val();
-			strURL += '&filter=' + $('#filter').val();
+			strURL += '&rows='       + $('#rows').val();
+			strURL += '&ds_type='    + $('#ds_type').val();
+			strURL += '&clusterid='  + $('#clusterid').val();
+			strURL += '&filter='     + $('#filter').val();
 			loadPageNoHeader(strURL);
 		}
 
@@ -5178,6 +5173,10 @@ function list_templates(bool $admin = true) {
 
 	$total_rows = db_fetch_cell_prepared("SELECT COUNT(*)
 		FROM gridalarms_template AS gat
+		LEFT JOIN gridalarms_alarm AS ga
+		ON ga.template_id = gat.id
+		LEFT JOIN gridalarms_template_expression AS gate
+		ON gat.expression_id = gate.id
 		$sql_where", $sql_params);
 
 	$display_text = array(
@@ -7585,6 +7584,8 @@ function template_propagation(string $type, int $id) : ?bool {
 		//8. propogate gridalarms_template_metric_expression to gridalarms_metric_expression
 		push_out_metrics_items($template_expression_id, $instance_expression_id, $instance_id, $template_id);
 	}
+
+	return true;
 }
 
 function push_out_layout(int $alarm_id, int $template_id) : void {

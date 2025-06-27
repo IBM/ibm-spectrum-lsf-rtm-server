@@ -314,14 +314,17 @@ function check_sql_syntax($id, $ajax = true) {
 	}
 }
 
-function check_script($id, $type = 'thold', $ajax = true) {
+function get_script_command($id, $type) : string {
 	global $gl_clusterid, $gl_clustername;
+
+	$command = '';
+
 	if (!empty($id)) {
 		if ($type == 'thold') {
 			$command = trim(db_fetch_cell_prepared('SELECT script_thold
 				FROM gridalarms_template_expression
 				WHERE id = ?',
-				array($id)) . '; ');
+				array($id)), '; ');
 		} else {
 			$command = trim(db_fetch_cell_prepared('SELECT script_data
 				FROM gridalarms_template_expression
@@ -338,39 +341,50 @@ function check_script($id, $type = 'thold', $ajax = true) {
 			WHERE name='path_webroot'");
 
 		$command = str_replace('|path_cacti|', $path_webroot, $command);
+	}
 
-		if (strlen($command)) {
-			$return_code = 0;
-			$output      = array();
-			$result      = exec($command, $output, $return_code);
+	return $command;
+}
 
-			if (strlen($result) && $return_code == 0) {
-				if (!$ajax) return true;
+function check_script($id, $type = 'thold', $ajax = true) {
+	$command = get_script_command($id, $type);
 
-				if ($type == 'thold') {
-					print "<p style='margin:5px 0px;min-height:15px' class='deviceUp'>" . __('OK', 'gridalarms') . '<br>' . __('Output: \'%s\'', trim(implode("\n", $output)), 'gridalarms') . '</p>';
-				} else{
-					print "<p style='margin:5px 0px;min-height:15px' class='deviceUp'>" . __('OK', 'gridalarms') . '<br>' . __('Output: \'%s\'', "<pre style='margin:0px;'>" . html_escape(trim(implode("\n", $output)) . '</pre>'), 'gridalarms') . '</p>';
-				}
+	if ($command != '') {
+		$return_code = 0;
+		$output      = array();
+		$result      = exec($command, $output, $return_code);
+		$output      = array_map('trim', $output);
+
+		if ($result != '' && $return_code == 0) {
+			if (!$ajax) {
+				return true;
+			}
+
+			if ($type == 'thold') {
+				print "<p style='margin:5px 0px;min-height:15px' class='deviceUp'>" . __('OK', 'gridalarms') . '<br>' . __('Output:', 'gridalarms') . html_escape(implode("\n", $output)) . '</p>';
 			} else {
-				if (!$ajax) return false;
-
-				if ($return_code == 127) {
-					print "<p style='margin:5px 0px;min-height:15px' class='deviceDown'>" . __('Error: Script File Not Found!', 'gridalarms') . '</p>';
-				} else {
-					if ($type == 'thold') {
-						print "<p style='margin:5px 0px;min-height:15px' class='deviceDown'>" . __('Error!', 'gridalarms') . '<br>' . __('Return Code: \'%s\'', $return_code, 'gridalarms') . '<br>' . __('Output: \'%s\'', html_escape(trim(implode("\n", $output))), 'gridalarms') . '</p>';
-					} else{
-						print "<p style='margin:5px 0px;min-height:15px' class='deviceDown'>" . __('Error!', 'gridalarms') . '<br>' . __('Return Code: \'%s\'', $return_code, 'gridalarms') . '<br>' . __('Output: %s', "<pre style='margin:0px;'>" . html_escape(trim(implode("\n", $output))) . '</pre>', 'gridalarms') . '</p>';
-					}
-				}
+				print "<p style='margin:5px 0px;min-height:15px' class='deviceUp'>" . __('OK', 'gridalarms') . '<br>' . __('Output:', 'gridalarms') . '</p><pre style="margin:0px">' . html_escape(implode("\n", $output)) . '</pre>';
 			}
 		} else {
-			if (!$ajax) return false;
-			print "<p style='margin:5px 0px;min-height:15px' class='deviceDown'>" . __('No Command Defined, You must Save Alert First!', 'gridalarms') . '</p>';
+			if (!$ajax) {
+				return false;
+			}
+
+			if ($return_code == 127) {
+				print "<p style='margin:5px 0px;min-height:15px' class='deviceDown'>" . __('Error: Script File Not Found!', 'gridalarms') . '</p>';
+			} else {
+				if ($type == 'thold') {
+					print "<p style='margin:5px 0px;min-height:15px' class='deviceDown'>" . __('Error!', 'gridalarms') . '<br>' . __('Return Code: \'%s\'', $return_code, 'gridalarms') . '<br>' . __('Output: \'%s\'', html_escape(implode("\n", $output)), 'gridalarms') . '</p>';
+				} else{
+					print "<p style='margin:5px 0px;min-height:15px' class='deviceDown'>" . __('Error!', 'gridalarms') . '<br>' . __('Return Code: \'%s\'', $return_code, 'gridalarms') . '<br>' . __('Output: %s', "<pre style='margin:0px;'>" . html_escape(implode("\n", $output)) . '</pre>', 'gridalarms') . '</p>';
+				}
+			}
 		}
 	} else {
-		if (!$ajax) return false;
+		if (!$ajax) {
+			return false;
+		}
+
 		print "<p style='margin:5px 0px;min-height:15px' class='deviceDown'>" . __('No Command Defined, You must Save Alert First!', 'gridalarms') . '</p>';
 	}
 
@@ -563,18 +577,29 @@ function draw_gridalarms_sql_preview($expression) {
 }
 
 function draw_gridalarms_script_preview($expression) {
+	$thold_command  = get_script_command($expression['id'], 'thold');
+	$output_command = get_script_command($expression['id'], 'data');
+
 	if (cacti_sizeof($expression)) { ?>
 		<tr class='even'>
-			<td id='syntax_message'><p style='margin:5px 0px;min-height:15px;'><?php print __('Not Run', 'gridalarms');?></p></td>
+			<td style='width: 50px'><b><?php print __('Thold:', 'gridalarms') . '</b>';?></td>
+			<td><?php print html_escape($thold_command);?></td>
+		</tr>
+		<tr class='even'>
+			<td style='width: 50px'><b><?php print __('Data:', 'gridalarms') . '</b>';?></td>
+			<td><?php print html_escape($output_command);?></td>
 		</tr>
 		<tr class='odd'>
-			<td style='padding:5px'>
+			<td colspan='2' style='padding:5px'>
 				<input id='check_script_threshold' type='button' name='check_script_threshold' value='<?php print __('Check Threshold Script', 'gridalarms');?>'/>
 				<input id='check_script_data' type='button' name='check_script_data' value='<?php print __('Check Items Script', 'gridalarms');?>'/>
 				<?php
 				print "<input type='hidden' id='check_syntax_expression_id' name='check_syntax_expression_id' value='" . $expression['id'] . "'/>";
 				?>
 			</td>
+		</tr>
+		<tr>
+			<td colspan='2' id='syntax_message'></td>
 		</tr>
 		<?php
 	}
@@ -1723,10 +1748,6 @@ function item_edit() {
 
 	form_save_button('gridalarms_template_edit.php?tab=data&header=false&id=' . get_request_var('alarm_id'));
 }
-
-/* ---------------------
-   Expression Functions
-   --------------------- */
 
 function gridalarms_expression_edit() {
 	global $config, $gridalarms_expression_item_types;
