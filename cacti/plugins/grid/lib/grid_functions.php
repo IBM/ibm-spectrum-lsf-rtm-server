@@ -2115,15 +2115,14 @@ function perform_grid_db_maint($start_time, $optimize = false) {
 							AND grid_jobs.indexid=gjgr.indexid
 							AND grid_jobs.submit_time=gjgr.submit_time
 							WHERE grid_jobs.jobid IS NULL;");
-							
+
 						 $gpu_partition = substr($new_partition_table, -3);
 						 if (isEmptyTable($new_partition_table)) {
 						 	db_execute('DROP TABLE IF EXISTS ' . $new_partition_table);
-						 	db_execute_prepared("DELETE FROM grid_table_partitions WHERE table_name=? and `partition` = ?", 
+						 	db_execute_prepared("DELETE FROM grid_table_partitions WHERE table_name=? and `partition` = ?",
 						 		array("grid_jobs_gpu_rusage", $gpu_partition));
-						 	$curmax = db_fetch_row_prepared("SELECT `partition`, max_time FROM grid_table_partitions 
+						 	$curmax = db_fetch_row_prepared("SELECT `partition`, max_time FROM grid_table_partitions
 						 		WHERE table_name=? ORDER BY max_time DESC LIMIT 1", array("grid_jobs_gpu_rusage"));
-						 		
 						 	if (cacti_sizeof($curmax)) {
 						 		db_execute_prepared('UPDATE settings set value = ? where name = ?',
 						 			array($curmax, 'grid_jobs_gpu_rusage_partitioning_version'));
@@ -2134,8 +2133,8 @@ function perform_grid_db_maint($start_time, $optimize = false) {
 						 } else {
 						 	$gpu_min_time = db_fetch_cell("SELECT MIN(submit_time) FROM $new_partition_table WHERE submit_time > '1971-02-01'");
 						 	$gpu_max_time = db_fetch_cell("SELECT MAX(update_time) FROM $new_partition_table");
-						 	db_execute_prepared("UPDATE grid_table_partitions SET min_time = ?, max_time = ? 
-						 		WHERE table_name = 'grid_jobs_gpu_rusage' and `partition` = ?", 
+						 	db_execute_prepared("UPDATE grid_table_partitions SET min_time = ?, max_time = ?
+						 		WHERE table_name = 'grid_jobs_gpu_rusage' and `partition` = ?",
 						 		array($gpu_min_time, $gpu_max_time, $gpu_partition));
 						 }
 					}
@@ -2210,6 +2209,7 @@ function perform_grid_db_maint($start_time, $optimize = false) {
 
 		/* remove old data query graphs */
 		grid_debug('Removing Stale Pending Reasons');
+
 		if (detect_and_correct_running_processes(0, 'REMOVING_STALE_PENDING_REASONS', read_config_option('grid_db_maint_max_time'))) {
 			db_execute('DELETE gjp
 				FROM grid_jobs_pendreasons AS gjp
@@ -2219,6 +2219,8 @@ function perform_grid_db_maint($start_time, $optimize = false) {
 				AND gjp.indexid=gj.indexid
 				AND gjp.submit_time=gj.submit_time
 				WHERE gj.jobid IS NULL');
+
+			remove_process_entry(0, 'REMOVING_STALE_PENDING_REASONS');
 		}
 
 		/* remove old data query graphs */
