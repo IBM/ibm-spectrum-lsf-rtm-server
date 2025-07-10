@@ -3784,6 +3784,7 @@ function update_fairshare_tree_information() {
 	grid_debug("grid_queues_shares users running jobs/slots update");
 
 	$q_start_time = db_fetch_cell("SELECT NOW()");
+	
 	$clusters = db_fetch_assoc("SELECT DISTINCT clusterid FROM grid_clusters WHERE disabled!='on'");
 
 	//Update last_updated=NOW() for all found shareAcctPath
@@ -6101,10 +6102,10 @@ function gridmemvio_notify_users() {
 				"<UNDERAGEJOBS>"  => $record["underage_jobs"],
 				"<OVERAGESLOTS>"  => $record["overage_slots"],
 				"<UNDERAGESLOTS>" => $record["underage_slots"],
-				"<TOTALOVERAGE>"    => display_job_memory(abs($record["total_overage"]), 3),
-				"<TOTALUNDERAGE>"   => display_job_memory(abs($record["total_underage"]),3),
-				"<AVGOVERAGE>"    => display_job_memory(abs($record["avg_overage"]), 3),
-				"<AVGUNDERAGE>"   => display_job_memory(abs($record["avg_underage"]),3),
+				"<TOTALOVERAGE>"    => display_job_memory(abs($record["total_overage"] ?? 0), 3),
+				"<TOTALUNDERAGE>"   => display_job_memory(abs($record["total_underage"] ?? 0),3),
+				"<AVGOVERAGE>"    => display_job_memory(abs($record["avg_overage"] ?? 0), 3),
+				"<AVGUNDERAGE>"   => display_job_memory(abs($record["avg_underage"] ?? 0),3),
 				"<AVGOVERRES>"    => display_job_memory($record["avg_overreserve"], 3),
 				"<AVGUNDERRES>"   => display_job_memory($record["avg_underreserve"], 3)
 			);
@@ -6275,10 +6276,13 @@ function grid_replace_tags($message, $cluster, $job, $data_array) {
 
 	/* custom replacements */
 	if (cacti_sizeof($data_array)) {
-	foreach ($data_array as $tag => $value) {
-		$message = str_replace($tag, $value, $message);
+		foreach ($data_array as $tag => $value) {
+			if ($value !== null) {
+				$message = str_replace($tag, $value, $message);
+			}
+		}
 	}
-	}
+
 	return $message;
 }
 
@@ -20619,6 +20623,7 @@ function grid_get_lsf_conf_variable_value($lsf_envdir, $arg) {
  */
 function array_unique_multidimensional($input)
 {
+    if (empty($input)) return $input;
     $serialized = array_map('serialize', $input);
     $unique = array_unique($serialized);
     return array_intersect_key($input, $unique);

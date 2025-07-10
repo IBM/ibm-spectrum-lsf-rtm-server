@@ -2580,20 +2580,25 @@ function read_default_lic_config_option($config_name) {
 	//TODO: combina grid_settings, grid_settings as rtm_settings for some RTM common options, e.g. RowsOfPage
     //      Except: default_main_screen
 
-    if($config_name == 'default_main_screen')
+	if($config_name == 'default_main_screen') {
 		$tmp_settings = $lic_settings;
-	else
+	} else {
 		$tmp_settings = $grid_settings;
+	}
 
-	reset($tmp_settings);
+	if (is_array($tmp_settings)) {
+		reset($tmp_settings);
+	}
 
-	foreach ($tmp_settings as $tab_name => $tab_array) {
-		if ((isset($tab_array[$config_name])) && (isset($tab_array[$config_name]['default']))) {
-			return $tab_array[$config_name]['default'];
-		}else{
-			foreach ($tab_array as $field_name => $field_array) {
-				if ((isset($field_array['items'])) && (isset($field_array['items'][$config_name])) && (isset($field_array['items'][$config_name]['default']))) {
-					return $field_array['items'][$config_name]['default'];
+	if (cacti_sizeof($tmp_settings)) {
+		foreach ($tmp_settings as $tab_name => $tab_array) {
+			if ((isset($tab_array[$config_name])) && (isset($tab_array[$config_name]['default']))) {
+				return $tab_array[$config_name]['default'];
+			}else{
+				foreach ($tab_array as $field_name => $field_array) {
+					if ((isset($field_array['items'])) && (isset($field_array['items'][$config_name])) && (isset($field_array['items'][$config_name]['default']))) {
+						return $field_array['items'][$config_name]['default'];
+					}
 				}
 			}
 		}

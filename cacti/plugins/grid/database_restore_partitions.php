@@ -287,7 +287,7 @@ function grid_restore_cacti_db_partitions($rephosts, $force = false, $tables = '
 
 									if (cacti_sizeof($range)) {
 										foreach($range as $np) {
-											$newparts[$np] = $np;
+											$newparts[$np] = substr('000' . $np, -3);
 										}
 									}
 								} else {
@@ -322,8 +322,11 @@ function grid_restore_cacti_db_partitions($rephosts, $force = false, $tables = '
 			}
 
 			/* check for a filter */
-			if ($tables != 'all' || $partitions != 'all') {
+			if (($tables != 'all' || $partitions != 'all') && !is_array($tables)) {
 				if ($tables != 'all')     $tables = explode(',', $tables);
+			}
+
+			if (($partitions != 'all' || $partitions != 'all') && !is_array($partitions)) {
 				if ($partitions != 'all') $partitions = explode(',', $partitions);
 			}
 
