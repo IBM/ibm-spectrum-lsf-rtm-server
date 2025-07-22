@@ -914,9 +914,12 @@ function lic_filter() {
 						<select id='refresh' onChange='applyFilter()'>
 							<?php
 							$max_refresh = read_config_option('grid_minimum_refresh_interval');
-							foreach($lic_refresh_interval as $key => $value) {
-								if ($key >= $max_refresh) {
-									print '<option value="' . $key . '"'; if (get_request_var('refresh') == $key) { print ' selected'; } print '>' . $value . '</option>';
+
+							if (cacti_sizeof($lic_refresh_interval)) {
+								foreach($lic_refresh_interval as $key => $value) {
+									if ($key >= $max_refresh) {
+										print '<option value="' . $key . '"'; if (get_request_var('refresh') == $key) { print ' selected'; } print '>' . $value . '</option>';
+									}
 								}
 							}
 							?>
