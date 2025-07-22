@@ -323,11 +323,15 @@ function grid_restore_cacti_db_partitions($rephosts, $force = false, $tables = '
 
 			/* check for a filter */
 			if (($tables != 'all' || $partitions != 'all') && !is_array($tables)) {
-				if ($tables != 'all')     $tables = explode(',', $tables);
+				if ($tables != 'all') {
+					$tables = explode(',', $tables);
+				}
 			}
 
-			if (($partitions != 'all' || $partitions != 'all') && !is_array($partitions)) {
-				if ($partitions != 'all') $partitions = explode(',', $partitions);
+			if (($tables != 'all' || $partitions != 'all') && !is_array($partitions)) {
+				if ($partitions != 'all') {
+					$partitions = explode(',', $partitions);
+				}
 			}
 
 			foreach($partitioned_tables as $table_data) {
