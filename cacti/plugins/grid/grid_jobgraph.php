@@ -152,11 +152,16 @@ if (is_numeric($job_update_interval)) {
 }
 
 if (file_exists($pngfile)) {
-	$file = fopen($pngfile, 'rb');
-	$data = fread($file, filesize($pngfile));
-	fclose($file);
-	input_validate_input_regex_xss_attack($data);
-	print $data;
-	exit;
+	$filesize = filesize($pngfile);
+	$filetype = exif_imagetype($pngfile);
+	if ($filesize > 0 && $filetype > 0 && $filetype < 19){
+		$file = fopen($pngfile, 'rb');
+		$data = fread($file, $filesize);
+		fclose($file);
+		input_validate_input_regex_xss_attack($data);
+		print $data;
+	}else{
+		cacti_log('WARNING: Invalid image file: '. $pngfile);
+	}
 }
 

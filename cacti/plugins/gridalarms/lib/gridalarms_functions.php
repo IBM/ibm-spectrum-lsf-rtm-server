@@ -7161,8 +7161,9 @@ function do_title_replacement(&$alarm) {
 			if ($input_names[$m2]) {
 				$ret_title = str_replace('|input_' . $m2 . '|', "'" . $input_names[$m2] . "'", $ret_title);
 			} else {
-				raise_message ('gridalarms_title_replacement_failure');
-				return -1;
+				raise_message ('gridalarms_title_replacement_failure', 
+					__('Alert name has unused custom data input ' . '|input_' . $m2 . '|, please remove from alert name.'),
+					MESSAGE_LEVEL_WARN);
 			}
 		}
 	}
