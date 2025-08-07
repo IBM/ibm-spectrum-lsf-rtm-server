@@ -426,11 +426,13 @@ function finalize_timespan(&$timespan) {
 function grid_set_timeshift() {
 	global $grid_timeshifts, $config;
 
+	$default_timeshift = read_grid_config_option('default_timeshift') ?? 7;
+
 	# no current timeshift: get default timeshift
 	if ((!isset($_SESSION['sess_grid_current_timeshift'])) || empty($_SESSION['sess_grid_current_timeshift']) ||
 		(isset_request_var('clear'))) {
-		$_SESSION['sess_grid_current_timeshift'] = read_grid_config_option('default_timeshift');
-		set_request_var('predefined_timeshift', $grid_timeshifts[read_grid_config_option('default_timeshift')]);
+		$_SESSION['sess_grid_current_timeshift'] = $default_timeshift;
+		set_request_var('predefined_timeshift', $grid_timeshifts[$default_timeshift]);
 		$_SESSION['grid_custom'] = 0;
 	}
 
