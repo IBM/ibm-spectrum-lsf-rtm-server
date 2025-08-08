@@ -1,0 +1,163 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: developers@cacti.net\n"
+"POT-Creation-Date: 2024-10-03 18:53-0400\n"
+"PO-Revision-Date: 2024-10-03 18:12-0400\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: sv_SE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.4\n"
+
+#: exlists.php:29
+#, fuzzy
+msgid "Delete"
+msgstr "Radera"
+
+#: exlists.php:154
+msgid "Cancel"
+msgstr "Avbryt"
+
+#: exlists.php:154
+msgid "Continue"
+msgstr "Fortsätt"
+
+#: exlists.php:182
+#, php-format
+msgid "Exception Filter [edit: %s]"
+msgstr "Undantagsfilter [redigera: %s]"
+
+#: exlists.php:184
+msgid "Exception Filter [new]"
+msgstr "Undantagsfilter [nytt]"
+
+#: exlists.php:220
+msgid "Filter Name"
+msgstr "Filternamn"
+
+#: exlists.php:221
+msgid "Name this filter.  It will appear as both the dropdown and Legend value"
+msgstr "Ge det här filtret namnet.  Det kommer att visas som både rullgardinsmenyn och förklaringsvärdet"
+
+#: exlists.php:228
+msgid "Enable Filter"
+msgstr "Aktivera filtrera"
+
+#: exlists.php:229
+msgid "When checked this Exception Filter will be enabled."
+msgstr "När det här alternativet är markerat aktiveras det här undantagsfiltret."
+
+#: exlists.php:235
+msgid "Database SQL Where"
+msgstr "Databas SQL Var"
+
+#: exlists.php:236
+msgid "The SQL Where Clause to use for the Exception list.  For example <b>\"max_memory>65000000 AND num_cpus>20\"</b>. The Exceoption Filter is combined with all other Filters on the Job details page."
+msgstr "Den SQL Where-sats som ska användas för undantagslistan.  Till exempel <b>\"max_memory>65000000 OCH num_cpus>20\".</b> Filtret Exceoption kombineras med alla andra filter på sidan Jobbinformation."
+
+#: exlists.php:252
+msgid "Select Column name to Append to SQL Where"
+msgstr "Välj Kolumnnamn som ska läggas till i SQL Where"
+
+#: exlists.php:286 exlists.php:288 exlists.php:291 exlists.php:297
+#: exlists.php:299
+msgid "Check SQL Syntax"
+msgstr "Kontrollera SQL-syntax"
+
+#: exlists.php:369
+msgid "Job Detail Exception Lists"
+msgstr "Undantagslistor för jobbinformation"
+
+#: exlists.php:378
+msgid "Search"
+msgstr "Sök"
+
+#: exlists.php:384
+msgid "Rows"
+msgstr "Rader"
+
+#: exlists.php:388
+msgid "Default"
+msgstr "Standard"
+
+#: exlists.php:399
+#, fuzzy
+msgid "Go"
+msgstr "Start"
+
+#: exlists.php:399
+msgid "Set/Refresh Filters"
+msgstr "Ställ in/uppdatera filter"
+
+#: exlists.php:402
+msgid "Clear"
+msgstr "Rensa"
+
+#: exlists.php:402
+msgid "Clear Filters"
+msgstr "Rensa filter"
+
+#: exlists.php:435
+msgid "List Name"
+msgstr "Listans namnb"
+
+#: exlists.php:439
+msgid "Enabled"
+msgstr "Aktiverad"
+
+#: exlists.php:443
+msgid "SQL Where"
+msgstr "SQL Var"
+
+#: exlists.php:448
+msgid "Filters"
+msgstr "Filter"
+
+#: exlists.php:463
+msgid "No"
+msgstr "Nej"
+
+#: exlists.php:463
+msgid "Yes"
+msgstr "Ja"
+
+#: exlists.php:469
+msgid "No Job Detail Exception Filters Found"
+msgstr "Inga filter för undantag för jobbinformation hittades"
+
+#: setup.php:146
+msgid "Data Collection"
+msgstr "Datainsamling"
+
+#: setup.php:147
+msgid "Clusters"
+msgstr "Kluster"
+
+#: setup.php:147
+msgid "Custom Job Filters"
+msgstr "Anpassade jobbfilter"
+
+#: setup.php:158 setup.php:163
+msgid "Undefined"
+msgstr "Odefinierat"
+
+#: setup.php:180
+msgid "Job Detail Exception Filters"
+msgstr "Undantagsfilter för jobbinformation"
+
+#: setup.php:187
+msgid "(edit)"
+msgstr "(Redigera)"
+
+#: setup.php:194
+#, fuzzy
+msgid "(actions)"
+msgstr "Åtgärder"

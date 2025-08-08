@@ -1,0 +1,161 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: developers@cacti.net\n"
+"POT-Creation-Date: 2024-10-03 18:53-0400\n"
+"PO-Revision-Date: 2024-10-03 18:07-0400\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar_SA\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.4\n"
+
+#: exlists.php:29
+msgid "Delete"
+msgstr "حذف"
+
+#: exlists.php:154
+msgid "Cancel"
+msgstr "إلغاء"
+
+#: exlists.php:154
+msgid "Continue"
+msgstr "إستمرار"
+
+#: exlists.php:182
+#, php-format
+msgid "Exception Filter [edit: %s]"
+msgstr "مرشح الاستثناء [عدل: %s]"
+
+#: exlists.php:184
+msgid "Exception Filter [new]"
+msgstr "عامل تصفية الاستثناء [جديد]"
+
+#: exlists.php:220
+msgid "Filter Name"
+msgstr "اسم الفلتر"
+
+#: exlists.php:221
+msgid "Name this filter.  It will appear as both the dropdown and Legend value"
+msgstr "أدخل اسما لهذا الفلتر.  سيظهر ككل من القائمة المنسدلة وقيمة وسيلة الإيضاح"
+
+#: exlists.php:228
+msgid "Enable Filter"
+msgstr "تمكينالمصنف"
+
+#: exlists.php:229
+msgid "When checked this Exception Filter will be enabled."
+msgstr "عند التحقق من ذلك ، سيتم تمكين عامل تصفية الاستثناء هذا."
+
+#: exlists.php:235
+msgid "Database SQL Where"
+msgstr "قاعدة بيانات SQL حيث"
+
+#: exlists.php:236
+msgid "The SQL Where Clause to use for the Exception list.  For example <b>\"max_memory>65000000 AND num_cpus>20\"</b>. The Exceoption Filter is combined with all other Filters on the Job details page."
+msgstr "جملة SQL Where لاستخدامها في قائمة الاستثناءات.  على سبيل المثال <b>\"max_memory>65000000 و num_cpus>20\".</b> يتم دمج عامل تصفية Exceoption مع جميع عوامل التصفية الأخرى في صفحة تفاصيل الوظيفة."
+
+#: exlists.php:252
+msgid "Select Column name to Append to SQL Where"
+msgstr "حدد اسم العمود لإلحاقه ب SQL حيث"
+
+#: exlists.php:286 exlists.php:288 exlists.php:291 exlists.php:297
+#: exlists.php:299
+msgid "Check SQL Syntax"
+msgstr "تحقق من بناء جملة SQL"
+
+#: exlists.php:369
+msgid "Job Detail Exception Lists"
+msgstr "قوائم استثناءات تفاصيل الوظيفة"
+
+#: exlists.php:378
+msgid "Search"
+msgstr "بحث"
+
+#: exlists.php:384
+msgid "Rows"
+msgstr "الصفوف"
+
+#: exlists.php:388
+msgid "Default"
+msgstr "الافتراضي"
+
+#: exlists.php:399
+msgid "Go"
+msgstr "أذهب"
+
+#: exlists.php:399
+msgid "Set/Refresh Filters"
+msgstr "مجموعة / تحديث الفلاتر"
+
+#: exlists.php:402
+msgid "Clear"
+msgstr "واضح"
+
+#: exlists.php:402
+msgid "Clear Filters"
+msgstr "مسح الفلتر"
+
+#: exlists.php:435
+msgid "List Name"
+msgstr "اسم القائمة"
+
+#: exlists.php:439
+msgid "Enabled"
+msgstr "مفعل"
+
+#: exlists.php:443
+msgid "SQL Where"
+msgstr "SQL حيث"
+
+#: exlists.php:448
+msgid "Filters"
+msgstr "التصفيات"
+
+#: exlists.php:463
+msgid "No"
+msgstr "لا"
+
+#: exlists.php:463
+msgid "Yes"
+msgstr "نعم"
+
+#: exlists.php:469
+msgid "No Job Detail Exception Filters Found"
+msgstr "لم يتم العثور على عوامل تصفية استثناء تفاصيل الوظيفة"
+
+#: setup.php:146
+msgid "Data Collection"
+msgstr "جمع البيانات"
+
+#: setup.php:147
+msgid "Clusters"
+msgstr "عنقود"
+
+#: setup.php:147
+msgid "Custom Job Filters"
+msgstr "مرشحات الوظائف المخصصة"
+
+#: setup.php:158 setup.php:163
+msgid "Undefined"
+msgstr "غير مُحدد"
+
+#: setup.php:180
+msgid "Job Detail Exception Filters"
+msgstr "مرشحات استثناء تفاصيل الوظيفة"
+
+#: setup.php:187
+msgid "(edit)"
+msgstr "(تعديل)"
+
+#: setup.php:194
+#, fuzzy
+msgid "(actions)"
+msgstr "أفعال"
