@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright IBM Corp. 2006, 2025                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -39,7 +39,7 @@ function plugin_gridalarms_install($upgrade = false) {
 	// Permissions Levels
 	api_plugin_register_realm('gridalarms', 'grid_alarmdb.php', 'View Grid Alerts', 1);
 	api_plugin_register_realm('gridalarms',
-		'notify_lists.php,gridalarms_alarm.php,gridalarms_templates.php,gridalarms_alarm_edit.php,gridalarms_template_edit.php',
+		'gridalarms_alarm.php,gridalarms_templates.php,gridalarms_alarm_edit.php,gridalarms_template_edit.php',
 		'Configure Grid Alerts', 1);
 
 	// Notification List Extension
@@ -76,9 +76,9 @@ function plugin_gridalarms_install($upgrade = false) {
 	// Remove/Disable cluster related alarms
 	api_plugin_register_hook('gridalarms', 'grid_cluster_remove', 'gridalarms_grid_cluster_remove', 'setup.php');
 
-
 	if ($upgrade) {
         plugin_gridalarms_upgrade();
+
         if (api_plugin_is_enabled('gridalarms')) {
             api_plugin_enable_hooks('gridalarms');
         }
@@ -158,7 +158,7 @@ function gridalarms_rtm_landing_page() {
 
 function gridalarms_bottom_footer() {
 	if (preg_match('(gridalarms|grid_alarmdb)', basename($_SERVER['SCRIPT_NAME']))) {
-		echo "<div id='gridalarms_dialog' style='display:none;'></div>\n";
+		print "<div id='gridalarms_dialog' style='display:none;'></div>\n";
 	}
 }
 
@@ -167,7 +167,7 @@ function gridalarms_page_head() {
 
 	print "<link href='" . $config['url_path'] . "plugins/gridalarms/includes/main.css' type='text/css' rel='stylesheet'>";
 	print get_md5_include_js('plugins/gridalarms/includes/common.js');
-	if(strstr($_SERVER['SCRIPT_NAME'], 'plugins' . DIRECTORY_SEPARATOR . 'gridalarms' . DIRECTORY_SEPARATOR) === false)
+	if (strstr($_SERVER['SCRIPT_NAME'], 'plugins' . DIRECTORY_SEPARATOR . 'gridalarms' . DIRECTORY_SEPARATOR) === false)
 		return;
 }
 
@@ -184,20 +184,26 @@ function plugin_gridalarms_upgrade() {
 	include_once(dirname(__FILE__) . '/includes/database.php');
 
 	$gridalarms_version = read_config_option('gridalarms_version');
-	if(!empty($gridalarms_version)){
-		$gridalarms_version = db_fetch_cell('SELECT version FROM plugin_config WHERE directory="gridalarms"');
+	if (!empty($gridalarms_version)) {
+		$gridalarms_version = db_fetch_cell('SELECT version FROM plugin_config WHERE directory = "gridalarms"');
 	}
 
 	$gridalarms_current_version = get_gridalarms_version();
 
 	gridalarms_setup_new_tables();
-	//From Pre-9.1 to 9.1, upgrade process is background
+
+	/* from Pre-9.1 to 9.1, upgrade process is background */
 	if (isset($gridalarms_version)) {
 		rtm_plugin_upgrade_ga($gridalarms_version, $gridalarms_current_version, 'gridalarms');
 	}
+
+	db_execute_prepared('UPDATE plugin_realms
+		SET file = ?
+		WHERE file LIKE "%gridalarms_alarm.php%"',
+		array('gridalarms_alarm.php,gridalarms_templates.php,gridalarms_alarm_edit.php,gridalarms_template_edit.php'));
 }
 
-function plugin_gridalarms_uninstall(){
+function plugin_gridalarms_uninstall() {
 	return true;
 }
 
@@ -211,7 +217,8 @@ function gridalarms_poller_bottom() {
 	global $config;
 
 	$command_string = read_config_option('path_php_binary');
-	$extra_args = '-q ' . $config['base_path'] . '/plugins/gridalarms/poller_gridalarms.php';
+	$extra_args = '-q ' . $config['base_path'] . '/plugins/gridalarms/poller_gridalarms.php -M';
+
 	exec_background($command_string, $extra_args);
 
 	return true;
@@ -438,7 +445,7 @@ function gridalarms_draw_navigation_text ($nav) {
 	return $nav;
 }
 
-function gridalarms_grid_tab_down($pages_grid_tab_down){
+function gridalarms_grid_tab_down($pages_grid_tab_down) {
 	$gridalarms_pages_grid_tab_down=array(
 		'grid_alarmdb.php' => ''
 		);
@@ -477,7 +484,7 @@ function gridalarms_grid_menu($grid_menu = array()) {
  * @deprecated 10.2.0.1, prefer to use get_gridalarms_version or plugin_gridalarms_version
  * @return array include version, author,...
  */
-function gridalarms_version(){
+function gridalarms_version() {
 	return plugin_gridalarms_version();
 }
 
@@ -487,24 +494,26 @@ function gridalarms_version(){
  */
 function get_gridalarms_version() {
 	$info = plugin_gridalarms_version();
-	if(!empty($info) && isset($info['version'])){
+
+	if (!empty($info) && isset($info['version'])) {
 		return $info['version'];
 	}
+
 	return RTM_VERSION;
 }
 
-function gridalarms_grid_cluster_remove($cluster){
+function gridalarms_grid_cluster_remove($cluster) {
 	global $config;
 
-	if (!isset($cluster) || !isset($cluster['clusterid']) || !isset($cluster['delete_type'])){
+	if (!isset($cluster) || !isset($cluster['clusterid']) || !isset($cluster['delete_type'])) {
 		return $cluster;
 	}
 
 	db_execute_prepared('UPDATE gridalarms_template SET clusterid=0 WHERE clusterid=?', array($cluster['clusterid']));
 
-	if ($cluster['delete_type'] == 1){
+	if ($cluster['delete_type'] == 1) {
 		db_execute_prepared('UPDATE gridalarms_alarm SET alarm_enabled="off" WHERE clusterid=?', array($cluster['clusterid']));
-	} else if ($cluster['delete_type'] == 2){
+	} else if ($cluster['delete_type'] == 2) {
 		include_once($config['base_path'] . '/plugins/gridalarms/lib/gridalarms_functions.php');
 
 		$alarms = db_fetch_assoc_prepared('SELECT *

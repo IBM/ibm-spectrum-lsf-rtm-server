@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright IBM Corp. 2006, 2025                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -30,6 +30,24 @@ function gridalarms_config_settings() {
 		'nl_header' => array(
 			'friendly_name' => __('Alert Presets', 'gridalarms'),
 			'method' => 'spacer',
+		),
+		'gridalarm_parallel' => array(
+			'friendly_name' => __('Concurrent Alert Processes', 'gridalarms'),
+			'description' => __('The maximum number of Alert check processes that can be launched in parallel.  The default is 5.', 'gridalarms'),
+			'method' => 'drop_array',
+			'default' => 5,
+			'array' => array(
+				1  => __('%d Processes', 1, 'gridalarms'),
+				2  => __('%d Processes', 2, 'gridalarms'),
+				3  => __('%d Processes', 3, 'gridalarms'),
+				4  => __('%d Processes', 4, 'gridalarms'),
+				5  => __('%d Processes', 5, 'gridalarms'),
+				6  => __('%d Processes', 6, 'gridalarms'),
+				7  => __('%d Processes', 7, 'gridalarms'),
+				8  => __('%d Processes', 8, 'gridalarms'),
+				9  => __('%d Processes', 9, 'gridalarms'),
+				10 => __('%d Processes', 10, 'gridalarms')
+			)
 		),
     	'gridalarm_severity' => array(
 			'friendly_name' => __('Default Alert Severity', 'gridalarms'),

@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2022                                          |
+ | Copyright IBM Corp. 2006, 2025                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -67,6 +67,9 @@ function gridalarms_setup_new_tables() {
 	$data['columns'][] = array('name' => 'req_ack', 'type' => 'char(3)', 'NULL' => false, 'default' => 'off');
 	$data['columns'][] = array('name' => 'email_body', 'type' => 'text', 'NULL' => false);
 	$data['columns'][] = array('name' => 'email_subject', 'type' => 'text', 'NULL' => false);
+	$data['columns'][] = array('name' => 'format_file', 'type' => 'varchar(255)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'notes', 'type' => 'text', 'NULL' => true);
+	$data['columns'][] = array('name' => 'external_id', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '');
 	$data['primary'] = 'id';
 	$data['keys'][] = array('name' => 'alarm_enabled', 'columns' => 'alarm_enabled');
 	$data['keys'][] = array('name' => 'clusterid', 'columns' => 'clusterid');
@@ -84,7 +87,7 @@ function gridalarms_setup_new_tables() {
 	$data['keys'][] = array('name' => 'contact_id', 'columns' => 'contact_id');
 	$data['type'] = 'InnoDB';
 	$data['comment'] = 'Stores Alert contacts similar to Thold';
-	api_plugin_db_table_create ('gridalarms', 'gridalarms_alarm_contacts', $data);
+	api_plugin_db_table_create('gridalarms', 'gridalarms_alarm_contacts', $data);
 
 	$data = array();
 	$data['columns'][] = array('name' => 'id', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'auto_increment' => true);
@@ -95,10 +98,15 @@ function gridalarms_setup_new_tables() {
 	$data['columns'][] = array('name' => 'sequence', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '1');
 	$data['columns'][] = array('name' => 'sortposition', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => true);
 	$data['columns'][] = array('name' => 'sortdirection', 'unsigned' => true, 'type' => 'int(1)', 'NULL' => true);
+	$data['columns'][] = array('name' => 'type', 'type' => 'varchar(10)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'units', 'type' => 'varchar(10)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'align', 'type' => 'varchar(10)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'digits', 'type' => 'tinyint(4)', 'NULL' => false, 'default' => '-1');
+	$data['columns'][] = array('name' => 'autoscale', 'type' => 'tinyint(4)', 'NULL' => false, 'default' => '0');
 	$data['primary'] = 'id';
 	$data['type'] = 'InnoDB';
 	$data['comment'] = 'Stores Report Layout Data for Alert Tablular Reports';
-	api_plugin_db_table_create ('gridalarms', 'gridalarms_alarm_layout', $data);
+	api_plugin_db_table_create('gridalarms', 'gridalarms_alarm_layout', $data);
 
 	$data = array();
 	$data['columns'][] = array('name' => 'id', 'unsigned' => true, 'type' => 'bigint(20)', 'NULL' => false, 'auto_increment' => true);
@@ -117,7 +125,7 @@ function gridalarms_setup_new_tables() {
 	$data['keys'][] = array('name' => 'type', 'columns' => 'type');
 	$data['type'] = 'InnoDB';
 	$data['comment'] = 'Stores Alert Logs';
-	api_plugin_db_table_create ('gridalarms', 'gridalarms_alarm_log', $data);
+	api_plugin_db_table_create('gridalarms', 'gridalarms_alarm_log', $data);
 
 	$data = array();
 	$data['columns'][] = array('name' => 'id', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'auto_increment' => true);
@@ -162,7 +170,7 @@ function gridalarms_setup_new_tables() {
 	$data['keys'][] = array('name' => 'alarm_id_present', 'columns' => 'alarm_id`,`present');
 	$data['type'] = 'InnoDB';
 	$data['comment'] = 'Stores an Archive of Alert Tabular Details';
-	api_plugin_db_table_create ('gridalarms', 'gridalarms_alarm_log_items', $data);
+	api_plugin_db_table_create('gridalarms', 'gridalarms_alarm_log_items', $data);
 
 	$data = array();
 	$data['columns'][] = array('name' => 'id', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'auto_increment' => true);
@@ -180,7 +188,7 @@ function gridalarms_setup_new_tables() {
 	$data['primary'] = 'id';
 	$data['type'] = 'InnoDB';
 	$data['comment'] = 'Stores Alert Expression Details';
-	api_plugin_db_table_create ('gridalarms', 'gridalarms_expression', $data);
+	api_plugin_db_table_create('gridalarms', 'gridalarms_expression', $data);
 
 	$data = array();
 	$data['columns'][] = array('name' => 'id', 'unsigned' => true, 'type' => 'mediumint(8)', 'NULL' => false, 'auto_increment' => true);
@@ -194,7 +202,7 @@ function gridalarms_setup_new_tables() {
 	$data['keys'][] = array('name' => 'exp_id_name', 'columns' => 'expression_id`,`name');
 	$data['type'] = 'InnoDB';
 	$data['comment'] = 'Stores Custom Input Variables and Defaults for Expressions';
-	api_plugin_db_table_create ('gridalarms', 'gridalarms_expression_input', $data);
+	api_plugin_db_table_create('gridalarms', 'gridalarms_expression_input', $data);
 
 	$data = array();
 	$data['columns'][] = array('name' => 'id', 'unsigned' => true, 'type' => 'mediumint(8)', 'NULL' => false, 'auto_increment' => true);
@@ -208,7 +216,7 @@ function gridalarms_setup_new_tables() {
 	$data['keys'][] = array('name' => 'expression_id', 'columns' => 'expression_id');
 	$data['type'] = 'InnoDB';
 	$data['comment'] = '';
-	api_plugin_db_table_create ('gridalarms', 'gridalarms_expression_item', $data);
+	api_plugin_db_table_create('gridalarms', 'gridalarms_expression_item', $data);
 
 	$data = array();
 	$data['columns'][] = array('name' => 'id', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'auto_increment' => true);
@@ -222,7 +230,7 @@ function gridalarms_setup_new_tables() {
 	$data['row_format'] = 'DYNAMIC';
 	$data['type'] = 'InnoDB';
 	$data['comment'] = 'Stores Metrics to be watched for Legacy Expressions';
-	api_plugin_db_table_create ('gridalarms', 'gridalarms_metric', $data);
+	api_plugin_db_table_create('gridalarms', 'gridalarms_metric', $data);
 
 	$data = array();
 	$data['columns'][] = array('name' => 'expression_id', 'unsigned' => true, 'type' => 'mediumint(8)', 'NULL' => false, 'default' => '0');
@@ -230,7 +238,7 @@ function gridalarms_setup_new_tables() {
 	$data['primary'] = 'expression_id`,`metric_id';
 	$data['type'] = 'InnoDB';
 	$data['comment'] = 'Table Linking Metrics to Expressions';
-	api_plugin_db_table_create ('gridalarms', 'gridalarms_metric_expression', $data);
+	api_plugin_db_table_create('gridalarms', 'gridalarms_metric_expression', $data);
 
 	$data = array();
 	$data['columns'][] = array('name' => 'id', 'type' => 'int(11)', 'NULL' => false, 'auto_increment' => true);
@@ -272,6 +280,9 @@ function gridalarms_setup_new_tables() {
 	$data['columns'][] = array('name' => 'req_ack', 'type' => 'char(3)', 'NULL' => false, 'default' => 'off');
 	$data['columns'][] = array('name' => 'email_body', 'type' => 'text', 'NULL' => false);
 	$data['columns'][] = array('name' => 'email_subject', 'type' => 'text', 'NULL' => false);
+	$data['columns'][] = array('name' => 'format_file', 'type' => 'varchar(255)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'notes', 'type' => 'text', 'NULL' => true);
+	$data['columns'][] = array('name' => 'external_id', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '');
 	$data['primary'] = 'id';
 	$data['keys'][] = array('name' => 'hash', 'columns' => 'hash');
 	$data['keys'][] = array('name' => 'notify_alert', 'columns' => 'notify_alert');
@@ -279,7 +290,7 @@ function gridalarms_setup_new_tables() {
 	$data['keys'][] = array('name' => 'tcheck', 'columns' => 'tcheck');
 	$data['type'] = 'InnoDB';
 	$data['comment'] = 'Stores Alert Template definitions similar to Thold';
-	api_plugin_db_table_create ('gridalarms', 'gridalarms_template', $data);
+	api_plugin_db_table_create('gridalarms', 'gridalarms_template', $data);
 
 	$data = array();
 	$data['columns'][] = array('name' => 'alarm_id', 'type' => 'int(12)', 'NULL' => false);
@@ -288,7 +299,7 @@ function gridalarms_setup_new_tables() {
 	$data['keys'][] = array('name' => 'contact_id', 'columns' => 'contact_id');
 	$data['type'] = 'InnoDB';
 	$data['comment'] = 'Stores Alert Template Contacts similar to Thold';
-	api_plugin_db_table_create ('gridalarms', 'gridalarms_template_contacts', $data);
+	api_plugin_db_table_create('gridalarms', 'gridalarms_template_contacts', $data);
 
 	$data = array();
 	$data['columns'][] = array('name' => 'id', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'auto_increment' => true);
@@ -306,7 +317,7 @@ function gridalarms_setup_new_tables() {
 	$data['keys'][] = array('name' => 'hash', 'columns' => 'hash');
 	$data['type'] = 'InnoDB';
 	$data['comment'] = 'Stores Alert Template Expressions';
-	api_plugin_db_table_create ('gridalarms', 'gridalarms_template_expression', $data);
+	api_plugin_db_table_create('gridalarms', 'gridalarms_template_expression', $data);
 
 	$data = array();
 	$data['columns'][] = array('name' => 'id', 'unsigned' => true, 'type' => 'mediumint(8)', 'NULL' => false, 'auto_increment' => true);
@@ -320,7 +331,7 @@ function gridalarms_setup_new_tables() {
 	$data['keys'][] = array('name' => 'hash', 'columns' => 'hash');
 	$data['type'] = 'InnoDB';
 	$data['comment'] = 'Stores Alert Template Custom Data Inputs and Defaults';
-	api_plugin_db_table_create ('gridalarms', 'gridalarms_template_expression_input', $data);
+	api_plugin_db_table_create('gridalarms', 'gridalarms_template_expression_input', $data);
 
 	$data = array();
 	$data['columns'][] = array('name' => 'id', 'unsigned' => true, 'type' => 'mediumint(8)', 'NULL' => false, 'auto_increment' => true);
@@ -334,7 +345,7 @@ function gridalarms_setup_new_tables() {
 	$data['keys'][] = array('name' => 'expression_id', 'columns' => 'expression_id');
 	$data['type'] = 'InnoDB';
 	$data['comment'] = '';
-	api_plugin_db_table_create ('gridalarms', 'gridalarms_template_expression_item', $data);
+	api_plugin_db_table_create('gridalarms', 'gridalarms_template_expression_item', $data);
 
 	$data = array();
 	$data['columns'][] = array('name' => 'id', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'auto_increment' => true);
@@ -345,11 +356,16 @@ function gridalarms_setup_new_tables() {
 	$data['columns'][] = array('name' => 'sequence', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '1');
 	$data['columns'][] = array('name' => 'sortposition', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => true);
 	$data['columns'][] = array('name' => 'sortdirection', 'unsigned' => true, 'type' => 'int(1)', 'NULL' => true);
+	$data['columns'][] = array('name' => 'type', 'type' => 'varchar(10)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'units', 'type' => 'varchar(10)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'align', 'type' => 'varchar(10)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'digits', 'type' => 'tinyint(4)', 'NULL' => false, 'default' => '-1');
+	$data['columns'][] = array('name' => 'autoscale', 'type' => 'tinyint(4)', 'NULL' => false, 'default' => '0');
 	$data['primary'] = 'id';
 	$data['keys'][] = array('name' => 'hash', 'columns' => 'hash');
 	$data['type'] = 'InnoDB';
 	$data['comment'] = '';
-	api_plugin_db_table_create ('gridalarms', 'gridalarms_template_layout', $data);
+	api_plugin_db_table_create('gridalarms', 'gridalarms_template_layout', $data);
 
 	$data = array();
 	$data['columns'][] = array('name' => 'id', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'auto_increment' => true);
@@ -365,7 +381,7 @@ function gridalarms_setup_new_tables() {
 	$data['row_format'] = 'DYNAMIC';
 	$data['type'] = 'InnoDB';
 	$data['comment'] = '';
-	api_plugin_db_table_create ('gridalarms', 'gridalarms_template_metric', $data);
+	api_plugin_db_table_create('gridalarms', 'gridalarms_template_metric', $data);
 
 	$data = array();
 	$data['columns'][] = array('name' => 'expression_id', 'unsigned' => true, 'type' => 'mediumint(8)', 'NULL' => false, 'default' => '0');
@@ -373,7 +389,7 @@ function gridalarms_setup_new_tables() {
 	$data['primary'] = 'expression_id`,`metric_id';
 	$data['type'] = 'InnoDB';
 	$data['comment'] = '';
-	api_plugin_db_table_create ('gridalarms', 'gridalarms_template_metric_expression', $data);
+	api_plugin_db_table_create('gridalarms', 'gridalarms_template_metric_expression', $data);
 
 	//This need to goto new gridalarms tables
 	api_plugin_db_add_column('gridalarms', 'thold_data', array(
