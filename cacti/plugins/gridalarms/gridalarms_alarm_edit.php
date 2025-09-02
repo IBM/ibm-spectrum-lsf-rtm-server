@@ -639,14 +639,14 @@ function form_save() {
 	get_filter_request_var('id');
 	get_filter_request_var('template');
 
-	if (!isempty_request_var('id')) {
+	$alarm_id = isempty_request_var('tab') ? get_request_var('alarm_id') : get_request_var('id');
+	
+	if (!empty($alarm_id)) {
 		$oldalarm = db_fetch_row_prepared('SELECT base_time_display, alarm_type, frequency, alarm_fail_trigger, repeat_alert
 			FROM gridalarms_alarm
 			WHERE id = ?',
-			array(get_request_var('id')));
-	}
-
-	if (!isempty_request_var('id')) {
+			array($alarm_id));
+	
 		if ($oldalarm['base_time_display']!=get_request_var('base_time_display') || $oldalarm['alarm_type']!=get_request_var('alarm_type')
 		|| $oldalarm['frequency']!=get_request_var('frequency')
 		|| $oldalarm['alarm_fail_trigger']!=get_request_var('alarm_fail_trigger')
@@ -654,7 +654,7 @@ function form_save() {
 			db_execute_prepared('UPDATE gridalarms_alarm
 				SET alarm_fail_count = 0
 				WHERE id = ?',
-				array(get_request_var('id')));
+				array($alarm_id));
 		}
 	}
 
@@ -3114,7 +3114,7 @@ function get_metrics_from_cache_by_expression_id($expression_id) {
 	if (isset($_SESSION['sess_ga_expr']['expr_' . $expression_id])){
 		$expression_metrics = $_SESSION['sess_ga_expr']['expr_' . $expression_id];
 	} else {
-		$expression_metrics = get_template_metrics_from_expression_by_id($expression_id);
+		$expression_metrics = get_metrics_from_expression_by_id($expression_id);
 		$_SESSION['sess_ga_expr']['expr_' . $expression_id] = $expression_metrics;
 	}
 	return $expression_metrics;
@@ -3941,10 +3941,6 @@ function layout_item_edit($new = false) {
 	form_hidden_box('id', (isset($layout['id']) ? $layout['id'] : '0'), '');
 	form_hidden_box('alarm_id', (isset_request_var('id') ? get_request_var('id') : '0'), '');
 	form_hidden_box('sequence', (isset($layout['sequence']) ? $layout['sequence'] : ''), '');
-
-	if (!$new) {
-		form_hidden_box('column_name', $layout['column_name'], '');
-	}
 
 	form_hidden_box('save_component_layout', '1', '');
 
