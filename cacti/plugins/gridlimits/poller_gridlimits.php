@@ -111,7 +111,7 @@ if (detect_and_correct_running_processes(0, 'GRIDLIMITS', $poller_interval*3) ||
 }
 
 function do_purge() {
-	$retention = read_config_option('grid_detail_data_retention');
+	$retention = read_config_option('grid_detail_data_retention') ?? '2weeks';
 
 	preg_match_all('!\d+!', $retention, $matches);
 
