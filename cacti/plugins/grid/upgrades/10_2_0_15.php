@@ -24,6 +24,7 @@ function upgrade_to_10_2_0_15() {
 	include_once(dirname(__FILE__) . '/../lib/grid_functions.php');
 	include_once(dirname(__FILE__) . '/../include/grid_constants.php');
 	include_once(dirname(__FILE__) . '/../../../lib/rtm_db_upgrade.php');
+	include_once(dirname(__FILE__) . '/../../../lib/database.php');
 	include_once(dirname(__FILE__) . '/../../../lib/plugins.php');
 	include_once(dirname(__FILE__) . '/../../../lib/utility.php');
 	include_once(dirname(__FILE__) . '/../../../lib/import.php');
@@ -76,6 +77,36 @@ function upgrade_to_10_2_0_15() {
 	if (file_exists($patch_script)) {
 		shell_exec($patch_script);
 	}
+	
+	db_execute("ALTER TABLE grid_projects MODIFY COLUMN projectName VARCHAR(256) NOT NULL DEFAULT '';");
+	db_execute("ALTER TABLE grid_job_daily_stats MODIFY COLUMN projectName VARCHAR(256) NOT NULL DEFAULT '';");
+	db_execute("ALTER TABLE grid_job_interval_stats MODIFY COLUMN projectName VARCHAR(256) NOT NULL DEFAULT '';");
+	db_execute("ALTER TABLE grid_jobs_pendhist_daily MODIFY COLUMN projectName VARCHAR(256) NOT NULL DEFAULT '';");
+	db_execute("ALTER TABLE grid_jobs_pendhist_hourly MODIFY COLUMN projectName VARCHAR(256) NOT NULL DEFAULT '';");
+	db_execute("ALTER TABLE grid_jobs_pendhist_yesterday MODIFY COLUMN projectName VARCHAR(256) NOT NULL DEFAULT '';");
+
+
+	db_execute("ALTER TABLE grid_arrays MODIFY COLUMN jName VARCHAR(3000) NOT NULL DEFAULT '',
+						MODIFY COLUMN projectName VARCHAR(256) NOT NULL DEFAULT '0';");
+
+	db_execute("ALTER TABLE grid_arrays_finished MODIFY COLUMN jName VARCHAR(3000) NOT NULL DEFAULT '',
+						MODIFY COLUMN projectName VARCHAR(256) NOT NULL DEFAULT '0';");
+
+	db_execute("ALTER TABLE grid_jobs MODIFY COLUMN command VARCHAR(3000) DEFAULT NULL, 
+						MODIFY COLUMN jobname VARCHAR(3000) NOT NULL DEFAULT '', 
+						MODIFY COLUMN preExecCmd VARCHAR(3000) DEFAULT NULL,
+						MODIFY COLUMN postExecCmd VARCHAR(3000) NOT NULL DEFAULT '',
+						MODIFY COLUMN projectName VARCHAR(256) NOT NULL DEFAULT '', 
+						MODIFY COLUMN licenseProject VARCHAR(256) NOT NULL DEFAULT '';");
+
+	db_execute("ALTER TABLE grid_jobs_finished MODIFY COLUMN command VARCHAR(3000) DEFAULT NULL, 
+						MODIFY COLUMN jobname VARCHAR(3000) NOT NULL DEFAULT '',
+						MODIFY COLUMN preExecCmd VARCHAR(3000) DEFAULT NULL,
+						MODIFY COLUMN postExecCmd VARCHAR(3000) NOT NULL DEFAULT '',
+						MODIFY COLUMN projectName VARCHAR(256) NOT NULL DEFAULT '', 
+						MODIFY COLUMN licenseProject VARCHAR(256) NOT NULL DEFAULT '';");
+
+	db_execute("ALTER TABLE grid_license_projects MODIFY COLUMN licenseProject VARCHAR(256) NOT NULL;");
 }
 
 function partition_tables_to_10_2_0_15(){

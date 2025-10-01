@@ -734,7 +734,7 @@ function grid_show_efficiency_state($state, $cluster_status, $clusterid) {
 
 function grid_get_group_jobname($job) {
 	/* let's display job arrays better */
-	$max_display_length = 119;
+	$max_display_length = 3000;
 	if ($job['indexid'] > 0) {
 		/* find out where we need to break the jobname for display */
 		$split_pos = strpos($job['jobname'], '[');
@@ -3784,6 +3784,12 @@ function update_fairshare_tree_information() {
 	grid_debug("grid_queues_shares users running jobs/slots update");
 
 	$q_start_time = db_fetch_cell("SELECT NOW()");
+	
+	// For jobmap, reset pend jobs/slots to zero in case user or usergroup no longer have pend jobs in grid_jobs table
+	if (read_config_option("grid_usergroup_method") == "jobmap") {
+		db_execute("UPDATE grid_queues_shares SET pend_jobs = 0, pend_slots = 0, last_updated = NOW() where present = 1 and pend_slots > 0");
+	}
+	
 	$clusters = db_fetch_assoc("SELECT DISTINCT clusterid FROM grid_clusters WHERE disabled!='on'");
 
 	//Update last_updated=NOW() for all found shareAcctPath
@@ -13530,7 +13536,7 @@ print '</tr></table>';
 				<td width='15%'>
 					<?php print __('Project', 'grid');?>
 				</td>
-				<td width='35%'>
+				<td width='35%' style="word-break:break-all;padding-right:20px">
 					<?php
 					$proj_showname = api_plugin_hook_function("job_project_name_show", $job);
 					if (!is_array($proj_showname) && ($proj_showname != $job['projectName'])) {
@@ -13542,7 +13548,7 @@ print '</tr></table>';
 				<td width='15%'>
 					<?php print __('License Project', 'grid');?>
 				</td>
-				<td width='35%'>
+				<td width='35%' style="word-break:break-all;padding-right:20px">
 					<?php grid_print_metadata('simple', 'license-project', $job['clusterid'], $job['licenseProject']); ?>
 				</td>
 			</tr>
@@ -20619,6 +20625,7 @@ function grid_get_lsf_conf_variable_value($lsf_envdir, $arg) {
  */
 function array_unique_multidimensional($input)
 {
+    if (empty($input)) return $input;
     $serialized = array_map('serialize', $input);
     $unique = array_unique($serialized);
     return array_intersect_key($input, $unique);
