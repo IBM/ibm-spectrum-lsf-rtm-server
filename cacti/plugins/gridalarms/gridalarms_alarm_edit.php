@@ -2033,7 +2033,9 @@ function gridalarms_expression_edit() {
 			if (type_value != '') {
 				$('#type').val(type_value);
 				$.get('gridalarms_alarm_edit.php',{'action':'gettables', 'type': type_value}, function(data) {
-					$('select#db_table').empty().html(data);
+					$('#db_table').html(data).trigger('change').selectmenu('refresh');
+					// Get first visible option text and update the displayed text
+    					$("#db_table-button .ui-selectmenu-text").text($("#db_table option:selected").text()); 
 				});
 			}
 		});
