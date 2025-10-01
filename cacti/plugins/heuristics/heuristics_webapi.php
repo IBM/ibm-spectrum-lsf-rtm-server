@@ -3427,23 +3427,21 @@ function get_long_jobs($row, $user, &$severity) {
 			if ($severity != 'alarm') {
 				$severity = 'alarm';
 			}
-
-			return "<a class='pic' href='" . html_escape($config['url_path'] . "plugins/heuristics/heuristics_jobs.php?action=viewlist&reset=true&job_user=$user&clusterid=$clusterid&project=$project&status=RUNNING&queue=$queue&force_sort=1&sort_column=run_time&sort_direction=DESC") . "'><img title='" . __esc('Your Job with a max runtime of %s, is above the 90th Percentils of %s for Jobs from the Queue/Project', display_job_time($max_run), display_job_time($expected['run_90thp']), 'heuristics') . "' src='images/red-ball.png'></a>";
+			return "<a class='pic' href='" . html_escape($config['url_path'] . "plugins/heuristics/heuristics_jobs.php?action=viewlist&reset=true&job_user=$user&clusterid=$clusterid&project=$project&status=RUNNING&queue=$queue&force_sort=1&sort_column=run_time&sort_direction=DESC") . "'><img title='" . __esc('Your job max runtime is %s, is above the 90th Percentils of %s for Jobs from the Queue/Project', display_job_time($max_run), display_job_time($expected['run_90thp']), 'heuristics') . "' src='images/red-ball.png'></a>";
 		} elseif ($max_run > $expected['run_75thp']) {
 			if ($severity == '' || $severity == 'notice') {
 				$severity = 'warn';
 			}
-
-			return "<a class='pic' href='" . html_escape($config['url_path'] . "plugins/heuristics/heuristics_jobs.php?action=viewlist&reset=true&job_user=$user&clusterid=$clusterid&project=$project&status=RUNNING&queue=$queue&force_sort=1&sort_column=run_time&sort_direction=DESC") . "'><img title='" . __esc('Your Job with a max runtime of %s, is above the 75th Percentils of %s for Jobs from this Queue/Project', display_job_time($max_run), display_job_time($expected['run_75thp']), 'heuristics') . "' src='images/yellow-ball.png'></a>";
+			return "<a class='pic' href='" . html_escape($config['url_path'] . "plugins/heuristics/heuristics_jobs.php?action=viewlist&reset=true&job_user=$user&clusterid=$clusterid&project=$project&status=RUNNING&queue=$queue&force_sort=1&sort_column=run_time&sort_direction=DESC") . "'><img title='" . __esc('Your job max runtime is %s, is above the 75th Percentils of %s for Jobs from this Queue/Project', display_job_time($max_run), display_job_time($expected['run_75thp']), 'heuristics') . "' src='images/yellow-ball.png'></a>";
 		} else {
-			return "<img title='" . __esc('Your Job with a max runtime of %s, has not exceeded the 75th Percentils of %s for jobs from this Queue/Project', display_job_time($max_run), display_job_time($expected['run_median']), 'heuristics') . "' src='images/green-ball.png'>";
+			return "<img title='" . __esc('Your job max runtime is %s, has not exceeded the 75th Percentils of %s for jobs from this Queue/Project', display_job_time($max_run), display_job_time($expected['run_median']), 'heuristics') . "' src='images/green-ball.png'>";
 		}
 	} else {
 		if ($severity == '') {
 			$severity = 'notice';
 		}
 
-		return "<img title='" . __esc('Your Job with a max runtime of %s.  There is no historiacl data for these job types, so we canno determine if there are long running jobs.', display_job_time($max_run), 'heuristics') . "' src='images/blue-ball.png'>";
+		return "<img title='" . __esc('Your job max runtime is %s.  Because there is no historical reference data for these job types, JobIQ cannot determine if these are long running jobs. ', display_job_time($max_run), 'heuristics') . "' src='images/blue-ball.png'>";
 	}
 }
 
