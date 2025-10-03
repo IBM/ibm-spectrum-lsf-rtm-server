@@ -1,9 +1,9 @@
 [info]
 name = lsfenh
-version = 10.2.0.15
+version = 10.2.0.16
 longname = IBM Spectrum LSF RTM Enhanced LSF Collector
-author = IBM Corporation
-email =
+author = Larry Adams
+email = TheWitness@cacti.net
 homepage = "https://www.ibm.com/docs/en/spectrum-lsf-rtm/10.2.0?topic=basics-settings-rtm-plugins"
 compat = 1.2.27
 requires = RTM

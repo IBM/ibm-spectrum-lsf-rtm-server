@@ -131,7 +131,12 @@ function update_lsf_events() {
 		WHERE last_mbatchd_reconfig != '0000-00-00'
 		ON DUPLICATE KEY UPDATE type=VALUES(type)");
 
-	db_execute("DELETE FROM grid_clusters_events WHERE event_time < DATE_SUB(NOW(), INTERVAL 180 DAY)")
+	$retention = read_config_option('lsfenh_retention');
+	if (empty($retention)) {
+		$retention = 180;
+	}
+
+	db_execute_prepared("DELETE FROM grid_clusters_events WHERE event_time < DATE_SUB(NOW(), INTERVAL ? DAY)", [$retention]);
 }
 
 function create_required_tables() {
@@ -482,6 +487,7 @@ function create_required_tables() {
 		MEM_REQUESTED double UNSIGNED default '0',
 		MEM_RESERVED double UNSIGNED default '0',
 		MAX_MEM double UNSIGNED default '0',
+		AVG_MEM double UNSIGNED default '0',
 		MEM double UNSIGNED default '0',
 		RUN_TIME int UNSIGNED default '0',
 		SUBMIT_TIME timestamp default '0000-00-00',
@@ -502,6 +508,10 @@ function create_required_tables() {
 		COLLATE=latin1_swedish_ci
 		ROW_FORMAT=Dynamic
 		COMMENT='Hold Active Job Summary Info'");
+
+	if (!db_column_exists('grid_jobs_summary', 'AVG_MEM')) {
+		db_execute('ALTER TABLE grid_jobs_summary ADD COLUMN AVG_MEM DOUBLE UNSIGNED default 0 AFTER MAX_MEM');
+	}
 
 	db_execute("CREATE TABLE IF NOT EXISTS `grid_jobs_reason_summary` (
 		`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -1682,6 +1692,7 @@ function grid_collect_jobs_remote($clusterid) {
 	// "SLOTS":"1",
 	// "CPU_USED":"1 second(s)",
 	// "MAX_MEM":"1.8 Gbytes",
+	// "AVG_MEM":"1.8 Gbytes",
 	// "MEM":"233 Mbytes",
 	// "SUBMIT_TIME":"Feb 21 00:02 2019",
 	// "START_TIME":"Feb 21 00:02 2019",
@@ -1712,7 +1723,7 @@ function grid_collect_jobs_remote($clusterid) {
 
 		$sql = "SELECT clusterid AS CLUSTERID, '1' AS PRESENT, jobid AS JOBID, indexid AS JOBINDEX, user AS USER, projectName AS PROJ_NAME,
 			app AS APPLICATION, IF(stat = 'RUNNING', 'RUN', stat) AS STAT, queue AS QUEUE, sla AS SERVICE_CLASS, exec_host AS FIRST_HOST, num_cpus AS SLOTS, cpu_used AS CPU_USED,
-			mem_reserved AS MEM_RESERVED, mem_requested AS MEM_REQUESTED, max_memory AS MAX_MEM, mem_used AS MEM, run_time AS RUN_TIME,
+			mem_reserved AS MEM_RESERVED, mem_requested AS MEM_REQUESTED, max_memory AS MAX_MEM, avg_memory AS AVG_MEM, mem_used AS MEM, run_time AS RUN_TIME,
 			submit_time AS SUBMIT_TIME, start_time AS START_TIME, end_time AS FINISH_TIME, effectiveResreq AS EFFECTIVE_RESREQ, combinedResreq AS COMBINED_RESREQ
 			FROM grid_jobs
 			WHERE clusterid = $clusterid
@@ -1735,6 +1746,7 @@ function grid_collect_jobs_remote($clusterid) {
 			'MEM_RESERVED',
 			'MEM_REQUESTED',
 			'MAX_MEM',
+			'AVG_MEM',
 			'MEM',
 			'RUN_TIME',
 			'SUBMIT_TIME',
@@ -1814,6 +1826,7 @@ function grid_collect_jobs($clusterid) {
 	// "SLOTS":"1",
 	// "CPU_USED":"1 second(s)",
 	// "MAX_MEM":"1.8 Gbytes",
+	// "AVG_MEM":"1.8 Gbytes",
 	// "MEM":"233 Mbytes",
 	// "SUBMIT_TIME":"Feb 21 00:02 2019",
 	// "START_TIME":"Feb 21 00:02 2019",
@@ -1841,7 +1854,7 @@ function grid_collect_jobs($clusterid) {
 
 	cacti_log('NOTE: Bjobs command starting for ClusterID:' . $clusterid, false, 'LSFENH', POLLER_VERBOSITY_MEDIUM);
 
-	$jobs = shell_exec($config['base_path'] . "/plugins/lsfenh/bin/bjobs -uall -o 'jobid jobindex user project app stat queue sla:60 first_host slots min_req_proc max_req_proc cpu_used max_mem mem run_time submit_time start_time finish_time effective_resreq combined_resreq' -json 2>/dev/null");
+	$jobs = shell_exec($config['base_path'] . "/plugins/lsfenh/bin/bjobs -uall -o 'jobid jobindex user project app stat queue sla:60 first_host slots min_req_proc max_req_proc cpu_used max_mem avg_mem mem run_time submit_time start_time finish_time effective_resreq combined_resreq' -json 2>/dev/null");
 
 	if ($jobs != '') {
 		$jobs = json_decode($jobs, true);
@@ -1863,9 +1876,9 @@ function grid_collect_jobs($clusterid) {
 	cacti_log('Starting to parse Job records for ClusterID:' . $clusterid, false, 'LSFENH', POLLER_VERBOSITY_MEDIUM);
 
 	if (cacti_sizeof($jobs['RECORDS'])) {
-		$prefix = 'INSERT INTO grid_jobs_summary (`CLUSTERID`, `PRESENT`, `JOBID`, `JOBINDEX`, `USER`, `PROJ_NAME`, `APPLICATION`, `STAT`, `QUEUE`, `SERVICE_CLASS`, `FIRST_HOST`, `SLOTS`, `CPU_USED`, `MEM_RESERVED`, `MEM_REQUESTED`, `MAX_MEM`, `MEM`, `RUN_TIME`, `SUBMIT_TIME`, `START_TIME`, `FINISH_TIME`, `EFFECTIVE_RESREQ`, `COMBINED_RESREQ`) VALUES ';
+		$prefix = 'INSERT INTO grid_jobs_summary (`CLUSTERID`, `PRESENT`, `JOBID`, `JOBINDEX`, `USER`, `PROJ_NAME`, `APPLICATION`, `STAT`, `QUEUE`, `SERVICE_CLASS`, `FIRST_HOST`, `SLOTS`, `CPU_USED`, `MEM_RESERVED`, `MEM_REQUESTED`, `MAX_MEM`, `AVG_MEM`, `MEM`, `RUN_TIME`, `SUBMIT_TIME`, `START_TIME`, `FINISH_TIME`, `EFFECTIVE_RESREQ`, `COMBINED_RESREQ`) VALUES ';
 
-		$suffix = ' ON DUPLICATE KEY UPDATE PRESENT=1, QUEUE=VALUES(QUEUE), STAT=VALUES(STAT), SERVICE_CLASS=VALUES(SERVICE_CLASS), FIRST_HOST=VALUES(FIRST_HOST), SLOTS=VALUES(SLOTS), CPU_USED=VALUES(CPU_USED), MEM_RESERVED=VALUES(MEM_RESERVED), MEM_REQUESTED=VALUES(MEM_REQUESTED), MAX_MEM=VALUES(MAX_MEM), MEM=VALUES(MEM), RUN_TIME=VALUES(RUN_TIME), START_TIME=VALUES(START_TIME), FINISH_TIME=VALUES(FINISH_TIME), EFFECTIVE_RESREQ=VALUES(EFFECTIVE_RESREQ), COMBINED_RESREQ=VALUES(COMBINED_RESREQ)';
+		$suffix = ' ON DUPLICATE KEY UPDATE PRESENT=1, QUEUE=VALUES(QUEUE), STAT=VALUES(STAT), SERVICE_CLASS=VALUES(SERVICE_CLASS), FIRST_HOST=VALUES(FIRST_HOST), SLOTS=VALUES(SLOTS), CPU_USED=VALUES(CPU_USED), MEM_RESERVED=VALUES(MEM_RESERVED), MEM_REQUESTED=VALUES(MEM_REQUESTED), MAX_MEM=VALUES(MAX_MEM), AVG_MEM=VALUES(AVG_MEM), MEM=VALUES(MEM), RUN_TIME=VALUES(RUN_TIME), START_TIME=VALUES(START_TIME), FINISH_TIME=VALUES(FINISH_TIME), EFFECTIVE_RESREQ=VALUES(EFFECTIVE_RESREQ), COMBINED_RESREQ=VALUES(COMBINED_RESREQ)';
 
 		foreach($jobs['RECORDS'] as $j) {
 			// Accomodate pending jobs
@@ -1938,6 +1951,9 @@ function grid_collect_jobs($clusterid) {
 					case 'MAX_MEM':          //'1.8 Gbytes'
 						$maxmem = getMemory($data);
 						break;
+					case 'AVG_MEM':          //'1.8 Gbytes'
+						$avgmem = getMemory($data);
+						break;
 					case 'MEM':              //'233 Mbytes'
 						$mem = getMemory($data);
 						break;
@@ -2002,6 +2018,7 @@ function grid_collect_jobs($clusterid) {
 				$mem_reserved     . ', ' .
 				$mem_requested    . ', ' .
 				$maxmem           . ', ' .
+				$avgmem           . ', ' .
 				$mem              . ', ' .
 				$run_time         . ', ' .
 				$submit_time      . ', ' .
@@ -2064,6 +2081,9 @@ function grid_collect_jobs($clusterid) {
 
 		// Set max memory column since RTM does not
 		grid_set_job_maxmem($clusterid);
+
+		// Set average memory column since RTM does not
+		grid_set_job_avgmem($clusterid);
 
 		grid_update_sla_finished_memory_buckets($clusterid, $date);
 
@@ -2415,6 +2435,33 @@ function grid_set_job_maxmem($clusterid) {
 				}
 			}
 		}
+	}
+}
+
+function grid_set_job_avgmem($clusterid) {
+	if (!db_column_exists('grid_jobs', 'avg_memory')) {
+		db_execute('ALTER TABLE grid_jobs ADD COLUMN avg_memory DOUBLE UNSIGNED default 0 AFTER max_memory');
+	}
+
+	if (!db_column_exists('grid_jobs_finished', 'avg_memory')) {
+		db_execute('ALTER TABLE grid_jobs_finished ADD COLUMN avg_memory DOUBLE UNSIGNED default 0 AFTER max_memory');
+	}
+
+	$jobs = db_fetch_assoc_prepared("SELECT COUNT(*)
+		FROM grid_jobs_summary
+		WHERE clusterid = ?",
+		array($clusterid));
+
+	if (cacti_sizeof($jobs)) {
+		db_execute_prepared("UPDATE IGNORE grid_jobs AS gj
+			INNER JOIN grid_jobs_summary AS gjs
+			ON gj.clusterid = gjs.CLUSTERID
+			AND gj.jobid = gjs.JOBID
+			AND gj.indexid = gjs.JOBINDEX
+			AND gj.submit_time = gjs.SUBMIT_TIME
+			SET avg_memory = gjs.AVG_MEM
+			WHERE gjs.clusterid = ?",
+			array($clusterid));
 	}
 }
 
