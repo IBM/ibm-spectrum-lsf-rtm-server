@@ -129,7 +129,19 @@ function lsfenh_config_arrays() {
 function lsfenh_graph_options($data) {
 	$window = read_config_option('lsfenh_time_window');
 
-	if ($data['end'] - $data['start'] < $window * 86400) {
+	if ($data['start'] > 0) {
+		$start = $data['start'];
+	} else {
+		$start = time() + $data['start'];
+	}
+
+	if ($data['end'] > 0) {
+		$end = $data['end'];
+	} else {
+		$end = time() + $data['end'];
+	}
+
+	if ($end - $start < $window * 86400) {
 		$clusterid = db_fetch_cell_prepared('SELECT clusterid
 			FROM host AS h
 			INNER JOIN host_template AS ht
@@ -143,9 +155,10 @@ function lsfenh_graph_options($data) {
 				FROM grid_clusters_events
 				WHERE clusterid = ?
 				AND event_time BETWEEN ? AND ?',
-				[$clusterid, date('Y-m-d H:i:s', $data['start']), date('Y-m-d H:i:s', $data['end'])]);
+				[$clusterid, date('Y-m-d H:i:s', $start), date('Y-m-d H:i:s', $end)]);
 
 			if (cacti_sizeof($records)) {
+				$data['txt_graph_items'] .= RRD_NL;
 				$data['txt_graph_items'] .= "COMMENT:\" \\n\"" . RRD_NL;
 				$data['txt_graph_items'] .= "COMMENT:\"" . __('LSF Restart/Reconfig Times') . " \\n\"" . RRD_NL;
 				$data['txt_graph_items'] .= "COMMENT:\"_________________________________________________________________________________________\\n\"" . RRD_NL;
