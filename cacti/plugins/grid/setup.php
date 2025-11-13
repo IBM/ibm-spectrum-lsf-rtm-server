@@ -3449,7 +3449,7 @@ function grid_config_settings () {
 		),
 		'grid_job_pend_pump_infile' => array(
 			'friendly_name' => __('Hostgroup Pend Jobs Data Save to Temp File', 'grid'),
-			'description' => __('Save the hostgroup intermediate pend jobs data to temp file before load to DB. Need to grant RTM DB user \'FILE\' privilege.', 'grid'),
+			'description' => __('Save the hostgroup intermediate pend jobs data to temp file before load to DB. Need to grant RTM DB user \'FILE\' privilege. e.g. GRANT FILE on *.* to \'dbuser\'@\'rtmhost\'', 'grid'),
 			'default' => '',
 			'method' => 'checkbox'
 		),

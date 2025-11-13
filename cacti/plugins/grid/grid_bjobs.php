@@ -151,6 +151,7 @@ function grid_validate_job_request_variables() {
 			$job_array = explode('[', str_replace(']', '', get_request_var('jobid')));
 			$job_id    = $job_array[0];
 			$index_id  = $job_array[1];
+			set_request_var('jobid', $job_id);
 		} elseif (strlen(get_request_var('jobid'))) {
 			$job_id    = get_request_var('jobid');
 			$index_id  = '';
@@ -163,7 +164,6 @@ function grid_validate_job_request_variables() {
 		$index_id = '';
 	}
 
-	set_request_var('jobid', $job_id);
 	set_request_var('indexid', $index_id);
 
     /* ================= input validation and session storage ================= */
@@ -493,8 +493,8 @@ function grid_view_get_jobs_records(&$total_rows, $table_name, $authfull = false
 	$rowsquery2 = '';
 
 	$sql_order = ' ' . get_order_string();
-	//Remove the wasted_memory from where clause, if it is NOT the job export column
-	if (strpos($sql_order, "wasted_memory") && read_grid_config_option('export_wasted_memory') != 'on') {
+	//Remove the wasted_memory from order clause, if NOT displayed
+	if (strpos($sql_order, "wasted_memory") && read_grid_config_option('show_wasted_memory') != 'on') {
 		$sql_order = "";
 	}
 
