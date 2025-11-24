@@ -28,7 +28,67 @@ include_once($config['base_path'] . '/lib/rtm_functions.php');
 
 $title = __('IBM Spectrum LSF RTM - Host Information', 'grid');
 
-grid_view_hosts();
+set_default_action();
+
+switch(get_nfilter_request_var('action')) {
+	case 'export':
+		grid_host_export();
+
+		break;
+	default:
+		grid_view_hosts();
+
+		break;
+}
+
+exit;
+
+function grid_host_export() {
+	$rows       = 0;
+	$sql_params = array();
+	$sql_where  = '';
+
+ 	grid_lshosts_validate_request_vars();
+
+	$hosts = grid_view_get_hosts_records($sql_where, false, $rows, $sql_params, true);
+
+	$stdout = fopen('php://output', 'w');
+
+	header('Content-type: application/excel');
+	header('Content-Disposition: attachment; filename=lsf-hosts-' . time() . '.csv');
+
+	if (cacti_sizeof($hosts)) {
+		$columns = array_keys($hosts[0]);
+		$ucols   = array();
+
+		foreach($columns as $index => $c) {
+			switch($c) {
+				case 'licensed':
+				case 'licFeaturesNeeded':
+				case 'licClass':
+				case 'rexPriority':
+				case 'present':
+					unset($columns[$index]);
+					$ucols[] = $c;
+					default:
+				}
+		}
+
+		fputcsv($stdout, $columns);
+
+		foreach($hosts as $h) {
+			if (cacti_sizeof($ucols)) {
+				foreach($ucols as $c) {
+					unset($h[$c]);
+				}
+			}
+
+			fputcsv($stdout, $h);
+		}
+	}
+
+	fclose($stdout);
+}
 
 function grid_view_get_hosts_records(&$sql_where, $apply_limits = true, $rows = 30, &$sql_params = array()) {
 	/* user id sql where */
@@ -163,18 +223,19 @@ function hostsFilter() {
 						<select id='rows'>
 							<?php
 							if (cacti_sizeof($grid_rows_selector)) {
-							foreach ($grid_rows_selector as $key => $value) {
-								print '<option value="' . $key . '"'; if (get_request_var('rows') == $key) { print ' selected'; } print '>' . $value . '</option>';
-							}
+								foreach ($grid_rows_selector as $key => $value) {
+									print '<option value="' . $key . '"'; if (get_request_var('rows') == $key) { print ' selected'; } print '>' . $value . '</option>';
+								}
 							}
 							?>
 						</select>
 					</td>
 					<td>
-						<input type='submit' id='go' value='<?php print __esc('Go', 'grid');?>' title='<?php print __esc('Search', 'grid');?>'>
-					</td>
-					<td>
-						<input type='button' id='clear' value='<?php print __esc('Clear', 'grid');?>' title='<?php print __esc('Clear Filters', 'grid');?>'>
+						<span>
+							<input type='submit' id='go' value='<?php print __esc('Go', 'grid');?>' title='<?php print __esc('Search', 'grid');?>'>
+							<input type='button' id='clear' value='<?php print __esc('Clear', 'grid');?>' title='<?php print __esc('Clear Filters', 'grid');?>'>
+							<input type='button' id='export' value='<?php print __esc('Export', 'grid');?>' title='<?php print __esc('Export Records', 'grid');?>'>
+						</span>
 					</td>
 				</tr>
 				<tr>
@@ -259,55 +320,52 @@ function hostsFilter() {
 	<?php
 }
 
-function grid_view_hosts() {
-	global $title, $report, $grid_search_types, $grid_rows_selector, $config;
-	$sql_params = array();
-
+function grid_lshosts_validate_request_vars() {
     /* ================= input validation and session storage ================= */
     $filters = array(
 		'rows' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '-1'
-			),
+		),
 		'page' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'default' => '1'
-			),
+		),
 		'type' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '-1',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'model' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '-1',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'resource' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '-1',
 			'options' => array('options' => 'resource_sanitize_search_string')
-			),
+		),
 		'filter' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'sort_column' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => 'host',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'sort_direction' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => 'ASC',
 			'options' => array('options' => 'sanitize_search_string')
-			)
+		)
 	);
 
 	validate_store_request_vars($filters, 'sess_glsh');
@@ -316,10 +374,18 @@ function grid_view_hosts() {
 		'clusterid' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'default' => read_grid_config_option('default_grid')
-			)
+		)
 	);
+
 	validate_store_request_vars($filters, 'sess_grid');
 	/* ================= input validation ================= */
+}
+
+function grid_view_hosts() {
+	global $title, $report, $grid_search_types, $grid_rows_selector, $config;
+	$sql_params = array();
+
+	grid_lshosts_validate_request_vars();
 
 	general_header();
 
@@ -358,6 +424,11 @@ function grid_view_hosts() {
 		loadPageNoHeader(strURL);
 	}
 
+	function exportRows() {
+		document.location = 'grid_lshosts.php?header=false&action=export';
+		Pace.stop();
+	}
+
 	$(function() {
 		$('#form_grid').submit(function(event) {
 			event.preventDefault();
@@ -370,6 +441,10 @@ function grid_view_hosts() {
 
 		$('#clear').click(function() {
 			clearFilter();
+		});
+
+		$('#export').click(function() {
+			exportRows();
 		});
 	});
 
