@@ -85,7 +85,7 @@ function grid_export_host() {
 
 	if (cacti_sizeof($hosts)) {
 		$columns = array_keys($hosts[0]);
-		$ucols   = array();
+		$ucols   = array();
 
 		foreach($columns as $index => $c) {
 			switch($c) {
