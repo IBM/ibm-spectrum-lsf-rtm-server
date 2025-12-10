@@ -122,6 +122,9 @@ mysql -ucacti -padmin cacti < rtm.sql
 ## Official Doc
 RTM Documentation is available with the IBM Spectrum LSF RTM releases and also available for viewing on the [Documentation](https://www.ibm.com/docs/en/spectrum-lsf-rtm).
 
+## Database Entity Relationships
+The RTM database entity relationship diagram is available [here.](https://github.com/IBM/ibm-spectrum-lsf-rtm-server/blob/main/Entity_relationships_for_RTM_database.pdf)
+
 ## Contributions
 
 We welcome contributions, feature requests, and suggestions. Here is the link to open an [issue](https://github.com/IBM/ibm-spectrum-lsf-rtm-server/issues) for any problems you encounter. If you want to contribute, please follow the guidelines in [contributors guidelines](https://github.com/IBM/ibm-spectrum-lsf-rtm-server/blob/main/CONTRIBUTING.md).
