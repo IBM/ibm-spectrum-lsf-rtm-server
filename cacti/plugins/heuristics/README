@@ -1,0 +1,42 @@
+    **********************************************************************
+    Author ......... IBM Corporation
+    Home Site ...... http://www.ibm.com
+    Program ........ IBM Spectrum LSF RTM User Heuristics Dashboard
+    Version ........ 10.2.1.0
+    Purpose ........ A Method for Users to Know When Their Jobs will Run
+    **********************************************************************
+
+
+----[ Purpose
+
+    Captures statistics about jobs and their runtime and when their jobs will run.
+
+----[ Features
+
+    Limited
+
+----[ Prerequisites
+
+    Cacti 1.2.x
+
+----[ Installation
+
+    Simply place in the plugins directory and install like any other Cacti 1.2.x
+    plugin.
+
+----[ Additional Help?
+
+    If you need additional help, please goto forums.cacti.net.
+
+----[ Possible Bugs?
+
+    If you figure out this problem, let me know!!!
+
+----[ Future Changes
+
+    Got any ideas or complaints, please e-mail me!
+
+----[ Changelog
+
+    --- 1.0 ---
+    Initial release

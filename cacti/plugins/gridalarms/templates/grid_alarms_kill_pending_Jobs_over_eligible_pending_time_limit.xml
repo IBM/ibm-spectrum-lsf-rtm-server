@@ -1,0 +1,159 @@
+<!-- $Id$ -->
+<cacti>
+	<hash_18002433458a4367a4d4b7ed64987e2c2b4fb7>
+		<id>7</id>
+		<name>Kill Pending Jobs over Effective Eligible Pending Time Limit in Cluster |alert_clustername|</name>
+		<clusterid>0</clusterid>
+		<type>0</type>
+		<expression_id>7</expression_id>
+		<aggregation>0</aggregation>
+		<metric>0</metric>
+		<base_time_display>12:00am</base_time_display>
+		<base_time>1453870800</base_time>
+		<frequency>3</frequency>
+		<alarm_type>0</alarm_type>
+		<alarm_hi>0</alarm_hi>
+		<alarm_low></alarm_low>
+		<alarm_fail_trigger>3</alarm_fail_trigger>
+		<time_hi>0</time_hi>
+		<time_low></time_low>
+		<time_fail_trigger>0</time_fail_trigger>
+		<time_fail_length>1</time_fail_length>
+		<warning_pct></warning_pct>
+		<trigger_cmd_high>php &lt;CACTI_ROOT&gt;/plugins/grid/kill_jobs_over_pending_time_limit.php</trigger_cmd_high>
+		<trigger_cmd_low></trigger_cmd_low>
+		<trigger_cmd_norm></trigger_cmd_norm>
+		<cmd_retrigger_enabled>on</cmd_retrigger_enabled>
+		<repeat_alert>3</repeat_alert>
+		<notify_extra></notify_extra>
+		<notify_cluster_admin>1</notify_cluster_admin>
+		<notify_alert>0</notify_alert>
+		<notify_users>on</notify_users>
+		<syslog_priority>4</syslog_priority>
+		<syslog_facility>24</syslog_facility>
+		<syslog_enabled></syslog_enabled>
+		<tcheck>0</tcheck>
+		<exempt>off</exempt>
+		<acknowledgement>off</acknowledgement>
+		<restored_alert>off</restored_alert>
+		<req_ack>off</req_ack>
+		<email_body>There are jobs that are pending over their effective eligible pending time limits. Those breached jobs will be forcely killed. &lt;br&gt;&lt;DETAILS&gt;&lt;br&gt;&lt;br&gt;</email_body>
+		<email_subject>ALERT: &lt;NAME&gt;</email_subject>
+		<gridalarms_template_contacts>
+		</gridalarms_template_contacts>
+		<gridalarms_template_layout>
+			<hash_200024f3636ebebb00453b23e691b0d6780993>
+				<id>49</id>
+				<alarm_id>7</alarm_id>
+				<display_name>Clusterid</display_name>
+				<column_name>clusterid</column_name>
+				<sequence>1</sequence>
+				<sortposition>1</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200024f3636ebebb00453b23e691b0d6780993>
+			<hash_200024f0d51dc695243a7a87142cf41f50e0ec>
+				<id>50</id>
+				<alarm_id>7</alarm_id>
+				<display_name>Cluster Name</display_name>
+				<column_name>clustername</column_name>
+				<sequence>2</sequence>
+				<sortposition>2</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200024f0d51dc695243a7a87142cf41f50e0ec>
+			<hash_200024e9bb04030be40a6e39503ca5fdcd6867>
+				<id>51</id>
+				<alarm_id>7</alarm_id>
+				<display_name>Jobid</display_name>
+				<column_name>jobid</column_name>
+				<sequence>3</sequence>
+				<sortposition>4</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200024e9bb04030be40a6e39503ca5fdcd6867>
+			<hash_200024e94c478d0470a72915da52619641bb83>
+				<id>52</id>
+				<alarm_id>7</alarm_id>
+				<display_name>Indexid</display_name>
+				<column_name>indexid</column_name>
+				<sequence>4</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200024e94c478d0470a72915da52619641bb83>
+			<hash_200024b3280473b48cafd2df3e190340925e98>
+				<id>53</id>
+				<alarm_id>7</alarm_id>
+				<display_name>Submit Time</display_name>
+				<column_name>submit_time</column_name>
+				<sequence>5</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200024b3280473b48cafd2df3e190340925e98>
+			<hash_200024c8ccf5b79259490ea23099ae791f2caa>
+				<id>54</id>
+				<alarm_id>7</alarm_id>
+				<display_name>Stat</display_name>
+				<column_name>stat</column_name>
+				<sequence>6</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200024c8ccf5b79259490ea23099ae791f2caa>
+			<hash_2000246f2f0fe861b7feb8e03a67a39f365286>
+				<id>55</id>
+				<alarm_id>7</alarm_id>
+				<display_name>Eligible Pend Limit</display_name>
+				<column_name>effectiveEligiblePendingTimeLimit</column_name>
+				<sequence>8</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_2000246f2f0fe861b7feb8e03a67a39f365286>
+			<hash_2000248a03b7fe014d9eb650cb2c550d54ad41>
+				<id>56</id>
+				<alarm_id>7</alarm_id>
+				<display_name>Eligible Pend Time</display_name>
+				<column_name>EligiblePendingTime</column_name>
+				<sequence>9</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_2000248a03b7fe014d9eb650cb2c550d54ad41>
+			<hash_2000248926fcc7933dccfa16b340215ba89bca>
+				<id>57</id>
+				<alarm_id>7</alarm_id>
+				<display_name>User</display_name>
+				<column_name>user</column_name>
+				<sequence>7</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_2000248926fcc7933dccfa16b340215ba89bca>
+		</gridalarms_template_layout>
+		<gridalarms_template_expression>
+			<hash_210024f3414c9f13bd7d0110670d05c517b58a>
+				<id>7</id>
+				<name>eligible_pending_time_limit</name>
+				<description>Check jobs that are pending over their effective elgible pending time limits</description>
+				<ds_type>1</ds_type>
+				<type>1</type>
+				<db_table></db_table>
+				<sql_query>SELECT gj.clusterid, gc.clustername, jobid, indexid, submit_time, stat, user,
+effectiveEligiblePendingTimeLimit,
+(CAST(pend_time AS SIGNED) - CAST(ineligiblePendingTime AS SIGNED))  AS EligiblePendingTime
+FROM grid_jobs AS gj, grid_clusters AS gc
+WHERE gj.clusterid = gc.clusterid
+AND stat in (&#039;PEND&#039;,&#039;USUSP&#039;, &#039;PSUSP&#039;, &#039;SSUSP&#039;)
+AND effectiveEligiblePendingTimeLimit &gt;0
+AND (CAST(pend_time AS SIGNED) - CAST(ineligiblePendingTime AS SIGNED)) &gt; effectiveEligiblePendingTimeLimit
+
+</sql_query>
+				<script_thold></script_thold>
+				<script_data></script_data>
+				<script_data_type>0</script_data_type>
+			</hash_210024f3414c9f13bd7d0110670d05c517b58a>
+		</gridalarms_template_expression>
+		<gridalarms_template_expression_item>
+		</gridalarms_template_expression_item>
+		<gridalarms_template_metric>
+		</gridalarms_template_metric>
+		<gridalarms_template_metric_expression>
+		</gridalarms_template_metric_expression>
+		<gridalarms_template_expression_input>
+		</gridalarms_template_expression_input>
+	</hash_18002433458a4367a4d4b7ed64987e2c2b4fb7>
+</cacti>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Viewing Graphs</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="viewing-graphs">Viewing Graphs</h1>
+<h2 id="background">Background</h2>
+<p>Cacti, when it was first invented in 2001 by Ian Berry, his vision was to make it the fastest and easiest way to view and render Network Monitoring <strong>Graphs</strong> for people in the Network, Site, and Data Center Operations Space. As such, it's focus from the very beginning was on render just one thing, <strong>Graphs</strong>. So, as such, the second <strong>Top Tab</strong> on a Cacti system is the <strong>Graphs</strong> tab.</p>
+<h2 id="the-graphs-top-tab">The Graphs Top Tab</h2>
+<p>The <strong>Graphs</strong> <strong>Top Tab</strong> has a few personalities. They include:</p>
+<ul>
+<li><p><strong>Tree View</strong></p>
+<p>Allows Cacti Users to view <strong>Graphs</strong> in the form of hierarchical <strong>Trees</strong>. These <strong>Trees</strong> are generally constructed by the Cacti Administrator and are controlled either at the <strong>User</strong> or <strong>User Group</strong> level.</p></li>
+<li><p><strong>Preview View</strong></p>
+<p>The <strong>Preview View</strong> provides a view of all <strong>Graphs</strong> that a Cacti User has access to. <strong>Table Filters</strong> are provided to constrain the list of <strong>Graphs</strong> returned to the page.</p></li>
+<li><p><strong>List View</strong></p>
+<p>The <strong>List View</strong> allows the Cacti user to Create their own <strong>Preview Page</strong> by allowing them to select graphs from various pages, and then finally view those pages from the <strong>Preview View</strong>.</p></li>
+</ul>
+<p>The way these various personalities appear in Cacti is somewhat different depending on your Theme. Review the two images below, for how you navigate to the various <strong>Graph View</strong> modes.</p>
+<p>In this first image, we see the way the <strong>Graph View</strong> options are displayed to the end user. This is the layout of the Classic, Modern and Dark themes.</p>
+<p><img src="images/graph-view-classic-mode.png" alt="Graph View Classic" /></p>
+<p>In this second image, you can see the way the <strong>Graph View</strong> page will appear for users of the Paw, Paper-Plane, and Sunrise themes.</p>
+<p><img src="images/graph-view-alternate-mode.png" alt="Graph View Alternate" /></p>
+<h2 id="graph-manipulation-and-options">Graph Manipulation and Options</h2>
+<p>Once you can view the <strong>Graphs</strong>, there will be a Filter Panel that will provide you multiple options to limit your view of them. Below, you can see an image of that Filter Panel.</p>
+<p><img src="images/graph-view-filter-sub-panel.png" alt="Graph View Filter Sub-Panel" /></p>
+<p>From this sub-panel, you can do the following:</p>
+<ul>
+<li>Search by regular expression</li>
+<li>Select one to many, or all <strong>Graph Templates</strong> to view</li>
+<li>Specify the number of Graphs per Page</li>
+<li>Specify the number of columns to Display</li>
+<li>View either Legendless Thumbnails or full Graphs with their legends</li>
+<li>Set various Preset Time-spans, or select a Time Range</li>
+<li>Shift the Time either forward or backward by the Shift Time-span</li>
+</ul>
+<p>Once you have the Filter where you like it from a Columns, Thumbnails, and Graphs per Page setting, you can press the <code>Save</code> button, if you have the correct permissions and save those defaults for your next login.</p>
+<p>Depending again on permissions, to the right of the <strong>Graphs</strong>, you will find a number of action icons that allow you to operate on the <strong>Graphs</strong></p>
+<p>The image below shows what that might look like if you have the <strong>Thold</strong> and <strong>QuickTree</strong> <strong>Plugins</strong> installed.</p>
+<p><img src="images/graph-view-action-icons.png" alt="Graph View Action Icons" /></p>
+<p>From top to bottom, the Graph Action Icons do the following.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Graph Details</td>
+<td>Allow you to perform precision zooming, view RRDtool debug information and perform CSV exports of your Graph Data.</td>
+</tr>
+<tr class="even">
+<td>CSV Export</td>
+<td>Allows you to directly CSV Export your Graph Data</td>
+</tr>
+<tr class="odd">
+<td>Realtime View</td>
+<td>Allows you to view your Graphs at down to a 1 second granularity either in place, or in a pop-up Window</td>
+</tr>
+<tr class="even">
+<td>Spike Kill</td>
+<td>Allow you to clear up Spikes and Gaps in your Graph</td>
+</tr>
+<tr class="odd">
+<td>Create Threshold</td>
+<td>Create a Threshold for the Graph</td>
+</tr>
+<tr class="even">
+<td>Add to QuickTree</td>
+<td>Allow you to select Graphs to add to Trees by simply tooling around the Graphs page.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="graph-zooming">Graph Zooming</h2>
+<p>Cacti also has a powerful Graph Zoom interface built in. You can discover what it allows you to do by simply right clicking in the Graph area. When zooming, you will zoom all the <strong>Graphs</strong> on a page. It's quite powerful.</p>
+<p><img src="images/graph-view-zoom-context-menu.png" alt="Graph Zoom Context Menu" /></p>
+<p>There are many options for the Zoom menu. Instead of explaining them here try them out for yourself.</p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

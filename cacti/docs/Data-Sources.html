@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Data Source Management</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="data-source-management">Data Source Management</h1>
+<p>Data sources in Cacti are the points of data that Cacti will collect from a device. The following are examples of different sources that can be utililised for graphing, though is just the surface of what is achievable:</p>
+<ul>
+<li><p>Monitoring a device via ping will usually count as 1 data source.</p></li>
+<li><p>A 24 port switch and you poll the device via snmp and graph all of the ports then there will be 24 data sources</p></li>
+</ul>
+<blockquote>
+<p><strong>Note</strong>: if you add more graphs that base their data on the original <strong>Data source</strong> that would not count as another <strong>Data Source</strong> since it uses the already existing source.</p>
+</blockquote>
+<p>For example, if you have a 24 port switch that you create an <strong>In/Out Bits</strong> graph for each interface, and you then add the <strong>In/Out Bits with 95th Percentile</strong> for each interface, you would still only have 24 data sources.</p>
+<p>Keeping on top of the amount of data sources you have is important as the more data sources you have the more resources you will need to allocate to your server.</p>
+<p>You can see how many data sources are associated with a single device by going to management then clicking on devices.</p>
+<p><img src="images/device-datasource.png" alt="device datasources" /></p>
+<p>You can also see the total amount of data sources by checking the poller stats on the system. Click the log tab and filter by stats and lookout for the below messege</p>
+<pre class="console"><code>2019/05/24 17:21:11 - SYSTEM STATS: Time:9.5913 Method:spine Processes:2 Threads:2 Hosts:14 HostsPerProcess:7 DataSources:162 RRDsProcessed:117
+</code></pre>
+<p>This output tells us we have 162 data sources on the system.</p>
+<h3 id="storage-considerations-and-datasources">Storage considerations and datasources</h3>
+<p>The amount of data sources on your system has an impact on the amount of storage you will need. You will also need to consider what rate you are polling your devices. e.g. 1 minute or 5 Minute polls</p>
+<p>Here is the approximate amount of storage you can expect to consume per data source</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Polling time</th>
+<th>Retention</th>
+<th style="text-align: right;">File size</th>
+<th style="text-align: right;">Polling time</th>
+<th>Retention</th>
+<th style="text-align: right;">File size</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">30 second</td>
+<td>Daily</td>
+<td style="text-align: right;">48kb</td>
+<td style="text-align: right;">30 second</td>
+<td>Weekly</td>
+<td style="text-align: right;">43kb</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">30 second</td>
+<td>Monthly</td>
+<td style="text-align: right;">46kb</td>
+<td style="text-align: right;">30 second</td>
+<td>Yearly</td>
+<td style="text-align: right;">140kb</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1 minute</td>
+<td>Daily</td>
+<td style="text-align: right;">93kb</td>
+<td style="text-align: right;">1 minute</td>
+<td>Weekly</td>
+<td style="text-align: right;">45kb</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1 minute</td>
+<td>Monthly</td>
+<td style="text-align: right;">47kb</td>
+<td style="text-align: right;">1 minute</td>
+<td>Yearly</td>
+<td style="text-align: right;">140kb</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5 minute</td>
+<td>Daily</td>
+<td style="text-align: right;">19b</td>
+<td style="text-align: right;">5 minute</td>
+<td>Weekly</td>
+<td style="text-align: right;">22kb</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">5 minute</td>
+<td>Monthly</td>
+<td style="text-align: right;">25kb</td>
+<td style="text-align: right;">5 minute</td>
+<td>Yearly</td>
+<td style="text-align: right;">26kb</td>
+</tr>
+</tbody>
+</table>
+<h3 id="viewing-all-data-sources-by-device">Viewing all Data sources by device</h3>
+<p>You are able to check the data sources associated to a specific device in the Console -&gt; Management -&gt; Data sources You can then search based on a device you may be interested in to view the Data sources in use</p>
+<p><img src="images/data-sources-per-device.png" alt="device datasources" /></p>
+<p>You can also view Orphaned data sources in this view by setting Orphaned from All to Orphaned Orphaned data sources are where the graph has been deleted but the data source was not deleted</p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

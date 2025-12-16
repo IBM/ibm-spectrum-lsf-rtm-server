@@ -1,0 +1,322 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-09-17 03:37-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../lib/metadata_api.php:37
+msgid "User"
+msgstr ""
+
+#: ../lib/metadata_api.php:38
+msgid "User Group"
+msgstr ""
+
+#: ../lib/metadata_api.php:39
+msgid "Host"
+msgstr ""
+
+#: ../lib/metadata_api.php:40
+msgid "Host Group"
+msgstr ""
+
+#: ../lib/metadata_api.php:41
+msgid "Job Group"
+msgstr ""
+
+#: ../lib/metadata_api.php:42
+msgid "Queue"
+msgstr ""
+
+#: ../lib/metadata_api.php:43
+msgid "Project"
+msgstr ""
+
+#: ../lib/metadata_api.php:44
+msgid "License Project"
+msgstr ""
+
+#: ../lib/metadata_api.php:45
+msgid "Application"
+msgstr ""
+
+#: ../lib/metadata_api.php:46 ../lib/metadata_api.php:989
+msgid "Queue Group"
+msgstr ""
+
+#: ../lib/metadata_api.php:64
+msgid "Metadata Details"
+msgstr ""
+
+#: ../lib/metadata_api.php:970 ../setup.php:66 ../setup.php:73
+msgid "Metadata"
+msgstr ""
+
+#: ../setup.php:80
+msgid "Actions"
+msgstr ""
+
+#: ../setup.php:87
+msgid "Edit Object"
+msgstr ""
+
+#: ../setup.php:94
+msgid "Add Object"
+msgstr ""
+
+#: ../setup.php:101
+msgid "Delete Object(s)"
+msgstr ""
+
+#: ../setup.php:232
+msgid "Utilities"
+msgstr ""
+
+#: ../setup.php:233
+msgid "Configuration"
+msgstr ""
+
+#: ../setup.php:233
+msgid "Metadata Settings"
+msgstr ""
+
+#: ../setup.php:242
+msgid "Object metadata imported successfully."
+msgstr ""
+
+#: ../setup.php:246
+msgid "Object metadata imported with errors."
+msgstr ""
+
+#: ../setup.php:250
+msgid "Object metadata import failed."
+msgstr ""
+
+#: ../setup.php:254 ../setup.php:258
+msgid "Object metadata saved successfully."
+msgstr ""
+
+#: ../setup.php:262
+msgid "Object metadata deleted successfully."
+msgstr ""
+
+#: ../setup.php:266
+msgid "Could not find the metadata configuration file."
+msgstr ""
+
+#: ../setup.php:270
+msgid "MySQL error."
+msgstr ""
+
+#: ../setup.php:274
+msgid "Object metadata configuration is not correctly formatted."
+msgstr ""
+
+#: ../setup.php:278
+msgid "Please specify a metadata file to import."
+msgstr ""
+
+#: ../setup.php:282
+msgid "Object metadata could not be imported."
+msgstr ""
+
+#: ../setup.php:286
+msgid "Object metadata import file could not be opened."
+msgstr ""
+
+#: ../setup.php:290
+msgid "Some metadata rows were invalid and were ignored."
+msgstr ""
+
+#: ../setup.php:294
+msgid "Object metadata imported successfully with warnings."
+msgstr ""
+
+#: ../setup.php:298
+msgid "Invalid metadata column header(s) encountered in the import file."
+msgstr ""
+
+#: ../setup.php:302
+msgid "object_id column header must be present in the import file."
+msgstr ""
+
+#: ../setup.php:306
+msgid "Object metadata configuration successfully imported."
+msgstr ""
+
+#: ../setup.php:310
+msgid "Metadata object(s) successfully deleted."
+msgstr ""
+
+#: ../setup.php:314
+msgid "Invalid metadata object type specified for deletion."
+msgstr ""
+
+#: ../setup.php:318
+msgid "cluster_id column header must be present in the import file."
+msgstr ""
+
+#: ../setup.php:322
+msgid "Invalid metadata object identifier specified."
+msgstr ""
+
+#: ../setup.php:326
+msgid "Object metadata save failed."
+msgstr ""
+
+#: ../setup.php:330
+msgid "No configuration is currently loaded for this object type."
+msgstr ""
+
+#: ../setup.php:334
+msgid "Metadata object already exists - no object created."
+msgstr ""
+
+#: ../metadata.php:35
+msgid "IBM Spectrum LSF RTM - Metadata"
+msgstr ""
+
+#: ../metadata.php:82
+msgid "Search"
+msgstr ""
+
+#: ../metadata.php:88
+msgid "Type"
+msgstr ""
+
+#: ../metadata.php:111 ../metadata.php:481
+msgid "Items"
+msgstr ""
+
+#: ../metadata.php:115
+msgid "Default"
+msgstr ""
+
+#: ../metadata.php:126
+msgid "Go"
+msgstr ""
+
+#: ../metadata.php:126
+msgid "Search MetaData"
+msgstr ""
+
+#: ../metadata.php:129
+msgid "Clear"
+msgstr ""
+
+#: ../metadata.php:129
+msgid "Clear Filters"
+msgstr ""
+
+#: ../metadata.php:274
+#, php-format
+msgid "Cluster '%s'"
+msgstr ""
+
+#: ../metadata.php:274
+msgid "All Clusters"
+msgstr ""
+
+#: ../metadata.php:281 ../metadata.php:292
+msgid "Delete Metadata Object(s)"
+msgstr ""
+
+#: ../metadata.php:286
+msgid "Click 'Continue' to Delete the selected MetaData Object(s)."
+msgstr ""
+
+#: ../metadata.php:295
+msgid "You must select at least one object."
+msgstr ""
+
+#: ../metadata.php:296 ../metadata.php:298
+msgid "Cancel"
+msgstr ""
+
+#: ../metadata.php:298
+msgid "Continue"
+msgstr ""
+
+#: ../metadata.php:456 ../metadata.php:679 ../metadata.php:897
+msgid "All"
+msgstr ""
+
+#: ../metadata.php:467 ../metadata.php:469 ../metadata.php:472
+msgid "Metadata Filters"
+msgstr ""
+
+#: ../metadata.php:489
+msgid "Object ID"
+msgstr ""
+
+#: ../metadata.php:490
+msgid "Cluster ID"
+msgstr ""
+
+#: ../metadata.php:575
+msgid "No metadata records found"
+msgstr ""
+
+#: ../metadata.php:583
+msgid "Delete"
+msgstr ""
+
+#: ../metadata.php:634
+#, php-format
+msgid "Edit Object - %s - %s"
+msgstr ""
+
+#: ../metadata.php:636
+#, php-format
+msgid "View Object - %s - %s"
+msgstr ""
+
+#: ../metadata.php:646 ../metadata.php:837
+msgid "Identifier"
+msgstr ""
+
+#: ../metadata.php:664 ../metadata.php:844
+msgid "Object Identifier"
+msgstr ""
+
+#: ../metadata.php:665 ../metadata.php:845
+msgid "The object identifier for this object"
+msgstr ""
+
+#: ../metadata.php:683 ../metadata.php:888
+msgid "Cluster Identifier"
+msgstr ""
+
+#: ../metadata.php:684 ../metadata.php:889
+msgid "The cluster identifier for this object"
+msgstr ""
+
+#: ../metadata.php:760 ../metadata.php:777
+msgid "Ok"
+msgstr ""
+
+#: ../metadata.php:768 ../metadata.php:997
+msgid "This object no longer exists"
+msgstr ""
+
+#: ../metadata.php:817
+#, php-format
+msgid "Add Object - %s"
+msgstr ""
+
+#: ../metadata.php:1005
+msgid "No configuration is currently loaded for this object type"
+msgstr ""

@@ -1,0 +1,50 @@
+<!-- $Id$ -->
+<cacti>
+	<hash_010021f8d2d0a63465b9539f9872a00a27cf32>
+		<name>GRID - Cluster/Host CPU Utilization</name>
+		<ds>
+			<t_name></t_name>
+			<name>|host_description| - CPU Utilization</name>
+			<data_input_id>hash_0300211e5986ff0339ce1c26b753a427449cc1</data_input_id>
+			<t_rra_id></t_rra_id>
+			<t_rrd_step></t_rrd_step>
+			<rrd_step>300</rrd_step>
+			<t_active></t_active>
+			<active>on</active>
+			<rra_items>hash_150021c21df5178e5c955013591239eb0afd46|hash_1500210d9c0af8b8acdc7807943937b3208e29|hash_1500216fc2d038fb42950138b0ce3e9874cc60|hash_150021e36f3adb9f152adfa5dc50fd2b23337e</rra_items>
+		</ds>
+		<items>
+			<hash_08002100b1d76bd7034a59b9e17b5153cc775a>
+				<t_data_source_name></t_data_source_name>
+				<data_source_name>ut</data_source_name>
+				<t_rrd_minimum></t_rrd_minimum>
+				<rrd_minimum>0</rrd_minimum>
+				<t_rrd_maximum></t_rrd_maximum>
+				<rrd_maximum>0</rrd_maximum>
+				<t_data_source_type_id></t_data_source_type_id>
+				<data_source_type_id>1</data_source_type_id>
+				<t_rrd_heartbeat></t_rrd_heartbeat>
+				<rrd_heartbeat>600</rrd_heartbeat>
+				<t_data_input_field_id></t_data_input_field_id>
+				<data_input_field_id>hash_070021ef5285a4765821eb48f1cbabc31ac1de</data_input_field_id>
+			</hash_08002100b1d76bd7034a59b9e17b5153cc775a>
+		</items>
+		<data>
+			<item_000>
+				<data_input_field_id>hash_0700212fb06f635f5c5b3fff9c83a8344371ad</data_input_field_id>
+				<t_value></t_value>
+				<value></value>
+			</item_000>
+			<item_001>
+				<data_input_field_id>hash_070021d9bbb77bcf21f2046f974cd58a251c24</data_input_field_id>
+				<t_value></t_value>
+				<value></value>
+			</item_001>
+			<item_002>
+				<data_input_field_id>hash_070021c67e51b3d83dc938c623fdf824a0e757</data_input_field_id>
+				<t_value>on</t_value>
+				<value>no</value>
+			</item_002>
+		</data>
+	</hash_010021f8d2d0a63465b9539f9872a00a27cf32>
+</cacti>

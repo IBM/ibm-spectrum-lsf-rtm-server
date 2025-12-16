@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Spike Kill</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="spike-kill">Spike Kill</h1>
+<p>Certain types of RRDtool based <strong>Data Sources</strong> can from time to time generate what are look like to the casual observer spikes. These spikes can make your Cacti <strong>Graphs</strong> unreadable.</p>
+<p>Spike happen when you either have set no maximum value on your Cacti <strong>Data Template</strong> by using a 'U' as the Maximum Value, or when certain <code>COUNTER</code> based RRDfiles have their counter data overflow, and start counting again from zero. When this happens recent versions of RRDtool, like version 1.7, handle these overflows quite well, but for some older RRDtool versions, these changes can result in these spikes.</p>
+<p>There are also cases where for some reason the Cacti system goes offline, and therefore your Cacti Graphs will develop what are referred to as gaps.</p>
+<h2 id="spike-kill-settings">Spike Kill Settings</h2>
+<p>Cacti provides two gap filling options from the user interface. In the image below, you can see the default Settings for Cacti's Spike Killer GUI.</p>
+<p><img src="images/settings-spikekill.png" alt="Settings Spike Kill" /></p>
+<p>Those settings include:</p>
+<ul>
+<li><p><strong>Removal Method</strong> - Cacti supports both Variance and Standard Deviation methods. When calculating those values, you have the ability to filter out outliers such that they don't negatively impact those calculations.</p></li>
+<li><p><strong>Replacement Method</strong> - When filling the Gap, what data point should be used. There is <code>Last Known Good</code>, which would be the last good known value, <code>Average</code>, which uses the Average value for the RRDfile data source, and <code>NaN's</code> which will cause the <strong>Graph</strong> to gap, but the spikes will be removed.</p></li>
+<li><p><strong>Number of Standard Deviations</strong> - This is the number of <code>Standard Deviations</code> above the Average that are required before the value is considered a spike. It only applies to the <code>Standard Deviation</code> spike removal method.</p></li>
+<li><p><strong>Variance Percentage</strong> - When using the <code>Variance</code> spike detection method, the percentage above variance before considering a value a spike.</p></li>
+<li><p><strong>Variance Number of Outliers</strong> - The number of high values to ignore when calculating the Variance.</p></li>
+<li><p><strong>Max Kills Per RRA</strong> - The maximum number of spike to remove from any given RRDfile Data Source.</p></li>
+<li><p><strong>RRDfile Backup Directory</strong> - If you wish to backup RRDfiles that have been altered by Spike Kill, they will be placed in this directory.</p></li>
+</ul>
+<h2 id="batch-spike-kill-settings">Batch Spike Kill Settings</h2>
+<p>Cacti also allows administrators to kill Cacti spikes on a periodic basis using a batch process. From this batch process, you select the time of day, the <strong>Graph Templates</strong> to perform Spike Kill operations on, and the backup retention for RRDfiles that have spikes removed from them. The image below shows those settings.</p>
+<p><img src="images/settings-spikekill-batch.png" alt="Settings Spike Kill Batch" /></p>
+<p>Of note is that first of all, the only <strong>Graph Templates</strong> that are shown are <strong>Graph Templates</strong> that include <code>COUNTER</code> type <strong>Data Sources</strong>. It is also worth noting that only <strong>Data Query</strong> type <strong>Graph Templates</strong> are supported as of the current Cacti version.</p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

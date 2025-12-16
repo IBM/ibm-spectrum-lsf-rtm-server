@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Creating a Graph for a Single SNMP OID</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="creating-a-graph-for-a-single-snmp-oid">Creating a Graph for a Single SNMP OID</h1>
+<p>When dealing with SNMP-enabled <strong>Devices</strong>, there are often times when you want to graph the value of a single OID. This tutorial explains how to do this in Cacti. It also assumes that you have the "SNMP - Generic OID Template" <strong>Graph Template</strong> which is available in the <strong>Generic SNMP Device Package</strong>. If you do not see this <strong>Graph Template</strong> listed under <strong>Graph Templates</strong>, install the <strong>Generic SNMP Device Package</strong> using the <code>import_package.php</code> command line script located in Cacti's cli directory.</p>
+<p>To start the process of creating a new graph for your OID, click go to <code>Console &gt; Create &gt; New Graphs</code>, and from there find the <strong>Device</strong> you would like to add the <strong>Graph</strong> to.</p>
+<p>From the image below, you can see the <strong>New Graphs</strong> interface.</p>
+<p><img src="images/graphs-new.png" alt="Graphs New" /></p>
+<p>In this image, only the <strong>Graph Template</strong> based <strong>Graph Templates</strong> are displayed. Had the <code>Graph Types</code> been switched to any of the <strong>Data Query</strong> based <code>Graph Types</code> the interface would look a bit different.</p>
+<p>From that Interface, to create a <code>Generic SNMP OID</code> based Graph, you need to first select it from the <code>Select a graph type to create</code> drop-down. Once you have selected it, you may press the <code>Create</code> button, at which point in time, you will see the image below.</p>
+<p><img src="images/graphs-new-generic-oid.png" alt="Graphs New" /></p>
+<p>From this interface, you must define various attributes for your resulting <strong>Graph</strong> as shown in the table below.</p>
+<h6 id="table-10-1-field-description-snmp---generic-oid-template">Table 10-1. Field Description: SNMP - Generic OID Template</h6>
+<table>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>(Graph) Title</td>
+<td>The title that is to be used for the new graph. It is generally a good idea to keep <code>host_description</code> in the title, as to make the graph easier to identify later.</td>
+</tr>
+<tr class="even">
+<td>(Graph) Vertical Label</td>
+<td>The text that will be printed along the y-axis of the graph. It is generally used to describe units, such as 'bytes' or 'percent'.</td>
+</tr>
+<tr class="odd">
+<td>(Graph Items) Legend Color</td>
+<td>The color that will be used to represent the data on the graph.</td>
+</tr>
+<tr class="even">
+<td>(Graph Items) Opacity/Alpha Channel</td>
+<td>This optionally provides an opacity (not available with RRDtool-1.0.x) for a colored item.</td>
+</tr>
+<tr class="odd">
+<td>(Graph Items) Legend Text</td>
+<td>The text that will be used to describe the data on the graph legend.</td>
+</tr>
+<tr class="even">
+<td>(Data Source) Name</td>
+<td>The title that is to be used for the new data source. It is generally a good idea to keep <code>host_description</code> in the title, as to make the data source easier to identify later.</td>
+</tr>
+<tr class="odd">
+<td>(Data Source) Maximum Value [snmp_oid]</td>
+<td>The maximum value that will be accepted from the OID. Make sure you choose a value that is reasonable for the data you are trying to graph because anything larger than the maximum will be ignored. If you are graphing a percentage, you should use '100' as the value should never exceed this.</td>
+</tr>
+<tr class="even">
+<td>(Data Source) Data Source Type [snmp_oid]</td>
+<td>How the data from the OID should be stored by RRDtool and interpreted on the graph. If the value of the OID represents the actual data, you should use GAUGE for this field. If the OID value is a constantly incremented number, you should use COUNTER for this field. The two remaining field values, DERIVE and ABSOLUTE can be ignored in most situations.</td>
+</tr>
+<tr class="odd">
+<td>(Custom Data) OID</td>
+<td>The actual SNMP OID to graph. It is typically a good idea to enter the number OID here as opposed to using MIB names. For instance, to get the number of open files on a Netware server, you would use ".1.3.6.1.4.1.23.2.28.2.7.0" as the OID.</td>
+</tr>
+</tbody>
+</table>
+<p>So, based upon your specific OID that you are graphing, You will need to fill out these fields before the new graph can be created properly.</p>
+<p>When finished filling in values for these fields, click the Create button. Your new <strong>Graph</strong> can now be accessed through the <code>Console &gt; Management &gt; Graphs</code> menu pick.</p>
+<blockquote>
+<p><strong>NOTE</strong>: When comparing the Table above, to the image, you will see that the <code>Opacity/Alpha Channel</code> pick is missing from the interface. To add it, you simply need &gt; to edit the <code>Generic SNMP OID</code> &gt; <strong>Graph Template</strong>, add a new <strong>Graph Item Input</strong> override to the Alpha/Opacity on the Graph Template as shown below. That topic will be covered in the <strong>Graph Template</strong> section of the manual though.</p>
+</blockquote>
+<p><img src="images/graphs-new-generic-oid-alpha.png" alt="Graphs New" /></p>
+<blockquote>
+<p><strong>Important Note</strong>:</p>
+<p>When graphing single OID's with Cacti, to ensure Spine and cmd.php will process single OID's correctly, they should be written using numeric format separated by dots, such as <code>1.3.6.1.4.1.9.9.97.</code></p>
+<p>At this time, ASN's (named OID's) such as <code>enterprise.9.9.97</code> (Cisco Switch) or <code>enterprises.cisco.ciscoMgnt.ciscoSwitchEngineMIB</code> are not supported.</p>
+</blockquote>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

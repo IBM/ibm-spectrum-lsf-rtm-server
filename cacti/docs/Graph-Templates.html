@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Graph Templates</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="graph-templates">Graph Templates</h1>
+<p><strong>Graph Templates</strong> are Cacti objects that allows you to define how RRDtool is to render a Cacti <strong>Graph</strong>. Most RRDtool options are supported including CDEF's and VDEF's, Left and Right Axis, Ticks and Dashes, multiple Auto Scaling, Grid, and Legend Options.</p>
+<p>The purpose of <strong>Graph Templates</strong> is to simplify the <strong>Automation</strong> process by pre-defining the layout of <strong>Graphs</strong> for various metrics that are to be monitored in Cacti. When used in Conjunction with Cacti's <strong>Graph Rules</strong>, you can automatically create just about any <strong>Data Query</strong> based <strong>Graph</strong> during Cacti's <strong>Network Discovery</strong> process.</p>
+<p>The <strong>Graph Templates</strong> main screen looks like the image below:</p>
+<p><img src="images/graph-templates1.png" alt="Device Templates Page" /></p>
+<p>From this page, you can see the title of each <strong>Graph Template</strong>, it's ID which is important for the Cacti CLI scripts. You can see if the <strong>Graph Template</strong> can be removed, and the number of <strong>Graphs</strong> using the <strong>Graph Template</strong> as well as the <em>Size</em> of the <strong>Graphs</strong> that will be created, the <em>Image Format</em>, and <em>Vertical Label</em>. Templates that are used by <strong>Devices</strong> can not be removed and therefore if you attempt to remove one of these Templates, you will receive and error message.</p>
+<p>From the drop down there are three options, they are:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><em>Delete</em></td>
+<td>Remove the <strong>Graph Template</strong> if it's <em>Deletable</em></td>
+</tr>
+<tr class="even">
+<td><em>Duplicate</em></td>
+<td>Make an exact copy of the <strong>Graph Template</strong></td>
+</tr>
+<tr class="odd">
+<td><em>Resize</em></td>
+<td>Make a resize decision that affects both the <strong>Graph Template</strong> and any</td>
+</tr>
+<tr class="even">
+<td><strong>Graphs</strong> created using this <strong>Graph Template</strong></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><em>Sync Graphs</em></td>
+<td>Update all <strong>Graphs</strong> using this <strong>Graph Template</strong> with the</td>
+</tr>
+<tr class="even">
+<td>latest definition, adding new <em>Graph Items</em> and removing orphaned <em>Graph Items</em></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>When Editing a <strong>Graph Template</strong>, there will be several sections that will require information from the Administrator. Those sections include:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Section</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><em>Graph Template Items</em></td>
+<td>These items paint inside the canvas of the <strong>Graph</strong></td>
+</tr>
+<tr class="even">
+<td><em>Graph Item Inputs</em></td>
+<td>This list is created automatically when you add <strong>Data Sources</strong></td>
+</tr>
+<tr class="odd">
+<td>to a <strong>Graph Template</strong>. However, you can also override certain <strong>Data Template</strong></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>and <strong>Graph Template</strong> fields by adding specifically named objects to this</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>section as well.</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><em>Graph Template</em></td>
+<td>Allows you to name the <strong>Graph Template</strong>, and whether or not</td>
+</tr>
+<tr class="odd">
+<td>you will allow multiple instances of this <strong>Graph Template</strong> to be used for a</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>Device</strong>, and whether or not to test for valid data before allowing the creation</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>of <strong>Graphs</strong>. The <em>Test Data Source</em> option is useful when you want to leverage</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>complex <strong>Device Template</strong> that contains <strong>Graph Templates</strong> that may not be applicable</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>for all classes of <strong>Devices</strong> using the <strong>Graph Template</strong>.</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><em>Common Options</em></td>
+<td>Things like Title, Vertical Label, Image Format,</td>
+</tr>
+<tr class="odd">
+<td>Height and Width, Base Value and Slope Mode</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><em>Scaling Options</em></td>
+<td>Which determine if the Graph is auto-scaled</td>
+</tr>
+<tr class="odd">
+<td>and by what means. Determines if the Graph will have fixed upper and lower limits</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><em>Grid Options</em></td>
+<td>Defines how the Graph canvas grid is rendered</td>
+</tr>
+<tr class="odd">
+<td><em>Axis Options</em></td>
+<td>Defines if there should be a right Axis and how it should be formatted</td>
+</tr>
+<tr class="even">
+<td><em>Legend Options</em></td>
+<td>Defines how the Legends should be formatted</td>
+</tr>
+</tbody>
+</table>
+<p>Each of these sections are displayed below for reference. For more information on how to use these options, please visit the <a href="http://RRDtool.org">RRDtool Website</a>.</p>
+<p>The <em>Graph Items</em> make up what is draw within the canvas of the Graph. There are several <em>Graph Item</em> types including:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><em>AREA</em></td>
+<td>Place an <em>Area Fill</em> on the canvas</td>
+</tr>
+<tr class="even">
+<td><em>AREA:STACK</em></td>
+<td>The second item of an <em>Area Fill</em> to be stacked upon the first</td>
+</tr>
+<tr class="odd">
+<td><em>COMMENT</em></td>
+<td>A written comment. Can include: |host_<em>|, |query_</em>|,</td>
+</tr>
+<tr class="even">
+<td>|input_*| <em>Replacement Variables</em></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><em>GPRINT</em></td>
+<td>Print a numeric value from the RRDfile with an optional <strong>CDEF</strong> or <strong>VDEF</strong></td>
+</tr>
+<tr class="even">
+<td>and formatted using a <strong>GPRINT Preset</strong>.</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><em>GPRINT:AVERAGE</em></td>
+<td>Print a numeric value from the RRDfile from the <em>AVERAGE</em></td>
+</tr>
+<tr class="even">
+<td><em>Consolidation Function</em> within the RRA, modified by an optional <strong>CDEF</strong>, or <strong>VDEF</strong>,</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>and formatted using a <strong>GPRINT Preset</strong>.</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><em>GPRINT:LAST</em></td>
+<td>Print a numeric value from the RRDfile from the <em>LAST</em> *Consolidation</td>
+</tr>
+<tr class="odd">
+<td>Function*within the RRA, modified by an optional <strong>CDEF</strong>, or <strong>VDEF</strong>,</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>and formatted using a <strong>GPRINT Preset</strong>.</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><em>GPRINT:MAX</em></td>
+<td>Print a numeric value from the RRDfile from the <em>MAX</em> *Consolidation</td>
+</tr>
+<tr class="even">
+<td>Function* within the RRA, modified by an optional <strong>CDEF</strong>, or <strong>VDEF</strong>, and formatted</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>using a <strong>GPRINT Preset</strong>.</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><em>GPRINT:MIN</em></td>
+<td>Print a numeric value from the RRDfile from the <em>MIN</em> *Consolidation</td>
+</tr>
+<tr class="odd">
+<td>Function* within the RRA, modified by an optional <strong>CDEF</strong>, or <strong>VDEF</strong>,</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>and formatted using a <strong>GPRINT Preset</strong>.</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><em>HRULE</em></td>
+<td>Draw an <em>Horizontal Rule</em> at the given point on the canvas.</td>
+</tr>
+<tr class="even">
+<td>You can NOT use any Data Source element or an optional <strong>CDEF</strong> or <strong>VDEF</strong>,</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>but may be able to use either a |query_<em>|, or |input_</em>|</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><em>Replacement Variable</em>.</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><em>LEGEND</em></td>
+<td>Draw a <em>Legend</em> from three <em>GPRINTS</em> using the same <strong>GPRINT Preset</strong>,</td>
+</tr>
+<tr class="even">
+<td>and <strong>VDEF</strong> or <strong>CDEF</strong>. The <em>Current</em>, <em>Average</em>, and <em>Max</em> <em>Consolidation Functions</em></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>are used.<em>LEGEND_CAMM</em></td>
+<td>Draw a <em>Legend</em> from four <em>GPRINTS</em> using the same <strong>GPRINT_Preset</strong>,</td>
+</tr>
+<tr class="even">
+<td>and <strong>VDEF</strong> or <strong>CDEF</strong>. The <em>Current</em>, <em>Average</em>, "Min*, and "Max"</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>functions are used for this <em>Legend</em>.</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><em>LINE[1,2,3]</em></td>
+<td>Draw a 1, 2, 3 or used defined thickness pixel <em>Line</em> from the</td>
+</tr>
+<tr class="odd">
+<td>RRDfile onto the canvas, modified by an optional <strong>CDEF</strong>, or <strong>VDEF</strong>.</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><em>LINE:STACK</em></td>
+<td>Stack a Line of a user defined thickness on top of another <em>Line</em>,</td>
+</tr>
+<tr class="odd">
+<td>modified by an optional <strong>CDEF</strong>, or <strong>VDEF</strong>.</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><em>TEXTALIGN</em></td>
+<td>Modify future text using the alignment provided.</td>
+</tr>
+<tr class="odd">
+<td><em>VRULE</em></td>
+<td>Place a <em>Vertical Rule</em> on the canvas of a specific color and time position.</td>
+</tr>
+</tbody>
+</table>
+<p>The canvas is painted from the first <em>Graph Item</em> till the last with each successive <em>Graph Item</em> rendered on top of the previous. Please keep this in mind when creating a <strong>Graph Template</strong>.</p>
+<p><img src="images/graph-templates-edit1.png" alt="Graph Items and Item Inputs" /></p>
+<h2 id="graph-template---general-and-common-options">Graph Template - General and Common Options</h2>
+<ul>
+<li><p><strong>Name</strong> - This is the name that you provide to the <strong>Graph Template</strong>.Since Cacti does not presently have the concept of <strong>Graph Template Class</strong> many authors will prefix the <strong>Name</strong> with a <strong>Class</strong> prefix like <em>Net-SNMP</em> for example.</p></li>
+<li><p><strong>Multiple Instances</strong> - This setting tells Cacti that a device can have more than one instance of the Template. This will allow you to select the <strong>Graph Template</strong> from the <strong>Create</strong> option of <strong>New Graphs</strong> interface more than once.</p></li>
+<li><p><strong>Test Data Sources</strong> - This option will test that the <strong>Data Source</strong> returns good data before allowing the creation of the <strong>Graph</strong>. You should be aware that if your <strong>Data Source</strong> calls a script that runs for a long time, selecting this option can really slow the <strong>Graph</strong> creation process. However, it's quite useful if you have a hybrid <strong>Device Template</strong> that includes a myriad of <strong>Graph Templates</strong> that may not work with all <strong>Devices</strong> that you create using the <strong>Device Template</strong>.</p></li>
+</ul>
+<p>Under the <em>Common Options</em>, for each <strong>Graph Template</strong> you will specify patterns for the <em>Graph Name</em>, assign it's <em>Vertical Label</em>, specify the <em>Width</em> and <em>Height</em>, and <em>Image Format</em> for the resulting <strong>Graph</strong>. The <em>Base Value</em> is important as some units of measure can be for example: MB (for Mega Bytes - 1024) and MiB (for Mega integer Bytes - 1000). Lastly, the <em>Slope Mode</em> gives the resulting <strong>Graphs</strong> a smoother look.</p>
+<p><img src="images/graph-templates-edit2.png" alt="Graph Name and Common Options" /></p>
+<h2 id="graph-template---scaling-options">Graph Template - Scaling Options</h2>
+<p>The <em>Scaling Options</em> allow the Administrator to apply either <em>Rigid</em> or <em>Auto Scaling</em> settings to the resulting <em>Graph</em>. These options are fairly self explanatory. However, you can always view the RRDtool Documentation online for more information.</p>
+<p><img src="images/graph-templates-edit3.png" alt="Scaling Options" /></p>
+<h2 id="graph-template---grid-options">Graph Template - Grid Options</h2>
+<p>The <em>Grid Options</em> are rarely necessary unless you have specific requirements to render the resulting <strong>Graphs</strong> with some exotic unit.</p>
+<p><img src="images/graph-templates-edit4.png" alt="Grid Options" /></p>
+<h2 id="graph-template---axis-options">Graph Template - Axis Options</h2>
+<p>The <em>Axis Options</em> allow you to define a <em>Right Axis</em> and optional <em>Formatters</em>.</p>
+<p><img src="images/graph-templates-edit5.png" alt="Axis Options" /></p>
+<h2 id="graph-template---legend-options">Graph Template - Legend Options</h2>
+<p>The <em>Legend</em> options allow you to specify how the <em>Legend</em> should be placed on the resulting <strong>Graph</strong> modern RRDtool has several options that were not available in Cacti prior to Cacti 1.0.</p>
+<p><img src="images/graph-templates-edit6.png" alt="Legend Options" /></p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

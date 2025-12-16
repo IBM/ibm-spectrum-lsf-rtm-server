@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Data Queries</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="data-queries">Data Queries</h1>
+<h2 id="overview">Overview</h2>
+<p>Cacti <strong>Data Queries</strong> are not a replacement for <strong>Data Input Methods</strong> in Cacti. Instead they provide an easy way to extend Data Input methods to interpret multidimensional objects, or list data based upon an index, making the data easier to graph. The most common use of a **Data Query within Cacti is to retrieve a list of network interfaces via SNMP.</p>
+<p>If you want to graph the traffic of a network interface, first Cacti must retrieve a list of interfaces on the host. Second, Cacti can use that information to create the necessary <strong>Graphs</strong> and <strong>Data Sources</strong>. <strong>Data Queries</strong> are only concerned with the first step of the process, that is obtaining a list of network interfaces and not creating the graphs/data sources for them. While listing network interfaces is a common use for **Data Queries**, they also have other uses such as listing partitions, processors, or even cards in a router.</p>
+<p>One requirement for any <strong>Data Query</strong> in Cacti, is that it has some unique value that defines each row in the list. This concept follows that of a 'primary key' in SQL, and makes sure that each row in the list can be uniquely referenced. Examples of these index values are 'ifIndex' for SNMP network interfaces or the device name for partitions.</p>
+<p>There are three types of <strong>Data queries</strong> that you will see referred to throughout Cacti. They are script queries, script server queries, and SNMP queries. Script, Script Server and SNMP queries are virtually identical in their functionality and only differ in how they obtain their information. Script and Script Server queries will call an external command or script and an SNMP query will make an SNMP call to retrieve a list of data.</p>
+<h2 id="user-interface">User Interface</h2>
+<p>Below, you can see Cacti's default <strong>Data Queries</strong> interface. From the interface, you can see the Name, ID, Data Input Method, and other information about the Data Query.</p>
+<p><img src="images/data-queries.png" alt="Data Query Interface" /></p>
+<p>When you edit an existing Data Query, you will see an interface like the one below. In that interface, you will note that there is an XML file path included. The XML file is a key component of a Cacti <strong>Data Query</strong>. For Script based <strong>Data Queries</strong>, there will also be a script that must be called to gather information about the <strong>Data Query</strong>, the script name is included in the XML file.</p>
+<p><img src="images/data-queries-edit1.png" alt="Data Query Edit Interface" /></p>
+<p>In this Interface, you can see the Name, Description, XML Path, and <strong>Data Input Method</strong>. In the section below that, you have the <code>Associated Graph Templates</code> section which includes all the various <strong>Graph Templates</strong> that can be used for the <strong>Data Query</strong>.</p>
+<p>Once a <strong>Data Query</strong> <strong>Graph Template</strong> is in use, it can not longer be removed from Cacti. This feature is there to prevent <strong>Graphs</strong> from becoming unrenderable if someone accidentally were to remove the <strong>Graph Template</strong> association.</p>
+<p>When you click on any of the <code>Associated Graph Template</code> name, you will be taken to the interface below.</p>
+<p><img src="images/data-queries-edit2.png" alt="Data Query Associated Graph Template Edit Interface" /></p>
+<p>From here, you map the various matching <strong>Data Template</strong> RRDfile Data Source names to Data Source names that exist in the XML file. There can be many Data Source names in the XML file, but a Graph Template may only require a few of them, which explains the reason for having the <code>Associated Data Templates</code> section of the <strong>Data Query</strong>. To associate the XML field with the <strong>Data Templates</strong> RRDfile Data Source, you simply select the correct one, and then toggle on the checkbox to the right of the XML field Data Source name.</p>
+<p>Below the <code>Associated Data Templates</code>, you will find two sections which are referred to as <code>Suggested Values</code> for both the <strong>Data Source</strong> and the <strong>Graph</strong> names. When creating <strong>Graphs</strong> and their associated <strong>Data Sources</strong> Cacti will use the first name in the <code>Suggested Values</code> pattern that fully replaces all the tags that are identified by opening and closing vertical bars. So, in the example above, when creating an Interface Graph, if that Interface does not have an ifAlias, Cacti will likely use the second <code>Suggested Value</code>, unless the interface does not have an IP Address, in which case it will use the third <code>Suggested Value</code>.</p>
+<p>Cacti also allows <code>Suggested Values</code>, to replace both <strong>Graph</strong> and <strong>Data Source</strong> values, as in the case above, the "rrd_maximum" column is replaced by the Network Interfaces maximum speed, otherwise known as the "ifSpeed" from an SNMP perspective.</p>
+<p>All data queries have two parts, the XML file and the definition within Cacti. An XML file must be created for each query, that defines where each piece of information is and how to retrieve it. This could be thought of as the actual query. The second part is a definition within Cacti, which tells Cacti where to find the XML file and associates the data query with one or more graph templates.</p>
+<h2 id="creating-a-data-query">Creating a Data Query</h2>
+<p>Once you have created the XML file that defines your data query, you must add the data query within Cacti. To do this you must click on Data Queries under the Data Gathering heading, and select Add. You will be prompted for some basic information about the data query, described in more detail below.</p>
+<h6 id="table-12-1-field-description-data-queries">Table 12-1. Field Description: Data Queries</h6>
+<table>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Name</td>
+<td>Give the <strong>Data Query</strong> a name that you will use to identify it. This name will be used throughout Cacti when presented with a list of <strong>Data Queries</strong>.</td>
+</tr>
+<tr class="even">
+<td>Description (Optional)</td>
+<td>Enter a more detailed description of the data query including the information it queries or additional requirements.</td>
+</tr>
+<tr class="odd">
+<td>XML Path</td>
+<td>Fill in the full path to the XML file that defines this query. You can optionally use the <code>path_cacti</code> variable that will be substituted with the full path to Cacti. On the next screen, Cacti will check to make sure that it can find the XML file.</td>
+</tr>
+<tr class="even">
+<td>Data Input Method</td>
+<td>This is how you tell Cacti to handle the data it receives from the data query. Typically, you will select <code>Get SNMP Data (Indexed)</code> for an SNMP query and <code>Get Script Data (Indexed)</code> for a script query.</td>
+</tr>
+</tbody>
+</table>
+<p>When you are finished filling in all necessary fields, click the Create button to continue. You will be redirected back to the same page, but this time with some additional information to fill in. If you receive a red warning that says 'XML File Does Not Exist', correct the value specified in the 'XML Path' field.</p>
+<h3 id="associated-graph-templates">Associated Graph Templates</h3>
+<p>Every data query must have at least one graph template associated with it, and possibly more depending on the number of output fields specified in the XML file. This is where you get to choose what kind of graphs to generate from this query. For instance, the interface data query has multiple graph template associations, used to graph traffic, errors, or packets. To add a new graph template association, simply click Add at the right of the Associated Graph Templates box. You will be presented with a few fields to fill in:</p>
+<h6 id="table-12-2-field-description-associated-graph-templates">Table 12-2. Field Description: Associated Graph Templates</h6>
+<table>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Name</td>
+<td>Give a name describing what kind of data you are trying to represent or graph. When the user creates a graph using this data query, they will see a list of graph template associations that they will have to choose from.</td>
+</tr>
+<tr class="even">
+<td>Graph Template</td>
+<td>Choose the actual graph template that you want to make the association with.</td>
+</tr>
+</tbody>
+</table>
+<p>When you are finished filling in these fields, click the Create button. You will be redirected back to the same page with some additional information to fill in. Cacti will make a list of each <strong>Data Template</strong> referenced to in your selected <strong>Graph Template</strong> and display them under the <code>Associated Data Templates</code> box. As previously mentioned, for each <strong>Data Source</strong> item listed, you must selected the <strong>Data Query</strong> output field that corresponds with it. <em>Do not forget to check the checkbox to the right of each selection, or your settings will not be saved.</em></p>
+<p>The <code>Suggested Values</code> form provides you a way to control field values of <strong>Data Sources</strong> and <strong>Graphs</strong> created using the <strong>Data Query</strong>. If you specify multiple <code>Suggested Values</code> for the same field, Cacti will evaluate them in order which you can control using the up or down arrow icons. For more information about valid field names and variables, read the section on <code>Suggested Values</code>.</p>
+<p>When you are finished filling in all necessary fields on this form, click the Save button to return to the data queries edit screen. Repeat the steps under this heading as many times as necessary to represent all data in your XML file. When you are finished with this, you should be ready to start adding your data query to hosts.</p>
+<h3 id="snmp-query-xml-syntax">SNMP Query XML Syntax</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">&lt;query&gt;</span></a>
+<a class="sourceLine" id="cb1-2" title="2">   <span class="kw">&lt;name&gt;</span>Get SNMP Interfaces<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb1-3" title="3">   <span class="kw">&lt;description&gt;</span>Queries a host for a list of monitorable interfaces<span class="kw">&lt;/description&gt;</span></a>
+<a class="sourceLine" id="cb1-4" title="4">   <span class="kw">&lt;oid_uptime&gt;</span>.1.3.x.x.x<span class="kw">&lt;/oid_uptime&gt;</span></a>
+<a class="sourceLine" id="cb1-5" title="5">   <span class="kw">&lt;oid_index&gt;</span>.1.3.6.1.2.1.2.2.1.1<span class="kw">&lt;/oid_index&gt;</span></a>
+<a class="sourceLine" id="cb1-6" title="6">   <span class="kw">&lt;oid_index_parse&gt;</span>OID/REGEXP:.*.([0-9]{1,3}.[0-9]{1,3})$<span class="kw">&lt;/oid_index_parse&gt;</span></a>
+<a class="sourceLine" id="cb1-7" title="7">   <span class="kw">&lt;oid_num_indexes&gt;</span>.1.3.6.1.2.1.2.1.0<span class="kw">&lt;/oid_num_indexes&gt;</span></a>
+<a class="sourceLine" id="cb1-8" title="8">   <span class="kw">&lt;index_order&gt;</span>ifDescr:ifName:ifIndex<span class="kw">&lt;/index_order&gt;</span></a>
+<a class="sourceLine" id="cb1-9" title="9">   <span class="kw">&lt;index_order_type&gt;</span>numeric<span class="kw">&lt;/index_order_type&gt;</span></a>
+<a class="sourceLine" id="cb1-10" title="10">   <span class="kw">&lt;index_title_format&gt;</span>|chosen_order_field|<span class="kw">&lt;/index_title_format&gt;</span></a>
+<a class="sourceLine" id="cb1-11" title="11"></a>
+<a class="sourceLine" id="cb1-12" title="12">   <span class="kw">&lt;fields&gt;</span></a>
+<a class="sourceLine" id="cb1-13" title="13">      <span class="kw">&lt;ifIndex&gt;</span></a>
+<a class="sourceLine" id="cb1-14" title="14">         <span class="kw">&lt;name&gt;</span>Index<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb1-15" title="15">         <span class="kw">&lt;method&gt;</span>walk<span class="kw">&lt;/method&gt;</span></a>
+<a class="sourceLine" id="cb1-16" title="16">         <span class="kw">&lt;source&gt;</span>value<span class="kw">&lt;/source&gt;</span></a>
+<a class="sourceLine" id="cb1-17" title="17">         <span class="kw">&lt;direction&gt;</span>input<span class="kw">&lt;/direction&gt;</span></a>
+<a class="sourceLine" id="cb1-18" title="18">         <span class="kw">&lt;oid&gt;</span>.1.3.6.1.2.1.2.2.1.1<span class="kw">&lt;/oid&gt;</span></a>
+<a class="sourceLine" id="cb1-19" title="19">      <span class="kw">&lt;/ifIndex&gt;</span></a>
+<a class="sourceLine" id="cb1-20" title="20">   <span class="kw">&lt;/fields&gt;</span></a>
+<a class="sourceLine" id="cb1-21" title="21"><span class="kw">&lt;/query&gt;</span></a></code></pre></div>
+<h6 id="table-12-3-snmp-query-xml-settings-reference">Table 12-3. SNMP Query XML Settings Reference</h6>
+<table>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>name</td>
+<td>(Optional) You can enter a "friendly name" for the SNMP Query here. It will not be used by Cacti, and is for identification only.</td>
+</tr>
+<tr class="even">
+<td>description</td>
+<td>(Optional) You can enter a description for the SNMP Query here. It will not be used by Cacti, and is for identification only.</td>
+</tr>
+<tr class="odd">
+<td>oid_uptime</td>
+<td>If you have another OID that contains ticks (time), say for example a Java VM. Then, you can create a data query that specifies an alternate uptime OID. To implement this for a data query, simply add the oid_uptime XML parameter to your XML file. Then, if you select your re-index method to be Uptime Goes Backward, Cacti will use that OID to detect whether it is time to re-index the host instead of the standard SNMP OID for uptime.</td>
+</tr>
+<tr class="even">
+<td>oid_index</td>
+<td>Every SNMP Query must have an OID that represents the index values for the query when walked. As described above, any data query in Cacti must contain a field that uniquely identifies each row returned by the query. In the example above, the oid_index points to the OID of ifIndex in the interface MIB. Note: Cacti is able to parse unique indexes from the OID itself. While the regular expression used for parsing the value from the OID is defined below, you must still specify an OID that can be walked by Cacti in order to obtain the list of OID's. Any OID defined for one of your input fields should work in this case. The values returned from the snmpwalk walk will be completely disregarded.</td>
+</tr>
+<tr class="odd">
+<td>non_unique</td>
+<td>If set to true, Cacti will allow the Data Query index to be non-unique, and it will not attempt to change the index_order if for some reason, the chosen index field is not unique.</td>
+</tr>
+<tr class="even">
+<td>oid_index_parse</td>
+<td>This field should only be used if you are trying to parse the unique index from the OID itself. If this field is defined, to obtain a list of indexes, Cacti walks the OID provided in the oid_index field above. It then applies the regular expression provided in this field to the list of OID's that are returned. The matched substrings that remain become the list of indexes for this SNMP Query.</td>
+</tr>
+<tr class="odd">
+<td>value_index_parse</td>
+<td>This field uses regular expressions to restrict the list of data returned from the get or walk method. For example: &lt;oid_index&gt;.1.3.6.1.2.1.2.2.1.8&lt;/oid_index&gt; &lt;value_index_parse&gt;OID/REGEXP:1&lt;/value_index_parse&gt; will only show the list of up-state interfaces. Tip - When using this field it is also worth using oid_index_parse, example: &lt;oid_index_parse&gt;OID/REGEXP:.*.([0-9]+)$&lt;/oid_index_parse&gt;</td>
+</tr>
+<tr class="even">
+<td>oid_num_indexes</td>
+<td>An OID that can be queried to determine the total number of available indexes. If specified, this will be used to determine when to automatically re-cache this SNMP Query when it is attached to a device.</td>
+</tr>
+<tr class="odd">
+<td>index_order</td>
+<td>Cacti will attempt to find the best field to index off of based on whether each row in the query is unique and non-null. If specified, Cacti will perform this check on the fields listed here in the order specified. Only input fields can be specified and multiple fields should be delimited with a colon.</td>
+</tr>
+<tr class="even">
+<td>index_transient</td>
+<td>If set to 'true', this field instructs Cacti not to stop attempting to Graph an index if it disappears from the host cache as a result of a re-index. This setting is for indexes that come and go, for example PPPoE statistics or user statistics which appear when a user log's in, but disappear a few hours after the connection is terminated.</td>
+</tr>
+<tr class="odd">
+<td>index_order_type</td>
+<td>For sorting purposes, specify whether the index is numeric or alphanumeric. numeric: The indexes in this SNMP Query are to be sorted numerically (ie. 1,2,3,10,20,31) alphabetic: The indexes in this SNMP Query are to be sorted alphabetically (1,10,2,20,3,31).</td>
+</tr>
+<tr class="even">
+<td>index_title_format</td>
+<td>Specify the title format to use when representing an index to the user. Any input field name can be used as a variable if enclosed in pipes (|). The variable <code>&amp;#124;chosen_order_field&amp;#124;</code> will be substituted with the field chosen by Cacti to index off of (see index_order above).</td>
+</tr>
+</tbody>
+</table>
+<h6 id="table-12-4-snmp-query-xml-field-settings-reference">Table 12-4. SNMP Query XML Field Settings Reference</h6>
+<p>Each field contained within the SNMP Query must be defined under the field tag as show in the example above. In addition, each defined field in the SNMP Query must have a unique name given to it. Do not use spaces or any non-alphanumeric characters, this name must be identifiable within Cacti.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>name</td>
+<td>Here you can specify a "friendly name" for the field. This name will be used by Cacti to help the user identify this field.</td>
+</tr>
+<tr class="even">
+<td>method</td>
+<td>Tell Cacti how you want it to gather SNMP information for this field. get: The <code>get</code> method performs an snmpget for the OID specified for this field appended by the index values derived from <code>&lt;oid_index&gt;/&lt;oid_index_parse&gt;</code>. walk: The <code>walk</code> method does a walk of the OID specified for this field. If all OIDs belong to the same SNMP table, both methods will return the same values, even though the 'walk' method is typically more efficient.</td>
+</tr>
+<tr class="odd">
+<td>source</td>
+<td>When Cacti obtains a list for this field, you need to tell it how to derive its value for each row. value: The 'value' option simply returns the result of the snmpget for each row. <strong>OID/REGEXP</strong> (regexp_match): The <strong>OID/REGEXP</strong> modifier can be used when you need to use a POSIX-based regular expression to derive the value from the OID. The most common example of this is to retrieve the IP address of an interface, and can be seen in the 'interface.xml' file. <strong>VALUE/REGEXP</strong> (regexp_match): The <strong>VALUE/REGEXP</strong> modifier can be used to parse the value based on a regular expression, returning the first match. index: Simply use the value of the index for this row as the value. If the index is being parsed from the OID using the oid_index_parse field, you must specify index here. Omit the <code>&lt;oid&gt;...&lt;/oid&gt;</code> field, then. <strong>OID2HEX/REGEXP</strong> (regexp_match): The <strong>OID2HEX/REGEXP</strong> modifier can be used to parse the OID to extract IPv6 addresses. This is useful for input type fields. It also supports the 'oid_index_parse' expression as well.</td>
+</tr>
+<tr class="even">
+<td>direction</td>
+<td>input: Input values are the "known" values that you will use to derive the output values, this is where the "query" part of SNMP query comes in. When you create a graph based on an SNMP query, Cacti will prompt you to choose the input value to base the graph on. output: Output values are "unknown" values that are returned from the script. An SNMP query may return multiple statistics for a single index. For instance, a single interface could return bytes/sec in, errors, packets/sec, etc. A rule of thumb is that input fields contain semi-static data that is not graphable, while the output fields contain the data that will be graphed.</td>
+</tr>
+<tr class="odd">
+<td>oid</td>
+<td>You must specify the actual OID that corresponds with the field. Each value for this field can be obtained by doing an snmpget on <code>oid.(each)snmpindex</code>.</td>
+</tr>
+<tr class="even">
+<td>oid_rewrite_pattern</td>
+<td>You can specify and <strong>OID/REGEXP</strong> string which will be replaced by the oid_rewrite_replacement string if found.</td>
+</tr>
+<tr class="odd">
+<td>oid_rewrite_replacement</td>
+<td>You must specify the actual OID that corresponds with the field. Each value for this field can be obtained by doing an snmpget on <code>oid.(each)snmpindex</code>.</td>
+</tr>
+<tr class="even">
+<td>oid_suffix</td>
+<td>The suffix, if specified will be appended to the each oid from the walk or get response, prior to the oid_rewrite_pattern to oid_rewrite_replace regular expression replace. If the method is get, Cacti will issue an snmpget to obtain the resulting data.</td>
+</tr>
+<tr class="odd">
+<td>rewrite_index</td>
+<td>Modifies the snmp values using the rewrite_index expression.</td>
+</tr>
+<tr class="even">
+<td>output_format</td>
+<td>Determines the output format of the column values. Options are 'ascii', 'hex'. If not specified, Cacti will allow SNMP to 'guess' the output format.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="script-query-xml-syntax">Script Query XML Syntax</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">&lt;query&gt;</span></a>
+<a class="sourceLine" id="cb2-2" title="2">   <span class="kw">&lt;name&gt;</span>Get Unix Mounted Partitions<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb2-3" title="3">   <span class="kw">&lt;description&gt;</span>Queries a list of mounted partitions on a unix-based host  with the &#39;df&#39; command.<span class="kw">&lt;/description&gt;</span></a>
+<a class="sourceLine" id="cb2-4" title="4">   <span class="kw">&lt;script_path&gt;</span>perl |path_cacti|/scripts/query_unix_partitions.pl<span class="kw">&lt;/script_path&gt;</span></a>
+<a class="sourceLine" id="cb2-5" title="5">   <span class="kw">&lt;arg_index&gt;</span>index<span class="kw">&lt;/arg_index&gt;</span></a>
+<a class="sourceLine" id="cb2-6" title="6">   <span class="kw">&lt;arg_query&gt;</span>query<span class="kw">&lt;/arg_query&gt;</span></a>
+<a class="sourceLine" id="cb2-7" title="7">   <span class="kw">&lt;arg_get&gt;</span>get<span class="kw">&lt;/arg_get&gt;</span></a>
+<a class="sourceLine" id="cb2-8" title="8">   <span class="kw">&lt;arg_num_indexes&gt;</span>num_indexes<span class="kw">&lt;/arg_num_indexes&gt;</span></a>
+<a class="sourceLine" id="cb2-9" title="9">   <span class="kw">&lt;output_delimeter&gt;</span>:<span class="kw">&lt;/output_delimeter&gt;</span></a>
+<a class="sourceLine" id="cb2-10" title="10">   <span class="kw">&lt;index_order&gt;</span>dskDevice:dskMount<span class="kw">&lt;/index_order&gt;</span></a>
+<a class="sourceLine" id="cb2-11" title="11">   <span class="kw">&lt;index_order_type&gt;</span>alphabetic<span class="kw">&lt;/index_order_type&gt;</span></a>
+<a class="sourceLine" id="cb2-12" title="12">   <span class="kw">&lt;index_title_format&gt;</span>|chosen_order_field|<span class="kw">&lt;/index_title_format&gt;</span></a>
+<a class="sourceLine" id="cb2-13" title="13"></a>
+<a class="sourceLine" id="cb2-14" title="14">   <span class="kw">&lt;fields&gt;</span></a>
+<a class="sourceLine" id="cb2-15" title="15">      <span class="kw">&lt;dskDevice&gt;</span></a>
+<a class="sourceLine" id="cb2-16" title="16">         <span class="kw">&lt;name&gt;</span>Device Name<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb2-17" title="17">         <span class="kw">&lt;direction&gt;</span>input<span class="kw">&lt;/direction&gt;</span></a>
+<a class="sourceLine" id="cb2-18" title="18">         <span class="kw">&lt;query_name&gt;</span>device<span class="kw">&lt;/query_name&gt;</span></a>
+<a class="sourceLine" id="cb2-19" title="19">      <span class="kw">&lt;/dskDevice&gt;</span></a>
+<a class="sourceLine" id="cb2-20" title="20">   <span class="kw">&lt;/fields&gt;</span></a>
+<a class="sourceLine" id="cb2-21" title="21"><span class="kw">&lt;/query&gt;</span></a></code></pre></div>
+<h6 id="table-12-5-script-query-xml-settings">Table 12-5. Script Query XML Settings</h6>
+<table>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>name</td>
+<td>(Optional) You can enter a "friendly name" for the script query here. It will not be used by Cacti, and is for identification only.</td>
+</tr>
+<tr class="even">
+<td>description</td>
+<td>(Optional) You can enter a description for the script query here. It will not be used by Cacti, and is for identification only.</td>
+</tr>
+<tr class="odd">
+<td>script_path</td>
+<td>Enter the complete path to the script or executable that is going to handle your script query. When in doubt, specify the pull path to all binaries referenced in this path, the query may not execute otherwise.</td>
+</tr>
+<tr class="even">
+<td>arg_index</td>
+<td>Enter the argument that is to be passed to the script to retrieve a list of indexes.</td>
+</tr>
+<tr class="odd">
+<td>arg_query</td>
+<td>Enter the argument that is to be passed to the script to retrieve a list of values given a field name.</td>
+</tr>
+<tr class="even">
+<td>arg_get</td>
+<td>Enter the argument that is to be passed to the script to retrieve a single value given a field name and index value.</td>
+</tr>
+<tr class="odd">
+<td>arg_num_indexes</td>
+<td>Enter the argument that is to be passed to the script to determine the total number of available indexes. If specified, this will be used to determine when to automatically re-cache this script query when it is attached to a device.</td>
+</tr>
+<tr class="even">
+<td>output_delimeter</td>
+<td>Enter the one character delimiter that will be used to separate output values. This is only used when you "query" the script in which case it outputs 'index(delimiter)value'.</td>
+</tr>
+<tr class="odd">
+<td>index_order</td>
+<td>Cacti will attempt to find the best field to index off of based on whether each row in the query is unique and non-null. If specified, Cacti will perform this check on the fields listed here in the order specified. Only input fields can be specified and multiple fields should be delimited with a comma.</td>
+</tr>
+<tr class="even">
+<td>index_transient</td>
+<td>If set to 'true', this field instructs Cacti not to stop attempting to Graph an index if it disappears from the host cache as a result of a re-index. This setting is for indexes that come and go, for example PPPoE statistics or user statistics which appear when a user log's in, but disappear a few hours after the connection is terminated.</td>
+</tr>
+<tr class="odd">
+<td>index_order_type</td>
+<td>For sorting purposes, specify whether the index is numeric or alphanumeric. numeric: The indexes in this script query are to be sorted numerically (ie. 1,2,3,10,20,31) alphabetic: The indexes in this script query are to be sorted alphabetically (1,10,2,20,3,31).</td>
+</tr>
+<tr class="even">
+<td>index_title_format</td>
+<td>Specify the title format to use when representing an index to the user. Any input field name can be used as a variable if enclosed in pipes (|). The variable |chosen_order_field| will be substituted with the field chosen by Cacti to index off of (see index_order above).</td>
+</tr>
+</tbody>
+</table>
+<h6 id="table-12-6-script-query-xml-field-settings">Table 12-6. Script Query XML Field Settings</h6>
+<p>Each field contained within the Script Query must be defined under the field tag as show in the example above. In addition, each defined field in the Script Query must have a unique name given to it. Do not use spaces or any non-alphanumeric characters, this name must be identifiable within Cacti.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>name</td>
+<td>Here you can specify a "friendly name" for the field. This name will be used by Cacti to help the user identify this field.</td>
+</tr>
+<tr class="even">
+<td>direction</td>
+<td>input: Input values are the "known" values that you will use to derive the output values, this is where the "query" part of script query comes in. When you create a graph based on a script query, Cacti will prompt you to choose the input value to base the graph on. output: Output values are "unknown" values that are returned from the script. A script query may return multiple statistics for a single index. For instance, a single partition could return free disk space, total disk space, fragmentation percentage, etc. A rule of thumb is that input fields contain semi-static data that is not graphable, while the output fields contain the data that will be graphed.</td>
+</tr>
+<tr class="odd">
+<td>query_name</td>
+<td>Enter the name that Cacti must use when asking the script for information about this field. For instance, the following should return values: '(script_name) query (query_name)'.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="script-server-xml-syntax">Script Server XML Syntax</h2>
+<div class="sourceCode" id="cb3"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">&lt;query&gt;</span></a>
+<a class="sourceLine" id="cb3-2" title="2">    <span class="kw">&lt;name&gt;</span>Get Host MIB CPUs<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb3-3" title="3">    <span class="kw">&lt;script_path&gt;</span>|path_cacti|/scripts/ss_host_cpu.php<span class="kw">&lt;/script_path&gt;</span></a>
+<a class="sourceLine" id="cb3-4" title="4">    <span class="kw">&lt;script_function&gt;</span>ss_host_cpu<span class="kw">&lt;/script_function&gt;</span></a>
+<a class="sourceLine" id="cb3-5" title="5">    <span class="kw">&lt;script_server&gt;</span>php<span class="kw">&lt;/script_server&gt;</span></a>
+<a class="sourceLine" id="cb3-6" title="6">    <span class="kw">&lt;arg_prepend&gt;</span>|host_hostname| |host_id| |host_snmp_version|:|host_snmp_port|:|host_snmp_timeout|:|host_ping_retries|:|host_max_oids|:|host_snmp_community|:|host_snmp_username|:|host_snmp_password|:|host_snmp_auth_protocol|:|host_snmp_priv_passphrase|:|host_snmp_priv_protocol|:|host_snmp_context|<span class="kw">&lt;/arg_prepend&gt;</span></a>
+<a class="sourceLine" id="cb3-7" title="7">    <span class="kw">&lt;arg_index&gt;</span>index<span class="kw">&lt;/arg_index&gt;</span></a>
+<a class="sourceLine" id="cb3-8" title="8">    <span class="kw">&lt;arg_query&gt;</span>query<span class="kw">&lt;/arg_query&gt;</span></a>
+<a class="sourceLine" id="cb3-9" title="9">    <span class="kw">&lt;arg_get&gt;</span>get<span class="kw">&lt;/arg_get&gt;</span></a>
+<a class="sourceLine" id="cb3-10" title="10">    <span class="kw">&lt;arg_num_indexes&gt;</span>num_indexes<span class="kw">&lt;/arg_num_indexes&gt;</span></a>
+<a class="sourceLine" id="cb3-11" title="11">    <span class="kw">&lt;output_delimeter&gt;</span>!<span class="kw">&lt;/output_delimeter&gt;</span></a>
+<a class="sourceLine" id="cb3-12" title="12">    <span class="kw">&lt;index_order&gt;</span>hrProcessorFrwID<span class="kw">&lt;/index_order&gt;</span></a>
+<a class="sourceLine" id="cb3-13" title="13">    <span class="kw">&lt;index_order_type&gt;</span>numeric<span class="kw">&lt;/index_order_type&gt;</span></a>
+<a class="sourceLine" id="cb3-14" title="14">    <span class="kw">&lt;index_title_format&gt;</span>CPU#|chosen_order_field|<span class="kw">&lt;/index_title_format&gt;</span></a>
+<a class="sourceLine" id="cb3-15" title="15"></a>
+<a class="sourceLine" id="cb3-16" title="16">    <span class="kw">&lt;fields&gt;</span></a>
+<a class="sourceLine" id="cb3-17" title="17">        <span class="kw">&lt;hrProcessorFrwID&gt;</span></a>
+<a class="sourceLine" id="cb3-18" title="18">            <span class="kw">&lt;name&gt;</span>Processor Index Number<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb3-19" title="19">            <span class="kw">&lt;direction&gt;</span>input<span class="kw">&lt;/direction&gt;</span></a>
+<a class="sourceLine" id="cb3-20" title="20">            <span class="kw">&lt;query_name&gt;</span>index<span class="kw">&lt;/query_name&gt;</span></a>
+<a class="sourceLine" id="cb3-21" title="21">        <span class="kw">&lt;/hrProcessorFrwID&gt;</span></a>
+<a class="sourceLine" id="cb3-22" title="22"></a>
+<a class="sourceLine" id="cb3-23" title="23">        <span class="kw">&lt;hrProcessorLoad&gt;</span></a>
+<a class="sourceLine" id="cb3-24" title="24">            <span class="kw">&lt;name&gt;</span>Processor Usage<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb3-25" title="25">            <span class="kw">&lt;direction&gt;</span>output<span class="kw">&lt;/direction&gt;</span></a>
+<a class="sourceLine" id="cb3-26" title="26">            <span class="kw">&lt;query_name&gt;</span>usage<span class="kw">&lt;/query_name&gt;</span></a>
+<a class="sourceLine" id="cb3-27" title="27">        <span class="kw">&lt;/hrProcessorLoad&gt;</span></a>
+<a class="sourceLine" id="cb3-28" title="28">    <span class="kw">&lt;/fields&gt;</span></a>
+<a class="sourceLine" id="cb3-29" title="29"><span class="kw">&lt;/query&gt;</span></a>
+<a class="sourceLine" id="cb3-30" title="30"></a></code></pre></div>
+<h6 id="table-12-7-script-server-xml-settings">Table 12-7. Script Server XML Settings</h6>
+<table>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>name</td>
+<td>(Optional) You can enter a "friendly name" for the script query here. It will not be used by Cacti, and is for identification only.</td>
+</tr>
+<tr class="even">
+<td>description</td>
+<td>(Optional) You can enter a description for the script query here. It will not be used by Cacti, and is for identification only.</td>
+</tr>
+<tr class="odd">
+<td>script_path</td>
+<td>Enter the complete path to the script or executable that is going to handle your script query. When in doubt, specify the pull path to all binaries referenced in this path, the query may not execute otherwise.</td>
+</tr>
+<tr class="even">
+<td>script_function</td>
+<td>The function within the script in the case where the script can be used for multiple data collection functions. Most script server scripts are associated with only one Data Query, but it's possible to have one script perform the collection for multiple Data Queries.</td>
+</tr>
+<tr class="odd">
+<td>arg_prepend</td>
+<td>A list of device variables from the host to prepend after the script function when calling the script. This information can be used to identify the device that is being monitored or pass certain device information to the script.</td>
+</tr>
+<tr class="even">
+<td>arg_index</td>
+<td>Enter the argument that is to be passed to the script to retrieve a list of indexes.</td>
+</tr>
+<tr class="odd">
+<td>arg_query</td>
+<td>Enter the argument that is to be passed to the script to retrieve a list of values given a field name.</td>
+</tr>
+<tr class="even">
+<td>arg_get</td>
+<td>Enter the argument that is to be passed to the script to retrieve a single value given a field name and index value.</td>
+</tr>
+<tr class="odd">
+<td>arg_num_indexes</td>
+<td>Enter the argument that is to be passed to the script to determine the total number of available indexes. If specified, this will be used to determine when to automatically re-cache this script query when it is attached to a device.</td>
+</tr>
+<tr class="even">
+<td>output_delimeter</td>
+<td>Enter the one character delimiter that will be used to separate output values. This is only used when you "query" the script in which case it outputs 'index(delimiter)value'.</td>
+</tr>
+<tr class="odd">
+<td>index_order</td>
+<td>Cacti will attempt to find the best field to index off of based on whether each row in the query is unique and non-null. If specified, Cacti will perform this check on the fields listed here in the order specified. Only input fields can be specified and multiple fields should be delimited with a comma.</td>
+</tr>
+<tr class="even">
+<td>index_transient</td>
+<td>If set to 'true', this field instructs Cacti not to stop attempting to Graph an index if it disappears from the host cache as a result of a re-index. This setting is for indexes that come and go, for example PPPoE statistics or user statistics which appear when a user log's in, but disappear a few hours after the connection is terminated.</td>
+</tr>
+<tr class="odd">
+<td>index_order_type</td>
+<td>For sorting purposes, specify whether the index is numeric or alphanumeric. numeric: The indexes in this script query are to be sorted numerically (ie. 1,2,3,10,20,31) alphabetic: The indexes in this script query are to be sorted alphabetically (1,10,2,20,3,31).</td>
+</tr>
+<tr class="even">
+<td>index_title_format</td>
+<td>Specify the title format to use when representing an index to the user. Any input field name can be used as a variable if enclosed in pipes (|). The variable |chosen_order_field| will be substituted with the field chosen by Cacti to index off of (see index_order above).</td>
+</tr>
+</tbody>
+</table>
+<h6 id="table-12-6-script-server-xml-field-settings">Table 12-6. Script Server XML Field Settings</h6>
+<p>Each field contained within the Script Query must be defined under the field tag as show in the example above. In addition, each defined field in the Script Query must have a unique name given to it. Do not use spaces or any non-alphanumeric characters, this name must be identifiable within Cacti.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>name</td>
+<td>Here you can specify a "friendly name" for the field. This name will be used by Cacti to help the user identify this field.</td>
+</tr>
+<tr class="even">
+<td>direction</td>
+<td>input: Input values are the "known" values that you will use to derive the output values, this is where the "query" part of script query comes in. When you create a graph based on a script query, Cacti will prompt you to choose the input value to base the graph on. output: Output values are "unknown" values that are returned from the script. A script query may return multiple statistics for a single index. For instance, a single partition could return free disk space, total disk space, fragmentation percentage, etc. A rule of thumb is that input fields contain semi-static data that is not graphable, while the output fields contain the data that will be graphed.</td>
+</tr>
+<tr class="odd">
+<td>query_name</td>
+<td>Enter the name that Cacti must use when asking the script for information about this field. For instance, the following should return values: '(script_name) query (query_name)'.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

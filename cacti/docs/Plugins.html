@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Plugin Management</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="plugin-management">Plugin Management</h1>
+<h2 id="installing-plugins">Installing Plugins</h2>
+<p><img src="images/plugins.png" alt="plugins" /></p>
+<p>Installing plugins on cacti is a simple procedure</p>
+<ol>
+<li><p>Download the plugin to cactidir/cacti/plugins</p>
+<pre class="console"><code>git clone https://github.com/Cacti/plugin_thold.git
+</code></pre>
+<pre class="console"><code>mv plugin_thold /var/www/html/cacti/plugins
+</code></pre></li>
+<li><p>Now assign the proper permissions to the folder</p>
+<pre class="console"><code>chown -R apache:apache plugin_thold
+</code></pre></li>
+<li><p>From <code>Console &gt; Configuration &gt; Plugins</code> Install the plugin by Clicking on the wrench Icon as showng below.</p>
+<p>Below you will now see the THOLD plugin available to install in this case we are installing thold</p>
+<p><img src="images/thold-install.png" alt="thold plugin" /></p></li>
+<li><p>After installing the plugin by clicking on the grey gear you will now how to enable it this can be done via clicking on the green check mark</p>
+<p><img src="images/thold-enable.png" alt="thold plugin enable" /></p></li>
+</ol>
+<p>After this, the <strong>Plugin</strong> is installed and enabled. However, there will likely be onfiguration that must take place after the <strong>Plugin</strong> is enabled. See the <strong>Plugin</strong> documentation for instructions on how to configure and use them.</p>
+<h2 id="updating-a-plugin">Updating a Plugin</h2>
+<p>Updating a plugin not only keeps you up to date with the latest release of the code for that plugin. It also allows you to keep all of your settings for that plugin ensure you DO NOT UNINSTALL the plugin. You must instead disable the plugin which will not drop the SQL tables and thus save your settings.</p>
+<ol>
+<li><p>Disable the <strong>Plugin</strong> you want to update</p></li>
+<li><p>Backup the current <strong>Plugin</strong> folder typically in <code>&lt;path_cacti&gt;/plugins/plugin_name</code></p>
+<pre class="console"><code>cp -R /var/www/html/cacti/plugin/thold /tmp
+</code></pre></li>
+<li><p>git pull or download the new version of the <strong>Plugin</strong></p>
+<pre class="console"><code>git pull
+</code></pre></li>
+<li><p>Change name of <strong>Plugin</strong> folder i.e plugin_thold to thold</p>
+<pre class="console"><code>mv plugin_thold thold
+</code></pre></li>
+<li><p>Assign proper permissions usually either www-data for Ubuntu/debian or apache for CentOS/RHEL</p>
+<pre class="console"><code>chown -R apache:apache thold
+</code></pre></li>
+<li><p>Re-enable the <strong>Plugin</strong> in the <strong>Console</strong></p></li>
+</ol>
+<h3 id="video-walkthrough">Video Walkthrough</h3>
+<p><a href="https://youtu.be/TPKu-2XYKok"><img src="http://img.youtube.com/vi/TPKu-2XYKok/0.jpg" alt="Video Tuturial" /></a></p>
+<h2 id="unistall-a-plugin">Unistall a Plugin</h2>
+<p>To uninstall a plugin go into the plugins page <code>Console &gt; Configuration &gt; Plugins</code> Click on the plugin to Disable the plugin.</p>
+<p>Click on the red dot beside the plugin to uninstall the plugin a dialogue box will appear now click uninstall.</p>
+<p><img src="images/plugins-uninstall.png" alt="uninstall plugin" /></p>
+<p>This will uninstall the plugin from cacti but will NOT remove the files from the server to do that you must manually remove the plugin until you remove the files the plugin will show to be available to be installed.</p>
+<blockquote>
+<p><strong>WARNING</strong>: Uninstalling a Cacti <strong>Plugin</strong> generally also removes any database tables that that <strong>Plugin</strong> created, which means your data! Before uninstalling <strong>Plugins</strong>, it would be wise to have a backup strategy in place in case you accidentally uninstall a <strong>Plugin</strong> and loose your data!</p>
+</blockquote>
+<h3 id="dependencies-in-plugins">Dependencies in plugins</h3>
+<p>Some dependencies such as THOLD aka Thresholds rely on another plugin in this case thold reliese on the monitor plugin which is missing in this case you will see the below messege box in order to continue you must install the required plugin.</p>
+<p><img src="images/plugins-dependencies.png" alt="plugin dependencies" /></p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

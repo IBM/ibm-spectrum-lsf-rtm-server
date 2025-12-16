@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – How To Work with Templates</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="how-to-work-with-templates">How To Work with Templates</h1>
+<p>We will follow the following process in this example:</p>
+<ul>
+<li><strong>Create Data Template</strong> - Defines how we store the data in the RRDfile</li>
+<li><strong>Create Graph Template</strong> - Defines how we graph the data in the RRDfile</li>
+<li><strong>Device Template</strong> - Defines which Graphs to associate with a Device Type</li>
+</ul>
+<h2 id="data-template-creation">Data Template Creation</h2>
+<p>For this task, let's stick to SNMP stuff. For you to be able to reproduce this example, I've chosen the <strong>UDP</strong> information of the IP MIB.</p>
+<pre class="console"><code>snmpwalk -c &lt;community string&gt; -v1 &lt;device&gt; udp
+UDP-MIB::udpInDatagrams.0 = Counter32: 7675
+UDP-MIB::udpNoPorts.0 = Counter32: 128
+UDP-MIB::udpInErrors.0 = Counter32: 0
+UDP-MIB::udpOutDatagrams.0 = Counter32: 8406
+</code></pre>
+<p>As cacti does not use the MIBs but pure ASN.1 OIDs, let's search the OID used as <code>udpInDatagrams</code>:</p>
+<pre class="console"><code>snmpwalk -c &lt;community string&gt; -v1 -On &lt;device&gt; udp
+.1.3.6.1.2.1.7.1.0 = Counter32: 7778
+.1.3.6.1.2.1.7.2.0 = Counter32: 129
+.1.3.6.1.2.1.7.3.0 = Counter32: 0
+.1.3.6.1.2.1.7.4.0 = Counter32: 8514
+</code></pre>
+<p>The needed OID is .1.3.6.1.2.1.7.1.0. Now learn how to enter this into a new Cacti Data Template: Please proceed to Data Templates and filter for SNMP. Check the SNMP - Generic OID Template</p>
+<p><img src="images/data-templates.png" alt="Data Templates" /></p>
+<p>After clicking Go, you're prompted with a new page to enter <code>udp/net - udp Out Datagrams</code> as the <code>Title Format</code> for the new <strong>Data Template</strong>:</p>
+<p><img src="images/data-templates-copy.png" alt="Data Templates Duplicate" /></p>
+<p>Due to the filter defined above, you won't see the new Template at once, so please enter <code>udp Out</code> as a new filter to find:</p>
+<p><img src="images/data-templates-new.png" alt="Data Templates New" /></p>
+<p>Now select this entry to change some definitions according to the following images:</p>
+<p><img src="images/data-templates-new1.png" alt="Data Templates New 1" /></p>
+<p><img src="images/data-templates-new2.png" alt="Data Templates New 2" /></p>
+<p><img src="images/data-templates-new3.png" alt="Data Templates New 2" /></p>
+<p>for the lower one. Please pay attention to change the MAXIMUM value to 0 to prevent data suppression for values exceeding 100. And you saw the OID <code>.1.3.6.1.2.1.7.1.0</code> from above, didn't you? Please copy another one for OID <code>.1.3.6.1.2.1.7.4.0</code>, using the description <strong>udpOutDatagrams</strong></p>
+<h2 id="graph-template-creation">Graph Template Creation</h2>
+<p>Now let's generate the <strong>Graph Template</strong> for those already generated Data Templates. Please go to <strong>Graph Templates</strong> and <strong>Add</strong> a new one:</p>
+<p><img src="images/graph-templates.png" alt="Graph Template" /></p>
+<p>Now you have to fill in some global parameters:</p>
+<p><img src="images/graph-templates-new1.png" alt="Graph Template New" /></p>
+<p>and <strong>Create</strong> to see:</p>
+<p><img src="images/graph-templates-new2.png" alt="Graph Template New 3" /></p>
+<p>Now let's add some <strong>Graph Template</strong> <strong>Graph Items</strong>. They will specify, which <strong>Data Sources</strong> defined by some <strong>Data Template</strong> should be displayed on the <strong>Graph</strong>. Please click Add as shown on the last image:</p>
+<p><img src="images/graph-templates-item1.png" alt="Graph Template Items 1" /></p>
+<p>Now click Save to see the resulting image below. Not that both the <strong>Graph Item</strong> and the <strong>Graph Item Input</strong> have been created.</p>
+<p><img src="images/graph-templates-item1s.png" alt="Graph Template Items 1" /></p>
+<p>Next, we have to add a Legend in order for people viewing the <strong>Graph</strong> in the future to obtain numeric data about the <strong>Graph</strong> contents. We will create a very simple one, though Graph Legends can be a very complex subject.</p>
+<p>To add the Graph Legend, simply press the Add button again and fill out the <strong>Graph Item</strong> as shown in the image below. You should note that for this second <strong>Graph Item</strong>, it remembered the previous <strong>Data Source</strong>.</p>
+<p><img src="images/graph-templates-item2.png" alt="Graph Template Items" /></p>
+<p>Press Save to see three legend items created in one step!</p>
+<p><img src="images/graph-templates-item2s.png" alt="Graph Template Items 2" /></p>
+<p>Now we could have continued to add the UDP Datagrams In by adding a second RRDfile Data Source to our <strong>Data Template</strong>, but we will skip that for this exercise and continue now that our <strong>Graph Template</strong> is reasonably completed.</p>
+<p>At this point, since we only added <strong>Graph Items</strong> to the <strong>Graph Template</strong> there is no need to resave it at this point. We can simply continue to the next step.</p>
+<p>Now, you may add this new <strong>Graph Template</strong> to any <strong>Devices</strong> that responds to the udp OID we specified in the <strong>Data Template</strong>. But in this case, please wait a moment. Let's first proceed to the <strong>Device Template</strong> and use this new <strong>Graph Gemplate</strong> for our first own <strong>Device Template</strong>.</p>
+<h2 id="device-template-creation">Device Template Creation</h2>
+<p>The next task is to create a new <strong>Device Template</strong>. So, select <strong>Device</strong> under <code>Console &gt; Templates</code> and press the Add button as in previous examples. When you do that, you will be presented with an page that resembles the one below.</p>
+<p><img src="images/device-template-add.png" alt="Add Host Template" /></p>
+<p>and fill in the name of this new Template:</p>
+<p><img src="images/device-template-new.png" alt="Add Host Template New" /></p>
+<p>Now you'll find two sections added. First, let's deal with <strong>Associated Graph Templates</strong>. The Add <strong>Graph template</strong> select drop-down contains all existing <strong>Graph Templates</strong>. In the images, you will see that we are creating a <strong>Device Template</strong> for a NetApp Filer and adding some common Graph Templates and Data Queries from the Cacti built-in collection.</p>
+<p><img src="images/device-template-new-gt.png" alt="Host Template Associate Graph Template" /></p>
+<p>and Add it:</p>
+<p><img src="images/device-template-new-gts.png" alt="Host Template Associate Graph Template 2" /></p>
+<p>Next, let's add the Data Query already selected above:</p>
+<p><img src="images/device-template-new-dqs.png" alt="Host Template - Data Query" /></p>
+<p>Keep in mind, this is one of the more simple Template examples. Topics such as <strong>Data Queries</strong>, <strong>Data Input Methods</strong>, and <strong>Script Server</strong> add a few steps to the Template creation process.</p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

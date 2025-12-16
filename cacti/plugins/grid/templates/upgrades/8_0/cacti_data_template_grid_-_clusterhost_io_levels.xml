@@ -1,0 +1,64 @@
+<!-- $Id$ -->
+<cacti>
+	<hash_010021f018f70c7c979eed1cc6b3ca1812575d>
+		<name>GRID - Cluster/Host IO Levels</name>
+		<ds>
+			<t_name></t_name>
+			<name>|host_description| - IO Levels</name>
+			<data_input_id>hash_030021b1749e1fa6655198fdc160f68007c3fe</data_input_id>
+			<t_rra_id></t_rra_id>
+			<t_rrd_step></t_rrd_step>
+			<rrd_step>300</rrd_step>
+			<t_active></t_active>
+			<active>on</active>
+			<rra_items>hash_150021c21df5178e5c955013591239eb0afd46|hash_1500210d9c0af8b8acdc7807943937b3208e29|hash_1500216fc2d038fb42950138b0ce3e9874cc60|hash_150021e36f3adb9f152adfa5dc50fd2b23337e</rra_items>
+		</ds>
+		<items>
+			<hash_080021c755e1fd3ab78e116cea7fc3eca39d63>
+				<t_data_source_name></t_data_source_name>
+				<data_source_name>pg</data_source_name>
+				<t_rrd_minimum></t_rrd_minimum>
+				<rrd_minimum>0</rrd_minimum>
+				<t_rrd_maximum></t_rrd_maximum>
+				<rrd_maximum>0</rrd_maximum>
+				<t_data_source_type_id></t_data_source_type_id>
+				<data_source_type_id>1</data_source_type_id>
+				<t_rrd_heartbeat></t_rrd_heartbeat>
+				<rrd_heartbeat>600</rrd_heartbeat>
+				<t_data_input_field_id></t_data_input_field_id>
+				<data_input_field_id>hash_0700212038a506382c5cd423b348ff7ee958fe</data_input_field_id>
+			</hash_080021c755e1fd3ab78e116cea7fc3eca39d63>
+			<hash_080021670047868ba33df82fc944174235625c>
+				<t_data_source_name></t_data_source_name>
+				<data_source_name>io</data_source_name>
+				<t_rrd_minimum></t_rrd_minimum>
+				<rrd_minimum>0</rrd_minimum>
+				<t_rrd_maximum></t_rrd_maximum>
+				<rrd_maximum>0</rrd_maximum>
+				<t_data_source_type_id></t_data_source_type_id>
+				<data_source_type_id>1</data_source_type_id>
+				<t_rrd_heartbeat></t_rrd_heartbeat>
+				<rrd_heartbeat>600</rrd_heartbeat>
+				<t_data_input_field_id></t_data_input_field_id>
+				<data_input_field_id>hash_0700211ea8abe892946bab9a81aa61346a4bae</data_input_field_id>
+			</hash_080021670047868ba33df82fc944174235625c>
+		</items>
+		<data>
+			<item_000>
+				<data_input_field_id>hash_070021ea8dccf5fc1384f938fd34eb84d663f3</data_input_field_id>
+				<t_value></t_value>
+				<value></value>
+			</item_000>
+			<item_001>
+				<data_input_field_id>hash_07002181088f2c5a34260da1c4947118d37787</data_input_field_id>
+				<t_value></t_value>
+				<value></value>
+			</item_001>
+			<item_002>
+				<data_input_field_id>hash_070021f6f1b65d709541eec49a5a51d96cd919</data_input_field_id>
+				<t_value>on</t_value>
+				<value>no</value>
+			</item_002>
+		</data>
+	</hash_010021f018f70c7c979eed1cc6b3ca1812575d>
+</cacti>

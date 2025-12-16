@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Path Settings</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="path-settings">Path Settings</h1>
+<p>Cacti's Path Settings include mainly the locations of core binaries that Cacti must call in order to operate correctly. Generally, these binaries are included in the Web Servers path, but being able to override these settings is important, especially for debugging issues. Cacti's Paths sub-tab is broken into the following sub-sections:</p>
+<ul>
+<li><strong>Required Tool Paths</strong> - Paths that are essential for Cacti's operation</li>
+<li><strong>Logging</strong> - Settings associated with Cacti's logging facilities including log rotation</li>
+<li><strong>Alternate Poller Path</strong> - Locations for Cacti's spine binary and spine config file if not in the established default locations</li>
+<li><strong>RRD Cleaner</strong> - Setting for Cacti's RRDfile disposal of removed RRDfile when Data Sources are removed.</li>
+</ul>
+<p>When using Cacti's <strong>Remote Data Collectors</strong> or <strong>Remote Pollers</strong> the settings that refer for a <code>File Path</code>, or <code>Directory Path</code> will be local to the <strong>Data Collector</strong>. Therefore, you can have one set of paths for your Main Cacti site, and another set of paths for your Remote Poller, say in the case that they are on Windows.</p>
+<h2 id="required-tools-paths">Required Tools Paths</h2>
+<p>The image below shows Cacti's <strong>Required Tool Paths</strong> settings.</p>
+<p><img src="images/settings-paths-required.png" alt="Required Tools Paths" /></p>
+<p>Those settings include:</p>
+<p><strong>snmpwalk Binary Path</strong> - This is the path to the <code>snmpwalk</code> binary.</p>
+<p><strong>snmpget Binary Path</strong> - This is the path to the <code>snmpget</code> binary.</p>
+<p><strong>snmpbulkwalk Binary Path</strong> - This is the path to the <code>snmpwalk</code> binary. This binary path is essential if you use SNMPv2 of SNMPv3 versions where <strong>Data Queries</strong> perform bulkwalks by default to increase performance.</p>
+<p><strong>snmpgetnext Binary Path</strong> - This is the path to the <code>snmpgetnext</code> binary.</p>
+<p><strong>snmptrap Binary Path</strong> - This is the path to the <code>snmptrap</code> binary. This binary is important for SNMP Notification and Trap generation.</p>
+<p><strong>RRDtool Binary Path</strong> - The location of the RRDtool binary that matches your RRDtool version.</p>
+<p><strong>PHP Binary Path</strong> - The location of the PHP Binary, generally, this setting is always <code>/usr/php</code>, but can change for some users.</p>
+<h2 id="logging">Logging</h2>
+<p>The next set of settings define where Cacti's Standard Output and Standard Error files are to be placed, and how they should be rotated, and for how long they should be retained. You can see those settings from the image below.</p>
+<p><img src="images/settings-paths-logging.png" alt="Logfile Settings" /></p>
+<p>Those settings include:</p>
+<p><strong>Cacti Log Path</strong> - The location of Cacti's Standard Output (stdout) log file.</p>
+<p><strong>Poller Standard Error Log Path</strong> - For Cacti's <strong>Data Collector</strong> functions only, the location of the Standard Error (stderr) log file.</p>
+<p><strong>Rotate the Cacti Log</strong> - Determines if Cacti or the package maintainer rotates the Cacti log.</p>
+<p><strong>Rotation Frequency</strong> - Should the Log files be rotated <code>Daily</code> or <code>Weekly</code> or <code>Monthly</code></p>
+<p><strong>Log Retention</strong> - How many generations of Log files should be maintained. Older files will be removed automatically.</p>
+<blockquote>
+<p><strong>NOTE</strong>: Some package maintainers control log rotation and therefore the log rotation settings may be missing from certain version of Cacti if you install through a packaging tool such as <code>apt-get</code>, <code>yum</code> or <code>dnf</code></p>
+</blockquote>
+<h2 id="alternate-poller-path">Alternate Poller Path</h2>
+<p>The sub-section hold information on how to find Cacti's <code>spine</code> binary if it's installed. Since <code>spine</code> is written in ANSI C, it is not provided as a part of the Cacti install and must be compiled by the Cacti Administrator. The benefit of the <code>spine</code> binary is that it's mufti-threaded and extremely scalable. It's possible to poll enterprises with excess of 30,000 devices using spine on a reasonably large system. The image below show's this sub-section.</p>
+<p><img src="images/settings-paths-alternate.png" alt="Alternate Poller Path" /></p>
+<p>Those settings include:</p>
+<ul>
+<li><p><strong>Spine Binary File Location</strong> - The path to the spine binary.</p></li>
+<li><p><strong>Spine Config File Path</strong> - This setting is optional. If blank, Cacti will search the following locations for a <code>spine.conf</code> file.</p>
+<ul>
+<li><strong>pwd</strong> - The same directory as spine</li>
+<li><strong>../etc/</strong> - One sibling <code>etc</code> directory of the <code>spine</code> binary directory.</li>
+<li><strong>/etc/</strong> - The systems /etc/ directory.</li>
+</ul></li>
+</ul>
+<h2 id="rrd-cleaner">RRD Cleaner</h2>
+<p>This setting defines how Cacti manages RRDfiles from <strong>Data Sources</strong> that have been removed. By default, Cacti does not manage these files, and leaves it to the Cacti Administrator to pro-actively manage them. The RRD Cleaner settings can be seen in the image below. Note that unless you enable <code>RRDfile Auto Clean</code>, you will not see the other settings by default.</p>
+<p><img src="images/settings-paths-rrd-cleaner.png" alt="RRD Cleaner" /></p>
+<p>Those settings include:</p>
+<ul>
+<li><p><strong>RRDfile Auto Clean</strong> - Denotes that you wish Cacti to manage RRDfiles from removed <strong>Data Sources</strong> potentially automatically.</p></li>
+<li><p><strong>RRDfile Auto Clean Method</strong> - This is the method to perform cleanup. Options include:</p>
+<ul>
+<li><strong>Delete</strong> - Simply remote the files once the <strong>Data Source</strong> is removed</li>
+<li><strong>Archive</strong> - Archive the RRDfile to an Archive directory once it's removed.</li>
+</ul></li>
+<li><p><strong>Archive directory</strong> - The Archive directory to move old RRDfile to.</p></li>
+</ul>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!-- $Id$ -->
+<interface>
+	<name>Grid Shared Resources</name>
+	<script_path>|path_cacti|/scripts/ss_grid_sres_stats.php</script_path>
+	<script_function>ss_grid_sres_stats</script_function>
+	<script_server>php</script_server>
+	<arg_prepend>|clusterid|</arg_prepend>
+	<arg_index>index</arg_index>
+	<arg_query>query</arg_query>
+	<arg_get>get</arg_get>
+	<output_delimeter>!</output_delimeter>
+	<index_order>resource_name</index_order>
+	<index_order_type>alpha</index_order_type>
+	<index_title_format>|chosen_order_field|</index_title_format>
+
+	<fields>
+		<resource_name>
+			<name>Resource Name</name>
+			<direction>input</direction>
+			<query_name>resource_name</query_name>
+		</resource_name>
+		<maxValue>
+			<name>Max Value</name>
+			<direction>output</direction>
+			<query_name>maxValue</query_name>
+		</maxValue>
+		<reservedValue>
+			<name>Reserved Value</name>
+			<direction>output</direction>
+			<query_name>reservedValue</query_name>
+		</reservedValue>
+		<totalValue>
+			<name>Total Value</name>
+			<direction>output</direction>
+			<query_name>totalValue</query_name>
+		</totalValue>
+	</fields>
+</interface>

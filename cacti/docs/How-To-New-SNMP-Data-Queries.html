@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – SNMP Data Query Walkthrough</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="snmp-data-query-walkthrough">SNMP Data Query Walkthrough</h1>
+<p>This walkthrough will show you how to implement a new SNMP Data Query. Assuming, you know the SNMP table, the next steps show how to proceed.</p>
+<h2 id="building-raw-xml-file">Building Raw XML File</h2>
+<p>The starting point will be snmptable for a well know table of the HOSTS MIB:</p>
+<pre class="console"><code>snmptable -c &lt;community&gt; -v 1 &lt;host&gt; HOST-RESOURCES-MIB::hrStorageTable
+SNMP table: HOST-RESOURCES-MIB::hrStorageTable
+
+ hrStorageIndex                hrStorageType hrStorageDescr hrStorageAllocationUnits hrStorageSize hrStorageUsed hrStorageAllocationFailures
+          1     HOST-RESOURCES-TYPES::hrStorageOther Memory Buffers           1024 Bytes       1035356     59532               ?
+          2       HOST-RESOURCES-TYPES::hrStorageRam    Real Memory           1024 Bytes       1035356    767448               ?
+          3 HOST-RESOURCES-TYPES::hrStorageVirtualMemory     Swap Space           1024 Bytes       1048568   0               ?
+          4     HOST-RESOURCES-TYPES::hrStorageFixedDisk          /           4096 Bytes       2209331    826154               ?
+          5     HOST-RESOURCES-TYPES::hrStorageFixedDisk       /sys           4096 Bytes         0   0               ?
+          6     HOST-RESOURCES-TYPES::hrStorageFixedDisk  /proc/bus/usb           4096 Bytes         0   0               ?
+          7     HOST-RESOURCES-TYPES::hrStorageFixedDisk      /boot           1024 Bytes    102454      9029               ?
+          8     HOST-RESOURCES-TYPES::hrStorageFixedDisk      /home           4096 Bytes    507988    446407               ?
+          9     HOST-RESOURCES-TYPES::hrStorageFixedDisk     /usr/local           4096 Bytes    507988     17133               ?
+         10     HOST-RESOURCES-TYPES::hrStorageFixedDisk       /var           4096 Bytes    507988    129429               ?
+         11     HOST-RESOURCES-TYPES::hrStorageFixedDisk /var/lib/nfs/rpc_pipefs           4096 Bytes         0        0               ?**
+</code></pre>
+<p>This given, the first step will be the definition of an XML file based on those OIDs. So change to your <code>&lt;path_cacti&gt;/resources/snmp_queries</code> directory and create a file named <strong>hrStorageTable.xml</strong>. You may of course choose your own name, but for me it seems appropriate to take the name of the SNMP Table itself. Before doing so, it is necessary to identify the Index of that table. Without looking at the MIB file, simply perform</p>
+<pre class="console"><code>snmpwalk -c &lt;community&gt; -v 1 -On &lt;host&gt; HOST-RESOURCES-MIB::hrStorageTable|more
+.1.3.6.1.2.1.25.2.3.1.1.1 = INTEGER: 1
+.1.3.6.1.2.1.25.2.3.1.1.2 = INTEGER: 2
+.1.3.6.1.2.1.25.2.3.1.1.3 = INTEGER: 3
+.1.3.6.1.2.1.25.2.3.1.1.4 = INTEGER: 4
+.1.3.6.1.2.1.25.2.3.1.1.5 = INTEGER: 5
+.1.3.6.1.2.1.25.2.3.1.1.6 = INTEGER: 6
+.1.3.6.1.2.1.25.2.3.1.1.7 = INTEGER: 7
+.1.3.6.1.2.1.25.2.3.1.1.8 = INTEGER: 8
+.1.3.6.1.2.1.25.2.3.1.1.9 = INTEGER: 9
+.1.3.6.1.2.1.25.2.3.1.1.10 = INTEGER: 10
+.1.3.6.1.2.1.25.2.3.1.1.11 = INTEGER: 11
+.1.3.6.1.2.1.25.2.3.1.2.1 = OID: .1.3.6.1.2.1.25.2.1.1
+.1.3.6.1.2.1.25.2.3.1.2.2 = OID: .1.3.6.1.2.1.25.2.1.2
+</code></pre>
+<p>The first index is <code>.1.3.6.1.2.1.25.2.3.1.1.1</code>, but the Index Base is <code>.1.3.6.1.2.1.25.2.3.1.1.</code> This OID is needed for the XML file:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">&lt;interface&gt;</span></a>
+<a class="sourceLine" id="cb3-2" title="2">    <span class="kw">&lt;name&gt;</span>Get hrStoragedTable Information<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb3-3" title="3">    <span class="kw">&lt;description&gt;</span>Get SNMP based Partition Information out of hrStorageTable<span class="kw">&lt;/description&gt;</span></a>
+<a class="sourceLine" id="cb3-4" title="4">    <span class="kw">&lt;index_order&gt;</span>hrStorageDescr:hrStorageIndex<span class="kw">&lt;/index_order&gt;</span></a>
+<a class="sourceLine" id="cb3-5" title="5">    <span class="kw">&lt;index_order_type&gt;</span>numeric<span class="kw">&lt;/index_order_type&gt;</span></a>
+<a class="sourceLine" id="cb3-6" title="6">    <span class="kw">&lt;oid_index&gt;</span>.1.3.6.1.2.1.25.2.3.1.1<span class="kw">&lt;/oid_index&gt;</span></a>
+<a class="sourceLine" id="cb3-7" title="7"></a>
+<a class="sourceLine" id="cb3-8" title="8">    <span class="kw">&lt;fields&gt;</span></a>
+<a class="sourceLine" id="cb3-9" title="9">        <span class="kw">&lt;hrStorageIndex&gt;</span></a>
+<a class="sourceLine" id="cb3-10" title="10">            <span class="kw">&lt;name&gt;</span>Index<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb3-11" title="11">            <span class="kw">&lt;method&gt;</span>walk<span class="kw">&lt;/method&gt;</span></a>
+<a class="sourceLine" id="cb3-12" title="12">            <span class="kw">&lt;source&gt;</span>value<span class="kw">&lt;/source&gt;</span></a>
+<a class="sourceLine" id="cb3-13" title="13">            <span class="kw">&lt;direction&gt;</span>input<span class="kw">&lt;/direction&gt;</span></a>
+<a class="sourceLine" id="cb3-14" title="14">            <span class="kw">&lt;oid&gt;</span>.1.3.6.1.2.1.25.2.3.1.1<span class="kw">&lt;/oid&gt;</span></a>
+<a class="sourceLine" id="cb3-15" title="15">        <span class="kw">&lt;/hrStorageIndex&gt;</span></a>
+<a class="sourceLine" id="cb3-16" title="16">    <span class="kw">&lt;/fields&gt;</span></a>
+<a class="sourceLine" id="cb3-17" title="17"><span class="kw">&lt;/interface&gt;</span></a></code></pre></div>
+<p>Lets talk about the header elements</p>
+<table>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Name</td>
+<td>Short Name; choose your own one if you want</td>
+</tr>
+<tr class="even">
+<td>Description</td>
+<td>Long Name</td>
+</tr>
+<tr class="odd">
+<td>index_order</td>
+<td>tells us, which field shall be selected to index on; evaluated from left to right</td>
+</tr>
+<tr class="even">
+<td>index_order_type</td>
+<td>numeric instead of alphabetic sorting</td>
+</tr>
+<tr class="odd">
+<td>oid_index</td>
+<td>the index of the table</td>
+</tr>
+</tbody>
+</table>
+<p>There are more header elements, but for sake of simplification, we'll stick to that for now.</p>
+<p>Lets turn to the fields. They correspond to the columns of the snmptable. For debugging purpose it is recommended to start with the Index field first. This will keep the XML as tiny as possible. The <code>&lt;fields&gt;</code> section contains one or more fields, each beginning with <code>&lt;field_description&gt;</code> and ending with <code>&lt;/field_description&gt;</code>. It is recommended but not necessary to take the textual representation of the OID or an abbreviation of that.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Name</td>
+<td>Short Name</td>
+</tr>
+<tr class="even">
+<td>Method</td>
+<td>Walk or get (representing snmpwalk or snmpget to fetch the values)</td>
+</tr>
+<tr class="odd">
+<td>Source</td>
+<td>Value = take the value of that OID as the requested value. Sounds ugly, but there are more options that we won't need for the purpose of this example</td>
+</tr>
+<tr class="even">
+<td>Direction</td>
+<td>Input (for values that may be printed as COMMENTs or the like). Output (for values that shall be graphed, e.g. COUNTERs or GAUGEs).</td>
+</tr>
+<tr class="odd">
+<td>OID</td>
+<td>the real OID as numeric representation</td>
+</tr>
+</tbody>
+</table>
+<p>Now save this file and lets turn to cacti to implement this one. First, go to <strong>Data Queries</strong> to see</p>
+<p><img src="images/dq-01.preview.png" alt="SNMP Table 1 - Data Query" /></p>
+<p>and <strong>Add</strong> a new one:</p>
+<p><img src="images/dq-02.preview.png" alt="SNMP Table 2 - Data Query" /></p>
+<p>Fill in Short and Long Names at your wish. Enter the file name of the XML file and don't forget to choose <strong>Get SNMP Data (indexed)</strong>. <strong>Create</strong> to see</p>
+<p><img src="images/dq-03.preview.png" alt="SNMP Table 3 - Data Query" /></p>
+<p>It has now <strong>Successfully located XML file</strong>. But this does not mean that there are no errors. So lets go on with that. Turn to the <strong>Device</strong> you want to query and add the new <strong>Data Query</strong> as shown:</p>
+<p><img src="images/dev-01.preview.png" alt="SNMP Table 1 - Device" /></p>
+<p><strong>Index Count Changed</strong> was chosen on purpose to tell cacti to re-index not only on reboot but each time the Index Count (e.g. number of partitions) changed. When done, see the results as</p>
+<p><img src="images/dev-02.preview.png" alt="SNMP Table 2 - Device" /></p>
+<p>You'll notice, that on my laptop there are 11 indices = 11 partitions. So the XML worked up to now! To make this clear, select <strong>Verbose Query</strong> to see:</p>
+<p><img src="images/dev-03.preview.png" alt="SNMP Table Preview - Device" /></p>
+<h2 id="insert-all-descriptive-table-columns">Insert all descriptive table columns</h2>
+<p>Now lets put all descriptive table columns into the SNMP Query XML file. This refers to</p>
+<ul>
+<li><p>hrStorageType</p></li>
+<li><p>hrStorageDescr</p></li>
+<li><p>hrStorageAllocationUnits</p></li>
+</ul>
+<p>I like to take the XML field names from the snmptable output, but this is not a must.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">&lt;interface&gt;</span></a>
+<a class="sourceLine" id="cb4-2" title="2">    <span class="kw">&lt;name&gt;</span>Get hrStoragedTable Information<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb4-3" title="3">    <span class="kw">&lt;description&gt;</span>Get SNMP based Partition Information out of hrStorageTable<span class="kw">&lt;/description&gt;</span></a>
+<a class="sourceLine" id="cb4-4" title="4">    <span class="kw">&lt;index_order&gt;</span>hrStorageDescr:hrStorageIndex<span class="kw">&lt;/index_order&gt;</span></a>
+<a class="sourceLine" id="cb4-5" title="5">    <span class="kw">&lt;index_order_type&gt;</span>numeric<span class="kw">&lt;/index_order_type&gt;</span></a>
+<a class="sourceLine" id="cb4-6" title="6">    <span class="kw">&lt;oid_index&gt;</span>.1.3.6.1.2.1.25.2.3.1.1<span class="kw">&lt;/oid_index&gt;</span></a>
+<a class="sourceLine" id="cb4-7" title="7"></a>
+<a class="sourceLine" id="cb4-8" title="8">    <span class="kw">&lt;fields&gt;</span></a>
+<a class="sourceLine" id="cb4-9" title="9">        <span class="kw">&lt;hrStorageIndex&gt;</span></a>
+<a class="sourceLine" id="cb4-10" title="10">            <span class="kw">&lt;name&gt;</span>Index<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb4-11" title="11">            <span class="kw">&lt;method&gt;</span>walk<span class="kw">&lt;/method&gt;</span></a>
+<a class="sourceLine" id="cb4-12" title="12">            <span class="kw">&lt;source&gt;</span>value<span class="kw">&lt;/source&gt;</span></a>
+<a class="sourceLine" id="cb4-13" title="13">            <span class="kw">&lt;direction&gt;</span>input<span class="kw">&lt;/direction&gt;</span></a>
+<a class="sourceLine" id="cb4-14" title="14">            <span class="kw">&lt;oid&gt;</span>.1.3.6.1.2.1.25.2.3.1.1<span class="kw">&lt;/oid&gt;</span></a>
+<a class="sourceLine" id="cb4-15" title="15">        <span class="kw">&lt;/hrStorageIndex&gt;</span></a>
+<a class="sourceLine" id="cb4-16" title="16">        <span class="kw">&lt;hrStorageType&gt;</span></a>
+<a class="sourceLine" id="cb4-17" title="17">            <span class="kw">&lt;name&gt;</span>Type<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb4-18" title="18">            <span class="kw">&lt;method&gt;</span>walk<span class="kw">&lt;/method&gt;</span></a>
+<a class="sourceLine" id="cb4-19" title="19">            <span class="kw">&lt;source&gt;</span>value<span class="kw">&lt;/source&gt;</span></a>
+<a class="sourceLine" id="cb4-20" title="20">            <span class="kw">&lt;direction&gt;</span>input<span class="kw">&lt;/direction&gt;</span></a>
+<a class="sourceLine" id="cb4-21" title="21">            <span class="kw">&lt;oid&gt;</span>.1.3.6.1.2.1.25.2.3.1.2<span class="kw">&lt;/oid&gt;</span></a>
+<a class="sourceLine" id="cb4-22" title="22"></a>
+<a class="sourceLine" id="cb4-23" title="23">        <span class="kw">&lt;/hrStorageType&gt;</span></a>
+<a class="sourceLine" id="cb4-24" title="24">        <span class="kw">&lt;hrStorageDescr&gt;</span></a>
+<a class="sourceLine" id="cb4-25" title="25">            <span class="kw">&lt;name&gt;</span>Description<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb4-26" title="26">            <span class="kw">&lt;method&gt;</span>walk<span class="kw">&lt;/method&gt;</span></a>
+<a class="sourceLine" id="cb4-27" title="27">            <span class="kw">&lt;source&gt;</span>value<span class="kw">&lt;/source&gt;</span></a>
+<a class="sourceLine" id="cb4-28" title="28">            <span class="kw">&lt;direction&gt;</span>input<span class="kw">&lt;/direction&gt;</span></a>
+<a class="sourceLine" id="cb4-29" title="29">            <span class="kw">&lt;oid&gt;</span>.1.3.6.1.2.1.25.2.3.1.3<span class="kw">&lt;/oid&gt;</span></a>
+<a class="sourceLine" id="cb4-30" title="30">        <span class="kw">&lt;/hrStorageDescr&gt;</span></a>
+<a class="sourceLine" id="cb4-31" title="31">        <span class="kw">&lt;hrStorageAllocationUnits&gt;</span></a>
+<a class="sourceLine" id="cb4-32" title="32">            <span class="kw">&lt;name&gt;</span>Allocation Units (Bytes)<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb4-33" title="33">            <span class="kw">&lt;method&gt;</span>walk<span class="kw">&lt;/method&gt;</span></a>
+<a class="sourceLine" id="cb4-34" title="34">            <span class="kw">&lt;source&gt;</span>value<span class="kw">&lt;/source&gt;</span></a>
+<a class="sourceLine" id="cb4-35" title="35">            <span class="kw">&lt;direction&gt;</span>input<span class="kw">&lt;/direction&gt;</span></a>
+<a class="sourceLine" id="cb4-36" title="36">            <span class="kw">&lt;oid&gt;</span>.1.3.6.1.2.1.25.2.3.1.4<span class="kw">&lt;/oid&gt;</span></a>
+<a class="sourceLine" id="cb4-37" title="37">        <span class="kw">&lt;/hrStorageAllocationUnits&gt;</span></a>
+<a class="sourceLine" id="cb4-38" title="38">    <span class="kw">&lt;/fields&gt;</span></a>
+<a class="sourceLine" id="cb4-39" title="39"><span class="kw">&lt;/interface&gt;</span></a></code></pre></div>
+<p>The <code>&lt;name&gt;&lt;/name&gt;</code> information will later show up as a column heading. Don't forget to provide the correct base OIDs. Remember, that the <strong>Index</strong> will always be appended to those OIDs, e.g. the first Description will be fetched from OID = <code>.1.3.6.1.2.1.25.2.3.1.3.1</code> (that is base OID = <code>.1.3.6.1.2.1.25.2.3.1.3</code> together with the appended index <code>.1</code> will form the complete OID <code>.1.3.6.1.2.1.25.2.3.1.3.1.</code></p>
+<p>Please notice, that all fields that will yield descriptive columns only take <code>&lt;direction&gt;input&lt;/direction&gt;</code></p>
+<p>If you have completed your work, turn to the cacti web interface and select your host from the <strong>Devices</strong> list to see:</p>
+<p><img src="images/dev-10.preview.png" alt="SNMP Table 3 - Devices" /></p>
+<p>Select the little green circle next to our SNMP XML to update your last changes. Then you'll see something like:</p>
+<p><img src="images/dev-11.preview.png" alt="SNMP Table 4 - Devices" /></p>
+<p>When using <strong>Verbose Query</strong>, you'll now find</p>
+<p><img src="images/dev-12.preview.png" alt="SNMP Table 5 - Devices" /></p>
+<p>And clicking <strong>Create Graphs for this host</strong> will result in</p>
+<p><img src="images/dev-13.preview.png" alt="SNMP Table 6 - Devices" /></p>
+<p>You're not supposed to really create graphs at this moment, cause the XML is not yet complete. And you'll notice, that the second column does not present very useful information. So it may be omitted in later steps.</p>
+<h2 id="getting-the-output-values">Getting the Output Values</h2>
+<p>Now lets modify the XML again. As said earlier, the second column is not very meaningful, so lets drop it. To get the output values, I appended the last two XML field descriptions, see:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">&lt;interface&gt;</span></a>
+<a class="sourceLine" id="cb5-2" title="2">    <span class="kw">&lt;name&gt;</span>Get hrStoragedTable Information<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb5-3" title="3">    <span class="kw">&lt;description&gt;</span>Get SNMP based Partition Information out of hrStorageTable<span class="kw">&lt;/description&gt;</span></a>
+<a class="sourceLine" id="cb5-4" title="4">    <span class="kw">&lt;index_order&gt;</span>hrStorageDescr:hrStorageIndex<span class="kw">&lt;/index_order&gt;</span></a>
+<a class="sourceLine" id="cb5-5" title="5">    <span class="kw">&lt;index_order_type&gt;</span>numeric<span class="kw">&lt;/index_order_type&gt;</span></a>
+<a class="sourceLine" id="cb5-6" title="6">    <span class="kw">&lt;oid_index&gt;</span>.1.3.6.1.2.1.25.2.3.1.1<span class="kw">&lt;/oid_index&gt;</span></a>
+<a class="sourceLine" id="cb5-7" title="7"></a>
+<a class="sourceLine" id="cb5-8" title="8">    <span class="kw">&lt;fields&gt;</span></a>
+<a class="sourceLine" id="cb5-9" title="9">        <span class="kw">&lt;hrStorageIndex&gt;</span></a>
+<a class="sourceLine" id="cb5-10" title="10">            <span class="kw">&lt;name&gt;</span>Index<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb5-11" title="11">            <span class="kw">&lt;method&gt;</span>walk<span class="kw">&lt;/method&gt;</span></a>
+<a class="sourceLine" id="cb5-12" title="12">            <span class="kw">&lt;source&gt;</span>value<span class="kw">&lt;/source&gt;</span></a>
+<a class="sourceLine" id="cb5-13" title="13">            <span class="kw">&lt;direction&gt;</span>input<span class="kw">&lt;/direction&gt;</span></a>
+<a class="sourceLine" id="cb5-14" title="14">            <span class="kw">&lt;oid&gt;</span>.1.3.6.1.2.1.25.2.3.1.1<span class="kw">&lt;/oid&gt;</span></a>
+<a class="sourceLine" id="cb5-15" title="15">        <span class="kw">&lt;/hrStorageIndex&gt;</span></a>
+<a class="sourceLine" id="cb5-16" title="16">        <span class="kw">&lt;hrStorageDescr&gt;</span></a>
+<a class="sourceLine" id="cb5-17" title="17">            <span class="kw">&lt;name&gt;</span>Description<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb5-18" title="18">            <span class="kw">&lt;method&gt;</span>walk<span class="kw">&lt;/method&gt;</span></a>
+<a class="sourceLine" id="cb5-19" title="19">            <span class="kw">&lt;source&gt;</span>value<span class="kw">&lt;/source&gt;</span></a>
+<a class="sourceLine" id="cb5-20" title="20">            <span class="kw">&lt;direction&gt;</span>input<span class="kw">&lt;/direction&gt;</span></a>
+<a class="sourceLine" id="cb5-21" title="21">            <span class="kw">&lt;oid&gt;</span>.1.3.6.1.2.1.25.2.3.1.3<span class="kw">&lt;/oid&gt;</span></a>
+<a class="sourceLine" id="cb5-22" title="22">        <span class="kw">&lt;/hrStorageDescr&gt;</span></a>
+<a class="sourceLine" id="cb5-23" title="23">        <span class="kw">&lt;hrStorageAllocationUnits&gt;</span></a>
+<a class="sourceLine" id="cb5-24" title="24">            <span class="kw">&lt;name&gt;</span>Allocation Units (Bytes)<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb5-25" title="25">            <span class="kw">&lt;method&gt;</span>walk<span class="kw">&lt;/method&gt;</span></a>
+<a class="sourceLine" id="cb5-26" title="26">            <span class="kw">&lt;source&gt;</span>value<span class="kw">&lt;/source&gt;</span></a>
+<a class="sourceLine" id="cb5-27" title="27">            <span class="kw">&lt;direction&gt;</span>input<span class="kw">&lt;/direction&gt;</span></a>
+<a class="sourceLine" id="cb5-28" title="28">            <span class="kw">&lt;oid&gt;</span>.1.3.6.1.2.1.25.2.3.1.4<span class="kw">&lt;/oid&gt;</span></a>
+<a class="sourceLine" id="cb5-29" title="29">        <span class="kw">&lt;/hrStorageAllocationUnits&gt;</span></a>
+<a class="sourceLine" id="cb5-30" title="30">        <span class="kw">&lt;hrStorageSize&gt;</span></a>
+<a class="sourceLine" id="cb5-31" title="31">            <span class="kw">&lt;name&gt;</span>Total Size (Units)<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb5-32" title="32">            <span class="kw">&lt;method&gt;</span>walk<span class="kw">&lt;/method&gt;</span></a>
+<a class="sourceLine" id="cb5-33" title="33">            <span class="kw">&lt;source&gt;</span>value<span class="kw">&lt;/source&gt;</span></a>
+<a class="sourceLine" id="cb5-34" title="34">            <span class="kw">&lt;direction&gt;</span>output<span class="kw">&lt;/direction&gt;</span></a>
+<a class="sourceLine" id="cb5-35" title="35">            <span class="kw">&lt;oid&gt;</span>.1.3.6.1.2.1.25.2.3.1.5<span class="kw">&lt;/oid&gt;</span></a>
+<a class="sourceLine" id="cb5-36" title="36">        <span class="kw">&lt;/hrStorageSize&gt;</span></a>
+<a class="sourceLine" id="cb5-37" title="37">        <span class="kw">&lt;hrStorageUsed&gt;</span></a>
+<a class="sourceLine" id="cb5-38" title="38">            <span class="kw">&lt;name&gt;</span>Used Space (Units)<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb5-39" title="39">            <span class="kw">&lt;method&gt;</span>walk<span class="kw">&lt;/method&gt;</span></a>
+<a class="sourceLine" id="cb5-40" title="40">            <span class="kw">&lt;source&gt;</span>value<span class="kw">&lt;/source&gt;</span></a>
+<a class="sourceLine" id="cb5-41" title="41">            <span class="kw">&lt;direction&gt;</span>output<span class="kw">&lt;/direction&gt;</span></a>
+<a class="sourceLine" id="cb5-42" title="42">            <span class="kw">&lt;oid&gt;</span>.1.3.6.1.2.1.25.2.3.1.6<span class="kw">&lt;/oid&gt;</span></a>
+<a class="sourceLine" id="cb5-43" title="43">        <span class="kw">&lt;/hrStorageUsed&gt;</span></a>
+<a class="sourceLine" id="cb5-44" title="44">    <span class="kw">&lt;/fields&gt;</span></a>
+<a class="sourceLine" id="cb5-45" title="45"><span class="kw">&lt;/interface&gt;</span></a></code></pre></div>
+<p>This works very much the same way as above.</p>
+<ul>
+<li><p>Provide the fields hrStorageSize and hrStorageUsed</p></li>
+<li><p>Provide a useful name</p></li>
+<li><p>Don't forget to specify <code>&lt;direction&gt;output&lt;/direction&gt;</code></p></li>
+<li><p>Give the corresponding base OIDs</p></li>
+</ul>
+<p>Now we may proceed as said above: Pressing the green circle runs that XML definitions against the host and updates the rows/columns. You will notice the “missing” second column only when Create Graphs for this Host is selected.</p>
+<hr />
+<p>Note: Don't forget to set <code>&lt;direction&gt;output&lt;/direction&gt;</code> for all variables/fields, that should be stored in RRDfiles and be graphed!. This is the mistake that occurs most often.</p>
+<h3 id="defining-the-data-template">Defining the Data Template</h3>
+<p>The Data Template will define, how the data is retrieved by the XML Query is saved. For more information about the principles of operation, please see Common Tasks. Please go to <strong>Data Templates</strong> and <strong>Add</strong>:</p>
+<p><img src="images/dt-01.preview.png" alt="SNMP Table 1 - Data Template" /></p>
+<p>Define the <strong>Name</strong> of the Data Template. When defining the Name of the <strong>Data Source</strong>, do not forget to check the <strong>Use Per-Data Source Value (Ignore this Value)</strong> checkbox. This will come in useful later. Data Input Method will read <strong>Get SNMP Data (Indexed)</strong>. Select the <strong>Data Source Profile</strong> as usual:</p>
+<p><img src="images/dt-02.preview.png" alt="SNMP Table 2 - Data Template" /></p>
+<p>Now to the <strong>Data Source Items</strong>. I like giving them the names of the MIB OIDs, see:</p>
+<p><img src="images/dt-03.preview.png" alt="SNMP Table 3 - Data Template" /></p>
+<p>and <strong>New</strong> or the plus sign on the <strong>Data Source Item</strong> panel. Now enter the second <strong>Data Source Item</strong>:</p>
+<p><img src="images/dt-04.preview.png" alt="SNMP Table 4 - Data Template" /></p>
+<p>Please pay attention to setting the <strong>Maximum Value</strong> to 'U' (no limit). Else, all values exceeding the pre-defined as <strong>NaN</strong>. Now scroll down to the bottom of the page and check <strong>Index Type, Index Value and Output Type Id</strong></p>
+<p><img src="images/dt-05.preview.png" alt="SNMP Table 5 - Data Template" /></p>
+<p><strong>Save</strong> and the <strong>Data Template</strong> is finished.</p>
+<h3 id="defining-the-graph-template">Defining the Graph Template</h3>
+<p>The Graph Template will define, how the data is presented. For more information about the principles of operation, please see <a href="Common-Tasks.html">Common Tasks</a>. Please go to Graph Templates and Add:</p>
+<p><img src="images/gt-01.preview.png" alt="Defining Graph Template" /></p>
+<p>Fill in the header names and don't forget to check the <strong>Use Per-Graph Value (Ignore this Value)</strong> for the <strong>Graph Template Title</strong>:</p>
+<p><img src="images/gt-02.preview.png" alt="Graph Template Preview" /></p>
+<p>and <strong>Create</strong>.</p>
+<p><img src="images/gt-03.preview.png" alt="Graph Template Preview after creation" /></p>
+<p>Now <strong>Add</strong> the first Graph Item as usual:</p>
+<p><img src="images/gt-04.preview.png" alt="Graph Template Items 1" /></p>
+<p>Add the Legend and the second Graph Item:</p>
+<p><img src="images/gt-05.preview.png" alt="Graph Template Items 2" /></p>
+<p>Again, add the Legend to end up with</p>
+<p><img src="images/gt-06.preview.png" alt="Graph Template Items 3" /></p>
+<h3 id="revisiting-the-data-query">Revisiting The Data Query</h3>
+<p>We'll now have to revisit the <strong>Data Query</strong></p>
+<p><img src="images/dq-10.preview.png" alt="Data Query Review 1" /></p>
+<p><strong>Create</strong>:</p>
+<p><img src="images/dq-12.preview.png" alt="Data Query Review 2" /></p>
+<p>Select the correct <strong>Data Sources</strong> and check the boxes on the right. <strong>Save</strong>. Now fill in some useful <strong>Suggested Values</strong>, at first for the <strong>Data Template</strong>:</p>
+<p><img src="images/dq-13.png" alt="Data Query - Name Suggested Values" /></p>
+<p>Now apply suggested values for the <strong>Graph Template</strong>:</p>
+<p><img src="images/dq-14.png" alt="Data Query - Apply Suggested Values" /></p>
+<p>Now the <strong>Data Query</strong> is complete:</p>
+<p><img src="images/dq-15.preview.png" alt="Data Query Complete" /></p>
+<h2 id="create-graphs-for-this-host">Create Graphs for this Host</h2>
+<p>Now we're almost done. Everything's ready for use now. So go to your device and select <strong>Create Graphs for this Host</strong>. Select some of the partitions you're interested in:</p>
+<p><img src="images/dev-20.preview.png" alt="Create Graphs for this host" /></p>
+<p>and <strong>Create</strong> to see:</p>
+<p><img src="images/dev-21.preview.png" alt="Graphs created" /></p>
+<p>Lets visit the <strong>Data Sources</strong>:</p>
+<p><img src="images/ds-01.preview.png" alt="Host Data Sources" /></p>
+<p>As you can see, the <strong>Suggested Values</strong> of the Data Query defined the Name of the Data Template. So lets go to <strong>Graph Management</strong>:</p>
+<p><img src="images/gm-01.preview.png" alt="Graph Management Preview" /></p>
+<p>to see the title defined by the <strong>Suggested Values</strong>. When turning to the <strong>Graphs</strong>, you may see something like</p>
+<p><img src="images/graph-01.png" alt="Graph image" /></p>
+<p>This might be the end of the show. While it should be enough to define some “easy” SNMP XML based Data Queries, there are some tricks and hints left to explain.</p>
+<p>As you may have noticed, the quantities defined by this example are counted in Units, not Bytes. This is somewhat inconvenient but may be changed. Lets wait for the next Section...</p>
+<h3 id="valueregexp-in-action">VALUE/REGEXP in Action</h3>
+<p>As said above, with the current XML size values are measured in <strong>Units</strong>. The current Unit Size is given by <strong>hrStorageAllocationUnits</strong>, but the reading of it is like <strong>4096 Bytes</strong>. To use this in any calculations, we must get rid of the string <strong>Bytes</strong>. This can be done by the <strong>VALUE/REGEXP</strong> Feature of Cacti's XML definitions. So please change</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">&lt;hrStorageAllocationUnits&gt;</span></a>
+<a class="sourceLine" id="cb6-2" title="2">   <span class="kw">&lt;name&gt;</span>Allocation Units (Bytes)<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb6-3" title="3">   <span class="kw">&lt;method&gt;</span>walk<span class="kw">&lt;/method&gt;</span></a>
+<a class="sourceLine" id="cb6-4" title="4">   <span class="kw">&lt;source&gt;</span>value<span class="kw">&lt;/source&gt;</span></a>
+<a class="sourceLine" id="cb6-5" title="5">   <span class="kw">&lt;direction&gt;</span>input<span class="kw">&lt;/direction&gt;</span></a>
+<a class="sourceLine" id="cb6-6" title="6">   <span class="kw">&lt;oid&gt;</span>.1.3.6.1.2.1.25.2.3.1.4<span class="kw">&lt;/oid&gt;</span></a>
+<a class="sourceLine" id="cb6-7" title="7"><span class="kw">&lt;/hrStorageAllocationUnits&gt;</span></a></code></pre></div>
+<p>By</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb7-1" title="1"><span class="kw">&lt;hrStorageAllocationUnits&gt;</span></a>
+<a class="sourceLine" id="cb7-2" title="2">   <span class="kw">&lt;name&gt;</span>Allocation Units (Bytes)<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb7-3" title="3">   <span class="kw">&lt;method&gt;</span>walk<span class="kw">&lt;/method&gt;</span></a>
+<a class="sourceLine" id="cb7-4" title="4">   <span class="kw">&lt;source&gt;</span>VALUE/REGEXP:([0-9]*) Bytes<span class="kw">&lt;/source&gt;</span></a>
+<a class="sourceLine" id="cb7-5" title="5">   <span class="kw">&lt;direction&gt;</span>input<span class="kw">&lt;/direction&gt;</span></a>
+<a class="sourceLine" id="cb7-6" title="6">   <span class="kw">&lt;oid&gt;</span>.1.3.6.1.2.1.25.2.3.1.4<span class="kw">&lt;/oid&gt;</span></a>
+<a class="sourceLine" id="cb7-7" title="7"><span class="kw">&lt;/hrStorageAllocationUnits&gt;</span></a></code></pre></div>
+<p>To prove this, go to your device and again <strong>Verbose Query</strong> our Data Query to see:</p>
+<p><img src="images/dev-30.png" alt="Data Query Debug Info" /></p>
+<p>Now select <strong>Create Graphs for this Host</strong> and notice the change of the column <strong>Allocation Units (Bytes)</strong>. The string “Bytes” has gone:</p>
+<p><img src="images/dev-31.preview.png" alt="Data Query Table" /></p>
+<p>To use these values, we define a CDEF:</p>
+<p><img src="images/cdef-01.preview.png" alt="CDEF Preview" /></p>
+<p>Notice, that with recent releases of cacti, it is possible to use <code>|query_*|</code> values within CDEFs. Finally, go to <strong>Graph Templates</strong> and use this CDEF with all <strong>Graph Items</strong>:</p>
+<p><img src="images/gt-10.preview.png" alt="Graph Template - CDEF" /></p>
+<p>Change the <strong>Base Value</strong> to 1024 for Bytes → kBytes and the y-axis description to <strong>Bytes</strong>:</p>
+<p><img src="images/gt-11.preview.png" alt="Graph Template - Base and Vertical values" /></p>
+<p>Now the Graph looks like</p>
+<p><img src="images/graph-10.png" alt="Graph image" /></p>
+<p>Please find the example resources below. Save <code>hrStorageTable.xml</code> into <code>./resource/snmp_queries</code> and import the Graph Template from <code>cacti_graph_template_host_mib_hrstoragetable.xml</code>.</p>
+<p><a href="resource/xml/cacti_graph_template_host_mib_hrstoragetable.xml">Cacti Graph Template Host MIB hrStorageTable</a></p>
+<p><a href="resource/xml/hrStorageTable.xml">hrStorageTable</a> download and store into <code>resource/snmp_queries</code>.</p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

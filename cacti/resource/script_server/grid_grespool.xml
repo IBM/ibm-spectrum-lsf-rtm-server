@@ -1,0 +1,57 @@
+<!-- $Id$ -->
+<interface>
+    <name>Grid Guarantee Resource Pool Information</name>
+    <script_path>|path_cacti|/scripts/ss_grid_bgrespool_stats.php</script_path>
+    <script_function>ss_grid_bgrespool_stats</script_function>
+    <script_server>php</script_server>
+    <arg_prepend>|clusterid|</arg_prepend>
+    <arg_index>index</arg_index>
+    <arg_query>query</arg_query>
+    <arg_get>get</arg_get>
+    <output_delimeter>!</output_delimeter>
+    <index_order>gridGResPool</index_order>
+    <index_order_type>alpha</index_order_type>
+    <index_title_format>|chosen_order_field|</index_title_format>
+    <fields>
+        <gridGResPool>
+            <name>Guarantee ResPool Name</name>
+            <direction>input</direction>
+            <query_name>grespoolname</query_name>
+        </gridGResPool>
+        <gridPoolType>
+            <name>Resource Pool Type</name>
+            <direction>input</direction>
+            <query_name>pooltype</query_name>
+        </gridPoolType>
+        <gridGuarConf>
+            <name>Guaranteed Config</name>
+            <direction>output</direction>
+            <query_name>guar_config</query_name>
+        </gridGuarConf>
+        <gridGuarUsed>
+            <name>Guaranteed Used</name>
+            <direction>output</direction>
+            <query_name>guar_used</query_name>
+        </gridGuarUsed>
+        <gridTotalRes>
+            <name>Total Resources in Pool</name>
+            <direction>output</direction>
+            <query_name>total_res</query_name>
+        </gridTotalRes>
+        <gridFreeRes>
+            <name>Total Unused Resources in Pool</name>
+            <direction>output</direction>
+            <query_name>free_res</query_name>
+        </gridFreeRes>
+        <gridPending>
+            <name>Total Pending Units in Pool</name>
+            <direction>output</direction>
+            <query_name>pending</query_name>
+        </gridPending>
+        <gridRunning>
+            <name>Total Running Units in Pool</name>
+            <direction>output</direction>
+            <query_name>running</query_name>
+        </gridRunning>
+    </fields>
+</interface>

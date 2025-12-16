@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – GPRINT Presets</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="gprint-presets">GPRINT Presets</h1>
+<p>GPRINT Presets are an object in Cacti used for formatting Legend output on RRDtool Graphs. These GPrint Presets closely fillow printf(), sprintf() ANSI syntax. They are simple to create and edit. You can find the format strings on the <a href="https://oss.oetiker.ch/rrdtool/doc/rrdgraph_graph.en.html#PRINT">RRDtool Website</a>.</p>
+<p>The stock GPrint Presets are generally sufficient for most <strong>Graph Templates</strong>, but they can easily be extended, and are a part of the Graph Template Export XML file. So, they are portable once created.</p>
+<p>In the image below, you can see the default GPrint Presets and the actions that can be taken on them. Keep in mind that once a GPrint Preset is being used by a <strong>Graph</strong> or a <strong>Graph Template</strong>. It can not be removed.</p>
+<p><img src="images/gprint-presets.png" alt="GPRINT Presets" /></p>
+<p>Below you can see the GPrint Preset edit screeen.</p>
+<p><img src="images/gprint-presets-edit.png" alt="GPRINT Presets Edit" /></p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

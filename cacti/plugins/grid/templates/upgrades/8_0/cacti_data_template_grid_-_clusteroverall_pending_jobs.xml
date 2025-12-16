@@ -1,0 +1,45 @@
+<!-- $Id$ -->
+<cacti>
+	<hash_010021dacd8126d57831cff5e6bb413846cf40>
+		<name>GRID - Cluster/Overall Pending Jobs</name>
+		<ds>
+			<t_name></t_name>
+			<name>|host_description| - Pending Jobs</name>
+			<data_input_id>hash_030021494185a2adb21bab8f5f3fecf9684f91</data_input_id>
+			<t_rra_id></t_rra_id>
+			<t_rrd_step></t_rrd_step>
+			<rrd_step>300</rrd_step>
+			<t_active></t_active>
+			<active>on</active>
+			<rra_items>hash_150021c21df5178e5c955013591239eb0afd46|hash_1500210d9c0af8b8acdc7807943937b3208e29|hash_1500216fc2d038fb42950138b0ce3e9874cc60|hash_150021e36f3adb9f152adfa5dc50fd2b23337e</rra_items>
+		</ds>
+		<items>
+			<hash_080021d460b069fb464bd6d3070bf9c5d47091>
+				<t_data_source_name></t_data_source_name>
+				<data_source_name>pending</data_source_name>
+				<t_rrd_minimum></t_rrd_minimum>
+				<rrd_minimum>0</rrd_minimum>
+				<t_rrd_maximum></t_rrd_maximum>
+				<rrd_maximum>0</rrd_maximum>
+				<t_data_source_type_id></t_data_source_type_id>
+				<data_source_type_id>1</data_source_type_id>
+				<t_rrd_heartbeat></t_rrd_heartbeat>
+				<rrd_heartbeat>600</rrd_heartbeat>
+				<t_data_input_field_id></t_data_input_field_id>
+				<data_input_field_id>hash_070021a79c3cb4b9c2e31d54b4de1071608ac8</data_input_field_id>
+			</hash_080021d460b069fb464bd6d3070bf9c5d47091>
+		</items>
+		<data>
+			<item_000>
+				<data_input_field_id>hash_070021fa1f49f70b24bc13951a62fba208c902</data_input_field_id>
+				<t_value></t_value>
+				<value></value>
+			</item_000>
+			<item_001>
+				<data_input_field_id>hash_07002128c644db377dc9afee24862bc5d21b88</data_input_field_id>
+				<t_value>on</t_value>
+				<value>no</value>
+			</item_001>
+		</data>
+	</hash_010021dacd8126d57831cff5e6bb413846cf40>
+</cacti>

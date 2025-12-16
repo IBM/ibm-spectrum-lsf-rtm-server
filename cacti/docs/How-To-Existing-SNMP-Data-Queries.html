@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – SNMP Data Queries</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="snmp-data-queries">SNMP Data Queries</h1>
+<h2 id="walkthrough-a-new-snmp-data-query">Walkthrough: A New SNMP Data Query</h2>
+<p>For SNMP Queries, you won't need to create a data retrieval script. Cacti will use SNMP to retrieve information. But cacti will need additional information on how the indexed data is structured. Think about a table (a MIB table in this case); you'll have to tell cacti about the table structure. This is done by defining an XML file. Basically, you have to define the index to tell cacti about the number of rows and about their unique index. This index is later used to access each rows data. Furthermore, you may define columns, that serve as <strong>descriptive fields</strong> to be shown in the selection table. The XML file knows them as</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">&lt;direction&gt;</span>input<span class="kw">&lt;/direction&gt;</span></a></code></pre></div>
+<p>You will have to define those fields, that will be queried for the readings, e.g. ifInOctets, ifOutOctets, ifInErrors, …The XML file knows them as</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">&lt;direction&gt;</span>output<span class="kw">&lt;/direction&gt;</span></a></code></pre></div>
+<p>Lets have an example: standard Interface MIB with the corresponding part of the <code>&lt;path_cacti&gt;/resources/snmp_queries/interfaces.xml</code> file are displayed using the following table:</p>
+<p><img src="images/snmp-dqw-table1.png" alt="SNMP Table 1" /></p>
+<p><img src="images/snmp-dqw-table2.png" alt="SNMP Table 2" /></p>
+<p><img src="images/snmp-dqw-table3.png" alt="SNMP Table 3" /></p>
+<p>and see the corresponding table structure when defining <strong>New Graphs</strong> for that <strong>Device</strong> (my laptop):</p>
+<p><img src="images/r-dq-1.png" alt="Creating graph for Data Query" /></p>
+<p>Now you can map</p>
+<ul>
+<li><p>Index: IF-MIB::ifIndex</p></li>
+<li><p>Status: IF-MIB::ifOperStatus</p></li>
+<li><p>Description: IF-MIB::ifDescr</p></li>
+<li><p>Type: IF-MIB::ifType</p></li>
+<li><p>Speed: IF-MIB::ifSpeed</p></li>
+</ul>
+<p>All those are <code>&lt;direction&gt;input&lt;/direction&gt;</code> Parameters. They serve as descriptive information to each row to help you identify the proper interface to use. Those parameters of <code>&lt;direction&gt;output&lt;/direction&gt;</code> can be compared to output parameters of a script (see ping.pl script above). These are the readings from the device. By selecting the appropriate row (the one grayed out had been selected by me), you tell cacti to retrieve data from the interface defined by this index. But how does cacti know, what output parameters it shall retrieve? See the Select a Graph type dropdown. It specifies a <strong>Graph Template</strong> defined for this Data Query. The Graph Template in turn references a <strong>Data Template</strong> which incorporates the needed output parameters as Data Sources. This works quite the same way as defined for a Data Input Method.</p>
+<p>To sum up: the SNMP XML file is somehow a <strong>replacement</strong> for the <strong>Data Input Method</strong> described above to be used on indexed values. It tells cacti, what data it should retrieve (direction: output). To help you identifying the relevant indexes, the XML defines descriptive parameters (direction: input) to be displayed in the selection table.</p>
+<p>A walkthrough for this is given now. It is based on the already supplied interfaces.xml XML file.</p>
+<h2 id="create-a-data-query-to-tell-cacti-how-to-retrieve-data">Create a Data Query to tell cacti how to retrieve data</h2>
+<p>Go to <strong>Data Queries</strong> and click the plus (+) glyph to see:</p>
+<p><img src="images/r-dq1-0.png" alt="Add new Data Query" /></p>
+<p>Here, we are using the already existing interface.xml file. Select <strong>Get SNMP Data (Indexed)</strong> as <strong>Data Input Method</strong>. Press <strong>Create</strong> to see:</p>
+<p><img src="images/r-dq2.png" alt="Fill Data for Data Query" /></p>
+<p>See, that cacti found the XML file. Don't bother with the Associated Graph Templates at the moment. The success message does not include checking of the XML file's content. Not lets proceed to the next definitions.</p>
+<h2 id="create-a-data-template-to-tell-cacti-how-to-store-data">Create a Data Template to tell Cacti how to store data</h2>
+<p>This is the exact copy of the definitions made above. So I do not repeat everything here. <strong>Data Input Method</strong> must be selected as <strong>Get SNMP Data (Indexed)</strong>. As this data source is a COUNTER type, select this as the <em>Data Source Type</em>. But after saving the new Data Source definition, you may want to define a second Data Source to the same <strong>Data Template</strong>. To do so, select New from the <em>Data Source Item</em> heading to see:</p>
+<p><img src="images/r-dq-dt1.png" alt="Enter new Data Source Item" /></p>
+<p>The name of the internal RRDtool Data Source (ifOutOctets) is not replaced in the Tab until you save your work. By default, <em>Maximum Value</em> is set to 100. This is way too low for an interface. All readings above this value will be stored as NaN by RRDtool. To avoid this, set to 0 (no clipping) or to a reasonable value (e.g. interface speed). Don't forget to specify COUNTER! You will have noticed, that the name of the data source does not match the Name in the interface.xml. Don't worry, the solution to this is given later on. Before leaving, pay attention to the bottom of the page:</p>
+<p><img src="images/r-dq-dt2.png" alt="Check Indexes for Data Query Data Template" /></p>
+<p>This is specific to indexed <strong>Data Queries</strong>. You will have to check the last three items to make indexing work. All other items should be left alone, there values will be taken from the appropriate device definitions. Now click <strong>Save</strong> and you're done with this step.</p>
+<blockquote>
+<p>Note that if you wish to hand Edit mappings of various indexed interfaces manually for each <strong>Graph</strong> in the future, you should check the following three fields <em>Index Type</em>, <em>Index Value</em> and <em>Output Type ID</em> as shown below. Do this for each <strong>Data Template</strong> <em>Data Source Items</em> in the <strong>Data Template</strong>.</p>
+</blockquote>
+<p><img src="images/r-dq-dt3.png" alt="Force the Indexes to be Hand Editable" /></p>
+<h2 id="create-a-graph-template-to-tell-cacti-how-to-present-the-data">Create a Graph Template to tell cacti how to present the data</h2>
+<p>Since creating a new <strong>Data Query</strong> based upon an existing Data Query called <em>SNMP - Interface Statistics</em> we don't need to create any <strong>Graph Templates</strong>, we can use the ones created for the other <strong>Data Query</strong>.</p>
+<h3 id="add-graph-template-to-the-data-query">Add Graph Template to the Data Query</h3>
+<p>Now it's time to re-visit our <strong>Data Query</strong>. Remember the <strong>Associated Graph Template</strong> we've left alone in the very first step? Now it will get a meaning. Go to <strong>Data Queries</strong> and select our new one. Then press the plus (+) glyph, and select <em>Interface - Traffic (bits/second)</em> from the drop down as shown below. Press <strong>Create</strong> to initialize the association of this <strong>Graph Template</strong> with out new <strong>Data Query</strong>.</p>
+<p><img src="images/r-dq3-0.png" alt="Add new associated Graph Template" /></p>
+<p>Once we press the <strong>Create</strong> button, we should get an image like the one below. From here, it's important that we associate the <em>Data Sources</em> to the XML file columns that retrieve the data using SNMP. Press the <strong>Save</strong> button to complete the mapping of <em>Data Sources</em> to the XML file <em>Data Source Output Values</em>.</p>
+<p><img src="images/r-dq4.png" alt="Creating new associated Graph Template" /></p>
+<p>In addition, we need to setup any <em>Suggested Values</em> as you can see from the example below. <em>Suggested Values</em> are optional when the <strong>Data Query</strong> can have a multitude of suggested names based upon the output from the <strong>Data Query</strong>. For both the <em>Suggested Values - Graphs</em> and <em>Suggested Values - Data Sources</em>, we must include the name of the column, and the <em>Suggested Value</em> which can includes the special tag <em>|query_xmlcolumn|</em> as shown in the examples below.</p>
+<p><img src="images/r-dq5.png" alt="Suggested Values for Associated Graph Template" /></p>
+<p>Once the <strong>Associated Graph Template</strong> mappings have been completed, you should see the image below, where we have:</p>
+<ul>
+<li><p>Mapped the internal <strong>Data Template</strong> <em>Data Sources</em> to the XML file <em>Input Data Sources</em></p></li>
+<li><p>Added any <em>Suggested Values</em> for the <em>Graph Title</em> or other <strong>Graph</strong> fields</p></li>
+<li><p>Added any <em>Suggested Values</em> for the <em>Data Source</em> name or other <strong>Data Source</strong> fields</p></li>
+</ul>
+<p><img src="images/r-dq6.png" alt="Associated Graph Template Completed" /></p>
+<p>Once you have confirmed all the values, you can press <strong>Return</strong> to return to the <strong>Data Query</strong> page for our Example <strong>Data Query</strong> as shown below.</p>
+<p><img src="images/r-dq7.png" alt="Save Associated Graph Template" /></p>
+<h2 id="apply-the-data-query-to-your-device">Apply the Data Query to your Device</h2>
+<p>Now go to your <strong>Device</strong> to add the <strong>Associated Data Query</strong>:</p>
+<p><img src="images/r-dq-dev1-0.png" alt="Apply Data Query to your Device" /></p>
+<p>Click <strong>Add</strong> and then <strong>Create Graphs for this Host</strong> to see:</p>
+<p><img src="images/r-dq-dev2.png" alt="Create Graphs for Data Query" /></p>
+<p>Now select the wanted <em>Interfaces</em> and press <strong>Create</strong> to generate the Traffic Graph. As long as there's only one <strong>Associated Graph Template</strong> for that <strong>Data Query</strong>, there will be no <em>Associated Graph Type</em> drop down. Once you create more than one <strong>Associated Graph Template</strong> for the <strong>Data Query</strong>, you will see a drop down just above the <strong>Create</strong> button showing the available <strong>Graph Templates</strong> for the <strong>Data Query</strong> in question, like the <em>SNMP - Interface Statistics</em> as show below.</p>
+<p><img src="images/r-dq-dev3.png" alt="Additional Associated Graph Templates Example" /></p>
+<p>Pressing the <em>Set Default</em> button will set the selected <em>Graph Type</em> to be the default for this <strong>Data Query</strong>.</p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

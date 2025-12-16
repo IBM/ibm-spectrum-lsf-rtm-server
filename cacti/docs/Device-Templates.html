@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Device Templates</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="device-templates">Device Templates</h1>
+<p><strong>Device Templates</strong> are Cacti objects that allows you to define classes of <strong>Devices</strong> that includes from one to many <strong>Graph Templates</strong>, <strong>Data Queries</strong> and other <strong>Plugin</strong> related object types.</p>
+<p>The purpose of <strong>Device Templates</strong> is to simplify the <strong>Automation</strong> process by pre-defining the <strong>Graphs</strong> that should be created for every <strong>Device</strong> that is added to Cacti. They work in conjunction with <strong>Automation Templates</strong> so that when Cacti discovers a <strong>Network</strong> it knows what <strong>Graphs</strong> to create for each <strong>Device</strong>.</p>
+<p>The <strong>Device Templates</strong> main screen looks like the image below:</p>
+<p><img src="images/device-templates.png" alt="Device Templates Page" /></p>
+<p>From this page, you can see the title of each <strong>Device Template</strong>, it's ID which is important for the Cacti CLI scripts. You can see if the <strong>Device Template</strong> can be removed, and the number of <strong>Devices</strong> using the <strong>Device Template</strong>. Templates that are used by <strong>Devices</strong> can not be removed and therefore if you attempt to remove one of these Templates, you will receive and error message.</p>
+<p>From the drop down there are three options, they are:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Delete</td>
+<td>Remove the <strong>Device Template</strong> if it's <em>Deletable</em></td>
+</tr>
+<tr class="even">
+<td>Duplicate</td>
+<td>Make an exact copy of the <strong>Device Template</strong>.</td>
+</tr>
+<tr class="odd">
+<td>Sync Devices</td>
+<td>Update all <strong>Devices</strong> using this <strong>Device Template</strong> with the latest definition, adding, but not removing <strong>Graph Templates</strong>, and <strong>Data Queries</strong>.</td>
+</tr>
+</tbody>
+</table>
+<p>When editing a <strong>Device Template</strong>, you will see the page as displayed below. From this page, you can add and remove <strong>Graph Templates</strong>, <strong>Data Queries</strong>, and other <strong>Plugin</strong> objects. In the image below, you can see that the <em>Cisco Router</em> has one <strong>Graph Template</strong> that of <em>Cisco - CPU Usage</em> and one <strong>Data Query</strong> that of <em>SNMP - Interface Statistics</em>. There are no <strong>Threshold Templates</strong> defined on the system, so there is no way to select one.</p>
+<p><img src="images/device-templates-edit.png" alt="Device Template Edit Page" /></p>
+<p>To add a <strong>Graph Template</strong> or <strong>Data Query</strong> to the <strong>Device Template</strong>, simply select it from the drop down, and press the <em>Add</em> button. There is no need to <em>Save</em> afterwards. To removed one of these items, simply press the x glyph to the right of the desired <strong>Graph Template</strong> or <strong>Data Query</strong>.</p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

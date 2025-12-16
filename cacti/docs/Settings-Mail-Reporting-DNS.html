@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Mail/Reporting/DNS Settings</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="mailreportingdns-settings">Mail/Reporting/DNS Settings</h1>
+<p>This area of Cacti is where you configure core notification settings as well as settings to using alternate DNS' servers associated with certain Cacti plugins.</p>
+<h2 id="url-linking">URL Linking</h2>
+<p>The URL Linking settings provide the Cacti administrator a URL prefix that will point properly to the main Cacti site for both core Cacti functions and Plugins to create URL for their use. Generally this URL should include the full DNS name of the Cacti server, and the correct protocol, for example HTTPS. The image below show an example of how this might be setup.</p>
+<p><img src="images/settings-mrd-urls.png" alt="PHP Mail Function" /></p>
+<h2 id="mail-settings">Mail Settings</h2>
+<p>Not only Cacti, but several plugins today are still leveraging Email for end user and administrative notification. Cacti uses the very popular PHP-Mailer 3rd party component to facilitate Email notification service. In this section, you will pick the method that you wish to provide Email notification an it's settings. Cacti actually provides three methods. They include:</p>
+<ul>
+<li><p><strong>PHP Mail Function</strong> - PHP has a built-in mail facility where PHP will communicate with the localhost mail facilities to send mail. This is useful if your Cacti system is setup as an anonymous forwarder to a corporate mail system.</p></li>
+<li><p><strong>Sendmail Binary</strong> - This method relies on the <code>sendmail</code> binary to properly communicate with your corporate mail systems. Like the <strong>PHP Mail Function</strong>, it requires that your localhost be properly setup to send mail through a forwarding setup.</p></li>
+<li><p><strong>Simple Mail Transfer Protocol (SMTP)</strong> - This is the most configurable option where Cacti can send Emails directly to the Email server.</p></li>
+</ul>
+<p>In the sections below, we will document each of these options in more details.</p>
+<h2 id="emailing-options">Emailing Options</h2>
+<p>In this section, you specify some general settings around Emailing in general as shown in the image below.</p>
+<p><img src="images/settings-mrd-php-mail.png" alt="PHP Mail Function" /></p>
+<p>Those settings include:</p>
+<ul>
+<li><p><strong>Notify Primary Admin of Issues</strong> - When certain anomalous Cacti events table place that justify the notification of the Cacti administrator, by checking this option, you will receive those notifications.</p></li>
+<li><p><strong>Test Email</strong> - When setting up Cacti for the first time, or when your Email settings change, you can send out a test Email to confirm that the Email setup is working. The Email that you put on this line will receive the test Email.</p></li>
+<li><p><strong>Mail Services</strong> - This is where you pick one of the three options above for providing Mail Services.</p></li>
+<li><p><strong>Ping Mail Server</strong> - When using the SMTP Mail Services provider, Cacti can first ping the Email Server to ensure that it's operational before sending Emails. If the Email Server does not respond, Cacti will issue a warning and continue operations.</p></li>
+<li><p><strong>From Email Address</strong> - The is the Default From Email address that will be used by Cacti and it's plugins, unless the plugin allows overriding the option. The common entry would be something of the form <code>noreply@mydomain.com</code> unless you have a desire to receive responses from recipients.</p></li>
+<li><p><strong>From Name</strong> - This setting allows you to provide a name to the given Email address. Something of the form <code>Cacti Administrator</code> would be common practice here.</p></li>
+<li><p><strong>Word Wrap</strong> - If not using HTML based Emailing, this will force a word wrap on text data at the length specified.</p></li>
+</ul>
+<p>The next sections will document the various <strong>Mail Services</strong></p>
+<h3 id="php-mail-function">PHP Mail Function</h3>
+<p>There are no settings for this function. It leverages the Cacti servers mail configuration to send mail notification.</p>
+<h3 id="sendmail-binary">Sendmail Binary</h3>
+<p>The <strong>Sendmail Binary</strong> is similar to the <strong>PHP Mail Function</strong> with the exception that you can specify the <code>sendmail</code> binary path. Cacti actually requires that you include this path.</p>
+<p><img src="images/settings-mrd-sendmail.png" alt="Sendmail Binary" /></p>
+<h3 id="simple-mail-transfer-protocol-smtp">Simple Mail Transfer Protocol (SMTP)</h3>
+<p>As mentioned before, the SMTP Mail Services provider provides the most options and will be very familiar and easy to use for Cacti Administrators that may not be as familiar with how to configure the Operating System to properly forward mail to their internal Email servers. Popular mail services like Google, Microsoft, etc. are all supported. This is primarily due to the use of the 3rd Party PHP-Mailer plugin within Cacti. The image below shows the various settings for the <strong>Simple Mail Transfer Protocol (SMTP)</strong> option.</p>
+<p><img src="images/settings-mrd-smtp.png" alt="SMTP Mail" /></p>
+<p>Those options include:</p>
+<ul>
+<li><strong>SMTP Hostname</strong> - The hostname or DNS name of the SMTP Server</li>
+<li><strong>SMTP Port</strong> - The TCP Port to use to communicate with the SMTP Server</li>
+<li><strong>SMTP Username</strong> - The username to use for SMTP communications if your SMTP Server requires authentication.</li>
+<li><strong>SMTP Password</strong> - The password to use for SMTP communications if you SMTP Server requires authentication.</li>
+<li><strong>SMTP Security</strong> - The security protocol to use for SMTP communications. The options include: None, SSL, and TLS. The most popular being TLS today due to all the security issues with the other protocols.</li>
+<li><strong>SMTP Timeout</strong> - How long to wait before abandoning connection attempts to the SMTP Server.</li>
+</ul>
+<h2 id="reporting-presets">Reporting Presets</h2>
+<p>Cacti Reporting can generate very large Email attachments. Therefore the <strong>Reporting Presets</strong> allow you to control the traffic associated with reporting. From here, you can also set presets for the image type and logging. You can see the settings from the image below.</p>
+<p><img src="images/settings-mrd-report-presets.png" alt="Reporting Presets" /></p>
+<p>Since these settings are straightforward, no further explanation is given here.</p>
+<h2 id="dns-options">DNS Options</h2>
+<p>The DNS Options allow you to specify a primary and secondary DNS to use for Plugin DNS operations. Many plugins allow you to even use their own DNS Options. For plugins that require Alternate/Non-System DNS settings, see their documentation as to how DNS is setup and used.</p>
+<p>The image below shows the two settings.</p>
+<p><img src="images/settings-mrd-dns-options.png" alt="DNS Options" /></p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

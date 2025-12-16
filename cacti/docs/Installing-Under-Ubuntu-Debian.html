@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Installing Cacti 1.x in Ubuntu/Debian LAMP stack</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="installing-cacti-1x-in-ubuntudebian-lamp-stack">Installing Cacti 1.x in Ubuntu/Debian LAMP stack</h1>
+<h2 id="installing-the-required-packages-needed-for-the-lamp-stack">Installing the required packages needed for the LAMP stack</h2>
+<pre class="console"><code>apt-get update
+apt-get install -y apache2 rrdtool mariadb-server snmp snmpd php8.0 php8.0-mysql php8.0-snmp php8.0-xml php8.0-mbstring php8.0-json php8.0-gd php8.0-gmp php8.0-zip php8.0-ldap php8.0-mbstring
+</code></pre>
+<h3 id="a-special-note-for-systems-using-php-fpm">A special note for systems using PHP-FPM</h3>
+<p>Prior to starting the setup process of Cacti you should restart the PHP-FPM Daemon to rebuild the Cache or you may received a HTTP 500 Error</p>
+<pre class="console"><code>systemctl restart php-fpm
+</code></pre>
+<h3 id="downloading-the-cacti-software">Downloading the Cacti software</h3>
+<p>Once the OS packages are installed, you will need to download the Cacti files you can do this by using the git command</p>
+<pre class="console"><code>git clone -b 1.2.x  https://github.com/Cacti/cacti.git
+Cloning into &#39;cacti&#39;...
+remote: Enumerating objects: 81, done.
+remote: Counting objects: 100% (81/81), done.
+remote: Compressing objects: 100% (55/55), done.
+remote: Total 59936 (delta 40), reused 51 (delta 26), pack-reused 59855&amp;
+Receiving objects: 100% (59936/59936), 76.33 MiB | 1.81 MiB/s, done.
+Resolving deltas: 100% (43598/43598), done.
+</code></pre>
+<p>After cloning the Cacti repository, move the files into the /var/www/html directory</p>
+<pre class="console"><code>mv cacti /var/www/html
+</code></pre>
+<h4 id="database-creation">Database Creation</h4>
+<p>Next we will create a database for the cacti installation to use</p>
+<pre class="console"><code>mysql -u root -p
+CREATE DATABASE cacti DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ;
+CREATE USER &#39;cactiuser&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;cactiuser&#39;;
+GRANT ALL ON cacti.* TO &#39;cactiuser&#39;@&#39;localhost&#39;;
+GRANT SELECT ON mysql.time_zone_name TO &#39;cactiuser&#39;@&#39;localhost&#39;;
+ALTER DATABASE cacti CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+FLUSH PRIVILEGES;
+</code></pre>
+<p>You will now need to pre-populate the database used by cacti</p>
+<pre class="console"><code>mysql -u root cacti &lt; /var/www/html/cacti/cacti.sql
+</code></pre>
+<p>Next, you will need to create the config.php file in /var/www/html/cacti/include</p>
+<pre class="console"><code>cd /var/www/html/cacti/include
+cp config.php.dist config.php
+</code></pre>
+<p>Now, edit the config.php file and make sure to change the database settings as needed to match the below entries (though it is highly recommended to use a customised username/password combination for security)</p>
+<pre class="console"><code>$database_type     = &#39;mysql&#39;;
+$database_default  = &#39;cacti&#39;;
+$database_hostname = &#39;localhost&#39;;
+$database_username = &#39;cactiuser&#39;;
+$database_password = &#39;cactiuser&#39;;
+$database_port     = &#39;3306&#39;;
+$database_retries  = 5;
+$database_ssl      = false;
+$database_ssl_key  = &#39;&#39;;
+</code></pre>
+<h3 id="create-your-cron-task-file-or-systemd-units-file">Create your cron task file or systemd units file</h3>
+<p>Starting with Cacti 1.2.16, you have the option to use either the legacy Crontab entry, or an optional cactid units file and server to run your Cacti pollers.</p>
+<p>For Crontab use, follow the instructions below:</p>
+<p>Create and edit <code>/etc/cron.d/cacti</code> file. Make sure to setup the correct path to poller.php</p>
+<pre class="console"><code>*/5 * * * * apache php /var/www/html/cacti/poller.php &amp;&gt;/dev/null
+</code></pre>
+<p>For systemd unit's file install, you will need to modify the included units file to following your install location and desired user and group's to run the Cacti poller as. To complete the task, follow the procedure below:</p>
+<pre class="console"><code>vim /var/www/html/cacti/service/cactid.service (edit the path)
+touch /etc/sysconfig/cactid
+cp -p /var/www/html/cacti/service/cactid.service /etc/systemd/system
+systemctl enable cactid
+systemctl start cactid
+systemctl status cactid
+</code></pre>
+<p>The systemd units file makes managing a highly available Cacti setup a bit more convenient.</p>
+<p>The system is now ready to finialise the steps by browsing to <a href="http://serverip/cacti">http://serverip/cacti</a> to start the cacti initialization wizard.</p>
+<h3 id="considerations-when-using-proxys-in-front-of-cacti-cacti-1223">Considerations when using Proxys in front of Cacti (Cacti 1.2.23+)</h3>
+<p>For optimal security, only specify the HTTP headers that are set by your proxy software to prevent unauthorized access. These can be set by editing the following section of config.php</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode ini"><code class="sourceCode ini"><a class="sourceLine" id="cb11-1" title="1"><span class="dt"> * Allow the use of Proxy IPs when searching for client</span></a>
+<a class="sourceLine" id="cb11-2" title="2"><span class="dt"> * IP to be used</span></a>
+<a class="sourceLine" id="cb11-3" title="3"><span class="dt"> *</span></a>
+<a class="sourceLine" id="cb11-4" title="4"><span class="dt"> * This can be set to one of the following:</span></a>
+<a class="sourceLine" id="cb11-5" title="5"><span class="dt"> *   - false: to use only REMOTE_ADDR</span></a>
+<a class="sourceLine" id="cb11-6" title="6"><span class="dt"> *   - true: to use all allowed headers (not advised)</span></a>
+<a class="sourceLine" id="cb11-7" title="7"><span class="dt"> *   - array of one or more the following:</span></a>
+<a class="sourceLine" id="cb11-8" title="8"><span class="dt"> *&#39;X-Forwarded-For&#39;,</span></a>
+<a class="sourceLine" id="cb11-9" title="9"><span class="dt"> *&#39;X-Client-IP&#39;,</span></a>
+<a class="sourceLine" id="cb11-10" title="10"><span class="dt"> *&#39;X-Real-IP&#39;,</span></a>
+<a class="sourceLine" id="cb11-11" title="11"><span class="dt"> *&#39;X-ProxyUser-Ip&#39;,</span></a>
+<a class="sourceLine" id="cb11-12" title="12"><span class="dt"> *&#39;CF-Connecting-IP&#39;,</span></a>
+<a class="sourceLine" id="cb11-13" title="13"><span class="dt"> *&#39;True-Client-IP&#39;,</span></a>
+<a class="sourceLine" id="cb11-14" title="14"><span class="dt"> *&#39;HTTP_X_FORWARDED&#39;,</span></a>
+<a class="sourceLine" id="cb11-15" title="15"><span class="dt"> *&#39;HTTP_X_FORWARDED_FOR&#39;,</span></a>
+<a class="sourceLine" id="cb11-16" title="16"><span class="dt"> *&#39;HTTP_X_CLUSTER_CLIENT_IP&#39;,</span></a>
+<a class="sourceLine" id="cb11-17" title="17"><span class="dt"> *&#39;HTTP_FORWARDED_FOR&#39;,</span></a>
+<a class="sourceLine" id="cb11-18" title="18"><span class="dt"> *&#39;HTTP_FORWARDED&#39;,</span></a>
+<a class="sourceLine" id="cb11-19" title="19"><span class="dt"> *&#39;HTTP_CLIENT_IP&#39;,</span></a>
+<a class="sourceLine" id="cb11-20" title="20"><span class="dt"> *</span></a>
+<a class="sourceLine" id="cb11-21" title="21"><span class="dt"> * NOTE: The following will always be checked:</span></a>
+<a class="sourceLine" id="cb11-22" title="22"><span class="dt"> *&#39;REMOTE_ADDR&#39;,</span></a>
+<a class="sourceLine" id="cb11-23" title="23"><span class="dt"> */</span></a>
+<a class="sourceLine" id="cb11-24" title="24"><span class="dt">$proxy_headers </span><span class="ot">=</span><span class="st"> </span><span class="kw">null</span><span class="st">;</span></a></code></pre></div>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

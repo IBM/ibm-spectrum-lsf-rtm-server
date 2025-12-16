@@ -1,0 +1,46 @@
+    *********************************************************
+    Author ......... IBM Corporation
+    Home Site ...... http://www.ibm.com
+    Program ........ IBM Spectrum LSF RTM Cluster Statistics
+    Version ........ 10.2.0.14
+    Purpose ........ View Cluster Statistics from RTM
+    *********************************************************
+
+
+----[ Purpose
+
+    Simple Plugin to View Cluster Summary Statistics
+
+----[ Features
+
+    View both job based and host based cluster summary statics at the following
+    Consolidation Levels:
+
+    Daily
+    Weekly
+    Monthly
+    Yearly
+
+----[ Installation
+
+    Install is similar to any other plugin:
+
+    1) Unzip/Tar the gzip file in the plugin directory,
+    2) Source the file gridcstat.sql into your Cacti database, i.e. mysql cacti < gridcstat.sql,
+    3) Edit your includes/global.php and add it 'gridcstat' to your $plugins array,
+    4) Give users access to the new menu selections by granting access to the
+       "RTM -> Cluster Statistics" Realm
+
+----[ Possible Bugs?
+
+    If you figure out this problem, let me know!!!
+
+----[ Future Changes
+
+    Got any ideas or complaints, please e-mail me!
+
+----[ Changelog
+
+    --- 1.0 ---
+    Initial release
+

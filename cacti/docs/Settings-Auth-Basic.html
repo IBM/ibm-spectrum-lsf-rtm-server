@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Basic Authentication</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="basic-authentication">Basic Authentication</h1>
+<h2 id="overview">Overview</h2>
+<p>Basic Auth settings leverage both Apache's and NGINX Authentication modules to grant a user access to the Cacti Website. The various configuration steps for these modules will not be covered in the Cacti documentation. Therefore, if you wish to use this authentication method, it is recommended that you test your configuration on a development server before putting this method into production.</p>
+<blockquote>
+<p><strong>NOTE</strong>: Before enabling the <strong>Basic Authentication Method</strong>, you must always verify that you are prompted for a password before getting the normal Cacti login prompt, and that you have setup a new user account with Admin privileges that matches your login account. Otherwise when you enable Basic Authentication, you can lock yourself out of the Cacti Website.</p>
+</blockquote>
+<h2 id="special-users">Special Users</h2>
+<p>The image below shows the settings for <strong>Web Basic Authentication</strong> which includes the <code>Special Users</code> sub-section.</p>
+<p><img src="images/settings-auth-basic.png" alt="Basic Auth Settings" /></p>
+<p>Those settings include:</p>
+<ul>
+<li><strong>Primary Admin</strong> - This is the Cacti primary administrative account this account will receive Cacti notifications and can not be deleted.</li>
+<li><strong>Guest Account</strong> - This is a special account that allows users to access certain pages without being prompted for a login and password. Setting to <code>None</code>, disables this feature.</li>
+<li><strong>User Template</strong> - All new users who login for the first time will have their initial settings based upon this <strong>User Template</strong>.</li>
+<li><strong>Basic Auth Login Failure Message</strong> - This textbox can be customized in order to provide a useful message to users who have no access to Cacti via Basic Authentication and how to resolve the issue.</li>
+<li><strong>Basic Auth Mapfile</strong> - If your basic users do not match OS users you can force a basic account to login with an alternate account.</li>
+</ul>
+<h2 id="basic-auth-mapfile">Basic Auth Mapfile</h2>
+<p>This settings is important for plugins that grant certain features to accounts, but those accounts do not match the login account. For example, your basic account maybe: <a href="mailto:joe.schmoe@company.com">joe.schmoe@company.com</a>, and your UNIX login account may be <code>jschmoe</code>, which grants you certain plugin permissions, like controlling your own workload.</p>
+<p>The mapfile is a file in CSV format, with the first column being the Basic account (aka <a href="mailto:joe.schmoe@company.com">joe.schmoe@company.com</a>), and the second column being the login account (jschmoe). It is up-to the Cacti administrator to manage and update this file per their local site practices.</p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – User Group Management</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="user-group-management">User Group Management</h1>
+<p>Cacti supports from one to many static User Groups in the current design. User Groups closely mimic the normal user. You see things like <strong>Graph</strong> permissions, Roles and Realms, Default pages, and settings, it's all there.</p>
+<p>The way that a Cacti User Group works is that it's combined with the Users permission, and then the resulting permission is the most permissive. So, if a User does not have a permission, but the User Group that they belong to does, the user then gains the permission.</p>
+<p>There are other types of settings that the User Group can own the permission as well. There are only a few of these permissions however.</p>
+<p>In the next series of images, we will walk through the User Group interface. In this first images, we can see the main User Group interface. From here, you can see all of the Groups defined on the system and the number of Users in the Group, if the User Group is enabled or disabled. Lastly, in the Action drop-down, you can see the actions that you can take with a User Group.</p>
+<p><img src="images/user-groups.png" alt="User Groups" /></p>
+<p>In this next image, you can see the User Group Edit page. The Edit page has multiple Sub-tabs. They include:</p>
+<ul>
+<li><strong>General</strong> - General settings about the User Group</li>
+<li><strong>Members</strong> - A list of User Group members</li>
+<li><strong>Permissions</strong> - Roles and Realms that provide group member access to Cacti components</li>
+<li><strong>Graph Perms</strong> - Effective Graph Permissions, rolling up Device and Template permissions</li>
+<li><strong>Device Perms</strong> - User Group Device Permissions</li>
+<li><strong>Template Perms</strong> - Graph Template Permissions</li>
+<li><strong>Tree Perms</strong> - Tree Permissions</li>
+<li><strong>User Settings</strong> - Settings for the User of the Group if they can not manage settings on their own</li>
+</ul>
+<p>The first form elements are pretty self explanitory. The Tree, Graph List, and Preview rights speak to Cacti three Graph Viewing modes which are explained in the Viewing Graphs section of the Document.</p>
+<p>Lastly Login options, are how the user should be re-directed after logging. This is again, pretty self explanitory.</p>
+<p><img src="images/user-groups-edit-general.png" alt="User Groups General" /></p>
+<p>The next image shows the Member list. This one is pretty self explanitory. You can see all the users defined on the system and whether or not they below to the User Group, and the ability to add or remove them enmass.</p>
+<p><img src="images/user-groups-edit-members.png" alt="User Groups Members" /></p>
+<p>The next image shows Cacti's Roles and Realms within those Roles. Cacti organizes it's Authorization Realms into Pre-defined Roles. Plugin Developers can create their own Roles as well. So, when you Extend Cacti using Plugins, you may find additional Roles.</p>
+<p><img src="images/user-groups-edit-permissions.png" alt="User Groups Realm Permissions" /></p>
+<p>In this last image on the page, you can see every <strong>Graph</strong> in the Cacti system and whether or not the User Group has permission to view it. This permission can granted by giving the Group permission to a <strong>Device</strong> or the <strong>Graph Template</strong> in the <strong>Permissive</strong> permission mode, or in the <strong>Restrictive</strong> permission mode, they have to have both <strong>Device</strong> and <strong>Graph Template</strong> permissions to gain access to the <strong>Graph</strong>. Finally, the Cacti Administrator can grant access to <strong>Graphs</strong> one at a time if they choose.</p>
+<p><img src="images/user-groups-edit-graph-permissions.png" alt="User Groups Graph Permissions" /></p>
+<p>You can find the <strong>Permission</strong> and <strong>Restrictive</strong> permission setting on Cactis configuration page at <code>Console &gt; Configuration &gt; Settings &gt; General</code>. We have not covered the <strong>Device</strong>, <strong>Template</strong>, <strong>Tree</strong> or <strong>Settings</strong> sub-tabs here. If you would like more information on them, see the User documentation.</p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

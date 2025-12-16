@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Cacti (tm) Documentation</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="cacti-tm-documentation">Cacti (tm) Documentation</h1>
+<p><img src="images/logo.svg" alt="Cacti" /></p>
+<p>Cacti is designed to be a complete graphing solution based on the RRDtool's framework. Its goal is to make a network administrator's job easier by taking care of all the necessary details necessary to create meaningful graphs.</p>
+<p>Please see the official Cacti website for information, support, and updates.</p>
+<h2 id="core-developers---both-active-and-emeritus">Core Developers - Both active and emeritus</h2>
+<ul>
+<li><p>Larry Adams (TheWitness, Active)</p></li>
+<li><p>Mark Brugnoli-Vinten (netniV, Active)</p></li>
+<li><p>Jimmy Conner (cigamit, Active)</p></li>
+<li><p>Andreas Braun (browniebraun, Active)</p></li>
+<li><p>J.P. Pasnak, CD (Linegod, Active)</p></li>
+<li><p>Tony Roman (rony, Emeritus)</p></li>
+<li><p>Reinhard Scheck (gandalf, Emeritus)</p></li>
+<li><p>Ian Berry (raX, Founder, Emeritus)</p></li>
+</ul>
+<h2 id="thanks">Thanks</h2>
+<p>A very special thanks to Tobi Oetiker, the creator of RRDtool and the very popular MRTG. The users of Cacti - especially anyone who has taken the time to create a bug report, or otherwise help fix a Cacti related problem. Also to anyone who has contributed to supporting Cacti.</p>
+<p>Cacti is licensed under the GNU GPL:</p>
+<p>This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.</p>
+<p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.</p>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li><p><a href="Table-of-Contents.html#cacti-installation">Cacti Installation</a></p>
+<p>This section contains information on how to install and/or upgrade the Cacti system. It covers requirements, different platforms and the steps needed to get your system working under normal circumstances.</p></li>
+<li><p><a href="Table-of-Contents.html#cacti-overview">Cacti Overview</a></p>
+<p>This section describes Cacti components and their purpose as well as providing examples including on how to create <strong>Templates</strong> in Cacti.</p></li>
+<li><p><a href="Table-of-Contents.html#advanced-operations">Advanced Operations</a></p>
+<p>This section covers more advanced material such as using a advanced data collection and replacement variables that can be used within <strong>Templates</strong>, etc.</p></li>
+<li><p><a href="Table-of-Contents.html#plugin-development">Plugin Development</a></p>
+<p>This section contains all Plugin development related information. Guidelines, hooks, references, etc. More information can be found on the <a href="https://forums.cacti.net/viewforum.php?f=6">Cacti Forums</a>.</p></li>
+<li><p><a href="Table-of-Contents.html#how-tos">How To's</a></p>
+<p>This section contains how to's for several topics.</p></li>
+<li><p><a href="Table-of-Contents.html#contributing">Contributing</a></p>
+<p>This section contains information on how to contribute to Cacti.</p></li>
+<li><p><a href="Table-of-Contents.html#development-standards">Development Standards</a></p>
+<p>This section contains the relevant information on how to ensure that any contribution is kept to the same standards that are applied for the Cacti Group. It should be noted that non-compliance does not mean automatically exclusion of proposed changes.</p></li>
+</ol>
+<h3 id="known-issues">Known Issues</h3>
+<p><a href="Known-Issues.html">List of Known issues</a></p>
+<h3 id="cacti-installation">Cacti Installation</h3>
+<ol>
+<li><p><a href="Requirements.html">Requirements</a></p></li>
+<li><p><a href="General-Installing-Instructions.html">General Installing Instructions</a></p></li>
+<li><p>Installing Cacti on Linux</p>
+<p>3.1. <a href="Install-Under-CentOS_LAMP.html">Installation Under CentOS 7 - LAMP Stack</a></p>
+<p>3.2. <a href="Install-Under-CentOS_LEMP.html">Installation Under CentOS 7 - LEMP Stack</a></p>
+<p>3.3. <a href="Installing-Under-Ubuntu-Debian.html">Installation Under Ubuntu/Debian - LAMP Stack</a></p></li>
+<li><p><a href="Installing-Under-Windows.html">Installing Under Windows</a></p></li>
+<li><p><a href="Upgrading-Cacti.html">Upgrading Cacti Under Linux/UNIX</a></p></li>
+<li><p><a href="Upgrading-Cacti-Under-Windows.html">Upgrading Cacti Under Windows</a></p></li>
+<li><p><a href="Upgrading-Cacti-Under-FreeBSD.html">Upgrading Cacti Under FreeBSD</a></p></li>
+</ol>
+<h3 id="cacti-overview">Cacti Overview</h3>
+<ol>
+<li><p>Overview</p>
+<p>1.1. <a href="Navigating-The-User-Interface.html">Navigating the User Interface</a></p>
+<p>1.2. <a href="Principles-of-Operation.html">Principles of Operation</a></p>
+<p>1.3. <a href="Graph-Overview.html">Graph Overview</a></p>
+<p>1.4. <a href="How-to-Graph-Your-Network.html">How to Graph Your Network</a></p>
+<p>1.5. <a href="Viewing-Graphs.html">Viewing Graphs</a></p></li>
+<li><p>Management</p>
+<p>2.1. <a href="Devices.html">Devices</a></p>
+<p>2.2. <a href="Sites.html">Sites</a></p>
+<p>2.3. <a href="Trees.html">Trees</a></p>
+<p>2.4. <a href="Graphs.html">Graphs</a></p>
+<p>2.5. <a href="Data-Sources.html">Data Sources</a></p>
+<p>2.6. <a href="Aggregates.html">Aggregates</a></p></li>
+<li><p>Data Collection</p>
+<p>3.1. <a href="Data-Collectors.html">Data Collectors</a></p>
+<p>3.2. <a href="Spine.html">Spine Data Collection</a></p>
+<p>3.3. <a href="Data-Input-Methods.html">Data Input Methods</a></p>
+<p>3.4. <a href="Data-Queries.html">Data Queries</a></p></li>
+<li><p><a href="Templates.html">Templates</a></p>
+<p>4.1. <a href="Device-Templates.html">Device</a></p>
+<p>4.2. <a href="Graph-Templates.html">Graph</a></p>
+<p>4.3. <a href="Data-Source-Templates.html">Data Source</a></p>
+<p>4.4. <a href="Aggregate-Templates.html">Aggregate</a></p>
+<p>4.5. <a href="Color-Templates.html">Color</a></p></li>
+<li><p>Automation</p>
+<p>5.1. <a href="Automation-Networks.html">Networks</a></p>
+<p>5.2. <a href="Discovered-Devices.html">Discovered Devices</a></p>
+<p>5.3. <a href="Device-Rules.html">Device Rules</a></p>
+<p>5.4. <a href="Graph-Rules.html">Graph Rules</a></p>
+<p>5.5. <a href="Tree-Rules.html">Tree Rules</a></p>
+<p>5.6. <a href="SNMP-Options.html">SNMP Options</a></p></li>
+<li><p>Presets</p>
+<p>6.1. <a href="Data-Profiles.html">Data Profiles</a></p>
+<p>6.2. <a href="CDEFs.html">CDEFS</a></p>
+<p>6.3. <a href="VDEFs.html">VDEFS</a></p>
+<p>6.4. <a href="Colors.html">Colors</a></p>
+<p>6.5. <a href="GPRINTs.html">GPRINTs</a></p></li>
+<li><p>Import/Export</p>
+<p>7.1. <a href="Import-Template.html">Import Templates</a></p>
+<p>7.2. <a href="Export-Template.html">Export Templates</a></p></li>
+<li><p><a href="Settings.html">Settings (w/o Auth)</a></p>
+<p>8.1. <a href="Settings-General.html">General</a></p>
+<p>8.2. <a href="Settings-Paths.html">Paths</a></p>
+<p>8.3. <a href="Settings-Device-Defaults.html">Device Defaults</a></p>
+<p>8.4. <a href="Settings-Poller.html">Poller</a></p>
+<p>8.5. <a href="Settings-Data.html">Data</a></p>
+<p>8.6. <a href="Settings-Visual.html">Visual</a></p>
+<p>8.7. <a href="Settings-Performance.html">Performance</a></p>
+<p>8.8. <a href="Settings-Spikes.html">Spikes</a></p>
+<p>8.9. <a href="Settings-Mail-Reporting-DNS.html">Mail/Reporting/DNS</a></p></li>
+<li><p><a href="Settings-Auth.html">Settings - Auth</a></p>
+<p>9.1. <a href="Settings-Auth-Local.html">Local Auth</a></p>
+<p>9.2. <a href="Settings-Auth-LDAP.html">LDAP Auth</a></p>
+<p>9.3. <a href="Settings-Auth-Basic.html">Basic Auth</a></p>
+<p>9.4. <a href="Settings-Domains.html">Domains Auth</a></p></li>
+<li><p><a href="Settings-Users-Groups-Domains.html">Configuration - Users, Groups and Domains</a></p>
+<p>10.1. <a href="User-Management.html">Users</a></p>
+<p>10.2. <a href="User-Group-Management.html">User Groups</a></p>
+<p>10.3. <a href="User-Domains.html">User Domains</a></p></li>
+<li><p><a href="Plugins.html">Configuration - Plugins</a></p></li>
+<li><p>Utilities</p>
+<p>12.1. <a href="System-Utilities.html">System Utilities</a></p>
+<p>12.2. <a href="Data-Debug.html">Data Debug</a></p>
+<p>12.3. <a href="External-Links.html">External Links</a></p></li>
+<li><p>Reporting</p>
+<p>13.1. <a href="Reports-Admin.html">Reports Admistrative Interface</a></p>
+<p>13.2. <a href="Reports-User.html">Reports User Interface</a></p>
+<p>13.3. <a href="Reports-Items.html">Report Items Page</a></p>
+<p>13.4. <a href="Reports-Preview.html">Report Preview Page</a></p>
+<p>13.5. <a href="Reports-Events.html">Report Events Page</a></p>
+<p>13.6. <a href="Reports-Other-Options.html">Other Options for Adding Report Items</a></p></li>
+<li><p><a href="Cacti-Log.html">The Cacti Log</a></p></li>
+</ol>
+<h3 id="advanced-operations">Advanced Operations</h3>
+<ol>
+<li><p>Data Collection</p>
+<p>1.1. <a href="Command-Line-Scripts.html">Command Line Scripts</a></p>
+<p>1.2. <a href="PHP-Script-Server.html">PHP Script Server</a></p>
+<p>1.3. <a href="Spine.html">Spine Data Collection</a></p>
+<p>1.4. <a href="Boost.html">Performance Setting (Boost)</a></p></li>
+<li><p><a href="Frequently-Asked-Questions.html">Frequently Asked Questions</a></p></li>
+<li><p><a href="Variables.html">Replacement Variables</a></p></li>
+<li><p><a href="RRDtool-Specific-Features.html">RRDtool Specific Features</a></p></li>
+<li><p><a href="RRDproxy.html">RRDProxy Specific Features</a></p></li>
+<li><p><a href="Spikekill.html">Spikekill</a></p></li>
+<li><p><a href="Debugging.html">Debugging</a></p></li>
+<li><p><a href="Version-Specific-Release-Notes.html">Version Specific Release Notes</a></p></li>
+</ol>
+<h3 id="plugin-development">Plugin Development</h3>
+<ol>
+<li><p><a href="Plugin-Development.html">Plugin Overview</a></p></li>
+<li><p><a href="Plugin-Guidelines.html">Plugin Guidelines</a></p></li>
+<li><p><a href="Plugin-Creating-Plugins.html">Creating Plugins</a></p></li>
+<li><p><a href="Plugin-Reference.html">References</a></p></li>
+<li><p><a href="Plugin-Hook-API-Ref.html">Hook API Reference</a></p></li>
+</ol>
+<h3 id="plugin-documentation">Plugin Documentation</h3>
+<p>1.<a href="syslog-plugin.html">Syslog Plugin</a></p>
+<h3 id="how-tos">How Tos</h3>
+<ol>
+<li><p><a href="How-To-Work-With-Templates.html">How To Work with Templates</a></p></li>
+<li><p><a href="How-To-Create-Data-Input-Method.html">How To Create a Data Input Method</a></p></li>
+<li><p><a href="How-To-Data-Queries.html">How To Work with Data Queries</a></p></li>
+<li><p><a href="How-To-Existing-SNMP-Data-Queries.html">How To Work with Existing SNMP Data Queries</a></p></li>
+<li><p><a href="How-To-New-SNMP-Data-Queries.html">How To Work with New SNMP Data Queries</a></p></li>
+<li><p><a href="How-To-Script-Data-Queries.html">How To Work with Script Data Queries</a></p></li>
+<li><p><a href="How-To-Setup-Remote-Pollers.html">How To Setup Remote Pollers</a></p></li>
+<li><p><a href="How-To-Determine-Template-Version.html">How To Determine Template Version</a></p></li>
+<li><p><a href="How-To-SSH-Tunnels.html">How To Setup SSH Tunnels</a></p></li>
+</ol>
+<p>10.<a href="Cacti-SSL-Configuration.html">Enable SSL for Cacti</a></p>
+<p>11.<a href="Graph-a-Single-SNMP-OID.html">Graph a Single SNMP OID</a></p>
+<p>12.<a href="How-To-Poller-5-to-1-min.html">Change poller interval from 5 minutes to 1 minute </a></p>
+<h3 id="video-tutorials">Video Tutorials</h3>
+<p>Watch Howto's and Tutorials on the Cacti Official YouTube page if you prefer. If you would have any ideas for videos or would like to contribute let us know !</p>
+<p><a href="https://www.youtube.com/channel/UC6ROmUGuuLa9BdHWzvGSY1w">Cacti Official Youtube Channel</a></p>
+<h3 id="contributing">Contributing</h3>
+<ol>
+<li><p><a href="Contributing.html">Open Source Code</a></p></li>
+<li><p><a href="Contributing-Translations.html">Language Translations</a></p></li>
+</ol>
+<h3 id="development-standards">Development Standards</h3>
+<ol>
+<li><p><a href="Standards-Documentation.html">Documentation</a></p></li>
+<li><p><a href="Standards-Code-Formatting.html">Code Formatting</a></p></li>
+<li><p><a href="Standards-PHP-Spec-Constructs.html">PHP Specific Constructs</a></p></li>
+<li><p><a href="Standards-FileSystem-Layout.html">File System Layout</a></p></li>
+<li><p><a href="Standards-Patch-Creation.html">Patch Creation</a></p></li>
+<li><p><a href="Standards-SQL.html">SQL Standards</a></p></li>
+<li><p><a href="Standards-Security.html">Security</a></p></li>
+</ol>
+<h3 id="template-specific-documentation">Template Specific Documentation</h3>
+<p>This section will be for template specific configuration requriments</p>
+<ol>
+<li><a href="apache_template_config.html">Apache Server Template</a></li>
+</ol>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

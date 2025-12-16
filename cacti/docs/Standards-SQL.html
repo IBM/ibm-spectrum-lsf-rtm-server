@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – SQL Standards</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="sql-standards">SQL Standards</h1>
+<p>Special care must be taken for Cacti to properly support multiple DBMS's.</p>
+<h2 id="quotes">Quotes</h2>
+<p>When writing queries do not use quotes around numeric values. While MySQL is not strict about types, most DBMS's assume that any value contained within quotes is a string.</p>
+<p>As well, single quotes are used unless a variable is referenced</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">$graphs</span> = db_fetch_assoc<span class="ot">(</span><span class="st">&#39;SELECT * FROM graph WHERE height &gt;= 150&#39;</span><span class="ot">);</span></a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">$rows</span> = db_fetch_cell<span class="ot">(</span><span class="st">&quot;SELECT count(*) FROM </span><span class="kw">$archive_table</span><span class="st">&quot;</span><span class="ot">);</span></a></code></pre></div>
+<h2 id="dbms-functions">DBMS Functions</h2>
+<p>Do not use functions in SQL queries that are provided only by a single DBMS. These functions are generally not uniformly support or even available in all DBMS's. Common examples of such functions are <code>MD5()</code>, <code>CONCAT()</code>, and <code>NOW()</code>.</p>
+<h2 id="sql-injection">SQL Injection</h2>
+<p>Cacti provides support for prepared statements. You should use these prepared statement functions as much as possible to avoid the risk of SQL Injection attacks from the Cacti website. Examples include:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb3-1" title="1"><span class="co">// Example prepared statements</span></a>
+<a class="sourceLine" id="cb3-2" title="2"><span class="kw">$hostname</span> = db_fetch_cell_prepared<span class="ot">(</span><span class="st">&#39;SELECT hostname FROM host WHERE id = ?&#39;</span><span class="ot">,</span> <span class="kw">array</span><span class="ot">(</span><span class="kw">$id</span><span class="ot">));</span></a>
+<a class="sourceLine" id="cb3-3" title="3"><span class="kw">$host</span>     = db_fetch_row_prepared<span class="ot">(</span><span class="st">&#39;SELECT * FROM host WHERE id = ?&#39;</span><span class="ot">,</span> <span class="kw">array</span><span class="ot">(</span><span class="kw">$id</span><span class="ot">));</span></a>
+<a class="sourceLine" id="cb3-4" title="4"><span class="kw">$graphs</span>   = db_fetch_assoc<span class="ot">(</span><span class="st">&#39;SELECT * FROM graph_local WHERE host_id = ?&#39;</span><span class="ot">,</span> <span class="kw">array</span><span class="ot">(</span><span class="kw">$id</span><span class="ot">));</span></a>
+<a class="sourceLine" id="cb3-5" title="5"></a>
+<a class="sourceLine" id="cb3-6" title="6">db_execute_prepared<span class="ot">(</span><span class="st">&#39;UPDATE host SET description = ? WHERE id = ?&#39;</span><span class="ot">,</span> <span class="kw">array</span><span class="ot">(</span><span class="st">&#39;Local Machines&#39;</span><span class="ot">,</span> <span class="kw">$id</span><span class="ot">));</span></a>
+<a class="sourceLine" id="cb3-7" title="7"></a>
+<a class="sourceLine" id="cb3-8" title="8"><span class="co">// Escape strings if using legacy functions</span></a>
+<a class="sourceLine" id="cb3-9" title="9"><span class="kw">$hostname</span> = db_qstr<span class="ot">(</span><span class="st">&#39;myhost.com&#39;</span><span class="ot">);</span></a>
+<a class="sourceLine" id="cb3-10" title="10">db_execute<span class="ot">(</span><span class="kw">UPDATE</span> host <span class="kw">SET</span> hostname = <span class="st">&#39;$myhost&#39;</span> <span class="kw">WHERE</span> id = <span class="kw">$id</span><span class="st">&quot;);</span></a>
+<a class="sourceLine" id="cb3-11" title="11"></a></code></pre></div>
+<h2 id="format-of-sql-statements">Format of SQL statements</h2>
+<ul>
+<li><p>For short statements, SQL calls may be made on a single row.</p></li>
+<li><p>If the SQL statement starts to grow and be unreadable without scrolling, it should be wrapped onto a continuation line for ease of use and readability. The following keywords should also be placed at the start of a new line:</p>
+<ul>
+<li><p>joins statements (excluding JOIN itself which should not be used) (eg, INNER JOIN, LEFT JOIN, RIGHT JOIN, OUTER JOIN, CROSS JOIN)</p>
+<p><strong>Note:</strong> *Any implicit join or JOIN without one of the modifiers should be converted to an explicit join with a modifier. When converting the implicit join statement, remember to remove the WHERE joining clause.</p></li>
+<li><p>AND / OR</p></li>
+<li><p>FROM</p></li>
+<li><p>WHERE</p></li>
+<li><p>ORDER</p></li>
+<li><p>GROUP BY</p></li>
+<li><p>HAVING</p></li>
+<li><p>LIMIT</p></li>
+<li><p>prepared statement arrays</p></li>
+</ul></li>
+<li><p>Indentation should consist of one extra tab when any of the following occur:</p>
+<ul>
+<li><p>continuation lines</p></li>
+<li><p>Subqueries</p></li>
+</ul></li>
+<li><p>There should always be 'AS' when defining an alias for any table, field or query to clearly define the definition of said alias.</p></li>
+<li><p>There should always be a space following a comma and before/after an operator.</p></li>
+</ul>
+<h3 id="example-of-single-line-sql">Example of single line SQL</h3>
+<h4 id="before-formatting">Before formatting</h4>
+<div class="sourceCode" id="cb4"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">$templates</span> = db_fetch_assoc<span class="ot">(</span><span class="st">&#39;SELECT DISTINCT gt.id, gt.name FROM graph_templates AS gt INNER JOIN graph_templates_graph AS gtg ON gt.id = gtg.graph_template_id INNER JOIN graph_templates_item AS gti ON gtg.graph_template_id=gti.graph_template_id INNER JOIN data_template_rrd AS dtr ON gti.task_item_id=dtr.id INNER JOIN data_template_data AS dtd ON dtd.data_template_id=dtr.data_template_id AND dtd.local_data_id = 0 WHERE gtg.local_graph_id=0 AND dtr.local_data_id = 0 AND dtd.local_data_id = 0 AND dtd.data_input_id in (2,11,12) ORDER BY gt.name;&#39;</span></a></code></pre></div>
+<h4 id="corrected-formatting-with-prepared-usage">Corrected formatting with prepared usage</h4>
+<div class="sourceCode" id="cb5"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">$templates</span> = db_fetch_assoc_prepared<span class="ot">(</span><span class="st">&#39;SELECT DISTINCT gt.id, gt.name</span></a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="st">    FROM graph_templates AS gt</span></a>
+<a class="sourceLine" id="cb5-3" title="3"><span class="st">    INNER JOIN graph_templates_graph AS gtg</span></a>
+<a class="sourceLine" id="cb5-4" title="4"><span class="st">    ON gt.id = gtg.graph_template_id</span></a>
+<a class="sourceLine" id="cb5-5" title="5"><span class="st">    INNER JOIN graph_templates_item AS gti</span></a>
+<a class="sourceLine" id="cb5-6" title="6"><span class="st">    ON gtg.graph_template_id=gti.graph_template_id</span></a>
+<a class="sourceLine" id="cb5-7" title="7"><span class="st">    INNER JOIN data_template_rrd AS dtr</span></a>
+<a class="sourceLine" id="cb5-8" title="8"><span class="st">    ON gti.task_item_id=dtr.id</span></a>
+<a class="sourceLine" id="cb5-9" title="9"><span class="st">    INNER JOIN data_template_data AS dtd</span></a>
+<a class="sourceLine" id="cb5-10" title="10"><span class="st">    ON dtd.data_template_id=dtr.data_template_id</span></a>
+<a class="sourceLine" id="cb5-11" title="11"><span class="st">    AND dtd.local_data_id = 0</span></a>
+<a class="sourceLine" id="cb5-12" title="12"><span class="st">    WHERE gtg.local_graph_id=0</span></a>
+<a class="sourceLine" id="cb5-13" title="13"><span class="st">    AND dtr.local_data_id = 0</span></a>
+<a class="sourceLine" id="cb5-14" title="14"><span class="st">    AND dtd.local_data_id = 0</span></a>
+<a class="sourceLine" id="cb5-15" title="15"><span class="st">    AND dtd.data_input_id in (?,?,?)</span></a>
+<a class="sourceLine" id="cb5-16" title="16"><span class="st">    ORDER BY gt.name&#39;</span><span class="ot">,</span></a>
+<a class="sourceLine" id="cb5-17" title="17">    <span class="kw">array</span><span class="ot">(</span><span class="dv">2</span><span class="ot">,</span><span class="dv">11</span><span class="ot">,</span><span class="dv">12</span><span class="ot">));</span></a></code></pre></div>
+<h3 id="example-of-implicit-join">Example of implicit join</h3>
+<h4 id="before-formatting-1">Before formatting</h4>
+<div class="sourceCode" id="cb6"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">$user_realms</span> = db_fetch_assoc<span class="ot">(</span><span class="st">&#39;SELECT ua.id, uar.realm_id</span></a>
+<a class="sourceLine" id="cb6-2" title="2"><span class="st">    FROM user_auth ua, user_auth_realms uar</span></a>
+<a class="sourceLine" id="cb6-3" title="3"><span class="st">    WHERE ua.id = uar.user_id&#39;</span><span class="ot">);</span></a></code></pre></div>
+<h4 id="corrected-formatting">Corrected formatting</h4>
+<div class="sourceCode" id="cb7"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb7-1" title="1"><span class="kw">$user_realms</span> = db_fetch_assoc<span class="ot">(</span><span class="st">&#39;SELECT ua.id, uar.realm_id</span></a>
+<a class="sourceLine" id="cb7-2" title="2"><span class="st">    FROM user_auth ua</span></a>
+<a class="sourceLine" id="cb7-3" title="3"><span class="st">    INNER JOIN user_auth_realms uar</span></a>
+<a class="sourceLine" id="cb7-4" title="4"><span class="st">    ON ua.id = uar.user_id&#39;</span><span class="ot">);</span></a></code></pre></div>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

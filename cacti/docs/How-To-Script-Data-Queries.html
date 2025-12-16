@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Script Data Query Walkthrough</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="script-data-query-walkthrough">Script Data Query Walkthrough</h1>
+<p>Goal of this HowTo will be to show the <strong>principles of writing a Script Query</strong>, including script, xml and all needed templates. Why should you create such a thing? Suppose, your target features some indexed readings, that are <strong>not</strong> available via SNMP but by some other method (e.g. wget/cgi, ssh, NRPE, …). Writing a Script Data Queries works very much the same way as SNMP Data Queries. But nevertheless, I'll take you through all of the steps now.</p>
+<p>The example uses PHP. Why PHP? First, it's easier to copy stuff from already existing PHP scripts. Second, it would be possible to use cacti functions. It should be possible to imagine, how this works with other programming languages. Strictly speaking, I'm not that PHP expert. So be patient with me.</p>
+<p>Please pay attention. This HowTo will not explain how to write a <strong>Script Server Data Query</strong> (yes, there is such a thing!). It would not introduce that many changes. But this will be left to some other HowTo.</p>
+<p>Personally, my primary goal was to use an example, that all users should be able to copy to execute each and every step on its own. Unfortunately, there seems to be no example, that is common enough and interesting at the same time. So I'm sorry to announce, that this HowTo will show “Interface Traffic Data Gathering”. Yes, I know, this is not that new. And surely, it will not be as fast as pure SNMP. So, to my shame, I suppose that this will never make it into any production environment. But, again, this is not the primary goal.</p>
+<p>Before starting the work, I feel encouraged to point out a drawback of this approach. Cacti will start a PHP instance, each time it has to fetch a value from the target device. This is not that fast, obviously. And it will not prosper from the performance boost when switching over from cmd.php to Spine. Of course, even Spine will need to start php! And that's exactly, where the thingy called <strong>Script Server Data Query</strong> drops in. But let's leave this for the next main chapter.</p>
+<p>The code runs on Cacti 0.8.7 versions.</p>
+<h2 id="basic-script">Basic Script</h2>
+<p>The starting point will be some very basic php script. Put it into <code>&lt;path_cacti&gt;/scripts/query_interface_traffic.php</code>. It will show interface indices only for the given target host. The script takes two parameters as input, the <strong>hostname</strong> of the target and the string <strong>index</strong>. You have to implement the <strong>index method</strong>, as OO programmers would say. In this case, there's an “if” clause to process index requests. Output is a list of indices, each one on a separate line.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">&lt;?php</span></a>
+<a class="sourceLine" id="cb1-2" title="2"></a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="co"># include some cacti files for ease of use</span></a>
+<a class="sourceLine" id="cb1-4" title="4"><span class="kw">include</span><span class="ot">(</span><span class="fu">dirname</span><span class="ot">(</span><span class="kw">__FILE__</span><span class="ot">)</span> . <span class="st">&#39;/../include/cli_check.php&#39;</span><span class="ot">);</span></a>
+<a class="sourceLine" id="cb1-5" title="5"><span class="kw">include</span><span class="ot">(</span><span class="fu">dirname</span><span class="ot">(</span><span class="kw">__FILE__</span><span class="ot">)</span> . <span class="st">&#39;/../lib/snmp.php&#39;</span><span class="ot">);</span></a>
+<a class="sourceLine" id="cb1-6" title="6"></a>
+<a class="sourceLine" id="cb1-7" title="7"><span class="co"># define all OIDs we need for further processing</span></a>
+<a class="sourceLine" id="cb1-8" title="8"><span class="kw">$oids</span> = <span class="kw">array</span><span class="ot">(</span></a>
+<a class="sourceLine" id="cb1-9" title="9">    <span class="st">&#39;index&#39;</span> =&gt; <span class="st">&#39;.1.3.6.1.2.1.2.2.1.1&#39;</span><span class="ot">,</span></a>
+<a class="sourceLine" id="cb1-10" title="10"><span class="ot">);</span></a>
+<a class="sourceLine" id="cb1-11" title="11"></a>
+<a class="sourceLine" id="cb1-12" title="12"><span class="kw">$xml_delimiter</span>  =  <span class="st">&#39;!&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb1-13" title="13"></a>
+<a class="sourceLine" id="cb1-14" title="14"><span class="co"># all required input parms</span></a>
+<a class="sourceLine" id="cb1-15" title="15"><span class="kw">$hostname</span>        = <span class="kw">$_SERVER</span><span class="ot">[</span><span class="st">&#39;argv&#39;</span><span class="ot">][</span><span class="dv">1</span><span class="ot">];</span>        <span class="co"># hostname/IP@</span></a>
+<a class="sourceLine" id="cb1-16" title="16"><span class="kw">$cmd</span>             = <span class="kw">$_SERVER</span><span class="ot">[</span><span class="st">&#39;argv&#39;</span><span class="ot">][</span><span class="dv">2</span><span class="ot">];</span>        <span class="co"># one of: index/query/get</span></a>
+<a class="sourceLine" id="cb1-17" title="17"></a>
+<a class="sourceLine" id="cb1-18" title="18"><span class="co"># put your own community string here</span></a>
+<a class="sourceLine" id="cb1-19" title="19"><span class="kw">$snmp_community</span>  = <span class="st">&#39;public&#39;</span><span class="ot">;</span>            <span class="co"># community string</span></a>
+<a class="sourceLine" id="cb1-20" title="20"><span class="kw">$snmp_version</span>    = <span class="dv">1</span><span class="ot">;</span>                <span class="co"># snmp version</span></a>
+<a class="sourceLine" id="cb1-21" title="21"><span class="kw">$snmp_port</span>       = <span class="dv">161</span><span class="ot">;</span>              <span class="co"># snmp port</span></a>
+<a class="sourceLine" id="cb1-22" title="22"><span class="kw">$snmp_timeout</span>    = <span class="dv">500</span><span class="ot">;</span>              <span class="co"># snmp timeout</span></a>
+<a class="sourceLine" id="cb1-23" title="23"><span class="kw">$snmp_retries</span>    = <span class="dv">3</span><span class="ot">;</span>                <span class="co"># snmp retries</span></a>
+<a class="sourceLine" id="cb1-24" title="24"><span class="kw">$max_oids</span>        = <span class="dv">1</span><span class="ot">;</span>                <span class="co"># max oids for V2/V3 hosts</span></a>
+<a class="sourceLine" id="cb1-25" title="25"><span class="co"># required for SNMP V3</span></a>
+<a class="sourceLine" id="cb1-26" title="26"><span class="kw">$snmp_auth_username</span>       = <span class="st">&#39;&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb1-27" title="27"><span class="kw">$snmp_auth_password</span>       = <span class="st">&#39;&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb1-28" title="28"><span class="kw">$snmp_auth_protocol</span>       = <span class="st">&#39;&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb1-29" title="29"><span class="kw">$snmp_priv_passphrase</span>     = <span class="st">&#39;&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb1-30" title="30"><span class="kw">$snmp_priv_protocol</span>       = <span class="st">&#39;&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb1-31" title="31"><span class="kw">$snmp_context</span>             = <span class="st">&#39;&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb1-32" title="32"></a>
+<a class="sourceLine" id="cb1-33" title="33"><span class="co"># -------------------------------------------------------------------------</span></a>
+<a class="sourceLine" id="cb1-34" title="34"><span class="co"># main code starts here</span></a>
+<a class="sourceLine" id="cb1-35" title="35"><span class="co"># -------------------------------------------------------------------------</span></a>
+<a class="sourceLine" id="cb1-36" title="36"></a>
+<a class="sourceLine" id="cb1-37" title="37"><span class="co"># -------------------------------------------------------------------------</span></a>
+<a class="sourceLine" id="cb1-38" title="38"><span class="co"># script MUST respond to index queries</span></a>
+<a class="sourceLine" id="cb1-39" title="39"><span class="co">#       the command for this is defined within the XML file as</span></a>
+<a class="sourceLine" id="cb1-40" title="40"><span class="co">#       &lt;arg_index&gt;index&lt;/arg_index&gt;</span></a>
+<a class="sourceLine" id="cb1-41" title="41"><span class="co">#       you may replace the string &#39;index&#39; both in the XML and here</span></a>
+<a class="sourceLine" id="cb1-42" title="42"><span class="co"># -------------------------------------------------------------------------</span></a>
+<a class="sourceLine" id="cb1-43" title="43"><span class="co">#       php -q &lt;script&gt; &lt;parms&gt; index</span></a>
+<a class="sourceLine" id="cb1-44" title="44"><span class="co"># will list all indices of the target values</span></a>
+<a class="sourceLine" id="cb1-45" title="45"><span class="co"># e.g. in case of interfaces</span></a>
+<a class="sourceLine" id="cb1-46" title="46"><span class="co">#      it has to respond with the list of interface indices</span></a>
+<a class="sourceLine" id="cb1-47" title="47"><span class="co"># -------------------------------------------------------------------------</span></a>
+<a class="sourceLine" id="cb1-48" title="48"><span class="kw">if</span> <span class="ot">(</span><span class="kw">$cmd</span> == <span class="st">&#39;index&#39;</span><span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb1-49" title="49">    <span class="co"># retrieve all indices from target</span></a>
+<a class="sourceLine" id="cb1-50" title="50">    <span class="kw">$return_arr</span> = reindex<span class="ot">(</span>cacti_snmp_walk<span class="ot">(</span><span class="kw">$hostname</span><span class="ot">,</span> <span class="kw">$snmp_community</span><span class="ot">,</span></a>
+<a class="sourceLine" id="cb1-51" title="51">    <span class="kw">$oids</span><span class="ot">[</span><span class="st">&#39;index&#39;</span><span class="ot">],</span> <span class="kw">$snmp_version</span><span class="ot">,</span> <span class="kw">$snmp_auth_username</span><span class="ot">,</span></a>
+<a class="sourceLine" id="cb1-52" title="52">    <span class="kw">$snmp_auth_password</span><span class="ot">,</span> <span class="kw">$snmp_auth_protocol</span><span class="ot">,</span> <span class="kw">$snmp_priv_passphrase</span><span class="ot">,</span> <span class="kw">$snmp_priv_protocol</span><span class="ot">,</span></a>
+<a class="sourceLine" id="cb1-53" title="53">    <span class="kw">$snmp_context</span><span class="ot">,</span> <span class="kw">$snmp_port</span><span class="ot">,</span> <span class="kw">$snmp_timeout</span><span class="ot">,</span> <span class="kw">$snmp_retries</span><span class="ot">,</span> <span class="kw">$max_oids</span><span class="ot">,</span> <span class="kw">SNMP_POLLER</span><span class="ot">));</span></a>
+<a class="sourceLine" id="cb1-54" title="54"></a>
+<a class="sourceLine" id="cb1-55" title="55">    <span class="co"># and print each index as a separate line</span></a>
+<a class="sourceLine" id="cb1-56" title="56">    <span class="kw">for</span> <span class="ot">(</span><span class="kw">$i</span>=<span class="dv">0</span><span class="ot">;(</span><span class="kw">$i</span>&lt;<span class="fu">sizeof</span><span class="ot">(</span><span class="kw">$return_arr</span><span class="ot">));</span><span class="kw">$i</span>++<span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb1-57" title="57">        <span class="kw">print</span> <span class="kw">$return_arr</span><span class="ot">[</span><span class="kw">$i</span><span class="ot">]</span> . <span class="st">&quot;</span><span class="kw">\n</span><span class="st">&quot;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb1-58" title="58">    }</a>
+<a class="sourceLine" id="cb1-59" title="59">} <span class="kw">else</span> {</a>
+<a class="sourceLine" id="cb1-60" title="60">    <span class="kw">print</span> <span class="st">&quot;Invalid use of script query, required parameters:</span><span class="kw">\n\n</span><span class="st">&quot;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb1-61" title="61">    <span class="kw">print</span> <span class="st">&quot;    &lt;hostname&gt; &lt;cmd&gt;</span><span class="kw">\n</span><span class="st">&quot;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb1-62" title="62">}</a>
+<a class="sourceLine" id="cb1-63" title="63"></a>
+<a class="sourceLine" id="cb1-64" title="64"><span class="kw">function</span> reindex<span class="ot">(</span><span class="kw">$arr</span><span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb1-65" title="65">    <span class="kw">$return_arr</span> = <span class="kw">array</span><span class="ot">();</span></a>
+<a class="sourceLine" id="cb1-66" title="66"></a>
+<a class="sourceLine" id="cb1-67" title="67">    <span class="kw">for</span> <span class="ot">(</span><span class="kw">$i</span>=<span class="dv">0</span><span class="ot">;(</span><span class="kw">$i</span>&lt;<span class="fu">sizeof</span><span class="ot">(</span><span class="kw">$arr</span><span class="ot">));</span><span class="kw">$i</span>++<span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb1-68" title="68">        <span class="kw">$return_arr</span><span class="ot">[</span><span class="kw">$i</span><span class="ot">]</span> = <span class="kw">$arr</span><span class="ot">[</span><span class="kw">$i</span><span class="ot">][</span><span class="st">&#39;value&#39;</span><span class="ot">];</span></a>
+<a class="sourceLine" id="cb1-69" title="69">    }</a>
+<a class="sourceLine" id="cb1-70" title="70"></a>
+<a class="sourceLine" id="cb1-71" title="71">    <span class="kw">return</span> <span class="kw">$return_arr</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb1-72" title="72">}</a></code></pre></div>
+<p>It will be called like this</p>
+<pre class="shell"><code>php -q query_interface_traffic.php &lt;your target host&gt; index
+1
+2
+3
+4
+</code></pre>
+<p>As you see, my <code>&lt;target&gt;</code> has 4 indices (interfaces).</p>
+<h3 id="discussion-function_reindex">Discussion: function_reindex</h3>
+<p>You may wonder why this function drops in. Well, lets have a look at <code>cacti_snmp_walk</code>. This function is part of cacti itself and eases the use of SNMP. That's why I call it here. But unfortunately, it's output looks like</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">Array</span></a>
+<a class="sourceLine" id="cb3-2" title="2"><span class="ot">(</span></a>
+<a class="sourceLine" id="cb3-3" title="3">    <span class="ot">[</span><span class="dv">0</span><span class="ot">]</span> =&gt; <span class="kw">Array</span></a>
+<a class="sourceLine" id="cb3-4" title="4">        <span class="ot">(</span></a>
+<a class="sourceLine" id="cb3-5" title="5">            <span class="ot">[</span>oid<span class="ot">]</span> =&gt; <span class="dv">1</span>.<span class="dv">3</span>.<span class="dv">6</span>.<span class="dv">1</span>.<span class="dv">2</span>.<span class="dv">1</span>.<span class="dv">2</span>.<span class="dv">2</span>.<span class="dv">1</span>.<span class="fl">1.1</span></a>
+<a class="sourceLine" id="cb3-6" title="6">            <span class="ot">[</span>value<span class="ot">]</span> =&gt; <span class="dv">1</span></a>
+<a class="sourceLine" id="cb3-7" title="7">        <span class="ot">)</span></a>
+<a class="sourceLine" id="cb3-8" title="8"></a>
+<a class="sourceLine" id="cb3-9" title="9">    <span class="ot">[</span><span class="dv">1</span><span class="ot">]</span> =&gt; <span class="kw">Array</span></a>
+<a class="sourceLine" id="cb3-10" title="10">        <span class="ot">(</span></a>
+<a class="sourceLine" id="cb3-11" title="11">            <span class="ot">[</span>oid<span class="ot">]</span> =&gt; <span class="dv">1</span>.<span class="dv">3</span>.<span class="dv">6</span>.<span class="dv">1</span>.<span class="dv">2</span>.<span class="dv">1</span>.<span class="dv">2</span>.<span class="dv">2</span>.<span class="dv">1</span>.<span class="fl">1.2</span></a>
+<a class="sourceLine" id="cb3-12" title="12">            <span class="ot">[</span>value<span class="ot">]</span> =&gt; <span class="dv">2</span></a>
+<a class="sourceLine" id="cb3-13" title="13">        <span class="ot">)</span></a>
+<a class="sourceLine" id="cb3-14" title="14"></a>
+<a class="sourceLine" id="cb3-15" title="15">    <span class="ot">[</span><span class="dv">2</span><span class="ot">]</span> =&gt; <span class="kw">Array</span></a>
+<a class="sourceLine" id="cb3-16" title="16">        <span class="ot">(</span></a>
+<a class="sourceLine" id="cb3-17" title="17">            <span class="ot">[</span>oid<span class="ot">]</span> =&gt; <span class="dv">1</span>.<span class="dv">3</span>.<span class="dv">6</span>.<span class="dv">1</span>.<span class="dv">2</span>.<span class="dv">1</span>.<span class="dv">2</span>.<span class="dv">2</span>.<span class="dv">1</span>.<span class="fl">1.3</span></a>
+<a class="sourceLine" id="cb3-18" title="18">            <span class="ot">[</span>value<span class="ot">]</span> =&gt; <span class="dv">3</span></a>
+<a class="sourceLine" id="cb3-19" title="19">        <span class="ot">)</span></a>
+<a class="sourceLine" id="cb3-20" title="20"></a>
+<a class="sourceLine" id="cb3-21" title="21">    <span class="ot">[</span><span class="dv">3</span><span class="ot">]</span> =&gt; <span class="kw">Array</span></a>
+<a class="sourceLine" id="cb3-22" title="22">        <span class="ot">(</span></a>
+<a class="sourceLine" id="cb3-23" title="23">            <span class="ot">[</span>oid<span class="ot">]</span> =&gt; <span class="dv">1</span>.<span class="dv">3</span>.<span class="dv">6</span>.<span class="dv">1</span>.<span class="dv">2</span>.<span class="dv">1</span>.<span class="dv">2</span>.<span class="dv">2</span>.<span class="dv">1</span>.<span class="fl">1.4</span></a>
+<a class="sourceLine" id="cb3-24" title="24">            <span class="ot">[</span>value<span class="ot">]</span> =&gt; <span class="dv">4</span></a>
+<a class="sourceLine" id="cb3-25" title="25">        <span class="ot">)</span></a>
+<a class="sourceLine" id="cb3-26" title="26"></a>
+<a class="sourceLine" id="cb3-27" title="27"><span class="ot">)</span></a></code></pre></div>
+<p>The values of interest are stored in <code>$return_arr[$i] = $arr[$i][“value”];</code>. The <strong>function_reindex</strong> gets them all.</p>
+<h2 id="xml-file">XML File</h2>
+<p>This given, the first step will be the xml file defining how to access index values only. So change to your <code>&lt;path_cacti&gt;/resources/script_queries</code> directory and create a file named <strong>ifTraffic.xml</strong>. You may of course choose your own name.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">&lt;interface&gt;</span></a>
+<a class="sourceLine" id="cb4-2" title="2">    <span class="kw">&lt;name&gt;</span>Get Interface Traffic Information<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb4-3" title="3">    <span class="kw">&lt;script_path&gt;</span>|path_php_binary| -q |path_cacti|/scripts/query_interface_traffic.php<span class="kw">&lt;/script_path&gt;</span></a>
+<a class="sourceLine" id="cb4-4" title="4">    <span class="kw">&lt;arg_prepend&gt;</span>|host_hostname|<span class="kw">&lt;/arg_prepend&gt;</span></a>
+<a class="sourceLine" id="cb4-5" title="5">    <span class="kw">&lt;arg_index&gt;</span>index<span class="kw">&lt;/arg_index&gt;</span></a>
+<a class="sourceLine" id="cb4-6" title="6"></a>
+<a class="sourceLine" id="cb4-7" title="7">    <span class="kw">&lt;fields&gt;</span></a>
+<a class="sourceLine" id="cb4-8" title="8">        <span class="kw">&lt;ifIndex&gt;</span></a>
+<a class="sourceLine" id="cb4-9" title="9">            <span class="kw">&lt;name&gt;</span>Index<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb4-10" title="10">            <span class="kw">&lt;direction&gt;</span>input<span class="kw">&lt;/direction&gt;</span></a>
+<a class="sourceLine" id="cb4-11" title="11">            <span class="kw">&lt;query_name&gt;</span>index<span class="kw">&lt;/query_name&gt;</span></a>
+<a class="sourceLine" id="cb4-12" title="12">        <span class="kw">&lt;/ifIndex&gt;</span></a>
+<a class="sourceLine" id="cb4-13" title="13">    <span class="kw">&lt;/fields&gt;</span></a>
+<a class="sourceLine" id="cb4-14" title="14"><span class="kw">&lt;/interface&gt;</span></a></code></pre></div>
+<p>Lets talk about the header elements</p>
+<table>
+<thead>
+<tr class="header">
+<th>field</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>name</td>
+<td>Short Name; chose your own one if you want</td>
+</tr>
+<tr class="even">
+<td>script_path</td>
+<td>Whole command to execute the script from cli. <code>path_php_binary</code>is a cacti builtin variable for<code>/the/full/path/to/php</code>. <code>path_cacti</code> in turn gives the path of the current cacti installation directory.</td>
+</tr>
+<tr class="odd">
+<td>arg_prepend</td>
+<td>All arguments passed to the script go here. There are some builtin variables, again. <code>host_hostname</code> represents the hostname of the device this query will be associated to.</td>
+</tr>
+<tr class="even">
+<td>arg_index</td>
+<td>The string given here will be passed just after all <code>&lt;arg_prepend&gt;</code> to the script for indexing requests. Up to now, this is the only method our script will answer to.</td>
+</tr>
+<tr class="odd">
+<td>fields</td>
+<td>All fields will be defined in this section. Up to now, only the index field is defined</td>
+</tr>
+<tr class="even">
+<td>name</td>
+<td>The name of this very field</td>
+</tr>
+<tr class="odd">
+<td>query_name</td>
+<td>Name of this field when performing a query or a get request (will be shown later, don't worry now).</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr class="header">
+<th>direction</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>input</td>
+<td>defines all fields that serve as a descriptive information to a specific table index. These values will not be graphed but may be printed in e.g.graph titles by means of <code>query\_&lt;name&gt;</code></td>
+</tr>
+<tr class="even">
+<td>output</td>
+<td>defines all fields that will yield a number that should be stored in some RRDfile</td>
+</tr>
+</tbody>
+</table>
+<p>Now save this file and lets turn to cacti to implement this one. First, go to <strong>Data Queries</strong> to see</p>
+<p><img src="images/dq-add-01.preview.png" alt="Script Data Query - Add 01" /></p>
+<p>and <strong>Add</strong> a new one:</p>
+<p><img src="images/dq-add-02.preview.png" alt="Script Data Query - Add 02" /></p>
+<p>Fill in Short and Long Names at your wish. Enter the file name of the XML file and don't forget to choose <strong>Get Script Data (indexed)</strong>. <strong>Create</strong> to see</p>
+<p><img src="images/dq-add-03.preview.png" alt="Script Data Query - Add 03" /></p>
+<p>It has now <strong>Successfully located XML file</strong>. But this does not mean that there are no errors. So lets go on with that. Turn to the <strong>Device</strong> you want to query and add the new <strong>Data Query</strong> as shown:</p>
+<p><img src="images/dev-dq-01.preview.png" alt="Script Data Query - Associate 01" /></p>
+<p><strong>Index Count Changed</strong> was chosen on purpose to tell cacti to re-index not only on reboot but each time the Index Count (e.g. number of interfaces) changed. When done, see the results as</p>
+<p><img src="images/dev-dq-02.preview.png" alt="Script Data Query - Associate 02" /></p>
+<p>To see your script at work, select <strong>Verbose Query</strong> to see:</p>
+<p><img src="images/dev-dq-03.preview.png" alt="Script Data Query - Associate 03" /></p>
+<h2 id="completing-the-script">Completing the Script</h2>
+<p>Now, lets improve our basic script. First, lets define all the variables (OIDs), this script should ask for.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">&lt;?php</span></a>
+<a class="sourceLine" id="cb5-2" title="2"></a>
+<a class="sourceLine" id="cb5-3" title="3"><span class="co">/* do NOT run this script through a web browser */</span></a>
+<a class="sourceLine" id="cb5-4" title="4"><span class="kw">if</span> <span class="ot">(</span>!<span class="kw">isset</span><span class="ot">(</span><span class="kw">$_SERVER</span><span class="ot">[</span><span class="st">&quot;argv&quot;</span><span class="ot">][</span><span class="dv">0</span><span class="ot">])</span> || <span class="kw">isset</span><span class="ot">(</span><span class="kw">$_SERVER</span><span class="ot">[</span><span class="st">&#39;REQUEST_METHOD&#39;</span><span class="ot">])</span>  || <span class="kw">isset</span><span class="ot">(</span><span class="kw">$_SERVER</span><span class="ot">[</span><span class="st">&#39;REMOTE_ADDR&#39;</span><span class="ot">]))</span> {</a>
+<a class="sourceLine" id="cb5-5" title="5">    <span class="kw">die</span><span class="ot">(</span><span class="st">&quot;&lt;br&gt;&lt;strong&gt;This script is only meant to run at the command line.&lt;/strong&gt;&quot;</span><span class="ot">);</span></a>
+<a class="sourceLine" id="cb5-6" title="6">}</a>
+<a class="sourceLine" id="cb5-7" title="7"></a>
+<a class="sourceLine" id="cb5-8" title="8"><span class="co"># deactivate http headers</span></a>
+<a class="sourceLine" id="cb5-9" title="9"><span class="kw">$no_http_headers</span> = <span class="kw">true</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb5-10" title="10"><span class="co"># include some cacti files for ease of use</span></a>
+<a class="sourceLine" id="cb5-11" title="11"><span class="kw">include</span><span class="ot">(</span><span class="fu">dirname</span><span class="ot">(</span><span class="kw">__FILE__</span><span class="ot">)</span> . <span class="st">&quot;/../include/global.php&quot;</span><span class="ot">);</span></a>
+<a class="sourceLine" id="cb5-12" title="12"><span class="kw">include</span><span class="ot">(</span><span class="fu">dirname</span><span class="ot">(</span><span class="kw">__FILE__</span><span class="ot">)</span> . <span class="st">&quot;/../lib/snmp.php&quot;</span><span class="ot">);</span></a>
+<a class="sourceLine" id="cb5-13" title="13"></a>
+<a class="sourceLine" id="cb5-14" title="14"><span class="co"># define all OIDs we need for further processing</span></a>
+<a class="sourceLine" id="cb5-15" title="15"><span class="kw">$oids</span> = <span class="kw">array</span><span class="ot">(</span></a>
+<a class="sourceLine" id="cb5-16" title="16">    <span class="st">&quot;index&quot;</span>         =&gt; <span class="st">&quot;.1.3.6.1.2.1.2.2.1.1&quot;</span><span class="ot">,</span></a>
+<a class="sourceLine" id="cb5-17" title="17">    <span class="st">&quot;ifstatus&quot;</span>      =&gt; <span class="st">&quot;.1.3.6.1.2.1.2.2.1.8&quot;</span><span class="ot">,</span></a>
+<a class="sourceLine" id="cb5-18" title="18">    <span class="st">&quot;ifdescription&quot;</span> =&gt; <span class="st">&quot;.1.3.6.1.2.1.2.2.1.2&quot;</span><span class="ot">,</span></a>
+<a class="sourceLine" id="cb5-19" title="19">    <span class="st">&quot;ifname&quot;</span>        =&gt; <span class="st">&quot;.1.3.6.1.2.1.31.1.1.1.1&quot;</span><span class="ot">,</span></a>
+<a class="sourceLine" id="cb5-20" title="20">    <span class="st">&quot;ifalias&quot;</span>       =&gt; <span class="st">&quot;.1.3.6.1.2.1.31.1.1.1.18&quot;</span><span class="ot">,</span></a>
+<a class="sourceLine" id="cb5-21" title="21">    <span class="st">&quot;iftype&quot;</span>        =&gt; <span class="st">&quot;.1.3.6.1.2.1.2.2.1.3&quot;</span><span class="ot">,</span></a>
+<a class="sourceLine" id="cb5-22" title="22">    <span class="st">&quot;ifspeed&quot;</span>       =&gt; <span class="st">&quot;.1.3.6.1.2.1.2.2.1.5&quot;</span><span class="ot">,</span></a>
+<a class="sourceLine" id="cb5-23" title="23">    <span class="st">&quot;ifHWaddress&quot;</span>   =&gt; <span class="st">&quot;.1.3.6.1.2.1.2.2.1.6&quot;</span><span class="ot">,</span></a>
+<a class="sourceLine" id="cb5-24" title="24">    <span class="st">&quot;ifInOctets&quot;</span>    =&gt; <span class="st">&quot;.1.3.6.1.2.1.2.2.1.10&quot;</span><span class="ot">,</span></a>
+<a class="sourceLine" id="cb5-25" title="25">    <span class="st">&quot;ifOutOctets&quot;</span>   =&gt; <span class="st">&quot;.1.3.6.1.2.1.2.2.1.16&quot;</span><span class="ot">,</span></a>
+<a class="sourceLine" id="cb5-26" title="26">    <span class="ot">);</span></a>
+<a class="sourceLine" id="cb5-27" title="27"><span class="kw">$xml_delimiter</span>          =  <span class="st">&quot;!&quot;</span><span class="ot">;</span></a></code></pre></div>
+<p>The next step removes all the builtin “magic strings” and replaces them by parameters. We'll have to change the XML template for that (see: <code>&lt;arg_prepend&gt;</code> later on). Cacti supports more SNMP parameters since version 0.8.7:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb6-1" title="1"><span class="co"># all required input parms</span></a>
+<a class="sourceLine" id="cb6-2" title="2"><span class="kw">$hostname</span>               = <span class="kw">$_SERVER</span><span class="ot">[</span><span class="st">&quot;argv&quot;</span><span class="ot">][</span><span class="dv">1</span><span class="ot">];</span></a>
+<a class="sourceLine" id="cb6-3" title="3"><span class="kw">$snmp_community</span>         = <span class="kw">$_SERVER</span><span class="ot">[</span><span class="st">&quot;argv&quot;</span><span class="ot">][</span><span class="dv">2</span><span class="ot">];</span></a>
+<a class="sourceLine" id="cb6-4" title="4"><span class="kw">$snmp_version</span>           = <span class="kw">$_SERVER</span><span class="ot">[</span><span class="st">&quot;argv&quot;</span><span class="ot">][</span><span class="dv">3</span><span class="ot">];</span></a>
+<a class="sourceLine" id="cb6-5" title="5"><span class="kw">$snmp_port</span>              = <span class="kw">$_SERVER</span><span class="ot">[</span><span class="st">&quot;argv&quot;</span><span class="ot">][</span><span class="dv">4</span><span class="ot">];</span></a>
+<a class="sourceLine" id="cb6-6" title="6"><span class="kw">$snmp_timeout</span>           = <span class="kw">$_SERVER</span><span class="ot">[</span><span class="st">&quot;argv&quot;</span><span class="ot">][</span><span class="dv">5</span><span class="ot">];</span></a>
+<a class="sourceLine" id="cb6-7" title="7"><span class="kw">$max_oids</span>               = <span class="kw">$_SERVER</span><span class="ot">[</span><span class="st">&quot;argv&quot;</span><span class="ot">][</span><span class="dv">6</span><span class="ot">];</span></a>
+<a class="sourceLine" id="cb6-8" title="8"><span class="co"># required for SNMP V3</span></a>
+<a class="sourceLine" id="cb6-9" title="9"><span class="kw">$snmp_auth_username</span>     = <span class="kw">$_SERVER</span><span class="ot">[</span><span class="st">&quot;argv&quot;</span><span class="ot">][</span><span class="dv">7</span><span class="ot">];</span></a>
+<a class="sourceLine" id="cb6-10" title="10"><span class="kw">$snmp_auth_password</span>     = <span class="kw">$_SERVER</span><span class="ot">[</span><span class="st">&quot;argv&quot;</span><span class="ot">][</span><span class="dv">8</span><span class="ot">];</span></a>
+<a class="sourceLine" id="cb6-11" title="11"><span class="kw">$snmp_auth_protocol</span>     = <span class="kw">$_SERVER</span><span class="ot">[</span><span class="st">&quot;argv&quot;</span><span class="ot">][</span><span class="dv">9</span><span class="ot">];</span></a>
+<a class="sourceLine" id="cb6-12" title="12"><span class="kw">$snmp_priv_passphrase</span>   = <span class="kw">$_SERVER</span><span class="ot">[</span><span class="st">&quot;argv&quot;</span><span class="ot">][</span><span class="dv">10</span><span class="ot">];</span></a>
+<a class="sourceLine" id="cb6-13" title="13"><span class="kw">$snmp_priv_protocol</span>     = <span class="kw">$_SERVER</span><span class="ot">[</span><span class="st">&quot;argv&quot;</span><span class="ot">][</span><span class="dv">11</span><span class="ot">];</span></a>
+<a class="sourceLine" id="cb6-14" title="14"><span class="kw">$snmp_context</span>           = <span class="kw">$_SERVER</span><span class="ot">[</span><span class="st">&quot;argv&quot;</span><span class="ot">][</span><span class="dv">12</span><span class="ot">];</span></a>
+<a class="sourceLine" id="cb6-15" title="15"><span class="kw">$cmd</span>                    = <span class="kw">$_SERVER</span><span class="ot">[</span><span class="st">&quot;argv&quot;</span><span class="ot">][</span><span class="dv">13</span><span class="ot">];</span></a>
+<a class="sourceLine" id="cb6-16" title="16"><span class="kw">if</span> <span class="ot">(</span><span class="kw">isset</span><span class="ot">(</span><span class="kw">$_SERVER</span><span class="ot">[</span><span class="st">&quot;argv&quot;</span><span class="ot">][</span><span class="dv">14</span><span class="ot">]))</span> { <span class="kw">$query_field</span> = <span class="kw">$_SERVER</span><span class="ot">[</span><span class="st">&quot;argv&quot;</span><span class="ot">][</span><span class="dv">14</span><span class="ot">];</span> }<span class="ot">;</span></a>
+<a class="sourceLine" id="cb6-17" title="17"><span class="kw">if</span> <span class="ot">(</span><span class="kw">isset</span><span class="ot">(</span><span class="kw">$_SERVER</span><span class="ot">[</span><span class="st">&quot;argv&quot;</span><span class="ot">][</span><span class="dv">15</span><span class="ot">]))</span> { <span class="kw">$query_index</span> = <span class="kw">$_SERVER</span><span class="ot">[</span><span class="st">&quot;argv&quot;</span><span class="ot">][</span><span class="dv">15</span><span class="ot">];</span> }<span class="ot">;</span></a>
+<a class="sourceLine" id="cb6-18" title="18"></a>
+<a class="sourceLine" id="cb6-19" title="19"><span class="co"># get number of snmp retries from global settings</span></a>
+<a class="sourceLine" id="cb6-20" title="20"><span class="kw">$snmp_retries</span>   = read_config_option<span class="ot">(</span><span class="st">&quot;snmp_retries&quot;</span><span class="ot">);</span></a></code></pre></div>
+<p>The code responsible for the “index” option is left unchanged:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb7-1" title="1"><span class="co"># -------------------------------------------------------------------------</span></a>
+<a class="sourceLine" id="cb7-2" title="2"><span class="co"># script MUST respond to index queries</span></a>
+<a class="sourceLine" id="cb7-3" title="3"><span class="co">#       the command for this is defined within the XML file as</span></a>
+<a class="sourceLine" id="cb7-4" title="4"><span class="co">#       &lt;arg_index&gt;index&lt;/arg_index&gt;</span></a>
+<a class="sourceLine" id="cb7-5" title="5"><span class="co">#       you may replace the string &quot;index&quot; both in the XML and here</span></a>
+<a class="sourceLine" id="cb7-6" title="6"><span class="co"># -------------------------------------------------------------------------</span></a>
+<a class="sourceLine" id="cb7-7" title="7"><span class="co">#       php -q &lt;script&gt; &lt;parms&gt; index</span></a>
+<a class="sourceLine" id="cb7-8" title="8"><span class="co"># will all indices of the target values</span></a>
+<a class="sourceLine" id="cb7-9" title="9"><span class="co"># e.g. in case of interfaces</span></a>
+<a class="sourceLine" id="cb7-10" title="10"><span class="co">#      it has to respond with the list of interface indices</span></a>
+<a class="sourceLine" id="cb7-11" title="11"><span class="co"># -------------------------------------------------------------------------</span></a>
+<a class="sourceLine" id="cb7-12" title="12"><span class="kw">if</span> <span class="ot">(</span><span class="kw">$cmd</span> == <span class="st">&quot;index&quot;</span><span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb7-13" title="13">    <span class="co"># retrieve all indices from target</span></a>
+<a class="sourceLine" id="cb7-14" title="14">    <span class="kw">$return_arr</span> = reindex<span class="ot">(</span>cacti_snmp_walk<span class="ot">(</span><span class="kw">$hostname</span><span class="ot">,</span> <span class="kw">$snmp_community</span><span class="ot">,</span></a>
+<a class="sourceLine" id="cb7-15" title="15">    <span class="kw">$oids</span><span class="ot">[</span><span class="st">&quot;index&quot;</span><span class="ot">],</span> <span class="kw">$snmp_version</span><span class="ot">,</span> <span class="kw">$snmp_auth_username</span><span class="ot">,</span></a>
+<a class="sourceLine" id="cb7-16" title="16">    <span class="kw">$snmp_auth_password</span><span class="ot">,</span> <span class="kw">$snmp_auth_protocol</span><span class="ot">,</span> <span class="kw">$snmp_priv_passphrase</span><span class="ot">,</span> <span class="kw">$snmp_priv_protocol</span><span class="ot">,</span></a>
+<a class="sourceLine" id="cb7-17" title="17">    <span class="kw">$snmp_context</span><span class="ot">,</span> <span class="kw">$snmp_port</span><span class="ot">,</span> <span class="kw">$snmp_timeout</span><span class="ot">,</span> <span class="kw">$snmp_retries</span><span class="ot">,</span> <span class="kw">$max_oids</span><span class="ot">,</span> <span class="kw">SNMP_POLLER</span><span class="ot">));</span></a>
+<a class="sourceLine" id="cb7-18" title="18"></a>
+<a class="sourceLine" id="cb7-19" title="19">    <span class="co"># and print each index as a separate line</span></a>
+<a class="sourceLine" id="cb7-20" title="20">    <span class="kw">for</span> <span class="ot">(</span><span class="kw">$i</span>=<span class="dv">0</span><span class="ot">;(</span><span class="kw">$i</span>&lt;<span class="fu">sizeof</span><span class="ot">(</span><span class="kw">$return_arr</span><span class="ot">));</span><span class="kw">$i</span>++<span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb7-21" title="21">        <span class="kw">print</span> <span class="kw">$return_arr</span><span class="ot">[</span><span class="kw">$i</span><span class="ot">]</span> . <span class="st">&quot;</span><span class="kw">\n</span><span class="st">&quot;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb7-22" title="22">    }</a></code></pre></div>
+<p>The new code implements the <strong>query</strong> function as follows</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb8-1" title="1"><span class="co">#</span></a>
+<a class="sourceLine" id="cb8-2" title="2"><span class="co"># -------------------------------------------------------------------------</span></a>
+<a class="sourceLine" id="cb8-3" title="3"><span class="co"># script MUST respond to query requests</span></a>
+<a class="sourceLine" id="cb8-4" title="4"><span class="co">#       the command for this is defined within the XML file as</span></a>
+<a class="sourceLine" id="cb8-5" title="5"><span class="co">#       &lt;arg_query&gt;query&lt;/arg_query&gt;</span></a>
+<a class="sourceLine" id="cb8-6" title="6"><span class="co">#       you may replace the string &quot;query&quot; both in the XML and here</span></a>
+<a class="sourceLine" id="cb8-7" title="7"><span class="co"># -------------------------------------------------------------------------</span></a>
+<a class="sourceLine" id="cb8-8" title="8"><span class="co">#       php -q &lt;script&gt; &lt;parms&gt; query &lt;function&gt;</span></a>
+<a class="sourceLine" id="cb8-9" title="9"><span class="co"># where &lt;function&gt; is a parameter that tells this script,</span></a>
+<a class="sourceLine" id="cb8-10" title="10"><span class="co"># which target value should be retrieved</span></a>
+<a class="sourceLine" id="cb8-11" title="11"><span class="co"># e.g. in case of interfaces, &lt;function&gt; = ifdescription</span></a>
+<a class="sourceLine" id="cb8-12" title="12"><span class="co">#      it has to respond with the list of</span></a>
+<a class="sourceLine" id="cb8-13" title="13"><span class="co">#      interface indices along with the description of the interface</span></a>
+<a class="sourceLine" id="cb8-14" title="14"><span class="co"># -------------------------------------------------------------------------</span></a>
+<a class="sourceLine" id="cb8-15" title="15">} <span class="kw">elseif</span> <span class="ot">(</span><span class="kw">$cmd</span> == <span class="st">&quot;query&quot;</span> &amp;&amp; <span class="kw">isset</span><span class="ot">(</span><span class="kw">$query_field</span><span class="ot">))</span> {</a>
+<a class="sourceLine" id="cb8-16" title="16">    <span class="kw">$arr_index</span> = reindex<span class="ot">(</span>cacti_snmp_walk<span class="ot">(</span><span class="kw">$hostname</span><span class="ot">,</span> <span class="kw">$snmp_community</span><span class="ot">,</span></a>
+<a class="sourceLine" id="cb8-17" title="17">        <span class="kw">$oids</span><span class="ot">[</span><span class="st">&quot;index&quot;</span><span class="ot">],</span> <span class="kw">$snmp_version</span><span class="ot">,</span> <span class="kw">$snmp_auth_username</span><span class="ot">,</span></a>
+<a class="sourceLine" id="cb8-18" title="18">        <span class="kw">$snmp_auth_password</span><span class="ot">,</span> <span class="kw">$snmp_auth_protocol</span><span class="ot">,</span> <span class="kw">$snmp_priv_passphrase</span><span class="ot">,</span> <span class="kw">$snmp_priv_protocol</span><span class="ot">,</span></a>
+<a class="sourceLine" id="cb8-19" title="19">        <span class="kw">$snmp_context</span><span class="ot">,</span> <span class="kw">$snmp_port</span><span class="ot">,</span> <span class="kw">$snmp_timeout</span><span class="ot">,</span> <span class="kw">$snmp_retries</span><span class="ot">,</span> <span class="kw">$max_oids</span><span class="ot">,</span> <span class="kw">SNMP_POLLER</span><span class="ot">));</span></a>
+<a class="sourceLine" id="cb8-20" title="20">        <span class="kw">$arr</span> = reindex<span class="ot">(</span>cacti_snmp_walk<span class="ot">(</span><span class="kw">$hostname</span><span class="ot">,</span> <span class="kw">$snmp_community</span><span class="ot">,</span></a>
+<a class="sourceLine" id="cb8-21" title="21">        <span class="kw">$oids</span><span class="ot">[</span><span class="kw">$query_field</span><span class="ot">],</span> <span class="kw">$snmp_version</span><span class="ot">,</span> <span class="kw">$snmp_auth_username</span><span class="ot">,</span></a>
+<a class="sourceLine" id="cb8-22" title="22">        <span class="kw">$snmp_auth_password</span><span class="ot">,</span> <span class="kw">$snmp_auth_protocol</span><span class="ot">,</span> <span class="kw">$snmp_priv_passphrase</span><span class="ot">,</span> <span class="kw">$snmp_priv_protocol</span><span class="ot">,</span></a>
+<a class="sourceLine" id="cb8-23" title="23">        <span class="kw">$snmp_context</span><span class="ot">,</span> <span class="kw">$snmp_port</span><span class="ot">,</span> <span class="kw">$snmp_timeout</span><span class="ot">,</span> <span class="kw">$snmp_retries</span><span class="ot">,</span> <span class="kw">$max_oids</span><span class="ot">,</span> <span class="kw">SNMP_POLLER</span><span class="ot">));</span></a>
+<a class="sourceLine" id="cb8-24" title="24"></a>
+<a class="sourceLine" id="cb8-25" title="25">    <span class="kw">for</span> <span class="ot">(</span><span class="kw">$i</span>=<span class="dv">0</span><span class="ot">;(</span><span class="kw">$i</span>&lt;<span class="fu">sizeof</span><span class="ot">(</span><span class="kw">$arr_index</span><span class="ot">));</span><span class="kw">$i</span>++<span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb8-26" title="26">        <span class="kw">print</span> <span class="kw">$arr_index</span><span class="ot">[</span><span class="kw">$i</span><span class="ot">]</span> . <span class="kw">$xml_delimiter</span> . <span class="kw">$arr</span><span class="ot">[</span><span class="kw">$i</span><span class="ot">]</span> . <span class="st">&quot;</span><span class="kw">\n</span><span class="st">&quot;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb8-27" title="27">    }</a></code></pre></div>
+<p>Last option is the <strong>get</strong> function</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb9-1" title="1"><span class="co">#</span></a>
+<a class="sourceLine" id="cb9-2" title="2"><span class="co"># -------------------------------------------------------------------------</span></a>
+<a class="sourceLine" id="cb9-3" title="3"><span class="co"># script MUST respond to get requests</span></a>
+<a class="sourceLine" id="cb9-4" title="4"><span class="co">#       the command for this is defined within the XML file as</span></a>
+<a class="sourceLine" id="cb9-5" title="5"><span class="co">#       &lt;arg_get&gt;get&lt;/arg_get&gt;</span></a>
+<a class="sourceLine" id="cb9-6" title="6"><span class="co">#       you may replace the string &quot;get&quot; both in the XML and here</span></a>
+<a class="sourceLine" id="cb9-7" title="7"><span class="co"># -------------------------------------------------------------------------</span></a>
+<a class="sourceLine" id="cb9-8" title="8"><span class="co">#       php -q &lt;script&gt; &lt;parms&gt; get &lt;function&gt; &lt;index&gt;</span></a>
+<a class="sourceLine" id="cb9-9" title="9"><span class="co"># where &lt;function&gt; is a parameter that tells this script,</span></a>
+<a class="sourceLine" id="cb9-10" title="10"><span class="co"># which target value should be retrieved</span></a>
+<a class="sourceLine" id="cb9-11" title="11"><span class="co"># and   &lt;index&gt;    is the index that should be queried</span></a>
+<a class="sourceLine" id="cb9-12" title="12"><span class="co"># e.g. in case of interfaces, &lt;function&gt; = ifdescription</span></a>
+<a class="sourceLine" id="cb9-13" title="13"><span class="co">#                             &lt;index&gt;    = 1</span></a>
+<a class="sourceLine" id="cb9-14" title="14"><span class="co">#      it has to respond with</span></a>
+<a class="sourceLine" id="cb9-15" title="15"><span class="co">#      the description of the interface for interface #1</span></a>
+<a class="sourceLine" id="cb9-16" title="16"><span class="co"># -------------------------------------------------------------------------</span></a>
+<a class="sourceLine" id="cb9-17" title="17">} <span class="kw">elseif</span> <span class="ot">(</span><span class="kw">$cmd</span> == <span class="st">&quot;get&quot;</span> $$ <span class="kw">isset</span><span class="ot">(</span><span class="kw">$query_field</span><span class="ot">)</span> &amp;&amp; <span class="kw">isset</span><span class="ot">(</span><span class="kw">$query_index</span><span class="ot">))</span> {</a>
+<a class="sourceLine" id="cb9-18" title="18">    <span class="kw">print</span> <span class="ot">(</span>cacti_snmp_get<span class="ot">(</span><span class="kw">$hostname</span><span class="ot">,</span> <span class="kw">$snmp_community</span><span class="ot">,</span></a>
+<a class="sourceLine" id="cb9-19" title="19">        <span class="kw">$oids</span><span class="ot">[</span><span class="kw">$query_field</span><span class="ot">]</span> . <span class="st">&quot;.</span><span class="kw">$query_index</span><span class="st">&quot;</span><span class="ot">,</span> <span class="kw">$snmp_version</span><span class="ot">,</span> <span class="kw">$snmp_auth_username</span><span class="ot">,</span></a>
+<a class="sourceLine" id="cb9-20" title="20">        <span class="kw">$snmp_auth_password</span><span class="ot">,</span> <span class="kw">$snmp_auth_protocol</span><span class="ot">,</span> <span class="kw">$snmp_priv_passphrase</span><span class="ot">,</span> <span class="kw">$snmp_priv_protocol</span><span class="ot">,</span></a>
+<a class="sourceLine" id="cb9-21" title="21">        <span class="kw">$snmp_context</span><span class="ot">,</span> <span class="kw">$snmp_port</span><span class="ot">,</span> <span class="kw">$snmp_timeout</span><span class="ot">,</span> <span class="kw">$snmp_retries</span><span class="ot">,</span> <span class="kw">$max_oids</span><span class="ot">,</span> <span class="kw">SNMP_POLLER</span><span class="ot">));</span></a></code></pre></div>
+<p>The rest of it is left unchanged. For sake of completeness, I repeat it here</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb10-1" title="1"><span class="co"># -------------------------------------------------------------------------</span></a>
+<a class="sourceLine" id="cb10-2" title="2"><span class="co"># -------------------------------------------------------------------------</span></a>
+<a class="sourceLine" id="cb10-3" title="3">} <span class="kw">else</span> {</a>
+<a class="sourceLine" id="cb10-4" title="4">    <span class="kw">print</span> <span class="st">&quot;Invalid use of script query, required parameters:</span><span class="kw">\n\n</span><span class="st">&quot;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb10-5" title="5">    <span class="kw">print</span> <span class="st">&quot;    &lt;hostname&gt; &lt;community&gt; &lt;version&gt; &lt;snmp_port&gt; &lt;timeout&gt;</span></a>
+<a class="sourceLine" id="cb10-6" title="6"><span class="st">        &lt;max_oids&gt; &lt;auth_user&gt; &lt;auth_passphrase&gt; &lt;auth_proto&gt;</span></a>
+<a class="sourceLine" id="cb10-7" title="7"><span class="st">        &lt;priv_passphrase&gt; &lt;priv_proto&gt; &lt;context&gt; &lt;cmd&gt;</span><span class="kw">\n</span><span class="st">&quot;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb10-8" title="8">}</a>
+<a class="sourceLine" id="cb10-9" title="9"></a>
+<a class="sourceLine" id="cb10-10" title="10"><span class="kw">function</span> reindex<span class="ot">(</span><span class="kw">$arr</span><span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb10-11" title="11">    <span class="kw">$return_arr</span> = <span class="kw">array</span><span class="ot">();</span></a>
+<a class="sourceLine" id="cb10-12" title="12"></a>
+<a class="sourceLine" id="cb10-13" title="13">    <span class="kw">for</span> <span class="ot">(</span><span class="kw">$i</span>=<span class="dv">0</span><span class="ot">;(</span><span class="kw">$i</span>&lt;<span class="fu">sizeof</span><span class="ot">(</span><span class="kw">$arr</span><span class="ot">));</span><span class="kw">$i</span>++<span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb10-14" title="14">        <span class="kw">$return_arr</span><span class="ot">[</span><span class="kw">$i</span><span class="ot">]</span> = <span class="kw">$arr</span><span class="ot">[</span><span class="kw">$i</span><span class="ot">][</span><span class="st">&quot;value&quot;</span><span class="ot">];</span></a>
+<a class="sourceLine" id="cb10-15" title="15">    }</a>
+<a class="sourceLine" id="cb10-16" title="16"></a>
+<a class="sourceLine" id="cb10-17" title="17">    <span class="kw">return</span> <span class="kw">$return_arr</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb10-18" title="18">}</a>
+<a class="sourceLine" id="cb10-19" title="19"></a>
+<a class="sourceLine" id="cb10-20" title="20"><span class="kw">?&gt;</span></a></code></pre></div>
+<p>You may want to copy all those fragments together and replace the basic script. Now, lets have a try using the command line. The “index” option was already shown, but is repeated here</p>
+<pre class="console"><code>[me@gandalf scripts]$ php -q query_interface_traffic.php &lt;target&gt; &lt;community&gt; 1 161 500 &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; index
+1
+2
+3
+4
+</code></pre>
+<h3 id="the-complete-xml-file">The Complete XML File</h3>
+<p>Of course, we now will have to complete the XML file given in Chapter II. Find it at <code>&lt;path_cacti&gt;/resources/script_queries/ifTraffic.xml</code>.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb12-1" title="1"><span class="kw">&lt;interface&gt;</span></a>
+<a class="sourceLine" id="cb12-2" title="2">    <span class="kw">&lt;name&gt;</span>Get Interface Traffic Information<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb12-3" title="3">    <span class="kw">&lt;script_path&gt;</span>|path_php_binary| -q |path_cacti|/scripts/query_interface_traffic.php<span class="kw">&lt;/script_path&gt;</span></a>
+<a class="sourceLine" id="cb12-4" title="4">    <span class="kw">&lt;arg_prepend&gt;</span>|host_hostname| |host_snmp_community| |host_snmp_version| |host_snmp_port| |host_snmp_timeout| |host_max_oids| &quot;|host_snmp_username|&quot; &quot;|host_snmp_password|&quot; &quot;|host_snmp_auth_protocol|&quot; &quot;|host_snmp_priv_passphrase|&quot; &quot;|host_snmp_priv_protocol|&quot; &quot;|host_snmp_context|&quot;<span class="kw">&lt;/arg_prepend&gt;</span></a>
+<a class="sourceLine" id="cb12-5" title="5">    <span class="kw">&lt;arg_index&gt;</span>index<span class="kw">&lt;/arg_index&gt;</span></a>
+<a class="sourceLine" id="cb12-6" title="6">    <span class="kw">&lt;arg_query&gt;</span>query<span class="kw">&lt;/arg_query&gt;</span></a>
+<a class="sourceLine" id="cb12-7" title="7">    <span class="kw">&lt;arg_get&gt;</span>get<span class="kw">&lt;/arg_get&gt;</span></a>
+<a class="sourceLine" id="cb12-8" title="8">    <span class="kw">&lt;output_delimeter&gt;</span>!<span class="kw">&lt;/output_delimeter&gt;</span></a>
+<a class="sourceLine" id="cb12-9" title="9">    <span class="kw">&lt;index_order&gt;</span>ifIndex<span class="kw">&lt;/index_order&gt;</span></a>
+<a class="sourceLine" id="cb12-10" title="10">    <span class="kw">&lt;index_order_type&gt;</span>numeric<span class="kw">&lt;/index_order_type&gt;</span></a>
+<a class="sourceLine" id="cb12-11" title="11">    <span class="kw">&lt;index_title_format&gt;</span>|chosen_order_field|<span class="kw">&lt;/index_title_format&gt;</span></a></code></pre></div>
+<p>Let's discuss the changes</p>
+<table>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>arg_prepend</td>
+<td>some more parameters were added to provide all necessary values for the script. They are position-dependent. You may notice the strange tics I've added to e.g. host_snmp_username and host_snmp_password. If you're not using those SNMP V3 parameters, they must be quoted, else the script would fail because two parameters would be missing.</td>
+</tr>
+<tr class="even">
+<td>arg_query</td>
+<td>The string passed to the query to perform query requests is given here. So you may modify it to your liking (in this case, the script has to be modified accordingly).</td>
+</tr>
+<tr class="odd">
+<td>arg_get</td>
+<td>Some as above for get requests</td>
+</tr>
+<tr class="even">
+<td>output_delimiter</td>
+<td>The delimiter used for query requests to separate index and value</td>
+</tr>
+<tr class="odd">
+<td>index_order (optional)</td>
+<td>Cacti will attempt to find the best field to index off of based on whether each row in the query is unique and non-null. If specified, Cacti will perform this check on the fields listed here in the order specified. Only input fields can be specified and multiple fields should be delimited with a comma.</td>
+</tr>
+<tr class="even">
+<td>index_title_format (optional)</td>
+<td>Specify the title format to use when representing an index to the user. Any input field name can be used as a variable if enclosed in pipes ( ). The variable <code>chosen_order_field</code> will be substituted with the field chosen by Cacti to index off of (see index_order above). Text constants are allowed as well</td>
+</tr>
+<tr class="odd">
+<td>index_order_type (optional)</td>
+<td>For sorting purposes, specify whether the index is numeric or alphanumeric.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>numeric</td>
+<td>The indexes in this script query are to be sorted numerically (ie. 1,2,3,10,20,31)</td>
+</tr>
+<tr class="even">
+<td>alphabetic</td>
+<td>The indexes in this script query are to be sorted alphabetically (1,10,2,20,3,31)</td>
+</tr>
+</tbody>
+</table>
+<p>Now lets turn to the fields section:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb13-1" title="1">    ....</a>
+<a class="sourceLine" id="cb13-2" title="2">    <span class="kw">&lt;fields&gt;</span></a>
+<a class="sourceLine" id="cb13-3" title="3">        <span class="kw">&lt;ifIndex&gt;</span></a>
+<a class="sourceLine" id="cb13-4" title="4">            <span class="kw">&lt;name&gt;</span>Index<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb13-5" title="5">            <span class="kw">&lt;direction&gt;</span>input<span class="kw">&lt;/direction&gt;</span></a>
+<a class="sourceLine" id="cb13-6" title="6">            <span class="kw">&lt;query_name&gt;</span>index<span class="kw">&lt;/query_name&gt;</span></a>
+<a class="sourceLine" id="cb13-7" title="7">        <span class="kw">&lt;/ifIndex&gt;</span></a>
+<a class="sourceLine" id="cb13-8" title="8"></a>
+<a class="sourceLine" id="cb13-9" title="9">        <span class="kw">&lt;ifstatus&gt;</span></a>
+<a class="sourceLine" id="cb13-10" title="10">            <span class="kw">&lt;name&gt;</span>Status<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb13-11" title="11">            <span class="kw">&lt;direction&gt;</span>input<span class="kw">&lt;/direction&gt;</span></a>
+<a class="sourceLine" id="cb13-12" title="12">            <span class="kw">&lt;query_name&gt;</span>ifstatus<span class="kw">&lt;/query_name&gt;</span></a>
+<a class="sourceLine" id="cb13-13" title="13">        <span class="kw">&lt;/ifstatus&gt;</span></a>
+<a class="sourceLine" id="cb13-14" title="14"></a>
+<a class="sourceLine" id="cb13-15" title="15">        <span class="kw">&lt;ifdescription&gt;</span></a>
+<a class="sourceLine" id="cb13-16" title="16">            <span class="kw">&lt;name&gt;</span>Description<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb13-17" title="17">            <span class="kw">&lt;direction&gt;</span>input<span class="kw">&lt;/direction&gt;</span></a>
+<a class="sourceLine" id="cb13-18" title="18">            <span class="kw">&lt;query_name&gt;</span>ifdescription<span class="kw">&lt;/query_name&gt;</span></a>
+<a class="sourceLine" id="cb13-19" title="19">        <span class="kw">&lt;/ifdescription&gt;</span></a>
+<a class="sourceLine" id="cb13-20" title="20"></a>
+<a class="sourceLine" id="cb13-21" title="21">        <span class="kw">&lt;ifname&gt;</span></a>
+<a class="sourceLine" id="cb13-22" title="22">            <span class="kw">&lt;name&gt;</span>Name<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb13-23" title="23">            <span class="kw">&lt;direction&gt;</span>input<span class="kw">&lt;/direction&gt;</span></a>
+<a class="sourceLine" id="cb13-24" title="24">            <span class="kw">&lt;query_name&gt;</span>ifname<span class="kw">&lt;/query_name&gt;</span></a>
+<a class="sourceLine" id="cb13-25" title="25">        <span class="kw">&lt;/ifname&gt;</span></a>
+<a class="sourceLine" id="cb13-26" title="26"></a>
+<a class="sourceLine" id="cb13-27" title="27">        <span class="kw">&lt;ifalias&gt;</span></a>
+<a class="sourceLine" id="cb13-28" title="28">            <span class="kw">&lt;name&gt;</span>Alias<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb13-29" title="29">            <span class="kw">&lt;direction&gt;</span>input<span class="kw">&lt;/direction&gt;</span></a>
+<a class="sourceLine" id="cb13-30" title="30">            <span class="kw">&lt;query_name&gt;</span>ifalias<span class="kw">&lt;/query_name&gt;</span></a>
+<a class="sourceLine" id="cb13-31" title="31">        <span class="kw">&lt;/ifalias&gt;</span></a>
+<a class="sourceLine" id="cb13-32" title="32"></a>
+<a class="sourceLine" id="cb13-33" title="33">        <span class="kw">&lt;iftype&gt;</span></a>
+<a class="sourceLine" id="cb13-34" title="34">            <span class="kw">&lt;name&gt;</span>Type<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb13-35" title="35">            <span class="kw">&lt;direction&gt;</span>input<span class="kw">&lt;/direction&gt;</span></a>
+<a class="sourceLine" id="cb13-36" title="36">            <span class="kw">&lt;query_name&gt;</span>iftype<span class="kw">&lt;/query_name&gt;</span></a>
+<a class="sourceLine" id="cb13-37" title="37">        <span class="kw">&lt;/iftype&gt;</span></a>
+<a class="sourceLine" id="cb13-38" title="38"></a>
+<a class="sourceLine" id="cb13-39" title="39">        <span class="kw">&lt;ifspeed&gt;</span></a>
+<a class="sourceLine" id="cb13-40" title="40">            <span class="kw">&lt;name&gt;</span>Speed<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb13-41" title="41">            <span class="kw">&lt;direction&gt;</span>input<span class="kw">&lt;/direction&gt;</span></a>
+<a class="sourceLine" id="cb13-42" title="42">            <span class="kw">&lt;query_name&gt;</span>ifspeed<span class="kw">&lt;/query_name&gt;</span></a>
+<a class="sourceLine" id="cb13-43" title="43">        <span class="kw">&lt;/ifspeed&gt;</span></a>
+<a class="sourceLine" id="cb13-44" title="44"></a>
+<a class="sourceLine" id="cb13-45" title="45">        <span class="kw">&lt;ifHWaddress&gt;</span></a>
+<a class="sourceLine" id="cb13-46" title="46">            <span class="kw">&lt;name&gt;</span>HWaddress<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb13-47" title="47">            <span class="kw">&lt;direction&gt;</span>input<span class="kw">&lt;/direction&gt;</span></a>
+<a class="sourceLine" id="cb13-48" title="48">            <span class="kw">&lt;query_name&gt;</span>ifHWaddress<span class="kw">&lt;/query_name&gt;</span></a>
+<a class="sourceLine" id="cb13-49" title="49">        <span class="kw">&lt;/ifHWaddress&gt;</span></a>
+<a class="sourceLine" id="cb13-50" title="50"></a>
+<a class="sourceLine" id="cb13-51" title="51">        <span class="kw">&lt;ifInOctets&gt;</span></a>
+<a class="sourceLine" id="cb13-52" title="52">            <span class="kw">&lt;name&gt;</span>InOctets<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb13-53" title="53">            <span class="kw">&lt;direction&gt;</span>output<span class="kw">&lt;/direction&gt;</span></a>
+<a class="sourceLine" id="cb13-54" title="54">            <span class="kw">&lt;query_name&gt;</span>ifInOctets<span class="kw">&lt;/query_name&gt;</span></a>
+<a class="sourceLine" id="cb13-55" title="55">        <span class="kw">&lt;/ifInOctets&gt;</span></a>
+<a class="sourceLine" id="cb13-56" title="56"></a>
+<a class="sourceLine" id="cb13-57" title="57">        <span class="kw">&lt;ifOutOctets&gt;</span></a>
+<a class="sourceLine" id="cb13-58" title="58">            <span class="kw">&lt;name&gt;</span>OutOctets<span class="kw">&lt;/name&gt;</span></a>
+<a class="sourceLine" id="cb13-59" title="59">            <span class="kw">&lt;direction&gt;</span>output<span class="kw">&lt;/direction&gt;</span></a>
+<a class="sourceLine" id="cb13-60" title="60">            <span class="kw">&lt;query_name&gt;</span>ifOutOctets<span class="kw">&lt;/query_name&gt;</span></a>
+<a class="sourceLine" id="cb13-61" title="61">        <span class="kw">&lt;/ifOutOctets&gt;</span></a>
+<a class="sourceLine" id="cb13-62" title="62">    <span class="kw">&lt;/fields&gt;</span></a>
+<a class="sourceLine" id="cb13-63" title="63"><span class="er">&lt;</span>/interface&gt;</a></code></pre></div>
+<p>These fields are related to the <strong>OID</strong> array of the script. <strong>Attention</strong>: The <strong>query_name</strong> strings must match the OID names <strong>exactly!</strong> Please notice, that all but the last two fields use <strong>direction input</strong>. All variables representing numeric values to be graphed must be defined as <strong>direction output</strong> instead.</p>
+<p>Now, lets test the “query” option. The keyword “query” must be given along with the variable, that should be queried. The script now will scan all indices and report the contents of the given variable as follows:</p>
+<pre class="console"><code>[me@gandalf scripts]$ php -q query_interface_traffic.php &lt;target&gt; &lt;community&gt; 1 161 500 &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; query iftype
+1!ethernetCsmacd(6)
+2!0
+3!0
+4!ethernetCsmacd(6)
+</code></pre>
+<p>The output reports the index, followed by the chosen delimiter. Then, the content of the requested variable is printed</p>
+<p>Last, the “get” option is shown. The keyword “get” is required, followed again by the variable (see above). Last needed option is the index, for which the “get” should be performed. Contrary to the “query” option, only one index is scanned. So the index number is not required and will not be printed.</p>
+<pre class="console"><code>[me@gandalf scripts]$ php -q query_interface_traffic.php &lt;target&gt; &lt;community&gt; 1 161 500 &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; get iftype 1
+ethernetCsmacd(6)
+</code></pre>
+<p>The output is not followed by a “newline”!</p>
+<h2 id="see-it-at-work">See it at work</h2>
+<p>Lets return to the <strong>Device</strong> and perform a <strong>Verbose Query</strong> again. The result is as follows</p>
+<pre class="console"><code>+ Running data query [21].
++ Found type = &#39;4 &#39;[script query].
++ Found data query XML file at &#39;/var/www/html/cacti/resource/script_queries/ifTraffic.xml&#39;
++ XML file parsed ok.
++ Executing script for list of indexes &#39;/usr/bin/php -q /var/www/html/cacti/scripts/query_interface_traffic.php router snmp-get 1 161 600 10 &quot;admin&quot; &quot;admin&quot; &quot;MD5&quot; &quot;&quot; &quot;DES&quot; &quot;&quot; index&#39;
++ Executing script query &#39;/usr/bin/php -q /var/www/html/cacti/scripts/query_interface_traffic.php router snmp-get 1 161 600 10 &quot;admin&quot; &quot;admin&quot; &quot;MD5&quot; &quot;&quot; &quot;DES&quot; &quot;&quot; query index&#39;
++ Found item [ifIndex=&#39;1&#39;] index: 1
++ Found item [ifIndex=&#39;2&#39;] index: 2
++ Found item [ifIndex=&#39;3&#39;] index: 3
++ Found item [ifIndex=&#39;4&#39;] index: 4
++ Executing script query &#39;/usr/bin/php -q /var/www/html/cacti/scripts/query_interface_traffic.php router snmp-get 1 161 600 10 &quot;admin&quot; &quot;admin&quot; &quot;MD5&quot; &quot;&quot; &quot;DES&quot; &quot;&quot; query ifstatus&#39;
++ Found item [ifstatus=&#39;up(1)&#39;] index: 1
++ Found item [ifstatus=&#39;up(1)&#39;] index: 2
++ Found item [ifstatus=&#39;up(1)&#39;] index: 3
++ Found item [ifstatus=&#39;up(1)&#39;] index: 4
++ Executing script query &#39;/usr/bin/php -q /var/www/html/cacti/scripts/query_interface_traffic.php router snmp-get 1 161 600 10 &quot;admin&quot; &quot;admin&quot; &quot;MD5&quot; &quot;&quot; &quot;DES&quot; &quot;&quot; query ifdescription&#39;
++ Found item [ifdescription=&#39;Ethernet0&#39;] index: 1
++ Found item [ifdescription=&#39;&#39;] index: 2
++ Found item [ifdescription=&#39;&#39;] index: 3
++ Found item [ifdescription=&#39;Ethernet1&#39;] index: 4
++ Executing script query &#39;/usr/bin/php -q /var/www/html/cacti/scripts/query_interface_traffic.php router snmp-get 1 161 600 10 &quot;admin&quot; &quot;admin&quot; &quot;MD5&quot; &quot;&quot; &quot;DES&quot; &quot;&quot; query ifname&#39;
++ Found item [ifname=&#39;&#39;] index: 1
++ Found item [ifname=&#39;&#39;] index: 2
++ Found item [ifname=&#39;&#39;] index: 3
++ Found item [ifname=&#39;&#39;] index: 4
++ Executing script query &#39;/usr/bin/php -q /var/www/html/cacti/scripts/query_interface_traffic.php router snmp-get 1 161 600 10 &quot;admin&quot; &quot;admin&quot; &quot;MD5&quot; &quot;&quot; &quot;DES&quot; &quot;&quot; query ifalias&#39;
++ Found item [ifalias=&#39;&#39;] index: 1
++ Found item [ifalias=&#39;&#39;] index: 2
++ Found item [ifalias=&#39;&#39;] index: 3
++ Found item [ifalias=&#39;&#39;] index: 4
++ Executing script query &#39;/usr/bin/php -q /var/www/html/cacti/scripts/query_interface_traffic.php router snmp-get 1 161 600 10 &quot;admin&quot; &quot;admin&quot; &quot;MD5&quot; &quot;&quot; &quot;DES&quot; &quot;&quot; query iftype&#39;
++ Found item [iftype=&#39;ethernetCsmacd(6)&#39;] index: 1
++ Found item [iftype=&#39;0&#39;] index: 2
++ Found item [iftype=&#39;0&#39;] index: 3
++ Found item [iftype=&#39;ethernetCsmacd(6)&#39;] index: 4
++ Executing script query &#39;/usr/bin/php -q /var/www/html/cacti/scripts/query_interface_traffic.php router snmp-get 1 161 600 10 &quot;admin&quot; &quot;admin&quot; &quot;MD5&quot; &quot;&quot; &quot;DES&quot; &quot;&quot; query ifspeed&#39;
++ Found item [ifspeed=&#39;100000000&#39;] index: 1
++ Found item [ifspeed=&#39;0&#39;] index: 2
++ Found item [ifspeed=&#39;0&#39;] index: 3
++ Found item [ifspeed=&#39;10000000&#39;] index: 4
++ Executing script query &#39;/usr/bin/php -q /var/www/html/cacti/scripts/query_interface_traffic.php router snmp-get 1 161 600 10 &quot;admin&quot; &quot;admin&quot; &quot;MD5&quot; &quot;&quot; &quot;DES&quot; &quot;&quot; query ifHWaddress&#39;
++ Found item [ifHWaddress=&#39;00:30:30:2E:35:30:2E:37:46:2E:30:43:2E:30:30:2E:44:16:00:00:00:01:00&#39;] index: 1
++ Found item [ifHWaddress=&#39;&#39;] index: 2
++ Found item [ifHWaddress=&#39;&#39;] index: 3
++ Found item [ifHWaddress=&#39;&#39;] index: 4
++ Found data query XML file at &#39;/var/www/html/cacti/resource/script_queries/ifTraffic.xml&#39;
++ Found data query XML file at &#39;/var/www/html/cacti/resource/script_queries/ifTraffic.xml&#39;
++ Found data query XML file at &#39;/var/www/html/cacti/resource/script_queries/ifTraffic.xml&#39;
+</code></pre>
+<p>Of course, snmp_username and snmp_user_password and more may differ from your installation defaults. Read it carefully, and you'll notice, that all XML <strong>fields</strong> were scanned and the output shown. All? No, not all. The <strong>direction output</strong> fields are missing! But this is on purpose as those won't make sense as header fields but will be written to RRDfiles.</p>
+<h2 id="create-the-data-template">Create the Data Template</h2>
+<p>As usual, next step is to create the <strong>Data Template</strong>. Select that menu item and <strong>Add</strong>:</p>
+<p><img src="images/dev-dt-01.preview.png" alt="Script Data Query - Data Template 01" /></p>
+<p>and find:</p>
+<p><img src="images/dev-dt-02.preview.png" alt="Script Data Query - Data Template 02" /></p>
+<p>Fill in <strong>Data Template Name</strong>, <strong>Data Source Name</strong>, and, most important, select <strong>Data Input Method</strong> to read <strong>Get Script Data (Indexed)</strong>, and <strong>Data Source Profile</strong>.</p>
+<p>When creating the <strong>Data Template</strong> and <strong>Graph Template</strong>, you SHOULD check the <code>Use Per Data Source Value</code> checkbox for name &amp; title. When you first create graphs using the data query, it will use the <code>Suggested Values</code> to name the templates. But then if you ever edit the templates and leave the <code>Use Per Data Source Value</code> unchecked, then saving will overwrite all the data source and graph names.</p>
+<p>Now, before you press the <code>Create</code> button also please proceed to the lower half of the form and complete the first RRDfile Data Source. Enter the <strong>Internal Data Source Name</strong>. You may select this name freely, though note your are limited to only 19 characters and spaces are not allowed. There's no need to match it to any of the XML field names. As the OID is a <strong>COUNTER</strong>, the <strong>Data Source Type</strong> must be selected appropriately. <code>Create</code>.</p>
+<p><img src="images/dev-dt-04.preview.png" alt="Script Data Query - Data Template 04" /></p>
+<p>For the second data source item, please select <strong>New</strong>.</p>
+<p><img src="images/dev-dt-05.png" alt="Script Data Query - Data Template 05" /></p>
+<p>Again, fill in the Data Source Name. Pay attention to set the maximum value to 0 to avoid clipping it off during updating of the RRDfile. COUNTER has to be set as done above. <strong>Important!</strong> You have to select the marked Index fields! Now, save again and you're done.</p>
+<h2 id="create-the-graph-template">Create the Graph Template</h2>
+<p>Now, its time for the <strong>Graph Template</strong>. Select this menu item and <strong>Add</strong>.</p>
+<p><img src="images/dev-gt-01.preview.png" alt="Script Data Query - Graph Template 01" /></p>
+<p>and fill in the values as usual:</p>
+<p><img src="images/dev-gt-02.png" alt="Script Data Query - Graph Template 02" /></p>
+<p>Now <strong>Save</strong>. Next, fill in the <strong>Graph Items</strong></p>
+<p><img src="images/dev-gt-04-0.preview.png" alt="Script Data Query - Graph Template 04" /></p>
+<p>Select the Data Source from our Data Template, take the color and select AREA, enter some text</p>
+<p><img src="images/dev-gt-05.preview.png" alt="Script Data Query - Graph Template 05" /></p>
+<p>Save and add the next graph item. Now, we're going to use the “LEGEND” time saver again:</p>
+<p><img src="images/dev-gt-06.preview.png" alt="Script Data Query - Graph Template 06" /></p>
+<p>For the next step, it's necessary to remove the newline added with the last action. Please select the 4th item as follows</p>
+<p><img src="images/dev-gt-07.png" alt="Script Data Query - Graph Template 07" /></p>
+<p>and remove the newline by deselecting the checkbox</p>
+<p><img src="images/dev-gt-08.png" alt="Script Data Query - Graph Template 08" /></p>
+<p>Now lets add the same data source again, but as a LINE1, MAXimum with a slightly changed color. Newline is checked this time</p>
+<p><img src="images/dev-gt-09.preview.png" alt="Script Data Query - Graph Template 09" /></p>
+<p>Pooh. Now lets apply the same procedure for the <strong>Outgoing Traffic</strong>. Personally, I love those outgoing stuff to be presented on the negative y-axis. So we'll have to apply some CDEF magic to some items. Lets see</p>
+<p><img src="images/dev-gt-10.preview.png" alt="Script Data Query - Graph Template 10" /></p>
+<p>Please pay attention when adding the “LEGEND” stuff. No CDEF to be applied in this case (else, legends will show negative values)</p>
+<p><img src="images/dev-gt-11.preview.png" alt="Script Data Query - Graph Template 11" /></p>
+<p>Again, select last legend item</p>
+<p><img src="images/dev-gt-12.png" alt="Script Data Query - Graph Template 12" /></p>
+<p>to remove the newline</p>
+<p><img src="images/dev-gt-13.png" alt="Script Data Query - Graph Template 13" /></p>
+<p>and add a new LINE1, MAXimum, “Make Stack Negative” CDEF with some text and a newline</p>
+<p><img src="images/dev-gt-14.preview.png" alt="Script Data Query - Graph Template 14" /></p>
+<p>Hoping, you've got all those steps correctly, finally <strong>Save</strong> your work. Take a cup of coffee to get your brains free again, kiss your wife, hug your children and/or pet your dog; sequence is arbitrary.</p>
+<h2 id="associate-graph-template-with-data-query">Associate Graph Template with Data Query</h2>
+<p>Huh, that sound complicated. Why would it be necessary to do so? Let me explain: You remember the <strong>Data Template</strong>, do you? The names of the data source item was chosen arbitrary. The Graph Items were associated with those data source items, but those in turn were not related to anything in the XML file. Not related? Not yet! So, let's revisit the <strong>Data Query</strong>. Remember the lower part on <strong>Associated Graph Templates</strong>. Click <strong>Add</strong></p>
+<p><img src="images/dev-dq-20.preview.png" alt="Script Data Query - Graph Template 15" /></p>
+<p>fill in a name for your choice and select the Graph Template that we have created in the last step.</p>
+<p><img src="images/dev-dq-21.preview.png" alt="Script Data Query - Graph Template 16" /></p>
+<p><strong>Create</strong> to see</p>
+<p><img src="images/dev-dq-22.preview.png" alt="Script Data Query - Graph Template 17" /></p>
+<p>First, let's have a look at the upper half of the screen. The red box to the left show the <strong>Internal Data Source Names</strong> names taken from the <strong>Data Template</strong> that is associated with the <strong>Graph template</strong> we've just added. The red box to the middle has a dropdown for each data source item. The dropdown list contains all <strong>output</strong> fields taken from the XML file. In our case, there are only two of them. The red box to the right must be checked on each line, to make the association valid. Now, lets turn to the lower half of the screen, denoted <strong>Suggested Values</strong></p>
+<p><img src="images/dev-dq-23.png" alt="Script Data Query - Suggested Value 01" /></p>
+<p>The example shows <code>|host_description| - Traffic - |query_ifdescription|</code> entered both for <strong>name</strong> of the Data Template and <strong>title</strong> of the Graph Template. Click <strong>Add</strong>, one by one</p>
+<p><img src="images/dev-dq-24.preview.png" alt="Script Data Query - Suggested Value 02" /></p>
+<p>Notice the second <strong>title</strong> I've added here. If more than one entry is present, they are applied from top to bottom, until a match is found. Match means, that all variables present are filled. Of course, you may add more than one variable taken from the XML file. But pay attention, that not all devices will fill all those variables. So my router does, sigh. You may use all <strong>input</strong> variables listed in the XML file. A <code>&lt;variable&gt;</code> may be listed as <code>|query_&lt;variable&gt;|</code>, e.g. for ifalias write <code>|query_ifalias|</code> and so forth.</p>
+<p>Click <strong>Save</strong>, and find the new Graph Template added to the list of <strong>Associated Graph Templates</strong>.</p>
+<p><img src="images/dev-dq-25.preview.png" alt="Script Data Query - Suggested Value 03" /></p>
+<p>You may continue to add more <strong>Graph Templates</strong>, each of them may be related to other output field of the XML file. Find, as an example, lots of graph templates associated to the standard <code>Interface Statistics</code> Data Query to get an idea what I'm talking about.</p>
+<p><img src="images/dev-dq-26.preview.png" alt="Script Data Query - Edit" /></p>
+<p>Don't worry about the first two entries; they are home-made.</p>
+<h2 id="creating-the-images">Creating the Images</h2>
+<p>Now, let's return to the <strong>Device</strong>, that we've already have used for this Data Query. <strong>Create Graphs for this Host</strong></p>
+<p><img src="images/dev-dev-10.preview.png" alt="Script Data Query - Devices 01" /></p>
+<p>to see</p>
+<p><img src="images/dev-dev-11-0.preview.png" alt="Script Data Query - Devices 02" /></p>
+<p>I've left the standard Interface Statistics in the screenshot. So you may compare both Queries. Our PHP Interface Traffic stuff has two more header items, Name and Alias. But all data seen equals the standard SNMP Data Query; not that bad, eh?</p>
+<p>Now, select one item</p>
+<p><img src="images/dev-dev-12.preview.png" alt="Script Data Query - Devices 03" /></p>
+<p>and <strong>Create</strong></p>
+<p><img src="images/dev-dev-13.png" alt="Script Data Query - Devices 04" /></p>
+<p>You'll have to wait a bit, at least two polling cycles. Then, you may notice some data in your new graph. The next image shows both our new graph (the first one) and a standard interface traffic graph. The latter one holds more data in this example, don't worry about that.</p>
+<p><img src="images/dev-dev-14.png" alt="Script Data Query - Devices 05" /></p>
+<p>Having a closer view, you may notice a difference in magnitude (y-axis). But please compare the units used. The first graph uses <strong>Bytes</strong>, the latter one uses <strong>Bits</strong>. For comparison, it would be necessary to multiply the first one with 8. This may be done using a CDEF Turn Bytes into Bits, applied to all items of the <strong>Graph Template</strong>. This task is left to you.</p>
+<p>Please find the example resource, script, and Data Query below. Save <code>ifTraffic.xml</code> into <code>./resource/script_queries</code>, and <code>query_interface_traffic.php</code> into the <code>./scripts</code> directory and import the Data Query <code>cacti_data_query_php_interface_traffic.xml</code>.</p>
+<p><a href="resource/xml/cacti_data_query_php_interface_traffic.xml">Cacti Data Query for PHP Interface Traffic</a></p>
+<p><a href="resource/xml/ifTraffic.xml">ifTraffic.xml</a> download and store into <code>resource/script_queries</code>.</p>
+<p><a href="resource/xml/query_interface_traffic.php">query_interface_traffic.php</a> download and store into <code>scripts</code>.</p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

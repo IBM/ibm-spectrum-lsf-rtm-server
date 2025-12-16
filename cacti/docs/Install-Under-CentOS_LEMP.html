@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Installing on CentOS 7</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="installing-on-centos-7">Installing on CentOS 7</h1>
+<h2 id="lemp-linux-nginx-mysql-php-required-packages">LEMP (Linux, Nginx, MySQL, PHP) Required packages</h2>
+<h3 id="web-server">Web Server</h3>
+<ol>
+<li><p>Install Nginx</p>
+<pre class="console"><code>yum install -y nginx
+</code></pre></li>
+<li><p>Enable and start the service to ensure it starts when the system reboots</p>
+<pre class="console"><code>systemctl start nginx
+systemctl enable nginx
+</code></pre></li>
+</ol>
+<h3 id="example-configuration-file-for-nginx-and-ssl">Example configuration file for Nginx and SSL</h3>
+<p>This example assumes you have your own certificates already. You should make sure you change the paths to match your setup.</p>
+<p>Replace <code>YourOwnCertFile.crt</code> and <code>YourOwnCertFile.key</code> with the names of the files holding your certificate (<code>.crt</code>) and private key (<code>.key</code>).</p>
+<pre class="console"><code>/etc/nginx/conf.d/cacti.conf
+</code></pre>
+<pre class="console"><code># Advanced config for NGINX
+#server_tokens off;
+add_header X-XSS-Protection &quot;1; mode=block&quot;;
+add_header X-Content-Type-Options nosniff;
+
+# Redirect all HTTP traffic to HTTPS
+server {
+   listen 80;
+   server_name cacti.yourdomain.com; #No one likes unencrypted web servers
+   #return 301 https://$host$request_uri; # some nginx do not support &#39;return&#39;;
+}
+
+# SSL configuration
+server {
+   listen 443 ssl default deferred;
+   server_name cacti.yourdomain.com;
+   root /usr/share/nginx/html/cacti;
+   index index.php index.html index.htm;
+
+   # Compression increases performance0
+   gzip on;
+   gzip_types      text/plain text/html text/xml text/css application/xml application/javascript application/x-javascript application/rss+xml application/xhtml+xml;
+   gzip_proxied    no-cache no-store private expired auth;
+   gzip_min_length 1000;
+
+   location / {
+      try_files $uri $uri/ /index.php$query_string;
+   }
+
+   error_page 404 /404.html;
+   error_page 500 502 503 504 /50x.html;
+   location = /50x.html {
+      root /usr/share/nginx/html/;
+   }
+
+   location ~ \.php$ {
+      alias /usr/share/nginx/html/cacti;
+      index index.php
+      try_files $uri $uri/ =404;
+      fastcgi_split_path_info ^(.+\.php)(/.+)$;
+
+      # you may have to change the path here for your OS
+      fastcgi_pass unix:/var/run/php-fpm/php-fpm.sock;
+      fastcgi_index index.php;
+      fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+      include /etc/nginx/fastcgi_params;
+   }
+
+   location /cacti {
+      root /usr/share/nginx/html/;
+      index index.php index.html index.htm;
+      location ~ ^/cacti/(.+\.php)$ {
+         try_files $uri =404;
+         root /usr/share/nginx/html;
+
+         # you may have to change the path here for your OS
+         fastcgi_pass unix:/var/run/php-fpm/php-fpm.sock;
+         fastcgi_index index.php;
+         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+         include /etc/nginx/fastcgi_params;
+      }
+
+      location ~* ^/cacti/(.+\.(jpg|jpeg|gif|css|png|js|ico|html|xml|txt))$ {
+         expires max;
+         log_not_found off;
+      }
+   }
+
+   location /doc/ {
+      alias /usr/share/nginx/html/cacti/doc/;
+      location ~* ^/docs/(.+\.(html|md|txt))$ {
+         root /usr/share/nginx/html/cacti/;
+         autoindex on;
+         allow 127.0.0.1; # Change this to allow your local networks
+         allow ::1;
+         deny all;
+      }
+   }
+
+   location /cacti/rra/ {
+      deny all;
+   }
+
+   ## Access and error logs.
+   access_log /var/log/nginx/cacti_access.log;
+   error_log  /var/log/nginx/cacti_error.log info;
+
+   ssl_certificate      /etc/ssl/certs/YourOwnCertFile.crt;
+   ssl_certificate_key  /etc/ssl/private/YourOwnCertKey.key;
+
+   # Improve HTTPS performance with session resumption
+   ssl_session_cache shared:SSL:10m;
+   ssl_session_timeout 5m;
+
+   # Enable server-side protection against BEAST attacks
+   #ssl_prefer_server_ciphers on;
+   ssl_ciphers ECDH+AESGCM:ECDH+AES256:ECDH+AES128:DH+3DES:!ADH:!AECDH:!MD5;
+
+   # Disable SSLv3
+   ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+
+   # Diffie-Hellman parameter for DHE cipher suites
+   # $ sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 4096
+   ssl_dhparam /etc/ssl/certs/dhparam.pem;
+
+   # Enable HSTS (https://developer.mozilla.org/en-US/docs/Security/HTTP_Strict_Transport_Security)
+   add_header Strict-Transport-Security &quot;max-age=63072000; includeSubdomains&quot;;
+}
+</code></pre>
+<h3 id="database-server">Database Server</h3>
+<p>The choice between MySQL server and MariaDB is normally down to the OS maintainers if you use one of the predefined LAMP setup installations. If you are deciding between these yourself, you should research this via your favorite search engine.</p>
+<p>Whilst MySQL is the original open source SQL database server created in 1995 which is now owned by Oracle, MariaDB is designed as a drop-in replacement by some of the original MySQL developers / owners. This will likely continue to be a drop-in alternative until there is a major divergence that can not be bridged.</p>
+<h4 id="mysql">MySQL</h4>
+<ol>
+<li><p>Install MySQL server</p>
+<pre class="console"><code>yum install -y mysql mysql-server
+</code></pre></li>
+<li><p>Enable and start the service to ensure it starts when the system reboots</p>
+<pre class="console"><code>systemctl enable mysqld
+systemctl start mysqld
+</code></pre></li>
+</ol>
+<h4 id="mariadb">MariaDB</h4>
+<ol>
+<li><p>Install MariaDB server</p>
+<pre class="console"><code>yum install -y MariaDB-server MariaDB-client
+</code></pre></li>
+<li><p>Enable and start the service to ensure it starts when the system reboots</p>
+<pre class="console"><code>systemctl enable mariadb
+systemctl start mariadb
+</code></pre></li>
+</ol>
+<h3 id="mysqlmariadb-common-tasks-and-recommendations">MySQL/MariaDB common tasks and recommendations</h3>
+<p><strong>IMPORTANT</strong>: Secure your MySQL installation before doing any more changes</p>
+<pre class="console"><code>/usr/bin/mysql_secure_installation
+</code></pre>
+<p>The following MySQL/MariaDB recommendations may vary depending on your system setup. In any case, Cacti will prompt you with more accurate recommendations during the installation.</p>
+<ol>
+<li><p>Edit your <strong>server.cnf</strong> file</p>
+<pre class="console"><code>vim /etc/my.cnf.d/server.cnf
+</code></pre>
+<p>The following <code>[mysqld]</code> section is a base configuration. The installer will provide recommendations based on the actual system which will be more tailored to your environment.</p>
+<p>If using MariaDB less than version 11.1 or MySQL use the settings below. Note that you should revise up or down your settings depending on the Cacti recommendation that you see once you start the installer.</p>
+<pre class="shell"><code>[mysqld]
+character_set_client            = utf8mb4
+character-set-server            = utf8mb4
+collation-server                = utf8mb4_unicode_ci
+innodb_file_format              = Barracuda
+max_allowed_packet              = 16777777
+max_heap_table_size             = 500M
+join_buffer_size                = 32M
+innodb_file_per_table           = ON
+innodb_large_prefix             = 1
+innodb_buffer_pool_size         = 500M
+innodb_additional_mem_pool_size = 90M
+innodb_flush_log_at_trx_commit  = 2
+log-error                       = /var/log/mysql/mysql-error.log
+log-queries-not-using-indexes   = 1
+slow-query-log                  = 1
+slow-query-log-file             = /var/log/mysql/mysql-slow.log
+</code></pre>
+<p>If using MariaDB 11.0 or higher, use the settings below:</p>
+<pre class="shell"><code>[mariadb]
+character_set_client            = utf8mb4
+character_set_server            = utf8mb4
+collation_server                = utf8mb4_unicode_ci
+max_heap_table_size             = 500M
+join_buffer_size                = 32M
+innodb_buffer_pool_size         = 8G
+innodb_doublewrite              = OFF
+tmp_table_size                  = 500M
+log-error                       = /var/log/mysql/mysql-error.log
+log-queries-not-using-indexes   = 1
+slow-query-log                  = 1
+slow-query-log-file             = /var/log/mysql/mysql-slow.log
+</code></pre></li>
+<li><p>Restart MySQL/MariaDB service to pick up the changes</p>
+<pre class="console"><code>systemctl restart mysql
+</code></pre></li>
+<li><p>Populate timezone table with available timezones</p>
+<pre class="console"><code>mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root -p mysql
+</code></pre></li>
+</ol>
+<h4 id="setup-cacti-database">Setup Cacti database</h4>
+<ol>
+<li><p>Login to MySQL/MariaDB as root to create Cacti database</p>
+<pre class="console"><code># mysql -u root -p
+MariaDB [(none)]&gt; create database if not exists cacti;
+Query OK, 1 row affected (0.00 sec)
+</code></pre></li>
+<li><p>Import Cacti database from SQL file</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb16-1" title="1">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">use</span> cacti;</a>
+<a class="sourceLine" id="cb16-2" title="2"><span class="kw">Database</span> changed</a>
+<a class="sourceLine" id="cb16-3" title="3">MariaDB [(cacti)]<span class="op">&gt;</span> <span class="kw">source</span> <span class="op">/</span>var<span class="op">/</span>www<span class="op">/</span>html<span class="op">/</span>cacti<span class="op">/</span>cacti.sql</a></code></pre></div></li>
+<li><p>Grant Cacti username access to Cacti database. Replace <code>your_cacti_username</code> and <code>your_cacti_password</code> with your own details.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb17-1" title="1">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">GRANT</span> <span class="kw">ALL</span> <span class="kw">PRIVILEGES</span> <span class="kw">ON</span> cacti.<span class="op">*</span> <span class="kw">TO</span> <span class="st">&#39;your_cacti_username&#39;</span>@<span class="st">&#39;localhost&#39;</span> <span class="kw">IDENTIFIED</span> <span class="kw">BY</span> <span class="st">&#39;your_cacti_password&#39;</span>;</a>
+<a class="sourceLine" id="cb17-2" title="2"><span class="kw">Query</span> OK, <span class="dv">0</span> <span class="kw">rows</span> affected (<span class="fl">0.00</span> sec)</a></code></pre></div></li>
+<li><p>Grant cacti username to MySQL timezone table</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb18-1" title="1">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">GRANT</span> <span class="kw">SELECT</span> <span class="kw">ON</span> mysql.time_zone_name <span class="kw">TO</span> <span class="st">&#39;cacti&#39;</span>@<span class="st">&#39;localhost&#39;</span>;</a>
+<a class="sourceLine" id="cb18-2" title="2"><span class="kw">Query</span> OK, <span class="dv">0</span> <span class="kw">rows</span> affected (<span class="fl">0.00</span> sec)</a>
+<a class="sourceLine" id="cb18-3" title="3">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">FLUSH</span> <span class="kw">PRIVILEGES</span>;</a>
+<a class="sourceLine" id="cb18-4" title="4"><span class="kw">Query</span> OK, <span class="dv">0</span> <span class="kw">rows</span> affected (<span class="fl">0.00</span> sec)</a></code></pre></div></li>
+<li><p>Save the Database Charset and Collation</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb19-1" title="1">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">ALTER</span> <span class="kw">DATABASE</span> cacti <span class="dt">CHARACTER</span> <span class="kw">SET</span> utf8mb4 COLLATE utf8mb4_unicode_ci;</a>
+<a class="sourceLine" id="cb19-2" title="2">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">FLUSH</span> <span class="kw">PRIVILEGES</span>;</a></code></pre></div></li>
+</ol>
+<h3 id="common-php-packages">Common PHP packages</h3>
+<h4 id="php">PHP</h4>
+<p>PHP and various packages are all required by Cacti for successful operation</p>
+<ol>
+<li><p>Install PHP and required packages.</p>
+<pre class="console"><code>yum install -y php php-common php-bcmath php-cli \
+php-mysqlnd php-gd php-gmp php-intl \
+php-json php-ldap php-mbstring \
+php-pdo php-pear php-snmp php-process \
+php-xml php-zip php-fpm
+</code></pre></li>
+</ol>
+<hr />
+<p>Note: <strong>php-fpm</strong> is only required if your Web Server is Nginx</p>
+<ol>
+<li><p>Set a timezone to your PHP.INI configuration</p>
+<p>Edit php.ini, typically located at <code>/etc/php.ini</code></p>
+<pre class="console"><code>date.timezone = Pacific/Auckland
+</code></pre></li>
+<li><p>Disable insecure <code>cgi.fix_pathinfo</code></p>
+<pre class="console"><code>cgi.fix_pathinfo=0
+</code></pre></li>
+</ol>
+<h4 id="setup-php-fpm">Setup php-fpm</h4>
+<ol>
+<li><p>Enable and start the service to ensure it starts when the system reboots</p>
+<pre class="console"><code>systemctl start php-fpm
+systemctl enable php-fpm
+</code></pre></li>
+<li><p>Edit <code>/etc/php-fpm.d/www.conf</code></p>
+<p>Find <code>listen = 127.0.0.1:9000</code> and add the following line below</p>
+<pre class="console"><code>listen = /var/run/php-fpm/php-fpm.sock
+</code></pre>
+<p>Find <code>listen.owner</code> and <code>listen.group</code> and set them to nginx</p>
+<pre class="console"><code>listen.owner = nginx
+listen.group = nginx
+</code></pre>
+<p>Find user and group and set them to <code>nginx</code></p>
+<pre class="console"><code>user = nginx
+group = nginx
+</code></pre>
+<p>Restart php-fpm to pick up the changes</p>
+<pre class="console"><code>systemctl restart php-fpm
+</code></pre></li>
+</ol>
+<h3 id="rrdtool">RRDtool</h3>
+<p>RRDtool is required to store the data retrieved from devices in <code>.rra</code> files to produce the graphs which are shown within Cacti</p>
+<pre class="console"><code>yum install -y rrdtool
+</code></pre>
+<h3 id="snmp">SNMP</h3>
+<p>SNMP is used to query most devices for information.</p>
+<pre class="console"><code>yum install -y net-snmp net-snmp-utils
+echo &quot;rocommunity public&quot; &gt; /etc/snmp/snmpd.conf
+systemctl enable snmpd
+systemctl start snmpd
+</code></pre>
+<h3 id="cacti">Cacti</h3>
+<p>The following steps will show you how to manually download, install and configure the basics for Cacti.</p>
+<ol>
+<li><p>Download Cacti source code from <a href="https://www.cacti.net/download_cacti.php">Cacti Web Site</a></p>
+<pre class="console"><code>cd /tmp
+wget https://www.cacti.net/downloads/cacti-1.y.z.tar.gz
+tar -zxvf cacti-1.y.z.tar.gz
+mv -v cacti-1.y.z /usr/share/nginx/html/cacti
+</code></pre></li>
+<li><p>Edit the config.php file</p>
+<pre class="console"><code>mv -v /usr/share/nginx/html/cacti/include/config.php-dist /usr/share/nginx/html/cacti/include/config.php
+</code></pre></li>
+<li><p>Update database_ fields with your own details. This section only applies to the Main Cacti Server</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb32-1" title="1"><span class="kw">$database_type</span>     = <span class="st">&#39;mysql&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb32-2" title="2"><span class="kw">$database_default</span>  = <span class="st">&#39;your_cacti_database&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb32-3" title="3"><span class="kw">$database_hostname</span> = <span class="st">&#39;localhost&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb32-4" title="4"><span class="kw">$database_username</span> = <span class="st">&#39;your_cacti_username&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb32-5" title="5"><span class="kw">$database_password</span> = <span class="st">&#39;your_cacti_password&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb32-6" title="6"><span class="kw">$database_port</span>     = <span class="st">&#39;3306&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb32-7" title="7"><span class="kw">$database_ssl</span>      = <span class="kw">false</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb32-8" title="8"><span class="kw">$database_ssl_key</span>  = <span class="st">&#39;&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb32-9" title="9"><span class="kw">$database_ssl_cert</span> = <span class="st">&#39;&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb32-10" title="10"><span class="kw">$database_ssl_ca</span>   = <span class="st">&#39;&#39;</span><span class="ot">;</span></a></code></pre></div></li>
+<li><p>Set your cookie domain to match your web site domain name</p>
+<pre class="console"><code>$cacti_cookie_domain = &#39;cacti.yourdomain.com&#39;;
+</code></pre></li>
+<li><p>Create your cron task file or systemd units file</p>
+<p>Starting with Cacti 1.2.16, you have the option to use either the legacy Crontab entry, or an optional cactid units file and server to run your Cacti pollers.</p>
+<p>For Crontab use, follow the instructions below:</p>
+<p>Create and edit <code>/etc/cron.d/cacti</code> file. Make sure to setup the correct path to poller.php</p>
+<pre class="console"><code>*/5 * * * * nginx php /var/www/html/cacti/poller.php &amp;&gt;/dev/null
+</code></pre>
+<p>For systemd unit's file install, you will need to modify the included units file to following your install location and desired user and group's to run the Cacti poller as. To complete the task, follow the procedure below:</p>
+<pre class="console"><code>vim /var/www/html/cacti/service/cactid.service (edit the path)
+touch /etc/sysconfig/cactid
+cp -p /var/www/html/cacti/service/cactid.service /etc/systemd/system
+systemctl enable cactid
+systemctl start cactid
+systemctl status cactid
+</code></pre>
+<p>The systemd units file makes managing a highly available Cacti setup a bit more convenient.</p></li>
+</ol>
+<h4 id="spine">Spine</h4>
+<ol>
+<li><p>Install the necessary packages to compile and install spine</p>
+<pre class="console"><code>yum install -y autoconf automake libtool dos2unix help2man \
+openssl-devel mariadb-devel net-snmp-devel
+</code></pre></li>
+<li><p>Download spine source code from <a href="https://www.cacti.net/spine_download.php">Cacti Web Site</a></p>
+<p>Go to /tmp to download the source code and extract it</p>
+<pre class="console"><code>cd /tmp
+wget https://www.cacti.net/downloads/spine/cacti-spine-1.y.z.tar.gz
+tar -zxvf cacti-spine-1.y.z.tar.gz
+cd cacti-spine-1.y.z
+</code></pre></li>
+<li><p>Run the configure script and compile spine.</p>
+<pre class="console"><code># ./configure
+# make &amp;  make install
+config/install-sh -c -d &#39;/usr/local/spine/bin&#39;
+/bin/sh ./libtool   --mode=install /usr/bin/install -c spine &#39;/usr/local/spine/bin&#39;
+libtool: install: /usr/bin/install -c spine /usr/local/spine/bin/spine
+config/install-sh -c -d &#39;/usr/local/spine/etc&#39;
+/usr/bin/install -c -m 644 spine.conf.dist &#39;/usr/local/spine/etc&#39;
+config/install-sh -c -d &#39;/usr/local/spine/share/man/man1&#39;
+/usr/bin/install -c -m 644 spine.1 &#39;/usr/local/spine/share/man/man1&#39;
+</code></pre></li>
+<li><p>Edit spine.conf</p>
+<p>Rename spine.conf.dist to spine.conf</p>
+<pre class="console"><code>mv -v /usr/local/spine/etc/spine.conf.dist /usr/local/spine/etc/spine.conf
+vi /usr/local/spine/etc/spine.conf
+</code></pre></li>
+<li><p>Now set up your database connection</p>
+<pre class="console"><code>DB_Host       localhost
+DB_Database   your_cacti_database
+DB_User       your_cacti_username
+DB_Pass       your_cacti_password
+DB_Port       3306
+#DB_UseSSL    0
+#RDB_SSL_Key
+#RDB_SSL_Cert
+#RDB_SSL_CA
+</code></pre></li>
+</ol>
+<h3 id="security-enhanced-linux-selinux">Security Enhanced Linux (SELinux)</h3>
+<p>If you are having issues to access the web page, disable SELinux temporarily to prove that the issues come from the SELinux policy. It is NOT recommended to disable SELinux permanently.</p>
+<p><a href="https:////wiki.centos.org/es/HowTos/SELinux">CentOS</a> has a lot of documentation on how to make your SELinux policy right.</p>
+<p>Check SELinux status</p>
+<pre class="console"><code>getenforce
+</code></pre>
+<p>Disable SELinux temporarily</p>
+<pre class="console"><code>setenforce 0
+</code></pre>
+<p>Enable SELinux back</p>
+<pre class="console"><code>setenforce 1
+</code></pre>
+<p><strong>Note:</strong> If you installed Cacti out of <code>/usr/share/nginx/html</code> make sure you fix up all SELinux context and permissions.</p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

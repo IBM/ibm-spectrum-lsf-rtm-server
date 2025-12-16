@@ -1,0 +1,929 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-05-05 15:14-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../benchmark.php:40 ../grid_benchmark_jobs.php:40
+msgid "Delete"
+msgstr ""
+
+#: ../benchmark.php:41 ../grid_benchmark_jobs.php:41
+msgid "Enable"
+msgstr ""
+
+#: ../benchmark.php:42 ../grid_benchmark_jobs.php:42
+msgid "Disable"
+msgstr ""
+
+#: ../benchmark.php:43
+msgid "Clear Counters"
+msgstr ""
+
+#: ../benchmark.php:55
+msgid "IBM Spectrum LSF RTM - Benchmark Job Details"
+msgstr ""
+
+#: ../benchmark.php:60 ../benchmark.php:70 ../grid_benchmark_summary.php:37
+#: ../grid_benchmark_jobs.php:82
+msgid "IBM Spectrum LSF RTM - Benchmark Job Management"
+msgstr ""
+
+#: ../benchmark.php:150
+msgid "Click 'Continue' to Delete the following Grid Benchmark(s)"
+msgstr ""
+
+#: ../benchmark.php:155
+msgid "Delete Benchmark(s)"
+msgstr ""
+
+#: ../benchmark.php:159
+msgid "Click 'Continue' to Enable the following Grid Benchmark(s)"
+msgstr ""
+
+#: ../benchmark.php:164
+msgid "Enable Benchmark(s)"
+msgstr ""
+
+#: ../benchmark.php:168
+msgid "Click 'Continue' to Disable the following Grid Benchmark(s)"
+msgstr ""
+
+#: ../benchmark.php:173
+msgid "Disable Benchmark(s)"
+msgstr ""
+
+#: ../benchmark.php:177
+msgid "Click 'Continue' to Clear Counters for the following Grid Benchmark(s)"
+msgstr ""
+
+#: ../benchmark.php:182
+msgid "Clear Counters for Benchmark(s)"
+msgstr ""
+
+#: ../benchmark.php:185
+msgid "Cancel"
+msgstr ""
+
+#: ../benchmark.php:185
+msgid "Continue"
+msgstr ""
+
+#: ../benchmark.php:187
+msgid "You must select at least one Grid Benchmark."
+msgstr ""
+
+#: ../benchmark.php:188
+msgid "Return"
+msgstr ""
+
+#: ../benchmark.php:325
+#, php-format
+msgid "Benchmark Edit [edit: %s]"
+msgstr ""
+
+#: ../benchmark.php:328
+msgid "Benchmark Edit [new]"
+msgstr ""
+
+#: ../benchmark.php:555 ../grid_benchmark_summary.php:91
+msgid "Actions"
+msgstr ""
+
+#: ../benchmark.php:556 ../grid_benchmark_summary.php:92
+#: ../grid_benchmark_jobs.php:137
+msgid "Benchmark Name"
+msgstr ""
+
+#: ../benchmark.php:557 ../functions.php:128 ../grid_benchmark_summary.php:93
+#: ../grid_benchmark_jobs.php:141
+msgid "ID"
+msgstr ""
+
+#: ../benchmark.php:558 ../functions.php:132 ../grid_benchmark_summary.php:94
+#: ../grid_benchmark_jobs.php:145
+msgid "Cluster Name"
+msgstr ""
+
+#: ../benchmark.php:559 ../functions.php:139 ../grid_benchmark_summary.php:95
+#: ../grid_benchmark_jobs.php:157
+msgid "Status"
+msgstr ""
+
+#: ../benchmark.php:559 ../grid_benchmark_jobs.php:157
+msgid "Status is sorted by its code"
+msgstr ""
+
+#: ../benchmark.php:560 ../functions.php:137 ../grid_benchmark_summary.php:96
+msgid "Run Interval"
+msgstr ""
+
+#: ../benchmark.php:561 ../grid_benchmark_summary.php:97
+msgid "Last"
+msgstr ""
+
+#: ../benchmark.php:562 ../grid_benchmark_summary.php:98
+msgid "Average"
+msgstr ""
+
+#: ../benchmark.php:563 ../grid_benchmark_summary.php:99
+msgid "Min"
+msgstr ""
+
+#: ../benchmark.php:564 ../grid_benchmark_summary.php:100
+msgid "Max"
+msgstr ""
+
+#: ../benchmark.php:565 ../grid_benchmark_summary.php:101
+msgid "Done"
+msgstr ""
+
+#: ../benchmark.php:566 ../grid_benchmark_summary.php:102
+msgid "Exited"
+msgstr ""
+
+#: ../benchmark.php:567 ../grid_benchmark_summary.php:103
+msgid "Failed"
+msgstr ""
+
+#: ../benchmark.php:568 ../grid_benchmark_summary.php:104
+msgid "Queue"
+msgstr ""
+
+#: ../benchmark.php:569 ../grid_benchmark_summary.php:105
+msgid "Project"
+msgstr ""
+
+#: ../benchmark.php:570
+msgid "User"
+msgstr ""
+
+#: ../benchmark.php:571
+msgid "Group"
+msgstr ""
+
+#: ../benchmark.php:572 ../functions.php:141 ../functions.php:194
+#: ../grid_benchmark_summary.php:108
+msgid "Last Runtime"
+msgstr ""
+
+#: ../benchmark.php:787
+msgid "Benchmark Management"
+msgstr ""
+
+#: ../benchmark.php:787
+msgid "(Learn More)"
+msgstr ""
+
+#: ../benchmark.php:819 ../setup.php:445
+msgid "Benchmarks"
+msgstr ""
+
+#: ../benchmark.php:872 ../benchmark.php:883 ../grid_benchmark_summary.php:392
+#: ../grid_benchmark_summary.php:406
+msgid "View Benchmark Results"
+msgstr ""
+
+#: ../benchmark.php:873 ../benchmark.php:884 ../grid_benchmark_summary.php:391
+#: ../grid_benchmark_summary.php:405
+msgid "View Benchmark Job"
+msgstr ""
+
+#: ../benchmark.php:875 ../benchmark.php:886 ../grid_benchmark_summary.php:394
+#: ../grid_benchmark_summary.php:408
+msgid "View Benchmark Graphs"
+msgstr ""
+
+#: ../benchmark.php:910 ../benchmark.php:912 ../functions.php:91
+#: ../functions.php:165 ../functions.php:172 ../grid_benchmark_summary.php:428
+#: ../grid_benchmark_summary.php:430 ../grid_benchmark_jobs.php:622
+msgid "N/A"
+msgstr ""
+
+#: ../benchmark.php:915 ../grid_benchmark_summary.php:433
+msgid "Never run"
+msgstr ""
+
+#: ../benchmark.php:926
+msgid "No Benchmark Records Found"
+msgstr ""
+
+#: ../benchmark.php:944 ../functions.php:74
+#, php-format
+msgid "%d sec"
+msgstr ""
+
+#: ../setup.php:36
+msgid "The Max Runtime should be >= Alert Threshold >= Warning Threshold."
+msgstr ""
+
+#: ../setup.php:41
+msgid "The Max Runtime should not run over 4 hours."
+msgstr ""
+
+#: ../setup.php:54
+msgid "Clusters"
+msgstr ""
+
+#: ../setup.php:54 ../setup.php:58 ../setup.php:469
+#: ../grid_benchmark_summary.php:317 ../grid_benchmark_jobs.php:586
+msgid "Benchmark Jobs"
+msgstr ""
+
+#: ../setup.php:57
+msgid "Reports"
+msgstr ""
+
+#: ../setup.php:57
+msgid "Benchmark Results"
+msgstr ""
+
+#: ../setup.php:58
+msgid "Dashboards"
+msgstr ""
+
+#: ../setup.php:86 ../setup.php:87 ../setup.php:88 ../setup.php:89
+#, php-format
+msgid "%d Minutes"
+msgstr ""
+
+#: ../setup.php:90
+#, php-format
+msgid "%d Hour"
+msgstr ""
+
+#: ../setup.php:91 ../setup.php:92
+#, php-format
+msgid "%d Hours"
+msgstr ""
+
+#: ../setup.php:93
+#, php-format
+msgid "%d Day"
+msgstr ""
+
+#: ../setup.php:97
+#, php-format
+msgid "Last %d Hour"
+msgstr ""
+
+#: ../setup.php:98 ../setup.php:99 ../setup.php:100 ../setup.php:101
+#, php-format
+msgid "Last %d Hours"
+msgstr ""
+
+#: ../setup.php:102
+#, php-format
+msgid "Last %d Day"
+msgstr ""
+
+#: ../setup.php:106
+msgid "Never Run"
+msgstr ""
+
+#: ../setup.php:107
+msgid "OK"
+msgstr ""
+
+#: ../setup.php:108
+msgid "OK, Threshold Warning"
+msgstr ""
+
+#: ../setup.php:109
+msgid "OK, Threshold Alert"
+msgstr ""
+
+#: ../setup.php:110
+msgid "Disabled"
+msgstr ""
+
+#: ../setup.php:111
+msgid "Queue Inact"
+msgstr ""
+
+#: ../setup.php:112
+msgid "Queue Closed"
+msgstr ""
+
+#: ../setup.php:113
+msgid "Submit Error"
+msgstr ""
+
+#: ../setup.php:114
+msgid "Invalid User"
+msgstr ""
+
+#: ../setup.php:115
+msgid "Invalid User Group"
+msgstr ""
+
+#: ../setup.php:116
+msgid "Invalid Host Spec"
+msgstr ""
+
+#: ../setup.php:117
+msgid "Cannot get Queue"
+msgstr ""
+
+#: ../setup.php:118
+msgid "Queue Permissions"
+msgstr ""
+
+#: ../setup.php:119
+msgid "Exit, Threshold OK"
+msgstr ""
+
+#: ../setup.php:120
+msgid "Exit, Threshold Warning"
+msgstr ""
+
+#: ../setup.php:121
+msgid "Exit, Threshold Alert"
+msgstr ""
+
+#: ../setup.php:122
+msgid "Not Seen Timeout"
+msgstr ""
+
+#: ../setup.php:123
+msgid "Killed, Max Runtime"
+msgstr ""
+
+#: ../setup.php:124
+msgid "User AllowList Error"
+msgstr ""
+
+#: ../setup.php:125
+msgid "Command AllowList Error"
+msgstr ""
+
+#: ../setup.php:126
+msgid "Cannot reach LSF"
+msgstr ""
+
+#: ../setup.php:127 ../functions.php:106
+msgid "Unknown"
+msgstr ""
+
+#: ../setup.php:159
+msgid "Benchmark Information"
+msgstr ""
+
+#: ../setup.php:163
+msgid "Benchmark Job Name"
+msgstr ""
+
+#: ../setup.php:164
+msgid "Enter a name for this Benchmark Job."
+msgstr ""
+
+#: ../setup.php:172
+msgid "Name of the Cluster to which the Benchmark Job is Submitted"
+msgstr ""
+
+#: ../setup.php:173
+msgid "Select the cluster to which this benchmark job will be submitted"
+msgstr ""
+
+#: ../setup.php:178
+msgid "Enable this benchmark"
+msgstr ""
+
+#: ../setup.php:179
+msgid "Is the benchmark enabled?"
+msgstr ""
+
+#: ../setup.php:188
+msgid "Job Run Interval"
+msgstr ""
+
+#: ../setup.php:189
+msgid "Specify the run interval for this Benchmark Job."
+msgstr ""
+
+#: ../setup.php:196
+msgid "Maximum Runtime (seconds)"
+msgstr ""
+
+#: ../setup.php:197
+msgid ""
+"The maximum time, in seconds, that a job will be allowed to run for before "
+"being forcibly killed."
+msgstr ""
+
+#: ../setup.php:205
+msgid "Alert Threshold (seconds)"
+msgstr ""
+
+#: ../setup.php:206
+msgid ""
+"The maximum total time, in seconds, before a Alert is indicated in the RTM "
+"log."
+msgstr ""
+
+#: ../setup.php:214
+msgid "Warning Threshold (seconds)"
+msgstr ""
+
+#: ../setup.php:215
+msgid ""
+"The maximum total time, in seconds, before a Warning is indicated in the RTM "
+"log."
+msgstr ""
+
+#: ../setup.php:223
+msgid "Benchmark Submission"
+msgstr ""
+
+#: ../setup.php:227
+msgid "Queue Name (bsub -q queuename)"
+msgstr ""
+
+#: ../setup.php:228
+msgid "Select the queue used to submit the benchmark job (bsub -q queuename)."
+msgstr ""
+
+#: ../setup.php:234
+msgid "Project Name (bsub -P project)"
+msgstr ""
+
+#: ../setup.php:235
+msgid ""
+"Enter a project name used to submit the benchmark job (bsub -P project)."
+msgstr ""
+
+#: ../setup.php:242
+msgid "User Name (bsub -U name)"
+msgstr ""
+
+#: ../setup.php:243
+msgid "Select the username used to submit the benchmark job."
+msgstr ""
+
+#: ../setup.php:249
+msgid "User Group (bsub -G group)"
+msgstr ""
+
+#: ../setup.php:250
+msgid ""
+"Enter a user group name used to submit the benchmark job (bsub -G group)."
+msgstr ""
+
+#: ../setup.php:257
+msgid "Host Specification (bsub -m 'host1 host2 ...')"
+msgstr ""
+
+#: ../setup.php:258
+msgid ""
+"Enter a host specification used to submit the benchmark job (bsub -m 'host1 "
+"host2 ...')."
+msgstr ""
+
+#: ../setup.php:264
+msgid "LSF Resource Requirements (bsub -R resource requirements)"
+msgstr ""
+
+#: ../setup.php:265
+msgid "Enter the LSF Resource Requirements for this Benchmark Job."
+msgstr ""
+
+#: ../setup.php:273
+msgid "Command for the Job Submission"
+msgstr ""
+
+#: ../setup.php:274
+msgid "Select the command that the benchmark job will run."
+msgstr ""
+
+#: ../setup.php:305
+msgid "RTM Plugins"
+msgstr ""
+
+#: ../setup.php:309
+msgid "RTM Cluster Benchmark Settings"
+msgstr ""
+
+#: ../setup.php:313
+msgid "Concurrent Job Limit"
+msgstr ""
+
+#: ../setup.php:314
+msgid "Maximum number of benchmark jobs that can run simultaneously."
+msgstr ""
+
+#: ../setup.php:317
+#, php-format
+msgid "%d Job"
+msgstr ""
+
+#: ../setup.php:318 ../setup.php:319 ../setup.php:320 ../setup.php:321
+#: ../setup.php:322 ../setup.php:323 ../setup.php:324 ../setup.php:325
+#: ../setup.php:326
+#, php-format
+msgid "%d Jobs"
+msgstr ""
+
+#: ../setup.php:331
+msgid "Benchmark Job History"
+msgstr ""
+
+#: ../setup.php:332
+msgid "Retain Benchmark job history."
+msgstr ""
+
+#: ../setup.php:335
+#, php-format
+msgid "%d Month"
+msgstr ""
+
+#: ../setup.php:336 ../setup.php:337
+#, php-format
+msgid "%d Months"
+msgstr ""
+
+#: ../setup.php:338
+#, php-format
+msgid "%d Year"
+msgstr ""
+
+#: ../setup.php:339 ../setup.php:340
+#, php-format
+msgid "%d Years"
+msgstr ""
+
+#: ../setup.php:341
+msgid "Forever"
+msgstr ""
+
+#: ../setup.php:347
+msgid "Run Interval Preset"
+msgstr ""
+
+#: ../setup.php:348
+msgid "When creating a benchmark job, the default Run Interval."
+msgstr ""
+
+#: ../setup.php:354
+msgid "Job Max Runtime Preset"
+msgstr ""
+
+#: ../setup.php:355
+msgid "When creating a benchmark job, the default Maximum Runtime, in seconds."
+msgstr ""
+
+#: ../setup.php:362
+msgid "Threshold Alert Preset"
+msgstr ""
+
+#: ../setup.php:363
+msgid "When creating a benchmark job, the default Alert Threshold, in seconds."
+msgstr ""
+
+#: ../setup.php:370
+msgid "Threshold Warning Preset"
+msgstr ""
+
+#: ../setup.php:371
+msgid ""
+"When creating a benchmark job, the default Warning Threshold, in seconds."
+msgstr ""
+
+#: ../setup.php:378
+msgid "Exceptional Benchmark Jobs check period"
+msgstr ""
+
+#: ../setup.php:379
+msgid "The period when exceptional benchmark jobs occurred."
+msgstr ""
+
+#: ../setup.php:451
+msgid "(Edit)"
+msgstr ""
+
+#: ../setup.php:457 ../setup.php:475
+msgid "View Benchmark Details"
+msgstr ""
+
+#: ../setup.php:463 ../grid_benchmark_jobs.php:559
+msgid "Benchmark Job Results"
+msgstr ""
+
+#: ../functions.php:83
+msgid "App Exit, Code"
+msgstr ""
+
+#: ../functions.php:86
+msgid "Signal"
+msgstr ""
+
+#: ../functions.php:123
+msgid "General"
+msgstr ""
+
+#: ../functions.php:126
+msgid "Name"
+msgstr ""
+
+#: ../functions.php:130
+msgid "Benchmark Type"
+msgstr ""
+
+#: ../functions.php:131
+msgid "LSF Performance"
+msgstr ""
+
+#: ../functions.php:143
+msgid "Last Errored"
+msgstr ""
+
+#: ../functions.php:148
+msgid "Last Error"
+msgstr ""
+
+#: ../functions.php:150
+msgid "Last Recovered"
+msgstr ""
+
+#: ../functions.php:157
+msgid "Configuration Settings"
+msgstr ""
+
+#: ../functions.php:160
+msgid "Queue Name"
+msgstr ""
+
+#: ../functions.php:162 ../grid_benchmark_summary.php:106
+msgid "User Name"
+msgstr ""
+
+#: ../functions.php:164 ../grid_benchmark_summary.php:107
+msgid "User Group"
+msgstr ""
+
+#: ../functions.php:166
+msgid "Project Name"
+msgstr ""
+
+#: ../functions.php:167
+msgid "default"
+msgstr ""
+
+#: ../functions.php:171
+msgid "Host Spec"
+msgstr ""
+
+#: ../functions.php:173
+msgid "Warning Thold"
+msgstr ""
+
+#: ../functions.php:174 ../functions.php:176 ../functions.php:178
+#, php-format
+msgid "%d seconds"
+msgstr ""
+
+#: ../functions.php:175
+msgid "Alert Thold"
+msgstr ""
+
+#: ../functions.php:177
+msgid "Run Limit"
+msgstr ""
+
+#: ../functions.php:182
+msgid "Command"
+msgstr ""
+
+#: ../functions.php:184
+msgid "ResReq"
+msgstr ""
+
+#: ../functions.php:191
+msgid "Runtime History (since last reset)"
+msgstr ""
+
+#: ../functions.php:196
+msgid "Avg Runtime"
+msgstr ""
+
+#: ../functions.php:198
+msgid "Min Runtime"
+msgstr ""
+
+#: ../functions.php:200
+msgid "Max Runtime"
+msgstr ""
+
+#: ../functions.php:205
+msgid "Done Runs"
+msgstr ""
+
+#: ../functions.php:207
+msgid "Exited Runs"
+msgstr ""
+
+#: ../functions.php:209
+msgid "Start Failures"
+msgstr ""
+
+#: ../functions.php:219
+msgid "Submit Time"
+msgstr ""
+
+#: ../functions.php:221
+msgid "Seen Time"
+msgstr ""
+
+#: ../functions.php:223 ../grid_benchmark_jobs.php:149
+msgid "Start Time"
+msgstr ""
+
+#: ../functions.php:225
+msgid "Run Time"
+msgstr ""
+
+#: ../functions.php:230
+msgid "Done Time"
+msgstr ""
+
+#: ../functions.php:232
+msgid "Seen Done"
+msgstr ""
+
+#: ../functions.php:238
+msgid "Graphs"
+msgstr ""
+
+#: ../grid_benchmark_summary.php:48 ../grid_benchmark_summary.php:53
+msgid "IBM Spectrum LSF RTM - Benchmark Job Dashboard"
+msgstr ""
+
+#: ../grid_benchmark_summary.php:123 ../grid_benchmark_jobs.php:206
+msgid "Cluster"
+msgstr ""
+
+#: ../grid_benchmark_summary.php:127 ../grid_benchmark_summary.php:143
+#: ../grid_benchmark_jobs.php:210 ../grid_benchmark_jobs.php:226
+msgid "All"
+msgstr ""
+
+#: ../grid_benchmark_summary.php:139
+msgid "Job Status"
+msgstr ""
+
+#: ../grid_benchmark_summary.php:144
+msgid "All Errors"
+msgstr ""
+
+#: ../grid_benchmark_summary.php:145
+msgid "All Job Exits"
+msgstr ""
+
+#: ../grid_benchmark_summary.php:146
+msgid "All Threshold Violations"
+msgstr ""
+
+#: ../grid_benchmark_summary.php:157
+msgid "Jobs"
+msgstr ""
+
+#: ../grid_benchmark_summary.php:171 ../grid_benchmark_jobs.php:259
+msgid "Refresh"
+msgstr ""
+
+#: ../grid_benchmark_summary.php:186 ../grid_benchmark_jobs.php:274
+msgid "Go"
+msgstr ""
+
+#: ../grid_benchmark_summary.php:186 ../grid_benchmark_summary.php:196
+#: ../grid_benchmark_jobs.php:343
+msgid "Search"
+msgstr ""
+
+#: ../grid_benchmark_summary.php:189 ../grid_benchmark_jobs.php:277
+msgid "Clear"
+msgstr ""
+
+#: ../grid_benchmark_summary.php:189
+msgid "Clear Filters"
+msgstr ""
+
+#: ../grid_benchmark_summary.php:403
+msgid "Edit Benchmark Job"
+msgstr ""
+
+#: ../grid_benchmark_summary.php:442
+msgid "No Benchmark Jobs Found"
+msgstr ""
+
+#: ../grid_benchmark_jobs.php:90
+msgid "IBM Spectrum LSF RTM - Benchmark Jobs"
+msgstr ""
+
+#: ../grid_benchmark_jobs.php:153
+msgid "Job ID"
+msgstr ""
+
+#: ../grid_benchmark_jobs.php:161
+msgid "Exit Code"
+msgstr ""
+
+#: ../grid_benchmark_jobs.php:165
+msgid "Submited"
+msgstr ""
+
+#: ../grid_benchmark_jobs.php:169
+msgid "Seen"
+msgstr ""
+
+#: ../grid_benchmark_jobs.php:173
+msgid "Started"
+msgstr ""
+
+#: ../grid_benchmark_jobs.php:177
+msgid "Runtime"
+msgstr ""
+
+#: ../grid_benchmark_jobs.php:181
+msgid "Finished"
+msgstr ""
+
+#: ../grid_benchmark_jobs.php:185
+msgid "SeenDone"
+msgstr ""
+
+#: ../grid_benchmark_jobs.php:189
+msgid "Status Reason"
+msgstr ""
+
+#: ../grid_benchmark_jobs.php:222
+msgid "Benchmark"
+msgstr ""
+
+#: ../grid_benchmark_jobs.php:245
+msgid "Records"
+msgstr ""
+
+#: ../grid_benchmark_jobs.php:274
+msgid "Apply Custom Date Ranges or Search"
+msgstr ""
+
+#: ../grid_benchmark_jobs.php:277
+msgid "Clear All Filters"
+msgstr ""
+
+#: ../grid_benchmark_jobs.php:284
+msgid "Presets"
+msgstr ""
+
+#: ../grid_benchmark_jobs.php:290
+msgid "Custom"
+msgstr ""
+
+#: ../grid_benchmark_jobs.php:304
+msgid "From"
+msgstr ""
+
+#: ../grid_benchmark_jobs.php:310
+msgid "Select Start Date"
+msgstr ""
+
+#: ../grid_benchmark_jobs.php:313
+msgid "To"
+msgstr ""
+
+#: ../grid_benchmark_jobs.php:319
+msgid "Select End Date"
+msgstr ""
+
+#: ../grid_benchmark_jobs.php:322
+msgid "Shift By Span Left"
+msgstr ""
+
+#: ../grid_benchmark_jobs.php:325
+msgid "Define Shifting Interval"
+msgstr ""
+
+#: ../grid_benchmark_jobs.php:336
+msgid "Shift Right"
+msgstr ""
+
+#: ../grid_benchmark_jobs.php:607
+msgid "Deleted"
+msgstr ""
+
+#: ../grid_benchmark_jobs.php:709
+msgid "No Benchmark Job Records Found"
+msgstr ""

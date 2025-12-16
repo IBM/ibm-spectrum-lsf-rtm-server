@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Authentication</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="authentication">Authentication</h1>
+<h2 id="overview">Overview</h2>
+<p>Cacti provides four Authentication methods that can be leveraged to provide Authentication services. When combined with the variety of Apache and NGINX Modules, Cacti can support just about every Authentication method available today in the industry. Those Authentication method include:</p>
+<ul>
+<li><strong>Built-in Authentication</strong> - When using the method, Cacti will store both the user account, and it's password on the Cacti server. When using this method, Cacti will encrypt the users password using a strong password encryption method and it will be rehashed periodically automatically. Also, when using this method, Cacti complies with C3 password requirements.</li>
+<li><strong>Web Basic Authentication</strong> - With this method, the Web Server itself controls the Authentication. Using this method, Cacti can support protocols such as SAML2 via OpenITC, NIS, LDAP, local password, TACAC+, etc.</li>
+<li><strong>LDAP/AD Authentication</strong> - Cacti supports direct communications with LDAP and Active Directory servers as well. When using this method, Cacti can limit what User Group may access Cacti based upon more detailed settings.</li>
+<li><strong>Multiple LDAP/AD Domains</strong> - When you have multiple security levels and/or LDAP and AD Domains that you wish to support, for example maybe you have Admins, Power Users, and General Users groups defined and you wish to restrict who can login as who, this Authentication method allows you to setup that type of security system.</li>
+</ul>
+<p>For most of these <code>Authentication Methods</code>, there are some common settings showing in the image below.</p>
+<p><img src="images/settings-auth-common.png" alt="Common Authentication Options" /></p>
+<p>Those options include:</p>
+<ul>
+<li><strong>Authentication Method</strong> - One of the options below.</li>
+<li><strong>Support Authentication Cookies</strong> - Provide Remember me that will keep a user logged in from a single browser instance for up-to 90 days without requesting that they re-validate their passwords.</li>
+<li><strong>Primary Admin</strong> - This is the Primary Cacti Admin account. This user account will receive all Cacti Administrative notification like when the Cacti system is experiencing issues.</li>
+<li><strong>Guest User</strong> - If you select a <strong>Guest User</strong>, people within an organization will be able to access certain Cacti pages without first authenticating. This setting is good for the pages like the <strong>Graph Page</strong> where you may with to embed live Cacti <strong>Graphs</strong> in other corporate websites.</li>
+<li><strong>User Template</strong>, when creating new accounts, either LDAP, Web Basic, or new Cacti local accounts, Cacti will pull the users default Authorization from this Template User account. For some Cacti <strong>Authentication Methods</strong>, you can have more than one Template User, for example: <strong>Multiple LDAP/AD Domains</strong>.</li>
+</ul>
+<p>In the sections below, we will go over these various <strong>Authentication Methods</strong> and their settings.</p>
+<p><a href="Settings-Auth-Local.html">Built-in Authentication</a></p>
+<p><a href="Settings-Auth-Basic.html">Web Basic Authentication</a></p>
+<p><a href="Settings-Auth-LDAP.html">LDAP/AD Authentication</a></p>
+<p><a href="Settings-Domains.html">Multiple LDAP/AD Authentication</a></p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

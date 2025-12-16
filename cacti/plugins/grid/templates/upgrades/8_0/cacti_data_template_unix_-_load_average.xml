@@ -1,0 +1,63 @@
+<!-- $Id$ -->
+<cacti>
+	<hash_0100219e72511e127de200733eb502eb818e1d>
+		<name>Unix - Load Average</name>
+		<ds>
+			<t_name></t_name>
+			<name>|host_description| - Load Average</name>
+			<data_input_id>hash_03002195ed0993eb3095f9920d431ac80f4231</data_input_id>
+			<t_rra_id></t_rra_id>
+			<t_rrd_step></t_rrd_step>
+			<rrd_step>300</rrd_step>
+			<t_active></t_active>
+			<active>on</active>
+			<rra_items>hash_150021c21df5178e5c955013591239eb0afd46|hash_1500210d9c0af8b8acdc7807943937b3208e29|hash_1500216fc2d038fb42950138b0ce3e9874cc60|hash_150021e36f3adb9f152adfa5dc50fd2b23337e</rra_items>
+		</ds>
+		<items>
+			<hash_0800218175ca431c8fe50efff5a1d3ae51b55d>
+				<t_data_source_name></t_data_source_name>
+				<data_source_name>load_1min</data_source_name>
+				<t_rrd_minimum></t_rrd_minimum>
+				<rrd_minimum>0</rrd_minimum>
+				<t_rrd_maximum></t_rrd_maximum>
+				<rrd_maximum>0</rrd_maximum>
+				<t_data_source_type_id></t_data_source_type_id>
+				<data_source_type_id>1</data_source_type_id>
+				<t_rrd_heartbeat></t_rrd_heartbeat>
+				<rrd_heartbeat>600</rrd_heartbeat>
+				<t_data_input_field_id></t_data_input_field_id>
+				<data_input_field_id>hash_070021363588d49b263d30aecb683c52774f39</data_input_field_id>
+			</hash_0800218175ca431c8fe50efff5a1d3ae51b55d>
+			<hash_080021a2eeb8acd6ea01cd0e3ac852965c0eb6>
+				<t_data_source_name></t_data_source_name>
+				<data_source_name>load_5min</data_source_name>
+				<t_rrd_minimum></t_rrd_minimum>
+				<rrd_minimum>0</rrd_minimum>
+				<t_rrd_maximum></t_rrd_maximum>
+				<rrd_maximum>0</rrd_maximum>
+				<t_data_source_type_id></t_data_source_type_id>
+				<data_source_type_id>1</data_source_type_id>
+				<t_rrd_heartbeat></t_rrd_heartbeat>
+				<rrd_heartbeat>600</rrd_heartbeat>
+				<t_data_input_field_id></t_data_input_field_id>
+				<data_input_field_id>hash_070021ad139a9e1d69881da36fca07889abf58</data_input_field_id>
+			</hash_080021a2eeb8acd6ea01cd0e3ac852965c0eb6>
+			<hash_0800219f951b7fb3b19285a411aebb5254a831>
+				<t_data_source_name></t_data_source_name>
+				<data_source_name>load_15min</data_source_name>
+				<t_rrd_minimum></t_rrd_minimum>
+				<rrd_minimum>0</rrd_minimum>
+				<t_rrd_maximum></t_rrd_maximum>
+				<rrd_maximum>0</rrd_maximum>
+				<t_data_source_type_id></t_data_source_type_id>
+				<data_source_type_id>1</data_source_type_id>
+				<t_rrd_heartbeat></t_rrd_heartbeat>
+				<rrd_heartbeat>600</rrd_heartbeat>
+				<t_data_input_field_id></t_data_input_field_id>
+				<data_input_field_id>hash_0700215db9fee64824c08258c7ff6f8bc53337</data_input_field_id>
+			</hash_0800219f951b7fb3b19285a411aebb5254a831>
+		</items>
+		<data>
+		</data>
+	</hash_0100219e72511e127de200733eb502eb818e1d>
+</cacti>

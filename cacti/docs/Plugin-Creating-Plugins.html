@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Creating a plugin</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="creating-a-plugin">Creating a plugin</h1>
+<p>Your plugin will require a few things to be properly detected by Cacti.</p>
+<h2 id="directory-structure">Directory Structure</h2>
+<p>Your plugin will reside in its own directory in Cacti's plugin directory. You will need to create a new directory, with a unique name. It is recommended that you use all lowercase alpha letters, and try to keep it short (you will be typing it a lot). All plugin names must contain only upper or lowercase letters a-z and digits 0-9.</p>
+<p>So to begin, create your directory in the plugins directory like this.</p>
+<pre class="console"><code>/plugins/PLUGINNAME/
+</code></pre>
+<h2 id="setup-file">Setup File</h2>
+<p>Cacti detects plugins by looking for a 'setup.php' file located inside your plugin's directory. It must be all lowercase. Inside this file should only be functions, no code that runs automatically.</p>
+<h2 id="info-file">INFO File</h2>
+<p>Every Cacti plugin must have an INFO file. Any legacy plugins that do not have an INFO file will not work with Cacti 1.x. This was done intentionally so that plugin users could know ahead of time that their plugin was not designed for Cacti 1.x. The info file includes several line including:</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">setting</th>
+<th style="text-align: left;">description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><em>name</em></td>
+<td style="text-align: left;">The short name for the plugin. Must be alpha with no spaces and match the directory name.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><em>version</em></td>
+<td style="text-align: left;">The version of the plugin. Use two to three decimal places.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><em>longname</em></td>
+<td style="text-align: left;">A user readable short description for the plugin.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><em>author</em></td>
+<td style="text-align: left;">The author of the plugin.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><em>email</em></td>
+<td style="text-align: left;">The authors email address for obtaining support.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><em>homepage</em></td>
+<td style="text-align: left;">If the author maintains a homepage, the address for that page.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><em>compat</em></td>
+<td style="text-align: left;">The minimum version of Cacti that is required to use this plugin.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><em>depends</em></td>
+<td style="text-align: left;">A space delimited list of plugins:version that are required to use this plugin.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><em>capabilities</em></td>
+<td style="text-align: left;">A comma delimited list of capabilities for define what capabilities the plugin has primarily remotely.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><em>nosync</em></td>
+<td style="text-align: left;">A comma delimited list of relative paths that should not be synchronized with the remote data collectors, for example transient folders that may contain quite a bit of data that changes often.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="functions">Functions</h2>
+<p>Inside the setup file, there are several functions that are mandatory in order for your plugin to properly be detected, and to properly function.</p>
+<h3 id="plugin_pluginname_install">plugin_PLUGINNAME_install</h3>
+<p>This first function is the installation function that is ran when a request is received to install your plugin. There are no arguments passed to this function.</p>
+<p>You will need to replace PLUGINNAME with the exact folder name (including case sensitivity). Below is an example of this function. We will discuss the register_hook function later in this document.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">function</span> plugin_PLUGINNAME_install <span class="ot">()</span> {</a>
+<a class="sourceLine" id="cb2-2" title="2">     api_plugin_register_hook<span class="ot">(</span><span class="st">&#39;PLUGINNAME&#39;</span><span class="ot">,</span> <span class="st">&#39;top_header_tabs&#39;</span><span class="ot">,</span> <span class="st">&#39;PLUGINNAME_show_tab&#39;</span><span class="ot">,</span> <span class="st">&#39;setup.php&#39;</span><span class="ot">);</span></a>
+<a class="sourceLine" id="cb2-3" title="3">}</a></code></pre></div>
+<h3 id="plugin_pluginname_uninstall">plugin_PLUGINNAME_uninstall</h3>
+<p>The next function is the uninstall function. This is a function that is called when someone requests to uninstall your plugin. You can use this to clean up any extra data that is left by your plugin. If you used the API function to install any tables, they will be cleaned up automatically.</p>
+<h3 id="plugin_pluginname_version">plugin_PLUGINNAME_version</h3>
+<p>The next function is used for checking the version of your plugin, plus providing a little bit more information.</p>
+<p>Below is an example of this function. The few extra things to return are the longname (aka Pretty Name that will be displayed), the author, website, etc... the <code>url</code> is a special url used to check for updates of your plugin to be compatible with the 'update' plugin.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">function</span> plugin_PLUGINNAME_version <span class="ot">()</span> {</a>
+<a class="sourceLine" id="cb3-2" title="2">     <span class="kw">global</span> <span class="kw">$config</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb3-3" title="3">     <span class="kw">$info</span> = <span class="fu">parse_ini_file</span><span class="ot">(</span><span class="kw">$config</span><span class="ot">[</span><span class="st">&#39;base_path&#39;</span><span class="ot">]</span> . <span class="st">&#39;/plugins/PLUGINNAME/INFO&#39;</span><span class="ot">,</span> <span class="kw">true</span><span class="ot">);</span></a>
+<a class="sourceLine" id="cb3-4" title="4"></a>
+<a class="sourceLine" id="cb3-5" title="5">     <span class="kw">return</span> <span class="kw">$info</span><span class="ot">[</span><span class="st">&#39;info&#39;</span><span class="ot">];</span></a>
+<a class="sourceLine" id="cb3-6" title="6">}</a></code></pre></div>
+<h3 id="plugin_pluginname_check_config">plugin_PLUGINNAME_check_config</h3>
+<p>The last mandatory function is used for determining whether your plugin is ready to be enabled after being installed.</p>
+<p>When a plugin is installed, it starts in a disabled state. Only a few of the necessary hooks for the plugin are enabled. These are the config_settings and config_arrays hook. Anything that uses those hooks will still be available while the plugin is disabled. This allows a user to modify any necessary settings for the plugin before the plugin is actually enabled and goes live. You can then use this check_config function to determine whether everything is correctly setup, before you allow the plugin to be enabled. From this function, you will simply need to return TRUE if everything checks out, or return FALSE if something else needs to be setup.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">function</span> plugin_PLUGINNAME_check_config <span class="ot">()</span> {</a>
+<a class="sourceLine" id="cb4-2" title="2">     <span class="kw">if</span> <span class="ot">(</span>read_config_option<span class="ot">(</span><span class="st">&#39;PLUGINNAME_SETTING&#39;</span><span class="ot">)</span> != <span class="st">&#39;&#39;</span><span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb4-3" title="3">          <span class="kw">return</span> <span class="kw">true</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb4-4" title="4">     }</a>
+<a class="sourceLine" id="cb4-5" title="5"></a>
+<a class="sourceLine" id="cb4-6" title="6">     <span class="kw">return</span> <span class="kw">false</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb4-7" title="7">}</a></code></pre></div>
+<h4 id="registering-hooks">Registering Hooks</h4>
+<p>The way that your plugin is able to interact within Cacti is via the many hooks that are placed into the interface. As cacti processes the various visual pages and backend functions, it will call specific hook functions which passes control over to any plugins that might want to interact with that aspect of cacti. In order to utilize these hooks, your plugin must register for each hook that you require inside our installation function. This is done via a simple API function.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb5-1" title="1">api_plugin_register_hook<span class="ot">(</span><span class="st">&#39;PLUGINNAME&#39;</span><span class="ot">,</span> <span class="st">&#39;HOOKNAME&#39;</span><span class="ot">,</span> <span class="st">&#39;CALLBACKFUNCTION&#39;</span><span class="ot">,</span> <span class="st">&#39;FILENAME&#39;</span><span class="ot">);</span></a></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>PLUGINNAME</td>
+<td>The name of your plugin</td>
+</tr>
+<tr class="even">
+<td>HOOKNAME</td>
+<td>The name of the hook you want to register</td>
+</tr>
+<tr class="odd">
+<td>CALLBACKFUNCTION</td>
+<td>The name of your function to call when the hook is triggered.</td>
+</tr>
+<tr class="even">
+<td>FILENAME</td>
+<td>The name of the file which contains the above function (path relative to your plugin directory)</td>
+</tr>
+</tbody>
+</table>
+<p>Taking our above example, if you wanted to display a new tab at the top of Cacti's Console, your setup.php file may look like this.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">function</span> plugin_PLUGINNAME_install <span class="ot">()</span> {</a>
+<a class="sourceLine" id="cb6-2" title="2">     api_plugin_register_hook<span class="ot">(</span><span class="st">&#39;PLUGINNAME&#39;</span><span class="ot">,</span> <span class="st">&#39;top_header_tabs&#39;</span><span class="ot">,</span> <span class="st">&#39;PLUGINNAME_show_tab&#39;</span><span class="ot">,</span> <span class="st">&#39;setup.php&#39;</span><span class="ot">);</span></a>
+<a class="sourceLine" id="cb6-3" title="3">}</a>
+<a class="sourceLine" id="cb6-4" title="4"></a>
+<a class="sourceLine" id="cb6-5" title="5"><span class="kw">function</span> PLUGINNAME_show_tab <span class="ot">()</span> {</a>
+<a class="sourceLine" id="cb6-6" title="6">     <span class="kw">global</span> <span class="kw">$config</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb6-7" title="7">     <span class="kw">print</span> <span class="st">&#39;&lt;a href=&quot;&#39;</span> . <span class="kw">$config</span><span class="ot">[</span><span class="st">&#39;url_path&#39;</span><span class="ot">]</span> . <span class="st">&#39;plugins/PLUGINNAME/PLUGINNAME.php&quot;&gt;&lt;img src=&quot;&#39;</span> . <span class="kw">$config</span><span class="ot">[</span><span class="st">&#39;url_path&#39;</span><span class="ot">]</span> . <span class="st">&#39;plugins/PLUGINNAME/images/tab.gif&quot; align=&quot;absmiddle&quot; border=&quot;0&quot;&gt;&lt;/a&gt;&#39;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb6-8" title="8">}</a></code></pre></div>
+<p>Here you can find a full listing of the available hooks</p>
+<p><a href="Plugin-Hook-API-Ref.html">Hook Api Reference</a></p>
+<h4 id="registering-realms">Registering Realms</h4>
+<p>Cacti allows you to restrict access to various portions of Cacti by utilizing Realm Permissions. Creating a new realm will add a checkbox to the User Permissions form for the page you desire to restrict access to. You can create 1 realm that permits access to multiple pages, or use multiple realms for different functional duties (ex: separating out the viewing and the configuration sections of your plugin).</p>
+<p>We need to call this hook in the same function as we registered for hooks. Either of the api calls can come first (there is no order necessary)</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb7-1" title="1">api_plugin_register_realm<span class="ot">(</span><span class="st">&#39;PLUGINNAME&#39;</span><span class="ot">,</span> <span class="st">&#39;FILENAMETORESTRICT&#39;</span><span class="ot">,</span> <span class="st">&#39;DISPLAYTEXT&#39;</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">);</span></a></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>PLUGINNAME</td>
+<td>Your plugins name</td>
+</tr>
+<tr class="even">
+<td>FILENAMETORESTRICT</td>
+<td>the filename (relative to your plugin directory) to restrict access to, you can separate multiple with a comma</td>
+</tr>
+<tr class="odd">
+<td>DISPLAYTEXT</td>
+<td>This is the text that will display on the User Permissions form for this Realm</td>
+</tr>
+<tr class="even">
+<td>1 or 0 (true or false)</td>
+<td>This tells it whether to automatically grant permission to the 'admin' user account (true)</td>
+</tr>
+</tbody>
+</table>
+<p>So to follow our example, your install function would look like this</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb8-1" title="1"><span class="kw">function</span> plugin_PLUGINNAME_install <span class="ot">()</span> {</a>
+<a class="sourceLine" id="cb8-2" title="2">     api_plugin_register_hook<span class="ot">(</span><span class="st">&#39;PLUGINNAME&#39;</span><span class="ot">,</span> <span class="st">&#39;top_header_tabs&#39;</span><span class="ot">,</span> <span class="st">&#39;PLUGINNAME_show_tab&#39;</span><span class="ot">,</span> <span class="st">&#39;setup.php&#39;</span><span class="ot">);</span></a>
+<a class="sourceLine" id="cb8-3" title="3">     api_plugin_register_realm<span class="ot">(</span><span class="st">&#39;PLUGINNAME&#39;</span><span class="ot">,</span> <span class="st">&#39;PLUGINNAME.php,&#39;</span><span class="ot">,</span> <span class="st">&#39;View PLUGINNAME&#39;</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">);</span></a>
+<a class="sourceLine" id="cb8-4" title="4">}</a></code></pre></div>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

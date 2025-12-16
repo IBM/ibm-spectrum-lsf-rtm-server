@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Performance Settings (Boost)</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="performance-settings-boost">Performance Settings (Boost)</h1>
+<p>The Performance Settings sub-tab in Cacti contains settings that can help improve the life of your Cacti server and significantly increase the live and lower the I/O wait of your Cacti system through caching of RRDfile disk writes.</p>
+<p>It will also reduce the number of CPU cores require to render Cacti <strong>Graphs</strong> due to it's image cache mechanism.</p>
+<p>We will explain how these settings work briely in the next two sections. However, there is a more detailed guide in the <a href="Boost.html">Advanced Topics</a>. Please refer to that guide as well.</p>
+<h2 id="on-demand-rrd-update-settings">On-demand RRD Update Settings</h2>
+<p>These are settings to place RRDfile updates into a database table and cache them. Then, on a periodic basis dump those updates to disk at once. This will reduce the overall wear and tear of your disks, and reduce the time periods where disk I/O will be higher. You can see the available settings in the image below.</p>
+<p><img src="images/settings-boost-ondemand.png" alt="Boost On-Demand Settings" /></p>
+<p>The settings include:</p>
+<ul>
+<li><p><strong>Enable On-demand RRD Updating</strong> - This check-box will enable on-demand updating and caching of unwritten updates. If you disable it, the poller must first clear the cache before it can be fully disabled. So, disabling is not immediate after it has been activated for some time.</p></li>
+<li><p><strong>How Often Should Boost Update All RRDs</strong> - As it says, what is the desired frequency of performing updates. The idea with boost is to reduce the amount of disk I/O, so if your poller frequency/interval is say 5 minutes, you may want to cache a few hours of updates.</p></li>
+<li><p><strong>Number of Boost Processes</strong> - For systems with shared disk where I/O performance is impacted by file system overhead or latency, the concurrent boost process setting comes in handy. Cacti will spawn the number of collectors specified by this setting.</p></li>
+<li><p><strong>Maximum Records</strong> - This is a threshold in cache records that if that number is exceeded, the cache will immediately begin to be cleared. This setting works together with the <strong>How Often</strong> setting.</p></li>
+<li><p><strong>Maximum Data Sources Items Per Pass</strong> - Cacti will count the number of distinct data sources in your system, and then divide it by this amount, and then make X number of passes through the data. If you have 1M <strong>Data Sources</strong> and 100M records in the cache, and set the setting to 100k, Cacti will make 10 passes through the <strong>Data Sources</strong> each pass processing approximately 10M cache entries.</p></li>
+<li><p><strong>Maximum Argument Length</strong> - This is the longest RRDtool update command to use. Most Linux systems allow for a very long command line. It's advisable to use something less than 32k though as some versions of RRDtool have problems with longer command lines.</p></li>
+<li><p><strong>Memory Limit for Boost and Poller</strong> - In a modern Cacti system, unless you have more than a million <strong>Data Sources</strong> the default of 1GB is likely enough.</p></li>
+<li><p><strong>Maximum RRD Update Script Run Time</strong> - This is the longest to allow the cache clearing script to run before notifying the primary Cacti admin. The process will be allowed to continue to run, but will issue a WARNING.</p></li>
+<li><p><strong>Enable direct population of poller_output_boost table</strong> - Originally a <code>spine</code> only setting, this setting is now supported in both <code>spine</code> and <code>cmd.php</code>. Instead of having to move records inside of the <strong>Data Collector</strong> Cacti simply makes two writes, one into the main output table and another into the boost table. Cacti has to write to the primary output table as some plugins require that data to be there immediately for fault management.</p></li>
+<li><p><strong>Boost Debug Log</strong> - If non-blank and points to a location that is writable, Cacti will log the RRDtool syntax used to update the RRDfiles.</p></li>
+</ul>
+<h2 id="image-caching">Image Caching</h2>
+<p>The Image Caching setting on the Performance sub-tab basically defined where to store time sensitive images caches of your various Cacti <strong>Graphs</strong>. These Cached images only live for a few minutes, but can be consumed by multiple users simultaneously.</p>
+<p>The image of the settings is shown below. They are fairly self explanatory.</p>
+<p><img src="images/settings-boost-image-cache.png" alt="Image Caching" /></p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

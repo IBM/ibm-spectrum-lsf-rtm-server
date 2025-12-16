@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Device Management</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="device-management">Device Management</h1>
+<p>This section will describe <strong>Device</strong> management in Cacti.</p>
+<p>Adding a <strong>Device</strong> to Cacti can be done in a few different ways, either via the Web GUI, Cacti's Automation, or the Command Line Interface (CLI).</p>
+<h2 id="web-gui-option">Web GUI Option</h2>
+<p>To add a device via the Web GUI first click on <code>Console &gt; Management &gt; Devices</code> and you will see the below device console window which will show existing devices if any</p>
+<p><img src="images/device-console-window.png" alt="Device Console" /></p>
+<p>You will now select the + on the top right hand corner</p>
+<p><img src="images/add-device-button.png" alt="Add Device Button" /></p>
+<p>Once you select the + otherwise known as the add device button you will see the below screen which will ask you for device specific information</p>
+<p>Some of the most important information about the device will be required in this window which includes</p>
+<ul>
+<li><strong>Description</strong> - The name that will appear on <strong>Graphs</strong> by default</li>
+<li><strong>IP/Hostname</strong> - The DNS or IP address of the actual <strong>Device</strong>. IPv6 address insert into brackets (example: [2001<span class="emoji" data-emoji="abcd">🔡</span>1234::1])</li>
+<li><strong>Poller Association</strong> - Defines which <strong>Data Collector</strong> is responsible for pulling information about the <strong>Device</strong></li>
+<li><strong>Device Template</strong> - Cisco, Net-SNMP, Linux, etc - The Cacti object that holds all the <strong>Graph Templates</strong> and <strong>Data Queries</strong> to be graphed</li>
+<li><strong>Site, Location</strong> - Very important to performing Meta queries, or for Site level Graph organization on Cacti <strong>Graph Trees</strong></li>
+<li><strong>Availability/Reachability</strong> - Settings that describe <strong>Device</strong> timeouts and availability methods.</li>
+<li><strong>SNMP information</strong> - SNMP Credentials for connecting to the <strong>Device</strong></li>
+<li><strong>Device Notes</strong> - Arbitrary unstructured information about the <strong>Device</strong></li>
+</ul>
+<p><img src="images/add-device-screen.png" alt="Add Device Info Screen" /></p>
+<p>Cacti requires this basic information to be able to monitor the device and once entered, click save on the bottom right corner. With the device created you will need to add graphs for the device by clicking <strong>Create graphs for this device</strong> on the top right hand corner.</p>
+<h2 id="availabilityreachability-settings">Availability/Reachability Settings</h2>
+<p>Cacti prefers to use the Simple Network Management Protocol (SNMP) to communicate with <strong>Devices</strong>. Therefore, when creating a <strong>Device</strong>, you need to provide SNMP credentials to obtain information about the <strong>Device</strong> in order to collect data from it. Before Cacti will query the <strong>Device</strong> for data, it first verifies that the <strong>Device</strong> is up and responding. When doing so, you have several options. They include:</p>
+<ul>
+<li><strong>None</strong> - Always assume the device is up. This is generally reserved for <strong>Device</strong> objects that do not have a state.</li>
+<li><strong>SNMP Uptime</strong> - Query the SNMP Uptime Instance OID</li>
+<li><strong>Ping and SNMP Uptime</strong> - Ping the device but also check the SNMP Uptime Instance OID</li>
+<li><strong>Ping</strong> - Either ICMP, TCP at a port, or UDP as a port</li>
+<li><strong>Ping or SNMP Uptime</strong> - Only one needs to be working for Cacti to collect data</li>
+<li><strong>SNMP Desc</strong> - Query the SNMP sysDescription in cases where the SNMP Uptime OID is not available</li>
+<li><strong>SNMP GetNext</strong> - Query the first available OID in the OID tree for the <strong>Device</strong> Used for certain devices that have limited SNMP support.</li>
+</ul>
+<h2 id="snmp-credentials">SNMP Credentials</h2>
+<p>When providing the SNMP credentials, Cacti currently supports the following versions:</p>
+<ul>
+<li><strong>Version 1</strong> - Rarely used any more. Reserved for very old hardware</li>
+<li><strong>Version 2</strong> - Still very popular, and support 64 bit counters except on Windows</li>
+<li><strong>Version 3</strong> - Support is provided, but there are presently a limitation. If you are using advanced settings such as SHA224+ or AES192+ with SNMPv3, you must uninstall the php-snmp module if it's in use in php and leverage the Net-SNMP binaries instead.</li>
+</ul>
+<p>When providing the SNMP Credentials, Cacti will warn you if you have provided incomplete information depending on the SNMP Version and SNMP Security Level you have specified.</p>
+<h2 id="additional-important-options">Additional Important Options</h2>
+<p>There are some additional options that you should note before starting to use Cacti. They include the following:</p>
+<ul>
+<li><strong>Device Threads</strong> - If your device is far away, and can tolerate multiple threads querying information, you can increase this number to reduce the time it takes to collect all information.</li>
+<li><strong>Maximum OIDs Per Get Request</strong> - Otherwise known as MaxOID's, this SNMP option will allow the SNMP client to gather more metrics per get request. Please keep in mind that the higher you make this number, the longer a SNMP respond may take. So, you have to be sensitive about the SNMP timeout as the number get's larger. Since, by default SNMP is generally collected over UDP, you will also be limited in the number of responses depending on how many routers or VPN's you traverse to reach a device. When traversing VPN connections, many VPN's limit the MTU to around 500 bytes, which will significantly limit how large the Max OID's can be. In some cases, it may be better to deploy a <strong>Remote Data Collector</strong> when your device is either far way from a latency perspective, or that you must traverse VPN's to communicate with.</li>
+<li><strong>External ID</strong> - This field is normally used for Asset Tracking information for the <strong>Device</strong>, but it use is entirely up to the System Administrator.</li>
+</ul>
+<h2 id="plugin-behavior">Plugin Behavior</h2>
+<p>Many Cacti Plugins can and do add additional columns to the Device table in Cacti. Depending on the Plugin you have installed, you will find other information that you can provide about the device including things like:</p>
+<ul>
+<li><strong>Notification Settings</strong> - Who to notify when the <strong>Device</strong> changes state</li>
+<li><strong>Criticality</strong> - How important is the device</li>
+<li><strong>Failure and Recovery Counts</strong> - How long till a device is treated as truly down.</li>
+<li><strong>Ping Thresholds</strong> - What RTL is considered bad when reaching a device</li>
+</ul>
+<h2 id="creating-devices-via-cli-script">Creating devices via CLI script</h2>
+<p>You can also create device by using the CLI script located at /cactidir/cli/</p>
+<pre class="console"><code>usage: add_device.php --description=[description] --ip=[IP] --template=[ID] [--notes=&quot;[]&quot;] [--disable]
+    [--poller=[id]] [--site=[id] [--external-id=[S]] [--proxy] [--threads=[1]
+    [--avail=[ping]] --ping_method=[icmp] --ping_port=[N/A, 1-65534] --ping_timeout=[N] --ping_retries=[2]
+    [--version=[0|1|2|3]] [--community=] [--port=161] [--timeout=500]
+    [--username= --password=] [--authproto=] [--privpass= --privproto=] [--context=] [--engineid=]
+    [--quiet]
+
+Required:
+    --description  the name that will be displayed by Cacti in the graphs
+    --ip           self explanatory (can also be a FQDN)
+</code></pre>
+<p>To add a device using the bare minimum information would look something like this</p>
+<pre class="console"><code>$ php add_device.php --description=test --ip=192.168.1.15
+Adding test (192.168.1.15) as &quot;Cacti Stats&quot; using SNMP v3 with community &quot;public&quot;
+Success - new device-id: (45)
+</code></pre>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Data Input Methods - From Script Output to Complete Graph</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="data-input-methods---from-script-output-to-complete-graph">Data Input Methods - From Script Output to Complete Graph</h1>
+<p>In this How-To we will take you through the process of creating a script and then from the scripts output generate a complete <strong>Graph Template</strong> that you can apply to your Cacti system. You should be able to reproduce this process regardless of the script type in question.</p>
+<h2 id="data-input-method-returning-a-single-value">Data Input Method returning a single value</h2>
+<p>Lets start with a simple script that takes a hostname or IP address as input parameter returning a single value.</p>
+<p><code>&lt;path_cacti&gt;/scripts/ping.pl</code>:</p>
+<pre class="shell"><code>#!/usr/bin/perl
+
+# take care for tcp:hostname or TCP:ip@
+$host = $ARGV[0];
+$host =~ s/tcp:/$1/gis;
+
+# old Linux version use &quot;icmp_seq&quot;
+# newer use &quot;icmp_req&quot; instead
+open(PROCESS, &quot;ping -c 1 $host | grep &#39;icmp_[s|r]eq&#39; | grep time |&quot;);
+$ping = &lt;PROCESS&gt;;
+close(PROCESS);
+$ping =~ m/(.*time=)(.*) (ms|usec)/;
+
+if ($2 == &quot;&quot;) {
+    print &quot;U&quot;;              # avoid cacti errors, but do not fake RRDtool stats
+}elsif ($3 eq &quot;usec&quot;) {
+    print $2/1000;  # re-calculate in units of &quot;ms&quot;
+}else{
+    print $2;
+}
+</code></pre>
+<p>To define this script as a <strong>Data Input Method</strong> to Cacti go to <strong>Data Input Methods</strong> and click <strong>Add</strong>. You should see:</p>
+<p><img src="images/r-dim1-0.png" alt="Data Input Methods New" /></p>
+<p>Please fill in <strong>Name</strong>, select <strong>Script/Command</strong> as Input Type and provide the command that should be used to retrieve the data. You may use <code>&lt;path_cacti&gt;</code> as a symbolical name for the path_to_your_Cacti_installation. Those commands will be executed from crontab; so pay attention to providing full path to binaries if required (e.g. <code>/usr/bin/perl</code> instead of <code>perl</code>). Enter all <strong>Input Parameters</strong> in <code>&lt;&gt;</code> brackets. Click create to see:</p>
+<p><img src="images/r-dim2.png" alt="Data Input Methods edit" /></p>
+<p>Now lets define the <strong>Input Fields</strong>. Click <strong>Add</strong> as given above to see:</p>
+<p><img src="images/r-dim3.png" alt="Input Fields" /></p>
+<p>The drop down <strong>Field [Input]</strong> contains one single value only. This is taken from the <strong>Input String</strong> <code>&lt;host&gt;</code> above. Fill <strong>Friendly Name</strong> to serve your needs. The <strong>Special Type</strong> Code allows you to provide parameters from the current Device to be queried. In this case, the <strong>hostname</strong> will be taken from the current device. Click create to see:</p>
+<p><img src="images/r-dim4.png" alt="Output Fields" /></p>
+<p>At least, define the <strong>Output Fields</strong>. Again, click <strong>Add</strong> as described above:</p>
+<p><img src="images/r-dim5.png" alt="Output Fields 2" /></p>
+<p>Provide a short <strong>Field [Output]</strong> name and a more meaningful <strong>Friendly Name</strong>. As you will want to save those data, select <strong>Update RRDfile</strong>. Create to see:</p>
+<p><img src="images/r-dim6-0.png" alt="Output Fields 3" /></p>
+<p>Click <strong>Save</strong> and you're done.</p>
+<h2 id="creating-the-data-template">Creating the Data Template</h2>
+<p>Now you want to tell Cacti, how to store the data retrieved from this script. Please go to <strong>Data Templates</strong> and click Add. You should see:</p>
+<p><img src="images/r-dt1.png" alt="Data Templates New" /></p>
+<p>Fill in the <strong>Data Templates Name</strong> with a reasonable text. This name will be used to find this Template among others. Then fill in the <strong>Data Source Name</strong>. This is the name given to the host-specific <strong>Data Source</strong>. The variable <strong>|host_description|</strong> is taken from the actual <strong>Device</strong>. This is to distinguish <strong>Data Sources</strong> for different devices. The <strong>Data Input Method</strong> is a drop down containing all known scripts and the like. Select the <strong>Data Input Method</strong> you just created. The <strong>Associated RRA's</strong> is filled by default. At the moment there's no need to change this. The lower part of the screen looks like:</p>
+<p><img src="images/r-dt2.png" alt="Data Source Item" /></p>
+<p>The <strong>Internal Data Source Name</strong> may be defined at your wish. There's no need to use the same name as the Output Field of the <strong>Data Input Method</strong>, but it may look nicer. Click create to see:</p>
+<p><img src="images/r-dt3.png" alt="Data Source Item" /></p>
+<p>Notice the new drop down <strong>Output Field</strong>. As there is only one Output Field defined by our <strong>Data Input Method</strong>, you'll see only this. Here's how to connect the <strong>Data Source Name</strong> (used in the RRDfile) to the Output Field of the Script. Click <strong>Save</strong> and you're done.</p>
+<h2 id="creating-the-graph-template">Creating the Graph Template</h2>
+<p>Now you want to tell Cacti, how to present the data retrieved from this script. Please go to <strong>Graph Templates</strong> and click <strong>Add</strong>. You should see:</p>
+<p><img src="images/r-gt1.png" alt="Graph Template New" /></p>
+<p>Fill in <strong>Name</strong> and <strong>Title</strong>. The variable <code>|host_description|</code> will again be filled from the Device's definition when generating the <strong>Graph</strong>. Keep the rest as is and <strong>Create</strong>. See:</p>
+<p><img src="images/r-gt2.png" alt="Graph Template Items" /></p>
+<p>Now click the plus (+) glyph to <strong>Add</strong> the first item to be shown on the <strong>Graphs</strong>:</p>
+<p><img src="images/r-gt3.png" alt="Graph Template Items 2" /></p>
+<p>Select the correct <strong>Data Source</strong> from the drop down, fill in a color of your liking and select AREA as a <strong>Graph Item Type</strong>. You want to fill in a <strong>Text Format</strong> that will be shown underneath the <strong>Graph</strong> as a legend. Again, <strong>Create</strong>:</p>
+<p><img src="images/r-gt4.png" alt="Graph Template Items 3" /></p>
+<p>Notice, that not only an entry was made under <strong>Graph Template Items</strong>, but under <strong>Graph Item Inputs</strong> as well. Don't bother with that now. Lets fill some more nice legends, see:</p>
+<p><img src="images/r-gt5.png" alt="Graph Template Items 4" /></p>
+<p>Notice, that the <strong>Data Source</strong> is filled in automagically. Select LEGEND as <strong>Graph Item Type</strong> (it is not really a <strong>Graph Item Type</strong> in RRDtool-speak, but a nice time-saver), and click <strong>Create</strong> to see:</p>
+<p><img src="images/r-gt6.png" alt="Graph Template Items 5" /></p>
+<p>Wow! Three items filled with one action!</p>
+<h2 id="apply-the-graph-template-to-a-device">Apply the Graph Template to a Device</h2>
+<p>Now go to the <strong>Devices</strong> and select the one of your choice. See the <strong>Associated Graph Templates</strong> in the middle of this page:</p>
+<p><img src="images/r-dev1.png" alt="Associate Graph Template" /></p>
+<p>Select your newly created <strong>Graph Template</strong> from the Add <strong>Graph Template</strong> drop down. Click the plus (+) glyph to see:</p>
+<p><img src="images/r-dev2.png" alt="Associate Data Queries" /></p>
+<p>By default, the <strong>Graph Template</strong> is added and shown as <strong>Is Being Graphed</strong>. The reason for this is that Cacti now automatically creates <strong>Graphs</strong> automatically, unless disabled. If the <strong>Graph Template</strong> shows <strong>Not Being Graphed</strong>, you can create the <strong>Graph</strong> by pressing the <strong>Create Graphs</strong> at the top of the <strong>Devices</strong> page. Click this link to see:</p>
+<p><img src="images/r-dev3.png" alt="Create New Graph" /></p>
+<p>Check the box that belongs to the new template and Create. See the results:</p>
+<p><img src="images/r-dev4.png" alt="Newly create Graph" /></p>
+<p>This will automatically</p>
+<ul>
+<li><p>Create the needed <strong>Graph Description</strong> from the <strong>Graph Template</strong>. As you may notice from the success message, this <strong>Graph</strong> takes the hosts name in it: <strong>router - Test ping</strong> (router is the hosts name of this example).</p></li>
+<li><p>Create the needed <strong>Data Source Description</strong> from the <strong>Data Template</strong>. Again, you will find the Hosts name replaced for |host_description|</p></li>
+<li><p>Create the needed RRDfile with definitions from the <strong>Data Template</strong>. The name of this file is derived from the Host and the <strong>Data Template</strong> in conjunction with an auto-incrementing number.</p></li>
+<li><p>Create an entry to the poller_item to instruct Cacti to gather data on each polling cycle.</p></li>
+</ul>
+<p>You'll have to wait at least two polling cycles to find data in the <strong>Graph</strong>. Find your <strong>Graph</strong> by going to <strong>Graph Management</strong>, filtering for your host and selecting the appropriate <strong>Graph</strong> (there are other methods as well). This may look like:</p>
+<p><img src="images/router-ping-graph.png" alt="Newly Graph after a few polling cycles" /></p>
+<h2 id="walkthrough-script-with-more-output-parameters">Walkthrough: Script with more Output Parameters</h2>
+<p>The script below will be implemented in perl. Please note that any supported language is supported using Cacti from direct command execution to scripts written in perl, python, php, bash, etc.</p>
+<pre class="shell"><code>#!/usr/bin/perl -w
+
+# --------------------------------------------------
+# ARGV[0] = &amp;lt;hostname&amp;gt;     required
+# ARGV[1] = &amp;lt;snmp port&amp;gt;    required
+# ARGV[2] = &amp;lt;community&amp;gt;    required
+# ARGV[3] = &amp;lt;version&amp;gt;      required
+# --------------------------------------------------
+use Net::SNMP;
+
+# verify input parameters
+my $in_hostname         = $ARGV[0] if defined $ARGV[0];
+my $in_port             = $ARGV[1] if defined $ARGV[1];
+my $in_community        = $ARGV[2] if defined $ARGV[2];
+my $in_version          = $ARGV[3] if defined $ARGV[3];
+
+# usage notes
+if (
+    ( ! defined $in_hostname ) ||
+    ( ! defined $in_port ) ||
+    ( ! defined $in_community ) ||
+    ( ! defined $in_version )
+) {
+    print &quot;usage:\n\n
+        $0 &amp;lt;host&amp;gt; &amp;lt;port&amp;gt; &amp;lt;community&amp;gt; &amp;lt;version&amp;gt;\n\n&quot;;
+    exit;
+}
+
+# list all OIDs to be queried
+my $udpInDatagrams      = &quot;.1.3.6.1.2.1.7.1.0&quot;;
+my $udpOutDatagrams     = &quot;.1.3.6.1.2.1.7.4.0&quot;;
+
+# get information via SNMP
+# create session object
+my ($session, $error) = Net::SNMP-&gt;session(
+    -hostname      =&gt; $in_hostname,
+    -port          =&gt; $in_port,
+    -version       =&gt; $in_version,
+    -community     =&gt; $in_community,
+    # add more parameters if there&#39;s a need for them:
+    #   [-localaddr     =&gt; $localaddr,]
+    #   [-localport     =&gt; $localport,]
+    #   [-nonblocking   =&gt; $boolean,]
+    #   [-domain        =&gt; $domain,]
+    #   [-timeout       =&gt; $seconds,]
+    #   [-retries       =&gt; $count,]
+    #   [-maxmsgsize    =&gt; $octets,]
+    #   [-translate     =&gt; $translate,]
+    #   [-debug         =&gt; $bitmask,]
+    #   [-username      =&gt; $username,]    # v3
+    #   [-authkey       =&gt; $authkey,]     # v3
+    #   [-authpassword  =&gt; $authpasswd,]  # v3
+    #   [-authprotocol  =&gt; $authproto,]   # v3
+    #   [-privkey       =&gt; $privkey,]     # v3
+    #   [-privpassword  =&gt; $privpasswd,]  # v3
+    #   [-privprotocol  =&gt; $privproto,]   # v3
+);
+
+# on error: exit
+if (!defined($session)) {
+    printf(&quot;ERROR: %s.\n&quot;, $error);
+    exit 1;
+}
+
+# perform get requests for all wanted OIDs
+my $result = $session-&gt;get_request(
+    -varbindlist      =&gt; [$udpInDatagrams, $udpOutDatagrams]
+);
+
+# on error: exit
+if (!defined($result)) {
+    printf(&quot;ERROR: %s.\n&quot;, $session-&gt;error);
+    $session-&gt;close;
+    exit 1;
+}
+
+# print results
+printf(&quot;udpInDatagrams:%s udpOutDatagrams:%s&quot;, # &lt;&lt;&lt; cacti requires this format!
+    $result-&gt;{$udpInDatagrams},
+    $result-&gt;{$udpOutDatagrams},
+);
+
+$session-&gt;close;
+</code></pre>
+<p>It should produce following output, when executed from command line:</p>
+<pre class="console"><code>[prompt]&gt; perl udp_packets.pl localhost 161 public 1
+udpInDatagrams:10121 udpOutDatagrams:11102
+</code></pre>
+<p>Where “public” would be replaced by your community string. Those input parameters again are controlled by the <code>Input Fields</code> in Cacti and the output from the script will be mapped to <code>Output Fields</code>. If you wish to return multiple output values, they must be space delimited name value pairs in the form of nameA:valueA nameB:valueB ...</p>
+<h2 id="the-data-input-method">The Data Input Method</h2>
+<p>To define this script as a <strong>Data Input Method</strong> to Cacti go to <strong>Data Input Methods</strong> and click the plus (+) glyph.</p>
+<p><img src="images/dim-add01.preview.png" alt="More Scripts dim 1" /></p>
+<p>You should see:</p>
+<p><img src="images/dim-add02.preview.png" alt="More Scripts dim 2" /></p>
+<p>Enter the name of the new <strong>Data Input Method</strong>, select <strong>Script/Command</strong> and type in the command to call the script. Please use the <strong>full path to the command interpreter</strong>. Instead of entering the specific parameters, type <code>&lt;symbolic variable name&gt;</code> for each parameter the script needs. <strong>Save</strong>:</p>
+<p><img src="images/dim-add03.preview.png" alt="More Scripts dim 3" /></p>
+<p>Now add each of the input parameters in the <strong>Input Fields</strong> section, one after the other. All of them are listed in sequence, starting with <code>&lt;host&gt;</code>:</p>
+<p><img src="images/dim-add04.png" alt="More Scripts dim 4" /></p>
+<p><code>&lt;port&gt;</code></p>
+<p><img src="images/dim-add05.png" alt="More Scripts dim 5" /></p>
+<p><code>&lt;community&gt;</code></p>
+<p><img src="images/dim-add06.preview.png" alt="More Scripts dim 6" /></p>
+<p><code>&lt;version&gt;</code></p>
+<p><img src="images/dim-add07.png" alt="More Scripts dim 7" /></p>
+<p>We've used some of Cacti builtin parameters. When applied to a host, those variables will be replaced by the hosts actual settings. Then, this command will be stored in the poller_command table. Now <strong>Save</strong> your work to see</p>
+<p><img src="images/dim-add08.preview.png" alt="More Scripts dim 8" /></p>
+<p>After having entered all <strong>Input Fields</strong>, let's now turn to the <strong>Output Fields</strong>, respectively. Add the first one, udpInDatagrams:</p>
+<p><img src="images/dim-add09.preview.png" alt="More Scripts dim 9" /></p>
+<p>Now udpOutDatagrams:</p>
+<p><img src="images/dim-add10.preview.png" alt="More Scripts dim 10" /></p>
+<p>Be careful to avoid typos. The strings entered here must <strong>exactly</strong> match those spitted out by the script. <strong>Double check Output Fields</strong>! Now, results should be like</p>
+<p><img src="images/dim-add11.preview.png" alt="More Scripts dim 11" /></p>
+<p>Finally Save and be proud!</p>
+<p><img src="images/dim-add12.preview.png" alt="More Scripts dim 12" /></p>
+<h2 id="the-data-template">The Data Template</h2>
+<p>The previous step explained how to call the script that retrieves the data. Now it's time to tell Cacti, how to store them in RRDfiles. You will need a single <strong>Data Template</strong> only, even if two different output fields will be stored. RRD files are able to store more than one output fields; RRDtool's name for those is <strong>Data Source</strong>. So we will create</p>
+<ol>
+<li><p>One single <strong>Data Template</strong> representing one RRDfile</p></li>
+<li><p>Two output fields/data sources</p></li>
+</ol>
+<p>The first step is quite the same as Create the <strong>Data Template</strong> for a simple <strong>Data Input Method</strong>. For sure, we provide a different name, <strong>Example - UDP Packets</strong>. Now, let's enter the first <strong>Data Source</strong>. Again, its like above. But we now provide the name of <strong>udpInPackets</strong>, enter a <strong>Maximum value</strong> of 100,000 and select the <strong>Data Source Type</strong> of COUNTER.</p>
+<p><img src="images/dim-add13.preview.png" alt="Data Template - Two DS, Step1" /></p>
+<p>Then save and find with the exception that the <em>Output Field</em> will be set to <em>None Selected</em>. Therefore, before adding the second <em>Data Source Item</em>, make sure you select the <em>Output Field</em> of <em>udpInDatagrams</em> and press the Save button to create the association.</p>
+<p><img src="images/dim-add14.preview.png" alt="Data Template - Two DS, Step2" /></p>
+<p>Then, add the second <strong>Data Source</strong> by pressing the plus (+) glyph and providing data for <em>udpOutPackets</em>. Pay attention to select the correct <em>Output Field</em> defined by the <strong>Data Input Method</strong> as we did with the <em>udpInDatagrams</em>.</p>
+<p><img src="images/dim-add15.preview.png" alt="Data Template - Two DS, Step3" /></p>
+<p>To deactivate maximum checking, enter 'U', else the desired number. Do not forget to select the correct <em>Data Source Type</em> and the <em>Output Field</em> as before.</p>
+<h2 id="the-graph-template">The Graph Template</h2>
+<p>Most of this task of creating a <strong>Graph Template</strong> has already been covered in our example. You will basically create a new <strong>Graph Template</strong>, provide a <em>Line</em> or an <em>Area Fill</em> followed by a <em>Legend</em> for both the <em>udpInDatagrams</em> and <em>udpOutDatagrams</em>. The result of those actions will be the image below:</p>
+<p><img src="images/dim-add16.preview.png" alt="Graph Template - Two DS, Step4" /></p>
+<p>After you have created your <strong>Graph Template</strong> you can proceed to Add the <strong>Graph Template</strong> to your <strong>Device</strong>, and either allow the automation to create the <strong>Graph</strong> for you, or to manually add it from the <strong>New Graphs</strong> menu pick.</p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

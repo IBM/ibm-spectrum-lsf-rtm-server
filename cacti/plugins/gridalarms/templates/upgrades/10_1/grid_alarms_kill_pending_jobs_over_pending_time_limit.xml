@@ -1,0 +1,158 @@
+<!-- $Id$ -->
+<cacti>
+	<hash_1800240f2e746e897dd2a5808d2cad6dfdd7eb>
+		<id>6</id>
+		<name>Kill Pending Jobs over Effective Pending Time Limit in Cluster |alert_clustername|</name>
+		<clusterid>0</clusterid>
+		<type>0</type>
+		<expression_id>6</expression_id>
+		<aggregation>0</aggregation>
+		<metric>0</metric>
+		<base_time_display>12:00am</base_time_display>
+		<base_time>1453266000</base_time>
+		<frequency>3</frequency>
+		<alarm_type>0</alarm_type>
+		<alarm_hi>0</alarm_hi>
+		<alarm_low></alarm_low>
+		<alarm_fail_trigger>3</alarm_fail_trigger>
+		<time_hi>0</time_hi>
+		<time_low></time_low>
+		<time_fail_trigger>0</time_fail_trigger>
+		<time_fail_length>1</time_fail_length>
+		<warning_pct></warning_pct>
+		<trigger_cmd_high>php &lt;CACTI_ROOT&gt;/plugins/grid/kill_jobs_over_pending_time_limit.php</trigger_cmd_high>
+		<trigger_cmd_low></trigger_cmd_low>
+		<trigger_cmd_norm></trigger_cmd_norm>
+		<cmd_retrigger_enabled>on</cmd_retrigger_enabled>
+		<repeat_alert>3</repeat_alert>
+		<notify_extra></notify_extra>
+		<notify_cluster_admin>1</notify_cluster_admin>
+		<notify_alert>0</notify_alert>
+		<notify_users>on</notify_users>
+		<syslog_priority>4</syslog_priority>
+		<syslog_facility>24</syslog_facility>
+		<syslog_enabled></syslog_enabled>
+		<tcheck>0</tcheck>
+		<exempt>off</exempt>
+		<acknowledgement>off</acknowledgement>
+		<restored_alert>off</restored_alert>
+		<req_ack>off</req_ack>
+		<email_body>There are jobs that are pending over their effective pending time limits. Those breached jobs will be forcely killed. &lt;br&gt;&lt;DETAILS&gt;&lt;br&gt;&lt;br&gt;</email_body>
+		<email_subject>ALERT: &lt;NAME&gt;</email_subject>
+		<gridalarms_template_contacts>
+		</gridalarms_template_contacts>
+		<gridalarms_template_layout>
+			<hash_200024b3edf7f8e494714281a71dec87ff9908>
+				<id>40</id>
+				<alarm_id>6</alarm_id>
+				<display_name>Clusterid</display_name>
+				<column_name>clusterid</column_name>
+				<sequence>1</sequence>
+				<sortposition>1</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200024b3edf7f8e494714281a71dec87ff9908>
+			<hash_20002431a475088ae645a75d75fbf8f4d090c2>
+				<id>41</id>
+				<alarm_id>6</alarm_id>
+				<display_name>Cluster Name</display_name>
+				<column_name>clustername</column_name>
+				<sequence>2</sequence>
+				<sortposition>2</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_20002431a475088ae645a75d75fbf8f4d090c2>
+			<hash_2000247b23d32aaa4a97f481c4a301bd71a105>
+				<id>42</id>
+				<alarm_id>6</alarm_id>
+				<display_name>Jobid</display_name>
+				<column_name>jobid</column_name>
+				<sequence>3</sequence>
+				<sortposition>4</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_2000247b23d32aaa4a97f481c4a301bd71a105>
+			<hash_200024b998415801cc97d7cf8ce3cbb06dc749>
+				<id>43</id>
+				<alarm_id>6</alarm_id>
+				<display_name>Indexid</display_name>
+				<column_name>indexid</column_name>
+				<sequence>4</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200024b998415801cc97d7cf8ce3cbb06dc749>
+			<hash_200024deba63e682f0e405f6c4cdac0661e603>
+				<id>44</id>
+				<alarm_id>6</alarm_id>
+				<display_name>Submit Time</display_name>
+				<column_name>submit_time</column_name>
+				<sequence>5</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200024deba63e682f0e405f6c4cdac0661e603>
+			<hash_20002428402bd856bd04695970f8e9fd8e2ad5>
+				<id>45</id>
+				<alarm_id>6</alarm_id>
+				<display_name>Stat</display_name>
+				<column_name>stat</column_name>
+				<sequence>6</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_20002428402bd856bd04695970f8e9fd8e2ad5>
+			<hash_20002437b9cb583d1c57ebbef02ae0a062e416>
+				<id>46</id>
+				<alarm_id>6</alarm_id>
+				<display_name>Pend Time Limit</display_name>
+				<column_name>effectivePendingTimeLimit</column_name>
+				<sequence>8</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_20002437b9cb583d1c57ebbef02ae0a062e416>
+			<hash_20002470d981ed78e932d3b87a3ab6f00aa731>
+				<id>47</id>
+				<alarm_id>6</alarm_id>
+				<display_name>Pend Time</display_name>
+				<column_name>pend_time</column_name>
+				<sequence>9</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_20002470d981ed78e932d3b87a3ab6f00aa731>
+			<hash_2000240af34708d0c7d98a06aaec049d3159a2>
+				<id>48</id>
+				<alarm_id>6</alarm_id>
+				<display_name>User</display_name>
+				<column_name>user</column_name>
+				<sequence>7</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_2000240af34708d0c7d98a06aaec049d3159a2>
+		</gridalarms_template_layout>
+		<gridalarms_template_expression>
+			<hash_2100240e95ddff15f9242958a3c2c23eade417>
+				<id>6</id>
+				<name>pending_time_limit</name>
+				<description>Check jobs that are pending over their effective pending time limits</description>
+				<ds_type>1</ds_type>
+				<type>1</type>
+				<db_table>grid_jobs</db_table>
+				<sql_query>SELECT gj.clusterid, gc.clustername, jobid, indexid, submit_time, stat, user,
+effectivePendingTimeLimit, pend_time
+FROM grid_jobs AS gj, grid_clusters AS gc
+WHERE gj.clusterid = gc.clusterid
+AND stat in (&#039;PEND&#039;,&#039;USUSP&#039;, &#039;PSUSP&#039;, &#039;SSUSP&#039;)
+AND effectivePendingTimeLimit &gt;0
+AND pend_time &gt; effectivePendingTimeLimit
+
+</sql_query>
+				<script_thold></script_thold>
+				<script_data></script_data>
+				<script_data_type>0</script_data_type>
+			</hash_2100240e95ddff15f9242958a3c2c23eade417>
+		</gridalarms_template_expression>
+		<gridalarms_template_expression_item>
+		</gridalarms_template_expression_item>
+		<gridalarms_template_metric>
+		</gridalarms_template_metric>
+		<gridalarms_template_metric_expression>
+		</gridalarms_template_metric_expression>
+		<gridalarms_template_expression_input>
+		</gridalarms_template_expression_input>
+	</hash_1800240f2e746e897dd2a5808d2cad6dfdd7eb>
+</cacti>

@@ -1,0 +1,7 @@
+hostname
+/bin/true
+sleep 0
+sleep 5
+sleep 60
+exit 1
+exit 5

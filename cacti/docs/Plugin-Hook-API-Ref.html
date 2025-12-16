@@ -1,0 +1,2855 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Plugin Hook API Reference</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="plugin-hook-api-reference">Plugin Hook API Reference</h1>
+<p>The following table shows all known Cacti plugin hooks and a brief description of their function.</p>
+<table>
+<thead>
+<tr class="header">
+<th>hook</th>
+<th>hook</th>
+<th>hook</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="Plugin-Hook-API-Ref.html#add_graph_template_to_host">add_graph_template_to_host</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#api_device_new">api_device_new</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#api_device_save">api_device_save</a></td>
+</tr>
+<tr class="even">
+<td><a href="Plugin-Hook-API-Ref.html#auth_alternate_realms">auth_alternate_realms</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#auth_profile_reset">auth_profile_reset</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#auth_profile_reset_value">auth_profile_reset_value</a></td>
+</tr>
+<tr class="odd">
+<td><a href="Plugin-Hook-API-Ref.html#auth_profile_run_action">auth_profile_run_action</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#auth_profile_save">auth_profile_save</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#auth_profile_tabs">auth_profile_tabs</a></td>
+</tr>
+<tr class="even">
+<td><a href="Plugin-Hook-API-Ref.html#auth_profile_update_data">auth_profile_update_data</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#boost_poller_bottom">boost_poller_bottom</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#bottom_footer">bottom_footer</a></td>
+</tr>
+<tr class="odd">
+<td><a href="Plugin-Hook-API-Ref.html#cacti_stats_update">cacti_stats_update</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#change_password_title">change_password_title</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#clog_regex_array">clog_regex_array</a></td>
+</tr>
+<tr class="even">
+<td><a href="Plugin-Hook-API-Ref.html#config_arrays">config_arrays</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#config_form">config_form</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#config_insert">config_insert</a></td>
+</tr>
+<tr class="odd">
+<td><a href="Plugin-Hook-API-Ref.html#config_settings">config_settings</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#console_after">console_after</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#console_before">console_before</a></td>
+</tr>
+<tr class="even">
+<td><a href="Plugin-Hook-API-Ref.html#copy_user">copy_user</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#create_complete_graph_from_template">create_complete_graph_from_template</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#custom_denied">custom_denied</a></td>
+</tr>
+<tr class="odd">
+<td><a href="Plugin-Hook-API-Ref.html#custom_login">custom_login</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#custom_logout_message">custom_logout_message</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#custom_password">custom_password</a></td>
+</tr>
+<tr class="even">
+<td><a href="Plugin-Hook-API-Ref.html#custom_version_info">custom_version_info</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#data_input_sql_where">data_input_sql_where</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#data_source_action_array">data_source_action_array</a></td>
+</tr>
+<tr class="odd">
+<td><a href="Plugin-Hook-API-Ref.html#data_source_action_bottom">data_source_action_bottom</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#data_source_action_execute">data_source_action_execute</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#data_source_action_prepare">data_source_action_prepare</a></td>
+</tr>
+<tr class="even">
+<td><a href="Plugin-Hook-API-Ref.html#data_source_edit_bottom">data_source_edit_bottom</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#data_source_edit_top">data_source_edit_top</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#data_source_remove">data_source_remove</a></td>
+</tr>
+<tr class="odd">
+<td><a href="Plugin-Hook-API-Ref.html#data_source_to_poller_items">data_source_to_poller_items</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#data_sources_table">data_sources_table</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#device_action_array">device_action_array</a></td>
+</tr>
+<tr class="even">
+<td><a href="Plugin-Hook-API-Ref.html#device_action_bottom">device_action_bottom</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#device_action_execute">device_action_execute</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#device_action_prepare">device_action_prepare</a></td>
+</tr>
+<tr class="odd">
+<td><a href="Plugin-Hook-API-Ref.html#device_display_text">device_display_text</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#device_edit_pre_bottom">device_edit_pre_bottom</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#device_edit_top_links">device_edit_top_links</a></td>
+</tr>
+<tr class="even">
+<td><a href="Plugin-Hook-API-Ref.html#device_filter_end">device_filter_end</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#device_filter_start">device_filter_start</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#device_filters">device_filters</a></td>
+</tr>
+<tr class="odd">
+<td><a href="Plugin-Hook-API-Ref.html#device_remove">device_remove</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#device_sql_where">device_sql_where</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#device_table_bottom">device_table_bottom</a></td>
+</tr>
+<tr class="even">
+<td><a href="Plugin-Hook-API-Ref.html#device_table_replace">device_table_replace</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#device_template_change">device_template_change</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#device_template_edit">device_template_edit</a></td>
+</tr>
+<tr class="odd">
+<td><a href="Plugin-Hook-API-Ref.html#device_template_top">device_template_top</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#draw_navigation_text">draw_navigation_text</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#export_action">export_action</a></td>
+</tr>
+<tr class="even">
+<td><a href="Plugin-Hook-API-Ref.html#fgc_contextoption">fgc_contextoption</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#get_friendly_name">get_friendly_name</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#global_settings_update">global_settings_update</a></td>
+</tr>
+<tr class="odd">
+<td><a href="Plugin-Hook-API-Ref.html#graph">graph</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#graph_buttons">graph_buttons</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#graph_edit_after">graph_edit_after</a></td>
+</tr>
+<tr class="even">
+<td><a href="Plugin-Hook-API-Ref.html#graph_image">graph_image</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#graph_items_remove">graph_items_remove</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#graph_tree_page_buttons">graph_tree_page_buttons</a></td>
+</tr>
+<tr class="odd">
+<td><a href="Plugin-Hook-API-Ref.html#graphs_action_array">graphs_action_array</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#graphs_action_bottom">graphs_action_bottom</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#graphs_action_execute">graphs_action_execute</a></td>
+</tr>
+<tr class="even">
+<td><a href="Plugin-Hook-API-Ref.html#graphs_action_prepare">graphs_action_prepare</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#graphs_item_array">graphs_item_array</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#graphs_new_top_links">graphs_new_top_links</a></td>
+</tr>
+<tr class="odd">
+<td><a href="Plugin-Hook-API-Ref.html#graphs_remove">graphs_remove</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#graphs_sql_where">graphs_sql_where</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#hmib_get_cpu">hmib_get_cpu</a></td>
+</tr>
+<tr class="even">
+<td><a href="Plugin-Hook-API-Ref.html#hmib_get_cpu_indexes">hmib_get_cpu_indexes</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#hmib_get_disk">hmib_get_disk</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#host_edit_bottom">host_edit_bottom</a></td>
+</tr>
+<tr class="odd">
+<td><a href="Plugin-Hook-API-Ref.html#host_edit_top">host_edit_top</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#host_save">host_save</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#import_action">import_action</a></td>
+</tr>
+<tr class="even">
+<td><a href="Plugin-Hook-API-Ref.html#is_console_page">is_console_page</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#login_after">login_after</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#login_before">login_before</a></td>
+</tr>
+<tr class="odd">
+<td><a href="Plugin-Hook-API-Ref.html#login_options_navigate">login_options_navigate</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#login_process">login_process</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#login_realms">login_realms</a></td>
+</tr>
+<tr class="even">
+<td><a href="Plugin-Hook-API-Ref.html#login_title">login_title</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#logout_post_session_destroy">logout_post_session_destroy</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#logout_pre_session_destroy">logout_pre_session_destroy</a></td>
+</tr>
+<tr class="odd">
+<td><a href="Plugin-Hook-API-Ref.html#nav_login_after">nav_login_after</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#nav_login_before">nav_login_before</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#page_bottom">page_bottom</a></td>
+</tr>
+<tr class="even">
+<td><a href="Plugin-Hook-API-Ref.html#page_buttons">page_buttons</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#page_head">page_head</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#page_title">page_title</a></td>
+</tr>
+<tr class="odd">
+<td><a href="Plugin-Hook-API-Ref.html#poller_bottom">poller_bottom</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#poller_command_args">poller_command_args</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#poller_exiting">poller_exiting</a></td>
+</tr>
+<tr class="even">
+<td><a href="Plugin-Hook-API-Ref.html#poller_finishing">poller_finishing</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#poller_output">poller_output</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#poller_remote_maint">poller_remote_maint</a></td>
+</tr>
+<tr class="odd">
+<td><a href="Plugin-Hook-API-Ref.html#poller_top">poller_top</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#remote_agent">remote_agent</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#replicate_in">replicate_in</a></td>
+</tr>
+<tr class="even">
+<td><a href="Plugin-Hook-API-Ref.html#replicate_out">replicate_out</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#report_filters">report_filters</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#resolve_dependencies">resolve_dependencies</a></td>
+</tr>
+<tr class="odd">
+<td><a href="Plugin-Hook-API-Ref.html#rrd_graph_graph_options">rrd_graph_graph_options</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#run_data_query">run_data_query</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#snmpagent_cache_install">snmpagent_cache_install</a></td>
+</tr>
+<tr class="even">
+<td><a href="Plugin-Hook-API-Ref.html#substitute_host_data">substitute_host_data</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#top_graph_header">top_graph_header</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#top_graph_header_tabs">top_graph_header_tabs</a></td>
+</tr>
+<tr class="odd">
+<td><a href="Plugin-Hook-API-Ref.html#top_graph_jquery_function">top_graph_jquery_function</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#top_graph_refresh">top_graph_refresh</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#top_header">top_header</a></td>
+</tr>
+<tr class="even">
+<td><a href="Plugin-Hook-API-Ref.html#tree_after">tree_after</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#tree_view_page_end">tree_view_page_end</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#ugroup_tabs">ugroup_tabs</a></td>
+</tr>
+<tr class="odd">
+<td><a href="Plugin-Hook-API-Ref.html#update_data_source_title_cache">update_data_source_title_cache</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#user_admin_action">user_admin_action</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#user_admin_edit">user_admin_edit</a></td>
+</tr>
+<tr class="even">
+<td><a href="Plugin-Hook-API-Ref.html#user_admin_run_action">user_admin_run_action</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#user_admin_setup_sql_save">user_admin_setup_sql_save</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#user_admin_tab">user_admin_tab</a></td>
+</tr>
+<tr class="odd">
+<td><a href="Plugin-Hook-API-Ref.html#user_admin_user_save">user_admin_user_save</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#user_group_admin_action">user_group_admin_action</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#user_group_admin_edit">user_group_admin_edit</a></td>
+</tr>
+<tr class="even">
+<td><a href="Plugin-Hook-API-Ref.html#user_group_admin_save">user_group_admin_save</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#user_group_admin_setup_sql_save">user_group_admin_setup_sql_save</a></td>
+<td>[user_group_admin_run_action] (Plugin-Hook-API-Ref.md#user_group_admin_run_action)</td>
+</tr>
+<tr class="odd">
+<td>[user_group_admin_tab] (Plugin-Hook-API-Ref.md#user_group_admin_tab)</td>
+<td>[user_group_remove] (Plugin-Hook-API-Ref.md#user_group_remove)</td>
+<td><a href="Plugin-Hook-API-Ref.html#user_remove">user_remove</a></td>
+</tr>
+<tr class="even">
+<td><a href="Plugin-Hook-API-Ref.html#utilities_action">utilities_action</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#utilities_array">utilities_array</a></td>
+<td><a href="Plugin-Hook-API-Ref.html#utilities_list">utilities_list</a></td>
+</tr>
+<tr class="odd">
+<td><a href="Plugin-Hook-API-Ref.html#valid_host_fields">valid_host_fields</a></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="add_graph_template_to_host">add_graph_template_to_host</h2>
+<p>Allows you to perform additional operations when adding a graph template to host. The parameters passed are <code>host_id</code> and <code>graph_template_id</code>.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>cli/add_graph_template.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td>cli/host_update_template.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td>host.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td>lib/api_device.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="api_device_new">api_device_new</h2>
+<p>This hooks allows you to perform additional operation at the end of api_device_save function. Unlike the api_device_save hook, the device ID is already defined here.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lib/api_device.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="api_device_save">api_device_save</h2>
+<p>This hook allows you to perform additional operation at the end of api_device_save function. Unlike the api_device_new hook, the device ID is might not be defined here.</p>
+<p>This hook allows you to alter the contents to the device table with custom fields. When used properly, it allows you to extend the host table with your plugins custom fields.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lib/api_device.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="auth_alternate_realms">auth_alternate_realms</h2>
+<p>This hook allows you to handle user login check alternate plugin defined authentication realms.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>include/auth.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="auth_profile_reset">auth_profile_reset</h2>
+<p>Allows you to reset plugins all user settings</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>auth_profile.php</td>
+<td style="text-align: left;">1.2.0-beta3</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="auth_profile_reset_value">auth_profile_reset_value</h2>
+<p>Allows you to reset plugins single user settings</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>auth_profile.php</td>
+<td style="text-align: left;">1.2.0-beta3</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="auth_profile_run_action">auth_profile_run_action</h2>
+<p>Allows you to draw plugins user settings form</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>auth_profile.php</td>
+<td style="text-align: left;">1.2.0-beta3</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="auth_profile_save">auth_profile_save</h2>
+<p>Allows you to save plugins all user settings</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>auth_profile.php</td>
+<td style="text-align: left;">1.2.0-beta3</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="auth_profile_tabs">auth_profile_tabs</h2>
+<p>Allows you to draw plugins user setting tabs</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>auth_profile.php</td>
+<td style="text-align: left;">1.2.0-beta3</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="auth_profile_update_data">auth_profile_update_data</h2>
+<p>Allows you to update plugins single user setting</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>auth_profile.php</td>
+<td style="text-align: left;">1.2.4</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="boost_poller_bottom">boost_poller_bottom</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>poller_boost.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="bottom_footer">bottom_footer</h2>
+<p>Allows you to override the rendering of the bottom_footer html snippet.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>include/bottom_footer.php</td>
+<td style="text-align: left;">0.8.7i</td>
+<td style="text-align: left;">1.1.38</td>
+</tr>
+</tbody>
+</table>
+<h2 id="cacti_stats_update">cacti_stats_update</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>poller.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="change_password_title">change_password_title</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>auth_changepassword.php</td>
+<td style="text-align: left;">1.2.0-beta1</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="clog_regex_array">clog_regex_array</h2>
+<p>Allows you to enhance the Logs display with additional information or links.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lib/clog_webapi.php</td>
+<td style="text-align: left;">1.1.34</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="config_arrays">config_arrays</h2>
+<p>Allows your plug-in to define custom array elements to be used throughout cacti. Things like dropdown arrays and the like.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>include/global_arrays.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="config_form">config_form</h2>
+<p>Allows you to define form object to represent data to be stored in your tables. In the case of MacTrack, there is a table called <code>mac_track_sites</code> and in order to drive the UI and allow for the user to provide input and save a site, you must provide the Cacti form engine a form array to allow for the form to be presented and contents to be saved.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>include/global_form.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="config_insert">config_insert</h2>
+<p>This is a general purpose hook used for connecting to other database, or sourcing common includes that would otherwise not be sourced.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>include/global.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="config_settings">config_settings</h2>
+<p>Allows you to extend the Cacti settings page to allow for custom tabs and global settings within them.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>include/global_settings.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="console_after">console_after</h2>
+<p>Allows you to add text after the default message on the console page</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>index.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="console_before">console_before</h2>
+<p>Allows you to add text before the default message on the console page. For instance, the Update plug-in will display a message here if there are new versions of plugins.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>index.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="copy_user">copy_user</h2>
+<p>Allows a plugin to take part in the Copy User actions. This is important a plugin maintains user settings.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lib/auth.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="create_complete_graph_from_template">create_complete_graph_from_template</h2>
+<p>Allows you to perform additional operations when adding new graph to device from graph template.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lib/template.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="custom_denied">custom_denied</h2>
+<p>Allows you to override the rendering of the permission denied interface.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>permission_denied.php</td>
+<td style="text-align: left;">1.2.2</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td>auth_login.php</td>
+<td style="text-align: left;">1.2.12</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="custom_login">custom_login</h2>
+<p>Allows you to override the rendering of the auth_login.php page.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>auth_login.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="custom_logout_message">custom_logout_message</h2>
+<p>Allows you to override the rendering of the logout.php page.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>logout.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="custom_password">custom_password</h2>
+<p>Allows you to override the rendering of the auth_changepassword.php page.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>auth_changepassword.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="custom_version_info">custom_version_info</h2>
+<p>Allows your plugin to display additional information on the cacti tech support page.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>utilities.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="data_input_sql_where">data_input_sql_where</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>data_input.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="data_source_action_array">data_source_action_array</h2>
+<p>Allows you to define custom dropdown actions from within the data sources page.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>data_sources.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="data_source_action_bottom">data_source_action_bottom</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>data_sources.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="data_source_action_execute">data_source_action_execute</h2>
+<p>Allows you to define custom actions to be taken upon you dropdown selection.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>data_sources.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="data_source_action_prepare">data_source_action_prepare</h2>
+<p>This is the final component to creating a custom action within the data sources. In Cacti's form engine, you must provide the dropdown action and then two follow-up actions to complete the cycle. This is were you actually save the data.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>data_sources.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="data_source_edit_bottom">data_source_edit_bottom</h2>
+<p>Allows you to make minor change to the Data Sources page, like add a tabbed interface.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>data_sources.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="data_source_edit_top">data_source_edit_top</h2>
+<p>Allows you to make minor changes to the Data Sources page, like add a tabbed interface.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>data_sources.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="data_source_remove">data_source_remove</h2>
+<p>This hook is called when the data sources used by a graph are removed. The parameters are the graphs data sources.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>data_sources.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;">1.1.38</td>
+</tr>
+<tr class="even">
+<td>graphs.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;">1.1.38</td>
+</tr>
+<tr class="odd">
+<td>host.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;">1.1.38</td>
+</tr>
+<tr class="even">
+<td>lib/api_data_source.php</td>
+<td style="text-align: left;">1.2.0-beta1</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="data_source_to_poller_items">data_source_to_poller_items</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lib/utility.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="data_sources_table">data_sources_table</h2>
+<p>Allows you to change the data displayed on the Data Sources table. THold uses this to create a link to that datasources threshold</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>data_sources.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="device_action_array">device_action_array</h2>
+<p>Allows you to define custom dropdown actions from within the device/host page.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>host.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="device_action_bottom">device_action_bottom</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>host.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="device_action_execute">device_action_execute</h2>
+<p>Allows you to define custom actions to be taken upon you dropdown selection.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>host.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="device_action_prepare">device_action_prepare</h2>
+<p>This is the final component to creating a custom action within the devices. In Cacti's form engine, you must provide the dropdown action and then two follow-up actions to complete the cycle. This is were you actually save the data.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>host.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="device_display_text">device_display_text</h2>
+<p>This hook allows you to add custom columns header to the host list page</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>host.php</td>
+<td style="text-align: left;">1.3.0 - Dev</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="device_edit_pre_bottom">device_edit_pre_bottom</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>host.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="device_edit_top_links">device_edit_top_links</h2>
+<p>This hook allows you to add custom actions to the host edit page, below the "Create graphs for this Host".</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>host.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="device_filter_end">device_filter_end</h2>
+<p>This hook allows you to add custom filter fields before Cacti buildin filter to the host list page</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>host.php</td>
+<td style="text-align: left;">1.3.0 - Dev</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="device_filter_start">device_filter_start</h2>
+<p>This hook allows you to add custom filter fields after Cacti buildin filter to the host list page</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>host.php</td>
+<td style="text-align: left;">1.3.0 - Dev</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="device_filters">device_filters</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>host.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="device_remove">device_remove</h2>
+<p>This hook allows you to perform additional actions on devices that have been selected for deletion. The parameter is an array of deleted device IDs. Note that at this point, the devices are already deleted from the host table.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>host.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;">1.1.38</td>
+</tr>
+<tr class="even">
+<td>lib/api_device.php</td>
+<td style="text-align: left;">1.2.0-beta1</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="device_sql_where">device_sql_where</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>host.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="device_table_bottom">device_table_bottom</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>host.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="device_table_replace">device_table_replace</h2>
+<p>Allows you to override the rendering of the host list page</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>host.php</td>
+<td style="text-align: left;">1.3.0 - Dev</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="device_template_change">device_template_change</h2>
+<p>Allows you to add template items such a threshold upon a device template change</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lib/ap_device.php</td>
+<td style="text-align: left;">1.2.25</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="device_template_edit">device_template_edit</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>host_templates.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="device_template_top">device_template_top</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>host_templates.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="draw_navigation_text">draw_navigation_text</h2>
+<p>Just below the Cacti "Console", and "Graphs" tabs, cacti provides a Navigation bar that allows you to move backward in a selection tree. Although it is not foolproof, this hook allows you to populate and navigate that tree.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lib/functions.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="export_action">export_action</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lib/export.php</td>
+<td style="text-align: left;">1.2.0-beta1</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="fgc_contextoption">fgc_contextoption</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lib/functions.php</td>
+<td style="text-align: left;">1.1.28</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="get_friendly_name">get_friendly_name</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lib/import.php</td>
+<td style="text-align: left;">1.2.0-beta1</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="global_settings_update">global_settings_update</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>settings.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="graph">graph</h2>
+<p>This hook is called at the top of graph.php page</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>graph.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="graph_buttons">graph_buttons</h2>
+<p>You know about the zoom button right? Well this allows you to add any additional custom button to the right of a graph.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>graph.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="graph_edit_after">graph_edit_after</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>graphs.php</td>
+<td style="text-align: left;">1.2.0-beta1</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="graph_image">graph_image</h2>
+<p>This hooks allows displaying of alternative graphics in place of a graph image. This hook can no output text, only modify the image, as it is only called when a graph is required to be outputted.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>graph_image.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td>graph_json.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="graph_items_remove">graph_items_remove</h2>
+<p>This hook is called when when the data source is deleted, and the option to remove all graph items tied to the data source is selected.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>data_sources.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="graph_tree_page_buttons">graph_tree_page_buttons</h2>
+<p>Allows you to add custom HTML to the graph tree view page, under the timespan presets and the graph search box.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lib/html_tree.php</td>
+<td style="text-align: left;">0.8.7i</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="graphs_action_array">graphs_action_array</h2>
+<p>Similar to the host actions and host, prepare and execute hooks. It allows you to have custom dropdown actions within the graph management interface.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>graphs.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="graphs_action_bottom">graphs_action_bottom</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>graphs.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="graphs_action_execute">graphs_action_execute</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>graphs.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="graphs_action_prepare">graphs_action_prepare</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>graphs.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="graphs_item_array">graphs_item_array</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>graphs.php</td>
+<td style="text-align: left;">1.2.0-beta1</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="graphs_new_top_links">graphs_new_top_links</h2>
+<p>Add a link at the top of the "Create New Graphs" page.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>graphs_new.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="graphs_remove">graphs_remove</h2>
+<p>This hook is called after one or more graphs are removed. The parameters are the removed graph IDs.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>data_sources.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;">1.1.38</td>
+</tr>
+<tr class="even">
+<td>graphs.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;">1.1.38</td>
+</tr>
+<tr class="odd">
+<td>host.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;">1.1.38</td>
+</tr>
+<tr class="even">
+<td>lib/api_graph.php</td>
+<td style="text-align: left;">1.2.0-beta1</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="graphs_sql_where">graphs_sql_where</h2>
+<p>This hooks allows you to add additional where clauses to the select statement used to display graphs on the graphs.php page.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>graphs.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="hmib_get_cpu">hmib_get_cpu</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>scripts/ss_host_cpu.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="hmib_get_cpu_indexes">hmib_get_cpu_indexes</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>scripts/ss_host_cpu.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="hmib_get_disk">hmib_get_disk</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>scripts/ss_host_disk.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="host_edit_bottom">host_edit_bottom</h2>
+<p>Allows you to make minor changes to the Devices page, like add a tabbed interface.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>host.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="host_edit_top">host_edit_top</h2>
+<p>Allows you to make minor changes to the Devices page, like add a tabbed interface.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>host.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="host_save">host_save</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>host.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="import_action">import_action</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lib/import.php</td>
+<td style="text-align: left;">1.2.0-beta1</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="is_console_page">is_console_page</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lib/html.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="login_after">login_after</h2>
+<p>This allows you to display text or html after the login form.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>auth_login.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="login_before">login_before</h2>
+<p>This allows you to display text or html before the login form. Combined with the above hook, you could draw a box, etc around the form, change its background color, etc to slightly customize the login page.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>auth_login.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="login_options_navigate">login_options_navigate</h2>
+<p>Used to support alternate login realm types.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>auth_changepassword.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td>auth_login.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="login_process">login_process</h2>
+<p>Used to authenticate the user logging in to a custom plugin defined realm.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>auth_login.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="login_realms">login_realms</h2>
+<p>Used to defined additional custom plugin defined authentication realms. The parameter passed is an array of existing authentication realms.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>auth_login.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="login_title">login_title</h2>
+<p>Allows the plugin to set/modify that page title.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>auth_login.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="logout_post_session_destroy">logout_post_session_destroy</h2>
+<p>This pair of hooks (<code>logout_pre_session_destroy</code> and <code>logout_post_session_destroy</code>) allows you to preserve some session variables that would otherwise get unset, when <code>session_destroy()</code> is called.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>logout.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="logout_pre_session_destroy">logout_pre_session_destroy</h2>
+<p>This pair of hooks (<code>logout_pre_session_destroy</code> and <code>logout_post_session_destroy</code>) allows you to preserve some session variables that would otherwise get unset, when <code>session_destroy()</code> is called.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>logout.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="nav_login_after">nav_login_after</h2>
+<p>This pair of hooks (<code>nav_login_before</code> and <code>nav_login_after</code>) allows you to add custom HTML to the navigation bar, before and after the "Logged in as " text.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lib/functions.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="nav_login_before">nav_login_before</h2>
+<p>This pair of hooks (<code>nav_login_before</code> and <code>nav_login_after</code>) allows you to add custom HTML to the navigation bar, before and after the "Logged in as " text.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lib/functions.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="page_bottom">page_bottom</h2>
+<p>This hook allows you to add custom HTML to the bottom of the page, after the main layout table.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>include/bottom_footer.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="page_buttons">page_buttons</h2>
+<p>Allows you to add custom buttons and HTML to the top of the graph.php page, above the "Viewing graph" row.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>graph.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="page_head">page_head</h2>
+<p>This hook allows you to add custom HTML tags to the page <code>&lt;head&gt;</code> tag.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>graph_realtime.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;">1.1.33</td>
+</tr>
+<tr class="even">
+<td>include/top_general_header.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;">1.1.33</td>
+</tr>
+<tr class="odd">
+<td>include/top_graph_header.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;">1.1.33</td>
+</tr>
+<tr class="even">
+<td>include/top_header.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;">1.1.33</td>
+</tr>
+<tr class="odd">
+<td>lib/html.php</td>
+<td style="text-align: left;">1.1.34</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="page_title">page_title</h2>
+<p>Allows the plugin to set/modify the page title</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>include/top_general_header.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td>include/top_graph_header.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td>include/top_header.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="poller_bottom">poller_bottom</h2>
+<p>This hook allows you to launch other polling activities once Cacti has complete it's polling activities. Things like MacTrack, Boost, THold, and others use this hook to launch their respective poller.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>poller.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="poller_command_args">poller_command_args</h2>
+<p>Using this hook, your plugin can pass additional command line arguments to the poller.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>poller.php</td>
+<td style="text-align: left;">0.8.7i</td>
+<td style="text-align: left;">1.2.8</td>
+</tr>
+</tbody>
+</table>
+<h2 id="poller_exiting">poller_exiting</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>poller.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="poller_finishing">poller_finishing</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>poller.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="poller_output">poller_output</h2>
+<p>This hook was designed specifically for the boost plug-in. However, it has found new life in many plugins making them much faster now. What this hook allows you to do is intercept the contents of the <code>poller_output</code> table before the data is deleted. This allows for things like threshold checking and other interesting actions such as checking for up/down events and the like. Previously, plugins were reliant on using things like <code>rrdtool fetch</code> to perform these actions. Now they can leverage the pollers output directly.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lib/poller.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="poller_remote_maint">poller_remote_maint</h2>
+<p>This hook will fire for plugins that need to perform remote maintenance. It will only fire on the Remote Data Collectors.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>poller_maintenance.php</td>
+<td style="text-align: left;">1.2.23</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="poller_top">poller_top</h2>
+<p>This hook allows you to launch processes concurrently with the Cacti poller for things like THolds fast poller for example.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>poller.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="remote_agent">remote_agent</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>remote_agent.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="replicate_in">replicate_in</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lib/poller.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="replicate_out">replicate_out</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lib/api_device.php</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td>lib/poller.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="resolve_dependencies">resolve_dependencies</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lib/export.php</td>
+<td style="text-align: left;">1.2.0-beta1</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="rrd_graph_graph_options">rrd_graph_graph_options</h2>
+<p>This hook allows you to specify additional options or change parameters regarding graph image rendering. Some of the parameters will be passed to RRDtool.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lib/rrd.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="run_data_query">run_data_query</h2>
+<p>This hook allows your plugin to perform additional operations after a data query update was triggered.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lib/data_query.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="snmpagent_cache_install">snmpagent_cache_install</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lib/snmpagent.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="substitute_host_data">substitute_host_data</h2>
+<p>This allows you to add to the substitution variables that cacti can parse.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lib/variables.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;">1.1.5</td>
+</tr>
+</tbody>
+</table>
+<h2 id="top_graph_header">top_graph_header</h2>
+<p>Allows you to override the rendering of the top_graph_header.php include.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>include/top_graph_header.php</td>
+<td style="text-align: left;">0.8.7i</td>
+<td style="text-align: left;">1.1.38</td>
+</tr>
+</tbody>
+</table>
+<h2 id="top_graph_header_tabs">top_graph_header_tabs</h2>
+<p>This hook is used to add tab's to Cacti's user interface.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lib/html.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="top_graph_jquery_function">top_graph_jquery_function</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lib/html_tree.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="top_graph_refresh">top_graph_refresh</h2>
+<p>This allows you to change the refresh on the graph (and any plug-in page that calls the graph header)</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>include/global_session.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td>include/themes/sunrise/global_session.php</td>
+<td style="text-align: left;">1.1.11</td>
+<td style="text-align: left;">1.1.38</td>
+</tr>
+</tbody>
+</table>
+<h2 id="top_header">top_header</h2>
+<p>This hooks enables you to output custom HTML on top the the graph view page, if navigation tabs are not rendered. Allows you to override the rendering of the top_header.php include.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>include/top_general_header.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;">1.1.38</td>
+</tr>
+<tr class="even">
+<td>include/top_header.php</td>
+<td style="text-align: left;">0.8.7i</td>
+<td style="text-align: left;">1.1.38</td>
+</tr>
+</tbody>
+</table>
+<h2 id="tree_after">tree_after</h2>
+<p>This hook allows you to add additional HTML at the bottom of the graph tree view page. The HTML is rendered only if a valid graph tree leaf is selected.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lib/html_tree.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="tree_view_page_end">tree_view_page_end</h2>
+<p>This hook allows you to add additional HTML at the bottom of the graph tree view page, irrespective of the leaf selection.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>graph.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td>lib/html_tree.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="ugroup_tabs">ugroup_tabs</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>user_group_admin.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="update_data_source_title_cache">update_data_source_title_cache</h2>
+<p>This hook is called after the data source title cache is updated.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lib/variables.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="user_admin_action">user_admin_action</h2>
+<p>This hook is part of a series of hooks that allow you to add custom user settings. Consider a plug-in called "abc". In that plug-in, you want to save custom settings on a per user basis. Therefore, following our unpublished ? table naming standards, you would create a table called "abc_settings". When you tab over to the "abc" plug-in, you are provided an "abc settings" on the right similar to "Graphs". The next series of hooks allow you to present those settings to the user, enable or disable the users access to that specific "abc settings" tab and allow an administrator to define customer values for that plug-in on a per user basis.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>user_admin.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="user_admin_edit">user_admin_edit</h2>
+<p>See the explanation on <code>user_admin_action</code></p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>user_admin.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="user_admin_run_action">user_admin_run_action</h2>
+<p>See the explanation on <code>user_admin_action</code></p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>user_admin.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="user_admin_setup_sql_save">user_admin_setup_sql_save</h2>
+<p>See the explanation on <code>user_admin_action</code></p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>user_admin.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="user_admin_tab">user_admin_tab</h2>
+<p>See the explanation on <code>user_admin_action</code></p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>user_admin.php</td>
+<td style="text-align: left;">0.8.7i</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td>utilities.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;">1.2.0-beta3</td>
+</tr>
+</tbody>
+</table>
+<h2 id="user_admin_user_save">user_admin_user_save</h2>
+<p>See the explanation on <code>user_admin_action</code></p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>user_admin.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="user_group_admin_action">user_group_admin_action</h2>
+<p>Similar to <code>user_admin_action</code></p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>user_group_admin.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="user_group_admin_edit">user_group_admin_edit</h2>
+<p>See the explanation on <code>user_admin_action</code></p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>user_group_admin.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="user_group_admin_save">user_group_admin_save</h2>
+<p>See the explanation on <code>user_admin_action</code></p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>user_group_admin.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="user_group_admin_action-1">user_group_admin_action</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>user_group_admin.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="user_group_admin_edit-1">user_group_admin_edit</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>user_group_admin.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="user_group_admin_save-1">user_group_admin_save</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>user_group_admin.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="user_group_admin_setup_sql_save">user_group_admin_setup_sql_save</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>user_group_admin.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="user_remove">user_remove</h2>
+<p>Allows the plugin to take part in the user removal process. Important when the plugin maintains user settings.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lib/auth.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td>user_admin.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="utilities_action">utilities_action</h2>
+<p>This hook set's up the function to be executed from within Cacti's utilities section.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>utilities.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="utilities_array">utilities_array</h2>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>utilities.php</td>
+<td style="text-align: left;">1.0.4</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="utilities_list">utilities_list</h2>
+<p>This hook allows you to add a custom utilities pick under Cacti's "Utilities" page.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>utilities.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="utilities_tab">utilities_tab</h2>
+<p>This hook allows you to add a custom utilities tab under Cacti's "Utilities" page.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>utilities.php</td>
+<td style="text-align: left;">1.2.0-beta3</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="valid_host_fields">valid_host_fields</h2>
+<p>Allows your plugin to define additional variables that will be used in substitute_host_data.</p>
+<p>Pretty sure that this hook allows you to define custom replacement values in graphs.</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th style="text-align: left;">introduced</th>
+<th style="text-align: left;">retired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>include/global_form.php</td>
+<td style="text-align: left;">1.0.0</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

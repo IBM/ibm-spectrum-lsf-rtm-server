@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Multiple LDAP/AD Domains</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="multiple-ldapad-domains">Multiple LDAP/AD Domains</h1>
+<h2 id="summary">Summary</h2>
+<p>This Authentication method enables the Cacti Administrator to have multiple login level templates for their accounts. This could be used to grant users say for the following three login levels controlled by an LDAP or AD User Group:</p>
+<ul>
+<li><strong>Admins</strong> - People with full control of Cacti</li>
+<li><strong>Super Users</strong> - Higher level of access, but below <strong>Admins</strong></li>
+<li><strong>Normal Users</strong> - For normal entry level users with limited access.</li>
+</ul>
+<p>To use the Multiple Domains setup, you must first setup at least one <a href="User-Domains.html">User Domains</a> from the Cacti console. Once the <strong>Multiple LDAP/AD Domains</strong> are setup, all users will have to provide domain credentials as well as select from which domain they wish to authenticate from, though when enabling this settings, <strong>Built-in</strong> accounts will still be able to login, however, they will have to provide the <code>Local</code> option from the drop-down on the login page.</p>
+<h2 id="settings">Settings</h2>
+<p>When you select the <strong>Multiple LDAP/AD Domains</strong> the Authentication sub-tab will look like the image below.</p>
+<p><img src="images/settings-domains.png" alt="Multiple LDAP/AD Domains" /></p>
+<p>The reason that it shows settings for <code>Built-in</code> accounts is that you can still login as a local account when you choose this setting.</p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

@@ -1,0 +1,1298 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-03-23 19:58-0400\n"
+"PO-Revision-Date: 2020-03-23 20:07-0400\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.3\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Language: fr_FR\n"
+
+#: ../disku_paths.php:28
+msgid "Disable"
+msgstr "Désactiver"
+
+#: ../disku_paths.php:29
+msgid "Enable"
+msgstr "Activer"
+
+#: ../disku_paths.php:30 ../disku_applications.php:28 ../disku_extenreg.php:31
+#: ../disku_pollers.php:30
+msgid "Delete"
+msgstr "Supprimer"
+
+#: ../disku_paths.php:31
+msgid "Clear Stats"
+msgstr "Effacer les statistiques"
+
+#: ../disku_paths.php:190
+#, fuzzy
+msgid "Click 'Continue' to Delete the following Scanner Path(s)."
+msgstr "Cliquez sur «Continuer» pour supprimer le ou les chemins de scanner suivants."
+
+#: ../disku_paths.php:195
+#, fuzzy
+msgid "Delete Disk Monitor Scan Path(s)"
+msgstr "Supprimer le ou les chemins d’analyse de Disk Monitor"
+
+#: ../disku_paths.php:199
+#, fuzzy
+msgid "Click 'Continue' to Disable Poller of the following Scanner Path(s)."
+msgstr "Cliquez sur «Continuer» pour désactiver Poller des chemins de scanner suivants."
+
+#: ../disku_paths.php:204
+#, fuzzy
+msgid "Disable Disk Monitor Scan Path(s)"
+msgstr "Désactiver le ou les chemins d’analyse de Disk Monitor"
+
+#: ../disku_paths.php:208
+#, fuzzy
+msgid "Click 'Continue' to Enable the following Scanner Path(s)."
+msgstr "Cliquez sur «Continuer» pour activer les chemins de scanner suivants."
+
+#: ../disku_paths.php:213
+#, fuzzy
+msgid "Enable Disk Monitor Scan Path(s)"
+msgstr "Activer le ou les chemins d’analyse de Disk Monitor"
+
+#: ../disku_paths.php:217
+#, fuzzy
+msgid "Click 'Continue' to Clear Statistics on the following Scanner Path(s)."
+msgstr "Cliquez sur «Continuer» pour effacer les statistiques sur les chemins de scanner suivants."
+
+#: ../disku_paths.php:222
+#, fuzzy
+msgid "Clear Disk Monitor Scan Path Stats"
+msgstr "Effacer les statistiques du chemin de scan du moniteur de disque"
+
+#: ../disku_paths.php:225 ../disku_pollers.php:218
+msgid "Cancel"
+msgstr "Abandonner"
+
+#: ../disku_paths.php:225 ../disku_pollers.php:218
+msgid "Continue"
+msgstr "Continuer"
+
+#: ../disku_paths.php:227
+#, fuzzy
+msgid "You must select at least one Disk Monitor Scan Path."
+msgstr "Vous devez sélectionner au moins un moniteur."
+
+#: ../disku_paths.php:263 ../disku_paths.php:609 ../setup.php:687
+#: ../setup.php:695 ../setup.php:703 ../disku_applications.php:331
+#: ../disku_extenreg.php:803 ../disku_extenreg.php:1205
+#: ../disku_extensions.php:139 ../disku_extensions.php:313
+#: ../disku_orgview.php:131 ../disku_orgview.php:141
+msgid "Undefined"
+msgstr "Indéfini"
+
+#: ../disku_paths.php:263
+#, fuzzy, php-format
+msgid "Disk Monitoring Path [edit: %s]"
+msgstr "Chemin de surveillance du disque [modifier:%s]"
+
+#: ../disku_paths.php:265
+#, fuzzy
+msgid "Disk Monitoring Path [new]"
+msgstr "Chemin de surveillance du disque [nouveau]"
+
+#: ../disku_paths.php:272
+#, fuzzy
+msgid "Path to Monitor"
+msgstr "Surveiller"
+
+#: ../disku_paths.php:273
+#, fuzzy
+msgid "Enter the path that must be scanned."
+msgstr "Entrez le chemin qui doit être numérisé."
+
+#: ../disku_paths.php:281 ../disku_paths.php:581
+#, fuzzy
+msgid "Path Name"
+msgstr "Nom de chemin:"
+
+#: ../disku_paths.php:282
+#, fuzzy
+msgid "Give the path a common name for others."
+msgstr "Donnez au chemin un nom commun pour les autres."
+
+#: ../disku_paths.php:290
+#, fuzzy
+msgid "Path Descripton"
+msgstr "Descripton du chemin"
+
+#: ../disku_paths.php:291
+#, fuzzy
+msgid "Details about this path for support purposes."
+msgstr "Détails sur ce chemin à des fins d'assistance."
+
+#: ../disku_paths.php:299
+#, fuzzy
+msgid "Tag Name for Accounting"
+msgstr "Nom de balise pour la comptabilité"
+
+#: ../disku_paths.php:300
+#, fuzzy
+msgid "Aggregates file statistical information under this name."
+msgstr "Agrège les informations statistiques du fichier sous ce nom."
+
+#: ../disku_paths.php:308
+#, fuzzy
+msgid "Poller Name"
+msgstr "Nom du pousseur"
+
+#: ../disku_paths.php:309
+#, fuzzy
+msgid "Select the poller that collects data for the configured path."
+msgstr "Sélectionnez l'interrogateur qui collecte les données pour le chemin configuré."
+
+#: ../disku_paths.php:316
+#, fuzzy
+msgid "Directory Depth"
+msgstr "Profondeur du répertoire"
+
+#: ../disku_paths.php:317
+#, fuzzy
+msgid "For parallelization support, what depth to you want to traverse the file system to determine the number of threads."
+msgstr "Pour la prise en charge de la parallélisation, quelle profondeur souhaitez-vous parcourir le système de fichiers pour déterminer le nombre de threads."
+
+#: ../disku_paths.php:321
+#, fuzzy, php-format
+msgid "%d Directory Deep"
+msgstr "% d Directory Deep"
+
+#: ../disku_paths.php:322 ../disku_paths.php:323 ../disku_paths.php:324
+#, fuzzy, php-format
+msgid "%d Directories Deep"
+msgstr "% d répertoires profonds"
+
+#: ../disku_paths.php:329
+#, fuzzy
+msgid "Max Concurrent Threads"
+msgstr "Nombre maximal de threads simultanés"
+
+#: ../disku_paths.php:330
+#, fuzzy
+msgid "Select the default maximum concurrent threads that you want to use in parallel on the configured path for that host. For example, if you set the path as <span class=\"filepath\">/tmp</span> with a Depth 2 and Thread 5, then<span class=\"filepath\">/tmp</span> is scanned until two directories depth by initiating 5 concurrent processes. Default is 5 Threads per path."
+msgstr "Sélectionnez le nombre maximal d'unités d'exécution simultanées par défaut que vous souhaitez utiliser en parallèle sur le chemin configuré pour cet hôte. Par exemple, si vous définissez le chemin comme <span class=\"filepath\">/ tmp</span> avec une profondeur 2 et un thread 5, <span class=\"filepath\">/ tmp</span> est analysé jusqu'à la profondeur de deux répertoires en lançant 5 processus simultanés. La valeur par défaut est 5 threads par chemin."
+
+#: ../disku_paths.php:334
+#, fuzzy, php-format
+msgid "%d Thread"
+msgstr "% d thread"
+
+#: ../disku_paths.php:335 ../disku_paths.php:336 ../disku_paths.php:337
+#: ../disku_paths.php:338 ../disku_paths.php:339 ../disku_paths.php:340
+#: ../disku_paths.php:341 ../disku_paths.php:342 ../disku_paths.php:343
+#, fuzzy, php-format
+msgid "%d Threads"
+msgstr "% d threads"
+
+#: ../disku_paths.php:348
+#, fuzzy
+msgid "Do Not Monitor this Path"
+msgstr "Ne surveillez pas ce chemin"
+
+#: ../disku_paths.php:349
+#, fuzzy
+msgid "Check this box if you want to disable scanning for this path."
+msgstr "Cochez cette case si vous souhaitez désactiver l'analyse de ce chemin."
+
+#: ../disku_paths.php:384
+#, fuzzy, php-format
+msgid "%d Hrs"
+msgstr "<ph id=\"mtc_1\" equiv-text=\"base64:JWQ=\"/> h"
+
+#: ../disku_paths.php:386
+#, fuzzy, php-format
+msgid "%d Mins"
+msgstr "<ph id=\"mtc_1\" equiv-text=\"base64:JWQ=\"/> minutes"
+
+#: ../disku_paths.php:389
+#, fuzzy, php-format
+msgid "%d Secs"
+msgstr "<ph id=\"mtc_1\" equiv-text=\"base64:JWQ=\"/> s"
+
+#: ../disku_paths.php:402 ../disku_paths.php:584 ../disku_dashboard.php:128
+#: ../disku_dashboard.php:227 ../disku_pollers.php:486
+msgid "Location"
+msgstr "Emplacement"
+
+#: ../disku_paths.php:406 ../setup.php:569 ../disku_dashboard.php:231
+#: ../disku_extensions.php:138 ../disku_extensions.php:161
+#: ../disku_groups.php:128 ../disku_orgview.php:208 ../disku_orgview.php:245
+#: ../disku_orgview.php:283 ../disku_users.php:135 ../disku_users.php:166
+msgid "All"
+msgstr "Tout"
+
+#: ../disku_paths.php:422 ../disku_paths.php:586 ../disku_pollers.php:481
+msgid "Status"
+msgstr "État"
+
+#: ../disku_paths.php:426
+msgid "Any"
+msgstr "N'importe quel"
+
+#: ../disku_paths.php:427 ../disku_paths.php:585
+msgid "Enabled"
+msgstr "Activé"
+
+#: ../disku_paths.php:428 ../disku_paths.php:614
+msgid "Disabled"
+msgstr "Désactivé"
+
+#: ../disku_paths.php:432 ../disku_paths.php:596 ../disku_pollers.php:506
+msgid "Paths"
+msgstr "Chemins"
+
+#: ../disku_paths.php:436 ../disku_tagview.php:131 ../setup.php:557
+#: ../disku_applications.php:402 ../disku_appview.php:131
+#: ../disku_dashboard.php:250 ../disku_extensions.php:171
+#: ../disku_groups.php:138 ../disku_orgview.php:320 ../disku_pollers.php:635
+#: ../disku_users.php:176
+msgid "Default"
+msgstr "Défaut"
+
+#: ../disku_paths.php:448 ../disku_tagview.php:142
+#: ../disku_applications.php:414 ../disku_appview.php:143
+#: ../disku_dashboard.php:262 ../disku_extenreg.php:1071
+#: ../disku_extensions.php:183 ../disku_groups.php:150 ../disku_orgview.php:332
+#: ../disku_pollers.php:646 ../disku_users.php:188
+msgid "Go"
+msgstr "Go"
+
+#: ../disku_paths.php:448 ../disku_paths.php:457 ../disku_tagview.php:121
+#: ../disku_applications.php:392 ../disku_applications.php:414
+#: ../disku_appview.php:121 ../disku_dashboard.php:262
+#: ../disku_dashboard.php:271 ../disku_extenreg.php:1080
+#: ../disku_extensions.php:192 ../disku_groups.php:159 ../disku_orgview.php:341
+#: ../disku_pollers.php:625 ../disku_pollers.php:646 ../disku_users.php:197
+msgid "Search"
+msgstr "Rechercher"
+
+#: ../disku_paths.php:449 ../disku_tagview.php:143
+#: ../disku_applications.php:415 ../disku_appview.php:144
+#: ../disku_dashboard.php:263 ../disku_extenreg.php:1072
+#: ../disku_extensions.php:184 ../disku_groups.php:151 ../disku_orgview.php:333
+#: ../disku_pollers.php:647 ../disku_users.php:189
+msgid "Clear"
+msgstr "Effacer"
+
+#: ../disku_paths.php:449 ../disku_tagview.php:143
+#: ../disku_applications.php:415 ../disku_appview.php:144
+#: ../disku_dashboard.php:263 ../disku_extenreg.php:1072
+#: ../disku_extensions.php:184 ../disku_groups.php:151 ../disku_orgview.php:333
+#: ../disku_pollers.php:647 ../disku_users.php:189
+msgid "Clear Filters"
+msgstr "Supprimer les filtres"
+
+#: ../disku_paths.php:517
+#, fuzzy
+msgid "Disk Monitoring Paths"
+msgstr "Chemins de surveillance des disques"
+
+#: ../disku_paths.php:582
+msgid "Path"
+msgstr "Chemin"
+
+#: ../disku_paths.php:583 ../disku_tagview.php:177
+msgid "Tag Name"
+msgstr "Nom du mot-clé"
+
+#: ../disku_paths.php:587 ../disku_pollers.php:511
+msgid "Pending"
+msgstr "En attente"
+
+#: ../disku_paths.php:588 ../disku_paths.php:614 ../disku_pollers.php:516
+#: ../disku_pollers.php:564
+msgid "Running"
+msgstr "En cours"
+
+#: ../disku_paths.php:589
+#, fuzzy
+msgid "Depth/Threads"
+msgstr "Profondeur / filets"
+
+#: ../disku_paths.php:590
+#, fuzzy
+msgid "Cur Time"
+msgstr "Cur Time"
+
+#: ../disku_paths.php:591 ../disku_pollers.php:526
+msgid "Avg Time"
+msgstr "Temps Moyen"
+
+#: ../disku_paths.php:592 ../disku_pollers.php:531
+msgid "Max Time"
+msgstr "Temps maximum"
+
+#: ../disku_paths.php:593 ../disku_pollers.php:536
+#, fuzzy
+msgid "Last Started"
+msgstr "Dernier démarrage"
+
+#: ../disku_paths.php:594 ../disku_pollers.php:541
+#, fuzzy
+msgid "Last Ended"
+msgstr "Le dernier épisode a pris fin le"
+
+#: ../disku_paths.php:613 ../disku_extenreg.php:1206
+#: ../disku_extensions.php:163 ../disku_extensions.php:314
+msgid "No"
+msgstr "Non"
+
+#: ../disku_paths.php:613 ../disku_extenreg.php:1206
+#: ../disku_extensions.php:162 ../disku_extensions.php:314
+msgid "Yes"
+msgstr "Oui"
+
+#: ../disku_paths.php:614
+msgid "Idle"
+msgstr "à l'arrêt"
+
+#: ../disku_paths.php:627
+#, fuzzy
+msgid "No Disk Data Collector Paths Defined"
+msgstr "Aucun chemin de collecteur de données de disque défini"
+
+#: ../disku_tagview.php:112
+#, fuzzy
+msgid "Disk Monitoring by Tag Name"
+msgstr "Surveillance de disque par nom de balise"
+
+#: ../disku_tagview.php:127 ../disku_tagview.php:212
+msgid "Tags"
+msgstr "Étiquettes"
+
+#: ../disku_tagview.php:142 ../disku_appview.php:143 ../disku_extenreg.php:1071
+#: ../disku_extensions.php:183 ../disku_groups.php:150 ../disku_orgview.php:332
+#: ../disku_users.php:188
+#, fuzzy
+msgid "Set/Refresh Filters"
+msgstr "Définir / actualiser les filtres"
+
+#: ../disku_tagview.php:173 ../setup.php:768 ../setup.php:778 ../setup.php:783
+#: ../setup.php:789 ../setup.php:804 ../disku_appview.php:166
+#: ../disku_dashboard.php:117 ../disku_extenreg.php:1114
+#: ../disku_extensions.php:220 ../disku_groups.php:199 ../disku_orgview.php:375
+#: ../disku_users.php:235
+msgid "Actions"
+msgstr "Actions"
+
+#: ../disku_tagview.php:181 ../disku_appview.php:178 ../disku_extenreg.php:1134
+#: ../disku_extensions.php:240 ../disku_groups.php:211 ../disku_orgview.php:404
+msgid "Total Users"
+msgstr "Nombre total d’utilisateurs"
+
+#: ../disku_tagview.php:186 ../disku_appview.php:183 ../disku_extenreg.php:1139
+#: ../disku_extensions.php:245 ../disku_groups.php:215 ../disku_orgview.php:409
+#: ../disku_users.php:255
+msgid "Total Files"
+msgstr "Nombre total de fichiers"
+
+#: ../disku_tagview.php:191 ../disku_appview.php:188 ../disku_extenreg.php:1144
+#: ../disku_extensions.php:250 ../disku_groups.php:225 ../disku_orgview.php:419
+#: ../disku_users.php:265
+msgid "Total Size"
+msgstr "Taille totale"
+
+#: ../disku_tagview.php:196 ../disku_appview.php:193 ../disku_extenreg.php:1149
+#: ../disku_extensions.php:255 ../disku_groups.php:230 ../disku_orgview.php:424
+#: ../disku_users.php:270
+#, fuzzy
+msgid "Less 6 Months"
+msgstr "6 mois"
+
+#: ../disku_tagview.php:201 ../disku_appview.php:198 ../disku_extenreg.php:1154
+#: ../disku_extensions.php:260 ../disku_groups.php:235 ../disku_orgview.php:429
+#: ../disku_users.php:275
+#, fuzzy
+msgid "Between 6-12 Months"
+msgstr "En Autriche une Au Pair peut vivre dans une famille d'Accueil entre 6 à 12 mois."
+
+#: ../disku_tagview.php:206 ../disku_appview.php:203 ../disku_extenreg.php:1159
+#: ../disku_extensions.php:265 ../disku_groups.php:240 ../disku_orgview.php:434
+#: ../disku_users.php:280
+#, fuzzy
+msgid "12 Months Plus"
+msgstr "Pili 12m+"
+
+#: ../disku_tagview.php:265
+#, fuzzy
+msgid "No Tag Name Found"
+msgstr "Aucun nom Trouvé!"
+
+#: ../setup.php:465
+msgid "Management"
+msgstr "Gestion"
+
+#: ../setup.php:466 ../setup.php:467 ../setup.php:468 ../setup.php:469
+#: ../setup.php:474
+#, fuzzy
+msgid "Disk Monitoring"
+msgstr "Surveillance de disque"
+
+#: ../setup.php:466
+#, fuzzy
+msgid "File System Pollers"
+msgstr "Interrogateurs du système de fichiers"
+
+#: ../setup.php:467
+#, fuzzy
+msgid "File System Scan Paths"
+msgstr "Chemins d'analyse du système de fichiers"
+
+#: ../setup.php:468 ../setup.php:800 ../setup.php:801
+#: ../disku_applications.php:398 ../disku_applications.php:537
+#: ../disku_appview.php:127 ../disku_appview.php:209
+msgid "Applications"
+msgstr "Candidatures"
+
+#: ../setup.php:469
+#, fuzzy
+msgid "Extension Registry"
+msgstr "Registre d'extension"
+
+#: ../setup.php:481
+#, fuzzy
+msgid "Weekly at Day/Time"
+msgstr "Hebdomadaire jour / heure"
+
+#: ../setup.php:482
+#, fuzzy
+msgid "Daily at Time"
+msgstr "Tous les jours à"
+
+#: ../setup.php:486
+msgid "Sunday"
+msgstr "Dimanche"
+
+#: ../setup.php:487
+msgid "Monday"
+msgstr "Lundi"
+
+#: ../setup.php:488
+msgid "Tuesday"
+msgstr "Mardi"
+
+#: ../setup.php:489
+msgid "Wednesday"
+msgstr "Mercredi"
+
+#: ../setup.php:490
+msgid "Thursday"
+msgstr "Jeudi"
+
+#: ../setup.php:491
+msgid "Friday"
+msgstr "Vendredi"
+
+#: ../setup.php:492
+msgid "Saturday"
+msgstr "Samedi"
+
+#: ../setup.php:496
+msgid "Level 1"
+msgstr "Niveau 1"
+
+#: ../setup.php:497
+msgid "Level 2"
+msgstr "Niveau 2"
+
+#: ../setup.php:498
+#, fuzzy
+msgid "Level 1 + Level 2"
+msgstr "Niveau I Niveau II"
+
+#: ../setup.php:499
+msgid "Level 3"
+msgstr "Niveau 3"
+
+#: ../setup.php:500
+#, fuzzy
+msgid "Level 1 + Level 3"
+msgstr "Niveau 1 ... Niveau 3"
+
+#: ../setup.php:501
+#, fuzzy
+msgid "Level 2 + Level 3"
+msgstr "Niveaux 2 & 3"
+
+#: ../setup.php:502
+#, fuzzy
+msgid "Level 1 + Level 2 + Level 3"
+msgstr "Niveau 1 + Niveau 2 + Niveau 3"
+
+#: ../setup.php:573 ../setup.php:574
+#, php-format
+msgid "%d Days"
+msgstr "%d Jours"
+
+#: ../setup.php:575
+#, php-format
+msgid "%d Week"
+msgstr "%d semaine"
+
+#: ../setup.php:576 ../setup.php:577
+#, php-format
+msgid "%d Weeks"
+msgstr "%d semaines"
+
+#: ../setup.php:578
+#, php-format
+msgid "%d Month"
+msgstr "%d mois"
+
+#: ../setup.php:579 ../setup.php:580 ../setup.php:581 ../setup.php:582
+#, php-format
+msgid "%d Months"
+msgstr "%d mois"
+
+#: ../setup.php:583
+#, php-format
+msgid "%d Year"
+msgstr "%d année"
+
+#: ../setup.php:584 ../setup.php:585
+#, php-format
+msgid "%d Years"
+msgstr "%d années"
+
+#: ../setup.php:588
+#, fuzzy
+msgid "Duplicated Extension. The Extension has exsited already."
+msgstr "Extension dupliquée. L'extension a déjà quitté."
+
+#: ../setup.php:591
+#, fuzzy
+msgid "Duplicated Extension. And the Extension has mapped to the same application."
+msgstr "Extension dupliquée. Et l'extension a mappé à la même application."
+
+#: ../setup.php:594
+#, fuzzy
+msgid "Duplicated Extension. The Extension will map to more than one application."
+msgstr "Extension dupliquée. L'extension sera mappée sur plusieurs applications."
+
+#: ../setup.php:597
+#, fuzzy
+msgid "A absolute path is needed."
+msgstr "Un chemin absolu est nécessaire."
+
+#: ../setup.php:600
+#, fuzzy
+msgid "Duplicated Path. The Path of the Poller has exsited already."
+msgstr "Chemin dupliqué. Le Chemin du Poller est déjà sorti."
+
+#: ../setup.php:619
+#, fuzzy
+msgid "RTM Plugins"
+msgstr "Plugins"
+
+#: ../setup.php:623
+#, fuzzy
+msgid "Disk Monitoring General Settings"
+msgstr "Paramètres généraux de surveillance du disque"
+
+#: ../setup.php:633
+#, fuzzy
+msgid "Add Disk Monitoring Device Automatically"
+msgstr "Ajouter un périphérique de surveillance de disque automatiquement"
+
+#: ../setup.php:634
+#, fuzzy
+msgid "RTM will add device and the related graphs for monitoring"
+msgstr "RTM ajoutera l'appareil et les graphiques associés pour la surveillance"
+
+#: ../setup.php:639
+#, fuzzy
+msgid "Bypass Directories"
+msgstr "Répertoires de contournement"
+
+#: ../setup.php:640
+msgid "The directories and files of which path content these strings will be bypassed during raw data scanning. Some directory paths can lead to misleading data, and cause the scanning process to take an excessive amount of time.  One important path that should always be ignored are one that include \".snapshot\" folders.  Scanning these folders will result in not only longer scan times, but erroneous data. If multiple strings need to be bypassed, separated them by semi-colon. For example, \"ex1;/ex2/\" will bypass directories and files of which path contents \"ex1\", and will bypass directories of which path contents \"/ex2/\"."
+msgstr ""
+
+#: ../setup.php:647
+#, fuzzy
+msgid "Disk Monitoring Data Retention Settings"
+msgstr "Paramètres de conservation des données de surveillance du disque"
+
+#: ../setup.php:651
+#, fuzzy
+msgid "Historical Data Retention"
+msgstr "Conservation des données historiques"
+
+#: ../setup.php:652
+#, fuzzy
+msgid "Select the period you want to store Daily Statistics data. Default is 1 year."
+msgstr "Sélectionnez la période pendant laquelle vous souhaitez stocker les données des statistiques quotidiennes. La valeur par défaut est 1 an."
+
+#: ../setup.php:658
+#, fuzzy
+msgid "Rotation Frequency"
+msgstr "Fréquence de rotation"
+
+#: ../setup.php:659
+#, fuzzy
+msgid "Select the data partition frequency. For example, if your poller runs once a day, then select Daily, if it runs once a week, then select Weekly. Default is Daily."
+msgstr "Sélectionnez la fréquence de la partition de données. Par exemple, si votre scrutateur s'exécute une fois par jour, puis sélectionnez Quotidien, s'il s'exécute une fois par semaine, puis sélectionnez Hebdomadaire. La valeur par défaut est Daily."
+
+#: ../setup.php:662
+msgid "Daily"
+msgstr "Quotidien"
+
+#: ../setup.php:662
+msgid "Weekly"
+msgstr "Hebdomadaire"
+
+#: ../setup.php:665
+#, fuzzy
+msgid "Data Storage Rotation Schedule "
+msgstr "Calendrier de rotation du stockage des données"
+
+#: ../setup.php:666
+#, fuzzy
+msgid "Only when using Weekly rotation, what day should this rotation take place. Select a day to back up data. Default is Sunday."
+msgstr "Ce n'est que lorsque vous utilisez la rotation hebdomadaire, quel jour cette rotation doit avoir lieu. Sélectionnez un jour pour sauvegarder les données. La valeur par défaut est dimanche."
+
+#: ../setup.php:672
+msgid "Rotation Time"
+msgstr "Temps de Rotation"
+
+#: ../setup.php:673
+#, fuzzy
+msgid "Set the time for back up rotation schedule. Please make this of day a time when no pollers are collecting data."
+msgstr "Définissez l'heure du programme de rotation de sauvegarde. Veuillez faire de cette journée un moment où aucun sondeur ne recueille de données."
+
+#: ../setup.php:679
+#, fuzzy
+msgid "Disk Monitoring Organizational Hierarchy"
+msgstr "Hiérarchie organisationnelle de la surveillance des disques"
+
+#: ../setup.php:683
+#, fuzzy
+msgid "Level 1 Hierarchy"
+msgstr "Hiérarchie de niveau 1"
+
+#: ../setup.php:684
+#, fuzzy
+msgid "Set the highest level of hierarchy"
+msgstr "Définissez le niveau de hiérarchie le plus élevé"
+
+#: ../setup.php:691
+#, fuzzy
+msgid "Level 2 Hierarchy"
+msgstr "Hiérarchie de niveau 2"
+
+#: ../setup.php:692
+#, fuzzy
+msgid "Set the second level of hierarchy"
+msgstr "Définir le deuxième niveau de hiérarchie"
+
+#: ../setup.php:699
+#, fuzzy
+msgid "Level 3 Hierarchy"
+msgstr "Hiérarchie de niveau 3"
+
+#: ../setup.php:700
+#, fuzzy
+msgid "Set the third level of hierarchy"
+msgstr "Définir le troisième niveau de hiérarchie"
+
+#: ../setup.php:707
+#, fuzzy
+msgid "Organizational Graph Level"
+msgstr "Niveau du graphique organisationnel"
+
+#: ../setup.php:708
+#, fuzzy
+msgid "Create graphs on which organization level."
+msgstr "Créez des graphiques à quel niveau d'organisation."
+
+#: ../setup.php:714
+#, fuzzy
+msgid "Disk Monitoring User/Group Settings"
+msgstr "Paramètres utilisateur / groupe de surveillance de disque"
+
+#: ../setup.php:718
+#, fuzzy
+msgid "User/Group Collection Method"
+msgstr "Méthode de collecte des utilisateurs / groupes"
+
+#: ../setup.php:719
+#, fuzzy
+msgid "What method should be used to determine users and group membership"
+msgstr "Quelle méthode doit être utilisée pour déterminer les utilisateurs et l'appartenance à un groupe"
+
+#: ../setup.php:726
+#, fuzzy
+msgid "Valid Unique Identifier (UID) User ID Range"
+msgstr "Plage d'ID utilisateur de l'identificateur unique valide (UID)"
+
+#: ../setup.php:727
+#, fuzzy
+msgid "Define a range  to uniquely identify users. By default, it is 1000 - 100000"
+msgstr "Définissez une plage pour identifier de manière unique les utilisateurs. Par défaut, c'est 1000 - 100000"
+
+#: ../setup.php:734
+#, fuzzy
+msgid "Valid Unique Identifier (GID) Group ID Range"
+msgstr "Plage d'ID de groupe d'identificateurs uniques valides (GID)"
+
+#: ../setup.php:735
+#, fuzzy
+msgid "Define a range to uniquely identify user groups. By default, it is 500 - 10000"
+msgstr "Définissez une plage pour identifier de manière unique les groupes d'utilisateurs. Par défaut, il s'agit de 500 - 10000"
+
+#: ../setup.php:765
+#, fuzzy
+msgid "Disk Pollers"
+msgstr "Pollers de disque"
+
+#: ../setup.php:766 ../setup.php:776 ../setup.php:781 ../setup.php:787
+#: ../setup.php:802
+msgid "(Edit)"
+msgstr "(Editer)"
+
+#: ../setup.php:767 ../setup.php:777 ../setup.php:782 ../setup.php:788
+#: ../setup.php:803
+#, fuzzy
+msgid "(Save)"
+msgstr "Sauvegarder"
+
+#: ../setup.php:775
+#, fuzzy
+msgid "Monitoring Paths"
+msgstr "Surveillance des chemins"
+
+#: ../setup.php:780
+#, fuzzy
+msgid "Unix Group Data Managers"
+msgstr "Gestionnaires de données du groupe Unix"
+
+#: ../setup.php:785
+#, fuzzy
+msgid "File Extension Registry"
+msgstr "Registre d'extension de fichier"
+
+#: ../setup.php:786
+msgid "File Extensions"
+msgstr "Extensions du fichier"
+
+#: ../setup.php:791 ../setup.php:792
+#, fuzzy
+msgid "Disk Usage by Extension"
+msgstr "Utilisation du disque par extension"
+
+#: ../setup.php:794 ../setup.php:795
+#, fuzzy
+msgid "Disk Usage by Application"
+msgstr "Utilisation du disque par application"
+
+#: ../setup.php:797 ../setup.php:798
+#, fuzzy
+msgid "Disk Usage by Tag Name"
+msgstr "Utilisation du disque par nom de balise"
+
+#: ../setup.php:806 ../setup.php:807
+#, fuzzy
+msgid "Disk Usage By Operating System Users"
+msgstr "Utilisation du disque par les utilisateurs du système d'exploitation"
+
+#: ../setup.php:809 ../setup.php:810
+#, fuzzy
+msgid "Disk Usage By Operating System Groups"
+msgstr "Utilisation du disque par groupes de systèmes d'exploitation"
+
+#: ../setup.php:812 ../setup.php:813
+#, fuzzy
+msgid "Disk Usage By Organization"
+msgstr "Utilisation du disque par organisation"
+
+#: ../setup.php:815 ../setup.php:816
+#, fuzzy
+msgid "Disk Monitoring Dashboard"
+msgstr "Tableau de bord de surveillance des disques"
+
+#: ../setup.php:835 ../setup.php:875 ../setup.php:890 ../setup.php:891
+#, fuzzy
+msgid "Disk Utilization"
+msgstr "Utilisation"
+
+#: ../setup.php:876
+msgid "By Volume"
+msgstr "Par volume"
+
+#: ../setup.php:877
+msgid "By Organization"
+msgstr "Par organisation"
+
+#: ../setup.php:878
+#, fuzzy
+msgid "By OS User"
+msgstr "Par utilisateur du système d'exploitation"
+
+#: ../setup.php:879
+#, fuzzy
+msgid "By OS Group"
+msgstr "Par OS Group"
+
+#: ../setup.php:880
+#, fuzzy
+msgid "By File Extension"
+msgstr "Extension du fichier"
+
+#: ../setup.php:881
+#, fuzzy
+msgid "By Application"
+msgstr "Par Application (+)"
+
+#: ../setup.php:882
+#, fuzzy
+msgid "By Tag Name"
+msgstr "Nom de l’étiquette"
+
+#: ../setup.php:889
+msgid "Dashboards"
+msgstr "Tableaux de bord"
+
+#: ../disku_applications.php:208
+#, fuzzy
+msgid "Delete Application(s)"
+msgstr "Supprimer une ou des applications"
+
+#: ../disku_applications.php:213
+#, fuzzy
+msgid "You must select at least one Application."
+msgstr "Vous devez séléctionner au moins un ;)"
+
+#: ../disku_applications.php:333
+#, fuzzy
+msgid "Disk Monitoring Application [new]"
+msgstr "Application de surveillance de disque [nouveau]"
+
+#: ../disku_applications.php:340 ../disku_applications.php:341
+#: ../disku_applications.php:522
+msgid "Application Name"
+msgstr "Nom de l’application"
+
+#: ../disku_applications.php:349 ../disku_applications.php:350
+#: ../disku_appview.php:174
+msgid "Vendor"
+msgstr "Vendeur"
+
+#: ../disku_applications.php:467
+#, fuzzy
+msgid "Disk Monitoring Applications"
+msgstr "Applications de surveillance de disque"
+
+#: ../disku_applications.php:526
+msgid "Vendor Name"
+msgstr "Nom du vendeur"
+
+#: ../disku_applications.php:530
+msgid "ID"
+msgstr "ID"
+
+#: ../disku_applications.php:555
+#, fuzzy
+msgid "No Applications Found"
+msgstr "Aucune candidature trouvée"
+
+#: ../disku_appview.php:112
+#, fuzzy
+msgid "Disk Monitoring by Application"
+msgstr "Surveillance de disque par application"
+
+#: ../disku_appview.php:170 ../disku_extenreg.php:825
+#: ../disku_extenreg.php:1122 ../disku_extensions.php:228
+msgid "Application"
+msgstr "Candidature"
+
+#: ../disku_appview.php:262
+#, fuzzy
+msgid "No Application Found"
+msgstr "Aucune application n'a été trouvée"
+
+#: ../disku_dashboard.php:74
+#, fuzzy
+msgid "Disk Monitoring File Systems"
+msgstr "Systèmes de fichiers de surveillance de disque"
+
+#: ../disku_dashboard.php:120
+msgid "Mount Point"
+msgstr "Point de montage"
+
+#: ../disku_dashboard.php:124
+msgid "Device"
+msgstr "Équipement"
+
+#: ../disku_dashboard.php:132 ../disku_pollers.php:476
+msgid "Hostname"
+msgstr "Nom de machine"
+
+#: ../disku_dashboard.php:136
+msgid "Size"
+msgstr "Taille"
+
+#: ../disku_dashboard.php:141
+msgid "Used"
+msgstr "Utilisé"
+
+#: ../disku_dashboard.php:146
+msgid "Available"
+msgstr "Disponible"
+
+#: ../disku_dashboard.php:151
+#, fuzzy
+msgid "Percent Used"
+msgstr "Pourcentage"
+
+#: ../disku_dashboard.php:157 ../disku_dashboard.php:246
+msgid "File Systems"
+msgstr "Systèmes de fichiers"
+
+#: ../disku_extenreg.php:29
+msgid "Monitor"
+msgstr "Moniteur"
+
+#: ../disku_extenreg.php:30
+#, fuzzy
+msgid "Unmonitor"
+msgstr "Ne pas surveiller"
+
+#: ../disku_extenreg.php:587
+#, fuzzy
+msgid "You must select at least one Extension."
+msgstr "Vous devez séléctionner au moins un ;)"
+
+#: ../disku_extenreg.php:780
+msgid "[edit]"
+msgstr "[modifier]"
+
+#: ../disku_extenreg.php:783
+msgid "[new]"
+msgstr "[nouveau]"
+
+#: ../disku_extenreg.php:803
+#, fuzzy, php-format
+msgid "[edit: %s]"
+msgstr "Editer: <ph id=\"mtc_1\" equiv-text=\"base64:JXM=\"/>"
+
+#: ../disku_extenreg.php:809
+#, fuzzy
+msgid "Registry Extension Name"
+msgstr "Nom de l'extension de registre"
+
+#: ../disku_extenreg.php:817
+#, fuzzy
+msgid "Extension Description"
+msgstr "Description de l'extension"
+
+#: ../disku_extenreg.php:837
+#, fuzzy
+msgid "Application Level Extension Description"
+msgstr "Extension de niveau d'application Description"
+
+#: ../disku_extenreg.php:1013 ../disku_extensions.php:125
+#, fuzzy
+msgid "Disk Monitoring by Extension"
+msgstr "Surveillance de disque par extension"
+
+#: ../disku_extenreg.php:1022 ../disku_extensions.php:134
+msgid "App"
+msgstr "App"
+
+#: ../disku_extenreg.php:1045 ../disku_extenreg.php:1126
+#: ../disku_extensions.php:157 ../disku_extensions.php:232
+msgid "Monitored"
+msgstr "Surveillée"
+
+#: ../disku_extenreg.php:1055 ../disku_extenreg.php:1108
+#: ../disku_extensions.php:167 ../disku_extensions.php:271
+msgid "Extensions"
+msgstr "Extensions"
+
+#: ../disku_extenreg.php:1118 ../disku_extensions.php:224
+msgid "Extension"
+msgstr "Extension"
+
+#: ../disku_extenreg.php:1130 ../disku_extensions.php:236
+#, fuzzy
+msgid "Description and Application Level Description"
+msgstr "Description et description du niveau d'application"
+
+#: ../disku_extenreg.php:1219 ../disku_extensions.php:331
+#, fuzzy
+msgid "No Extensions Found"
+msgstr "Pas d'extension trouvé."
+
+#: ../disku_groups.php:86
+#, fuzzy
+msgid "Disk Monitoring by Group"
+msgstr "Surveillance de disque par groupe"
+
+#: ../disku_groups.php:124 ../disku_users.php:162
+msgid "Type"
+msgstr "Type"
+
+#: ../disku_groups.php:129 ../disku_users.php:167
+msgid "System"
+msgstr "Système"
+
+#: ../disku_groups.php:130 ../disku_users.php:131 ../disku_users.php:168
+#: ../disku_users.php:239
+msgid "User"
+msgstr "Utilisateur"
+
+#: ../disku_groups.php:134 ../disku_groups.php:246 ../disku_users.php:251
+msgid "Groups"
+msgstr "Groupes"
+
+#: ../disku_groups.php:203
+msgid "Group Name"
+msgstr "Nom du groupe"
+
+#: ../disku_groups.php:207
+msgid "Group ID"
+msgstr "Identifiant (ID) du groupe"
+
+#: ../disku_groups.php:220 ../disku_orgview.php:414 ../disku_users.php:260
+#, fuzzy
+msgid "Total Dirs"
+msgstr "Total Dirs"
+
+#: ../disku_orgview.php:152
+#, fuzzy
+msgid "Organization View"
+msgstr "Vue de l'organisation"
+
+#: ../disku_orgview.php:209 ../disku_orgview.php:246 ../disku_orgview.php:284
+msgid "N/A"
+msgstr "N/A"
+
+#: ../disku_orgview.php:316 ../disku_orgview.php:440
+msgid "Organizations"
+msgstr "Organisations"
+
+#: ../disku_orgview.php:561
+#, fuzzy
+msgid "No Disk Utilization Records Found"
+msgstr "Aucun enregistrement d'utilisation de disque trouvé"
+
+#: ../disku_pollers.php:31
+msgid "Reset Counters"
+msgstr "Réinitialiser compteur"
+
+#: ../disku_pollers.php:145
+#, fuzzy
+msgid "Unable to delete Pollers that have services running.  Shutdown diskud on the host prior to removing it."
+msgstr "Impossible de supprimer les sondeurs dont les services sont en cours d'exécution. Arrêtez diskud sur l'hôte avant de le supprimer."
+
+#: ../disku_pollers.php:183
+#, fuzzy
+msgid "Click 'Continue' to Delete the following Disk Monitoring Poller(s)."
+msgstr "Cliquez sur «Continuer» pour supprimer le ou les contrôleurs de surveillance de disque suivants."
+
+#: ../disku_pollers.php:188
+#, fuzzy
+msgid "Delete Disk Monitoring Poller(s)"
+msgstr "Supprimer le ou les contrôleurs de surveillance de disque"
+
+#: ../disku_pollers.php:192
+#, fuzzy
+msgid "Click 'Continue' to Disable the following Disk Monitoring Poller(s)."
+msgstr "Cliquez sur «Continuer» pour désactiver le ou les contrôleurs de surveillance de disque suivants."
+
+#: ../disku_pollers.php:197
+#, fuzzy
+msgid "Disable Disk Monitoring Poller(s)"
+msgstr "Désactiver le ou les contrôleurs de surveillance de disque"
+
+#: ../disku_pollers.php:201
+#, fuzzy
+msgid "Click 'Continue' to Enable the following Disk Monitoring Poller(s)."
+msgstr "Cliquez sur «Continuer» pour activer le ou les contrôleurs de surveillance de disque suivants."
+
+#: ../disku_pollers.php:206
+#, fuzzy
+msgid "Enable Disk Monitoring Poller(s)"
+msgstr "Activer le ou les contrôleurs de surveillance de disque"
+
+#: ../disku_pollers.php:210
+#, fuzzy
+msgid "Click 'Continue' to Reset Counters on the following Disk Monitoring Poller(s)."
+msgstr "Cliquez sur «Continuer» pour réinitialiser les compteurs sur les contrôleurs de surveillance de disque suivants."
+
+#: ../disku_pollers.php:215
+#, fuzzy
+msgid "Reset Counters for Disk Monitoring Poller(s)"
+msgstr "Réinitialiser les compteurs pour le ou les contrôleurs de surveillance de disque"
+
+#: ../disku_pollers.php:220
+#, fuzzy
+msgid "You must select at least one Disk Monitoring Poller."
+msgstr "Vous devez sélectionner au moins un contrôleur de surveillance de disque."
+
+#: ../disku_pollers.php:287
+#, fuzzy, php-format
+msgid "Disk Monitoring Poller [edit: %s (%s) ]"
+msgstr "Contrôleur de surveillance du disque [modifier:%s (%s)]"
+
+#: ../disku_pollers.php:289
+#, fuzzy
+msgid "Disk Monitoring Poller [new]"
+msgstr "Disk Monitoring Poller [nouveau]"
+
+#: ../disku_pollers.php:295
+#, fuzzy
+msgid "Poller Location"
+msgstr "Emplacement de Poller"
+
+#: ../disku_pollers.php:296
+#, fuzzy
+msgid "The location where the Poller is located"
+msgstr "L'endroit où se trouve le Poller"
+
+#: ../disku_pollers.php:304
+#, fuzzy
+msgid "Collection Timing"
+msgstr "Calendrier de collecte"
+
+#: ../disku_pollers.php:305
+#, fuzzy
+msgid "How often will the collectors be launched for this poller?"
+msgstr "À quelle fréquence les collecteurs seront-ils lancés pour ce scrutateur?"
+
+#: ../disku_pollers.php:312
+msgid "Day of Week"
+msgstr "Jour de la semaine"
+
+#: ../disku_pollers.php:313
+#, fuzzy
+msgid "When scanning weekly, what day of week should the scan be run?"
+msgstr "Lors de l'analyse hebdomadaire, quel jour de la semaine l'analyse doit-elle être exécutée?"
+
+#: ../disku_pollers.php:320
+msgid "Time of Day"
+msgstr "Heures de la journée"
+
+#: ../disku_pollers.php:321
+#, fuzzy
+msgid "What time of the day should scanning start?"
+msgstr "À quelle heure de la journée le scan doit-il commencer?"
+
+#: ../disku_pollers.php:328
+#, fuzzy
+msgid "Collect all file system disk space usage"
+msgstr "Collecter toute l'utilisation de l'espace disque du système de fichiers"
+
+#: ../disku_pollers.php:329
+#, fuzzy
+msgid "Collect disk space usage, not only the usage of local file systems, but also NFS file systems. If checked on more than one poller, and pollers in the same NFS, may cause duplicate records in Disk Monitoring Dashboard (Grid > Disk Utilization > By Volume)"
+msgstr "Collectez l'utilisation de l'espace disque, non seulement l'utilisation des systèmes de fichiers locaux, mais également les systèmes de fichiers NFS. Si cette option est cochée sur plusieurs pollers et que les pollers du même NFS peuvent provoquer des enregistrements en double dans le tableau de bord de surveillance des disques (Grille> Utilisation du disque> Par volume)"
+
+#: ../disku_pollers.php:408
+#, fuzzy
+msgid "Disk Monitoring Pollers"
+msgstr "Pollers de surveillance de disque"
+
+#: ../disku_pollers.php:491
+msgid "Launch Frequency"
+msgstr "Fréquence de lancement"
+
+#: ../disku_pollers.php:496
+#, fuzzy
+msgid "Launch Time"
+msgstr "Heure de lancement"
+
+#: ../disku_pollers.php:501
+#, fuzzy
+msgid "Launch Day"
+msgstr "Journée de lancement"
+
+#: ../disku_pollers.php:521
+msgid "Last Time"
+msgstr "Dernière minute"
+
+#: ../disku_pollers.php:547 ../disku_pollers.php:631
+msgid "Pollers"
+msgstr "Agents collecteurs"
+
+#: ../disku_pollers.php:564
+msgid "Up"
+msgstr "Haut"
+
+#: ../disku_pollers.php:566
+msgid "Orphaned"
+msgstr "Enfants orphelins"
+
+#: ../disku_pollers.php:566
+msgid "Down"
+msgstr "Bas"
+
+#: ../disku_pollers.php:588
+#, fuzzy
+msgid "No Pollers Defined"
+msgstr "Aucun sondeur défini"
+
+#: ../disku_pollers.php:607
+#, php-format
+msgid "%s Hrs"
+msgstr "%s H"
+
+#: ../disku_pollers.php:609
+#, fuzzy, php-format
+msgid "%s Mins"
+msgstr "<ph id=\"mtc_1\" equiv-text=\"base64:JXM=\"/> mins"
+
+#: ../disku_pollers.php:612
+#, fuzzy, php-format
+msgid "%s Secs"
+msgstr "<ph id=\"mtc_1\" equiv-text=\"base64:JXM=\"/> secondes"
+
+#: ../disku_users.php:88
+#, fuzzy
+msgid "Operating System Users"
+msgstr "Utilisateurs du système d'exploitation"
+
+#: ../disku_users.php:172 ../disku_users.php:286
+msgid "Users"
+msgstr "Utilisateurs"
+
+#: ../disku_users.php:243
+msgid "Name"
+msgstr "Nom"
+
+#: ../disku_users.php:247
+msgid "Default Group"
+msgstr "Groupe par défaut"
+
+#: ../disku_users.php:351
+msgid "No Users Found"
+msgstr "Aucun utilisateur trouvé"
+
+#: ../disku_users.php:361
+#, fuzzy
+msgid "User Range in Settings is invalid. Upper and lower range must be separated with a hypen."
+msgstr "La plage d'utilisateurs dans les paramètres n'est pas valide. Les plages supérieure et inférieure doivent être séparées par un hypène."
+
+#: ../disku_users.php:363
+#, fuzzy
+msgid "User Range in Settings is invalid.  Ranges are not numeric."
+msgstr "La plage d'utilisateurs dans les paramètres n'est pas valide. Les plages ne sont pas numériques."
+
+#: ../disku_users.php:365
+#, fuzzy
+msgid "User Range in Settings is invalid.  Lower range limit must be less than the upper range limit."
+msgstr "La plage d'utilisateurs dans les paramètres n'est pas valide. La limite inférieure de plage doit être inférieure à la limite supérieure de plage."

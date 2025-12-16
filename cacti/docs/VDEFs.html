@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – VDEFs</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="vdefs">VDEFs</h1>
+<h2 id="background">Background</h2>
+<p>VDEF's in Cacti are a one to one analog to VDEF's in RRDtool. Cacti simply provides and interface to create and manage them. Once the VDEF's are created in Cacti they can be imported and exported globally.</p>
+<p>VDEFS's are mathematical formulas that instead of operating on just one Data Point in the RRDfile, oerate on the entire Data Set in the time range selected. So, VDEF's become an excellent tool to replace Nth Percentile and Bandwidth function in Cacti with the VDEF equivalents.</p>
+<p>The are referenced in Cacti graphs as VNAMES. However, as mentioned before Cacti automatically assigns VNAMES. So, to perform complex operations, you will have to experiment to determine the VNAME of your VDEF as you build your <strong>Graph Template</strong>. But in their simplest forms, they are quite easy to use.</p>
+<p>The format of the mathematical formulas is called Reverse Polish Notation (RPN). RPN was and is an early form of how Engineers entered equations into early HP and other Calculators to solve Engineering problems. The reason we still use it today, is that it follows a simple Stack principle. In other words, it's not broken.</p>
+<h2 id="vdef-interface">VDEF Interface</h2>
+<p>In the image below, you can see all the VDEF's that are included in Cacti by default. They are included just to get you thinking about how your would use them. You can see straight away the first and the last items are 95th Percentile and Bandwidth (or Total) VDEF's. Other examples are pretty self explanatory.</p>
+<p>You will also note that you can Delete or Duplicate the VDEF's, but as with CDEF's you can not Delete a VDEF that is being used in a <strong>Graph</strong>.</p>
+<p><img src="images/vdefs.png" alt="VDEFS" /></p>
+<p>In the image below, you can also see that their interface very closely resembles the CDEF Interface. Unlike the CDEF's, there is presently only one <code>Special Data Source</code> and that's the Current Data Source, which makes sense when you think about it.</p>
+<p><img src="images/vdefs-edit1.png" alt="VDEF Edit" /></p>
+<p>In the image below, you can see an example of a Single completed VDEF for 95th Percentile of the Current Data Source. Pretty straightforward.</p>
+<p><img src="images/vdefs-edit2.png" alt="VDEF Item Edit" /></p>
+<p>In the next two images, you can see the VDEF Item Types and the comprehensive list of VDEF functions. Again, you can reference the <a href="https://oss.oetiker.ch/rrdtool/doc/rrdgraph_rpn.en.html">RRDtool Documentation</a> for usage examples for more information.</p>
+<p><img src="images/vdefs-edit3.png" alt="VDEF Item Edit" /></p>
+<p><img src="images/vdefs-edit4.png" alt="VDEF Item Edit" /></p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

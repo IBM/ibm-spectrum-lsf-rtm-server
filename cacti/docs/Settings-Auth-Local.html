@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Local Authentication</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="local-authentication">Local Authentication</h1>
+<h2 id="overview">Overview</h2>
+<p>Cacti's Built-in Authentication is sufficient for most small work-group Cacti installs. All users and their passwords are stored on the local Cacti database, and are stored in a method where they are not easily compromised.</p>
+<h2 id="local-account-complexity-requirements">Local Account Complexity Requirements</h2>
+<p>Additionally, Cacti has the ability to remember password history, force complexity rules, minimum lengths, force change frequency, etc. on new passwords. These settings are configurable as well. The image below shows the local complexity settings available in Cacti.</p>
+<p><img src="images/settings-auth-local-complexity.png" alt="Local Complexity Settings" /></p>
+<p>Those options include:</p>
+<ul>
+<li><strong>Minimum Length</strong> - The minimum length password that is acceptable</li>
+<li><strong>Require Mix Case</strong> - Require that the password have mixed case</li>
+<li><strong>Require Number</strong> - The password must includes a number.</li>
+<li><strong>Require Special Character</strong> - The password must include a Special Character.</li>
+<li><strong>Force Complexity Upon Old Passwords</strong> - If set, and a user attempts to login with a password that does not meet the current complexity requirements, they will be forced to change their password.</li>
+<li><strong>Expire Inactive Accounts</strong> - Disable inactive accounts after a certain number of days of inactivity.</li>
+<li><strong>Password History</strong> - Maintain a list of previous passwords, and do not allow a user to use one of those prior passwords during their password changes.</li>
+</ul>
+<h2 id="account-locking">Account Locking</h2>
+<p>If a user attempts to use an incorrect password more than a certain number of times without a successful login, Cacti can automatically lock out the user from that account for a certain amount of time. This technique prevents hackers from continually attempting to break a users password from the Cacti interface. The images below shows the two settings associated with this Cacti feature.</p>
+<p><img src="images/settings-auth-local-locking.png" alt="Local Lockout Settings" /></p>
+<p>The settings are fairly self explanatory, so additional detail is no provided here.</p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

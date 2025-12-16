@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Data Input Methods</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="data-input-methods">Data Input Methods</h1>
+<p>Data Input Methods allow Cacti to retrieve data to insert into RRDfiles based upon a mapping controlled by <strong>Data Templates</strong> and their corresponding <strong>Data Sources</strong>. These resulting <strong>Data Templates</strong> and <strong>Data Sources</strong> can then be used to create <strong>Graph Templates</strong> and <strong>Graphs</strong>.</p>
+<p>Cacti includes a number of build in <strong>Data Input Methods</strong> for <strong>SNMP</strong> data and for <strong>Script</strong>, <strong>Script Server</strong> and <strong>SNMP Data Queries</strong>.</p>
+<p>Outside of the built in <strong>Data Input Methods</strong>, the Cacti Administrator can create virtually any <strong>Data Input Method</strong> based upon a <strong>Script</strong>, or a PHP <strong>Script Server</strong> script. The <strong>Script</strong> based <strong>Data Input Method</strong> allows Cacti to virtually collect data from anywhere, though the built in <strong>SNMP</strong> and <strong>Script Server</strong> methods provide the greatest scalability in Cacti. Both <strong>Data Queries</strong>, and PHP <strong>Script Server</strong> topics will be covered in later sections of the documentation.</p>
+<h2 id="creating-a-data-input-method">Creating a Data Input Method</h2>
+<p>To create a new <strong>Data Input Method</strong>, from the Cacti Console, select <strong>Data Collection &gt; Data Input Methods</strong>. Once on that screen, click the plus (+) glyph on the right which will allow you to add a new <strong>Data Input Method</strong>. You will be presented with a few fields to populate on the following screen.</p>
+<h6 id="table-11-1-field-description-data-input-methods">Table 11-1. Field Description: Data Input Methods</h6>
+<table>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Name</td>
+<td>Give the data query a name that you will use to identify it</td>
+</tr>
+<tr class="even">
+<td>Input Type</td>
+<td>Select the type of <strong>Data Input Method</strong> you are trying to create</td>
+</tr>
+<tr class="odd">
+<td>Input String</td>
+<td>This field is only used when the Input Type is set to <strong>Script/Command</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The <code>Name</code> specified will be used throughout Cacti to identify the human readable name given to the <strong>Data Input Method</strong>. Careful consideration should be made to help uniquely identify the <strong>Data Source</strong>. Having very similar names can lead to confusion when utilizing them as your Cacti system grows.</p>
+<p>Valid options for <code>Input Type</code> are <strong>Script/Command</strong>, and <strong>Script Server</strong>. As mentioned previously, Cacti provides built in <strong>Data Input Methods</strong> for SNMP data gathering and for SNMP, <strong>Script</strong>, and <strong>Script Server</strong> based <strong>Data Queries</strong>. Though present in the Cacti database, they are hidden from user view.</p>
+<p>When the type is set to <code>Script/Command</code>, the <code>Input String</code> specifies the full path to the script including any per <strong>Data Source</strong> input variables. <strong>Data Source</strong> input variables must be enclosed in greater than and less than characters. For instance, if you are passing an IP address to a script, your input string might look something like: <code>/path/to/script.pl &lt;ip&gt;</code> When the user creates a <strong>Data Source</strong> based on this <strong>Data Input Method</strong>, they will be prompted for an IP address to pass onto the script.</p>
+<p>When you are finished filling in all necessary fields, click the Create button to continue. Upon saving the new <strong>Data Input Method</strong>, you will be presented with two new sections to complete. Those sections will instruct Cacti what to pass to the Script, known as <code>Input Fields</code> otherwise known as <code>Input Parameters</code> and how to handle the output data, which we refer to as <code>Output Fields</code>.</p>
+<p>The <code>Input Fields</code> box is used to define any fields that require information from the user or from various data within the Cacti Database such as the hostname, ip address, host id, etc. Any input fields referenced to in the input string must be defined here.</p>
+<p>The <code>Output Fields</code> box is used to define each field that you expect back from the script and will be eventually stored in both the database and RRDfiles.</p>
+<p><em>All <strong>Data Input Methods</strong> must have at least one output field defined</em>, but may have more than one depending on the type.</p>
+<h3 id="data-input-fields">Data Input Fields</h3>
+<p>To define a new field, click the plus sign (+) next to the input or output field boxes. You will be presented with some or all of the fields below depending on whether you are adding an input or output field.</p>
+<h6 id="table-11-2-field-description-data-input-fields">Table 11-2. Field Description: Data Input Fields</h6>
+<table>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Field/Field Name</td>
+<td>You will be presented a drop down list of the unused braced input fields from the command</td>
+</tr>
+<tr class="even">
+<td>Friendly Name</td>
+<td>Enter a more descriptive name for this field</td>
+</tr>
+<tr class="odd">
+<td>Regular Expression Match (Input Only)</td>
+<td>Enter a valid regular expression as to how to modify the output</td>
+</tr>
+<tr class="even">
+<td>Allow Empty Input (Input Only)</td>
+<td>Can the input value of this field blank or not</td>
+</tr>
+<tr class="odd">
+<td>Special Type Code (Input Only)</td>
+<td>Pull the input data from the Cacti database and don't prompt the user for this input value</td>
+</tr>
+<tr class="even">
+<td>Update RRDfile (Output Only)</td>
+<td>Checked if you intend this output data to be stored in an RRDfile</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>Field Name</code> must contain no spaces or other non-alphanumeric characters (except '-' or '_').</p>
+<p>If you want to enforce a certain regular expression pattern when the user enters a value into <code>Regular Expression Match (Input Only)</code> for this Data Input Field, it must follow POSIX syntax as it will be passed to PHP's preg() functions.</p>
+<p>If the Data Input Field needs to reference another field internally, you can enter this into the <code>Special Type Code</code>. For instance, if your field requires an IP address from the user, you can enter 'management_ip' here and Cacti will fill this field in with the current IP address of the selected host.</p>
+<h6 id="table-11-3-special-type-codes">Table 11-3. Special Type Codes</h6>
+<table>
+<thead>
+<tr class="header">
+<th>Field Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>hostname</td>
+<td>The hostname</td>
+</tr>
+<tr class="even">
+<td>management_ip</td>
+<td>The ip</td>
+</tr>
+<tr class="odd">
+<td>snmp_community</td>
+<td>The SNMP community</td>
+</tr>
+<tr class="even">
+<td>snmp_username</td>
+<td>The SNMP username</td>
+</tr>
+<tr class="odd">
+<td>snmp_password</td>
+<td>The SNMP version</td>
+</tr>
+</tbody>
+</table>
+<p>If you enable the <code>Update RRDfile</code>, Cacti will insert the return value from this field into the RRDfile. This box needs to be checked for at least one output field per data input source, but can be left blank to have Cacti store the value only in the database instead.</p>
+<p>When you are finished filling in all necessary fields, click the Create button to continue. You will be redirected back to the <strong>Data Input Method</strong> edit page. From here you can continue to add additional fields, or click Save on this screen when finished.</p>
+<h2 id="making-your-scripts-work-with-cacti">Making Your Scripts Work With Cacti</h2>
+<p>The simplest way to extend Cacti's data gathering functionality is through external scripts. Cacti comes with a number of scripts out of the box which are located in the <code>scripts/</code> directory. These scripts are used by the <strong>Data Input Methods</strong> that are present in a new installation of Cacti.</p>
+<p>To have Cacti call an external script to gather data you must create a new <strong>Data Input Method</strong>, making sure to specify Script/Command for the Input Type field. See the previous section, <a href="data_input_methods.html">Creating a Data Input Method</a> for more information about how to create a <strong>Data Input Method</strong>. To gather data using your <strong>Data Input Method</strong>, Cacti simply executes the shell command specified in the Input String field. Because of this, you can have Cacti run any shell command or call any script which can be written in almost any language.</p>
+<p>What Cacti is concerned with is the output of the script. When you define your <strong>Data Input Method</strong>, you are required to define one or more output fields. The number of output fields that you define here is important to your script's output. For a <strong>Data Input Method</strong> with only one output field, your script should output its value in the following format:</p>
+<pre class="console"><code>&lt;numeric value&gt;
+</code></pre>
+<p>So if I wrote a script that outputs the number of running processes, its output might look like the following:</p>
+<pre class="console"><code>67
+</code></pre>
+<p>Data Input Methods with more than one output field are handled a bit differently when writing scripts. Scripts that output more than one value should be formatted like the following:</p>
+<pre class="console"><code>&lt;fieldname_1&gt;:&lt;value_1&gt; &lt;fieldname_2&gt;:&lt;value_2&gt; ... &lt;fieldname_n&gt;:&lt;value_n&gt;
+</code></pre>
+<p>If you wrote a script that outputs the 1, 5, and 10 minute load average of a Unix machine and in Cacti named the output fields '1min', '5min', and '10min', the output of the script should look like the following:</p>
+<p><code>1min:0.40 5min:0.32 10min:0.01</code></p>
+<p>One last thing to keep in mind when writing scripts for Cacti is that they will be executed as the user the data gatherer runs as. Sometimes a script may work correctly when executed as root, but fails due to permissions problems when executed as a less privileged user.</p>
+<h2 id="walkthough">Walkthough</h2>
+<p>You can find a detailed example of how to create a complete Graph from simple command output in the following example <a href="How-To-Create-Data-Input-Method.html">How To Create a Data Input Method</a>.</p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

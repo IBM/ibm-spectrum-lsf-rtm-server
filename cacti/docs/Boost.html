@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Performance Boosting Settings</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="performance-boosting-settings">Performance Boosting Settings</h1>
+<h2 id="summary">Summary</h2>
+<p>Cacti Performance Settings, formally known as <code>boost</code> are available to support very large Cacti installations, and are required for supporting the multiple <strong>Data Collector</strong> architecture that Cacti affords.</p>
+<p>Designed years ago, Boosts intent was to reduce the the main data collectors cycle time by caching writes to disk, and those writes would be handled by an out of band process currently known as <code>poller_boost.php</code>.</p>
+<p>Since these Large Sites had potentially well over one million <strong>Data Sources</strong>, there was previously no way to write all that data every 5 minutes. So, the buffering helped with maintaining a consistent run-time, and minimizing the user experience disruption from all that blocking Disk I/O.</p>
+<p>In the modern Data Center, where we find an abundance of NVMe, Flash, and SSD's, the impact of all that I/O has been reduced. However, Boost now serves as a way to extend the life of your Flash media and therefore increase the availability of your Cacti server over its lifetime.</p>
+<p>The Boost function in Cacti has several features that can be enabled or disabled on demand by the Cacti Administrator. They include:</p>
+<ul>
+<li><strong>On Demand RRD Updates</strong> - Required in ALL multiple <strong>Data Collector</strong> installs and control the mass update of RRDfiles through periodic dumping of Cacti's Boost cache.</li>
+<li><strong>Image Caching</strong> - caches PNG and SVG representations of the Cacti <strong>Graphs</strong> to reduce the overall CPU utilization of the Cacti server infrastructure.</li>
+</ul>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>In its initial design the Boost process leveraged MySQL Memory Tables to increase overall performance, and to reduce writing data to disk. This is still a valid case however, with improvements in InnoDB performance over the years combined with Flash storage, the need for using MySQL Memory Tables has diminished. In some cases, for example when using MariaDB Galera, or MySQL Master/Slave replication, it can not be used.</p>
+<p>If you do wish to use Memory you have to pay close attention to the amount of data that will be cached in your design. You should periodically check that you have sufficient memory available to cache all the data in the Boost cache. The MySQL/MariaDB setting that controls the maximum size of a memory table is the <code>max_heap_table_size</code> setting in your <code>/etc/my.cnf.d/server.cnf</code> file.</p>
+<p>To change the <code>max_heap_table_size</code> setting you require a restart of MySQL/MariaDB. So you won't want to make these changes often, as some systems have little time between mass updates to perform a restart. If you restart MySQL/MariaDB when the cache is full, you will lose those updates upon restart unless you first change the ENGINE of the Boost cache table to InnoDB or MyISAM before restarting.</p>
+<p>When using Memory Tables you have to be cognizant of the maximum output width of the Cache table called <code>poller_output_boost</code>. By default, it's set to 512 bytes, which allows for very wide output from your <strong>Data Collectors</strong>. MySQL Memory Tables do not allow for variable sized columns in memory - which means if you write one byte to it, it will take 512 bytes. So, tuning this width is very important. That will be explained in more detail later on in this chapter.</p>
+<h2 id="checking-how-your-system-is-configured">Checking how your system is configured</h2>
+<p>To see how your system is configured, you can goto <code>Console &gt; Utilityes &gt; System Utilities &gt; View Boost Status</code> option, when you go there, you will see an image similar to that below.</p>
+<p><img src="images/boost-status1.png" alt="Boost Status Screen" /></p>
+<p>From this image, we can tell a few things:</p>
+<ul>
+<li>Boost is Idle, or flushing the Cache</li>
+<li>The system has 1,120 Data Sources in total</li>
+<li>There are currently 58,710 Boost records cached in all tables</li>
+</ul>
+<p>Additionally, you can tell</p>
+<ul>
+<li>Our Current Database Engine is InnoDB</li>
+<li>The size of the current table is 3.52 MBytes</li>
+<li>The average 'Bytes/Record' is 62</li>
+<li>We have unlimited Records that can be stored there</li>
+</ul>
+<p>From that Data, we know if we were to use a Memory Table, at present it's width could be say 100 Bytes and we could cut memory use by 80%.</p>
+<p>We can also estimate from this interface, how large our <code>max_heap_table_size</code> would ultimately have to be, keeping in mind that the <code>Current Boost Table Size</code> is misleading since even though each record can be in excess of 512 bytes, it's presently only using 62 bytes of total storage per record.</p>
+<p>In the image below, you can see runtime statistics, update frequencies, and Image Caching settings, which are currently disabled.</p>
+<p><img src="images/boost-status2.png" alt="Boost Status Screen" /></p>
+<p>From this setup, you can see that mass RRDfile updates are only happening roughly every 6 hours to minimize wear and tear on the SSD storage in use.</p>
+<h2 id="enabling-boost">Enabling Boost</h2>
+<p>To find and Enable the Boost settings, you first go to <code>Console &gt; Configuration &gt; Settings &gt; Performance</code>. From this interface, in the image below, you can setup Boost.</p>
+<p><img src="images/boost-settings.png" alt="Boost Settings Screen" /></p>
+<p>As an exercise, lets look at a fictitious setup and determine what the <code>max_heap_table_size</code> should be. Let's say, for example, that your Cacti systems <strong>Poller Cache</strong> contains 200k rows, and the maximum length of any rows output is 20 bytes, about the size of a 64bit counter value.</p>
+<p>If you are running scripts, ones that return very long results, like the MySQL statistics plugin, you should consider carefully the next step.</p>
+<p>In this case, we will assume that even though the largest value returned is 20 bytes, we will elect to maintain a maximum output column width of 50 bytes.</p>
+<p>The important thing here is that memory tables store the full size of the column, even though the column type is <code>varchar()</code>. By default it's <code>varchar(512)</code>. Therefore, if your system only needs 50 bytes, you will have 90% waste in your <code>poller_output_boost</code> table.</p>
+<p>The next step would me to modify the structure of your <code>poller_output</code> and <code>poller_output_boost</code> tables. You would do this by doing the following:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">ALTER</span> <span class="kw">TABLE</span> poller_output,</a>
+<a class="sourceLine" id="cb1-2" title="2">    <span class="kw">MODIFY</span> <span class="kw">column</span> output <span class="dt">varchar</span>(<span class="dv">50</span>) <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">default</span> <span class="ot">&quot;&quot;</span></a>
+<a class="sourceLine" id="cb1-3" title="3">    ENGINE<span class="op">=</span>memory;</a>
+<a class="sourceLine" id="cb1-4" title="4"></a>
+<a class="sourceLine" id="cb1-5" title="5"><span class="kw">ALTER</span> <span class="kw">TABLE</span> poller_output_boost,</a>
+<a class="sourceLine" id="cb1-6" title="6">    <span class="kw">MODIFY</span> <span class="kw">column</span> output <span class="dt">varchar</span>(<span class="dv">50</span>) <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">default</span> <span class="ot">&quot;&quot;</span></a>
+<a class="sourceLine" id="cb1-7" title="7">    ENGINE<span class="op">=</span>memory;</a></code></pre></div>
+<p>As previously mentioned, its also important that the <code>poller_output</code> table is converted to memory, eliminate any disk I/O related to poller updates.</p>
+<p>Now, you need to determine how many polling cycles will fit into your <code>poller_output_boost</code> table. In this case, when sizing the <code>poller_output_boost</code> table, you take the output column width and add 34 bytes per record. So, in this case, each data source result to be stored in the <code>poller_output_boost</code> table would take 84bytes.</p>
+<p>Then, with the Maximum Heap Table size in hand, and let's say the default is 16MBytes for the largest table (the MySQL default), you can calculate the number of poller intervals that you can store without running out of MySQL memory. So, let's take our example:</p>
+<pre class="console"><code>200k Cache Entries x 84 Bytes Per Poller Cache Row = 1,680,000 Bytes per Poll
+</code></pre>
+<p>This means that your <code>poller_output_boost</code> can handle 10 Cacti polling cycles, or roughly 4/5 of an hour of poller data before it must be cleared by the system.</p>
+<p>As all things go, you should not want to take your system to the edge. So, it is best to increase the <code>max_heap_table_size</code> of your system to ensure you have buffer in cases where say for example, your disks become degraded over time and the Boost cycle is extended as a result.</p>
+<p>But let's look at the problem a different way. Let's say that you wish to perform major updates every 4 hours. With a 50% memory reserve, we should plan for 6 hours of updates. This way, we need to have size for 72 poller cycles in your <code>poller_output_boost</code> table. This means that the <code>max_heap_table_size</code> must be at least 131,040,000 Bytes.</p>
+<p>So, let's call it a deal. Provided you have enough memory, and I expect that you do, you would edit the /etc/my.cnf.d/server.cnf and add/modify the following line:</p>
+<pre class="console"><code>max_heap_table_size=132M
+</code></pre>
+<p>Then, save the file, and restart MySQL. Once this is done, you are ready to “enable” Boost as described above.</p>
+<h2 id="flushing-the-boost-cache">Flushing the Boost Cache</h2>
+<p>If you are planning on system maintenance if you are using MEMORY storage in MySQL or MariaDB, you should flush your Boost Cache before your system is taken offline for maintenance. To do this, you simply login to the Cacti system as root, and flush the Cache using the commands below</p>
+<pre class="console"><code>cd /var/www/html/cacti
+php -q poller_boost.php --force
+</code></pre>
+<p>This operation will take several minutes to complete, at which time there will be additional records in the <code>poller_output_boost</code> table. So, it might be better that after the <code>poller_boost.php</code> process is complete, to modify the <code>poller_output_boost</code> table to InnoDB before reboot, and then convert it back to memory after they system maintenance is complete.</p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

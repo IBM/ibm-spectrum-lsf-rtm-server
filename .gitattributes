@@ -1,0 +1,24 @@
+* text=auto
+
+*.css text eol=lf ident
+*.format text eol=lf ident
+*.js text eol=lf ident
+*.php text eol=lf ident
+*.pl text eol=lf ident
+*.py text eol=lf ident
+*.sh text eol=lf
+*.sql* text eol=lf ident
+*.xml text eol=lf ident
+*.xsd text eol=lf ident
+*.php.demo eol=lf ident
+
+*.gif binary
+*.jar binary
+*.jpg binary
+*.mo binary
+*.png binary
+*.rpm binary
+*.svg binary
+*.tar binary
+*.tar.gz binary
+*.Z binary

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Frequently Asked Questions</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="frequently-asked-questions">Frequently Asked Questions</h1>
+<h2 id="using-cacti">Using Cacti</h2>
+<p><strong>Q:</strong> How do I create traffic graphs?</p>
+<p><strong>A:</strong> Before you can create traffic graphs, Cacti must have working SNMP support. One way to do this is to compile PHP with SNMP support built in, many times you can install the 'php-snmp' package to do this. The second option is to have Cacti call the snmpget and snmpwalk binaries from your ucd-snmp or net-snmp installation. You can use the about page to determine whether to are using "built-in" or "external" SNMP support.</p>
+<p>Now that you have working SNMP support, follow these steps.</p>
+<ol>
+<li><p>Click Devices on Cacti's menu.</p></li>
+<li><p>Click Add to add a new device.</p></li>
+<li><p>Type a description, hostname, management IP, and SNMP community. Make sure to select "Generic SNMP-enabled Host" under Host Template and click Create.</p></li>
+<li><p>Click Create Graphs for this Host at the top of the page.</p></li>
+<li><p>You should see one or more interfaces listed under the Data Query [SNMP - Interface Statistics] box. Place a check next to each interface that you want to graph. Below the box, select type of graph that you want to create (bits, bytes, summation, etc).</p></li>
+<li><p>Click Create, and Create again on the following screen to create your graphs.</p></li>
+</ol>
+<h2 id="general">General</h2>
+<p><strong>Q:</strong> When I visit the Cacti Monitoring Website, I see garbage instead of a login prompt.</p>
+<p><strong>A:</strong> Starting with Cacti 1.2.x, the first thing you should always see is a login prompt asking for your admin credentials before the installation wizard will be displayed. However, if you fail to see the login prompt, you may be presented with text that looks like:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">&lt;?php</span></a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="co">/*</span></a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="co"> +-------------------------------------------------------------------------+</span></a>
+<a class="sourceLine" id="cb1-4" title="4"><span class="co"> | Copyright (C) 2004-2024 The Cacti Group                                 |</span></a>
+<a class="sourceLine" id="cb1-5" title="5"><span class="co"> |                                                                         |</span></a>
+<a class="sourceLine" id="cb1-6" title="6"><span class="co"> | This program is free software; you can redistribute it and/or           |</span></a>
+<a class="sourceLine" id="cb1-7" title="7"><span class="co"> | modify it under the terms of the GNU General Public License             |</span></a>
+<a class="sourceLine" id="cb1-8" title="8"><span class="co"> | as published by the Free Software Foundation; either version 2          |</span></a>
+<a class="sourceLine" id="cb1-9" title="9"><span class="co"> | of the License, or (at your option) any later version.                  |</span></a></code></pre></div>
+<p>If this happens, it usually means that you have not enabled the PHP module to work with your web server software. This can be as simple as running <code>a2enmod</code> on Ubuntu, or having to manually create a configuration for nginx under another flavour of Linux. For specific help on enabling PHP, search the internet using your favourite search engine with keywords such as:</p>
+<blockquote>
+<p>How do I enable PHP under ...</p>
+</blockquote>
+<p>Replacing the three dots with your operating system and web server software should reveal many results on how to do this. The specific steps are outside of the scope of Cacti's FAQ documentation, though there are several How To installation documents included that may also help.</p>
+<hr />
+<p><strong>Q:</strong> I have forgotten my 'admin' password to Cacti, how do I reset it?</p>
+<p><strong>A:</strong> To reset the admin account password back to the default of 'admin', connect to your Cacti database at the command line.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb2-1" title="1">shell<span class="op">&gt;</span> mysql <span class="op">-</span>u root <span class="op">-</span>p cacti</a></code></pre></div>
+<p>Now execute the following SQL:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb3-1" title="1">MySQL<span class="op">&gt;</span> <span class="kw">update</span> user_auth <span class="kw">set</span> <span class="kw">password</span><span class="op">=</span>md5(<span class="st">&#39;admin&#39;</span>) <span class="kw">where</span> username<span class="op">=</span><span class="st">&#39;admin&#39;</span>;</a></code></pre></div>
+<h2 id="monitoring">Monitoring</h2>
+<p><strong>Q:</strong> I am polling thousands of items and poller.php takes more than 5 minutes to run.</p>
+<p><strong>A:</strong> Give Spine, the fast replacement for poller.php a try. Unlike poller.php, Spine is written in c and makes use of threads. On a typical installation, it is not uncommon for Spine to poll about 50000 items in less then 10 seconds. Spine supports upto several threads per poller process and can also poll a single hosts with more than a single thread.</p>
+<p>If using spine alone does not help, look to both the amount of memory and CPU threads are available on your Cacti server. You should generally not use more than 2 times the number of CPU threads as you have spine threads. Remember, every spine thread has to also talk to the database, so having more CPU threads on your Cacti server has a direct impact on performance. If you make the thread setting too high, it will actually decrease performance. So, be careful.</p>
+<hr />
+<p><strong>Q:</strong> I changed x, and now some of my graphs are not updating.</p>
+<p><strong>A:</strong> First, check your Poller Cache to see if the poller entries for the Data Sources in question are still found there. Then, if you find that they are missing, you can either resave the Device in question, if it's a single device, or Repopulate the Poller cache if it impacts multiple Devices. If you have a large installation with thousands or tens of thousands of devices you should use the CLI script <code>rebuild_poller_cache.php</code> to perform this action.</p>
+<p>Often times, if you have changed a Template, bad things can happen. So, it's always advisable to have a backup of your Graph and Data Templates as well as any Script or XML files you used to create the Templates. Another good practice is to perform database backups daily just in case of either an unintended change, or a disaster.</p>
+<hr />
+<p><strong>Q:</strong> I am using Redhat 8.0 and SNMP is not working.</p>
+<p><strong>A:</strong> Redhat 8.0 comes with a broken php-snmp package. Updating your 'php-snmp' and 'net-snmp' packages to their latest versions should fix this problem.</p>
+<hr />
+<p><strong>Q:</strong> How do I configure net-snmp so it will work with Cacti?</p>
+<p><strong>A:</strong> Run <code>snmpconf -g basic_setup</code> and follow the prompts. Also check that the file being used by snmpd is the correct config file. For Redhat Linux, snmpconf creates the <code>/etc/snmpd.conf</code>, but snmpd uses <code>/etc/snmpd/snmpd.conf</code>.</p>
+<p>If this doesn't work a very simple config file is:</p>
+<pre class="console"><code>    # contact
+    syslocation Something
+    syscontact &quot;root@someone.com&quot;
+
+    # auth
+    rocommunity public
+
+    # disk monitoring
+    disk /
+
+    # Don&#39;t monitor NFS
+    skipNFSInHostResources true
+
+    # Allow for real big disk volumes
+    realStorageUnits 0
+</code></pre>
+<p>After you have made the changes to the net-snmp configuration file, you should restart the service using the following command:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" title="1"><span class="ex">systemctl</span> enable snmpd</a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="ex">systemctl</span> restart snmpd</a></code></pre></div>
+<p>Though there are many more advanced settings available in net-snmp, it generally recommended to keep a simpler configuration unless your information security policies require more stringent settings.</p>
+<hr />
+<p><strong>Q:</strong> I've installed Cacti, and scheduled a network discovery, but nothing is happening. Where should I go to see the issue?</p>
+<p><strong>A:</strong> You should click the <strong>Log</strong> tab at the top of the page. When you get to the <strong>Log</strong> tab, you should search for an entry "SYSTEM STATS:". If you do not find that entry, it means that you Cacti Data Collector, otherwise known as the Cacti Poller is not running.</p>
+<p>This can happen if you have neglected to create either a CRON entry for the Cacti Poller, or registered and started the <code>cactid</code> service available in the latest Cacti. If you find that the CRON entry is there, you should look at your systems CRON log for entries like <strong>permission denied</strong>. Sometimes the user accounts you have selected to run the CRON are not permitted to do so. We strongly recommend that you use the <code>cactid</code> service with Cacti 1.x though and avoid CRON based Data Collection though.</p>
+<h2 id="graphs">Graphs</h2>
+<p><strong>Q:</strong> I just installed Cacti and all of my graphs appear as broken images.</p>
+<p><strong>A:</strong> For you to actually get graph images, poller.php must run at least once so it can create .rrd files in Cacti's 'rra/' directory. Double check that you configured your <code>/etc/crontab</code> file or the <code>cactid</code> service to execute poller.php at the desired frequency, normally either every 1 or 5 minutes. Also make sure that the user poller.php runs as has permission to create new files in Cacti's 'rra/' directory. In the modern Cacti, both the Web Server account and Cacti's Poller account must have write access.</p>
+<p>If all of your settings appear correct, try running poller.php manually by cd'ing to Cacti's directory and typing:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb6-1" title="1"><span class="ex">shell</span><span class="op">&gt;</span> php poller.php</a></code></pre></div>
+<p>If you have files in your 'rra/' directory, but your graphs still appear as broken images, you should enable graph debug mode see exactly why the graphs are not rendering. To do this go into Cacti, select Graph Management from the menu, select any graph listed, and select Turn On Graph Debug Mode.</p>
+<hr />
+<p><strong>Q:</strong> My graphs render, but they do not contain any data.</p>
+<p><strong>A:</strong> More often than not, this problem's cause is permissions. For instance if you run poller.php manually as root for testing, any .rrd files that it creates will be owned by root. Now when poller.php runs from cron, it will not be able to update these .rrd files because they are owned by root. You can double check the owner of your .rrd files by running the following command in your Cacti directory:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb7-1" title="1"><span class="ex">shell</span><span class="op">&gt;</span> ls -al rra/</a></code></pre></div>
+<p>If only some of your graphs are not updating correctly, double check the Maximum Value field for all data sources used by these graphs. If the value being fed to the .rrd file exceeds its Maximum Value, RRDtool will insert an Unknown and you will see no data on the graph.</p>
+<hr />
+<p><strong>Q:</strong> A lot of my graphs contain long ifAlias names, but they are being truncated to 15 characters.</p>
+<p><strong>A:</strong> Cacti does this by default to better control graph title formatting. You can change this limit, by going to Cacti Settings on the Cacti menu, selecting the Visual tab, and changing the value for Data Queries - Maximum Field Length.</p>
+<hr />
+<p><strong>Q:</strong> One of my devices rebooted and now I have a huge spike on my graph!</p>
+<p><strong>A:</strong> This occurs because the reboot causes SNMP counters to reset, which can cause a rather large spike on the graph when RRDtool tries to determine the change between the new small counter value and the large previous value. One way to combat this issue is to specify realistic maximum values for your data sources. RRDtool will ignore any value that is larger than the maximum value.</p>
+<p>If you already have a spike on one or more of your graphs, there is a really <a href="http://cricket.sourceforge.net/contrib/files/killspike2">useful Perl script</a> that will remove them for you.</p>
+<hr />
+<p><strong>Q:</strong> I have a remote poller that is timing out but SNMP timing to the devices is fine</p>
+<p><strong>A:</strong> Check that the network connection between the Remote poller and Main poller is working ok if the link has very high latency this can cause the polling times to increase as the data being transferred from the remote poller will be slowed causing the poll not to finish in time</p>
+<hr />
+<p><strong>Q:</strong> RRDtool Says: ERROR: unknown option '--slope-mode' or RRDtool Says: ERROR: Garbage ':39:24 To 2005/10/22 16:39:24\c' after command: COMMENT:From 2005/10/21 16:39:24 To 2005/10/22 16:39:24\c</p>
+<p><strong>A:</strong> This occurs because the version of RRDtool that you are running does not match the RRDtool version Cacti is configured to use. Double check your Cacti Settings and make sure that the RRDtool version matches what version of RRDtool you are running.</p>
+<h2 id="windows-related">Windows Related</h2>
+<p><strong>Q:</strong> I get a "Fatal error: Cannot redeclare title_trim()" error message from Cacti.</p>
+<p><strong>A:</strong> Contrary to previous versions of Cacti, you must not put Cacti in your PHP include path. Check your <code>php.ini</code> file to make sure there is not something like <code>include_path = C:/Apache2/htdocs/cacti</code>.</p>
+<h2 id="common-problems">Common Problems</h2>
+<h3 id="cron-is-out-of-sync-with-the-poller-interval">Cron is out of sync with the Poller Interval</h3>
+<pre class="shell"><code>WARNING: Cron is out of sync with the Poller Interval! The Poller Interval is
+&#39;15&#39; seconds, with a maximum of a &#39;60&#39; second Cron, but 300.9 seconds have
+passed since the last poll!
+</code></pre>
+<p>This warning message may be recorded in the Cacti logs if you have a mismatch between the cron file that runs the poller.php and the settings within Cacti itself. Browse to <strong>Console &gt; Configuration &gt; Settings &gt; Poller</strong> <em>(tab)</em> and check that the Cron Interval is defined as either 1 minute or 5 minutes.</p>
+<p>If the cron interval is 5 minutes, then the schedule within the cron configuration file (normally /etc/cron.d/cacti) should be set to:</p>
+<pre class="console"><code>*/5 * * * *
+</code></pre>
+<p>For 1 minute intervals, this should be:</p>
+<pre class="console"><code>* * * * *
+</code></pre>
+<h3 id="poller-runtime-exceeded">Poller Runtime exceeded</h3>
+<pre class="shell"><code>POLLER: Poller[0] Maximum runtime of xxx seconds exceeded.
+</code></pre>
+<p>This error indicates that Cacti was unable to finish the polling cycle in time. This can be for a few reasons.</p>
+<ul>
+<li>You are using spine and have not entered the correct mysql credentials in spine.conf</li>
+<li>You do not have an adaquete process setting for cmd.php or thread/process count for spine</li>
+<li>Network related issue either an network outage or a network slowdown</li>
+<li>System related trouble cpu/memory exhaustion</li>
+<li>Insufficient MySQL connections resulting in spine failing</li>
+</ul>
+<h3 id="rrdtool-reports-unknown-error">RRDtool reports Unknown Error</h3>
+<p>Sometimes, RRDtool can be rather unhelpful and display the simple error within the graph image of "Unknown Error". When this occurs, the best course of action would be to grab the command that Cacti uses and see if any more information is given at the command line level.</p>
+<p>To do this, edit a graph that has the issue, select <strong>Turn On Graph Debug</strong> and a new section should appear beneath the graph. This should show both the command and what output we received from the tool.</p>
+<pre class="console"><code>RRDtool Command:
+  /usr/bin/rrdtool graph - \
+  --imgformat=PNG \
+  --start=&#39;-86400&#39; \
+  --end=&#39;-60&#39; \
+  --pango-markup  \
+  --title=&#39;localhost - CPU Usage&#39; \
+  --vertical-label=&#39;percent&#39; \
+  --slope-mode \
+  --base=1000 \
+  --height=200 \
+  --width=700 \
+  --tabwidth &#39;40&#39; \
+  --rigid \
+  --alt-autoscale-max \
+  --lower-limit=&#39;0&#39; \
+  COMMENT:&quot;From 2019/10/19 12\:37\:00 To 2019/10/20 12\:36\:00\c&quot; \
+  COMMENT:&quot;  \n&quot; \
+  --color BACK#F3F3F3 \
+  --color CANVAS#FDFDFD \
+  --color SHADEA#CBCBCB \
+  --color SHADEB#999999 \
+  --color FONT#000000 \
+  --color AXIS#2C4D43 \
+  --color ARROW#2C4D43 \
+  --color FRAME#2C4D43 \
+  --border 1 --font TITLE:11:&#39;Arial&#39; \
+  --font AXIS:8:&#39;Arial&#39; \
+  --font LEGEND:8:&#39;Courier&#39; \
+  --font UNIT:8:&#39;Arial&#39; \
+  --font WATERMARK:6:&#39;Arial&#39; \
+  --slope-mode \
+  --watermark &#39;Generated by Cacti&#39; \
+  DEF:a=&#39;/usr/share/cacti/site/rra/127_0_0_1_5min_cpu_40.rrd&#39;:&#39;5min_cpu&#39;:MAX \
+  AREA:a#FF0000FF:&#39;CPU Usage&#39;  \
+  GPRINT:a:LAST:&#39;Current\:%8.0lf&#39;  \
+  GPRINT:a:AVERAGE:&#39;Average\:%8.0lf&#39;  \
+  GPRINT:a:MAX:&#39;Maximum\:%8.0lf\n&#39;
+
+RRDtool Says:
+  OK
+</code></pre>
+<p>If the output above isn't helpful, simply copy the command section and then run it as the user which the website runs as. For Linux, you can do this by either <code>su - &lt;user&gt;</code> and then running the command, or <code>sudo -u &lt;user&gt; &lt;command&gt;</code> to stay as your current user but run the command as the website user.</p>
+<p>For Windows, the following command will allow you to spawn a command prompt as the website user, from which you can then run the above command to see the output.</p>
+<pre class="console"><code>runas /user:&lt;machine or domain&gt;\&lt;user&gt; cmd.exe
+</code></pre>
+<p>The newly created command prompt should show the user name if you have entered the correct password.</p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

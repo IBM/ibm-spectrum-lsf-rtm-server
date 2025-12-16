@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Template Import</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="template-import">Template Import</h1>
+<p>This section will describe <strong>Template Import</strong> in Cacti.</p>
+<p>Template Import files are XML files used to add support for more graph types and different devices that can be shared with others. These template files can either be custom made or you could download them from the community on the cacti forums.</p>
+<p>Once you have downloaded the graph/device template you are looking for you will need to import the template into the cacti system. To import a device/graph template go to <code>Console &gt; Import/Export &gt; Import Templates</code> you will now see the below page</p>
+<p><img src="images/import-template.png" alt="Import Template" /></p>
+<blockquote>
+<p><strong>Important note</strong>: When importing the template be sure to match the data source profile with your preferred <strong>Data Source Profile</strong>.</p>
+</blockquote>
+<p>First you must click on <strong>Select File</strong> and browse to where the XML file is located on your computer. Cacti will default to preview the import to check for any issues. If none are found, you can select the same file and then untick the preview option to import after which the template should be available.</p>
+<p>The <code>Remove Orphans</code> option should only be used if you have Templates that have become damaged and the best way to correct them is to start over. This option will remove any <strong>Graph Items</strong> from any <strong>Graph</strong> that do not appear in the <strong>Graph Template</strong> to be imported. Use this option with care.</p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Settings</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="settings">Settings</h1>
+<p>Cacti has numerous settings that can be changed from the Web Interface. Cacti, from it's inception desired to have as many settings as possible to be configurable without having to goto the Command Line to make them. While, for the most part this is still true, there are several settings that must be configured in the config.php which we will cover in a separate sub-section.</p>
+<p>The standard Settings sub-tabs include:</p>
+<ul>
+<li><p><a href="Settings-General.html">General</a> - This is where Cacti holds a general collection of settings that every Cacti administrator should become familiar with.</p></li>
+<li><p><a href="Settings-Paths.html">Paths</a> - Mostly, this sub-tab holds all settings that the Cacti administrator has control of. It also includes some settings around RRDfile maintenance.</p></li>
+<li><p><a href="Settings-Device-Defaults.html">Device Defaults</a> - This is where you can establish presets that every new Cacti <strong>Device</strong> get's by default, through <strong>Automation</strong>, the CLI or though the Web Interface.</p></li>
+<li><p><a href="Settings-Poller.html">Poller</a> - Though most <strong>Poller</strong> settings have been moved to the <strong>Data Collectors</strong>, some are still managed at the system level including the poller type to use, script server and a number of additional settings.</p></li>
+<li><p><a href="Settings-Data.html">Data</a> - This is where you can enable the RRDproxy and <strong>Data Source Statistics</strong> collection. The <strong>Data Source Statistics</strong> module allows for the saving of key metrics that are important in dash-boarding plugins in Cacti.</p></li>
+<li><p><a href="Settings-Visual.html">Visual</a> - This is where you can set some preset like <strong>Graph</strong> and <strong>Data Source</strong> title lengths, and drop-down sizes these Visual settings are global in nature.</p></li>
+<li><p><a href="Settings-Auth.html">Authentication</a> - This is where Cacti defines how <strong>Users</strong> are managed. There are three Classes of <strong>Users</strong>.</p>
+<p>They include:</p>
+<ul>
+<li><a href="Settings-Auth-Local.html">Local Users</a> - Authentication and Authorization all handled in Cacti. This means passwords are stored locally using strong encryption</li>
+<li><a href="Settings-Auth-Basic.html">Basic Users</a> - Authentication outside of Cacti, for example SAML2, TACACS+, NIS, etc.). Authorization remains in Cacti</li>
+<li><a href="Settings-Auth-LDAP.html">LDAP Users</a> - Authentication outside of Cacti, either LDAP or Active Directory. Authorization remains in Cacti</li>
+<li><a href="Settings-Domains.html">Multiple Domains</a> - Multiple Authentication LDAP or Active Directory Domains with their own Authorization User Templates.</li>
+</ul></li>
+<li><p><a href="Settings-Performance.html">Performance</a> - This is where Cacti's <code>Boost</code> functionality was moved to. Cacti's <code>Boost</code> module allows Cacti to scale to systems with over a million <strong>Graphs</strong> and <strong>Data Sources</strong>.</p></li>
+<li><p><a href="Settings-Spikes.html">Spikes</a> - This is a built-in tool for killing spikes on graphs in a scheduled fashion. It also holds system level spike killing defaults.</p></li>
+<li><p><a href="Settings-Mail-Reporting-DNS.html">Mail/Reporting/DNS</a> - This is where Cacti saves settings associated with these three services, for example Simple Mail Transfer Protocol (SMTP) settings used for general notification across all of Cacti.</p></li>
+</ul>
+<p>In addition, to the base settings, Cacti Plugins can extend settings for their own purposes. When a Plugin has few settings that it uses, the Cacti Group has recommended a sub-tab called <code>Misc</code> for those Plugins for their purposes. Most Plugins conform to that guideline.</p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

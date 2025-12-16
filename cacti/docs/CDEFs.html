@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – CDEFs</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="cdefs">CDEFs</h1>
+<h2 id="background">Background</h2>
+<p>CDEF's in Cacti are a one to one analog to CDEF's in RRDtool. Cacti simply provides and interface to create and manage them. Once the CDEF's are created in Cacti they can be imported and exported globally.</p>
+<p>CDEF's are mathematical formulas that either modify the numeric data from one to many data sources or VNAMES that you have in your <strong>Graph Template</strong>.</p>
+<p>The format of the mathematical formulas is called Reverse Polish Notation (RPN). RPN was and is an early form of how Engineers entered equations into early HP and other Calculators to solve Engineering problems. The reason we still use it today, is that it follows a simple Stack principle. In other words, it's not broken.</p>
+<p>CDEF's can get very complex as there are several mathematical functions available in the RRDtool command set.</p>
+<h2 id="cdef-interface">CDEF Interface</h2>
+<p>In the image below, you can see all the CDEF's that are included in Cacti by default. There are quite a few of them. Many of the formulas in use are quite simple. If you want to view Tutorials on how to work with CDEF's you should go to the <a href="https://oss.oetiker.ch/rrdtool/tut/cdeftutorial.en.html">RRDtool Tutorial</a>. There is also documentation at the <a href="https://oss.oetiker.ch/rrdtool/doc/rrdgraph_data.en.html#CDEF">RRDtool Website</a>.</p>
+<p>In this image you can see that you have the ability to Delete or Duplicate a CDEF, but note you will not be able to Delete any CDEF that is associated with a Cacti <strong>Graph</strong> or <strong>Graph Template</strong>.</p>
+<p><img src="images/cdefs.png" alt="CDEFs" /></p>
+<p>When you Click on the CDEF's name, you will enter into an Edit screen. From there you will see an ordered list of your Stack. It normally will begin with something like the CURRENT_DATA_SOURCE which means that when you Add a <strong>Graph Item</strong> to either a <strong>Graph Template</strong> or <strong>Graph</strong>, you can select a CDEF. The <strong>Data Source</strong> associated with that <strong>Graph Items</strong> is the CURRENT_DATA_SOURCE.</p>
+<p>After that, you may see a numeric number, followed by a math operator. That the simplest form of a CDEF. If you have drag &amp; drop enabled, you can re-order the CDEF items using drag &amp; drop. Otherwise you will see arrows that allow you to move the CDEF Items up and down.</p>
+<p><img src="images/cdefs-edit1.png" alt="CDEFs Edit" /></p>
+<p>When editing a CDEF, the first decision is what Type of Data you want to put on the Stack, you options as shown in the image below. They include:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Function</td>
+<td>A mathematical function that we will describe below</td>
+</tr>
+<tr class="even">
+<td>Operator</td>
+<td>Common mathematical operators including (+, -, *, /, and %)</td>
+</tr>
+<tr class="odd">
+<td>Another CDEF</td>
+<td>Another Cacti CDEF. That could be confusing</td>
+</tr>
+<tr class="even">
+<td>Custom String</td>
+<td>Something like a number, a 'U' or 'Nan' for example</td>
+</tr>
+</tbody>
+</table>
+<p><img src="images/cdefs-edit3.png" alt="CDEFs Item Type Edit" /></p>
+<h2 id="special-data-sources">Special Data Sources</h2>
+<p>In this next Image, you will find a CDEF Item in the process of being added. Note that when you pick <code>Special Data Source</code> you have a drop-down that appears with the flavor of <code>Special Data Source</code>. There are many. They include:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Current Graph Item Data Source</td>
+<td>The value of the Data Source associated with the Graph Item</td>
+</tr>
+<tr class="even">
+<td>Current Graph Item Polling Interval</td>
+<td>This value is otherwise known as the Step in RRDtool terminology</td>
+</tr>
+<tr class="odd">
+<td>All Data Sources (No Dupes)</td>
+<td>The total of all Data Sources removing any duplicate DEF's</td>
+</tr>
+<tr class="even">
+<td>All Data Sources (With Dupes)</td>
+<td>Add the values from all the Data Sources whether or not they are duplicated</td>
+</tr>
+<tr class="odd">
+<td>All Similar Data Sources (No Dupes)</td>
+<td>Means all Data Sources with the same RRDtool Data Source name like traffic_in, and traffic_out</td>
+</tr>
+<tr class="even">
+<td>All Similar Data Sources (No Dupes) Poller Interval</td>
+<td>The max of the poller intervals returned from all similar Data Sources</td>
+</tr>
+<tr class="odd">
+<td>Current Data Source Item: Minimum Value</td>
+<td>The RRDtool minimum value of the Current Data Source</td>
+</tr>
+<tr class="even">
+<td>Current Data Source Item: Maximum Value</td>
+<td>The RRDtool maximum value of the Current Data Source</td>
+</tr>
+<tr class="odd">
+<td>Graph: Lower Limit</td>
+<td>The lower Limit of the Graph</td>
+</tr>
+<tr class="even">
+<td>Graph: Upper Limit</td>
+<td>The upper Limit of the Graph</td>
+</tr>
+<tr class="odd">
+<td>Count of All Data Sources (No Dupes)</td>
+<td>The total count of all Data Sources without Duplication</td>
+</tr>
+<tr class="even">
+<td>Count of All Data Sources (With Dupes)</td>
+<td>The total count of all Data Sources including Duplicates</td>
+</tr>
+<tr class="odd">
+<td>Count of Similar Data Sources (No Dupes)</td>
+<td>The total count of Data Sources with the same RRDtool Data Source Name</td>
+</tr>
+<tr class="even">
+<td>Count of Similar Data Sources (With Dupes)</td>
+<td>The total count of Data Sources with the same RRDtool Data Source Name</td>
+</tr>
+</tbody>
+</table>
+<p>As you can see there is quite a bit of information that can be pulled from RRDtool for performing Graphical manipulation of Data.</p>
+<p><img src="images/cdefs-edit2.png" alt="CDEFs Item Edit" /></p>
+<h2 id="cdef-functions">CDEF Functions</h2>
+<p>This list of CDEF functions is long and it's best to refer directly to the <a href="https://oss.oetiker.ch/rrdtool/doc/rrdgraph_rpn.en.html">RRDtool Manual</a> for meanings and examples of their use. Cacti supports all of them, if you find one that is not supported, open an <a href="https://github.com/Cacti/cacti/issues">Issue on Github</a>.</p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Version Specific Release Notes</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="version-specific-release-notes">Version Specific Release Notes</h1>
+<h2 id="summary">Summary</h2>
+<p>Below you will find the release note for all versions of Cacti 1.0.0 and above. Release notes for earlier Cacti versions have been excluded due to the large list of changes that have occurred over the years, and since Cacti 0.8.x is no longer supported, it's a good time to for the purposes of this document, move them aside.</p>
+<p>Before that list, let's talks about Cacti 1.0.0 first.</p>
+<h2 id="cacti-100">Cacti 1.0.0</h2>
+<p>This was the initial release of Cacti 1.x. With the release of Cacti 1.0.0 many improvements and enhancements have been made. As part of ongoing efforts to improve Cacti almost 20 plugins were merged into the core of Cacti eliminating the need for the plugins. A major refresh of the interface has been started and will continue to occur as development on Cacti continues.</p>
+<h3 id="plugins-integrated-into-cacti-core">Plugins integrated into Cacti Core</h3>
+<p>The following plugins have been merged into the core Cacti code as of version 1.0.0:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Plugin</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>snmpagent</td>
+<td>An SNMP Agent extension, trap and notification generator</td>
+</tr>
+<tr class="even">
+<td>clog</td>
+<td>Log viewers for administrators</td>
+</tr>
+<tr class="odd">
+<td>settings</td>
+<td>Core plugin providing email and DNS services</td>
+</tr>
+<tr class="even">
+<td>boost</td>
+<td>Large system performance boost plugin</td>
+</tr>
+<tr class="odd">
+<td>dsstats</td>
+<td>Cacti data source statistics</td>
+</tr>
+<tr class="even">
+<td>watermark</td>
+<td>Watermark graphs</td>
+</tr>
+<tr class="odd">
+<td>ssl</td>
+<td>Force https connection</td>
+</tr>
+<tr class="even">
+<td>ugroup</td>
+<td>User groups support</td>
+</tr>
+<tr class="odd">
+<td>domains</td>
+<td>Multiple authentication domains</td>
+</tr>
+<tr class="even">
+<td>jqueryskin</td>
+<td>User interface skinning</td>
+</tr>
+<tr class="odd">
+<td>secpass</td>
+<td>C3 level password and site security</td>
+</tr>
+<tr class="even">
+<td>logrotate</td>
+<td>Log management</td>
+</tr>
+<tr class="odd">
+<td>realtime</td>
+<td>Realtime graphing</td>
+</tr>
+<tr class="even">
+<td>rrdclean</td>
+<td>RRDfile maintenance</td>
+</tr>
+<tr class="odd">
+<td>nectar</td>
+<td>Email based graph reporting</td>
+</tr>
+<tr class="even">
+<td>aggregate</td>
+<td>Templating, creation and management of aggregate graphs</td>
+</tr>
+<tr class="odd">
+<td>autom8</td>
+<td>Graph and Tree creation automation</td>
+</tr>
+<tr class="even">
+<td>discovery</td>
+<td>Network Discovery and Device automation</td>
+</tr>
+<tr class="odd">
+<td>spikekill</td>
+<td>Removes spikes from Graphs</td>
+</tr>
+<tr class="even">
+<td>superlinks</td>
+<td>Allows administrators to links to additional sites</td>
+</tr>
+</tbody>
+</table>
+<h2 id="changelog-for-all-cacti-1x-releases">ChangeLog for All Cacti 1.x Releases</h2>
+<p>The following shows the naming convention used for issues and features listed in the CHANGELOG for both cacti and it's plugins</p>
+<table>
+<thead>
+<tr class="header">
+<th>Category</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>issue[issue#]</td>
+<td>Normal issues either experienced by a Developer or logged in GitHub and fixed</td>
+</tr>
+<tr class="even">
+<td>feature[issue#]</td>
+<td>Features either implemented or logged in GitHub and addressed</td>
+</tr>
+<tr class="odd">
+<td>security[issue#]</td>
+<td>Security vulnerability either fixed or logged in GitHub and addressed</td>
+</tr>
+<tr class="even">
+<td>bug[bug#]</td>
+<td>Feature of Bug reported in the old Cacti Mantis system that was addressed.</td>
+</tr>
+</tbody>
+</table>
+<p>Below are a few examples of the version, type and description that can be found in the CHANGELOG | Version | Feature/Bug | Description | | ------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------- | | 1.2.17 | issue#3981 | PHP ERROR: Call to undefined function api_data_source_cache_crc_update() | | 1.2.17 | feature#4013 | Remote Poller - reset avg/max polling time | | 1.2.16 | issue#3704 | When generating a report, the Cascade to Branches function does not as expected | | 1.2.16 | issue#3859 | When viewing graphs, automatic refresh so not always work as expected | | 1.2.16 | feature | Update Chart.js to version 2.9.4 | | 1.2.16 | feature#3923 | Add ability to hide the Graph Drilldown icons by datatecuk | | 1.2.16 | feature#3943 | Add hooks for plugins to show custom Graph Source and custom Template URL (List View) | | 1.2.13 | security#3628 | Lack of escaping on template import can lead to XSS exposure | | 1.2.13 | issue#3517 | When generating reports, function looping can occur resulting in 100% cpu usage |</p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

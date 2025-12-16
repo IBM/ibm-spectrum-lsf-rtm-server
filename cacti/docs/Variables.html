@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Variables</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="variables">Variables</h1>
+<h2 id="graph-variables">Graph Variables</h2>
+<p>Graphs Variables are special use replacement variables used to take information from the following objects and use them in the context of a Cacti Graph:</p>
+<ul>
+<li><strong>Cacti Device</strong> - host information</li>
+<li><strong>Data Query</strong> - input query meta data</li>
+<li><strong>Data Input</strong> - input variables</li>
+<li><strong>Nth Percentile</strong> - formulas</li>
+</ul>
+<p>It also allows you additional one single use replacement variables like:</p>
+<ul>
+<li><strong>Data Source Name</strong> - The name of your Data Source</li>
+<li><strong>Date Time</strong> - The date and time the graph was rendered.</li>
+</ul>
+<p>In the examples below, you will be able to see how to use these values. They can be used in:</p>
+<ol>
+<li>Graph and Graph Template - Titles</li>
+<li>Graph and Graph Template - Comments</li>
+<li>Data Query - Suggested names for Graphs and Data Sources</li>
+<li>Data Source - Min and Max Data Source Limits</li>
+<li>Aggregate Graphs and Templates - Prefixes</li>
+</ol>
+<p>All Graph Variables are enclosed by pipe characters as shown in the examples below.</p>
+<h2 id="datetime">Date/Time</h2>
+<pre class="regex"><code>|date_time|
+</code></pre>
+<p>This variable will place the date and time of the last poller run on the graph. It can be used to replicate MRTG's "graph last updated" feature.</p>
+<h2 id="data-source-title">Data Source Title</h2>
+<pre class="regex"><code>|data_source_title|
+</code></pre>
+<p>This variable, <code>|data_source_title|</code>, gets replaced with the name of the data source associated with a particular graph item in a graph template. This change allows the creation of generic graph templates (2-variable line graph, 3-variable stack, etc.) which can be reused with large numbers of data sources. See attached examples to understand usage.</p>
+<p><img src="images/graph-variables-data-source-title.png" alt="Example of a Graph Template using |data_source_title|" /></p>
+<p>The example graphs below, show how the output may look, but for a slightly different Case.</p>
+<p><img src="images/data-source-title-example1.png" alt="Example 1 of a Graph making use of |data_source_title|" /></p>
+<p><img src="images/data-source-title-example2.png" alt="Example 2 of a Graph making use of |data_source_title|" /></p>
+<h2 id="data-query-fields">Data Query Fields</h2>
+<pre class="regex"><code>|query_field_name|
+</code></pre>
+<p>You can place the value of any data query field on the by including this variable. Make sure to substitute "field_name" with the actual data query field name.</p>
+<pre class="regex"><code>|query_ifIP|
+</code></pre>
+<pre class="regex"><code>|query_dskPath|
+</code></pre>
+<h2 id="data-input-arguments">Data Input Arguments</h2>
+<pre class="regex"><code>|input_hostname|
+</code></pre>
+<pre class="regex"><code>|input_ip_address|
+</code></pre>
+<h2 id="nth-percentile">Nth Percentile</h2>
+<pre class="regex"><code>|[0-9]:(bits|bytes):[0-9]:(current|total|max|total_peak|all_max_current|all_max_peak|aggregate_max|aggregate_sum|aggregate_current|aggregate):[0-9]|
+</code></pre>
+<p>Nth percentile is often used by hosting providers to bill customers based on their peak traffic usage while ignoring their top (100 - Nth) percent. This way if a customer has a fairly consistent traffic pattern and decides to download a huge file one day, the large spike will be ignored. Common Nth percentile is 95, which would cut off the top 5% of the traffic.</p>
+<p>The Nth Percentile variables, when placed in Graph Comments will be detected and the syntax will be parsed and the reulting numeric value will replace the formula. They are used in both 95th Percentile and Bandwidth Traffic Graphs today.</p>
+<p>In Cacti, Nth percentile works just like any other graph variable. To use this variable you must give it five arguments:</p>
+<h6 id="table-15-1-nth-percentile-argument-description">Table 15-1. Nth Percentile Argument Description</h6>
+<table>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>[0-9]</td>
+<td>The first argument is a number between 1 and 99. This number represents the Nth percentile that you would like to calculate.</td>
+</tr>
+<tr class="even">
+<td>(bits | bytes)</td>
+<td>Choose whether you want to represent your Nth percentile in bits or bytes. The only valid values for this field are 'bits' and 'bytes'.</td>
+</tr>
+<tr class="odd">
+<td>[0-9]</td>
+<td>This field determines the power of 10 divisor that will be applied to your Nth percentile number. Enter '0' to leave the number alone, '3' for kilo or '6' for mega, etc.</td>
+</tr>
+<tr class="even">
+<td>( current | total | max | total_peak | all_max_current | all_max_peak | aggregate_max | aggregate_sum | aggregate )</td>
+<td>Nth Percentile Type - Refer to Nth Types below</td>
+</tr>
+<tr class="odd">
+<td>[0-9]</td>
+<td>Enter the number of digits to use for floating point precision when printing out the final number. The default value for this field is two decimal places.</td>
+</tr>
+</tbody>
+</table>
+<h6 id="table-15-2-nth-percentile-types">Table 15-2. Nth Percentile Types</h6>
+<table>
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>current</td>
+<td>Calculates the Nth percentile based off the selected data source on the graph item which the variable is used. This type requires a selected Data Source Item in the graph item in which it is defined.</td>
+</tr>
+<tr class="even">
+<td>total</td>
+<td>Calculates the Nth percentile based off the selected data source on the graph item which the variable is used. But unlike current, this function totals the Nth percentile results of all same named data source names on the graph. Example, all traffic_in would have their Nth percentile calculated and then totaled. This type requires a selected Data Source Item in the graph item in which it is defined.</td>
+</tr>
+<tr class="odd">
+<td>max</td>
+<td>Calculates the Nth percentile based off the selected data source on the graph item which the variable is used, but it is important to note that it selects the higher of the values for each row in data source and then uses the resulting set to calculate the Nth percentile. Example, you have selected a interface data source for traffic_in, this will evaluate traffic_out and traffic_in for that selected data source (RRDtool file) and select the higher of the two values for each row of data. The resulting max values are used to calculate the Nth percentile value. This type requires a selected Data Source Item in the graph item in which it is defined.</td>
+</tr>
+<tr class="even">
+<td>total_peak</td>
+<td>Calculates the Nth percentile based on the max for each data source defined on the graph. Example, the max is taken for each data source defined on the graph, but it's the max of traffic_in or traffic_out for that data source (RRDtool file). The resulting max values are summed and returned.</td>
+</tr>
+<tr class="odd">
+<td>all_max_current</td>
+<td>Calculates the Nth percentile based off the selected data source on the graph item which the variable is used, but it only selects the highest (max) value of all the data source items on the graph. Example, there are 3 data sources defined on the graph, the selected data source is traffic_in, all data sources for traffic_in will be compared against each other and the highest Nth value of all graph items will be selected as the result. This type requires a selected Data Source Item in the graph item in which it is defined.</td>
+</tr>
+<tr class="even">
+<td>all_max_peak</td>
+<td>Calculates the Nth percentile by selecting the highest (max) calculated max Nth percentile value for each data source (RRDtool file) selected on the graph. Example, 3 data sources are defined on the graph, for each data source, the max Nth percentile is calculated, and out of the resulting set of values, the highest value is selected and returned.</td>
+</tr>
+<tr class="odd">
+<td>aggregate_max</td>
+<td>Calculates the Nth percentile by selecting the highest value for each summed value of like data sources and selecting the maximum value of that set to calculate the Nth percentile value. Example, you have a graph with 5 traffic_in and 18 traffic_out data sources. The traffic_in rows are summed together, then the traffic_out rows are summed together, then for each row, the higher of the 2 values is selected. The Nth percentile is calculated from the resulting maximum values.</td>
+</tr>
+<tr class="even">
+<td>aggregate_sum</td>
+<td>Calculates the Nth percentile by summing all data sources on the graph row for row and calculates the Nth value on the resulting summed data. Example, you have a graph with 4 traffic_in and 3 traffic_out data sources defined. All the defined traffic_in and traffic_out are summed together and then the Nth percentile value is calculated from that set.</td>
+</tr>
+<tr class="odd">
+<td>aggregate</td>
+<td>Calculates the Nth percentile by summing like data source names row for row from each data source defined on the graph and then returning the highest Nth percent value calculated for like data source names. Example, you have a graph with 3 traffic_out and 5 traffic_in data sources defined. The traffic_in and traffic_out are summed then the Nth value is calculated and the higher of the 2 values is returned as the variable.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Note</strong></p>
+<p>All data sources used in a graph MUST have the same RRA definitions. If the number of rows do not match when calculations are attempted, the results may produce errors and invalid results. Please also be aware the aggregate functions take more memory and processor power when used. Recommended minimum of 64 megs memory limit for PHP when querying large ranges or graphs with a large amount of aggregated data sources.</p>
+</blockquote>
+<h6 id="example-15-3-output-in-the-following-format-for-95th-percentile-4258-mbit">Example 15-3. Output in the following format, for 95th percentile: 42.58 mbit</h6>
+<pre class="regex"><code>|95:bits:6:max:2|
+</code></pre>
+<h2 id="bandwidth-summation">Bandwidth Summation</h2>
+<pre class="regex"><code>|sum:([0-9]|auto):(current|total):([0-9]):([0-9]+|auto)|
+</code></pre>
+<p>Bandwidth summation is useful for summing up all values in an RRDfile for a given time range. This is typically useful on traffic graphs where you can see a total of all traffic that has gone through an interface in a given time period.</p>
+<p>In Cacti, bandwidth summation works just like any other graph variable. To use this variable you must give it three arguments:</p>
+<h6 id="table-15-3-bandwidth-summation-argument-description">Table 15-3. Bandwidth Summation Argument Description</h6>
+<table>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>([0-9] | auto)</td>
+<td>This field determines the power of 10 divisor that will be applied to your number. Enter '0' to leave the number alone, '3' for kilo or '6' for mega, etc. You can also enter 'auto' for this field to have Cacti automatically scale the number and insert the appropriate label.</td>
+</tr>
+<tr class="even">
+<td>(current | total)</td>
+<td>You can choose to calculate the summation based on the current data source or a total of all data sources used on the graph. The only valid values for this field are 'current' and 'total'.</td>
+</tr>
+<tr class="odd">
+<td>[0-9]</td>
+<td>Enter the number of digits to use for floating point precision when printing out the final number. The default value for this field is two decimal places.</td>
+</tr>
+<tr class="even">
+<td>([0-9]+ | auto)</td>
+<td>Enter the number of seconds in the past to perform the summation calculation for. For instance '86400' for 24 hours, '172800' for 48 hours, etc. You can also enter 'auto' for this field to have Cacti use the graph timespan.</td>
+</tr>
+</tbody>
+</table>
+<h6 id="example-15-4-output-in-the-following-format-3647-gb">Example 15-4. Output in the following format: 36.47 GB</h6>
+<pre class="regex"><code>|sum:auto:current:2:auto|
+</code></pre>
+<h2 id="host-variables">Host Variables</h2>
+<p>Host variables represent host data and can be placed in graph or data source titles. The following table describes which host variables can be used and which host fields the correspond to.</p>
+<h6 id="table-15-4-host-variables">Table 15-4. Host Variables</h6>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Variable Name</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">|host_availability|</td>
+<td style="text-align: left;">Availability of host</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">|host_avg_time|</td>
+<td style="text-align: left;">Average time for host</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">|host_cur_time|</td>
+<td style="text-align: left;">Current time for host</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">|host_description|</td>
+<td style="text-align: left;">Description</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">|host_external_id|</td>
+<td style="text-align: left;">ID associated with external system</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">|host_hostname|</td>
+<td style="text-align: left;">Hostname</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">|host_id|</td>
+<td style="text-align: left;">Numerical ID of the Host as it is maintained in the MySQL Tables</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">|host_location|</td>
+<td style="text-align: left;">Location</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">|host_max_oids|</td>
+<td style="text-align: left;">SNMP Max OIDs for snmpbulkwalk</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">|host_notes|</td>
+<td style="text-align: left;">Administrative Notes</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">|host_ping_retries|</td>
+<td style="text-align: left;">Ping Retries (Downed Host Detection)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">|host_polling_time|</td>
+<td style="text-align: left;">Last polling time</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">|host_snmp_auth_protocol|</td>
+<td style="text-align: left;">SNMP Authentication Protocol (v3)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">|host_snmp_community|</td>
+<td style="text-align: left;">SNMP Community</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">|host_snmp_context|</td>
+<td style="text-align: left;">SNMP Context (v3)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">|host_snmp_engine_id|</td>
+<td style="text-align: left;">SNMP Engine Id (v3)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">|host_snmp_password|</td>
+<td style="text-align: left;">SNMP Password (v3)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">|host_snmp_port|</td>
+<td style="text-align: left;">SNMP Port</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">|host_snmp_priv_passphrase|</td>
+<td style="text-align: left;">SNMP Privacy Passphrase (v3)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">|host_snmp_priv_protocol|</td>
+<td style="text-align: left;">SNMP Privacy Protocol (v3)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">|host_snmp_sysContact|</td>
+<td style="text-align: left;">SNMP Contact</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">|host_snmp_sysDescr|</td>
+<td style="text-align: left;">SNMP Description</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">|host_snmp_sysLocation|</td>
+<td style="text-align: left;">SNMP Location</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">|host_snmp_sysName|</td>
+<td style="text-align: left;">SNMP System Name</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">|host_snmp_sysObjectID|</td>
+<td style="text-align: left;">SNMP ObjectID</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">|host_snmp_sysUpTimeInstance|</td>
+<td style="text-align: left;">SNMP Up Time</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">|host_snmp_timeout|</td>
+<td style="text-align: left;">SNMP Timeout</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">|host_snmp_username|</td>
+<td style="text-align: left;">SNMP Username (v3)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">|host_snmp_version|</td>
+<td style="text-align: left;">SNMP Version</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">|host_uptime|</td>
+<td style="text-align: left;">SNMP Uptime</td>
+</tr>
+</tbody>
+</table>
+<h2 id="example-use">Example Use</h2>
+<p>Below you can see the example in the <code>SNMP - Interface Statistics</code> Data Query of how they are used for suggested names.</p>
+<p><img src="images/graph-variables-suggested-names.png" alt="Suggested Names" /></p>
+<p>And in Bandwidth Graph Template.</p>
+<p><img src="images/graph-variables-graph-template.png" alt="Graph Template Bandwidth" /></p>
+<p>In the images above, you can see both the Title of the Graph and the Comments showing the use of the bandwidth replacement variables.</p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

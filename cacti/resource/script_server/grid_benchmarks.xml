@@ -1,0 +1,57 @@
+<!-- $Id$ -->
+<interface>
+	<name>Grid Benchmark Statistics</name>
+	<script_path>|path_cacti|/scripts/ss_grid_benchmarks.php</script_path>
+	<script_function>ss_grid_benchmarks</script_function>
+	<script_server>php</script_server>
+	<arg_prepend>|clusterid|</arg_prepend>
+	<arg_index>index</arg_index>
+	<arg_query>query</arg_query>
+	<arg_get>get</arg_get>
+	<output_delimeter>!</output_delimeter>
+	<index_order>benchmarkId</index_order>
+	<index_order_type>alpha</index_order_type>
+	<index_title_format>|chosen_order_field|</index_title_format>
+	<fields>
+		<benchmarkId>
+			<name>Benchmark Id</name>
+			<direction>input</direction>
+			<query_name>benchmarkId</query_name>
+		</benchmarkId>
+		<benchmarkName>
+			<name>Benchmark Name</name>
+			<direction>input</direction>
+			<query_name>benchmarkName</query_name>
+		</benchmarkName>
+		<pjob_bsubTime>
+			<name>Submit Time</name>
+			<direction>output</direction>
+			<query_name>pjob_bsubTime</query_name>
+		</pjob_bsubTime>
+		<pjob_startTime>
+			<name>Start Time</name>
+			<direction>output</direction>
+			<query_name>pjob_startTime</query_name>
+		</pjob_startTime>
+		<pjob_seenTime>
+			<name>Seen Time</name>
+			<direction>output</direction>
+			<query_name>pjob_seenTime</query_name>
+		</pjob_seenTime>
+		<pjob_runTime>
+			<name>Run Time</name>
+			<direction>output</direction>
+			<query_name>pjob_runTime</query_name>
+		</pjob_runTime>
+		<pjob_doneTime>
+			<name>Done Time</name>
+			<direction>output</direction>
+			<query_name>pjob_doneTime</query_name>
+		</pjob_doneTime>
+		<pjob_seenDoneTime>
+			<name>Seen Done Time</name>
+			<direction>output</direction>
+			<query_name>pjob_seenDoneTime</query_name>
+		</pjob_seenDoneTime>
+	</fields>
+</interface>

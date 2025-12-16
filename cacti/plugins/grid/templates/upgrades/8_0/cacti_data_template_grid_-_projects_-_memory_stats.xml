@@ -1,0 +1,64 @@
+<!-- $Id$ -->
+<cacti>
+	<hash_0100219c2921c6126f1c72b7a4525de98926fb>
+		<name>GRID - Projects - Memory Stats</name>
+		<ds>
+			<t_name></t_name>
+			<name>|host_description| - |query_projectLevel1| - Memory Stats</name>
+			<data_input_id>hash_030021332111d8b54ac8ce939af87a7eac0c06</data_input_id>
+			<t_rra_id></t_rra_id>
+			<t_rrd_step></t_rrd_step>
+			<rrd_step>300</rrd_step>
+			<t_active></t_active>
+			<active>on</active>
+			<rra_items>hash_150021c21df5178e5c955013591239eb0afd46|hash_1500210d9c0af8b8acdc7807943937b3208e29|hash_1500216fc2d038fb42950138b0ce3e9874cc60|hash_150021e36f3adb9f152adfa5dc50fd2b23337e</rra_items>
+		</ds>
+		<items>
+			<hash_080021f4d7c8387a0c263333717bcd018f4908>
+				<t_data_source_name></t_data_source_name>
+				<data_source_name>max_mem</data_source_name>
+				<t_rrd_minimum></t_rrd_minimum>
+				<rrd_minimum>0</rrd_minimum>
+				<t_rrd_maximum></t_rrd_maximum>
+				<rrd_maximum>0</rrd_maximum>
+				<t_data_source_type_id></t_data_source_type_id>
+				<data_source_type_id>1</data_source_type_id>
+				<t_rrd_heartbeat></t_rrd_heartbeat>
+				<rrd_heartbeat>600</rrd_heartbeat>
+				<t_data_input_field_id></t_data_input_field_id>
+				<data_input_field_id>0</data_input_field_id>
+			</hash_080021f4d7c8387a0c263333717bcd018f4908>
+			<hash_080021197123851bb2706ed23f07ab2479a189>
+				<t_data_source_name></t_data_source_name>
+				<data_source_name>avg_mem</data_source_name>
+				<t_rrd_minimum></t_rrd_minimum>
+				<rrd_minimum>0</rrd_minimum>
+				<t_rrd_maximum></t_rrd_maximum>
+				<rrd_maximum>0</rrd_maximum>
+				<t_data_source_type_id></t_data_source_type_id>
+				<data_source_type_id>1</data_source_type_id>
+				<t_rrd_heartbeat></t_rrd_heartbeat>
+				<rrd_heartbeat>600</rrd_heartbeat>
+				<t_data_input_field_id></t_data_input_field_id>
+				<data_input_field_id>0</data_input_field_id>
+			</hash_080021197123851bb2706ed23f07ab2479a189>
+		</items>
+		<data>
+			<item_000>
+				<data_input_field_id>hash_070021172b4b0eacee4948c6479f587b62e512</data_input_field_id>
+				<t_value></t_value>
+				<value></value>
+			</item_000>
+			<item_001>
+				<data_input_field_id>hash_07002130fb5d5bcf3d66bb5abe88596f357c26</data_input_field_id>
+				<t_value></t_value>
+				<value></value>
+			</item_001>
+			<item_002>
+				<data_input_field_id>hash_07002131112c85ae4ff821d3b288336288818c</data_input_field_id>
+				<t_value></t_value>
+				<value></value>
+			</item_002>
+		</data>
+	</hash_0100219c2921c6126f1c72b7a4525de98926fb>
+</cacti>

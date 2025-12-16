@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Aggregate Templates</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="aggregate-templates">Aggregate Templates</h1>
+<h2 id="aggregate-overview">Aggregate Overview</h2>
+<p><strong>Aggregate Templates</strong> are a special form of a <strong>Graph Template</strong>. They allow you to easily create <strong>Graphs</strong> that combine data from multiple common <strong>Graphs</strong> from multiple <strong>Devices</strong>, and allow you to easily manage the resulting <strong>Aggregate Graphs</strong> to add and remove elements from other common <strong>Graphs</strong>.</p>
+<p>To create <strong>Aggregate Graphs</strong> that are managed through a Template, you first must create the <strong>Aggregate Template</strong>. Then from the Cacti <strong>Graphs</strong> page, you can select the <strong>Graphs</strong> that you want used as part of the <strong>Aggregate</strong>. You then select <code>Create Aggregate from Template</code> from the Cacti Actions drop-down.</p>
+<p>Once you have created your <strong>Aggregate Graphs</strong>, they behave like any other Cacti Graph. They can be a part of a Tree, zoomed, etc. They have an added bonus - you can add and remove <strong>Graphs</strong> from aggregate in a very controlled way, reducing the effort to maintain them during their life-cycle.</p>
+<p>If you wish to change settings for <strong>Graphs</strong> managed by the <strong>Aggregate Template</strong>, simply make the changes in the <strong>Aggregate Template</strong>, and they will cascade to <strong>Aggregate Graphs</strong> managed by the Template.</p>
+<h2 id="aggregate-template-interface">Aggregate Template Interface</h2>
+<p>The images below shows an Aggregate Template for Traffic.</p>
+<p><img src="images/aggregate-templates.png" alt="Aggregate Templates" /></p>
+<p>When you edit the <strong>Aggregate Template</strong>, you are presented with an interface that allows you to define the Graph Canvas as well as it's formatting. You should experiment until you find the mechanism that works best to suite your needs.</p>
+<p>The <code>Aggregate Template</code> <code>Prefix</code> setting allows you to provide a pattern to be applied to the <strong>Aggregate Graph</strong> legend items. Any <code>host</code>, <code>query</code> or <code>input</code> references can be used in the <code>Prefix</code> section in order to uniquely identify the <strong>Graph Item</strong>.</p>
+<p>There are several <code>Graph Types</code> transformations that deal with how <code>AREA</code>, <code>LINEX</code> and <code>STACK</code> items are handled in the resulting <strong>Aggeregate Graph</strong>, they include:</p>
+<ul>
+<li><strong>Keep Graph Types</strong> - No transformation will occur. All <code>AREA</code>, <code>LINE</code>, and <code>STACKS</code> will be unchanged.</li>
+<li><strong>Keep Type and Stack</strong> - Which means the types will be preserved, but all data will be stacked instead of simply LINEX it will be transformed to LINEX:STACK</li>
+<li><strong>Convert to Area/STACK Graph</strong> - All <code>LINEX</code> will be converted to <code>AREA</code> and stacked.</li>
+<li><strong>Convert to LINE1</strong> - All <strong>Graph Items</strong> will be converted to <code>LINE1</code></li>
+<li><strong>Convert to LINE2</strong> - All <strong>Graph Items</strong> will be converted to <code>LINE2</code></li>
+<li><strong>Convert to LINE3</strong> - All <strong>Graph Items</strong> will be converted to <code>LINE3</code></li>
+<li><strong>Convert to LINE1/Stack</strong> - All <strong>Graph Items</strong> will be converted to <code>LINE1</code> and stacked.</li>
+<li><strong>Convert to LINE2/Stack</strong> - All <strong>Graph Items</strong> will be converted to <code>LINE2</code> and stacked.</li>
+<li><strong>Convert to LINE3/Stack</strong> - All <strong>Graph Items</strong> will be converted to <code>LINE3</code> and stacked.</li>
+</ul>
+<p>The <code>Totaling</code> setting has multiple values. They include:</p>
+<ul>
+<li><strong>No Totals</strong> - There will be no Summation of Data in the Legend</li>
+<li><strong>Print All Legend Items</strong> - Means that all Legend Items selected will be included with a Total</li>
+<li><strong>Print Totaling Legend Items Only</strong> - This option means that the Legend will total all the Legend items into a single Legend.</li>
+</ul>
+<p>The <code>Total Type</code> - Will create groupings of common elements on the <strong>Graph</strong>, and reset stacking rules when a change in the common element occurs. The options include:</p>
+<ul>
+<li><strong>Total Similar Data Sources</strong> - Means that you will Total legend items and <strong>Data Sources</strong> through similar <strong>Data Source</strong> names, for example <code>traffic_out</code> and <code>traffic_in</code>.</li>
+<li><strong>Total All Data Sources</strong> - It means that you will sum the values for all <strong>Data Sources</strong> regardless of their <strong>Data Source</strong> name.</li>
+</ul>
+<p>When using <code>Total Type</code>, you are provided an option to additionally prefix your legends using the <code>Prefix for GPRINT Totals</code> with a text value. The default works in most cases.</p>
+<p>The <code>Reorder Type</code> will re-order the <strong>Data Sources</strong> within their respective grouping on the Graph so that they are ordered in a common way, in alphabetic order. The options include:</p>
+<ul>
+<li><strong>No Reordering</strong> - Don't make any changes in ordering.</li>
+<li><strong>Data Source, Graph</strong> - Order by <strong>Data Source</strong> name and then by <strong>Graph</strong> name</li>
+<li><strong>Graph, Data Source</strong> - Order by <strong>Graph</strong> name and then by <strong>Data Source</strong> name</li>
+<li><strong>Base Graph Order</strong> - Focus on the <strong>Graph</strong> name only</li>
+</ul>
+<p><img src="images/aggregate-templates-edit1.png" alt="Aggregate Templates Edit General Options" /></p>
+<p>The <code>Graph Template Items</code> section allows you to either Skip or Total (aka include) the <strong>Graph Items</strong> in the resulting <strong>Aggregate Graphs</strong>. When you think about how a resulting <strong>Aggregate</strong> graph will look, there are some elements that simply will not result in a good looking <strong>Graph</strong>. In those cases you will want to remove them from the resulting <strong>Aggregate Graphs</strong>.</p>
+<p>The <code>Color Template</code> option allows you to use differing Color rotations when displaying elements on the resulting <strong>Aggregate Graphs</strong>. <strong>Color Templates</strong> can be added and removed from the <strong>Color Templates</strong> menu pick under <code>Console &gt; Templates</code>.</p>
+<p><img src="images/aggregate-templates-edit2.png" alt="Aggregate Templates Edit Canvas Options" /></p>
+<p>The several sections allow you to override any of the common <strong>Graph Template</strong> elements from the resulting <strong>Aggregate Graph</strong>. We will not explain those options here, only let you know that you can override them in your resulting <strong>Aggregate Graph</strong>.</p>
+<p><img src="images/aggregate-templates-edit3.png" alt="Aggregate Templates Edit Common Options" /></p>
+<p><img src="images/aggregate-templates-edit4.png" alt="Aggregate Templates Edit Scaling Options" /></p>
+<p><img src="images/aggregate-templates-edit5.png" alt="Aggregate Templates Edit Grid Options" /></p>
+<p><img src="images/aggregate-templates-edit6.png" alt="Aggregate Templates Edit Axis Options" /></p>
+<p><img src="images/aggregate-templates-edit7.png" alt="Aggregate Templates Edit Legend Options" /></p>
+<h2 id="summary">Summary</h2>
+<p>There are several combinations of options that you can use when working with an <strong>Aggregate Template</strong>. Some of these options will results in horrible and unexpected outcomes, so you will have to experiment until you come up with a desirable <strong>Aggregate Template</strong>.</p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

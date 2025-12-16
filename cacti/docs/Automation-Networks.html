@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Automation Networks</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="automation-networks">Automation Networks</h1>
+<p>This section will describe <strong>Automation Networks</strong> in Cacti.</p>
+<p>Adding a network to scan in the automation plugin is easy. On the main console click Automation. Once on the below page click the + on the top right of the page.</p>
+<p><img src="images/automation-network-main.png" alt="Automation Networks" /></p>
+<p>You will now see the below page. If you want to scan 192.168.1.0/24, you would enter that in the subnet range textbox then enter the subnet in CIDR format.</p>
+<p>Other important options are</p>
+<table>
+<thead>
+<tr class="header">
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Schedule type</td>
+<td>How often you want to scan this subnet for devices</td>
+</tr>
+<tr class="even">
+<td>Discovery threads</td>
+<td>How many proccessess to spawn during the scan</td>
+</tr>
+<tr class="odd">
+<td>Max Runtime</td>
+<td>to prevent the scan from running indefinitely</td>
+</tr>
+<tr class="even">
+<td>Automatically add to Cacti</td>
+<td>If a device is SNMP reachable and matches a rule from this subnet the device will be added</td>
+</tr>
+<tr class="odd">
+<td>Netbios</td>
+<td>Attempt to resolve the hostname by netbios</td>
+</tr>
+</tbody>
+</table>
+<p>After you are done adding your network details, ensure you enable the rule and save.</p>
+<p><img src="images/automation-networks-edit1.png" alt="Automation Networks Edit General" /></p>
+<p>Ensure that if you have a SNMP rule for this part of the network to select the SNMP option set this will tie the network to the SNMP rules</p>
+<p><img src="images/automation-reachability-settings.png" alt="Automation Networks Edit General" /></p>
+<p>To begin the scanner click on the bottom right drop down and select "Discover Now" this will start the discovery</p>
+<p><img src="images/automation-networks.png" alt="Automation Networks" /></p>
+<p>Here is the flow of the automation scan</p>
+<p><img src="images/automation-flow3.png" alt="Automation Flow" /></p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

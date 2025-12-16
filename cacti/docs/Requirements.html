@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Requirements</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="requirements">Requirements</h1>
+<p>Cacti requires that the following software is installed on your system.</p>
+<ul>
+<li><p>Web Server that supports PHP e.g. Apache, Nginx, or IIS</p></li>
+<li><p>Build environment when using spine (gcc, automake, autoconf, libtool, help2man)</p></li>
+<li><p>RRDtool 1.3 or greater, 1.5+ recommended</p></li>
+<li><p>PHP 5.4 or greater, 5.5+ recommended</p>
+<ul>
+<li><p>Required modules:</p>
+<ul>
+<li>ctype, date, filter, gettext, gd, gmp</li>
+<li>hash, json, ldap, mbstring, openssl, pcre</li>
+<li>PDO, pdo_mysql, session, simplexml, sockets, spl</li>
+<li>standard, xml, zlib</li>
+<li>com_dotnet (windows only)</li>
+<li>posix (linux only)</li>
+</ul></li>
+<li><p>Optional modules:</p>
+<ul>
+<li>snmp (falls back to NetSNMP)</li>
+</ul></li>
+</ul></li>
+<li><p>Problematic software and configuration</p>
+<ul>
+<li><p>On Linux OS do not turn on SELinux</p></li>
+<li><p>On web server do not turn on ModSecurity</p>
+<p>SELinux and ModSecurity can cause problem with ICMP ping, socket connections, ...</p></li>
+</ul></li>
+<li><p>MySQL 5.6 or MariaDB 5.5 or greater</p>
+<ul>
+<li><p>Timezone support must be enabled</p></li>
+<li><p>The following are my.cnf recommendations:</p>
+<ul>
+<li><p><strong>version &gt;= 5.6</strong></p>
+<p>MySQL 5.6+ and MariaDB 10.0+ are great releases, and are very good versions to choose. Make sure you run the very latest release though which fixes a long standing low level networking issue that was causing spine many issues with reliability.</p></li>
+<li><p><strong>innodb = ON</strong></p>
+<p>It is recommended that you enable InnoDB in any MySQL/MariaDB version greater than 5.1.</p></li>
+<li><p><strong>collation_server = utf8mb4_unicode_ci</strong></p>
+<p>When using Cacti with languages other than English, it is important to use the utf8_general_ci collation type as some characters take more than a single byte. If you are first just now installing Cacti, stop, make the changes and start over again. If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages.</p></li>
+<li><p><strong>character_set_client = utf8mb4</strong></p></li>
+<li><p><strong>character_set_server = utf8mb4</strong></p>
+<p>When using Cacti with languages other than English, it is important to use the utf8 character set as some characters take more than a single byte. If you are first just now installing Cacti, stop, make the changes and start over again. If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages.</p></li>
+<li><p><strong>max_connections &gt;= 100</strong></p>
+<p>Depending on the number of logins and use of spine data collector, MySQL/MariaDB will need many connections. The calculation for spine is:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb1-1" title="1">total_connections = total_processes * <span class="ot">(</span>total_threads + script_servers + <span class="dv">1</span><span class="ot">)</span></a></code></pre></div>
+<p>then you must leave headroom for user connections, which will change depending on the number of concurrent login accounts.</p></li>
+<li><p><strong>max_heap_table_size &gt;= 5</strong></p>
+<p>If using the Cacti Performance Booster and choosing a memory storage engine, you have to be careful to flush your Performance Booster buffer before the system runs out of memory table space. This is done two ways, first reducing the size of your output column to just the right size. This column is in the tables poller_output, and poller_output_boost.</p>
+<p>The second thing you can do is allocate more memory to memory tables with a recommended value of 10% of system memory, but if you are using SSD disk drives, or have a smaller system, you may ignore this recommendation or choose a different storage engine. You may see the expected consumption of the Performance Booster tables under Console -&gt; System Utilities -&gt; View Boost Status.</p>
+<p>NOTE: If you are using a recent version of MariaDB or MySQL, using memory tables is no longer a requirement. You may choose to continue to use memory tables to spare your NVMe or SSD drives excessive use wear. However, outside of that, it is no longer a requirement. As such, the value of the <strong>max_heap_table_size</strong> is not as important as in previous releases. Additionally, if you are using Galera replication with Cacti, all your tables must be in InnoDB format. So, the only feature in MariaDB or MySQL becomes temporary table space which may not be dependent on the <strong>max_heap_table_size</strong>.</p></li>
+<li><p><strong>table_cache &gt;= 200</strong></p>
+<p>Keeping the table cache larger means less file open/close operations when using innodb_file_per_table.</p></li>
+<li><p><strong>max_allowed_packet &gt;= 16777216</strong></p>
+<p>With Remote polling capabilities, large amounts of data will be synced from the main server to the remote pollers. Therefore, keep this value at or above 16M.</p></li>
+<li><p><strong>tmp_table_size &gt;= 64M</strong></p>
+<p>When executing subqueries, having a larger temporary table size, keep those temporary tables in memory.</p></li>
+<li><p><strong>join_buffer_size &gt;= 64M</strong></p>
+<p>When performing joins, if they are below this size, they will be kept in memory and never written to a temporary file.</p></li>
+<li><p><strong>innodb_file_per_table = ON</strong></p>
+<p>When using InnoDB storage it is important to keep your table spaces separate. This makes managing the tables simpler for long time users of MySQL/MariaDB. If you are running with this currently off, you can migrate to the per file storage by enabling the feature, and then running an alter statement on all InnoDB tables.</p></li>
+<li><p><strong>innodb_buffer_pool_size &gt;= 25</strong></p>
+<p>InnoDB will hold as much tables and indexes in system memory as is possible. Therefore, you should make the innodb_buffer_pool large enough to hold as much of the tables and index in memory. Checking the size of the /var/lib/mysql/cacti directory will help in determining this value. We are recommending 25% of your systems total memory, but your requirements will vary depending on your systems size.</p></li>
+<li><p><strong>innodb_doublewrite = OFF</strong></p>
+<p>With modern SSD type storage, this operation actually degrades the disk more rapidly and adds a 50% overhead on all write operations.</p></li>
+<li><p><strong>innodb_additional_mem_pool_size &gt;= 80M</strong></p>
+<p>This is where metadata is stored. If you had a lot of tables, it would be useful to increase this.</p></li>
+<li><p><strong>innodb_lock_wait_timeout &gt;= 50</strong></p>
+<p>Rogue queries should not for the database to go offline to others. Kill these queries before they kill your system.</p></li>
+<li><p><strong>innodb_flush_log_at_trx_commit = 2</strong></p>
+<p>Setting this value to 2 means that you will flush all transactions every second rather than at commit. This allows MySQL/MariaDB to perform writing less often.</p></li>
+<li><p><strong>innodb_file_io_threads &gt;= 16</strong></p>
+<p>With modern SSD type storage, having multiple io threads is advantageous for applications with high IO characteristics.</p></li>
+<li><p><strong>innodb_flush_log_at_timeout &gt;= 3</strong></p>
+<p>If your MySQL/MariaDB version supports it, the you can control how often MySQL/MariaDB flushes transactions to disk. The default is 1 second, but in high I/O systems setting to a value greater than 1 can allow disk I/O to be more sequential</p></li>
+<li><p><strong>innodb_read_IO_threads &gt;= 32</strong></p>
+<p>With modern SSD type storage, having multiple read IO threads is advantageous for applications with high IO characteristics.</p></li>
+<li><p><strong>innodb_write_IO_threads &gt;= 16</strong></p>
+<p>With modern SSD type storage, having multiple write IO threads is advantageous for applications with high IO characteristics.</p></li>
+<li><p><strong>innodb_buffer_pool_instances &gt;= 16</strong></p>
+<p>MySQL/MariaDB will divide the innodb_buffer_pool into memory regions to improve performance with a maximum value is 64. When your innodb_buffer_pool is less than 1GB, you should use the pool size divided by 128MB. Continue to use this equation up to the max of 64.</p></li>
+</ul>
+<p>Note:</p>
+<ul>
+<li><p>Some of these recommendations may not be applicable depending on the version of MySQL/MariaDB you are running.</p></li>
+<li><p>Some of these recommendations should be scaled where appropriate</p></li>
+<li><p>Newer MySQL/MariaDB software are using <a href="https://dev.mysql.com/doc/refman/8.0/en/sql-mode.html">strict modes</a> and it can cause unexpected problems when importing dumps of Cacti databases from older systems, like <strong>Can't create table <code>cacti</code>.<code>poller_output_boost</code> (errno: 140 "Wrong create options")</strong>.</p>
+<p>You have more possibilities:</p>
+<ul>
+<li><p>disable appropriate strict mode - not recommended</p></li>
+<li><p>change mysqldump file - remove <strong>ROW_FORMAT=FIXED</strong> from table definition</p></li>
+<li><p>before mysqldump run query: <strong>ALTER TABLE <code>poller_output_boost</code> ROW_FORMAT=DYNAMIC;</strong></p></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+<p>To implement the above mysql recommendations you can use the below entries and paste them into my.cnf</p>
+<pre class="console"><code> innodb_flush_log_at_timeout = 4
+ innodb_read_io_threads = 34
+ innodb_write_io_threads = 17
+ max_heap_table_size = 70M
+ tmp_table_size = 70M
+ join_buffer_size = 130M
+ innodb_buffer_pool_size = 250M
+ innodb_io_capacity = 5000
+ innodb_io_capacity_max = 10000
+ innodb_file_format = Barracuda
+ innodb_large_prefix = 1
+</code></pre>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

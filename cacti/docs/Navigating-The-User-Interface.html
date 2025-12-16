@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Navigating the Cacti User Interface</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="navigating-the-cacti-user-interface">Navigating the Cacti User Interface</h1>
+<p>The Cacti User Interface is visually broken into multiple panels. Each major major panel is designed to hold content. Depending on the Cacti Theme you use some of these panel may not be visible at the Theme Developers discretion. The common panels are:</p>
+<ul>
+<li><strong>Top Tabs</strong> - Where you perform major navigation separate content</li>
+<li><strong>Navigation Area</strong> - If the content in navigated to by the Top Tab has a menu, it will be found here.</li>
+<li><strong>Breadcrumb Bar</strong> - This is where you can see where in the Cacti interface you are currently pointed to</li>
+<li><strong>Content Area</strong> - This is where you present tables, charts, forms, etc. It is where your main Content resides</li>
+<li><strong>Footer</strong> - This section is left for Theme Developers to insert content that belongs at the bottom of the screen.</li>
+</ul>
+<p>You can see the default Cacti layout with its various panels in the image below. You will note, in this <code>Modern</code> Theme, the Theme Author has decided to dispense with the Footer.</p>
+<p><img src="images/navigation-layout.png" alt="Cacti Layout" /></p>
+<p>In Cacti, when you click on the <strong>Top Tab</strong>, you will by default enter a completely different section of Cacti. Cacti's Top Taps are Designed to mimic browser tabs, this helps with users orienting themselves to the various sections of Cacti. When you have many <strong>Plugins</strong> installed as in the example above, you can see clearly the benefit of these navigation aids.</p>
+<p>Inside each of these panels, a page can be broken into sub-panels. Two panels customarily broken into sub-panels include the <em>Navigation Area</em> and the <em>Content Area</em>.</p>
+<p>In the example below, we show the <strong>Device</strong> page in Cacti calling out the various sub-panels.</p>
+<p><img src="images/navigation-layout-subpanel.png" alt="Cacti Layout Subpanels" /></p>
+<p>Most of Cacti's pages are laid out in this fashion. However, what goes into the Cacti <strong>Content Area</strong> is completely under the <strong>Plugin</strong> authors control.</p>
+<p>At the Theme developers discretion, all pages should include both the <strong>Top Tab</strong> and <strong>Breadcrumb Bar</strong>. Inside of the <strong>Breadcrumb Bar</strong> or <strong>Top Tap</strong> panels you should always see the <em>User Profile and Menu</em> on the right.</p>
+<p>To use Cacti properly, you should first understand these sections. We will start by describing the Cacti <em>Console</em>.</p>
+<h2 id="cacti-core-panels-and-sub-panels">Cacti Core Panels and Sub-Panels</h2>
+<ul>
+<li><p><strong>Top Tabs</strong></p>
+<p>Cacti <strong>Top Tabs</strong> provide Cacti with multiple <strong>Navigation Areas</strong>. By default, Cacti includes four <strong>Top Tabs</strong>. They are <em>Console</em>, <em>Graphs</em>, <em>Log</em> and <em>Reports</em>.</p></li>
+<li><p><strong>Breadcrumbs</strong></p>
+<p><strong>Breadcrumbs</strong> appear directly below the <strong>Top Tabs</strong>. Note that some Cacti <em>Themes</em> disable the <strong>Breadcrumbs</strong>. You can click on a <strong>Breadcrumb</strong> area to navigate to that area if desired.</p></li>
+<li><p><strong>Cacti Content Area</strong></p>
+<p>This is where the main page content will be displayed. It is directly below the <strong>Breadcrumbs</strong> or the <strong>Top Tabs</strong> with some Cacti <em>Themes</em>. They can include any HTML that the <strong>Plugin Author</strong> or Cacti Administrator desires in the case of <strong>External Links</strong>.</p></li>
+<li><p><strong>Navigation Menu</strong></p>
+<p>If you click on the Cacti <em>Console</em>, you will see an example <strong>Navigation Menu</strong>. These menus can appear on any Plugin based <strong>Top Tab</strong> page in addition to the Cacti <em>Console</em>.</p></li>
+<li><p><strong>Cacti Tables</strong></p>
+<p>These tables are where table based data is rendered in Cacti. <strong>Cacti Tables</strong> are presented using an arcane, though easy to use API.</p></li>
+<li><p><strong>Table Filters</strong></p>
+<p>Any <strong>Cacti Table</strong> can include a <strong>Table Filters</strong>. These filters can be used to limit the data returned to a <strong>Cacti Table</strong>.</p></li>
+<li><p><strong>Actions Dropdown</strong></p>
+<p>Any page that includes a <strong>Cacti Table</strong> will generally include an <strong>Actions Dropdown</strong>. These <strong>Actions Dropdown</strong> menus allow you to take action on a table row or rows.</p></li>
+<li><p><strong>User Profile and Menu</strong></p>
+<p>This is where a <strong>Cacti User</strong> can edit their profile, change their password, logout, or find links to other Cacti information and support.</p></li>
+</ul>
+<p>Non-Administrative users, such as the Cacti Guest account <em>should</em> not have access to the Cacti <em>Console</em>. The Cacti Guest account should additionally not have access to their <em>User Profile</em> as that account is shared with many users.</p>
+<h2 id="the-cacti-graphs-top-tab">The Cacti Graphs Top Tab</h2>
+<p>The Cacti Graphs <strong>Top Tab</strong> is where most Cacti <strong>Graphs</strong> are viewed. By default, the Cacti Graphs <strong>Top Tab</strong> includes three distinct views. They include:</p>
+<ul>
+<li><p><strong>Tree View</strong></p>
+<p>Allows Cacti Users to view <strong>Graphs</strong> in the form of hierarchical <strong>Trees</strong>. These <strong>Trees</strong> are generally constructed by the Cacti Administrator and are controlled either at the <strong>User</strong> or <strong>User Group</strong> level.</p></li>
+<li><p><strong>Preview View</strong></p>
+<p>The <strong>Preview View</strong> provides a view of all <strong>Graphs</strong> that a Cacti User has access to. <strong>Table Filters</strong> are provided to constrain the list of <strong>Graphs</strong> returned to the page.</p></li>
+<li><p><strong>List View</strong></p>
+<p>The <strong>List View</strong> allows the Cacti user to Create their own <strong>Preview Page</strong> by allowing them to select graphs from various pages, and then finally view those pages from the <strong>Preview View</strong>.</p></li>
+</ul>
+<p>In the example <strong>Tree View</strong> page below, you can see the <strong>Tree Navigation Area</strong> to the left, and in the <strong>Cacti Content Area</strong>, you can see the <strong>Graphs</strong> and a <strong>Table Filter</strong> area for constraining the list of <strong>Graphs</strong> returned. You can <em>Search</em> the Tree View from the <em>Search</em> area above the <strong>Tree Navigation Area</strong>.</p>
+<p><img src="images/tree-view-page.png" alt="Cacti Tree View Page" /></p>
+<h2 id="the-cacti-console">The Cacti Console</h2>
+<p>In the image below, you can see a basic Cacti Console menu area. It is divided into separate sub-menus. We will describe the purpose of each next.</p>
+<p><img src="images/navigation-console.png" alt="Cacti Console" /></p>
+<ul>
+<li><strong>Main Console</strong> - This sub-menu pick is fairly benign. It provides an open area. This screen feels like it needs more content if it's the <em>Main Console</em>. Fortunately, <strong>Plugin</strong> developers have solved this problem. The <strong>intropage plugin</strong> for example can fulfill that need.</li>
+<li><strong>Create</strong> - This sub-menu allows you to create both <strong>Devices</strong> and <strong>Graphs</strong>. They are essentially shortcuts to other sub-menu picks.</li>
+<li><strong>Management</strong> - This is where all core Cacti <strong>Site</strong>, <strong>Graph</strong>, <strong>Device</strong>, <strong>Tree</strong>, <strong>Data Source</strong>, and <strong>Aggregate</strong> non-templated objects reside. When you install Cacti <strong>Plugins</strong>, you will find they they extend this sub-menu.</li>
+<li><strong>Data Collection</strong> - This is where you define rules for <strong>Data Collection</strong> Examples include: <strong>Data Collectors</strong>, <strong>Data Input Methods</strong> and <strong>Data Queries</strong></li>
+<li><strong>Templates</strong> - This is where you find all of Cacti's various Templates outside of Automation. By default, You will find Templates for <strong>Graphs</strong>, <strong>Data Sources</strong>, <strong>Devices</strong>, <strong>Aggregates</strong>, and <strong>Colors</strong>.</li>
+<li><strong>Automation</strong> - This sub-menu is where you find rules for automating <strong>Device</strong> Discovery, and Rules for creating <strong>Devices</strong>, <strong>Graphs</strong>, and <strong>Trees</strong>.</li>
+<li><strong>Presets</strong> - This area contains meta objects that cross Template boundaries and are Global in nature. They include; <strong>Data Source Profiles</strong>, <strong>CDEFs</strong>, <strong>VDEFs</strong>, <strong>GPrint Presets</strong>, and <strong>Colors</strong></li>
+<li><strong>Import Export</strong> - This is how you can import and export various Cacti Template objects.</li>
+<li><strong>Configuration</strong> - This is where you manage <strong>Users</strong>, <strong>User Groups</strong>, <strong>User Domains</strong>, <strong>Global Settings</strong>, and <strong>Plugins</strong>.</li>
+<li><strong>Utilities</strong> - This is where Cacti includes common utilities that can be use in the Web Portal without having to goto the Command line.</li>
+<li><strong>Troubleshooting</strong> - There are some handy utilities here that help diagnose common problems with Cacti.</li>
+</ul>
+<p>All of these objects types will be explained in subsequent sections of the Cacti documentation. For now, it's important just to know that these pages exist.</p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!-- $Id$ -->
+<cacti>
+	<hash_180021fce727eb3e8918ae4bfd8e07cc98c1bc>
+		<id>20</id>
+		<name>Jobs in Lost And Found Status in Cluster |alert_clustername|</name>
+		<clusterid>0</clusterid>
+		<type>0</type>
+		<expression_id>19</expression_id>
+		<aggregation>0</aggregation>
+		<metric>0</metric>
+		<base_time_display>12:00am</base_time_display>
+		<base_time>0</base_time>
+		<frequency>12</frequency>
+		<alarm_type>0</alarm_type>
+		<alarm_hi>0</alarm_hi>
+		<alarm_low></alarm_low>
+		<alarm_fail_trigger>12</alarm_fail_trigger>
+		<time_hi>0</time_hi>
+		<time_low></time_low>
+		<time_fail_trigger>0</time_fail_trigger>
+		<time_fail_length>1</time_fail_length>
+		<warning_pct></warning_pct>
+		<trigger_cmd_high></trigger_cmd_high>
+		<trigger_cmd_low></trigger_cmd_low>
+		<trigger_cmd_norm></trigger_cmd_norm>
+		<repeat_alert>288</repeat_alert>
+		<notify_extra></notify_extra>
+		<notify_cluster_admin>1</notify_cluster_admin>
+		<notify_alert>0</notify_alert>
+		<notify_users></notify_users>
+		<syslog_priority>4</syslog_priority>
+		<syslog_facility>24</syslog_facility>
+		<syslog_enabled></syslog_enabled>
+		<tcheck>0</tcheck>
+		<exempt>off</exempt>
+		<acknowledgement>off</acknowledgement>
+		<restored_alert>off</restored_alert>
+		<req_ack>off</req_ack>
+		<email_body>There are jobs in Lost and Found Queues or Hosts. This means either host or queue has been removed from a cluster. Remove these jobs using bkill, or switch these jobs to the proper queue using bswitch.&lt;br&gt;&lt;DETAILS&gt;&lt;br&gt;&lt;br&gt;</email_body>
+		<email_subject>ALERT: &lt;NAME&gt;</email_subject>
+		<gridalarms_template_contacts>
+		</gridalarms_template_contacts>
+		<gridalarms_template_layout>
+			<hash_2000217df05c8209ebaf8b9503ab51fb3877ce>
+				<id>149</id>
+				<alarm_id>20</alarm_id>
+				<display_name>Jobid</display_name>
+				<column_name>jobid</column_name>
+				<sequence>9</sequence>
+				<sortposition>1</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_2000217df05c8209ebaf8b9503ab51fb3877ce>
+			<hash_200021490224260d79d1fddb1e27b63a873c05>
+				<id>150</id>
+				<alarm_id>20</alarm_id>
+				<display_name>Indexid</display_name>
+				<column_name>indexid</column_name>
+				<sequence>10</sequence>
+				<sortposition>2</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200021490224260d79d1fddb1e27b63a873c05>
+			<hash_200021f1947eb01df382ff771adbd217503a0f>
+				<id>151</id>
+				<alarm_id>20</alarm_id>
+				<display_name>Clusterid</display_name>
+				<column_name>clusterid</column_name>
+				<sequence>8</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200021f1947eb01df382ff771adbd217503a0f>
+			<hash_200021427af2f8b91707d917cb4d750c95a71f>
+				<id>152</id>
+				<alarm_id>20</alarm_id>
+				<display_name>Queue Name</display_name>
+				<column_name>queue</column_name>
+				<sequence>3</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200021427af2f8b91707d917cb4d750c95a71f>
+			<hash_200021990c04aabb41dd4a152a3838e931f573>
+				<id>153</id>
+				<alarm_id>20</alarm_id>
+				<display_name>Submit Time</display_name>
+				<column_name>submit_time</column_name>
+				<sequence>11</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200021990c04aabb41dd4a152a3838e931f573>
+			<hash_200021de36eb059bbe34c09697ceb7cb899e53>
+				<id>154</id>
+				<alarm_id>20</alarm_id>
+				<display_name>User Name</display_name>
+				<column_name>user</column_name>
+				<sequence>7</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200021de36eb059bbe34c09697ceb7cb899e53>
+			<hash_2000215f497752b86ad3cb0115845e35641edc>
+				<id>155</id>
+				<alarm_id>20</alarm_id>
+				<display_name>Status</display_name>
+				<column_name>stat</column_name>
+				<sequence>12</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_2000215f497752b86ad3cb0115845e35641edc>
+			<hash_2000219625399f44d9f89ad2d7cffdfa16b63f>
+				<id>156</id>
+				<alarm_id>20</alarm_id>
+				<display_name>Exec Host</display_name>
+				<column_name>exec_host</column_name>
+				<sequence>13</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_2000219625399f44d9f89ad2d7cffdfa16b63f>
+			<hash_200021241a1415c518c36e8ab73c8a0f3f6c29>
+				<id>178</id>
+				<alarm_id>20</alarm_id>
+				<display_name>Cluster Name</display_name>
+				<column_name>clustername</column_name>
+				<sequence>1</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200021241a1415c518c36e8ab73c8a0f3f6c29>
+			<hash_20002153dc43ca42719fdc1680996141c38f25>
+				<id>179</id>
+				<alarm_id>20</alarm_id>
+				<display_name>Job Name</display_name>
+				<column_name>jobname</column_name>
+				<sequence>2</sequence>
+				<sortposition>3</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_20002153dc43ca42719fdc1680996141c38f25>
+		</gridalarms_template_layout>
+		<gridalarms_template_expression>
+			<hash_210021fb1383f2ed658c9c105867f1911b1595>
+				<id>19</id>
+				<name>lost_and_found</name>
+				<description>A job is moved to the lost_and_found queue or lost_and_found host.</description>
+				<ds_type>1</ds_type>
+				<type>1</type>
+				<db_table></db_table>
+				<sql_query>SELECT gc.clustername, gj.*
+FROM grid_jobs AS gj
+INNER JOIN grid_clusters AS gc
+ON gc.clusterid=gj.clusterid
+WHERE queue=&#039;lost_and_found&#039;
+OR exec_host=&#039;lost_and_found&#039;</sql_query>
+				<script_thold></script_thold>
+				<script_data></script_data>
+				<script_data_type>0</script_data_type>
+			</hash_210021fb1383f2ed658c9c105867f1911b1595>
+		</gridalarms_template_expression>
+		<gridalarms_template_expression_item>
+		</gridalarms_template_expression_item>
+		<gridalarms_template_metric>
+		</gridalarms_template_metric>
+		<gridalarms_template_metric_expression>
+		</gridalarms_template_metric_expression>
+		<gridalarms_template_expression_input>
+		</gridalarms_template_expression_input>
+	</hash_180021fce727eb3e8918ae4bfd8e07cc98c1bc>
+</cacti>

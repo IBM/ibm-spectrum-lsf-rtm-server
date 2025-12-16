@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Templates</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="templates">Templates</h1>
+<p>The real strength of Cacti is unleashed by using templates. There are five different types of templates with the basic Cacti installation:</p>
+<ul>
+<li><p><strong>Device Templates</strong> - Define a Collection of <strong>Graph Templates</strong> and <strong>Data Queries</strong> that belong to a class of <strong>Devices</strong></p></li>
+<li><p><strong>Graph Templates</strong> - Define how to paint the Graph, it size, legend, left and right Axis and it Canvas</p></li>
+<li><p><strong>Data Templates</strong> - Define how data is to be stored in the RRDfile and how often to collect that data</p></li>
+<li><p><strong>Aggregate Templates</strong> - A special class of <strong>Graph Template</strong> that allows you to combine elements from multiple <strong>Graph</strong> of a common Template into one <strong>Graph</strong></p></li>
+<li><p><strong>Color Templates</strong> - A collection of color rotations to use for <strong>Aggregate Graphs</strong></p></li>
+</ul>
+<p>While it is perfectly fine to define all <strong>Data Sources</strong> and <strong>Graphs</strong> without using Templates at all, the burden of this approach is high.</p>
+<p>In most installations, there are hundreds if not thousands of <strong>Devices</strong> of the same kind. And there are many similar <strong>Graph Templates</strong>, that span multiple <strong>Device Templates</strong>. For example: Network Traffic information is needed for almost every <strong>Device</strong>. Therefore, the parameters needed to create a traffic RRDfile are defined by the <strong>Data Template</strong>, in this case known as "Interface - Traffic". These definitions are used by all Traffic-related RRDfiles.</p>
+<p>The same approach is used for defining <strong>Graph Templates</strong>. This is done only once. And all parameters defined within such a <strong>Graph Template</strong> are copied to all <strong>Graphs</strong> that are created using this Template.</p>
+<p>The last type of classic Templates are the <strong>Device Templates</strong>. The purpose of <strong>Device Templates</strong> is to group all <strong>Graph Templates</strong> and <strong>Data Queries</strong> for a given <strong>Device Type</strong>. Example <strong>Device Types</strong> that you might find a <strong>Device Template</strong> for include:</p>
+<ul>
+<li>Cisco Router</li>
+<li>Net-SNMP Device</li>
+<li>F5 Load Balancer</li>
+<li>Windows Device</li>
+<li>Local Linux Device</li>
+<li>...</li>
+</ul>
+<p>So you will make up a <strong>Device Template</strong> e.g. for a specific type of router, switch, host and the like. By assigning the correct <strong>Device Template</strong> to each new <strong>Device</strong>, you'll never forget to create all needed <strong>Graphs</strong>.</p>
+<p>There's no need to create all Templates on your own! Apart from the fact, that many common templates are provided out-of-the-box, there's a very simple mechanism to <strong>Import Templates</strong> and to <strong>Export Templates</strong> and more recently to <strong>Import Packages</strong>.</p>
+<p>More recent additions to the Cacti family of Templates are the <strong>Aggregate Template</strong> and <strong>Color Template</strong>. The <strong>Aggregate Template</strong> allows you to define a <strong>Graph Template</strong> that can aggregate data from many <strong>Graphs</strong> sharing that Template.</p>
+<p>The <strong>Color Template</strong> defines a list of colors that are used in a Round Robin fashion to change the colors seen on the resulting <strong>Aggregate Graphs</strong> to better assist the user in interpreting the resulting <strong>Graph</strong>.</p>
+<p>In order to best follow the natural course of Template creation, the remainder of this chapter will explain Templating starting with <strong>Data Templates</strong>, then we will go from there to <strong>Graph Templates</strong>, and from there go to a walk-through of creating both a <strong>Data Template</strong> and <strong>Graph Template</strong>.</p>
+<p>From there, we will explain how to create a <strong>Graph</strong> using that newly created set of Templates.</p>
+<h2 id="data-templates">Data Templates</h2>
+<p>In Cacti, a <strong>Data Template</strong> provides a skeleton for an actual <strong>Data Source</strong>. If you have many <strong>Data Sources</strong> that share most of their characteristics, using a <strong>Data Template</strong> would probably make sense. No change of a <strong>Data Template</strong> is propagated to already existing RRDfiles. But most of them may be changed by using <code>rrdtool tune</code> from command line. Pay attention to not append new <em>Data Source Items</em> to already existing RRDfiles. There's no <code>rrdtool</code> command to achieve this!</p>
+<h3 id="creating-a-data-template">Creating a Data Template</h3>
+<p>To create a new <strong>Data Template</strong>, select <strong>Data Source</strong> under <code>Console &gt; Templates</code> menu selection and then click Add, which in most cases will be the plus sign in the upper right area of the page.</p>
+<p>The first thing you must do is give the template a name. This name has nothing to do with the <strong>Data Source</strong> name, but is what you will use to identify the template throughout Cacti.</p>
+<p>Second, you will notice a list of <strong>Data Source</strong> / <strong>Data Source Item</strong> field names with Use Per-Data Source Value check-boxes next to each one. The nice thing about Templates in Cacti is that you can choose whether to template each field on a per-field basis. If you leave the check-box unchecked, every <strong>Data Source</strong> attached to the <strong>Data Template</strong> will inherit its value from the Template. If the check-box is checked, every <strong>Data Source</strong> attached to the <strong>Data Template</strong> will contain its own value for that particular field. When generating a real <strong>Data Source</strong>, you will be prompted to fill those non-templated fields.</p>
+<blockquote>
+<p><strong>NOTE</strong>: If you are using Cacti's <strong>Automation</strong> feature, there is presently no way for you to override these values. So, plan accordingly when engineering your Cacti deployment.</p>
+</blockquote>
+<h6 id="table-13-1-data-templates-field-description-of-the-data-source-section">Table 13-1. Data Templates: Field Description of the Data Source Section</h6>
+<table>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Name</td>
+<td>The name of the <strong>Data Source</strong> that will be created by using this Template. You can use the keyword <code>host_description</code> enclosed by vertical bars in this field, which will be automatically substituted with the current host description of the <strong>Device</strong>. There are several replacement values available to you when using a Template.</td>
+</tr>
+<tr class="even">
+<td>Data Input Method</td>
+<td>Here is where you tell Cacti how it is supposed to fetch data for this <strong>Data Source</strong>. There are several <strong>Data Input Methods</strong> that come with Cacti, and you can add your own by going to <code>Console &gt; Data Collection &gt; Data Input Methods</code>. If this RRDfile is being populated outside of Cacti, make sure to leave this field set to "None".</td>
+</tr>
+<tr class="odd">
+<td>Data Source Profile</td>
+<td>The <strong>Data Source Profile</strong> will define how often to collect data for the resulting <strong>Data Source</strong>, and how long to keep that data in the RRDfile.</td>
+</tr>
+<tr class="even">
+<td>Data Source Active</td>
+<td>This is a quick and easy to tell Cacti to stop gathering data for this <strong>Data Template</strong>. The resulting <strong>Data Source</strong> can still be used on <strong>Graphs</strong>, but no data will be fed to it until it is made active again.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>NOTE:</strong> For most <strong>Data Templates</strong>, you will should not have to to check the Use Per-Graph Value check-box for the name field. The Templating should handle this just fine. However, the Generic SNMP OID <strong>Data Template</strong> has this value checked to allow you to create Graphs and Data Sources on a piecemeal basis.</p>
+</blockquote>
+<p>When you are finished filling in values for the <strong>Data Template</strong>, click Create and you will be presented with a screen similar to the image below.</p>
+<p><img src="images/data-template.png" alt="Adding a Data Template" /></p>
+<h4 id="data-source-items">Data Source Items</h4>
+<p>Just like a <strong>Graph</strong>, a <strong>Data Source</strong> can have more than one item. This is useful in situations where a script returns more than piece of data at one time and both need to appear on the same <strong>Graph</strong>. This also applies to <strong>Data Queries</strong>, so you can have a single <strong>Data Template</strong> that contains both Inbound and Outbound Traffic, rather than having to create a separate <strong>Data Template</strong> for each.</p>
+<h6 id="table-13-2-data-templates-field-description-of-the-data-source-items-section">Table 13-2. Data Templates: Field Description of the Data Source Items Section</h6>
+<table>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Internal Data Source Name</td>
+<td>This is the name used by RRDtool to identify this particular data source within the RRDfile. RRDtool places a limit of 19 alphanumeric characters (plus '_' and '-') on this field.</td>
+</tr>
+<tr class="even">
+<td>Minimum Value</td>
+<td>Here is where you specify the minimum value that is expected for this data source in the RRDfile. If a value lower than the minimum is given, it will be stored as Unknown (U).</td>
+</tr>
+<tr class="odd">
+<td>Maximum Value</td>
+<td>Here is where you specify the maximum value that is expected for this data source in the RRDfile. If a value higher than the maximum is given, it will be stored as Unknown (U). Note: It often makes sense to define a reasonable maximum value here to avoid spikes in case of a COUNTER wrap</td>
+</tr>
+<tr class="even">
+<td>Data Source Type</td>
+<td>Cacti currently supports seven types of data that RRDtool can represent for any given data source: COUNTER: is for continuous incrementing counters like the ifInOctets counter in a router. The COUNTER data source assumes that the counter never decreases, except when a counter overflows. It is always a whole INTEGER, floating point numbers are invalid. The update function takes the overflow into account. The counter is stored as a per-second rate. When the counter overflows, RRDtool checks if the overflow happened at the 32-bit or 64-bit border and acts accordingly by adding an appropriate value to the result. GAUGE: numbers that are not continuously incrementing, e.g. a temperature reading. Floating point numbers are accepted. ABSOLUTE: counters that are reset upon reading. DERIVE: like COUNTER but without overflow checks</td>
+</tr>
+<tr class="odd">
+<td>Heartbeat</td>
+<td>As defined by RRDtool: "The maximum amount of time that can pass before data is entered as "unknown". This field is usually '600' or 2 data gathering intervals".</td>
+</tr>
+</tbody>
+</table>
+<h4 id="custom-data">Custom Data</h4>
+<p>Assuming you selected a <strong>Data Input Method</strong> on the previous screen, you should now be presented with a <strong>Custom Data</strong> form. It will show a single line for every single parameter required for that very <strong>Data Input Method</strong>. This is how the <strong>Data Source</strong> connects to the <strong>Data Input Method</strong> to provide all run time parameters.</p>
+<p>Each <strong>Custom Data</strong> field is per-field Templatable as all of the other <strong>Data Source</strong> fields are. Even if you select the Use Per-Data Source Value check-box, it might be useful to specify a value that will be used as an "initial value" for any <strong>Data Source</strong> using the <strong>Data template</strong>.</p>
+<h3 id="applying-data-templates-to-data-sources">Applying Data Templates to Data Sources</h3>
+<blockquote>
+<p><strong>NOTE:</strong> When changing parameters of a <strong>Data Template</strong>, existing RRDfiles will not be changed automatically. If this is required, you will have to apply <code>rrdtool tune</code> command to any related RRDfile manually.</p>
+</blockquote>
+<p>Applying a <strong>Data Template</strong> to a <strong>Data Source</strong> is a very simple process. The first thing you must do is select the <strong>Data Source</strong> you want to apply the template to under <strong>Data Sources</strong>. Under the <strong>Data Template</strong> Actions drop-down, select the <strong>Data Template</strong> that you want to apply to the <strong>Data Source</strong> and click Save. Though this should be very rare in modern Cacti instances, it was fairly common before Cacti's Templating system matured.</p>
+<p>Once a Template is applied to a Data Source, you will notice that you can only change values for the fields that you checked Use Per-Data Source Value for.</p>
+<blockquote>
+<p><strong>NOTE:</strong> Now any time a change is made to the <strong>Data Template</strong>, it will be automatically propagated to the <strong>Data Sources</strong> attached to it. However, as previously stated, changes to a <strong>Data Template</strong> that involve changes to the <strong>Data Source Items</strong>, will not be automatically applied to those same <strong>Data Sources</strong>.</p>
+</blockquote>
+<h4 id="how-to-working-with-templates">How To: Working with Templates</h4>
+<p>If you goto the following article <a href="How-To-Work-With-Templates.html">How to Work with Templates</a>. There you will find a step by step guide on how to work with variout Cacti Templates in general.</p>
+<h2 id="graph-templates">Graph Templates</h2>
+<p>In Cacti, a <strong>Graph Template</strong> provides a skeleton for an actual <strong>Graph</strong>. If you have many <strong>Graphs</strong> that share most of their characteristics, using a <strong>Graph Template</strong> makes perfect sense. After a <strong>Graph</strong> is attached to a particular <strong>Graph Template</strong>, all changes made to the <strong>Graph Template</strong> will propagate out to all of its <strong>Graphs</strong>, unless Use Per-Graph Value has been checked.</p>
+<h3 id="creating-a-graph-template">Creating a Graph Template</h3>
+<p>To create a new <strong>Graph Template</strong>, select <strong>Graph</strong> under <code>Console &gt; Templates</code> menu selection, then click Add normally the plus sign in the upper right corner of the <strong>Graph Template</strong> interface.</p>
+<p>The first thing you must do is give the <strong>Graph Template</strong> a name. This name has nothing to do with the graph title, but is what you will use to identify the <strong>Graph Template</strong> throughout Cacti. Second, you will notice a list of graph field names with Use Per-Graph Value check-boxes next to each one. The nice thing about Templates in Cacti is that you can choose whether to template each field on a per-field basis. If you leave the check-box unchecked, every <strong>Graph</strong> owned by the <strong>Graph Template</strong> will inherit its value from the Template. If the check-box is checked, every <strong>Graph</strong> owned by <strong>Graph Template</strong> will have its own value for that particular field.</p>
+<h6 id="table-13-3-field-description-graph-templates">Table 13-3. Field Description: Graph Templates</h6>
+<table>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Title</td>
+<td>The title of the <strong>Graph</strong> within Cacti and the title that will be printed on the actual <strong>Graph</strong> itself. <strong>NOTE</strong>: You can use the keyword <code>host_description</code> enclosed by vertical bars in this field, which will be automatically substituted with the current host description.</td>
+</tr>
+<tr class="even">
+<td>Image Format</td>
+<td>Choose whether you would prefer to output your graph images in PNG or SVG.</td>
+</tr>
+<tr class="odd">
+<td>Height</td>
+<td>The height of the Graph Canvas in pixels. This is not the height of the overall Graph, just the Graph Canvas.</td>
+</tr>
+<tr class="even">
+<td>Width</td>
+<td>The width of the Graph Canvas in pixels</td>
+</tr>
+<tr class="odd">
+<td>Base Value</td>
+<td>Should be set to 1024 for memory values and 1000 for traffic measurements.</td>
+</tr>
+<tr class="even">
+<td>Slope Mode</td>
+<td>RRDtool graphs are composed of stair case curves by default. This is in line with the way RRDtool calculates its data. Some people favor a more "organic" look for their graphs.</td>
+</tr>
+<tr class="odd">
+<td>Auto Scale</td>
+<td>Enable auto scale for the graph. This option must be check to use the next two options. Upper/Lower limit values are ignored when using auto-scale since these boundaries are determined automatically.</td>
+</tr>
+<tr class="even">
+<td>Auto Scale Options</td>
+<td>Choose whether you would like to use --alt-autoscale (ignoring given limits), --alt-autoscale-max (accepting a lower limit), --alt-autoscale-min (accepting an upper limit.</td>
+</tr>
+<tr class="odd">
+<td>Logarithmic Scaling</td>
+<td>Choose if you want logarithmic y-axis scaling.</td>
+</tr>
+<tr class="even">
+<td>Scientific Units for Logarithmic Scaling</td>
+<td>For linear graphs, scientific units (in magnitudes of k=kilo, M=mega, ...) is default. But for logarithmic graphs, exponential notation is default. Choose if you want logarithmic y-axis scaling and scientific units.</td>
+</tr>
+<tr class="odd">
+<td>Rigid Boundaries Mode</td>
+<td>From the RRDtool manual "Normally rrdgraph will automatically expand the lower and upper limit if the graph contains a value outside the valid range. With this option you can disable this behavior".</td>
+</tr>
+<tr class="even">
+<td>Auto Padding</td>
+<td>If you have ever created RRDtool based graphs manually, you may have realized how annoying it can be to get text to line up properly. With this option Cacti will do its best to make the columns on your graph legend line up. This option works best when your graph legend has a consistent number of columns.</td>
+</tr>
+<tr class="odd">
+<td>Allow Graph Export</td>
+<td>If you choose to use Cacti's static HTML/image export, you can choose whether you want each individual graph to be exported.</td>
+</tr>
+<tr class="even">
+<td>Upper Limit</td>
+<td>The maximum value that will be displayed on the y-axis. This value is ignored is auto-scaling is turned on.</td>
+</tr>
+<tr class="odd">
+<td>Lower Limit</td>
+<td>The minimum value that will be displayed on the y-axis. This value is ignored is auto-scaling is turned on.</td>
+</tr>
+<tr class="even">
+<td>Base Value</td>
+<td>Whether you want to base the y-axis labels on 1000 or 1024. This field will typically be set to 1024 for memory and 1000 for traffic measurements.</td>
+</tr>
+<tr class="odd">
+<td>Unit Grid Value</td>
+<td>Sets the unit value for the y-axis (--y-grid). You should probably keep the unit short as to keep it readable.</td>
+</tr>
+<tr class="even">
+<td>Unit Exponent Value</td>
+<td>Sets the 10^e scaling of the y-axis. Valid values for this field are between -18 and 18. For example, you could use 3 to display everything in 'k' (kilo) or -6 to display everything in 'u' (micro).</td>
+</tr>
+<tr class="odd">
+<td>Vertical Label</td>
+<td>The text to print on the left edge of the graph. Usually is the units the data on the graph is measured in.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="auto-scaling-options-explained">Auto-scaling Options Explained</h3>
+<p>Relative to Auto-scale Options, the RRDtool graph manual says:</p>
+<ul>
+<li><p>Limits [-u|--upper-limit value] [-l|--lower-limit value] [-r|--rigid] By default the graph will be auto-scaling so that it will adjust the y-axis to the range of the data. You can change this behavior by explicitly setting the limits. The displayed y-axis will then range at least from lower-limit to upper-limit. Auto-scaling will still permit those boundaries to be stretched unless the rigid option is set.</p></li>
+<li><p>[-A|--alt-autoscale] Sometimes the default algorithm for selecting the y-axis scale is not satisfactory. Normally the scale is selected from a predefined set of ranges and this fails miserably when you need to graph something like "260 + 0.001 * sin(x)". This option calculates the minimum and maximum y-axis from the actual minimum and maximum data values. Our example would display slightly less than "260-0.001" to slightly more than "260+0.001".</p></li>
+<li><p>[-J|--alt-autoscale-min] Where "--alt-autoscale" will modify both the absolute maximum AND minimum values, this option will only affect the minimum value. The maximum value, if not defined on the command line, will be 0. This option can be useful when graphing router traffic when the WAN line uses compression, and thus the throughput may be higher than the WAN line speed.</p></li>
+<li><p>[-M|--alt-autoscale-max] Where "--alt-autoscale" will modify both the absolute maximum AND minimum values, this option will only affect the maximum value. The minimum value, if not defined on the command line, will be 0. This option can be useful when graphing router traffic when the WAN line uses compression, and thus the throughput may be higher than the WAN line speed.</p></li>
+</ul>
+<p>When you are finished filling in values for the <strong>Graph Template</strong>, click Create and you will be presented with a page similar to the image below. The example below is from a completed Traffic Graph Template.</p>
+<p>In this first image, you can see what elements will be painted on the <strong>Graph</strong> Canvas. They are represented by <strong>LINEX</strong>, <strong>AREA</strong> and <strong>STACK</strong> elements. The <strong>Graph Items</strong> listed as <strong>GPRINT</strong> and <strong>COMMENT</strong> appear in the Legend Area of the <strong>Graph</strong>.</p>
+<p>The <strong>Graph Input Items</strong> are the Cacti names for the Data Sources that appear on the <strong>Graph</strong> as well as other items that can be substituted during <strong>Graph</strong> Creation.</p>
+<p>The <code>Multiple Instances</code> field is a parameter to let Cacti know that it should allow you to create more than one <strong>Graph</strong> per <strong>Device</strong> using the <strong>Graph Template</strong>.</p>
+<p><img src="images/graph-template.png" alt="Adding a Graph Template" /></p>
+<p>The <strong>Common Options</strong> are options that most every <strong>Graph Template</strong> included. The <strong>Scaling Options</strong> are also very common, but related to <strong>Graph</strong> scaling only.</p>
+<p><img src="images/graph-template-options1.png" alt="Adding a Graph Template Options" /></p>
+<p>The <strong>Grid Options</strong>, <strong>Axis Options</strong>, and <strong>Legend Options</strong> are must less common but are available in Cacti should you choose to use them.</p>
+<p><img src="images/graph-template-options2.png" alt="Adding a Graph Template Options" /></p>
+<h4 id="graph-items">Graph Items</h4>
+<p>The first thing you should do is create <strong>Graph Items</strong> for a <strong>Graph Template</strong>, just like for a stand alone <strong>Graph</strong>. One difference you will notice is that the <strong>Data Sources</strong> drop-down will contain a list of <strong>Data Template</strong> items rather than <strong>Data Source Items</strong>. It is important that Cacti can make this association here, so that Cacti doesn't have to make unnecessary assumptions later.</p>
+<h6 id="table-13-4-field-description-graph-template-items">Table 13-4. Field Description: Graph Template Items</h6>
+<table>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Data Source</td>
+<td>If this graph item is to represent some sort of data, you must select a your data source here. Keep in mind that not all graph items have a data source. Graph item types such as COMMENT, VRULE, and HRULE typically do not.</td>
+</tr>
+<tr class="even">
+<td>Color</td>
+<td>Depending on the graph item type, you can select a color for the graph item. This field only applies to the graph item types AREA, STACK, LINE1, LINE2, and LINE3.</td>
+</tr>
+<tr class="odd">
+<td>Opacity/Alpha Channel</td>
+<td>For a colored graph item, you may optionally select an opacity (alpha channel). This option is not available with RRDtool-1.0.x.</td>
+</tr>
+<tr class="even">
+<td>Graph Item Type</td>
+<td>This field is important because it defines what kind of graph item this is. Types such as AREA, STACK, LINE1, LINE2, and LINE3 are used to represent data on the graph, while COMMENT and GPRINT are used put on the legend. The LEGEND type is specific to Cacti only and can be used if you want to Cacti to automatically create a GPRINT-LAST/GPRINT-AVERAGE/GPRINT-MAXIMUM graph item for you. Note: You must always put an AREA item before using STACK or your graph will not render.</td>
+</tr>
+<tr class="odd">
+<td>Consolidation Function</td>
+<td>This tells RRDtool which consolidation function to use when representing this data on the graph. You will typically use AVERAGE for most things on the graph area, and LAST/MAXIMUM as well for GPRINT items.</td>
+</tr>
+<tr class="even">
+<td>CDEF Function</td>
+<td>If you want to apply a CDEF function to the graph item, select one here. Check out the CDEF section of the manual for more information.</td>
+</tr>
+<tr class="odd">
+<td>Value</td>
+<td>This field is only used with the HRULE/VRULE graph item types. Type any valid integer to draw the line at for HRULE or the time of the day HH:MM for VRULE.</td>
+</tr>
+<tr class="even">
+<td>GPRINT Type</td>
+<td>If this item is a GPRINT, you can choose how you want the number to be formatted. You can add your own in the GPRINT Presets section of Cacti.</td>
+</tr>
+<tr class="odd">
+<td>Text Format</td>
+<td>You can enter text to be displayed on the legend here. This field is applicable for all graph item types except for the virtual LEGEND type.</td>
+</tr>
+<tr class="even">
+<td>Hard Return</td>
+<td>Check this box to force graph items onto the next line.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="graph-item-inputs">Graph Item Inputs</h4>
+<p>After creating <strong>Graph Items</strong> for your <strong>Graph Template</strong>, you will need to create some <strong>Graph Item Inputs</strong>. <strong>Graph Item Inputs</strong> are unique to <strong>Graph Templates</strong> because of the large number of items they sometimes contain. <strong>Graph Item Inputs</strong> enable you to take one <strong>Graph Item</strong> field, and associate it with multiple <strong>Graph Items</strong>. <strong>Graph Item Input</strong> fields are generally created automatically as you add <strong>Graph Items</strong> associated with a <strong>Data Source</strong>, like a LINE or AREA or GPRINT.</p>
+<p>To create a new <strong>Graph Item Input</strong> manually, click Add on the right of the <strong>Graph Item Inputs</strong> form. There are various fields that must be filled in for every graph item input:</p>
+<h6 id="table-13-5-field-description-graph-template-items">Table 13-5. Field Description: Graph Template Items</h6>
+<table>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Name</td>
+<td>This will be the name used to identify the <strong>Graph Item Input</strong> on both the <strong>Graph Template</strong> and <strong>Graph</strong> edit pages.</td>
+</tr>
+<tr class="even">
+<td>Description</td>
+<td>(Optional) This description will be displayed on the <strong>Graph</strong> edit page of any <strong>Graph</strong> using this <strong>Graph Template</strong> if specified.</td>
+</tr>
+<tr class="odd">
+<td>Field Type</td>
+<td>You must choose the field that you are going to associate with one or more <strong>Graph Item</strong>.</td>
+</tr>
+<tr class="even">
+<td>Associated Graph Items</td>
+<td>Choose one or more <strong>Graph Items</strong> to associate with the field selected for "Field Type". When the user specifies a value for the field, it will be applied to all of the items you select here.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="applying-graph-templates-to-graphs">Applying Graph Templates to Graphs</h3>
+<p>Applying a <strong>Graph Template</strong> to an existing <strong>Graph</strong> is a very simple process, though very uncommon in a modern Cacti install. The first thing you must do is select the <strong>Graph</strong> you want to apply the template to under <strong>Graph Management</strong>. Under the <strong>Graph Template</strong> Action drop-down, select the <strong>Graph Template</strong> that you want to apply to the <strong>Graph</strong> and click Save. If this is a new <strong>Graph</strong> or the <strong>Graph</strong> and <strong>Graph Template</strong> contain an equal number of <strong>Graph Items</strong>, the <strong>Graph Template</strong> will be automatically applied. If number of <strong>Graph Items</strong> varies from the <strong>Graph</strong> to the target <strong>Graph Template</strong>, you will be prompted with a warning that your <strong>Graph</strong> will be changed, and not always for the better.</p>
+<p>Once the <strong>Graph Template</strong> is applied to the existing <strong>Graph</strong>, you will notice that you can only change values for the fields that you checked Use Per-Graph Value for. You will also notice a new box, called <strong>Graph Item Inputs</strong>. This is where you can specify values for the <strong>Graph Item Inputs</strong> that you defined in the <strong>Graph Template</strong>. The values specified here will be applied to each <strong>Graph Item</strong> tied to the <strong>Graph Item Input</strong>.</p>
+<blockquote>
+<p><strong>NOTE:</strong> Any time a change is made to the <strong>Graph Template</strong>, it will be automatically propagated to the <strong>Graphs</strong> associated to it.</p>
+</blockquote>
+<h2 id="device-templates">Device Templates</h2>
+<p><strong>Device Templates</strong> in Cacti, often times referred to as Host Templates serve as a way to group a set of common <strong>Graph Templates</strong> and <strong>Data Queries</strong> to <strong>Devices</strong> of a certain class, say a Cisco Router or Linux host using Net-SNMP. It really accelerates the deployment of a Cacti system across and enterprise of Devices.</p>
+<h3 id="adding-a-device-template">Adding a Device Template</h3>
+<p>To create a new <strong>Device Template</strong> in Cacti, select the <strong>Device</strong> option under the <code>Console &gt; Templates</code> menu selection. Once on that page, click Add on the right. Type a unique name for the <strong>Device Template</strong> and click the Create button. You will be redirected back to the edit page with the <code>Associated Graph Templates</code> and <code>Associated Data Queries</code> forms empty. These two forms allow you to associate <strong>Graph Templates</strong> and/or <strong>Data Queries</strong> with the <strong>Device Template</strong>. Simply select something from the drop-down menu and click Add to associate it with your <strong>Device Template</strong>.</p>
+<p>In the case below, we show the Net-SNMP <strong>Device Template</strong>. Note the variety of Graph Templates and Data Queries available for this Class of <strong>Devices</strong>.</p>
+<p><img src="images/device-template.png" alt="Adding a Host Template" /></p>
+<h2 id="import-templates">Import Templates</h2>
+<p>Assume, you're searching for a specific set of templates to monitor a special type of device. Apart from designing templates from scratch, there's a good chance to find a solution in the <a href="http://forums.cacti.net/forum-12.html">Scripts and Templates Forum</a>. The set of templates is usually provided as a single XML file holding all required definitions for a data template and a graph template. Depending on the goal of the original author, he/she may have provided a <strong>Device Template</strong> as well as part of this XML file. Note that after you <strong>Import Templates</strong>, you may also have to copy a Resource XML file to the appropriate &lt;path_cacti&gt;/resource directory, and a script to the &lt;path_cacti&gt;/scripts directory. However, also note that in the current version of Cacti, <strong>Packages</strong> are now importable as well. When you import a <strong>Package</strong> all of the required additional file changes will also be accommodated. We will discuss <strong>Packages</strong> later in the documentation.</p>
+<p><img src="images/import-template.png" alt="Import Templates" /></p>
+<p>If the XML file was downloaded, simply select that file from the Downloads location on your local system. Cacti no longer supports pasting the XML into the browser window.</p>
+<p>Please pay attention the the <code>Data Source Profile</code> field. By default, cacti will attempt to use your default <strong>Data Source Profile</strong>. However, you can change that at import time to use an alternate <strong>Data Source Profile</strong> or even the one from the <strong>Template</strong> itself, if it includes one.</p>
+<p>Also, not that if you have made local modification to an earlier version of a <strong>Graph Template</strong>, and wish to fully migrate to the new <strong>Graph Template</strong> for all your existing <strong>Graphs</strong>, please select <code>Remove Orphaned Graph Items</code>. Otherwise, your <strong>Graphs</strong> will look awkward in the end. This should not be a problem for new Imports.</p>
+<p>It's also important to <code>Preview</code> the <strong>Template</strong> imports to access the impact that the import will have on existing database object. In earlier versions of Cacti, you were unable to determine what would actually change. However, in the current and future versions of Cacti, you will be able to see all local modifications when performing a <code>Preview</code> prior to <code>Importing</code>.</p>
+<p>In the image below, you can see the output of a <code>Preview</code> of the Cisco WLC 5520 <strong>Device Template</strong>. When Previewing, no changes are actually made to your Cacti system.</p>
+<p><img src="images/import-template-preview.png" alt="Import Template Preview" /></p>
+<p>As mentioned previously, for a single OID based template, <strong>Importing</strong> the <strong>Template</strong> is all that will be required. However, for a script based template, the author will provide the script that has to be downloaded to the Cacti <code>./scripts</code> directory and for a <strong>Data Query</strong> based <strong>Template</strong>, a second XML file holding the Data Query definitions will have to be downloaded to the appropriate directory under the <code>./resource</code> directory.</p>
+<p>When importing templates, Cacti will perform a version check. All XML templates hold the version of the Cacti system that generated this XML set. Cacti will import only, if your current Cacti version equals or is higher than the exported one.</p>
+<h2 id="export-templates">Export Templates</h2>
+<p>Now that you know how to import, you may want to know in which way to export as well. Selecting the Export Templates gives</p>
+<p><img src="images/export-template.png" alt="Export Templates" /></p>
+<p>You may select to export a graph template, a data template, a <strong>Device Template</strong> or a <strong>Data Query</strong>. When selecting <code>Include Dependencies</code>, e.g. a <strong>Device Template</strong> will include all referred templates (<strong>Graph Template</strong>, <strong>Data Template</strong>, if defined, <strong>Data Query</strong>). Output may be written to the browser or to a file for uploading.</p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

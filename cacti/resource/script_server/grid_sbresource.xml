@@ -1,0 +1,93 @@
+<!-- $Id$ -->
+<interface>
+	<name>Grid Static Bool Resource Statistics</name>
+	<script_path>|path_cacti|/scripts/ss_grid_sbres_stats.php</script_path>
+	<script_function>ss_grid_sbres_stats</script_function>
+	<script_server>php</script_server>
+	<arg_prepend>|clusterid|</arg_prepend>
+	<arg_index>index</arg_index>
+	<arg_query>query</arg_query>
+	<arg_get>get</arg_get>
+	<output_delimeter>!</output_delimeter>
+	<index_order>resource_name</index_order>
+	<index_order_type>alpha</index_order_type>
+	<index_title_format>|chosen_order_field|</index_title_format>
+
+	<fields>
+		<resource_name>
+			<name>Resource Name</name>
+			<direction>input</direction>
+			<query_name>resource_name</query_name>
+		</resource_name>
+		<numCPUS>
+			<name>Number of CPUS/Cores</name>
+			<direction>output</direction>
+			<query_name>numCPUS</query_name>
+		</numCPUS>
+		<memMin>
+			<name>Min Memory</name>
+			<direction>output</direction>
+			<query_name>memMin</query_name>
+		</memMin>
+		<memMax>
+			<name>Max Memory</name>
+			<direction>output</direction>
+			<query_name>memMax</query_name>
+		</memMax>
+		<memAvg>
+			<name>Average Memory</name>
+			<direction>output</direction>
+			<query_name>memAvg</query_name>
+		</memAvg>
+		<cpuMin>
+			<name>Min CPU</name>
+			<direction>output</direction>
+			<query_name>cpuMin</query_name>
+		</cpuMin>
+		<cpuMax>
+			<name>Max CPU</name>
+			<direction>output</direction>
+			<query_name>cpuMax</query_name>
+		</cpuMax>
+		<cpuAvg>
+			<name>Average CPU</name>
+			<direction>output</direction>
+			<query_name>cpuAvg</query_name>
+		</cpuAvg>
+		<swapMin>
+			<name>Min Swap</name>
+			<direction>output</direction>
+			<query_name>swapMin</query_name>
+		</swapMin>
+		<swapMax>
+			<name>Max Swap</name>
+			<direction>output</direction>
+			<query_name>swapMax</query_name>
+		</swapMax>
+		<swapAvg>
+			<name>Average Swap</name>
+			<direction>output</direction>
+			<query_name>swapAvg</query_name>
+		</swapAvg>
+		<capacity>
+			<name>Host Group Capacity</name>
+			<direction>output</direction>
+			<query_name>capacity</query_name>
+		</capacity>
+		<load>
+			<name>Host Group Load</name>
+			<direction>output</direction>
+			<query_name>load</query_name>
+		</load>
+		<total_slots>
+			<name>Host Group Total Slots</name>
+			<direction>output</direction>
+			<query_name>total_slots</query_name>
+		</total_slots>
+		<total_jobs>
+			<name>Host Group Total Jobs</name>
+			<direction>output</direction>
+			<query_name>total_jobs</query_name>
+		</total_jobs>
+	</fields>
+</interface>

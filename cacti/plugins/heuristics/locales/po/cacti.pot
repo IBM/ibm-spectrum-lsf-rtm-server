@@ -1,0 +1,1754 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-08-29 00:16+0530\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: grid_heuristics.php:28
+msgid "IBM Spectrum LSF RTM - Grid Heuristics Detail View"
+msgstr ""
+
+#: grid_heuristics.php:277 grid_heuristics.php:413 grid_heuristics.php:549
+#: grid_heuristics.php:700 heuristics_jobs.php:412 heuristics_webapi.php:1370
+#: heuristics_webapi.php:1528 heuristics_webapi.php:1645
+#: heuristics_webapi.php:1858 heuristics_webapi.php:2228
+#: heuristics_webapi.php:3140 heuristics_webapi.php:3184
+msgid "Cluster"
+msgstr ""
+
+#: grid_heuristics.php:278 grid_heuristics.php:414 grid_heuristics.php:550
+msgid ""
+"The LSF Cluster that jobs to the right were run on during the Heuristics "
+"period."
+msgstr ""
+
+#: grid_heuristics.php:282 grid_heuristics.php:418 grid_heuristics.php:554
+#: grid_heuristics.php:720 heuristics_jobs.php:436 heuristics_webapi.php:1373
+#: heuristics_webapi.php:1531 heuristics_webapi.php:1648
+#: heuristics_webapi.php:2231 heuristics_webapi.php:2688
+#: heuristics_webapi.php:2690 heuristics_webapi.php:2692
+#: heuristics_webapi.php:3205
+msgid "Queue"
+msgstr ""
+
+#: grid_heuristics.php:283 grid_heuristics.php:419 grid_heuristics.php:555
+msgid ""
+"The LSF Job Queue that jobs to the right requested during the Heuristics "
+"period."
+msgstr ""
+
+#: grid_heuristics.php:287 grid_heuristics.php:423 grid_heuristics.php:559
+#: grid_heuristics.php:878 heuristics_webapi.php:2233
+msgid "CPUs"
+msgstr ""
+
+#: grid_heuristics.php:288 grid_heuristics.php:424 grid_heuristics.php:560
+msgid ""
+"The number of cores, threads or job slots that jobs to the right requested "
+"during the Heuristics period."
+msgstr ""
+
+#: grid_heuristics.php:308 grid_heuristics.php:444 grid_heuristics.php:580
+msgid ""
+"The LSF Application Profile assigned to jobs during the requested during the "
+"Heuristics period."
+msgstr ""
+
+#: grid_heuristics.php:311 grid_heuristics.php:447 grid_heuristics.php:583
+msgid ""
+"The LSF Service Level Agreement assigned to the jobs during the Heuristics "
+"period."
+msgstr ""
+
+#: grid_heuristics.php:314 grid_heuristics.php:450 grid_heuristics.php:586
+msgid "The LSF Charged SAAP assigned to the jobs during the Heuristics period."
+msgstr ""
+
+#: grid_heuristics.php:320 grid_heuristics.php:456 grid_heuristics.php:592
+msgid "Should never be seen"
+msgstr ""
+
+#: grid_heuristics.php:328 grid_heuristics.php:464 grid_heuristics.php:600
+#: grid_heuristics.php:924 heuristics_jobs.php:460 heuristics_webapi.php:1532
+#: heuristics_webapi.php:2232 heuristics_webapi.php:2688
+#: heuristics_webapi.php:2690 heuristics_webapi.php:2692 setup.php:252
+msgid "Project"
+msgstr ""
+
+#: grid_heuristics.php:329 grid_heuristics.php:465 grid_heuristics.php:601
+msgid ""
+"The LSF Job Project that jobs to the right requested during the Heuristics "
+"period."
+msgstr ""
+
+#: grid_heuristics.php:333 grid_heuristics.php:469 grid_heuristics.php:605
+msgid "Effective ResReq"
+msgstr ""
+
+#: grid_heuristics.php:334 grid_heuristics.php:470 grid_heuristics.php:606
+msgid ""
+"The Effective Resource Requirements that jobs to the right requested during "
+"the Heuristics period."
+msgstr ""
+
+#: grid_heuristics.php:338 grid_heuristics.php:474 grid_heuristics.php:610
+#: heuristics_jobs.php:521 heuristics_webapi.php:1377
+#: heuristics_webapi.php:1533 setup.php:313
+msgid "Jobs"
+msgstr ""
+
+#: grid_heuristics.php:339 grid_heuristics.php:475 grid_heuristics.php:611
+msgid ""
+"The total number of jobs that ran matching the criteria to the left during "
+"the Heuristics period."
+msgstr ""
+
+#: grid_heuristics.php:344 grid_heuristics.php:480 grid_heuristics.php:616
+msgid "Cores"
+msgstr ""
+
+#: grid_heuristics.php:345 grid_heuristics.php:481 grid_heuristics.php:617
+msgid ""
+"The number of cores, threads or job slots that jobs requested/used during "
+"the Heuristics period."
+msgstr ""
+
+#: grid_heuristics.php:350 grid_heuristics.php:486 grid_heuristics.php:622
+msgid "Minimum"
+msgstr ""
+
+#: grid_heuristics.php:351
+msgid ""
+"The Minimum Run Time of jobs matching the fields to the left during the "
+"Heuristics period."
+msgstr ""
+
+#: grid_heuristics.php:356 grid_heuristics.php:492 grid_heuristics.php:628
+msgid "25th"
+msgstr ""
+
+#: grid_heuristics.php:357
+msgid ""
+"The 25th percentile of Run Time of jobs matching the fields to the left "
+"during the Heuristics period."
+msgstr ""
+
+#: grid_heuristics.php:362 grid_heuristics.php:498 grid_heuristics.php:634
+msgid "Median"
+msgstr ""
+
+#: grid_heuristics.php:363
+msgid ""
+"The Median (50th percentile) of Run Time of jobs matching the fields to the "
+"left during the Heuristics period."
+msgstr ""
+
+#: grid_heuristics.php:368 grid_heuristics.php:504 grid_heuristics.php:640
+msgid "Average"
+msgstr ""
+
+#: grid_heuristics.php:369
+msgid ""
+"The Average Run Time of jobs matching the fields to the left during the "
+"Heuristics period."
+msgstr ""
+
+#: grid_heuristics.php:374 grid_heuristics.php:510 grid_heuristics.php:646
+msgid "75th"
+msgstr ""
+
+#: grid_heuristics.php:375
+msgid ""
+"The 75th percentile of Run Time of jobs matching the fields to the left "
+"during the Heuristics period."
+msgstr ""
+
+#: grid_heuristics.php:380 grid_heuristics.php:516 grid_heuristics.php:652
+msgid "90th"
+msgstr ""
+
+#: grid_heuristics.php:381
+msgid ""
+"The 90th percentile of Run Time of jobs matching the fields to the left "
+"during the Heuristics period."
+msgstr ""
+
+#: grid_heuristics.php:386 grid_heuristics.php:522 grid_heuristics.php:658
+msgid "Maximum"
+msgstr ""
+
+#: grid_heuristics.php:387 grid_heuristics.php:523
+msgid ""
+"The Maximum Run Time of jobs matching the fields to the left during the "
+"Heuristics period."
+msgstr ""
+
+#: grid_heuristics.php:392 grid_heuristics.php:528 grid_heuristics.php:664
+msgid "Stddev"
+msgstr ""
+
+#: grid_heuristics.php:393
+msgid ""
+"The Standard Deviation of Run Time of jobs matching the fields to the left "
+"during the Heuristics period."
+msgstr ""
+
+#: grid_heuristics.php:398 grid_heuristics.php:534 grid_heuristics.php:670
+msgid "Jobs/Hr"
+msgstr ""
+
+#: grid_heuristics.php:399 grid_heuristics.php:535 grid_heuristics.php:671
+msgid ""
+"The Hourly Average Job Throughput of jobs matching the fields to the left "
+"during the Heuristics period."
+msgstr ""
+
+#: grid_heuristics.php:404 grid_heuristics.php:540 grid_heuristics.php:676
+msgid "Jobs/Hr (3SD)"
+msgstr ""
+
+#: grid_heuristics.php:405 grid_heuristics.php:541 grid_heuristics.php:677
+msgid ""
+"3 Standard deviations of Hourly Throughput of jobs matching fields to the "
+"left during the Heuristics period."
+msgstr ""
+
+#: grid_heuristics.php:487
+msgid ""
+"The Minimum Max Memory of jobs matching the fields to the left during the "
+"Heuristics period."
+msgstr ""
+
+#: grid_heuristics.php:493
+msgid ""
+"The 25th percentile of Max Memory of jobs matching the fields to the left "
+"during the Heuristics period."
+msgstr ""
+
+#: grid_heuristics.php:499
+msgid ""
+"The Median (50th percentile) of Max Memory of jobs matching the fields to "
+"the left during the Heuristics period."
+msgstr ""
+
+#: grid_heuristics.php:505
+msgid ""
+"The Average Max Memory of jobs matching the fields to the left during the "
+"Heuristics period."
+msgstr ""
+
+#: grid_heuristics.php:511
+msgid ""
+"The 75th percentile of Max Memory of jobs matching the fields to the left "
+"during the Heuristics period."
+msgstr ""
+
+#: grid_heuristics.php:517
+msgid ""
+"The 90th percentile of Max Memory of jobs matching the fields to the left "
+"during the Heuristics period."
+msgstr ""
+
+#: grid_heuristics.php:529
+msgid ""
+"The Standard Deviation of Max Memory of jobs matching the fields to the left "
+"during the Heuristics period."
+msgstr ""
+
+#: grid_heuristics.php:623
+msgid ""
+"The Minimum Pend Time of jobs matching the fields to the left during the "
+"Heuristics period."
+msgstr ""
+
+#: grid_heuristics.php:629
+msgid ""
+"The 25th percentile of Pend Time of jobs matching the fields to the left "
+"during the Heuristics period."
+msgstr ""
+
+#: grid_heuristics.php:635
+msgid ""
+"The Median (50th percentile) of Pend Time of jobs matching the fields to the "
+"left during the Heuristics period."
+msgstr ""
+
+#: grid_heuristics.php:641
+msgid ""
+"The Average Pend Time of jobs matching the fields to the left during the "
+"Heuristics period."
+msgstr ""
+
+#: grid_heuristics.php:647
+msgid ""
+"The 75th percentile of Pend Time of jobs matching the fields to the left "
+"during the Heuristics period."
+msgstr ""
+
+#: grid_heuristics.php:653
+msgid ""
+"The 90th percentile of Pend Time of jobs matching the fields to the left "
+"during the Heuristics period."
+msgstr ""
+
+#: grid_heuristics.php:659
+msgid ""
+"The Maximum Pend Time of jobs matching the fields to the left during the "
+"Heuristics period."
+msgstr ""
+
+#: grid_heuristics.php:665
+msgid ""
+"The Standard Deviation of Pend Time of jobs matching the fields to the left "
+"during the Heuristics period."
+msgstr ""
+
+#: grid_heuristics.php:704 grid_heuristics.php:724 grid_heuristics.php:751
+#: grid_heuristics.php:883 heuristics_jobs.php:416 heuristics_jobs.php:440
+#: heuristics_jobs.php:464 heuristics_jobs.php:569 heuristics_webapi.php:3188
+#: heuristics_webapi.php:3240 heuristics_webapi.php:3263 setup.php:150
+msgid "All"
+msgstr ""
+
+#: grid_heuristics.php:777
+msgid "Aggregation"
+msgstr ""
+
+#: grid_heuristics.php:793 grid_heuristics.php:798 grid_heuristics.php:805
+#: grid_heuristics.php:815 grid_heuristics.php:827 grid_heuristics.php:838
+msgid "Cluster, Queue, CPU's"
+msgstr ""
+
+#: grid_heuristics.php:794 grid_heuristics.php:806 grid_heuristics.php:828
+#, php-format
+msgid "Cluster, Queue, CPU's, %s"
+msgstr ""
+
+#: grid_heuristics.php:807 grid_heuristics.php:829
+#, php-format
+msgid "Cluster, Queue, CPU's, %s, Project"
+msgstr ""
+
+#: grid_heuristics.php:816 grid_heuristics.php:839
+msgid "Cluster, Queue, CPU's, Project"
+msgstr ""
+
+#: grid_heuristics.php:830
+#, php-format
+msgid "Cluster, Queue, CPU's, %s, Project, ResReq"
+msgstr ""
+
+#: grid_heuristics.php:840
+msgid "Cluster, Queue, CPU's, Project, ResReq"
+msgstr ""
+
+#: grid_heuristics.php:858
+msgid "Metric"
+msgstr ""
+
+#: grid_heuristics.php:862
+msgid "Runtime"
+msgstr ""
+
+#: grid_heuristics.php:863
+msgid "Memory"
+msgstr ""
+
+#: grid_heuristics.php:864
+msgid "Pendtime"
+msgstr ""
+
+#: grid_heuristics.php:869 heuristics_jobs.php:540 heuristics_webapi.php:3226
+msgid "Go"
+msgstr ""
+
+#: grid_heuristics.php:869 heuristics_jobs.php:540 heuristics_jobs.php:670
+msgid "Search"
+msgstr ""
+
+#: grid_heuristics.php:870 heuristics_jobs.php:541 heuristics_webapi.php:3227
+msgid "Clear"
+msgstr ""
+
+#: grid_heuristics.php:870 heuristics_jobs.php:541
+msgid "Clear Filters"
+msgstr ""
+
+#: grid_heuristics.php:910
+msgid "Level"
+msgstr ""
+
+#: grid_heuristics.php:912
+msgid "All Levels"
+msgstr ""
+
+#: grid_heuristics.php:916
+#, php-format
+msgid "Level %d"
+msgstr ""
+
+#: grid_heuristics.php:932
+msgid "ResReq"
+msgstr ""
+
+#: grid_heuristics.php:940 grid_heuristics.php:1217
+msgid "Records"
+msgstr ""
+
+#: grid_heuristics.php:1167 grid_heuristics.php:1168 grid_heuristics.php:1169
+#: grid_heuristics.php:1170 grid_heuristics.php:1171 setup.php:192
+#: setup.php:193 setup.php:194 setup.php:195 setup.php:196 setup.php:197
+#, php-format
+msgid "%d Days"
+msgstr ""
+
+#: grid_heuristics.php:1172
+#, php-format
+msgid "%d Week"
+msgstr ""
+
+#: grid_heuristics.php:1173
+#, php-format
+msgid "%d Weeks"
+msgstr ""
+
+#: grid_heuristics.php:1174
+#, php-format
+msgid "%d Month"
+msgstr ""
+
+#: grid_heuristics.php:1182
+msgid ""
+"Set Your History Duration in Console > Configuration > Settings > RTM Plugins"
+msgstr ""
+
+#: grid_heuristics.php:1206
+#, php-format
+msgid "Job Heuristics [ Runtime Statistics ] [ History: %s ]"
+msgstr ""
+
+#: grid_heuristics.php:1208
+#, php-format
+msgid "Job Heuristics [ Memory Statistics ] [ History: %s ]"
+msgstr ""
+
+#: grid_heuristics.php:1210
+#, php-format
+msgid "Job Heuristics [ Pendtime Statistics ] [ History: %s ]"
+msgstr ""
+
+#: grid_heuristics.php:1346 grid_heuristics.php:1347 grid_heuristics.php:1348
+#: grid_heuristics.php:1349 grid_heuristics.php:1350 grid_heuristics.php:1351
+#: grid_heuristics.php:1352 grid_heuristics.php:1353 grid_heuristics.php:1355
+#: grid_heuristics.php:1356 grid_heuristics.php:1357 grid_heuristics.php:1358
+#: grid_heuristics.php:1359 grid_heuristics.php:1360 grid_heuristics.php:1361
+#: grid_heuristics.php:1362 grid_heuristics.php:1364 grid_heuristics.php:1365
+#: grid_heuristics.php:1366 grid_heuristics.php:1367 grid_heuristics.php:1368
+#: grid_heuristics.php:1369 grid_heuristics.php:1370 grid_heuristics.php:1371
+#: grid_heuristics.php:1374 grid_heuristics.php:1375 heuristics_jobs.php:585
+#: heuristics_webapi.php:1800 setup.php:159 setup.php:172
+msgid "N/A"
+msgstr ""
+
+#: grid_heuristics.php:1374 grid_heuristics.php:1375
+#, php-format
+msgid "%s jph"
+msgstr ""
+
+#: grid_heuristics.php:1381
+msgid "No Grid Heuristics Records Found"
+msgstr ""
+
+#: grid_heuristics.php:1408
+msgid "Clear Cluster Filter"
+msgstr ""
+
+#: grid_heuristics.php:1413
+msgid "Clear Custom Filter"
+msgstr ""
+
+#: grid_heuristics.php:1418
+msgid "Clear Queue Filter"
+msgstr ""
+
+#: grid_heuristics.php:1431 grid_heuristics.php:1447
+msgid "Filter Exact Project"
+msgstr ""
+
+#: grid_heuristics.php:1434
+msgid "Reduce Project Aggregation Level"
+msgstr ""
+
+#: grid_heuristics.php:1437 grid_heuristics.php:1440
+msgid "Increase Project Aggregation Level"
+msgstr ""
+
+#: grid_heuristics.php:1443 grid_heuristics.php:1448
+msgid "Clear Project Filter"
+msgstr ""
+
+#: grid_heuristics.php:1457
+msgid "Clear Requested CPU Filter"
+msgstr ""
+
+#: heuristics.php:42
+msgid "User Summary"
+msgstr ""
+
+#: heuristics.php:43
+msgid "Queue/Project"
+msgstr ""
+
+#: heuristics.php:44
+msgid "Daily Throughput"
+msgstr ""
+
+#: heuristics.php:45
+msgid "Feature Checkouts"
+msgstr ""
+
+#: heuristics.php:46
+msgid "Pending Reasons"
+msgstr ""
+
+#: heuristics.php:47
+msgid "Exit Analysis"
+msgstr ""
+
+#: heuristics.php:48 heuristics_webapi.php:927
+msgid "Cluster Health"
+msgstr ""
+
+#: heuristics.php:52
+msgid "Free Memory Slots"
+msgstr ""
+
+#: heuristics.php:53
+msgid "Memory Histogram"
+msgstr ""
+
+#: heuristics.php:54
+msgid "Runtime Histogram"
+msgstr ""
+
+#: heuristics.php:55
+msgid "Job Statistics"
+msgstr ""
+
+#: heuristics.php:56
+msgid "Time Distribution"
+msgstr ""
+
+#: heuristics_jobs.php:41
+msgid "Set First in Queue"
+msgstr ""
+
+#: heuristics_jobs.php:42
+msgid "Set Last in Queue"
+msgstr ""
+
+#: heuristics_jobs.php:43
+msgid "Switch Queue"
+msgstr ""
+
+#: heuristics_jobs.php:44
+msgid "Run Now"
+msgstr ""
+
+#: heuristics_jobs.php:45
+msgid "Suspend Job"
+msgstr ""
+
+#: heuristics_jobs.php:46
+msgid "Resume Job"
+msgstr ""
+
+#: heuristics_jobs.php:47
+msgid "Terminate Job"
+msgstr ""
+
+#: heuristics_jobs.php:48
+msgid "Force Kill"
+msgstr ""
+
+#: heuristics_jobs.php:49
+msgid "Signal Kill"
+msgstr ""
+
+#: heuristics_jobs.php:68
+msgid "IBM Spectrum LSF RTM - Batch Jobs Utility"
+msgstr ""
+
+#: heuristics_jobs.php:76 heuristics_jobs.php:795
+msgid "JobIQ Dashboard"
+msgstr ""
+
+#: heuristics_jobs.php:77
+msgid "JobIQ Jobs"
+msgstr ""
+
+#: heuristics_jobs.php:79
+#, php-format
+msgid "Batch Job %s %s for User %s"
+msgstr ""
+
+#: heuristics_jobs.php:484 heuristics_webapi.php:1376
+msgid "Status"
+msgstr ""
+
+#: heuristics_jobs.php:489
+msgid "ALL"
+msgstr ""
+
+#: heuristics_jobs.php:492
+msgid "CUSTOM"
+msgstr ""
+
+#: heuristics_jobs.php:494
+msgid "ACTIVE"
+msgstr ""
+
+#: heuristics_jobs.php:495
+msgid "STARTED"
+msgstr ""
+
+#: heuristics_jobs.php:496
+msgid "FINISHED"
+msgstr ""
+
+#: heuristics_jobs.php:497
+msgid "SUSPENDED"
+msgstr ""
+
+#: heuristics_jobs.php:542
+msgid "Export"
+msgstr ""
+
+#: heuristics_jobs.php:542
+msgid "Export to CSV"
+msgstr ""
+
+#: heuristics_jobs.php:545
+msgid "NOTE: Custom ExitCode filter set.  Press Clear to remove it."
+msgstr ""
+
+#: heuristics_jobs.php:552 heuristics_webapi.php:3247
+msgid "History"
+msgstr ""
+
+#: heuristics_jobs.php:565
+msgid "Effic"
+msgstr ""
+
+#: heuristics_jobs.php:580
+msgid "ShowOnly"
+msgstr ""
+
+#: heuristics_jobs.php:587
+msgid "Warning"
+msgstr ""
+
+#: heuristics_jobs.php:589 heuristics_webapi.php:3243 setup.php:153
+msgid "Alarm"
+msgstr ""
+
+#: heuristics_jobs.php:591
+msgid "Flapping"
+msgstr ""
+
+#: heuristics_jobs.php:593
+msgid "Depend"
+msgstr ""
+
+#: heuristics_jobs.php:595
+msgid "Inv Depend"
+msgstr ""
+
+#: heuristics_jobs.php:597
+msgid "Exclusive"
+msgstr ""
+
+#: heuristics_jobs.php:599
+msgid "Interactive"
+msgstr ""
+
+#: heuristics_jobs.php:601
+msgid "Susp Lic Sched"
+msgstr ""
+
+#: heuristics_jobs.php:611
+msgid "GPU"
+msgstr ""
+
+#: heuristics_jobs.php:618
+msgid "MemSize"
+msgstr ""
+
+#: heuristics_jobs.php:632
+msgid "RunTime"
+msgstr ""
+
+#: heuristics_jobs.php:664
+msgid "JobID"
+msgstr ""
+
+#: heuristics_jobs.php:797
+msgid "All Users"
+msgstr ""
+
+#: heuristics_jobs.php:797
+#, php-format
+msgid "Batch Job Filters for User '%s'"
+msgstr ""
+
+#: heuristics_webapi.php:156
+msgid "RTM Grid User Heuristics"
+msgstr ""
+
+#: heuristics_webapi.php:210
+msgid "Choose your Views"
+msgstr ""
+
+#: heuristics_webapi.php:211
+msgid "Choose your Charts"
+msgstr ""
+
+#: heuristics_webapi.php:263
+msgid "Please Enter a Valid User Account"
+msgstr ""
+
+#: heuristics_webapi.php:448
+msgid "Filter Settings Saved"
+msgstr ""
+
+#: heuristics_webapi.php:647 heuristics_webapi.php:708
+msgid "Hide Panel Contents"
+msgstr ""
+
+#: heuristics_webapi.php:648 heuristics_webapi.php:709
+msgid "Force Refresh of Panel Data"
+msgstr ""
+
+#: heuristics_webapi.php:649 heuristics_webapi.php:710
+msgid "Remove Dashboard Panel"
+msgstr ""
+
+#: heuristics_webapi.php:878
+#, php-format
+msgid "User Filter for User %s"
+msgstr ""
+
+#: heuristics_webapi.php:879
+msgid "RTM Batch Users"
+msgstr ""
+
+#: heuristics_webapi.php:880
+msgid "Current Users Jobs"
+msgstr ""
+
+#: heuristics_webapi.php:881
+msgid "All User Jobs"
+msgstr ""
+
+#: heuristics_webapi.php:893 heuristics_webapi.php:3299
+msgid "Charts"
+msgstr ""
+
+#: heuristics_webapi.php:898
+msgid "General"
+msgstr ""
+
+#: heuristics_webapi.php:899
+msgid "Project/Queue"
+msgstr ""
+
+#: heuristics_webapi.php:1121 heuristics_webapi.php:1237
+#: heuristics_webapi.php:1482 heuristics_webapi.php:1606
+#: heuristics_webapi.php:1823 heuristics_webapi.php:2009
+#: heuristics_webapi.php:2408
+msgid "No Records Found"
+msgstr ""
+
+#: heuristics_webapi.php:1137
+msgid "Showing All Rows"
+msgstr ""
+
+#: heuristics_webapi.php:1139
+#, php-format
+msgid "Showing First %s Rows"
+msgstr ""
+
+#: heuristics_webapi.php:1166
+msgid "Feature"
+msgstr ""
+
+#: heuristics_webapi.php:1166
+msgid "License Service Feature Name"
+msgstr ""
+
+#: heuristics_webapi.php:1167
+msgid "License Service Name"
+msgstr ""
+
+#: heuristics_webapi.php:1167
+msgid "Service"
+msgstr ""
+
+#: heuristics_webapi.php:1168
+msgid "Service Vendor"
+msgstr ""
+
+#: heuristics_webapi.php:1168
+msgid "Vendor"
+msgstr ""
+
+#: heuristics_webapi.php:1169
+msgid "Services License Type"
+msgstr ""
+
+#: heuristics_webapi.php:1169 heuristics_webapi.php:1375
+msgid "Type"
+msgstr ""
+
+#: heuristics_webapi.php:1170
+msgid "Max Tokens"
+msgstr ""
+
+#: heuristics_webapi.php:1170
+msgid "Total Tokens for this Feature"
+msgstr ""
+
+#: heuristics_webapi.php:1171
+msgid "Free Tokens"
+msgstr ""
+
+#: heuristics_webapi.php:1171
+msgid "Free Tokens for this Feature"
+msgstr ""
+
+#: heuristics_webapi.php:1172
+msgid "My Tokens"
+msgstr ""
+
+#: heuristics_webapi.php:1172
+msgid "Total Tokens in use by this User"
+msgstr ""
+
+#: heuristics_webapi.php:1173
+msgid "Checkout Time"
+msgstr ""
+
+#: heuristics_webapi.php:1173
+msgid "Total Token Time"
+msgstr ""
+
+#: heuristics_webapi.php:1174 heuristics_webapi.php:1379
+msgid "Max Time"
+msgstr ""
+
+#: heuristics_webapi.php:1174
+msgid "Maximum Token Time"
+msgstr ""
+
+#: heuristics_webapi.php:1175
+msgid "Average Token Time"
+msgstr ""
+
+#: heuristics_webapi.php:1175 heuristics_webapi.php:1380
+msgid "Avg Time"
+msgstr ""
+
+#: heuristics_webapi.php:1214
+#, php-format
+msgid "Feature Checkouts for %s %s"
+msgstr ""
+
+#: heuristics_webapi.php:1370 heuristics_webapi.php:1645
+msgid "The name of your Cluster"
+msgstr ""
+
+#: heuristics_webapi.php:1373
+msgid "Your Jobs run Queue"
+msgstr ""
+
+#: heuristics_webapi.php:1374 heuristics_webapi.php:1534
+msgid "Reason"
+msgstr ""
+
+#: heuristics_webapi.php:1374
+msgid "The Pending Reasons impacting Jobs"
+msgstr ""
+
+#: heuristics_webapi.php:1375
+msgid "Is this a Pending Reason or a Suspended Reason"
+msgstr ""
+
+#: heuristics_webapi.php:1376
+msgid "If Hidden then if you hide reasons this reason will be Hidden"
+msgstr ""
+
+#: heuristics_webapi.php:1377
+msgid "The total number of Pending Jobs"
+msgstr ""
+
+#: heuristics_webapi.php:1378
+msgid "Total Pending Time"
+msgstr ""
+
+#: heuristics_webapi.php:1378
+msgid "Total Time"
+msgstr ""
+
+#: heuristics_webapi.php:1379
+msgid "Maximum Job Pending Time"
+msgstr ""
+
+#: heuristics_webapi.php:1380
+msgid "Average Job Pending Time"
+msgstr ""
+
+#: heuristics_webapi.php:1443
+#, php-format
+msgid "%s Reasons Hidden"
+msgstr ""
+
+#: heuristics_webapi.php:1446 heuristics_webapi.php:1448
+msgid "Hide Excluded Reasons"
+msgstr ""
+
+#: heuristics_webapi.php:1446
+msgid "Show Excluded Reasons"
+msgstr ""
+
+#: heuristics_webapi.php:1448
+msgid "All Reasons Shown"
+msgstr ""
+
+#: heuristics_webapi.php:1451
+#, php-format
+msgid "Pending Reasons by Queue for %s %s"
+msgstr ""
+
+#: heuristics_webapi.php:1460
+msgid "Click to make Visible"
+msgstr ""
+
+#: heuristics_webapi.php:1460
+msgid "Hidden"
+msgstr ""
+
+#: heuristics_webapi.php:1462
+msgid "Click to Hide"
+msgstr ""
+
+#: heuristics_webapi.php:1462
+msgid "Visible"
+msgstr ""
+
+#: heuristics_webapi.php:1470 heuristics_webapi.php:1861
+#: heuristics_webapi.php:2234
+msgid "Pending"
+msgstr ""
+
+#: heuristics_webapi.php:1470 heuristics_webapi.php:1863
+#: heuristics_webapi.php:2236
+msgid "Suspended"
+msgstr ""
+
+#: heuristics_webapi.php:1528 heuristics_webapi.php:1858
+#: heuristics_webapi.php:2228
+msgid "The name of your cluster"
+msgstr ""
+
+#: heuristics_webapi.php:1531
+msgid "Your Jobs Run Queue"
+msgstr ""
+
+#: heuristics_webapi.php:1532
+msgid "Your Jobs Run Project"
+msgstr ""
+
+#: heuristics_webapi.php:1533
+msgid "The total number of exited Jobs"
+msgstr ""
+
+#: heuristics_webapi.php:1534
+msgid "The Reason that these Jobs Exited"
+msgstr ""
+
+#: heuristics_webapi.php:1577
+#, php-format
+msgid "Exit Analysis Since '%s' by Queue/Project for %s %s"
+msgstr ""
+
+#: heuristics_webapi.php:1648 heuristics_webapi.php:2231
+msgid "The name of your Queue"
+msgstr ""
+
+#: heuristics_webapi.php:1649
+msgid "Ended Today"
+msgstr ""
+
+#: heuristics_webapi.php:1649
+msgid "Your Done Jobs"
+msgstr ""
+
+#: heuristics_webapi.php:1650
+msgid "Exited Today"
+msgstr ""
+
+#: heuristics_webapi.php:1650
+msgid "Your Exited Jobs"
+msgstr ""
+
+#: heuristics_webapi.php:1651
+msgid "Average TT Today"
+msgstr ""
+
+#: heuristics_webapi.php:1651
+msgid "Your Average Turnaround Time for Ended/Exited Jobs Today"
+msgstr ""
+
+#: heuristics_webapi.php:1652
+msgid "Ended Yesterday"
+msgstr ""
+
+#: heuristics_webapi.php:1652
+msgid "Your Ended Jobs Yesterday"
+msgstr ""
+
+#: heuristics_webapi.php:1653
+msgid "Exited Yesterday"
+msgstr ""
+
+#: heuristics_webapi.php:1653
+msgid "Your Exited Jobs Yesterday"
+msgstr ""
+
+#: heuristics_webapi.php:1796
+#, php-format
+msgid "Daily Throughput by Cluster for %s %s "
+msgstr ""
+
+#: heuristics_webapi.php:1796
+msgid "RTM Summary Job History"
+msgstr ""
+
+#: heuristics_webapi.php:1861
+msgid "Your Pending Jobs over Others"
+msgstr ""
+
+#: heuristics_webapi.php:1862 heuristics_webapi.php:2235
+msgid "Running"
+msgstr ""
+
+#: heuristics_webapi.php:1862
+msgid "Your Running Jobs over Others"
+msgstr ""
+
+#: heuristics_webapi.php:1863
+msgid "Your Suspended Jobs over Others"
+msgstr ""
+
+#: heuristics_webapi.php:1864
+msgid "Finished/Hr"
+msgstr ""
+
+#: heuristics_webapi.php:1864
+msgid "Your Done Jobs over Others in last hour"
+msgstr ""
+
+#: heuristics_webapi.php:1865
+msgid "Exited/Hr"
+msgstr ""
+
+#: heuristics_webapi.php:1865
+msgid "Your Exited Jobs over Others in last hour"
+msgstr ""
+
+#: heuristics_webapi.php:1866
+msgid "Hourly TPut"
+msgstr ""
+
+#: heuristics_webapi.php:1866 heuristics_webapi.php:2237
+msgid "Your Hourly Throughput over Others"
+msgstr ""
+
+#: heuristics_webapi.php:1867
+msgid "5Min TPut"
+msgstr ""
+
+#: heuristics_webapi.php:1867 heuristics_webapi.php:2238
+msgid "Your 5 Minute Throughput over Others"
+msgstr ""
+
+#: heuristics_webapi.php:1952 heuristics_webapi.php:2327
+msgid "Just Updated"
+msgstr ""
+
+#: heuristics_webapi.php:1952 heuristics_webapi.php:2327
+#, php-format
+msgid "Last Updated %s Seconds Ago"
+msgstr ""
+
+#: heuristics_webapi.php:1954
+msgid "All Queues"
+msgstr ""
+
+#: heuristics_webapi.php:1956
+#, php-format
+msgid "Current Status by Cluster [ %s ] %s [ %s ]"
+msgstr ""
+
+#: heuristics_webapi.php:2089
+msgid "Add"
+msgstr ""
+
+#: heuristics_webapi.php:2232
+msgid "The name of your Project"
+msgstr ""
+
+#: heuristics_webapi.php:2233
+msgid "The Requested CPUS"
+msgstr ""
+
+#: heuristics_webapi.php:2234
+msgid "Your Pending Jobs over Others Pending Ahead"
+msgstr ""
+
+#: heuristics_webapi.php:2235
+msgid "Your Running Jobs over Others Running"
+msgstr ""
+
+#: heuristics_webapi.php:2236
+msgid "Your Suspended Jobs over Others Suspended"
+msgstr ""
+
+#: heuristics_webapi.php:2237
+msgid "TPut(1Hr)"
+msgstr ""
+
+#: heuristics_webapi.php:2238
+msgid "TPut(5Min)"
+msgstr ""
+
+#: heuristics_webapi.php:2239
+msgid "Estimate"
+msgstr ""
+
+#: heuristics_webapi.php:2239
+msgid "Your estimated time to complete based upon Runtime Heuristics"
+msgstr ""
+
+#: heuristics_webapi.php:2240
+msgid "Method"
+msgstr ""
+
+#: heuristics_webapi.php:2240
+msgid ""
+"The method used to calculate the completion estimate. Vel-JP5M: Velocity of "
+"the queue based upon the throughput of jobs over the last 5 minutes.  Vel-"
+"JPH: Velocity of the queue based upon the throughput of jobs over the last "
+"hour.  Heur-QP-JPH: Velocity of the queue and project based upon the "
+"historical throughput of jobs from the queue and project.  Heur-Q-JPH: "
+"Velocity of the queue based upon the historical throughput of jobs from the "
+"queue.  Heur-QG-75th: Expected completion time of the job based upon "
+"historical 75th percentile of runtime for the queue."
+msgstr ""
+
+#: heuristics_webapi.php:2242
+msgid "Idle Jobs"
+msgstr ""
+
+#: heuristics_webapi.php:2242
+msgid ""
+"Red if you have jobs that are currently running, but have been flagged as "
+"Idle by RTM which means that they have not used CPU in some time"
+msgstr ""
+
+#: heuristics_webapi.php:2244
+msgid ""
+"Blue if RTM has no historical runtime information, Yellow if any of your "
+"jobs exceed the 75th percentile, and Red if any of your jobs exceed the 90th "
+"percentile for jobs from this Queue, Project, and Requested CPUS"
+msgstr ""
+
+#: heuristics_webapi.php:2244
+msgid "Long Jobs"
+msgstr ""
+
+#: heuristics_webapi.php:2246
+msgid ""
+"Blue if you have any jobs with dependencies, and Red if your jobs have "
+"invalid Job Dependencies"
+msgstr ""
+
+#: heuristics_webapi.php:2246
+msgid "Pend Dpnd"
+msgstr ""
+
+#: heuristics_webapi.php:2248
+msgid "Mem Use"
+msgstr ""
+
+#: heuristics_webapi.php:2248
+msgid ""
+"Red if your jobs have used more memory than reserved by the Memory Exception "
+"threshold, and Yellow if using much less than reserved below the Memory "
+"Exception threshold"
+msgstr ""
+
+#: heuristics_webapi.php:2331
+msgid "Current Status by Queue/Project"
+msgstr ""
+
+#: heuristics_webapi.php:2354
+#, php-format
+msgid "%s Hrs"
+msgstr ""
+
+#: heuristics_webapi.php:2379
+msgid "Show Queue Based Charts"
+msgstr ""
+
+#: heuristics_webapi.php:2380
+#, php-format
+msgid "Show Queue/Project Based Charts for Project: %s"
+msgstr ""
+
+#: heuristics_webapi.php:2411
+msgid ""
+"Estimates are based upon current conditions.  Actual runtime, individual job "
+"Resource Requirements, runtime, Fairshare and future job submissions can "
+"affect estimates."
+msgstr ""
+
+#: heuristics_webapi.php:2602
+#, php-format
+msgid "You have %s Idle Job(s) running"
+msgstr ""
+
+#: heuristics_webapi.php:2604
+msgid "No Idle Jobs found"
+msgstr ""
+
+#: heuristics_webapi.php:2622
+msgid "View License Checkouts"
+msgstr ""
+
+#: heuristics_webapi.php:2634 heuristics_webapi.php:2662
+#: heuristics_webapi.php:2718
+msgid "Job is Pending"
+msgstr ""
+
+#: heuristics_webapi.php:2645
+msgid "Idle Job"
+msgstr ""
+
+#: heuristics_webapi.php:2647
+msgid "Not an Idle Job"
+msgstr ""
+
+#: heuristics_webapi.php:2685
+msgid "No Heuristics Found for This Cluster, Queue and Project combination"
+msgstr ""
+
+#: heuristics_webapi.php:2688
+#, php-format
+msgid "Job is Running under the 75th Percentile based upon %s Heuristics"
+msgstr ""
+
+#: heuristics_webapi.php:2690
+#, php-format
+msgid "Job is Running longer than the 75th Percentile based upon %s Heuristics"
+msgstr ""
+
+#: heuristics_webapi.php:2692
+#, php-format
+msgid "Job is Running longer than the 90th Percentile based upon %s Heuristics"
+msgstr ""
+
+#: heuristics_webapi.php:2708
+msgid "Job is Pending on Dependency"
+msgstr ""
+
+#: heuristics_webapi.php:2710
+msgid "Invalid Dependencies Found"
+msgstr ""
+
+#: heuristics_webapi.php:2712
+msgid "No Current Dependencies"
+msgstr ""
+
+#: heuristics_webapi.php:2723
+msgid "No Memory Exception"
+msgstr ""
+
+#: heuristics_webapi.php:2725
+msgid "Memory Over Usage Reported"
+msgstr ""
+
+#: heuristics_webapi.php:2727
+msgid "Memory Under Usage Reported"
+msgstr ""
+
+#: heuristics_webapi.php:2769
+#, php-format
+msgid "You have %s Job(s) that are Using Excessive Memory"
+msgstr ""
+
+#: heuristics_webapi.php:2796
+#, php-format
+msgid "You have %s Job(s) that are Under Using Memory"
+msgstr ""
+
+#: heuristics_webapi.php:2801
+msgid "No Memory Violations Found"
+msgstr ""
+
+#: heuristics_webapi.php:2853
+#, php-format
+msgid ""
+"%s out of your %s Dependent Pending Jobs have Invalid Dependency Contintions"
+msgstr ""
+
+#: heuristics_webapi.php:2859
+#, php-format
+msgid "You have %s Pending Dependent Job(s)"
+msgstr ""
+
+#: heuristics_webapi.php:2862
+msgid "No dependent jobs found"
+msgstr ""
+
+#: heuristics_webapi.php:3431
+#, php-format
+msgid ""
+"Your job max runtime is %s, is above the 90th Percentils of %s for "
+"Jobs from the Queue/Project"
+msgstr ""
+
+#: heuristics_webapi.php:3437
+#, php-format
+msgid ""
+"Your job max runtime is %s, is above the 75th Percentils of %s for "
+"Jobs from this Queue/Project"
+msgstr ""
+
+#: heuristics_webapi.php:3439
+#, php-format
+msgid ""
+"Your job max runtime is %s, has not exceeded the 75th Percentils of "
+"%s for jobs from this Queue/Project"
+msgstr ""
+
+#: heuristics_webapi.php:3446
+#, php-format
+msgid ""
+"Your job max runtime is %s.  Because there is no historical reference data for these "
+"job types, JobIQ cannot determine if these are long running jobs."
+msgstr ""
+
+#: heuristics_webapi.php:3141
+msgid "Cluster Status"
+msgstr ""
+
+#: heuristics_webapi.php:3142
+msgid "RTM Status"
+msgstr ""
+
+#: heuristics_webapi.php:3143
+msgid "Master Status"
+msgstr ""
+
+#: heuristics_webapi.php:3144
+msgid "Active Alerts"
+msgstr ""
+
+#: heuristics_webapi.php:3145
+msgid "Down Hosts"
+msgstr ""
+
+#: heuristics_webapi.php:3146
+msgid "Throughput"
+msgstr ""
+
+#: heuristics_webapi.php:3155
+msgid "App Exited, Code"
+msgstr ""
+
+#: heuristics_webapi.php:3158
+msgid "Signal"
+msgstr ""
+
+#: heuristics_webapi.php:3162
+msgid "Exit: 0, Likely Preexec Retry Failure"
+msgstr ""
+
+#: heuristics_webapi.php:3178
+msgid "User"
+msgstr ""
+
+#: heuristics_webapi.php:3226
+msgid "Refresh all Views and Charts"
+msgstr ""
+
+#: heuristics_webapi.php:3227
+msgid "Revert to My Last Saved Settings"
+msgstr ""
+
+#: heuristics_webapi.php:3228
+msgid "Save"
+msgstr ""
+
+#: heuristics_webapi.php:3228
+msgid "Save all Filter Settings"
+msgstr ""
+
+#: heuristics_webapi.php:3236
+msgid "Severity"
+msgstr ""
+
+#: heuristics_webapi.php:3241 setup.php:151
+msgid "Notice+"
+msgstr ""
+
+#: heuristics_webapi.php:3242 setup.php:152
+msgid "Warning+"
+msgstr ""
+
+#: heuristics_webapi.php:3259
+msgid "Limit"
+msgstr ""
+
+#: heuristics_webapi.php:3264 heuristics_webapi.php:3265
+#: heuristics_webapi.php:3266
+#, php-format
+msgid "%d Rows"
+msgstr ""
+
+#: heuristics_webapi.php:3270
+msgid "Refresh"
+msgstr ""
+
+#: heuristics_webapi.php:3291
+msgid "Views"
+msgstr ""
+
+#: heuristics_webapi.php:4196
+#, php-format
+msgid "Free Memory Slots Availability for Cluster '%s'"
+msgstr ""
+
+#: heuristics_webapi.php:4198
+msgid "Free Memory Slots Availability for All Clusters"
+msgstr ""
+
+#: heuristics_webapi.php:4336
+#, php-format
+msgid "Running for Queue '%s'"
+msgstr ""
+
+#: heuristics_webapi.php:4339
+#, php-format
+msgid "Pending for Queue '%s'"
+msgstr ""
+
+#: heuristics_webapi.php:4342
+#, php-format
+msgid "Finished for Queue '%s'"
+msgstr ""
+
+#: heuristics_webapi.php:4345
+#, php-format
+msgid "Throughput for Queue '%s'"
+msgstr ""
+
+#: heuristics_webapi.php:4350
+#, php-format
+msgid " in Project '%s'"
+msgstr ""
+
+#: heuristics_webapi.php:4354
+#, php-format
+msgid " in Cluster '%s'"
+msgstr ""
+
+#: heuristics_webapi.php:4513
+msgid "My User"
+msgstr ""
+
+#: heuristics_webapi.php:4515
+#, php-format
+msgid "User %s"
+msgstr ""
+
+#: setup.php:135
+msgid "Show the JobIQ tab."
+msgstr ""
+
+#: setup.php:141 setup.php:306
+msgid "Job Heuristics"
+msgstr ""
+
+#: setup.php:141
+msgid "Reports"
+msgstr ""
+
+#: setup.php:160
+msgid "0 - 1GB"
+msgstr ""
+
+#: setup.php:161
+msgid "1GB - 2GB"
+msgstr ""
+
+#: setup.php:162
+msgid "2GB - 4GB"
+msgstr ""
+
+#: setup.php:163
+msgid "4GB - 8GB"
+msgstr ""
+
+#: setup.php:164
+msgid "8GB - 16GB"
+msgstr ""
+
+#: setup.php:165
+msgid "16GB - 24GB"
+msgstr ""
+
+#: setup.php:166
+msgid "24GB - 32GB"
+msgstr ""
+
+#: setup.php:167
+msgid "32GB - 64GB"
+msgstr ""
+
+#: setup.php:168
+msgid "64GB+"
+msgstr ""
+
+#: setup.php:173
+msgid "0 to 5Min"
+msgstr ""
+
+#: setup.php:174
+msgid "5Min to 15Min"
+msgstr ""
+
+#: setup.php:175
+msgid "15Min to 30Min"
+msgstr ""
+
+#: setup.php:176
+msgid "30Min to 1Hr"
+msgstr ""
+
+#: setup.php:177
+msgid "1Hr to 2Hrs"
+msgstr ""
+
+#: setup.php:178
+msgid "2Hrs to 6Hrs"
+msgstr ""
+
+#: setup.php:179
+msgid "6Hrs to 12Hrs"
+msgstr ""
+
+#: setup.php:180
+msgid "12Hrs to 1Day"
+msgstr ""
+
+#: setup.php:181
+msgid "1Day to 2Days"
+msgstr ""
+
+#: setup.php:186
+#, php-format
+msgid "%d Hour"
+msgstr ""
+
+#: setup.php:187 setup.php:188 setup.php:189 setup.php:190
+#, php-format
+msgid "%d Hours"
+msgstr ""
+
+#: setup.php:191
+#, php-format
+msgid "%d Day"
+msgstr ""
+
+#: setup.php:205
+msgid "RTM Plugins"
+msgstr ""
+
+#: setup.php:209
+msgid "RTM Job Heuristic Settings"
+msgstr ""
+
+#: setup.php:213
+msgid "Set Default User"
+msgstr ""
+
+#: setup.php:214
+msgid ""
+"If checked, the current logged in username is default user if user filter is "
+"not set when navigating to the JobIQ page. The logged in username has to be "
+"a vailid user in LSF clusters."
+msgstr ""
+
+#: setup.php:219
+msgid "Job History Days"
+msgstr ""
+
+#: setup.php:220
+msgid ""
+"How many days of Job history will be retained for Percentile calculations.  "
+"Keep in mind, as job volume increases, you should limit the number of days "
+"as it will impact daily processing times."
+msgstr ""
+
+#: setup.php:223 setup.php:224 setup.php:225 setup.php:226 setup.php:227
+#, php-format
+msgid "Finished + %d Days"
+msgstr ""
+
+#: setup.php:228
+#, php-format
+msgid "Finished + %d Week"
+msgstr ""
+
+#: setup.php:229
+#, php-format
+msgid "Finished + %d Weeks"
+msgstr ""
+
+#: setup.php:230
+#, php-format
+msgid "Finished + %d Month"
+msgstr ""
+
+#: setup.php:235 setup.php:251
+msgid "Custom Aggregation Column"
+msgstr ""
+
+#: setup.php:236
+msgid ""
+"Heuristics will calculate statistical data at various levels including "
+"Clusters, Queue, the Number of CPU's, an optional user defined column, then "
+"by Project and finnaly, and optionally, by Effective Resource Requirements.  "
+"This setting allows you to control Custom Aggregation column in RTM. "
+"WARNING: Changing this value will remove exiting historical Heuristics data "
+"at next polling cycle."
+msgstr ""
+
+#: setup.php:239
+msgid "None"
+msgstr ""
+
+#: setup.php:240
+msgid "Application"
+msgstr ""
+
+#: setup.php:241
+msgid "SLA"
+msgstr ""
+
+#: setup.php:242
+msgid "Charged SAAP"
+msgstr ""
+
+#: setup.php:247
+msgid "Lowest Level Aggregation"
+msgstr ""
+
+#: setup.php:248
+msgid ""
+"When aggregating Statistical Data, Heuristics will Walk down the natural "
+"Hiearchy of Cluster, Queue, Number of CPU's, the Custom Aggregation Column, "
+"Project Name and finally Effective Resource Requirements.  You can direct "
+"Heuristics to stop walking through the Aggregations after a certain level.  "
+"This setting was created to avoid out of memory problems with Database "
+"Servers.  If you Choose to go all the way to the Resource Requirements "
+"Level, you should ensure that your MariaDB/MySQL 'tmpdir' is set and the "
+"'tmpdir' is pointing to a memory file system that is in line with the number "
+"of jobs in your heuristics setting.  A 300GB memory 'tmpdir' is required for "
+"30 million job records at that level."
+msgstr ""
+
+#: setup.php:253
+msgid "Resource Requirements (see warnings)"
+msgstr ""
+
+#: setup.php:258
+msgid "Down Host Warning Percent"
+msgstr ""
+
+#: setup.php:259
+msgid "What percentage of hosts must be down prior to being in Warning?"
+msgstr ""
+
+#: setup.php:262 setup.php:263 setup.php:264 setup.php:265 setup.php:266
+#: setup.php:267 setup.php:276 setup.php:277 setup.php:278 setup.php:279
+#: setup.php:280 setup.php:281 setup.php:282 setup.php:283
+#, php-format
+msgid "%d%% of Hosts"
+msgstr ""
+
+#: setup.php:272
+msgid "Down Host Alarm Percent"
+msgstr ""
+
+#: setup.php:273
+msgid "What percentage of hosts must be down prior to being in Alarm?"
+msgstr ""
+
+#: setup.php:288
+msgid "Cluster Hourly Throughput Warning"
+msgstr ""
+
+#: setup.php:289
+msgid ""
+"What total sum of hourly throughput must exceed prior to being in Warning?"
+msgstr ""
+
+#: setup.php:320
+msgid "View Job Listing"
+msgstr ""
+
+#: setup.php:327
+msgid "View Job"
+msgstr ""
+
+#: setup.php:334
+msgid "Actions"
+msgstr ""
+
+#: setup.php:340
+msgid "Job Heuristics Viewer"
+msgstr ""
+
+#: setup.php:375 setup.php:395
+msgid "JobIQ"
+msgstr ""
+
+#: setup.php:413
+msgid "View User Dashboard"
+msgstr ""

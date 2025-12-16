@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – The Cacti Log Interface</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="the-cacti-log-interface">The Cacti Log Interface</h1>
+<h2 id="summary">Summary</h2>
+<p>The Cacti Log is where all Cacti statistics, warnings, errors and other log messages are sent to. Cacti can optionally log some information to your syslog or event log depending on your OS type.</p>
+<p>The Cacti Log is by default ordered from newest event to oldest event, and the Cacti Log is rotated by Cacti itself once a day.</p>
+<p>If you have the User Level permission, you can view any available Cacti Standard Output or Standard Error log. If you have the Administrative level access, you may additionally purge information from the logs.</p>
+<p>As a Cacti Administrator, you have the ability to filter out some message types from users for example, one message type that people like to filter out is "AUTH" messages that tell you who is logging into the Cacti Web Site. You can edit these removal rules from the Cacti Settings page.</p>
+<p>An image of the Cacti Log file can be seen below.</p>
+<p><img src="images/cacti-log.png" alt="Cacti Log File" /></p>
+<h2 id="cacti-log-filters">Cacti Log Filters</h2>
+<p>What we like to see in the Cacti Log is a lot of Green, which means good. By default, WARNINGS are yellow, and ERRORS are red. But there are other types of messages that highlight differently. Generally, you can filter for these message types. The filters include:</p>
+<ul>
+<li><strong>File</strong> - The Cacti Log file to view. They are suffixed by a data when they were rotated using the following pattern: YYYY-MM-DD.</li>
+<li><strong>Tail Lines</strong> - The number of lines to view from the selected Cacti Log.</li>
+<li><strong>Types</strong> - The message types to view. These will be explained below.</li>
+<li><strong>Display Order</strong> - The order to display the Log lines, either <em>Newest First</em> or <em>Oldest First</em>.</li>
+<li><strong>Refresh</strong> - How often to Auto-refresh the interface.</li>
+<li><strong>Search</strong> - A perl compatible Regular Expression to search the log with.</li>
+</ul>
+<p>The Cacti Log <strong>Types</strong> include the following:</p>
+<ul>
+<li><p><strong>Stats</strong> - Anything that includes the word <strong>STATS</strong></p></li>
+<li><p><strong>Warnings</strong> - Anything that includes the word <strong>WARNING</strong></p></li>
+<li><p><strong>Warnings++</strong> - Anything of each <strong>WARNING</strong>, <strong>ERROR</strong>, <strong>DEBUG</strong>, and <strong>SQL</strong> this one is good for debugging, and it will include most important errors to the Cacti Administrator.</p></li>
+<li><p><strong>Errors</strong> - Anything that includes the word <strong>ERROR</strong></p></li>
+<li><p><strong>Errors++</strong> - Anything of each <strong>ERROR</strong>, <strong>DEBUG</strong>, and <strong>SQL</strong></p></li>
+<li><p><strong>Debug</strong> - Anything that includes the word <strong>DEBUG</strong></p></li>
+<li><p><strong>AutoM8</strong> - Anything that includes the word <strong>AUTOM8</strong>. These message come from Cacti automation of Devices, Graphs, and Trees</p></li>
+<li><p><strong>Non Stats</strong> - Anything that does not include the word <strong>STATS</strong>.</p></li>
+<li><p><strong>Boost</strong> - Anything that contains the word <strong>BOOST</strong>.</p></li>
+<li><p><strong>Device Up/Down</strong> - Any device Up/Down notification including t hose that come from <em>Thold</em> or <em>Monitor</em> Plugins.</p></li>
+<li><p><strong>Recaches</strong> - Any Device Recache Events.</p></li>
+<li><p><strong>Threshold</strong> - If the <em>Thold</em> plugins is installed, any of it's threshold breach and restoration events.</p></li>
+</ul>
+<h2 id="differences-between-user-and-administrative-views">Differences between User and Administrative Views</h2>
+<p>As previously mentioned, the Cacti log has two permission levels, the User Permission level will not include the <em>Purge</em> button, and can have some information hidden from public view whereas the Administrative view includes all Log messages and a <em>Purge</em>* button.</p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

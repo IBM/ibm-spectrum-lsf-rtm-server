@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – General Installing Instructions</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="general-installing-instructions">General Installing Instructions</h1>
+<p>Make sure the following packages are installed according to your operating systems requirements. Verify, that httpd/apache and MySQL/MariaDB are started at system startup.</p>
+<h2 id="required-packages-for-most-operating-systems">Required Packages for Most Operating Systems</h2>
+<p>Depending on your operating system and PHP version, certain packages are required for Cacti. The largest variable in these requirements come with regard to PHP and MySQL/MariaDB.</p>
+<p>Installation requirements include the packages below. The installation of these packages will vary by operating system.</p>
+<h3 id="base-os">Base OS</h3>
+<ul>
+<li><p>apache, IIS, or nginx</p></li>
+<li><p>net-snmp, net-snmp-utils</p></li>
+<li><p>rrdtool</p></li>
+<li><p>help2man (for spine)</p></li>
+<li><p>dos2unix (for spine)</p></li>
+<li><p>development packages (gcc, automake, autoconf, libtool, either mysql-devel or mariadb-devel, net-snmp-devel, help2man)</p>
+<p>(for spine)</p></li>
+</ul>
+<h3 id="database">Database</h3>
+<p>MySQL versions to 5.7 are supported. MariaDB to 10.2 is also supported.</p>
+<ul>
+<li><p>mysql</p></li>
+<li><p>mysql-server</p></li>
+<li><p>libmysqlclient</p></li>
+</ul>
+<p>or</p>
+<ul>
+<li><p>mariadb</p></li>
+<li><p>mariadb-server</p></li>
+<li><p>libmariadbclient</p></li>
+</ul>
+<h3 id="php-modules">PHP Modules</h3>
+<p>The installation of these modules vary by OS. Use the <code>php -m</code> command to verify that they are installed.</p>
+<ul>
+<li><p>posix</p></li>
+<li><p>session</p></li>
+<li><p>sockets</p></li>
+<li><p>PDO</p></li>
+<li><p>pdo_mysql</p></li>
+<li><p>xml</p></li>
+<li><p>ldap</p></li>
+<li><p>mbstring</p></li>
+<li><p>pcre</p></li>
+<li><p>json</p></li>
+<li><p>openssl</p></li>
+<li><p>gd</p></li>
+<li><p>zlib</p></li>
+</ul>
+<h3 id="php-optional-modules">PHP Optional Modules</h3>
+<p>The following modules are optional, but preferred to be installed.</p>
+<ul>
+<li><p>snmp</p></li>
+<li><p>gmp (for plugin support)</p></li>
+<li><p>com or dotnet (windows only)</p></li>
+</ul>
+<h3 id="a-special-note-for-systems-using-php-fpm">A special note for systems using PHP-FPM</h3>
+<p>Prior to starting the setup process of Cacti you should restart the PHP-FPM Daemon to rebuild the Cache or you may receive a HTTP 500 Error</p>
+<pre class="console"><code>systemctl restart php-fpm
+</code></pre>
+<h2 id="freebsd">FreeBSD</h2>
+<p>When installing on FreeBSD you can use two ways. For both ways, cacti has a lot of dependent packages, you don't need to install anything else. Everything is prepared. Both ways have few pros and cons:</p>
+<ul>
+<li><p>Compiled packages - fast, but invariant dependencies (like older MySQL server, PHP version, ...)</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb2-1" title="1"><span class="ex">pkg</span> install cacti</a>
+<a class="sourceLine" id="cb2-2" title="2"><span class="ex">pkg</span> install spine</a></code></pre></div></li>
+<li><p>FreeBSD ports - compilation could last long time, but without invariant dependencies (See <a href="https://www.freebsd.org/doc/handbook/ports-using.html">Howto use ports</a>)</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" title="1"><span class="ex">pkg</span> install git</a>
+<a class="sourceLine" id="cb3-2" title="2"><span class="fu">git</span> clone https://git.FreeBSD.org/ports.git /usr/ports</a>
+<a class="sourceLine" id="cb3-3" title="3"><span class="fu">git</span> -C /usr/ports pull</a>
+<a class="sourceLine" id="cb3-4" title="4"><span class="bu">cd</span> /usr/ports/databases/mariadb106-server (or mysql80-server)</a>
+<a class="sourceLine" id="cb3-5" title="5"><span class="fu">make</span> install</a>
+<a class="sourceLine" id="cb3-6" title="6"><span class="bu">cd</span> /usr/ports/net-mgmt/cacti</a>
+<a class="sourceLine" id="cb3-7" title="7"><span class="fu">make</span> install</a>
+<a class="sourceLine" id="cb3-8" title="8"><span class="bu">cd</span> /usr/ports/net-mgmt/spine</a>
+<a class="sourceLine" id="cb3-9" title="9"><span class="fu">make</span> install</a></code></pre></div></li>
+</ul>
+<p>Apache and other software is possible install with package or Ports too.</p>
+<p>Everything in FreeBSD is installed to /usr/local/ directory! In this documentation you can see paths like /etc/php.ini, /usr/bin/spine, ...</p>
+<p>Please use correct paths - /usr/local/etc, /usr/local/bin/spine, ...</p>
+<p>For Spine set suid bit (without this isn't possible make ICMP ping):</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" title="1"><span class="fu">chmod</span> +s /usr/local/bin/spine</a></code></pre></div>
+<h2 id="configure-php">Configure PHP</h2>
+<p>Verify that the modules are installed and configured correctly. There are several ways to do so - consult <a href="http://www.php.net/manual/en/configuration.php">PHP configuration instructions</a> for a complete description.</p>
+<p>It is imperative that you set the <code>date.timezone</code> in your <code>/etc/php.ini</code>, or <code>/etc/phpX/apache/php.ini</code> and <code>/etc/phpX/cli/php.ini</code> files. Failure to do so will result in errors after the install is complete.</p>
+<p>Most other PHP configuration is done automatically by the base OS, so there is no need to discuss that here.</p>
+<h2 id="configure-the-webserver-apache">Configure the Webserver (Apache)</h2>
+<p>Most Linux/UNIX OS' automatically configure the Web Server to allow PHP content. So there should be no need to provide additional configuration. However, the following section is included below for reference in the case that you are running a UNIX version that does not properly configure the Webserver properly. The documentation below is written specifically for RHEL and variants. So, the instructions may vary.</p>
+<p>Find the file <code>/etc/httpd/conf/httpd.conf</code> or its equivalent and make the following changes to it:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode ini"><code class="sourceCode ini"><a class="sourceLine" id="cb5-1" title="1"><span class="co"># Load config files from the config directory &quot;/etc/httpd/conf.d&quot;.</span></a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="dt">Include conf.d/*.conf</span></a></code></pre></div>
+<p>Now, locate the PHP configuration file at <code>/etc/httpd/conf.d/php.conf</code></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode ini"><code class="sourceCode ini"><a class="sourceLine" id="cb6-1" title="1"><span class="co"># PHP is an HTML-embedded scripting language which attempts to make it</span></a>
+<a class="sourceLine" id="cb6-2" title="2"><span class="co"># easy for developers to write dynamically generated webpages.</span></a>
+<a class="sourceLine" id="cb6-3" title="3"><span class="dt">LoadModule php_module modules/libphp.so</span></a>
+<a class="sourceLine" id="cb6-4" title="4"><span class="co">#</span></a>
+<a class="sourceLine" id="cb6-5" title="5"><span class="co"># Cause the PHP interpreter to handle files with a .php extension.</span></a>
+<a class="sourceLine" id="cb6-6" title="6"><span class="dt">AddHandler php-script .php</span></a>
+<a class="sourceLine" id="cb6-7" title="7"><span class="dt">AddType text/html .php</span></a>
+<a class="sourceLine" id="cb6-8" title="8"><span class="co">#</span></a>
+<a class="sourceLine" id="cb6-9" title="9"><span class="co"># Add index.php to the list of files that will be served as directory</span></a>
+<a class="sourceLine" id="cb6-10" title="10"><span class="co"># indexes.</span></a>
+<a class="sourceLine" id="cb6-11" title="11"><span class="dt">DirectoryIndex index.php</span></a></code></pre></div>
+<h2 id="configure-mysqlmariadb">Configure MySQL/MariaDB</h2>
+<p>Set a password for the root user, and record this password. If you loose control of this password, you may have to re-install your database server in the case of any system disaster or recovering from a crash.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb7-1" title="1"><span class="ex">shell</span><span class="op">&gt;</span> mysqladmin --user=root password somepassword</a>
+<a class="sourceLine" id="cb7-2" title="2"><span class="ex">shell</span><span class="op">&gt;</span> mysqladmin --user=root --password reload</a></code></pre></div>
+<p>You must also load timezone information into the database. This is required for various plugin use. Later, you will be required to grant access to the <code>time_zone_name</code> table during the final installation steps.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb8-1" title="1"><span class="ex">shell</span><span class="op">&gt;</span> mysql_tzinfo_to_sql /usr/share/zoneinfo <span class="kw">|</span> <span class="ex">mysql</span> -u root mysql</a></code></pre></div>
+<p>Since Cacti 1.x is supporting internationalization (i18n), it is important that the default character set for MySQL/MariaDB be i18n compatible. The Cacti installer will make specific recommendations on MySQL/MariaDB settings. Follow those as applicable for your OS.</p>
+<p>Galera clustering: There are several tables which are set to use the MEMORY storage engine which do not get replicated among nodes which can cause problems. If you configure Cacti to only connect to one node of your cluster and are not load balancing this does not apply to you.</p>
+<p>If you are running multiple nodes in a load-balanced environment where you connect to a VIP you should remove all but one node from rotation during Cacti installation or update. After the installation/update login to your MySQL server and execute the following commands to update those tables to use the InnoDB engine:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb9-1" title="1">MariaDB [(<span class="kw">none</span>)]<span class="op">&gt;</span> <span class="kw">use</span> cacti;</a>
+<a class="sourceLine" id="cb9-2" title="2">MariaDB [cacti]<span class="op">&gt;&gt;</span> <span class="kw">ALTER</span> <span class="kw">TABLE</span> `automation_ips` ENGINE<span class="op">=</span>InnoDB;</a>
+<a class="sourceLine" id="cb9-3" title="3">MariaDB [cacti]<span class="op">&gt;&gt;</span> <span class="kw">ALTER</span> <span class="kw">TABLE</span> `automation_processes` ENGINE<span class="op">=</span>InnoDB;</a>
+<a class="sourceLine" id="cb9-4" title="4">MariaDB [cacti]<span class="op">&gt;&gt;</span> <span class="kw">ALTER</span> <span class="kw">TABLE</span> `data_source_stats_hourly_cache` ENGINE<span class="op">=</span>InnoDB;</a>
+<a class="sourceLine" id="cb9-5" title="5">MariaDB [cacti]<span class="op">&gt;&gt;</span> <span class="kw">ALTER</span> <span class="kw">TABLE</span> `data_source_stats_hourly_last` ENGINE<span class="op">=</span>InnoDB;</a>
+<a class="sourceLine" id="cb9-6" title="6">MariaDB [cacti]<span class="op">&gt;&gt;</span> <span class="kw">ALTER</span> <span class="kw">TABLE</span> `poller_output` ENGINE<span class="op">=</span>InnoDB;</a>
+<a class="sourceLine" id="cb9-7" title="7">MariaDB [cacti]<span class="op">&gt;&gt;</span> <span class="kw">ALTER</span> <span class="kw">TABLE</span> `poller_output_boost_processes` ENGINE<span class="op">=</span>InnoDB;</a></code></pre></div>
+<p>These changes should replicate to the other nodes in your cluster. Allow Cacti to run at least two or three full polling cycles before placing the other nodes back into rotation.</p>
+<h2 id="install-and-configure-cacti">Install and Configure Cacti</h2>
+<ol>
+<li><p>Extract the distribution tarball.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb10-1" title="1"><span class="ex">shell</span><span class="op">&gt;</span> tar xzvf cacti-version.tar.gz</a></code></pre></div></li>
+<li><p>Create the MySQL database:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb11-1" title="1"><span class="ex">shell</span><span class="op">&gt;</span> mysqladmin --user=root create cacti</a></code></pre></div></li>
+<li><p>Import the default cacti database:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb12-1" title="1"><span class="ex">shell</span><span class="op">&gt;</span> mysql cacti <span class="op">&lt;</span> cacti.sql</a></code></pre></div></li>
+<li><p>Optional: Create a MySQL username and password for Cacti.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb13-1" title="1">shell<span class="op">&gt;</span> mysql <span class="co">--user=root mysql</span></a>
+<a class="sourceLine" id="cb13-2" title="2">mysql<span class="op">&gt;</span> <span class="kw">CREATE</span> <span class="kw">DATABASE</span> cacti</a>
+<a class="sourceLine" id="cb13-3" title="3">mysql<span class="op">&gt;</span> <span class="kw">CREATE</span> <span class="fu">USER</span> <span class="st">&#39;cacti&#39;</span>@<span class="st">&#39;localhost&#39;</span>;</a>
+<a class="sourceLine" id="cb13-4" title="4">mysql<span class="op">&gt;</span> <span class="kw">ALTER</span> <span class="fu">USER</span> <span class="st">&#39;cacti&#39;</span>@<span class="st">&#39;localhost&#39;</span> <span class="kw">IDENTIFIED</span> <span class="kw">BY</span> <span class="st">&#39;somepassword&#39;</span>;</a>
+<a class="sourceLine" id="cb13-5" title="5">mysql<span class="op">&gt;</span> <span class="kw">GRANT</span> <span class="kw">ALL</span> <span class="kw">PRIVILEGES</span> <span class="kw">ON</span> cacti.<span class="op">*</span> <span class="kw">to</span> <span class="st">&#39;cacti&#39;</span>@<span class="st">&#39;localhost&#39;</span>;</a>
+<a class="sourceLine" id="cb13-6" title="6">mysql<span class="op">&gt;</span> <span class="kw">GRANT</span> <span class="kw">SELECT</span> <span class="kw">ON</span> mysql.time_zone_name <span class="kw">TO</span> <span class="st">&#39;cacti&#39;</span>@<span class="st">&#39;localhost&#39;</span>;</a>
+<a class="sourceLine" id="cb13-7" title="7">mysql<span class="op">&gt;</span> <span class="kw">FLUSH</span> <span class="kw">PRIVILEGES</span>;</a></code></pre></div>
+<p>Note that if your <code>root</code> (or equivalent) user does not have <code>SUPER</code> permissions, it may still be possible to <code>GRANT SELECT</code> privileges to the Cacti user via an <code>INSERT INTO mysql.tables_priv</code>.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode sql"><code class="sourceCode sql"><a class="sourceLine" id="cb14-1" title="1"><span class="kw">INSERT</span> <span class="kw">INTO</span> mysql.tables_priv (Host, Db, <span class="fu">User</span>, Table_name, Grantor, Table_priv)</a>
+<a class="sourceLine" id="cb14-2" title="2"><span class="kw">VALUES</span> (<span class="st">&#39;localhost&#39;</span>, <span class="st">&#39;mysql&#39;</span>, <span class="st">&#39;cactiuser&#39;</span>, <span class="st">&#39;time_zone_name&#39;</span>, <span class="st">&#39;root@localhost&#39;</span>, <span class="st">&#39;Select&#39;</span>);</a></code></pre></div></li>
+<li><p>Edit <code>include/config.php</code> and specify the database type, name, host, user and password for your Cacti configuration.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb15-1" title="1"><span class="kw">$database_type</span> = <span class="st">&quot;mysql&quot;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb15-2" title="2"><span class="kw">$database_default</span> = <span class="st">&quot;cacti&quot;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb15-3" title="3"><span class="kw">$database_hostname</span> = <span class="st">&quot;localhost&quot;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb15-4" title="4"><span class="kw">$database_username</span> = <span class="st">&quot;cactiuser&quot;</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb15-5" title="5"><span class="kw">$database_password</span> = <span class="st">&quot;cacti&quot;</span><span class="ot">;</span></a></code></pre></div></li>
+<li><p>Set the appropriate permissions on Cacti's directories for graph/log generation. You should execute these commands from inside Cacti's directory to change the permissions.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb16-1" title="1"><span class="ex">shell</span><span class="op">&gt;</span> chown -R cactiuser rra/ log/ cache/</a></code></pre></div>
+<p>(Enter a valid username for <em>cactiuser</em>, this user will also be used in the next step for data gathering.)</p></li>
+<li><p>Create your cron task file or systemd units file</p>
+<p>Starting with Cacti 1.2.16, you have the option to use either the legacy Crontab entry, or an optional cactid units file and server to run your Cacti pollers.</p>
+<p>For Crontab use, follow the instructions below:</p>
+<p>Create and edit <code>/etc/cron.d/cacti</code> file. Make sure to setup the correct path to poller.php</p>
+<pre class="console"><code>*/5 * * * * apache php &lt;path_cacti&gt;/poller.php &amp;&gt;/dev/null
+</code></pre>
+<p>For systemd unit's file install, you will need to modify the included units file to following your install location and desired user and group's to run the Cacti poller as. To complete the task, follow the procedure below:</p>
+<pre class="console"><code>vim &lt;path_cacti&gt;/service/cactid.service (edit the path)
+touch /etc/sysconfig/cactid
+cp -p &lt;path_cacti&gt;/service/cactid.service /etc/systemd/system
+systemctl enable cactid
+systemctl start cactid
+systemctl status cactid
+</code></pre>
+<p>The systemd units file makes managing a highly available Cacti setup a bit more convenient.</p></li>
+<li><p>During install, you will need to provide write access to the following files and directories:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb19-1" title="1"><span class="ex">shell</span><span class="op">&gt;</span> chown -R resource scripts include/config.php</a></code></pre></div>
+<p>Once the installation is complete, you may change the permissions to more restrictive settings.</p></li>
+<li><p>Point your web browser to:</p>
+<p><code>http://&lt;your-server&gt;/cacti/</code></p>
+<p>Log in the with a username/password of <em>admin</em>. You will be required to change this password immediately. Make sure to fill in all of the path variables carefully and correctly on the following screen.</p></li>
+</ol>
+<h2 id="optional-install-and-configure-spine">(Optional) Install and Configure Spine</h2>
+<p>Spine is a very fast data collection engine, written in C. It is an optional replacement for cmd.php. If you decide to use it, you will have to install it explicitly. It does not come with cacti itself.</p>
+<p>The easiest way is to install Spine using rpm or ports. You will find packages for Spine at the main cacti site or from your distribution.</p>
+<p>To compile Spine, download it to any location of your liking. Then, issue from the downloaded directory following commands</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb20-1" title="1"><span class="ex">shell</span><span class="op">&gt;</span>./bootstrap</a></code></pre></div>
+<p>If the <code>bootstrap</code> script is successful, you then will follow the instructions it provides to compile and install.</p>
+<p>Assuming, you've managed to install spine correctly, you will have to configure it. The configuration file may be placed in the same directory as spine itself or at /etc/spine.conf.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode ini"><code class="sourceCode ini"><a class="sourceLine" id="cb21-1" title="1"><span class="dt">DB_Host     127.0.0.1 or hostname (not localhost)</span></a>
+<a class="sourceLine" id="cb21-2" title="2"><span class="dt">DB_Database cacti</span></a>
+<a class="sourceLine" id="cb21-3" title="3"><span class="dt">DB_User     cactiuser</span></a>
+<a class="sourceLine" id="cb21-4" title="4"><span class="dt">DB_Password cacti</span></a>
+<a class="sourceLine" id="cb21-5" title="5"><span class="dt">DB_Port     3306</span></a></code></pre></div>
+<h3 id="considerations-when-using-proxys-in-front-of-cacti-cacti-1223">Considerations when using Proxys in front of Cacti (Cacti 1.2.23+)</h3>
+<p>For optimal security, only specify the HTTP headers that are set by your proxy software. to prevent unauthorized access, These can be set by editing the following section of config.php</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb22-1" title="1"><span class="co">/*</span></a>
+<a class="sourceLine" id="cb22-2" title="2"><span class="co"> * Allow the use of Proxy IPs when searching for client</span></a>
+<a class="sourceLine" id="cb22-3" title="3"><span class="co"> * IP to be used</span></a>
+<a class="sourceLine" id="cb22-4" title="4"><span class="co"> *</span></a>
+<a class="sourceLine" id="cb22-5" title="5"><span class="co"> * This can be set to one of the following:</span></a>
+<a class="sourceLine" id="cb22-6" title="6"><span class="co"> *   - false: to use only REMOTE_ADDR</span></a>
+<a class="sourceLine" id="cb22-7" title="7"><span class="co"> *   - true: to use all allowed headers (not advised)</span></a>
+<a class="sourceLine" id="cb22-8" title="8"><span class="co"> *   - array of one or more the following:</span></a>
+<a class="sourceLine" id="cb22-9" title="9"><span class="co"> *      &#39;X-Forwarded-For&#39;,</span></a>
+<a class="sourceLine" id="cb22-10" title="10"><span class="co"> *      &#39;X-Client-IP&#39;,</span></a>
+<a class="sourceLine" id="cb22-11" title="11"><span class="co"> *      &#39;X-Real-IP&#39;,</span></a>
+<a class="sourceLine" id="cb22-12" title="12"><span class="co"> *      &#39;X-ProxyUser-Ip&#39;,</span></a>
+<a class="sourceLine" id="cb22-13" title="13"><span class="co"> *      &#39;CF-Connecting-IP&#39;,</span></a>
+<a class="sourceLine" id="cb22-14" title="14"><span class="co"> *      &#39;True-Client-IP&#39;,</span></a>
+<a class="sourceLine" id="cb22-15" title="15"><span class="co"> *      &#39;HTTP_X_FORWARDED&#39;,</span></a>
+<a class="sourceLine" id="cb22-16" title="16"><span class="co"> *      &#39;HTTP_X_FORWARDED_FOR&#39;,</span></a>
+<a class="sourceLine" id="cb22-17" title="17"><span class="co"> *      &#39;HTTP_X_CLUSTER_CLIENT_IP&#39;,</span></a>
+<a class="sourceLine" id="cb22-18" title="18"><span class="co"> *      &#39;HTTP_FORWARDED_FOR&#39;,</span></a>
+<a class="sourceLine" id="cb22-19" title="19"><span class="co"> *      &#39;HTTP_FORWARDED&#39;,</span></a>
+<a class="sourceLine" id="cb22-20" title="20"><span class="co"> *      &#39;HTTP_CLIENT_IP&#39;,</span></a>
+<a class="sourceLine" id="cb22-21" title="21"><span class="co"> *</span></a>
+<a class="sourceLine" id="cb22-22" title="22"><span class="co"> * </span><span class="al">NOTE</span><span class="co">: The following will always be checked:</span></a>
+<a class="sourceLine" id="cb22-23" title="23"><span class="co"> *      &#39;REMOTE_ADDR&#39;,</span></a>
+<a class="sourceLine" id="cb22-24" title="24"><span class="co"> */</span></a>
+<a class="sourceLine" id="cb22-25" title="25"><span class="kw">$proxy_headers</span> = <span class="kw">null</span><span class="ot">;</span></a>
+<a class="sourceLine" id="cb22-26" title="26"></a></code></pre></div>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

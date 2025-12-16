@@ -1,0 +1,123 @@
+<!-- $Id$ -->
+<cacti>
+	<hash_1800240dc92cf4253b699a1cb05a0100641b92>
+		<id>9</id>
+		<name>Disk used over |input_percent| percent on host like |input_hostname|</name>
+		<clusterid>0</clusterid>
+		<type>0</type>
+		<expression_id>9</expression_id>
+		<aggregation>0</aggregation>
+		<metric>0</metric>
+		<base_time_display>12:00am</base_time_display>
+		<base_time>1520956800</base_time>
+		<frequency>1</frequency>
+		<alarm_type>0</alarm_type>
+		<alarm_hi>0</alarm_hi>
+		<alarm_low></alarm_low>
+		<alarm_fail_trigger>1</alarm_fail_trigger>
+		<time_hi>0</time_hi>
+		<time_low></time_low>
+		<time_fail_trigger>0</time_fail_trigger>
+		<time_fail_length>1</time_fail_length>
+		<warning_pct></warning_pct>
+		<trigger_cmd_high></trigger_cmd_high>
+		<trigger_cmd_low></trigger_cmd_low>
+		<trigger_cmd_norm></trigger_cmd_norm>
+		<cmd_retrigger_enabled></cmd_retrigger_enabled>
+		<repeat_alert>12</repeat_alert>
+		<notify_extra></notify_extra>
+		<notify_cluster_admin>0</notify_cluster_admin>
+		<notify_alert></notify_alert>
+		<notify_users></notify_users>
+		<syslog_priority>4</syslog_priority>
+		<syslog_facility>24</syslog_facility>
+		<syslog_enabled></syslog_enabled>
+		<tcheck>0</tcheck>
+		<exempt>off</exempt>
+		<acknowledgement>off</acknowledgement>
+		<restored_alert>off</restored_alert>
+		<req_ack>off</req_ack>
+		<email_body>An Alert has been issued that requires your attention. &lt;br&gt;&lt;br&gt;&lt;strong&gt;&lt;NAME&gt;&lt;/strong&gt;: has breached threshold limits HI:&lt;HI&gt;/LOW:&lt;LOW&gt; with Current Value:&lt;VALUE&gt;&lt;br&gt;&lt;DETAILS&gt;&lt;br&gt;&lt;br&gt;</email_body>
+		<email_subject>ALERT: &lt;NAME&gt; Breached Threshold Limits</email_subject>
+		<gridalarms_template_contacts>
+		</gridalarms_template_contacts>
+		<gridalarms_template_layout>
+			<hash_2000243c93ff156d1e2336719ecdbb66601c2b>
+				<id>62</id>
+				<alarm_id>9</alarm_id>
+				<display_name>Poller_id</display_name>
+				<column_name>poller_id</column_name>
+				<sequence>1</sequence>
+				<sortposition>1</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_2000243c93ff156d1e2336719ecdbb66601c2b>
+			<hash_200024a6bed2f00a490e53bbdb22f6144f2e04>
+				<id>63</id>
+				<alarm_id>9</alarm_id>
+				<display_name>Hostname</display_name>
+				<column_name>hostname</column_name>
+				<sequence>2</sequence>
+				<sortposition>2</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200024a6bed2f00a490e53bbdb22f6144f2e04>
+			<hash_2000241386f94944724ecfff762ba2c96f00cc>
+				<id>64</id>
+				<alarm_id>9</alarm_id>
+				<display_name>MountPoint</display_name>
+				<column_name>mountPoint</column_name>
+				<sequence>3</sequence>
+				<sortposition>3</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_2000241386f94944724ecfff762ba2c96f00cc>
+			<hash_200024bf9f815fe9b139cd16ca6924fd9955ba>
+				<id>65</id>
+				<alarm_id>9</alarm_id>
+				<display_name>PercentUsed</display_name>
+				<column_name>percentUsed</column_name>
+				<sequence>4</sequence>
+				<sortposition>0</sortposition>
+				<sortdirection>0</sortdirection>
+			</hash_200024bf9f815fe9b139cd16ca6924fd9955ba>
+		</gridalarms_template_layout>
+		<gridalarms_template_expression>
+			<hash_21002437339d4214e5d8282e8d03278a813d10>
+				<id>9</id>
+				<name>disk used on host</name>
+				<description>disk used over percent on host </description>
+				<ds_type>1</ds_type>
+				<type>1</type>
+				<db_table></db_table>
+				<sql_query>SELECT poller_id, hostname, mountPoint, percentUsed, present
+FROM disku_pollers_filesystems
+JOIN disku_pollers on disku_pollers.id=disku_pollers_filesystems.poller_id
+WHERE present=1 AND percentUsed &gt; |input_percent| AND hostname LIKE &#039;|input_hostname|&#039;
+</sql_query>
+				<script_thold></script_thold>
+				<script_data></script_data>
+				<script_data_type>0</script_data_type>
+			</hash_21002437339d4214e5d8282e8d03278a813d10>
+		</gridalarms_template_expression>
+		<gridalarms_template_expression_item>
+		</gridalarms_template_expression_item>
+		<gridalarms_template_metric>
+		</gridalarms_template_metric>
+		<gridalarms_template_metric_expression>
+		</gridalarms_template_metric_expression>
+		<gridalarms_template_expression_input>
+			<hash_24002428d3e8833566cee265924b78ab523e1a>
+				<id>9</id>
+				<expression_id>9</expression_id>
+				<name>hostname</name>
+				<description>disk used over percent on the host, % is any host</description>
+				<value>%</value>
+			</hash_24002428d3e8833566cee265924b78ab523e1a>
+			<hash_240024aab99b9eadff17fb875327fb9f4b9eeb>
+				<id>8</id>
+				<expression_id>9</expression_id>
+				<name>percent</name>
+				<description>disku used over percent</description>
+				<value>80</value>
+			</hash_240024aab99b9eadff17fb875327fb9f4b9eeb>
+		</gridalarms_template_expression_input>
+	</hash_1800240dc92cf4253b699a1cb05a0100641b92>
+</cacti>

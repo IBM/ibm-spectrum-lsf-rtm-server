@@ -1,0 +1,177 @@
+/* $Id$ */
+.gridalarmsAlertNotify {
+	background-color: rgba(242, 25, 36, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 12.5%;
+	color: #0A0A0A;
+}
+
+.gridalarmsAlert2Warn {
+	background-color: rgba(200, 25, 36, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 12.5%;
+	color: #0A0A0A;
+}
+
+.gridalarmsWarningNotify {
+	background-color: rgba(251, 74, 20, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 12.5%;
+	color: #0A0A0A;
+}
+
+.gridalarmsReTriggerNotify {
+	background-color: rgba(255, 122, 48, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 12.5%;
+	color: #0A0A0A;
+}
+
+.gridalarmsReTriggerEvent {
+	background-color: rgba(250, 253, 158, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 12.5%;
+	color: #0A0A0A;
+}
+
+.gridalarmsTriggerEvent {
+	background-color: rgba(250, 253, 158, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 12.5%;
+	color: #0A0A0A;
+}
+
+.gridalarmsWarnTrigger {
+	background-color: rgba(210, 223, 128, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 12.5%;
+	color: #0A0A0A;
+}
+
+.gridalarmsRestoralNotify {
+	background-color: rgba(204, 255, 204, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 12.5%;
+	color: #0A0A0A;
+}
+
+.gridalarmsRestoralEvent {
+	background-color: rgba(205, 207, 196, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 12.5%;
+	color: #0A0A0A;
+}
+
+.gridalarmsRestore {
+	background-color: rgba(204, 255, 204, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 14%;
+	color: #0A0A0A;
+}
+
+.gridalarmsAlertTrigger {
+	background-color: rgba(242, 23, 33, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 14%;
+	color: #0A0A0A;
+}
+
+.gridalarmsReTrigger {
+	background-color: rgba(250, 116, 32, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 14%;
+	color: #0A0A0A;
+}
+
+.gridalarmsWarning {
+	background-color: rgba(255, 122, 48, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 14%;
+	color: #0A0A0A;
+}
+
+.gridalarmsWarning .linkEditMain {
+	color: #000000;
+}
+
+.gridalarmsAlert {
+	background-color: rgba(242, 25, 36, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 14%;
+	color: #0A0A0A;
+}
+
+.gridalarmsAlert .linkEditMain {
+	color: #000000;
+}
+
+.gridalarmsAcknowledgment {
+	background-color: rgba(153, 204, 102, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 14%;
+	color: #0A0A0A;
+}
+
+.gridalarmsAcknowledgment .linkEditMain {
+	color: #000000;
+}
+
+.gridalarmsBaseAlert {
+	background-color: rgba(251, 74, 20, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 14%;
+	color: #0A0A0A;
+}
+
+.gridalarmsBaseAlert .linkEditMain {
+	color: #000000;
+}
+
+.gridalarmsNotice {
+	background-color: rgba(250, 253, 158, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 14%;
+	color: #0A0A0A;
+}
+
+.gridalarmsOk {
+	background-color: rgba(204, 255, 204, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 14%;
+	color: #0A0A0A;
+}
+
+.gridalarmsDisabled {
+	background-color: rgba(205, 207, 196, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 14%;
+	color: #0A0A0A;
+}
+
+.gridalarmsAcknowledgementRequired {
+    background-color: rgba(255, 125, 0, 0.8);
+    text-align: center;
+    white-space: nowrap;
+    width: 14%;
+    color: #0A0A0A;
+}
+

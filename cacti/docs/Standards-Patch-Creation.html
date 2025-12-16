@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Patch Creation</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="patch-creation">Patch Creation</h1>
+<h2 id="overview">Overview</h2>
+<p>In order to create a patch for inclusion into the cacti project, you need to create a pull request which holds the changes to be made. Please note, it is better if your request also includes a change to <code>docs/CHANGELOG</code> with a brief description of your change (this is included with the distributed project).</p>
+<p>The basic steps to creating a pull request are to fork cacti (by clicking on "Fork") into your own repo on GitHub. You can use just the main develop branch of your forked repo as long as all future changes can also appear in the same pull request (until it is merged). However, it is cleaner to create a separate branch from your local develop which includes the changes for the specific fix leaving the develop branch alone.</p>
+<h2 id="conventions-used">Conventions used</h2>
+<p>The following terms are defined here for an understanding when they are used later.</p>
+<ul>
+<li><p><strong>repo</strong> is a repository of files/code/images</p></li>
+<li><p><strong>fork</strong> is the creation of a new <strong>repo</strong> based on an existing <strong>repo</strong></p></li>
+<li><p><strong>origin</strong> is the <strong>repo</strong> that you have created on GitHub</p></li>
+<li><p><strong>upstream</strong> is the <strong>repo</strong> that you have forked from on GitHub</p></li>
+<li><p><strong>branch</strong> is similar to a <strong>fork</strong> but within an existing <strong>repo</strong> contains a separate area of work * <strong>commit</strong> is a collection of changes that are stored together</p></li>
+<li><p><strong>git</strong> is a command that should be installed locally on the developers machine</p></li>
+<li><p><strong>Issue-1153</strong> is an example branch whose name is based of the number of the issue created on GitHub</p></li>
+</ul>
+<p><em>Note: During this page, any reference to Issue-1153 is the branch name that should be replaced by your own branch name.</em></p>
+<h2 id="creating-your-developer-details">Creating your developer details</h2>
+<p>The first time you come to use <code>git</code> if you try to commit, it will use your local settings to mark the commit with a username and email address. However, if these are not defined, then it will use username@machinename as the email address and username as the name. These details will be stored against the commit that you make so it is always advisably to set them. To change these, use</p>
+<pre class="shell"><code>git config --global user.name &quot;yourname&quot;
+git config --global user.email &quot;email@example.com&quot;
+</code></pre>
+<h2 id="creating-your-local-clone">Creating your local clone</h2>
+<ol>
+<li><p>Fork cacti on github.com using the Fork button that appears top right of the code area.</p>
+<p><img src="images/patch-creation-clone.png" alt="create fork" /></p></li>
+<li><p>Clone the source to your local machine, you can use one of the following two lines. The second allows you to clone into a directory of your own naming, whilst the first takes the repo's name.</p>
+<pre class="shell"><code>git clone https://github.com/&lt;myuser&gt;/cacti
+git clone https://github.com/&lt;myuser&gt;/cacti &lt;dirname&gt;
+</code></pre></li>
+<li><p>If you have previously cloned your repo locally, you should always ensure you are back on your own develop branch so that you are not branching from another branch (unless you really want !). The double minus at the end ensures that all files are replaced with the current branch version.</p>
+<pre class="shell"><code>git checkout origin/develop --
+</code></pre></li>
+<li><p>Next, you should create a branch for the work you want to do and there are two ways to do this. If you want to create a new branch (I tend to call it Issue-# where # is the issue number) using command line</p>
+<pre class="shell"><code>git checkout -b Issue-1153
+git push --set-upstream origin Issue-1153
+</code></pre></li>
+<li><p>If you want to create a new branch on your forked repo on github, do so by clicking on the branch (normally Develop) on the GitHub code page, then type in the new name of a branch before hitting return. GitHub will then create and switch to that branch but your local repo will know nothing of this yet.</p>
+<p><img src="images/patch-creation-branch.png" alt="image" /></p></li>
+</ol>
+<p>To checkout the newly created branch, you need to pull down the latest GitHub information using <code>git fetch</code> before perform the checkout. It will as follows:</p>
+<pre class="shell"><code>git fetch
+git checkout Issue-1153
+</code></pre>
+<p>At this point, you will have a local repo (which is a replica of your forked cacti repo) downloaded and available to edit with the changes you wish to make. At any time, whilst making changes or once all done, you can see the files that have changed using <code>git status</code> and if you want to see the actual differences then you would use <code>git diff</code>.</p>
+<h2 id="commit-your-changes">Commit your changes</h2>
+<p>To commit any changes that you have made, you must first commit them to your local repo. This does not affect the online GitHub repo that you have forked from cacti's repo. Neither of these are touched at this time.</p>
+<ol>
+<li><p>Add any change file to the commitment list using either <code>git stage</code> or <code>git add</code> (they are both the same command)</p>
+<pre class="shell"><code>git stage &lt;file&gt;
+</code></pre></li>
+<li><p>Commit your changes to the local repo</p>
+<pre class="shell"><code>git commit
+</code></pre></li>
+</ol>
+<p>This has now committed the changes you made to your local repo. Again, please note, this has not yet published these changes on GitHub to your forked repo.</p>
+<h2 id="update-with-the-latest-development-source">Update with the latest development source</h2>
+<p>Before you publish your local changes back to GitHub (or even afterwards), you've may have noticed changes being made to the cacti (upstream) project that are you not in your origin (forked) or local repos. If you were to commit a pull request using your local changes, there would be quite a few differences. You also wouldn't know if there was likely to be a conflict with your changes. Travis CI is now running against the cacti repo so conflicts do usually show up there if no where else.</p>
+<p>In order to get these latest changes, we must pull from the upstream (cacti) repo and commit these to our local repo.</p>
+<ol>
+<li><p>If you have previously added an upstream repo, you may skip this step. If not, we add the upstream using the following command.</p>
+<pre class="shell"><code>git remote add upstream https://github.com/cacti/cacti.git
+</code></pre></li>
+<li><p>With the upstream established, we must fetch the latest upstream information so <code>git</code> knows what can be used.</p>
+<pre class="shell"><code>git fetch upstream
+</code></pre></li>
+<li><p>Now, with this latest information available, we can merge any changes from the main development branch using the following command. Note that at this point, you can use an alternative branch, if you are trying to apply this to a feature branch such as 1.2.x for example.</p>
+<pre class="shell"><code>git merge upstream/develop
+</code></pre></li>
+<li><p>Once we have merged the latest changes, there may be conflicts due to changes made by other people at the same point in a file as you have made. Any file listed as being in conflict needs to be edited by looking for the <code>&lt;&lt;&lt;</code> and <code>&gt;&gt;&gt;</code> points.</p></li>
+<li><p>Edit these points (and there may be more that one set in a given file) as you will see both the original upstream version and your edited version. You must remove everything but the changes you desire including the chevron points before you exit the file leaving it in a full working state.</p></li>
+<li><p>Once your done editing all the conflicts, you must add the file so that <code>git</code> knows you wish to commit this file later.</p>
+<pre class="shell"><code>git add &lt;file&gt;
+</code></pre></li>
+<li><p>Finally, you can commit the changes which will default the message as below. If you wish to abort the commit, ensure that there are no non-blank lines or only lines that start with a #. Anything else will be treated as a commit message.</p>
+<blockquote>
+<p>Merge remote-tracking branch 'upstream/develop' into Issue-1153</p>
+</blockquote>
+<pre class="shell"><code>git commit
+</code></pre></li>
+</ol>
+<h2 id="getting-changes-back-up-to-github">Getting changes back up to GitHub</h2>
+<p>In order to get changes back from your local repo back to Github in your forked repo, you need to "push" the changes back up.</p>
+<ol>
+<li><p>Push those latest merges up to github</p>
+<pre class="shell"><code>git push
+</code></pre></li>
+</ol>
+<p>At this point, if you have not saved your GitHub credentials, these will be prompted for and you will have to manually enter.</p>
+<p><em>Note: this will NOT have affected the main cacti repo at all, only your forked copy.</em></p>
+<h2 id="updating-other-branches">Updating other branches</h2>
+<p>If you want to update to the latest develop source on the develop branch, or master on the master branch just repeat the "Update with the latest development source" against the appropriate branches instead. eg, update origin/develop with upstream/develop or origin/master with upstream/master.</p>
+<h2 id="creating-a-git-patch-and-applying-it-elsewhere">Creating a git patch and applying it elsewhere</h2>
+<p>Sometimes, if you have quite a lot of changes you wish to port to another branch, it's worth performing the following:</p>
+<ol>
+<li><p>Get the commit hash number from github.com or from <code>git log</code></p></li>
+<li><p>Create a patch file of the difference by comparing the provided has with it's parent (^)</p>
+<pre class="shell"><code>git diff -p 1c0dd0e75d8b6d234eecc63acb68280c9bae0d06^ 1c0dd0e75d8b6d234eecc63acb68280c9bae0d06 &gt; diff.patch
+</code></pre></li>
+<li><p>This can then be applied later using</p>
+<pre class="shell"><code>git apply diff.patch
+</code></pre></li>
+</ol>
+<p>If you are going to have many patch files, it is worth naming them using a convention that keeps them unique.</p>
+<h2 id="creating-a-pull-request-on-the-cacti-repo">Creating a pull request on the cacti repo</h2>
+<p>Once you have committed and published all the changes that you need to make for your issue/fix/enhancement, you will need to let the cacti group know that these changes are available. To do this, you can browse to your code and then click on pull request</p>
+<p><img src="images/patch-creation-pull-request-1.png" alt="cacti - create pull request 1" /></p>
+<p>This will then switch you automatically over to the cacti repo, create a pull request and fill in details as much as possible. You will then have the opportunity to edit the title and enter a description. It would be wise to put as much detail as possible, and if you referring back to a previous issue, place a link to that too.</p>
+<p><img src="images/patch-creation-pull-request-2.png" alt="cacti - create pull request 2" /></p>
+<p>After you have entered the details above, double check the changes that follow and make sure you have no conflicts again. It is normal to have conflicts here if you have no been updating your local repo with the changes from the upstream (cacti) repo. If not, everything will look OK.</p>
+<p><img src="images/patch-creation-pull-request-3.png" alt="cacti - create pull request 3" /></p>
+<p>If you are positive that you have everything in order, click Create Pull Request and this will be submitted to the cacti repo. Once the developers there have reviewed your changes they will either suggest some alterations or they will successfully commit your code in.</p>
+<p>Once your code has been pulled in, you should see an option to safely delete the branch that you created at the bottom of the pull request. Clicking this will remove the repo from public view (though you can later revert this if you wish to).</p>
+<h2 id="alternative-to-setting-upstream-on-push">Alternative to setting upstream on push</h2>
+<p>If you do not want to keep setting the origin on the initial push in the long format, you can shorten this by using the following:</p>
+<pre class="shell"><code>git config --global push.default current
+</code></pre>
+<p>Once that has been done, all future pushes to the origin source can be achieved using:</p>
+<pre class="shell"><code>git push -u
+</code></pre>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

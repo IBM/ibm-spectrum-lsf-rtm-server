@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Device Default Settings</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="device-default-settings">Device Default Settings</h1>
+<p>Cacti has multiple ways to create <strong>Devices</strong>. Those methods include:</p>
+<ul>
+<li><strong>Manual</strong> - Create Devices one at a time through the User Interface</li>
+<li><strong>CLI</strong> - Through Cacti's Command Line Interfaces (CLI's)</li>
+<li><strong>Automation</strong> - Through Cacti's Network Discovery</li>
+</ul>
+<p>When using any of these methods, Cacti needs a way to apply a default for a new <strong>Device</strong> if the user does not specify on, be it any of the three methods above. That is what this settings sub-tab if for.</p>
+<h2 id="general-defaults">General Defaults</h2>
+<p>In the image below, you can see the <strong>General Defaults</strong>. These settings cover a number of <strong>Device</strong> attributes.</p>
+<p><img src="images/settings-device-defaults-general.png" alt="General Defaults" /></p>
+<p>Those settings include:</p>
+<ul>
+<li><p><strong>Template</strong> - The default <strong>Device Template</strong>. You might select <code>Net-SNMP</code> device if you are monitoring all Linux devices for example.</p></li>
+<li><p><strong>Site</strong> - The default physical location of the <strong>Device</strong></p></li>
+<li><p><strong>Poller</strong> - The default <strong>Data Collector</strong> to assign new <strong>Devices</strong> to</p></li>
+<li><p><strong>Device Threads</strong> - The default number of Device Threads to assign to a new <strong>Device</strong></p></li>
+<li><p><strong>Re-index Method for Data Queries</strong> - The default **Re-index" method for new <strong>Device Data Queries</strong></p></li>
+<li><p><strong>Default Interface Speed</strong> - If the <strong>Device</strong> does not include <code>ifHighSpeed</code> what should the maximum speed of the interface be set to.</p></li>
+</ul>
+<blockquote>
+<p><strong>NOTE</strong>: <strong>Device Threads</strong> is only applicable when using the spine binary</p>
+</blockquote>
+<h2 id="snmp-defaults">SNMP Defaults</h2>
+<p>Similar to the <code>General Defaults</code>, the <code>SNMP Defaults</code> control what SNMP settings to use for new *<em>Devices</em> if the user does not specify any. The image below shows the settings when using first SNMP v2 and then SNMP v3. If you are using SNMP v1 or v2, you will have much less required settings.</p>
+<p><img src="images/settings-device-defaults-snmp-defaults-v1v2.png" alt="SNMP Defaults" /></p>
+<p><img src="images/settings-device-defaults-snmp-defaults-v3.png" alt="SNMP Defaults" /></p>
+<p>Those settings include:</p>
+<ul>
+<li><p><strong>Version</strong> - The default SNMP version to query using (v1, v2, v3)</p></li>
+<li><p><strong>Community</strong> - The default SNMP password to access the device (SNMP v1, v2)</p></li>
+<li><p><strong>Port Number</strong> - The default SNMP port number to poll (SNMP v1, v2, v3)</p></li>
+<li><p><strong>Timeout</strong> - The default SNMP Timeout (SNMP v1, v2, v3)</p></li>
+<li><p><strong>Retries</strong> - The default number of times to retry a query if SNMP times out (SNMP v1, v2, v3)</p></li>
+<li><p><strong>Security Level</strong> - The default Security Level (SNMP v3)</p></li>
+<li><p><strong>Auth Protocol</strong> - The default Authentication Portocol to use (SNMP v3)</p></li>
+<li><p><strong>Auth User</strong> - The default Authentication User to use (SNMP v3)</p></li>
+<li><p><strong>Auth Password</strong> - The default Authentication password to use (SNMP v3)</p></li>
+<li><p><strong>Privacy Protocol</strong> - The default Privacy Protocol to use (SNMP v3)</p></li>
+<li><p><strong>Privacy Pass-phrase</strong> - The default Privacy Pass-phrase to use (SNMP v3)</p></li>
+<li><p><strong>SNMP Context</strong> - The default SNMP Context to use (SNMP v3)</p></li>
+<li><p><strong>SNMP Engine ID</strong> - The default SNMP Engine ID to use (SNMP v3)</p></li>
+</ul>
+<h2 id="availability--reachability">Availability / Reachability</h2>
+<p>Cacti's <code>Availability / Reachability</code> define how to perform initial checks prior to polling to see if the <strong>Device</strong> is alive or not. Attempting to gather large amounts of data from a <strong>Device</strong> that is down, is counter-productive.</p>
+<p>Availability / Reachability is generally performned using a <code>ping</code>. These <code>pings</code> come in many formats, and Cacti supports all of the reasonable ones. In the image below, you can see the settings for one of the combination cases. Depending on your <code>ping</code> method, you may receive less options.</p>
+<p><img src="images/settings-device-defaults-availability.png" alt="SNMP Defaults" /></p>
+<p>Those options include:</p>
+<ul>
+<li><p><strong>Downed Device Detection</strong> - The method by which Cacti should <code>ping</code> the <strong>Device</strong>, SNMP <code>pings</code> involve querying a specific OID. Options include:</p>
+<ul>
+<li><strong>None</strong> - Only used for devices having their data collected through a back-end agent</li>
+<li><strong>Ping and SNMP uptime</strong> - Perform a TCP/UDP/ICMP ping and then check uptime through SNMP. Both methods must work for the device to be <strong>Up</strong></li>
+<li><strong>Ping or SNMP Uptime</strong> - If either method works, consider the <strong>Device Up</strong></li>
+<li><strong>SNMP Uptime</strong> - Only check the SNMP sysUptimeInstance of the <strong>Device</strong></li>
+<li><strong>SNMP Desc</strong> - Only check the SNMP sysDescription of the <strong>Device</strong></li>
+<li><strong>SNMP getNext</strong> - Only perform a basic <code>getnext</code> query for the <strong>Device</strong></li>
+<li><strong>Ping</strong> - Either TCP, UDP, or ICMP pings</li>
+</ul></li>
+<li><p><strong>Ping Type</strong> - When using an options that leverages <strong>Ping</strong> above, which method</p></li>
+<li><p><strong>Ping Port</strong> - When using TCP or UDP ping, the port to ping</p></li>
+<li><p><strong>Ping Timeout Value</strong> - The ping timeout value in Milliseconds</p></li>
+<li><p><strong>Ping Retry Count</strong> - The number of times to retry the ping if it fails</p></li>
+</ul>
+<h2 id="up--down-settings">Up / Down Settings</h2>
+<p>The Up / Down Settings define how many polling cycles that a Device must not respond to be considered truly <code>Down</code>, and when at device is returning from <code>Down</code>, how many polling cycles to keep a device in <code>Recovering</code> state before returning it to <code>Up</code>. The image below shows the two settings for the <strong>Device</strong>. There is really no reason to explain these two settings in any additional detail.</p>
+<p><img src="images/settings-device-defaults-updown.png" alt="SNMP Defaults" /></p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

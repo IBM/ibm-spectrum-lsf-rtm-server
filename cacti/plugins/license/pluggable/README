@@ -1,0 +1,91 @@
+    ****************************************************************************
+    Author ......... IBM Corporation
+    Home Site ...... http://www.ibm.com
+    Program ........ License Pluggable Parser Example
+    Version ........ 10.2.0.11
+    Purpose ........ Collect and Parse LicenseManager Admin/Client CLI Output.
+                     Then output JSON format for RTM licjsonpoller loading.
+    ****************************************************************************
+
+----[ Purpose
+
+    Help the RTM user to understand how to add non-FLEXlm/RLM license management
+    service to RTM. e.g. DSLS, LM-X, ....
+
+----[ Installation
+
+    For local installation, DSLS/LM-X example will be installed to
+    <RTM_TOP>/rtm/lic/etc/pluggable RTM Poller package by Installation Guide.
+
+    Under RTM Remote Poller mode:
+     - Install PHP(>=5.3) with php-mysql extension.
+     - Install RTM Poller package by Installation Guide.
+     - Copy <RTM_TOP>/rtm/lic/etc/pluggable from local to remote node
+     - Configure <RTM_TOP>/rtm/lic/etc/pluggable/include/config.php
+       like <RTM_TOP>/cacti/include/config.php
+
+----[ Before Get Start
+
+    Import DSLS/LM-X Poller definition by:
+       #mysql cacti < <RTM_TOP>/rtm/lic/etc/pluggable/lm_install.sql
+
+    Configure DSLS/LM-X command path (<path_to_dsls> or <path_to_lm-x>) by:
+	   - RTM_Web->Console->License Services->Managers->(Click DSLS or LM-X)
+	     ->(Edit)License Manager Binary Path->Save
+       - Or copy DSLS command 'DSLicSrv into RTM_TOP/dsls/bin,
+          copy LM-X command 'lmxendutil' into RTM_TOP/lmx/bin/.
+
+----[ Get Start
+
+     Add DSLS/LM-X service with port@server like FLEXlm service adding process, detail refer to RTM Administration Guide
+
+----[ Layout
+
+The example directory is structured as follows:
+
+lm_install.sql                  - Use to import DSLS/LM-X License Manager and
+                                  Poller record into RTM
+
+lic_dsls_capture.php            - Capture DSLS command output from:
+                                    <path_to_dsls>/DSLicSrv -admin -r "connect \
+                                    <host> <port> -restricted; getLicenseUsage -all"
+                                  And output the JSON string include license servers,
+                                  features, and checkout details records.
+
+lic_lmx_capture.php             - Capture LM-X command output from:
+                                    <path_to_lm-x>/lmxendutil -licstat -host <host>\
+                                    -port <port> [-vendor <vendor>]
+                                  And output the JSON string include license servers,
+                                  features, and checkout details records.
+
+include/config.php              - Include RTM database connection info, like
+                                  RTM_TOP/cacti/include/config.php
+
+include/global.php              - General settings and functions for DSLS/LM-X parser
+lib/database.php                  example.
+lib/functions.php
+lib/xml.php
+
+dsls_product_database.sql       - DSLS Product database to map DSLS long feature name
+                                  to a reasonable readable name, e.g.
+                                  Map
+                                    "HD2-AMGANRCCVCFODF1DL1DMNDMODSEDSSEHFEHIELBESTEWRFITFLXFMDFMSFR1FSKFSOFSPFSSFTAGASGDYGPSGSOHA1HAAHBRHMEHPAKINKWAKWELO1MMGMPAMTDNCGNVGPEOPHSPIDPIPPKTPMGPSOPX1QSRRSORTRSDISMDSMGSPASSRST1STCSTLTUBTUDWD1"
+                                  to
+                                    "V5_HD2_Package_1"
+
+----[ Additional Help?
+
+    If you need additional help, please contact IBM Spectrum support.
+
+----[ Possible Bugs?
+
+    If you figure out this problem, let us know!!!
+
+----[ Future Changes
+
+    Got any ideas or complaints, please e-mail me!
+
+----[ Changelog
+
+    --- 1.0 ---
+    Initial release

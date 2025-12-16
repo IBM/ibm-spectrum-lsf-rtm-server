@@ -1,0 +1,98 @@
+/* $Id$ */
+/* main styles */
+
+*, ::after, ::before {
+    box-sizing: content-box;
+}
+
+.login-body .product-name {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.login-table {
+	width: calc(100% - 50px);
+}
+
+.login-area, .logout-area {
+	min-width:360px;
+	max-width:450px;
+}
+
+.loginArea legend, .logoutArea legend {
+    text-align: left;
+    margin: 0 auto 40px;
+    white-space: nowrap;
+    line-height: 28px;
+    font-weight: 400;
+}
+
+.login-logo-area {
+	display: none;
+}
+
+.login-form {
+	width: 80%;
+}
+
+.login-field {
+	width: 100%;
+}
+
+ul.ulist{
+	background-color: transparent;
+	padding:0px;
+	margin:0px;
+}
+
+li.llist {
+	float: left;
+	background-color: transparent;
+	display: block;
+	list-style-type:none;
+	list-style-position: outside;
+}
+
+li.slist {
+	float: left;
+	background-color: transparent;
+	display: block;
+	list-style-type:none;
+	list-style-position: outside;
+}
+
+.rtmLegend {
+	font-weight: bold;
+	padding: 8px;
+    table-layout: fixed;
+    width: 100%;
+}
+
+.learnMore {
+	font-size:12px;
+	padding-left:3px;
+}
+
+.rtmTitle, .rtmSubTitle {
+        font-weight: 550;
+}
+
+svg:not(:root) {
+    overflow: hidden;
+}
+
+.footerContainer {
+	display: flex;
+	flex-basis: 0;
+	flex-wrap: wrap;
+	flex-stretch: 1;
+	justify-content: space-between;
+}
+
+.footerContainer div {
+	text-align: center;
+	flex-basis: 10%;
+	flex-shrink: 1;
+	flex-grow: 1;
+}
+

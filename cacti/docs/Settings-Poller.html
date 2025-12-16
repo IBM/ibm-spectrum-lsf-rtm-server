@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Poller Settings</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="poller-settings">Poller Settings</h1>
+<p>The Poller sub-tab of the Cacti settings are where you go to control many aspects of <strong>Data Collection</strong> in Cacti, you control various base collection frequencies, communication timeouts, and other settings that impact how Cacti's <strong>Data Collection</strong> works.</p>
+<h2 id="general-settings">General Settings</h2>
+<p>The <strong>General Settings</strong> are a broad collection of settings into multiple categories. The image below shows Cacti's <strong>General Settings</strong> sub-section.</p>
+<p><img src="images/settings-poller-general.png" alt="Settings Poller General" /></p>
+<p>Those settings include:</p>
+<ul>
+<li><p><strong>Data Collection Enabled</strong> - This is a setting that essentially will override and disable all Cacti <strong>Data Collection</strong> from all of Cacti's <strong>Data Collectors</strong>. It's really intended to allow you to put Cacti in maintenance mode with a single click.</p></li>
+<li><p><strong>SNMP Agent Support Enabled</strong> - The SNMP Agent has a measurable amount of overhead on larger systems. Therefore, if you are not using it, you should disable it. However, the SNMP Agent is a marvelous addition to any Cacti system that's participating in a multi-level Operations Framework.</p></li>
+<li><p><strong>Poller Type</strong> - This is where you define either Cacti's built in poller <code>cmd.php</code>, or use the more robust poller <code>spine</code>. You will not see the <code>spine</code> drop-down option unless it has first been installed, and the <code>spine</code> binary path defined from <code>Console &gt; Configuration &gt; Settings &gt; Paths</code> settings sub-tab.</p></li>
+<li><p><strong>Poller Sync Interval</strong> - When creating a Cacti <strong>Data Collector</strong> this is the default <code>Full Sync</code> interval it will use. In the current Cacti design, a <code>Full Sync</code> should only be required when attempting to replicate local authentication or authorization data to <strong>Remote Data Collectors</strong>, of if you have made changes that would otherwise impact the behavior of a <strong>Remote Data Collector</strong> when it was offline.</p></li>
+<li><p><strong>Poller Interval</strong> - This setting must align with the highest frequency <strong>Data Source Profile</strong> polling interval.</p></li>
+</ul>
+<blockquote>
+<p><strong>NOTE</strong>: This only applies to the <strong>Data Source Profiles</strong> that are in use. If you only plan on polling every minute and therefore only using the <code>1 Minute</code> <strong>Data Source Profile</strong>, then your <strong>Poller Interval</strong> should be <code>1 Minute</code> as well.</p>
+</blockquote>
+<ul>
+<li><p><strong>Cron/Daemon Interval</strong> - This is the frequency at which either the Cacti daemon (cactid.php), or the systems crontab/task-manager should relaunch every <strong>Data Collectors</strong> Poller process.</p></li>
+<li><p><strong>Balance Process Load</strong> - This setting will sort the devices such that each concurrent Cacti process is polling the same number of <strong>Data Sources</strong>. Otherwise, Cacti will simply order the hosts by their <code>device ids</code>.</p></li>
+<li><p><strong>Debug Output Width</strong> - This is a diagnostic settings that you would only enable from time to time if you wish to check if the output from your <strong>Data Collector</strong> scripts exceeded the output width in the various Poller tables. Since checking this have a very negative impact on polling performance, it's disabled by default.</p></li>
+<li><p><strong>Disable Decreasing OID Check</strong> - This setting is for performing <strong>Data Query</strong> <code>Re-index</code> activities for tables whose OID's are not structured in an orderly way where the suffix for the OID increases in a known way. Though, in most cases enabling this setting will not be harmless. There may be some cases where it would slow the <code>Re-index</code> process.</p></li>
+<li><p><strong>Remote Agent Timeout</strong> - When Cacti either needs information from a <strong>Data Collector</strong>, like <code>ping</code> latency from the collector to one of the <strong>Devices</strong> it's monitoring, or when a <strong>Remote Data Collector</strong> needs information from the main Cacti server, this is the timeout for receiving a handshake from that server. It's use to keep the Website from locking up in the case a <strong>Data Collector</strong> is not responding due to being down.</p></li>
+<li><p><strong>SNMP Bulkwalk Fetch Size</strong> - This controls how many OID's are returned per UDP turn when obtaining <code>snmpwalk</code> data from an SNMP enabled <strong>Device</strong>.</p></li>
+</ul>
+<blockquote>
+<p><strong>NOTE</strong>: This only works with SNMP v2 and v3. It is not supported on older SNMP v1 <strong>Devices</strong>.</p>
+</blockquote>
+<ul>
+<li><p><strong>SNMP Get OID Limit</strong> - The default maximum number of SNMP Get OIDs to issue per <code>snmpget</code> request. For <strong>Devices</strong>, this setting is controlled at the <strong>Device</strong> level. You should only use this setting when using Cacti's SNMP API natively in your scripts and Plugins.</p></li>
+<li><p><strong>Disable Resource Cache Replication</strong> - By default Cacti will continually replicate it's Website content with it's <strong>Remote Data Collectors</strong>. So, essentially, they are self upgradable. However there are some cases where customers wish to upgrade the Central system before allowing the remotes to self upgrade. In those cases, you would enable this feature.</p></li>
+</ul>
+<h2 id="background-timeout-settings">Background Timeout Settings</h2>
+<p>The settings below limit how long Cacti background processes will be allowed to run before timing out and being killed the system and notifying the Cacti administrator. These background timeouts are required to keep Cacti performing a peak performance by not allowing certain tasks to re-spawn while they are still running causing system overload. Below is the image of those settings.</p>
+<p><img src="images/settings-poller-background.png" alt="Background Timeout Settings" /></p>
+<p>Those settings include:</p>
+<ul>
+<li><p><strong>Report Generation Timeout</strong> - Some reports can take several minutes to complete. Adjust accordingly based upon your system size and the number of reports across all users.</p></li>
+<li><p><strong>Data Source Statistics Timeout</strong> - Depending on the size of your Cacti system, some <strong>Data Source Statistics</strong> tasks can take quite a bit of time. This setting is for the periodic collection and not the Daily process.</p></li>
+<li><p><strong>Background Commands Timeout</strong> - Cacti will schedule some commands to be run offline during normal operations. This timeout affects those commands. Some activities include some aspects of re-indexing, removing old RRDfiles, etc.</p></li>
+<li><p><strong>Maintenance Background Generation Timeout</strong> - Cacti performs daily maintenance at midnight every day. This maintenance can include: rotating logs, purging old logs, calculating <strong>Data Source</strong> statistics, etc. This setting controls it maximum allowed runtime.</p></li>
+<li><p><strong>Spikekill Background Generation Timeout</strong> - If you are using Cacti's prophylactic spike-killer process on your Data Queries, this will control it's maximum allowed run-time.</p></li>
+</ul>
+<h2 id="data-collector-defaults">Data Collector Defaults</h2>
+<p>Cacti's <strong>Data Collectors</strong> include both concurrent process and thread settings. They are maintained at the <strong>Data Collector</strong> level due to the fact that not all <strong>Data Collectors</strong> are created equally. You may have one <strong>Data Collector</strong> that's collecting data from 1,000 hosts, and another that is collecting from 10. Maybe one is a Raspberry Pi and the other a two socket EPYC chip. You would not want the same settings for each.</p>
+<p>These settings are only the defaults, when you fist create a <strong>Data Collector</strong>, once you save them, the setting stays with the individual <strong>Data Collector</strong>. Below, you can see an image of those settings.</p>
+<p><img src="images/settings-poller-data-collector.png" alt="Data Collector Defaults" /></p>
+<p>Those settings include:</p>
+<ul>
+<li><p><strong>Data Collector Processes</strong> - The default number of concurrent processes the <strong>Data Collector</strong> will spawn every cron or daemon cycle.</p></li>
+<li><p><strong>Threads per Process</strong> - The default number of <code>spine</code> threads per Concurrent Poller Process above.</p></li>
+</ul>
+<blockquote>
+<p><strong>NOTE</strong>: The Thread setting only applies if you are using the <code>spine</code> poller. It does not apply to the <code>cmd.php</code> poller.</p>
+</blockquote>
+<h2 id="additional-spine-parameters">Additional Spine Parameters</h2>
+<p>These settings are Global Spine poller settings. They apply to all <strong>Data Collectors</strong>. An image of these settings can be seen below:</p>
+<p><img src="images/settings-poller-spine.png" alt="Additional Spine Parameters" /></p>
+<p>Those settings include:</p>
+<ul>
+<li><p><strong>Invalid Data Logging</strong> - By default spine will only log the number of errors it experienced for a <strong>Device</strong>. If you wish more granularity you can change this settings to either <code>Summary</code> or <code>Detailed</code> logging.</p></li>
+<li><p><strong>Number of PHP Script Servers</strong> - Another level of Spine parallelism is it's ability to create a pool of memory resident PHP interpreters for running PHP scripts, making spine very powerful. Every concurrent process will have this many memory resident PHP interpreters pooled fro running scripts.</p></li>
+<li><p><strong>Script and Script Server Timeout Value</strong> - This is the timeout to stop run-on script from blocking poller performance. If a script exceeds this timeout, it will generate a log message.</p></li>
+</ul>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

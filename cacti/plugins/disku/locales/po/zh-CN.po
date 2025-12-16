@@ -1,0 +1,1295 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-03-23 19:58-0400\n"
+"PO-Revision-Date: 2020-03-23 20:04-0400\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.3\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: zh_CN\n"
+
+#: ../disku_paths.php:28
+msgid "Disable"
+msgstr "禁用"
+
+#: ../disku_paths.php:29
+msgid "Enable"
+msgstr "启用"
+
+#: ../disku_paths.php:30 ../disku_applications.php:28 ../disku_extenreg.php:31
+#: ../disku_pollers.php:30
+msgid "Delete"
+msgstr "删除"
+
+#: ../disku_paths.php:31
+msgid "Clear Stats"
+msgstr "清除统计数据"
+
+#: ../disku_paths.php:190
+#, fuzzy
+msgid "Click 'Continue' to Delete the following Scanner Path(s)."
+msgstr "单击“继续”以删除以下扫描路径。"
+
+#: ../disku_paths.php:195
+#, fuzzy
+msgid "Delete Disk Monitor Scan Path(s)"
+msgstr "删除磁盘监视器扫描路径"
+
+#: ../disku_paths.php:199
+#, fuzzy
+msgid "Click 'Continue' to Disable Poller of the following Scanner Path(s)."
+msgstr "单击“继续”以停止以下扫描路径的数据采集。"
+
+#: ../disku_paths.php:204
+#, fuzzy
+msgid "Disable Disk Monitor Scan Path(s)"
+msgstr "禁用磁盘监视器扫描路径"
+
+#: ../disku_paths.php:208
+#, fuzzy
+msgid "Click 'Continue' to Enable the following Scanner Path(s)."
+msgstr "单击“继续”以开启以下扫描路径的数据采集。"
+
+#: ../disku_paths.php:213
+#, fuzzy
+msgid "Enable Disk Monitor Scan Path(s)"
+msgstr "启用磁盘监视器扫描路径"
+
+#: ../disku_paths.php:217
+#, fuzzy
+msgid "Click 'Continue' to Clear Statistics on the following Scanner Path(s)."
+msgstr "单击“继续”以清除以下扫描路径上的统计信息。"
+
+#: ../disku_paths.php:222
+#, fuzzy
+msgid "Clear Disk Monitor Scan Path Stats"
+msgstr "清除磁盘监视器扫描路径统计信息"
+
+#: ../disku_paths.php:225 ../disku_pollers.php:218
+msgid "Cancel"
+msgstr "取消"
+
+#: ../disku_paths.php:225 ../disku_pollers.php:218
+msgid "Continue"
+msgstr "继续"
+
+#: ../disku_paths.php:227
+#, fuzzy
+msgid "You must select at least one Disk Monitor Scan Path."
+msgstr "您必须至少选择一个磁盘监视器扫描路径。"
+
+#: ../disku_paths.php:263 ../disku_paths.php:609 ../setup.php:687
+#: ../setup.php:695 ../setup.php:703 ../disku_applications.php:331
+#: ../disku_extenreg.php:803 ../disku_extenreg.php:1205
+#: ../disku_extensions.php:139 ../disku_extensions.php:313
+#: ../disku_orgview.php:131 ../disku_orgview.php:141
+msgid "Undefined"
+msgstr "未定义"
+
+#: ../disku_paths.php:263
+#, fuzzy, php-format
+msgid "Disk Monitoring Path [edit: %s]"
+msgstr "磁盘监视路径[编辑：％s]"
+
+#: ../disku_paths.php:265
+#, fuzzy
+msgid "Disk Monitoring Path [new]"
+msgstr "磁盘监视路径[新建]"
+
+#: ../disku_paths.php:272
+#, fuzzy
+msgid "Path to Monitor"
+msgstr "监控路径"
+
+#: ../disku_paths.php:273
+#, fuzzy
+msgid "Enter the path that must be scanned."
+msgstr "输入必须扫描的路径。"
+
+#: ../disku_paths.php:281 ../disku_paths.php:581
+msgid "Path Name"
+msgstr "路径名"
+
+#: ../disku_paths.php:282
+#, fuzzy
+msgid "Give the path a common name for others."
+msgstr "给该路径指定其他名称。"
+
+#: ../disku_paths.php:290
+#, fuzzy
+msgid "Path Descripton"
+msgstr "路径描述"
+
+#: ../disku_paths.php:291
+#, fuzzy
+msgid "Details about this path for support purposes."
+msgstr "用于支持目的的有关此路径的详细信息。"
+
+#: ../disku_paths.php:299
+#, fuzzy
+msgid "Tag Name for Accounting"
+msgstr "记帐的标签名称"
+
+#: ../disku_paths.php:300
+#, fuzzy
+msgid "Aggregates file statistical information under this name."
+msgstr "以该名称汇总文件统计信息。"
+
+#: ../disku_paths.php:308
+msgid "Poller Name"
+msgstr "采集器名称"
+
+#: ../disku_paths.php:309
+#, fuzzy
+msgid "Select the poller that collects data for the configured path."
+msgstr "选择所配置路径的数据收集的调度器。"
+
+#: ../disku_paths.php:316
+#, fuzzy
+msgid "Directory Depth"
+msgstr "目录深度"
+
+#: ../disku_paths.php:317
+#, fuzzy
+msgid "For parallelization support, what depth to you want to traverse the file system to determine the number of threads."
+msgstr "对于并行化支持，要遍历文件系统以确定线程数的深度。"
+
+#: ../disku_paths.php:321
+#, fuzzy, php-format
+msgid "%d Directory Deep"
+msgstr "％d目录深"
+
+#: ../disku_paths.php:322 ../disku_paths.php:323 ../disku_paths.php:324
+#, fuzzy, php-format
+msgid "%d Directories Deep"
+msgstr "％d目录深"
+
+#: ../disku_paths.php:329
+#, fuzzy
+msgid "Max Concurrent Threads"
+msgstr "最大并发线程"
+
+#: ../disku_paths.php:330
+#, fuzzy
+msgid "Select the default maximum concurrent threads that you want to use in parallel on the configured path for that host. For example, if you set the path as <span class=\"filepath\">/tmp</span> with a Depth 2 and Thread 5, then<span class=\"filepath\">/tmp</span> is scanned until two directories depth by initiating 5 concurrent processes. Default is 5 Threads per path."
+msgstr "选择要在该主机的配置路径上并行使用的默认最大并发线程数。例如，如果您使用深度2和线程5将路径设置为<span class=\"filepath\">/ tmp</span> ，则通过启动5个并发进程来扫描<span class=\"filepath\">/ tmp</span>直到两个目录深度。默认值为每个路径5个线程。"
+
+#: ../disku_paths.php:334
+#, php-format
+msgid "%d Thread"
+msgstr "%d线程"
+
+#: ../disku_paths.php:335 ../disku_paths.php:336 ../disku_paths.php:337
+#: ../disku_paths.php:338 ../disku_paths.php:339 ../disku_paths.php:340
+#: ../disku_paths.php:341 ../disku_paths.php:342 ../disku_paths.php:343
+#, php-format
+msgid "%d Threads"
+msgstr "%d线程"
+
+#: ../disku_paths.php:348
+#, fuzzy
+msgid "Do Not Monitor this Path"
+msgstr "不监视此路径"
+
+#: ../disku_paths.php:349
+#, fuzzy
+msgid "Check this box if you want to disable scanning for this path."
+msgstr "如果要禁用对此路径的扫描，请选中此框。"
+
+#: ../disku_paths.php:384
+#, fuzzy, php-format
+msgid "%d Hrs"
+msgstr "%d小时"
+
+#: ../disku_paths.php:386
+#, php-format
+msgid "%d Mins"
+msgstr "%d分钟"
+
+#: ../disku_paths.php:389
+#, fuzzy, php-format
+msgid "%d Secs"
+msgstr "％d秒"
+
+#: ../disku_paths.php:402 ../disku_paths.php:584 ../disku_dashboard.php:128
+#: ../disku_dashboard.php:227 ../disku_pollers.php:486
+msgid "Location"
+msgstr "位置"
+
+#: ../disku_paths.php:406 ../setup.php:569 ../disku_dashboard.php:231
+#: ../disku_extensions.php:138 ../disku_extensions.php:161
+#: ../disku_groups.php:128 ../disku_orgview.php:208 ../disku_orgview.php:245
+#: ../disku_orgview.php:283 ../disku_users.php:135 ../disku_users.php:166
+msgid "All"
+msgstr "所有"
+
+#: ../disku_paths.php:422 ../disku_paths.php:586 ../disku_pollers.php:481
+msgid "Status"
+msgstr "状态"
+
+#: ../disku_paths.php:426
+msgid "Any"
+msgstr "任何"
+
+#: ../disku_paths.php:427 ../disku_paths.php:585
+msgid "Enabled"
+msgstr "启用"
+
+#: ../disku_paths.php:428 ../disku_paths.php:614
+msgid "Disabled"
+msgstr "禁用"
+
+#: ../disku_paths.php:432 ../disku_paths.php:596 ../disku_pollers.php:506
+msgid "Paths"
+msgstr "路径"
+
+#: ../disku_paths.php:436 ../disku_tagview.php:131 ../setup.php:557
+#: ../disku_applications.php:402 ../disku_appview.php:131
+#: ../disku_dashboard.php:250 ../disku_extensions.php:171
+#: ../disku_groups.php:138 ../disku_orgview.php:320 ../disku_pollers.php:635
+#: ../disku_users.php:176
+msgid "Default"
+msgstr "默认"
+
+#: ../disku_paths.php:448 ../disku_tagview.php:142
+#: ../disku_applications.php:414 ../disku_appview.php:143
+#: ../disku_dashboard.php:262 ../disku_extenreg.php:1071
+#: ../disku_extensions.php:183 ../disku_groups.php:150 ../disku_orgview.php:332
+#: ../disku_pollers.php:646 ../disku_users.php:188
+msgid "Go"
+msgstr "查询"
+
+#: ../disku_paths.php:448 ../disku_paths.php:457 ../disku_tagview.php:121
+#: ../disku_applications.php:392 ../disku_applications.php:414
+#: ../disku_appview.php:121 ../disku_dashboard.php:262
+#: ../disku_dashboard.php:271 ../disku_extenreg.php:1080
+#: ../disku_extensions.php:192 ../disku_groups.php:159 ../disku_orgview.php:341
+#: ../disku_pollers.php:625 ../disku_pollers.php:646 ../disku_users.php:197
+msgid "Search"
+msgstr "搜索"
+
+#: ../disku_paths.php:449 ../disku_tagview.php:143
+#: ../disku_applications.php:415 ../disku_appview.php:144
+#: ../disku_dashboard.php:263 ../disku_extenreg.php:1072
+#: ../disku_extensions.php:184 ../disku_groups.php:151 ../disku_orgview.php:333
+#: ../disku_pollers.php:647 ../disku_users.php:189
+msgid "Clear"
+msgstr "清除"
+
+#: ../disku_paths.php:449 ../disku_tagview.php:143
+#: ../disku_applications.php:415 ../disku_appview.php:144
+#: ../disku_dashboard.php:263 ../disku_extenreg.php:1072
+#: ../disku_extensions.php:184 ../disku_groups.php:151 ../disku_orgview.php:333
+#: ../disku_pollers.php:647 ../disku_users.php:189
+msgid "Clear Filters"
+msgstr "清除过滤器"
+
+#: ../disku_paths.php:517
+#, fuzzy
+msgid "Disk Monitoring Paths"
+msgstr "磁盘监控路径"
+
+#: ../disku_paths.php:582
+msgid "Path"
+msgstr "路径"
+
+#: ../disku_paths.php:583 ../disku_tagview.php:177
+msgid "Tag Name"
+msgstr "标签名称"
+
+#: ../disku_paths.php:587 ../disku_pollers.php:511
+msgid "Pending"
+msgstr "待定"
+
+#: ../disku_paths.php:588 ../disku_paths.php:614 ../disku_pollers.php:516
+#: ../disku_pollers.php:564
+msgid "Running"
+msgstr "运行中"
+
+#: ../disku_paths.php:589
+#, fuzzy
+msgid "Depth/Threads"
+msgstr "深度/线程"
+
+#: ../disku_paths.php:590
+#, fuzzy
+msgid "Cur Time"
+msgstr "固化时间"
+
+#: ../disku_paths.php:591 ../disku_pollers.php:526
+#, fuzzy
+msgid "Avg Time"
+msgstr "平均时间"
+
+#: ../disku_paths.php:592 ../disku_pollers.php:531
+msgid "Max Time"
+msgstr "最长时间"
+
+#: ../disku_paths.php:593 ../disku_pollers.php:536
+msgid "Last Started"
+msgstr "上次开始时间"
+
+#: ../disku_paths.php:594 ../disku_pollers.php:541
+#, fuzzy
+msgid "Last Ended"
+msgstr "最后结束"
+
+#: ../disku_paths.php:613 ../disku_extenreg.php:1206
+#: ../disku_extensions.php:163 ../disku_extensions.php:314
+msgid "No"
+msgstr "禁用"
+
+#: ../disku_paths.php:613 ../disku_extenreg.php:1206
+#: ../disku_extensions.php:162 ../disku_extensions.php:314
+msgid "Yes"
+msgstr "是"
+
+#: ../disku_paths.php:614
+msgid "Idle"
+msgstr "空闲"
+
+#: ../disku_paths.php:627
+#, fuzzy
+msgid "No Disk Data Collector Paths Defined"
+msgstr "未定义磁盘数据收集器路径"
+
+#: ../disku_tagview.php:112
+#, fuzzy
+msgid "Disk Monitoring by Tag Name"
+msgstr "按标签名称监视磁盘"
+
+#: ../disku_tagview.php:127 ../disku_tagview.php:212
+msgid "Tags"
+msgstr "标签"
+
+#: ../disku_tagview.php:142 ../disku_appview.php:143 ../disku_extenreg.php:1071
+#: ../disku_extensions.php:183 ../disku_groups.php:150 ../disku_orgview.php:332
+#: ../disku_users.php:188
+msgid "Set/Refresh Filters"
+msgstr "设置/刷新过滤器"
+
+#: ../disku_tagview.php:173 ../setup.php:768 ../setup.php:778 ../setup.php:783
+#: ../setup.php:789 ../setup.php:804 ../disku_appview.php:166
+#: ../disku_dashboard.php:117 ../disku_extenreg.php:1114
+#: ../disku_extensions.php:220 ../disku_groups.php:199 ../disku_orgview.php:375
+#: ../disku_users.php:235
+msgid "Actions"
+msgstr "操作"
+
+#: ../disku_tagview.php:181 ../disku_appview.php:178 ../disku_extenreg.php:1134
+#: ../disku_extensions.php:240 ../disku_groups.php:211 ../disku_orgview.php:404
+msgid "Total Users"
+msgstr "用户总数"
+
+#: ../disku_tagview.php:186 ../disku_appview.php:183 ../disku_extenreg.php:1139
+#: ../disku_extensions.php:245 ../disku_groups.php:215 ../disku_orgview.php:409
+#: ../disku_users.php:255
+msgid "Total Files"
+msgstr "文件"
+
+#: ../disku_tagview.php:191 ../disku_appview.php:188 ../disku_extenreg.php:1144
+#: ../disku_extensions.php:250 ../disku_groups.php:225 ../disku_orgview.php:419
+#: ../disku_users.php:265
+msgid "Total Size"
+msgstr "总大小"
+
+#: ../disku_tagview.php:196 ../disku_appview.php:193 ../disku_extenreg.php:1149
+#: ../disku_extensions.php:255 ../disku_groups.php:230 ../disku_orgview.php:424
+#: ../disku_users.php:270
+#, fuzzy
+msgid "Less 6 Months"
+msgstr "6个月内"
+
+#: ../disku_tagview.php:201 ../disku_appview.php:198 ../disku_extenreg.php:1154
+#: ../disku_extensions.php:260 ../disku_groups.php:235 ../disku_orgview.php:429
+#: ../disku_users.php:275
+#, fuzzy
+msgid "Between 6-12 Months"
+msgstr "6-12个月之间"
+
+#: ../disku_tagview.php:206 ../disku_appview.php:203 ../disku_extenreg.php:1159
+#: ../disku_extensions.php:265 ../disku_groups.php:240 ../disku_orgview.php:434
+#: ../disku_users.php:280
+#, fuzzy
+msgid "12 Months Plus"
+msgstr "12个月以上"
+
+#: ../disku_tagview.php:265
+#, fuzzy
+msgid "No Tag Name Found"
+msgstr "暂无标签。"
+
+#: ../setup.php:465
+msgid "Management"
+msgstr "管理"
+
+#: ../setup.php:466 ../setup.php:467 ../setup.php:468 ../setup.php:469
+#: ../setup.php:474
+#, fuzzy
+msgid "Disk Monitoring"
+msgstr "文件系统监控"
+
+#: ../setup.php:466
+#, fuzzy
+msgid "File System Pollers"
+msgstr "数据采集调度器"
+
+#: ../setup.php:467
+#, fuzzy
+msgid "File System Scan Paths"
+msgstr "扫描路径"
+
+#: ../setup.php:468 ../setup.php:800 ../setup.php:801
+#: ../disku_applications.php:398 ../disku_applications.php:537
+#: ../disku_appview.php:127 ../disku_appview.php:209
+msgid "Applications"
+msgstr "应用程序"
+
+#: ../setup.php:469
+#, fuzzy
+msgid "Extension Registry"
+msgstr "扩展名注册表"
+
+#: ../setup.php:481
+#, fuzzy
+msgid "Weekly at Day/Time"
+msgstr "每周定时"
+
+#: ../setup.php:482
+#, fuzzy
+msgid "Daily at Time"
+msgstr "每天定时"
+
+#: ../setup.php:486
+msgid "Sunday"
+msgstr "周日"
+
+#: ../setup.php:487
+msgid "Monday"
+msgstr "周一"
+
+#: ../setup.php:488
+msgid "Tuesday"
+msgstr "周二"
+
+#: ../setup.php:489
+msgid "Wednesday"
+msgstr "周三"
+
+#: ../setup.php:490
+msgid "Thursday"
+msgstr "周四"
+
+#: ../setup.php:491
+msgid "Friday"
+msgstr "周五"
+
+#: ../setup.php:492
+msgid "Saturday"
+msgstr "周六"
+
+#: ../setup.php:496
+msgid "Level 1"
+msgstr "1级"
+
+#: ../setup.php:497
+msgid "Level 2"
+msgstr "2级"
+
+#: ../setup.php:498
+#, fuzzy
+msgid "Level 1 + Level 2"
+msgstr "1-2级"
+
+#: ../setup.php:499
+msgid "Level 3"
+msgstr "3级"
+
+#: ../setup.php:500
+#, fuzzy
+msgid "Level 1 + Level 3"
+msgstr "1级＋3级"
+
+#: ../setup.php:501
+#, fuzzy
+msgid "Level 2 + Level 3"
+msgstr "2-3级"
+
+#: ../setup.php:502
+#, fuzzy
+msgid "Level 1 + Level 2 + Level 3"
+msgstr "1-3级"
+
+#: ../setup.php:573 ../setup.php:574
+#, php-format
+msgid "%d Days"
+msgstr "%d天"
+
+#: ../setup.php:575
+#, php-format
+msgid "%d Week"
+msgstr "%d周"
+
+#: ../setup.php:576 ../setup.php:577
+#, php-format
+msgid "%d Weeks"
+msgstr "%d周"
+
+#: ../setup.php:578
+#, php-format
+msgid "%d Month"
+msgstr "%d月"
+
+#: ../setup.php:579 ../setup.php:580 ../setup.php:581 ../setup.php:582
+#, php-format
+msgid "%d Months"
+msgstr "%d月"
+
+#: ../setup.php:583
+#, php-format
+msgid "%d Year"
+msgstr "%d年"
+
+#: ../setup.php:584 ../setup.php:585
+#, php-format
+msgid "%d Years"
+msgstr "%d年"
+
+#: ../setup.php:588
+#, fuzzy
+msgid "Duplicated Extension. The Extension has exsited already."
+msgstr "重复的扩展名。该扩展名已经存在。"
+
+#: ../setup.php:591
+#, fuzzy
+msgid "Duplicated Extension. And the Extension has mapped to the same application."
+msgstr "重复的扩展名。并且扩展已映射到相同的应用程序。"
+
+#: ../setup.php:594
+#, fuzzy
+msgid "Duplicated Extension. The Extension will map to more than one application."
+msgstr "重复的扩展名。该扩展将映射到多个应用程序。"
+
+#: ../setup.php:597
+#, fuzzy
+msgid "A absolute path is needed."
+msgstr "需要绝对路径。"
+
+#: ../setup.php:600
+#, fuzzy
+msgid "Duplicated Path. The Path of the Poller has exsited already."
+msgstr "路径重复。该路径的数据收集设置已经存在。"
+
+#: ../setup.php:619
+#, fuzzy
+msgid "RTM Plugins"
+msgstr "RTM插件"
+
+#: ../setup.php:623
+#, fuzzy
+msgid "Disk Monitoring General Settings"
+msgstr "磁盘监视常规设置"
+
+#: ../setup.php:633
+#, fuzzy
+msgid "Add Disk Monitoring Device Automatically"
+msgstr "自动添加磁盘监视设备"
+
+#: ../setup.php:634
+#, fuzzy
+msgid "RTM will add device and the related graphs for monitoring"
+msgstr "RTM将添加设备和相关图形进行监视"
+
+#: ../setup.php:639
+#, fuzzy
+msgid "Bypass Directories"
+msgstr "绕过目录"
+
+#: ../setup.php:640
+msgid "The directories and files of which path content these strings will be bypassed during raw data scanning. Some directory paths can lead to misleading data, and cause the scanning process to take an excessive amount of time.  One important path that should always be ignored are one that include \".snapshot\" folders.  Scanning these folders will result in not only longer scan times, but erroneous data. If multiple strings need to be bypassed, separated them by semi-colon. For example, \"ex1;/ex2/\" will bypass directories and files of which path contents \"ex1\", and will bypass directories of which path contents \"/ex2/\"."
+msgstr ""
+
+#: ../setup.php:647
+#, fuzzy
+msgid "Disk Monitoring Data Retention Settings"
+msgstr "磁盘监视数据保留期限设置"
+
+#: ../setup.php:651
+#, fuzzy
+msgid "Historical Data Retention"
+msgstr "历史数据保留期限"
+
+#: ../setup.php:652
+#, fuzzy
+msgid "Select the period you want to store Daily Statistics data. Default is 1 year."
+msgstr "选择要存储每日统计数据的时间段。默认值为1年。"
+
+#: ../setup.php:658
+msgid "Rotation Frequency"
+msgstr "轮转频率"
+
+#: ../setup.php:659
+#, fuzzy
+msgid "Select the data partition frequency. For example, if your poller runs once a day, then select Daily, if it runs once a week, then select Weekly. Default is Daily."
+msgstr "选择数据分区频率。例如，如果您的采集周期每天一次，则选择“每日”，如果它每周一次，则选择“每周”。默认值为每日。"
+
+#: ../setup.php:662
+msgid "Daily"
+msgstr "每天"
+
+#: ../setup.php:662
+msgid "Weekly"
+msgstr "每周"
+
+#: ../setup.php:665
+#, fuzzy
+msgid "Data Storage Rotation Schedule "
+msgstr "数据存储轮换时间表"
+
+#: ../setup.php:666
+#, fuzzy
+msgid "Only when using Weekly rotation, what day should this rotation take place. Select a day to back up data. Default is Sunday."
+msgstr "仅当使用每周轮换时，才应该在哪一天轮换。选择一天来备份数据。默认值为星期日。"
+
+#: ../setup.php:672
+msgid "Rotation Time"
+msgstr "轮换时间"
+
+#: ../setup.php:673
+#, fuzzy
+msgid "Set the time for back up rotation schedule. Please make this of day a time when no pollers are collecting data."
+msgstr "设置备份轮换时间表的时间。请设置为没有采集器收集数据的时候的一天。"
+
+#: ../setup.php:679
+#, fuzzy
+msgid "Disk Monitoring Organizational Hierarchy"
+msgstr "磁盘监视组织层次结构"
+
+#: ../setup.php:683
+#, fuzzy
+msgid "Level 1 Hierarchy"
+msgstr "1级层次结构"
+
+#: ../setup.php:684
+#, fuzzy
+msgid "Set the highest level of hierarchy"
+msgstr "设置最高等级"
+
+#: ../setup.php:691
+#, fuzzy
+msgid "Level 2 Hierarchy"
+msgstr "2级层次结构"
+
+#: ../setup.php:692
+#, fuzzy
+msgid "Set the second level of hierarchy"
+msgstr "设置第二层等级"
+
+#: ../setup.php:699
+#, fuzzy
+msgid "Level 3 Hierarchy"
+msgstr "3级层次结构"
+
+#: ../setup.php:700
+#, fuzzy
+msgid "Set the third level of hierarchy"
+msgstr "设置层次结构的第三级"
+
+#: ../setup.php:707
+#, fuzzy
+msgid "Organizational Graph Level"
+msgstr "组织图级别"
+
+#: ../setup.php:708
+#, fuzzy
+msgid "Create graphs on which organization level."
+msgstr "在组织级别上创建图。"
+
+#: ../setup.php:714
+#, fuzzy
+msgid "Disk Monitoring User/Group Settings"
+msgstr "磁盘监视用户/组设置"
+
+#: ../setup.php:718
+#, fuzzy
+msgid "User/Group Collection Method"
+msgstr "用户/组收集方法"
+
+#: ../setup.php:719
+#, fuzzy
+msgid "What method should be used to determine users and group membership"
+msgstr "应该使用哪种方法确定用户和组成员身份"
+
+#: ../setup.php:726
+#, fuzzy
+msgid "Valid Unique Identifier (UID) User ID Range"
+msgstr "有效唯一标识符（UID）用户ID范围"
+
+#: ../setup.php:727
+#, fuzzy
+msgid "Define a range  to uniquely identify users. By default, it is 1000 - 100000"
+msgstr "定义范围以唯一标识用户。默认情况下为1000-100000"
+
+#: ../setup.php:734
+#, fuzzy
+msgid "Valid Unique Identifier (GID) Group ID Range"
+msgstr "有效唯一标识符（GID）组ID范围"
+
+#: ../setup.php:735
+#, fuzzy
+msgid "Define a range to uniquely identify user groups. By default, it is 500 - 10000"
+msgstr "定义范围以唯一地标识用户组。默认情况下为500-10000"
+
+#: ../setup.php:765
+#, fuzzy
+msgid "Disk Pollers"
+msgstr "磁盘数据采集器"
+
+#: ../setup.php:766 ../setup.php:776 ../setup.php:781 ../setup.php:787
+#: ../setup.php:802
+msgid "(Edit)"
+msgstr "(编辑)"
+
+#: ../setup.php:767 ../setup.php:777 ../setup.php:782 ../setup.php:788
+#: ../setup.php:803
+#, fuzzy
+msgid "(Save)"
+msgstr "保存"
+
+#: ../setup.php:775
+#, fuzzy
+msgid "Monitoring Paths"
+msgstr "监控路径"
+
+#: ../setup.php:780
+#, fuzzy
+msgid "Unix Group Data Managers"
+msgstr "Unix组数据管理器"
+
+#: ../setup.php:785
+#, fuzzy
+msgid "File Extension Registry"
+msgstr "文件扩展名注册表"
+
+#: ../setup.php:786
+msgid "File Extensions"
+msgstr "文件扩展名"
+
+#: ../setup.php:791 ../setup.php:792
+#, fuzzy
+msgid "Disk Usage by Extension"
+msgstr "按扩展名使用磁盘"
+
+#: ../setup.php:794 ../setup.php:795
+#, fuzzy
+msgid "Disk Usage by Application"
+msgstr "按应用程序使用磁盘"
+
+#: ../setup.php:797 ../setup.php:798
+#, fuzzy
+msgid "Disk Usage by Tag Name"
+msgstr "磁盘使用情况（按标签名称）"
+
+#: ../setup.php:806 ../setup.php:807
+#, fuzzy
+msgid "Disk Usage By Operating System Users"
+msgstr "操作系统用户的磁盘使用情况"
+
+#: ../setup.php:809 ../setup.php:810
+#, fuzzy
+msgid "Disk Usage By Operating System Groups"
+msgstr "操作系统组的磁盘使用情况"
+
+#: ../setup.php:812 ../setup.php:813
+#, fuzzy
+msgid "Disk Usage By Organization"
+msgstr "磁盘使用情况（按组织）"
+
+#: ../setup.php:815 ../setup.php:816
+#, fuzzy
+msgid "Disk Monitoring Dashboard"
+msgstr "磁盘监控仪表板"
+
+#: ../setup.php:835 ../setup.php:875 ../setup.php:890 ../setup.php:891
+msgid "Disk Utilization"
+msgstr "磁盘利用率"
+
+#: ../setup.php:876
+#, fuzzy
+msgid "By Volume"
+msgstr "按文件系统"
+
+#: ../setup.php:877
+#, fuzzy
+msgid "By Organization"
+msgstr "按组织"
+
+#: ../setup.php:878
+#, fuzzy
+msgid "By OS User"
+msgstr "按操作系统用户"
+
+#: ../setup.php:879
+#, fuzzy
+msgid "By OS Group"
+msgstr "按操作系统用户组"
+
+#: ../setup.php:880
+#, fuzzy
+msgid "By File Extension"
+msgstr "按文件扩展名"
+
+#: ../setup.php:881
+#, fuzzy
+msgid "By Application"
+msgstr "按应用程序"
+
+#: ../setup.php:882
+#, fuzzy
+msgid "By Tag Name"
+msgstr "按标签名称"
+
+#: ../setup.php:889
+msgid "Dashboards"
+msgstr "仪表盘"
+
+#: ../disku_applications.php:208
+#, fuzzy
+msgid "Delete Application(s)"
+msgstr "删除应用程序"
+
+#: ../disku_applications.php:213
+#, fuzzy
+msgid "You must select at least one Application."
+msgstr "您必须至少选择一个应用程序。"
+
+#: ../disku_applications.php:333
+#, fuzzy
+msgid "Disk Monitoring Application [new]"
+msgstr "磁盘监视应用程序[新建]"
+
+#: ../disku_applications.php:340 ../disku_applications.php:341
+#: ../disku_applications.php:522
+msgid "Application Name"
+msgstr "应用程序名称"
+
+#: ../disku_applications.php:349 ../disku_applications.php:350
+#: ../disku_appview.php:174
+msgid "Vendor"
+msgstr "供应商"
+
+#: ../disku_applications.php:467
+#, fuzzy
+msgid "Disk Monitoring Applications"
+msgstr "磁盘监控应用"
+
+#: ../disku_applications.php:526
+msgid "Vendor Name"
+msgstr "供应商名称"
+
+#: ../disku_applications.php:530
+msgid "ID"
+msgstr "ID"
+
+#: ../disku_applications.php:555
+#, fuzzy
+msgid "No Applications Found"
+msgstr "没有发现应用程序"
+
+#: ../disku_appview.php:112
+#, fuzzy
+msgid "Disk Monitoring by Application"
+msgstr "按应用程序监视磁盘"
+
+#: ../disku_appview.php:170 ../disku_extenreg.php:825
+#: ../disku_extenreg.php:1122 ../disku_extensions.php:228
+msgid "Application"
+msgstr "应用程序"
+
+#: ../disku_appview.php:262
+#, fuzzy
+msgid "No Application Found"
+msgstr "找不到应用程序"
+
+#: ../disku_dashboard.php:74
+#, fuzzy
+msgid "Disk Monitoring File Systems"
+msgstr "磁盘监控文件系统"
+
+#: ../disku_dashboard.php:120
+msgid "Mount Point"
+msgstr "挂载点"
+
+#: ../disku_dashboard.php:124
+msgid "Device"
+msgstr "设备"
+
+#: ../disku_dashboard.php:132 ../disku_pollers.php:476
+msgid "Hostname"
+msgstr "主机名"
+
+#: ../disku_dashboard.php:136
+msgid "Size"
+msgstr "大小"
+
+#: ../disku_dashboard.php:141
+msgid "Used"
+msgstr "已使用"
+
+#: ../disku_dashboard.php:146
+msgid "Available"
+msgstr "可用"
+
+#: ../disku_dashboard.php:151
+#, fuzzy
+msgid "Percent Used"
+msgstr "已用百分比"
+
+#: ../disku_dashboard.php:157 ../disku_dashboard.php:246
+msgid "File Systems"
+msgstr "文件系统"
+
+#: ../disku_extenreg.php:29
+msgid "Monitor"
+msgstr "监控"
+
+#: ../disku_extenreg.php:30
+msgid "Unmonitor"
+msgstr "取消监控"
+
+#: ../disku_extenreg.php:587
+#, fuzzy
+msgid "You must select at least one Extension."
+msgstr "您必须至少选择一个扩展名。"
+
+#: ../disku_extenreg.php:780
+msgid "[edit]"
+msgstr "[编辑]"
+
+#: ../disku_extenreg.php:783
+msgid "[new]"
+msgstr "[新建]"
+
+#: ../disku_extenreg.php:803
+#, php-format
+msgid "[edit: %s]"
+msgstr "[编辑: %s]"
+
+#: ../disku_extenreg.php:809
+#, fuzzy
+msgid "Registry Extension Name"
+msgstr "注册扩展名"
+
+#: ../disku_extenreg.php:817
+#, fuzzy
+msgid "Extension Description"
+msgstr "扩展名描述"
+
+#: ../disku_extenreg.php:837
+#, fuzzy
+msgid "Application Level Extension Description"
+msgstr "应用程序级别扩展名描述"
+
+#: ../disku_extenreg.php:1013 ../disku_extensions.php:125
+#, fuzzy
+msgid "Disk Monitoring by Extension"
+msgstr "按扩展名监视磁盘"
+
+#: ../disku_extenreg.php:1022 ../disku_extensions.php:134
+msgid "App"
+msgstr "应用"
+
+#: ../disku_extenreg.php:1045 ../disku_extenreg.php:1126
+#: ../disku_extensions.php:157 ../disku_extensions.php:232
+msgid "Monitored"
+msgstr "监控"
+
+#: ../disku_extenreg.php:1055 ../disku_extenreg.php:1108
+#: ../disku_extensions.php:167 ../disku_extensions.php:271
+msgid "Extensions"
+msgstr "扩展名"
+
+#: ../disku_extenreg.php:1118 ../disku_extensions.php:224
+msgid "Extension"
+msgstr "扩展名"
+
+#: ../disku_extenreg.php:1130 ../disku_extensions.php:236
+#, fuzzy
+msgid "Description and Application Level Description"
+msgstr "描述和应用程序级别描述"
+
+#: ../disku_extenreg.php:1219 ../disku_extensions.php:331
+#, fuzzy
+msgid "No Extensions Found"
+msgstr "找不到扩展名"
+
+#: ../disku_groups.php:86
+#, fuzzy
+msgid "Disk Monitoring by Group"
+msgstr "按组监视磁盘"
+
+#: ../disku_groups.php:124 ../disku_users.php:162
+msgid "Type"
+msgstr "类型"
+
+#: ../disku_groups.php:129 ../disku_users.php:167
+msgid "System"
+msgstr "系统"
+
+#: ../disku_groups.php:130 ../disku_users.php:131 ../disku_users.php:168
+#: ../disku_users.php:239
+msgid "User"
+msgstr "用户"
+
+#: ../disku_groups.php:134 ../disku_groups.php:246 ../disku_users.php:251
+msgid "Groups"
+msgstr "用户组"
+
+#: ../disku_groups.php:203
+msgid "Group Name"
+msgstr "用户组名称"
+
+#: ../disku_groups.php:207
+msgid "Group ID"
+msgstr "用户组ID"
+
+#: ../disku_groups.php:220 ../disku_orgview.php:414 ../disku_users.php:260
+#, fuzzy
+msgid "Total Dirs"
+msgstr "总目录数"
+
+#: ../disku_orgview.php:152
+#, fuzzy
+msgid "Organization View"
+msgstr "组织视图"
+
+#: ../disku_orgview.php:209 ../disku_orgview.php:246 ../disku_orgview.php:284
+msgid "N/A"
+msgstr "不适用"
+
+#: ../disku_orgview.php:316 ../disku_orgview.php:440
+msgid "Organizations"
+msgstr "组织"
+
+#: ../disku_orgview.php:561
+#, fuzzy
+msgid "No Disk Utilization Records Found"
+msgstr "找不到磁盘利用率记录"
+
+#: ../disku_pollers.php:31
+msgid "Reset Counters"
+msgstr "重置计数器"
+
+#: ../disku_pollers.php:145
+#, fuzzy
+msgid "Unable to delete Pollers that have services running.  Shutdown diskud on the host prior to removing it."
+msgstr "无法删除正在运行服务的数据采集器。在删除之前，请先停止主机上的守护进程rtmclientd。"
+
+#: ../disku_pollers.php:183
+#, fuzzy
+msgid "Click 'Continue' to Delete the following Disk Monitoring Poller(s)."
+msgstr "单击“继续”以删除以下磁盘监控数据采集器。"
+
+#: ../disku_pollers.php:188
+#, fuzzy
+msgid "Delete Disk Monitoring Poller(s)"
+msgstr "删除磁盘监控数据采集器"
+
+#: ../disku_pollers.php:192
+#, fuzzy
+msgid "Click 'Continue' to Disable the following Disk Monitoring Poller(s)."
+msgstr "单击“继续”以禁用以下磁盘监控数据采集器。"
+
+#: ../disku_pollers.php:197
+#, fuzzy
+msgid "Disable Disk Monitoring Poller(s)"
+msgstr "禁用磁盘监控数据采集器"
+
+#: ../disku_pollers.php:201
+#, fuzzy
+msgid "Click 'Continue' to Enable the following Disk Monitoring Poller(s)."
+msgstr "单击“继续”以启用以下磁盘监控数据采集器。"
+
+#: ../disku_pollers.php:206
+#, fuzzy
+msgid "Enable Disk Monitoring Poller(s)"
+msgstr "启用磁盘监控数据采集器"
+
+#: ../disku_pollers.php:210
+#, fuzzy
+msgid "Click 'Continue' to Reset Counters on the following Disk Monitoring Poller(s)."
+msgstr "单击“继续”以重置以下磁盘监控数据采集器上的计数器。"
+
+#: ../disku_pollers.php:215
+#, fuzzy
+msgid "Reset Counters for Disk Monitoring Poller(s)"
+msgstr "重置磁盘监控数据采集器的计数器"
+
+#: ../disku_pollers.php:220
+#, fuzzy
+msgid "You must select at least one Disk Monitoring Poller."
+msgstr "您必须至少选择一个磁盘监控数据采集器。"
+
+#: ../disku_pollers.php:287
+#, fuzzy, php-format
+msgid "Disk Monitoring Poller [edit: %s (%s) ]"
+msgstr "磁盘监控数据采集程序[编辑：％s（％s）]"
+
+#: ../disku_pollers.php:289
+#, fuzzy
+msgid "Disk Monitoring Poller [new]"
+msgstr "磁盘监控数据采集器[新建]"
+
+#: ../disku_pollers.php:295
+#, fuzzy
+msgid "Poller Location"
+msgstr "数据采集器位置"
+
+#: ../disku_pollers.php:296
+#, fuzzy
+msgid "The location where the Poller is located"
+msgstr "数据采集器所在主机的位置"
+
+#: ../disku_pollers.php:304
+#, fuzzy
+msgid "Collection Timing"
+msgstr "收集过程使用时间"
+
+#: ../disku_pollers.php:305
+#, fuzzy
+msgid "How often will the collectors be launched for this poller?"
+msgstr "收集器将多久启动一次此轮询器？"
+
+#: ../disku_pollers.php:312
+msgid "Day of Week"
+msgstr "每周的"
+
+#: ../disku_pollers.php:313
+#, fuzzy
+msgid "When scanning weekly, what day of week should the scan be run?"
+msgstr "每周扫描时，应在一周的哪一天进行扫描？"
+
+#: ../disku_pollers.php:320
+msgid "Time of Day"
+msgstr "一天中的时间"
+
+#: ../disku_pollers.php:321
+#, fuzzy
+msgid "What time of the day should scanning start?"
+msgstr "扫描应该在一天的什么时间开始？"
+
+#: ../disku_pollers.php:328
+#, fuzzy
+msgid "Collect all file system disk space usage"
+msgstr "收集所有文件系统磁盘空间使用情况"
+
+#: ../disku_pollers.php:329
+#, fuzzy
+msgid "Collect disk space usage, not only the usage of local file systems, but also NFS file systems. If checked on more than one poller, and pollers in the same NFS, may cause duplicate records in Disk Monitoring Dashboard (Grid > Disk Utilization > By Volume)"
+msgstr "收集磁盘空间使用情况，不仅收集本地文件系统的使用情况，还收集NFS文件系统的使用情况。如果对多个轮询器进行了检查，并且同一NFS中的轮询器可能会导致磁盘监视仪表板中出现重复记录（“网格”>“磁盘利用率”>“按卷”）"
+
+#: ../disku_pollers.php:408
+#, fuzzy
+msgid "Disk Monitoring Pollers"
+msgstr "磁盘监控数据采集器"
+
+#: ../disku_pollers.php:491
+#, fuzzy
+msgid "Launch Frequency"
+msgstr "发射频率"
+
+#: ../disku_pollers.php:496
+#, fuzzy
+msgid "Launch Time"
+msgstr "执行时间"
+
+#: ../disku_pollers.php:501
+#, fuzzy
+msgid "Launch Day"
+msgstr "执行日"
+
+#: ../disku_pollers.php:521
+msgid "Last Time"
+msgstr "上次运行时间"
+
+#: ../disku_pollers.php:547 ../disku_pollers.php:631
+msgid "Pollers"
+msgstr "采集器"
+
+#: ../disku_pollers.php:564
+msgid "Up"
+msgstr "活跃"
+
+#: ../disku_pollers.php:566
+msgid "Orphaned"
+msgstr "孤立的"
+
+#: ../disku_pollers.php:566
+msgid "Down"
+msgstr "关闭"
+
+#: ../disku_pollers.php:588
+#, fuzzy
+msgid "No Pollers Defined"
+msgstr "未定数据采集器"
+
+#: ../disku_pollers.php:607
+#, php-format
+msgid "%s Hrs"
+msgstr "%s小时"
+
+#: ../disku_pollers.php:609
+#, fuzzy, php-format
+msgid "%s Mins"
+msgstr "<ph id=\"mtc_1\" equiv-text=\"base64:JXM=\"/>分钟"
+
+#: ../disku_pollers.php:612
+#, fuzzy, php-format
+msgid "%s Secs"
+msgstr "％s秒"
+
+#: ../disku_users.php:88
+#, fuzzy
+msgid "Operating System Users"
+msgstr "操作系统用户"
+
+#: ../disku_users.php:172 ../disku_users.php:286
+msgid "Users"
+msgstr "用户"
+
+#: ../disku_users.php:243
+msgid "Name"
+msgstr "名称"
+
+#: ../disku_users.php:247
+msgid "Default Group"
+msgstr "默认用户组"
+
+#: ../disku_users.php:351
+msgid "No Users Found"
+msgstr "未找到用户"
+
+#: ../disku_users.php:361
+#, fuzzy
+msgid "User Range in Settings is invalid. Upper and lower range must be separated with a hypen."
+msgstr "设置中的用户范围无效。上限和下限必须用连字符分开。"
+
+#: ../disku_users.php:363
+#, fuzzy
+msgid "User Range in Settings is invalid.  Ranges are not numeric."
+msgstr "设置中的用户范围无效。范围不是数字。"
+
+#: ../disku_users.php:365
+#, fuzzy
+msgid "User Range in Settings is invalid.  Lower range limit must be less than the upper range limit."
+msgstr "设置中的用户范围无效。范围下限必须小于范围上限。"

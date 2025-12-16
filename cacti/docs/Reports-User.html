@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Reports User</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="reports-user">Reports User</h1>
+<p>This section will describe the user view to Cacti's <strong>Reports</strong> feature.</p>
+<p>The <strong>Reports User</strong> interface allows you to see and manage your own reports. This is unlike the <strong>Reports Administration</strong> interface that allows you to manage others reports in addition to your own.</p>
+<h2 id="the-web-interface">The Web Interface</h2>
+<p>The user of any <strong>Report</strong> begins on the main Reports tab in Cacti. A screen shot of the Reports tab is shown below.</p>
+<p><img src="images/reports-admin-tab.png" alt="Reports User Tab" /></p>
+<p>When viewing any <strong>Reports</strong> from this interface, you will see the following columns:</p>
+<ul>
+<li><strong>Report Name</strong> - The name of the Report.</li>
+<li><strong>Owner</strong> - The Cacti account that has ownership of the Report.</li>
+<li><strong>Frequency</strong> - How often the Report is to be sent to the distribution.</li>
+<li><strong>Last Run</strong> - The last time that the Report was sent to the distribution.</li>
+<li><strong>Next Run</strong> - The approximate next time that the report is to be sent. this is not an exact number. It does depend on the poller first running. So, depending on how long your poller runs for, this time could be off by a few minutes.</li>
+<li><strong>From</strong> - The From Name portion of the From Email address</li>
+<li><strong>To</strong> - The list of Emails that the reports is to be sent to.</li>
+<li><strong>Type</strong> - The Image format and the type of embedding done in the Email.</li>
+<li><strong>Enabled</strong> - Is the Report able to be sent on the Schedule.</li>
+</ul>
+<p>The actions that you can take on an existing Report as an Administrator include:</p>
+<ul>
+<li><strong>Send Now</strong> - Force send one or more <strong>Reports</strong> now</li>
+<li><strong>Duplicate</strong> - Duplicate one or more <strong>Reports</strong></li>
+<li><strong>Enable</strong> - Enable one or more <strong>Reports</strong></li>
+<li><strong>Disable</strong> - Disable one or more <strong>Reports</strong></li>
+<li><strong>Delete</strong> - Delete one or more <strong>Reports</strong></li>
+</ul>
+<h2 id="report-editing">Report Editing</h2>
+<p>When you click the Add button on the right side of the <strong>Reports</strong> page, or Click on the Report Name of an existing Report, you will be presented with the interface below.</p>
+<p><img src="images/reports-edit-1.png" alt="Reports User Edit" /></p>
+<p>This section includes:</p>
+<ul>
+<li><strong>Report Name</strong> - The Name of the <strong>Report</strong></li>
+<li><strong>Enable Report</strong> - Is the <strong>Report</strong> Enabled</li>
+<li><strong>Use Custom Format HTML</strong> - This is an indication that you wish to use a custom html/css document that you can use to customize the layout of your reports and add corporate branding for example.</li>
+<li><strong>Format File to Use</strong> - The specific html/css file to use.</li>
+<li><strong>Graphs Linked</strong> - Provide the recipient of the report a ling back to the actual graph in Cacti.</li>
+<li><strong>Graph Columns</strong> - The number of Graph columns to use per row.</li>
+<li><strong>Graph Width</strong> - The width of each Graph</li>
+<li><strong>Graph Height</strong> - The height of each Graph</li>
+<li><strong>Thumbnails</strong> - Should the Graphs be rendered in Thumbnail mode</li>
+<li><strong>Next Timestamp of Sending Mail Report</strong> - The approximate next time to send out the <strong>Report</strong>.</li>
+<li><strong>Report Interval</strong> - The frequency to send the report. Options are every X Minute, Hours, Days, Weeks, Months on a Day of the Month, Months on the Day of the Week, and Years.</li>
+<li><strong>Interval Frequency</strong> - How often to send, for example if you select Days, and the Interval is one, it means every day, if you select 2, it means every other day.</li>
+</ul>
+<p>The <strong>Email Frequency</strong> section does not use the same layout as does our <strong>Automation Networks</strong>. Correcting that is a future project for the team.</p>
+<p>The last section of the <strong>Report Details</strong> is the <strong>Email Sender/Receiver</strong> section as shown below.</p>
+<p><img src="images/reports-edit-2.png" alt="Reports Admin Edit" /></p>
+<p>From here you can set the following columns.</p>
+<ul>
+<li><strong>Subject</strong> - The Email subject.</li>
+<li><strong>From Name</strong> - The From Name on the Email. For example <strong>Cacti Administrator</strong></li>
+<li><strong>From Email Address</strong> - The From Email address. For example <code>noreply@mydomain.com</code></li>
+<li><strong>To Email Address(es)</strong> - A comma delimited list of Email addresses that should receive the Report.</li>
+<li><strong>BCC Address(es)</strong> - An anonymized list of Email recipients</li>
+<li><strong>Image attach type</strong> - This defines how the Cacti Graph images get attached to the Email. Maybe are for legacy purposes. Most users will use Inline PNG or Inline JPG.</li>
+</ul>
+<p>Once you save a new <strong>Report</strong> additional Tabs will show up. Those tabs are:</p>
+<ul>
+<li><strong>Items</strong> - The Graph's, Tree's, Text, Horizontal Rules, and Device's to place on the Report.</li>
+<li><strong>Preview</strong> - See a Preview of your Report</li>
+<li><strong>Events</strong> - Approximate Future Event Days for your Report to be sent. This helps interpret the idiosyncrasies of the scheduler design.</li>
+</ul>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

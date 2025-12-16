@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Report Items</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="report-items">Report Items</h1>
+<p>This section will describe the <strong>Report Edit Items</strong> Sub-Tab.</p>
+<p>From this Sub-Tab, you can add, remove, and if <strong>Drag and Drop</strong> is enabled, easily reorder any <strong>Report Item</strong>. <strong>Report Items</strong> include:</p>
+<ul>
+<li><p><strong>Trees</strong> - Including one or more Branches, which include Devices as a Branch Type.</p></li>
+<li><p><strong>Graphs</strong> - One or more Graphs from a Device.</p></li>
+<li><p><strong>Devices</strong> - One or more Cacti Devices with Graphs whose titles may include a Regular Expression.</p></li>
+<li><p><strong>Text</strong> - For example to sub-section a Report and add a Title</p></li>
+<li><p><strong>Horizontal Rule</strong> - For separating sections of a <strong>Report</strong>.</p></li>
+</ul>
+<p>An example <strong>Report Items</strong> interface can be seen below.</p>
+<p><img src="images/reports-items.png" alt="Report Item" /></p>
+<p>From this image, you can see a combination of <strong>Graphs</strong>, <strong>Devices</strong>, and a <strong>Device</strong> showing only <strong>Graphs</strong> that include <em>eth0</em>, and <em>SCSI</em> in their titles indicating something about Interface Graphs and Disk Utilization Graphs.</p>
+<h2 id="item-edit-page">Item Edit Page</h2>
+<p>When you either add a new Item by pressing the Add button on the right, Clicking on the Item # on the left, you will be presented a page that is personalized depending on the <em>Item Type</em>. When you add an item for the first time, you will see the image below.</p>
+<p><img src="images/reports-item-new.png" alt="Report Item New Item" /></p>
+<p>Again, the user interface will change layout depending on the <em>Item Type</em> that you select which happens to be the first drop-down on that page.</p>
+<p>The columns for a <strong>Graph</strong> Type <strong>Report Item</strong> include:</p>
+<ul>
+<li><strong>Site</strong> - A filter that will show only Devices and Graphs from a specific site.</li>
+<li><strong>Device Template</strong> - A filter that will only show Devices and Graphs from a specific Device Template</li>
+<li><strong>Device</strong> - A filter that will show only Graphs from a specific Device.</li>
+<li><strong>Graph Template</strong> - A filter that will show only Graphs from a specific Graph Template.</li>
+</ul>
+<p>The options above are only Filter to reduce the Graph list when you actually select the <strong>Graph Name</strong>, it will apply those filters to narrow in on the Graphs to display in the drop-down. All of the filters above are <em>optional</em>.</p>
+<p>The last sections are for the specific Graph in question including:</p>
+<ul>
+<li><strong>Graph Name</strong> - The name of the Graph to include.</li>
+<li><strong>Graph Timespan</strong> - The time range to show for the Graph.</li>
+<li><strong>Alignment</strong> - Should the Graph be Center, Left or Right Aligned on the page.</li>
+<li><strong>Sequence</strong> - The Graph Items Sequence number. This is a Read Only variable.</li>
+</ul>
+<p>When, you change the <strong>Report Item</strong> to <strong>Device</strong> the layout of the page will change and you will see the form shown below.</p>
+<p><img src="images/reports-item-device.png" alt="Report Item Device Item" /></p>
+<p>In this case, the <strong>Site</strong>, and <strong>Device Template</strong> both remain Filters, the <strong>Device</strong> represents the <strong>Device</strong> to include on the <strong>Report</strong>. After that, the options below define what Graphs from the Device are to be included.</p>
+<ul>
+<li><strong>Graph Template</strong> - Either Any Graph Template, or a Specific Graph Template.</li>
+<li><strong>Graph Name Regular Expression</strong> - A regular expression that limits the <strong>Graphs</strong> to only those matching the Regular Expression.</li>
+<li><strong>Graph Timespan</strong> - The time range to show for the Graph.</li>
+<li><strong>Alignment</strong> - Should the Graph be Center, Left or Right Aligned on the page.</li>
+<li><strong>Sequence</strong> - The Graph Items Sequence number. This is a Read Only variable.</li>
+</ul>
+<p>The last <strong>Report Item</strong> that we will document here is the <strong>Tree</strong> type. The Text and Horizontal Rule types are pretty much self explanitory. The image below is the layout that will be shown when you change the <strong>Report Item</strong> to <strong>Tree</strong>.</p>
+<p><img src="images/reports-item-tree.png" alt="Report Item Tree Item" /></p>
+<p>In this case, there are no filter, just selections. They include:</p>
+<ul>
+<li><p><strong>Graph Tree</strong> - The name of the Cacti Tree to include in the report.</p></li>
+<li><p><strong>Graph Tree Branch</strong> - The specific Branch to include</p></li>
+</ul>
+<p>if you are only wanting to include aportion of the <strong>Tree</strong></p>
+<ul>
+<li><p><strong>Cascade to Branches</strong> - Walk all the <strong>Graph Trees</strong> branches</p></li>
+<li><p><strong>Graph Name Regular Expression</strong> - A MySQL/MariaDB compatible Regular</p></li>
+</ul>
+<p>Expression of Graph Names to include in the Report.</p>
+<ul>
+<li><p><strong>Graph Timespan</strong> - The time range to show for the Graph.</p></li>
+<li><p><strong>Alignment</strong> - Should the Graph be Center, Left or Right Aligned on the page.</p></li>
+<li><p><strong>Sequence</strong> - The Graph Items Sequence number. This is a Read Only variable.</p></li>
+</ul>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

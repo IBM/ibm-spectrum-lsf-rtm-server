@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Plugin Development</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="plugin-development">Plugin Development</h1>
+<h2 id="overview">Overview</h2>
+<p>Cacti Plugins allow users of Cacti to extend it's functionality into areas that the core Cacti developers have not. They were written based off of the work of Jimmy Conner from the Squirrel Mail project years ago. They allow developers to augment the Cacti Website, and it's polling processes to extend Cacti's reach.</p>
+<p>There are a number of popular plugins including:</p>
+<ul>
+<li><strong>Thold</strong> - A graph based service checking framework that leverages the data on Cacti graphs for performing service checks</li>
+<li><strong>Syslog</strong> - A plugin that allows you to view log data from hundreds or thousands of hosts and generate faults based upon pattern matching of that log data.</li>
+<li><strong>Monitor</strong> - A plugin that provides a Device Dashboard highlighting Cacti Devices that are experiencing faults.</li>
+<li><strong>Intropage</strong> - A plugin that provides a replacement to the Cacti console showing key performance metrics across all of Cacti from a single page.</li>
+<li><strong>Weathermap</strong> - A plugin that allows you to create architectural diagrams of your network and to animate them with status data.</li>
+</ul>
+<p>In theory, these plugins can be integrated into Cacti very simply, and removed without breaking Cacti. However, it must be noted to always review the plugins documentation before you start to use it.</p>
+<h2 id="legacy-plugins-notice">Legacy Plugins Notice</h2>
+<p>Plugins written for Cacti 0.8.x require modifications in order to be compatible with Cacti 1.x. There are several changes that all plugin developers need to be aware of. Any of the Cacti Group maintained plugin can be used as reference plugins for driving your plugin migration to the 1.x framework and are available on <a href="https://github.com/Cacti/">Github</a>.</p>
+<h2 id="plugin-migration">Plugin Migration</h2>
+<p>In order to migrate your legacy Cacti plugins, there are several steps that need to be taken. This guide will provide a brief synopsis of changes that are required to make your plugins compatible with Cacti 1.0.</p>
+<h2 id="migration-steps">Migration Steps</h2>
+<p>Each of the following steps should be followed to migrate your plugins. Some of these changes are optional, and some are mandatory. We will start with the list of steps that must be required. Then, in future sections, we will provide details on performing each step.</p>
+<h3 id="required-steps">Required Steps</h3>
+<ul>
+<li><p>Creation of Information (INFO) file (mandatory)</p></li>
+<li><p>Applying correct classes to Anchor tags to trigger callbacks (mandatory)</p></li>
+<li><p>Remove instances of including top_header.php, top_graph_header.php, top_general_header.php and replacing with function calls top_header(), bottom_footer(), top_graph_header(), and top_general_header(). (mandatory)</p></li>
+<li><p>Adding '&amp;header=false' to most header() function calls to drive Ajax rendering. (mandatory)</p></li>
+<li><p>Movement of form elements to be W3C compliant as HTML5 requires it (mandatory)</p></li>
+<li><p>Moving the $nav variable within the page to ensure tables are formatted correctly. This includes the $nav before the table and the $nav afterwards. (mandatory)</p></li>
+<li><p>Remove all instances of $_GET, $_REQUEST, and $_POST and replacing the wrappers get_request_var(), get_filter_request_var(), set_request_var(), isset_request_var(), isempty_request_var() (mandatory)</p></li>
+<li><p>Utilize the 'validate_store_request_vars()' function to greatly simplify request validation on your pages. (mandatory)</p></li>
+<li><p>Migration of the Plugin to the PIA 2.x+ install and setup process. Cacti PIA 1.x plugins are not supported in Cacti 1.0 and beyond. (mandatory)</p></li>
+<li><p>Removal of hooks that inject jQuery, jQueryUI into Cacti's header (mandatory)</p></li>
+</ul>
+<h3 id="optional-steps">Optional Steps</h3>
+<ul>
+<li><p>Remove inline styles, and use Cacti's classes instead (highly recommended)</p></li>
+<li><p>Migration of filters to Ajax callbacks (highly recommended)</p></li>
+<li><p>Removing references to the $colors array (optional)</p></li>
+<li><p>Using new functions for alternate colored rows, sorted, checkbox and other headers (optional)</p></li>
+<li><p>Using new options for headers to support tool tips, alignment etc (optional)</p></li>
+<li><p>Migration to new pagination functions, which simplify page navigation</p></li>
+</ul>
+<h3 id="info-file-structure">INFO File structure</h3>
+<p>The INFO file follows the INI file specification. An example INFO file includes the following sections:</p>
+<ul>
+<li><p><strong>name</strong> - The name of the plugin directory</p></li>
+<li><p><strong>version</strong> - The version number of the plugin</p></li>
+<li><p><strong>longname</strong> - A description for the plugin</p></li>
+<li><p><strong>author</strong> - The plugins author</p></li>
+<li><p><strong>email</strong> - An email contact in order to reach the author</p></li>
+<li><p><strong>homepage</strong> - A link to the plugin authors homepage</p></li>
+<li><p><strong>compat</strong> - The minimum supported Cacti version</p></li>
+<li><p><strong>capabilities</strong> - a comma delimited string of capabilities defining how the plugin works with remote data collectors</p></li>
+<li><p><strong>nosync</strong> - a comma delimited string of directories or file extensions to skip during the remote data collector synchronization. File extensions must be formatted as <code>*.extension</code> and only are relevant in the base directory of the plugin. The following extensions are automatically excluded regardless of directory: 'tar', 'gz', 'zip', 'tgz', 'ttf', 'z', 'exe', 'pack', 'swp', 'swo'.</p></li>
+</ul>
+<p>As mentioned, there are some very good examples of how to create or migrate plugins in the various Cacti plugins included on The Cacti Groups GitHub site. Also, for a very simple Cacti page, you can look at vdef.php as an example. You can use this as a template to manage a table using the Cacti framework. For a simple plugin example, please review the gexport plugin.</p>
+<h2 id="charting-functionality">Charting Functionality</h2>
+<p>Several JavaScript based HTML5 Charting packages have been included in Cacti in an effort to assist plugin developers who wish to use graphing API's in their plugins other than RRDtool.</p>
+<ul>
+<li><a href="https://naver.github.io/billboard.js/">Billboard.js</a></li>
+<li><a href="https://d3js.org/">D3</a></li>
+<li><a href="http://www.chartjs.org/">Chart.js</a></li>
+<li><a href="http://dygraphs.com/">DyGraphs</a></li>
+<li><a href="http://omnipotent.net/jquery.sparkline/">jQuery Sparklines</a></li>
+</ul>
+<h2 id="logging">Logging</h2>
+<p>For developers using the Cacti framework, it is important to note that additional controls on logging have been added. Debug logging can now be controlled at not only a global level, but now per plugin, per device and even per file.</p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

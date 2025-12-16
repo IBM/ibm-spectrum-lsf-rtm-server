@@ -1,0 +1,92 @@
+## $Id$
+## Description: Default RTM Memory Exception Format
+<style type='text/css'>
+#report_table {
+	background-color:#F9F9F9;
+	align: center;
+	border: 0px;
+	border-style: solid;
+	width:100%;
+}
+
+#report_header th {
+	background-color:#00438C;
+	font-size:10pt;
+	text-align:left;
+	align:center;
+	border: 0px;
+	color:#FFF;
+}
+
+#report_row td {
+	background-color:#BABABA;
+	border: 0px;
+	font-size:10pt;
+}
+
+#title_row {
+	background-color:#EAEAEA;
+}
+
+#title {
+	background-color:#EAEAEA;
+	font-size:16pt;
+	text-align:left;
+	align:center;
+}
+
+#image_table {
+}
+
+#image_row {
+}
+
+#image_column {	align:center;
+}
+
+#image {
+}
+
+#text_row {
+	background-color:#EAEAEA;
+}
+
+#text {
+	background-color:#EAEAEA;
+	font-size: 16pt;
+	text-align: left;
+}
+
+#header_table {
+	background-color:#00438C;
+	align: center;
+	border:0;
+	width:100%;
+}
+
+#header_row {
+	background-color:#00438C;
+}
+
+#header {
+	background-color:#00438C;
+	font-size:16pt;
+	text-align:left;
+	align:center;
+	color:#FFF;
+}
+
+#footer {
+	background-color:#00438C;
+	font-size:10pt;
+	text-align:left;
+	align:center;
+	color:#FFF;
+}
+</style>
+<!-- header -->
+<table id="header_table"><tr id="header_row" ><td id="header">RTM Memory Exception Report</td></tr></table>
+<!-- main report -->
+<REPORT>
+<!-- footer -->
+<table id="header_table"><tr id="header_row"><td id="footer">&copy; Copyright International Business Machines Corp, 2006-2022.</td></tr></table>

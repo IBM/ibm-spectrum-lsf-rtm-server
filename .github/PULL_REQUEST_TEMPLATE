@@ -1,0 +1,10 @@
+<!--
+Thank you for your interest in and contributing to IBM Spectrum LSF RTM! There are a few simple things to check before submitting your pull request that can help with the review process. You should delete these items from your submission, but they are here to help bring them to your
+attention.
+-->
+<!-- If this pull request resolves any bugs in the issues, provide a link: -->
+Resolved #XXXX.
+<!--
+Have you followed the [contributor guidelines](https://github.com/IBM/ibm-spectrum-lsf-rtm-server/blob/main/CONTRIBUTING.md)?
+Thank you for your contribution to IBM Spectrum LSF RTM!
+-->

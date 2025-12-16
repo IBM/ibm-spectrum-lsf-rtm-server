@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – Graph Overview</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="graph-overview">Graph Overview</h1>
+<p>Almost everything in Cacti is somehow related to a <strong>Graph</strong>. At any time, you can list all available <strong>Graph</strong> by clicking on <code>Console &gt; Management &gt; Graphs</code> menu pick. While it is possible to manually create graphs through this interface, new users should follow the instructions provided in the next chapter for creating <strong>New Graphs</strong> in Cacti.</p>
+<p>For users who are familiar with <a href="http://www.RRDtool.org/">RRDtool</a>, you will immediately recognize that a <strong>Graph</strong> in Cacti is closely modeled after RRDtool's graphs. This makes sense since Cacti provides a user friendly interface to RRDtool without requiring users to understand how RRDtool works. With this in mind, every <strong>Graph</strong> in Cacti has certain settings and at least one <strong>Graph Item</strong> associated with it. While graph settings define the overall properties of a <strong>Graph</strong>, the <strong>Graph Items</strong> define the data that is to be represented on the <strong>Graph</strong>. So the <strong>Graph Items</strong> define which data to display and how it should displayed, and also define what should be displayed on the legend.</p>
+<p>Each <strong>Graph</strong> and <strong>Graph Item</strong> has a set of parameters which control various aspects of the <strong>Graph</strong>. Fortunately through the use of <strong>Graph Templates</strong>, it is not necessary to understand the function of each field to create <strong>Graphs</strong> for your network. When you are ready to take on the task of creating your own <strong>Graph Templates</strong>, extensive field descriptions for both <strong>Graphs</strong> and <strong>Graph Items</strong> are provided in that section of the manual.</p>
+<p>Below, you can see a simple version of the Graph Management interface found by going to <code>Console &gt; Management &gt; Graphs</code></p>
+<p><img src="images/graphs.png" alt="Graph Management" /></p>
+<p>From this interface, you can see the Name, and ID of the <strong>Graph</strong>, the Source <strong>Graph Template</strong>, and it's size. At the bottom of the page, there is a list of Action that can be taken on <strong>Graphs</strong>. These actions are fairly extensive, and are also extended as you add <strong>Plugins</strong> to Cacti.</p>
+<p>When you click on the Name of the <strong>Graph</strong>, you will be taken to a <code>Graph Edit</code> page as shown below.</p>
+<p><img src="images/graphs-edit.png" alt="Graph Management Edit" /></p>
+<p>In most cases, where the <strong>Graph</strong> is owned by a <strong>Graph Template</strong>, there is not much your can do on this page. However, in the case that a <strong>Graph</strong> is not managed by a template as in the image below, there are many more options you will have when working with the <strong>Graph</strong>. The downside of not leveraging a <strong>Graph Template</strong> for your <strong>Graphs</strong> is that you have to duplicate the work for each <strong>Graph</strong> created.</p>
+<p><img src="images/graphs-edit-nontemplate.png" alt="Graph Management Edit" /></p>
+<p>When viewing a Non-Templated <strong>Graph</strong>, you have complete control of the <strong>Graphs</strong> Canvas and all the <strong>Graph Items</strong> as you would in a <strong>Graph Template</strong>, and the Graph Configuration as shown below.</p>
+<p><img src="images/graphs-edit-nontemplate-configuration.png" alt="Graph Management Edit" /></p>
+<p>The settings in both the Canvas and Configuration components of the <strong>Graph</strong> will be covered in the <strong>Graph Template</strong> section of the manual and not covered here.</p>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cacti – PHP Specific Constructs</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="Cacti-Github.css" />
+</head>
+<body>
+<h1 id="php-specific-constructs">PHP Specific Constructs</h1>
+<h2 id="traversing-arrays">Traversing Arrays</h2>
+<p>Use the <code>foreach ($array as $name =&gt; $value)</code> syntax instead of <code>while (list($name, $value) = each($array))</code> syntax when traversing arrays. The former has been demonstrated to be more efficient and does not increment the internal pointer of the array. The <code>foreach</code> construct will error if the array is empty or is not an array, so you must check this first.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">if</span> <span class="ot">((</span><span class="fu">is_array</span><span class="ot">(</span><span class="kw">$array</span><span class="ot">))</span> &amp;&amp; <span class="ot">(</span><span class="fu">sizeof</span><span class="ot">(</span><span class="kw">$array</span><span class="ot">)</span> &gt; <span class="dv">0</span><span class="ot">))</span> {</a>
+<a class="sourceLine" id="cb1-2" title="2">    <span class="kw">foreach</span> <span class="ot">(</span><span class="kw">$array</span> <span class="kw">as</span> <span class="kw">$name</span> =&gt; <span class="kw">$value</span><span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb1-3" title="3">        <span class="co">// code</span></a>
+<a class="sourceLine" id="cb1-4" title="4">    }</a>
+<a class="sourceLine" id="cb1-5" title="5">}</a></code></pre></div>
+<p>It should be noted that with PHP 7.2 use of <code>list() = each()</code> syntax will result in warnings and/or errors. It should also be noted that 7.2 also introduced the need for the variable to implement ICountable which are arrays and objects. You should therefore check if <code>variable !=== false</code> before using <code>sizeof()</code> or <code>count()</code></p>
+<h2 id="error-return-values">Error Return Values</h2>
+<p>When an a function needs to return a generic error, it is best to return boolean <code>false</code> in PHP. This makes it very straightforward to check for.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">if</span> <span class="ot">(</span>file_list<span class="ot">()</span> === <span class="kw">false</span><span class="ot">)</span> {</a>
+<a class="sourceLine" id="cb2-2" title="2">    <span class="co">// there was an error</span></a>
+<a class="sourceLine" id="cb2-3" title="3">}</a></code></pre></div>
+<h2 id="regular-expressions-are-slow">Regular Expressions Are Slow</h2>
+<p>Only use PHP's regular expression parsing functions (<code>preg_match</code>, <code>preg_replace</code>, <code>preg_quote</code>, etc) when absolutely needed. Often simpler functions such as <code>strstr()</code>, <code>str_replace()</code>, <code>substr()</code>, and <code>explode()</code> can be used, and are much faster.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">$items</span> = <span class="fu">explode</span><span class="ot">(</span><span class="st">&#39;:&#39;</span><span class="ot">,</span> <span class="kw">$string</span><span class="ot">));</span></a></code></pre></div>
+<p>It's much quicker than:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">$items</span> = <span class="er">split</span><span class="ot">(</span><span class="st">&#39;:&#39;</span><span class="ot">,</span> <span class="kw">$string</span><span class="ot">));</span></a></code></pre></div>
+<h2 id="use-preg-functions-instead-of-ereg">Use <code>preg</code> Functions Instead of <code>ereg</code></h2>
+<p>The POSIX based regular expressions in PHP tend to be slower than their Perl-based equivalents. Use Perl-based regular expression functions unless there is an explicit reason to do otherwise.</p>
+<p><em><strong>NOTE:</strong></em> Do not use any deprecated functions: <code>eregi_replace</code>, <code>ereg</code>, or <code>eregi</code></p>
+<h2 id="quotes">Quotes</h2>
+<p>Single quotes are used instead of double where possible. Per string, it doesn't really make a huge difference, but when you have thousands upon thousands of them, every little bit helps.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">include_once</span><span class="ot">(</span><span class="st">&#39;./lib/api_tree.php&#39;</span><span class="ot">);</span></a></code></pre></div>
+<p>However, there isn't any difference between</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb6-1" title="1"><span class="st">&quot;This is a </span><span class="kw">$test</span><span class="st">&quot;</span></a></code></pre></div>
+<p>and</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb7-1" title="1"><span class="st">&#39;This is a &#39;</span> . <span class="kw">$test</span></a></code></pre></div>
+<p>Don't bother trying to break out variables out of the string if you are just going to have to concatenate them.</p>
+<h2 id="including-other-php-files">Including other PHP files</h2>
+<p>When including other PHP files, you should use the <code>$config['base_path']</code> to ensure that the base path is configured properly.</p>
+<p>If the main file is a web-based page, it should include <code>include/auth.php</code> to ensure that the current user is authenticated.</p>
+<p>If the main file is a CLI-based program to be run by end users, it should include <code>lib/cli_check.php</code> and support <code>-h</code> and <code>-v</code> parameters which run <code>display_help()</code> and <code>display_version()</code> respectively.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb8-1" title="1"><span class="kw">include</span><span class="ot">(</span><span class="kw">$config</span><span class="ot">[</span><span class="st">&#39;base_path&#39;</span><span class="ot">]</span> . <span class="st">&#39;/lib/database.php&#39;</span><span class="ot">);</span></a></code></pre></div>
+<hr />
+<p>Copyright (c) 2004-2024 The Cacti Group</p>
+</body>
+</html>

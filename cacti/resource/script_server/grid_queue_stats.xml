@@ -1,0 +1,218 @@
+<!-- $Id$ -->
+<interface>
+	<name>Grid Queue Statistics</name>
+	<script_path>|path_cacti|/scripts/ss_grid_queue_stats.php</script_path>
+	<script_function>ss_grid_queue_stats</script_function>
+	<script_server>php</script_server>
+	<arg_prepend>|clusterid|</arg_prepend>
+	<arg_index>index</arg_index>
+	<arg_query>query</arg_query>
+	<arg_get>get</arg_get>
+	<output_delimeter>!</output_delimeter>
+	<index_order>gridQname</index_order>
+	<index_order_type>numeric</index_order_type>
+	<index_title_format>|chosen_order_field|</index_title_format>
+
+	<fields>
+		<gridQname>
+			<name>Queue Name</name>
+			<direction>input</direction>
+			<query_name>queue</query_name>
+		</gridQname>
+		<gridDescr>
+			<name>Description</name>
+			<direction>input</direction>
+			<query_name>description</query_name>
+		</gridDescr>
+		<gridPriority>
+			<name>Queue Priority</name>
+			<direction>input</direction>
+			<query_name>prio</query_name>
+		</gridPriority>
+		<gridNumJobs>
+			<name>Total Jobs In Queue</name>
+			<direction>output</direction>
+			<query_name>total</query_name>
+		</gridNumJobs>
+		<gridPendJobs>
+			<name>Pending Jobs</name>
+			<direction>output</direction>
+			<query_name>pending</query_name>
+		</gridPendJobs>
+		<gridRunJobs>
+			<name>Running Jobs</name>
+			<direction>output</direction>
+			<query_name>running</query_name>
+		</gridRunJobs>
+		<gridSuspendJobs>
+			<name>Suspended Jobs</name>
+			<direction>output</direction>
+			<query_name>suspended</query_name>
+		</gridSuspendJobs>
+		<gridCompletedJobs>
+			<name>Completed Jobs</name>
+			<direction>output</direction>
+			<query_name>ended</query_name>
+		</gridCompletedJobs>
+		<gridExitedJobs>
+			<name>Exited Jobs</name>
+			<direction>output</direction>
+			<query_name>exited</query_name>
+		</gridExitedJobs>
+		<gridStartedJobs>
+			<name>Started Jobs</name>
+			<direction>output</direction>
+			<query_name>started</query_name>
+		</gridStartedJobs>
+		<gridSubmittedJobs>
+			<name>Submitted Jobs</name>
+			<direction>output</direction>
+			<query_name>submitted</query_name>
+		</gridSubmittedJobs>
+		<gridAvgPendTime>
+			<name>Average Pending Time</name>
+			<direction>output</direction>
+			<query_name>avgpend</query_name>
+		</gridAvgPendTime>
+		<gridMaxPendTime>
+			<name>Maximum Pending Time</name>
+			<direction>output</direction>
+			<query_name>maxpend</query_name>
+		</gridMaxPendTime>
+		<gridAvgRunTime>
+			<name>Average Run Time</name>
+			<direction>output</direction>
+			<query_name>avgrun</query_name>
+		</gridAvgRunTime>
+		<gridMaxRunTime>
+			<name>Maximum Run Time</name>
+			<direction>output</direction>
+			<query_name>maxrun</query_name>
+		</gridMaxRunTime>
+		<gridAvgSSUSPTime>
+			<name>Average System Suspended Time</name>
+			<direction>output</direction>
+			<query_name>avgssusp</query_name>
+		</gridAvgSSUSPTime>
+		<gridMaxSSUSPTime>
+			<name>Maximum System Suspended Time</name>
+			<direction>output</direction>
+			<query_name>maxssusp</query_name>
+		</gridMaxSSUSPTime>
+		<gridAvgUSUSPTime>
+			<name>Average User Suspended Time</name>
+			<direction>output</direction>
+			<query_name>avgususp</query_name>
+		</gridAvgUSUSPTime>
+		<gridMaxUSUSPTime>
+			<name>Maximum User Suspended Time</name>
+			<direction>output</direction>
+			<query_name>maxususp</query_name>
+		</gridMaxUSUSPTime>
+		<gridAvgPSUSPTime>
+			<name>Average Pre-Exec Suspended Time</name>
+			<direction>output</direction>
+			<query_name>avgpsusp</query_name>
+		</gridAvgPSUSPTime>
+		<gridMaxPSUSPTime>
+			<name>Maximum Pre-Exec Suspended Time</name>
+			<direction>output</direction>
+			<query_name>maxpsusp</query_name>
+		</gridMaxPSUSPTime>
+		<gridAvgUNKWNTime>
+			<name>Average Unknown Time</name>
+			<direction>output</direction>
+			<query_name>avgunkwn</query_name>
+		</gridAvgUNKWNTime>
+		<gridMaxUNKWNTime>
+			<name>Maximum Unknown Time</name>
+			<direction>output</direction>
+			<query_name>maxunkwn</query_name>
+		</gridMaxUNKWNTime>
+		<gridAvgDispTime>
+			<name>Average Dispatch Time</name>
+			<direction>output</direction>
+			<query_name>avgdisp</query_name>
+		</gridAvgDispTime>
+		<gridMaxDispTime>
+			<name>Maximum Dispatch Time</name>
+			<direction>output</direction>
+			<query_name>maxdisp</query_name>
+		</gridMaxDispTime>
+		<gridUsers>
+			<name>Active Users</name>
+			<direction>output</direction>
+			<query_name>users</query_name>
+		</gridUsers>
+		<gridHStart>
+			<name>Hourly Started Jobs</name>
+			<direction>output</direction>
+			<query_name>hstart</query_name>
+		</gridHStart>
+		<gridHDone>
+			<name>Hourly Done Jobs</name>
+			<direction>output</direction>
+			<query_name>hdone</query_name>
+		</gridHDone>
+		<gridHExit>
+			<name>Hourly Exit Jobs</name>
+			<direction>output</direction>
+			<query_name>hexit</query_name>
+		</gridHExit>
+		<gridTotalSlots>
+			<name>Total Slots</name>
+			<direction>output</direction>
+			<query_name>numslots</query_name>
+		</gridTotalSlots>
+		<gridTotalSharedSlots>
+			<name>Total Shared Slots</name>
+			<direction>output</direction>
+			<query_name>sharedSlots</query_name>
+		</gridTotalSharedSlots>
+		<gridOpenSharedSlots>
+			<name>Open Shared Slots</name>
+			<direction>output</direction>
+			<query_name>openSharedSlots</query_name>
+		</gridOpenSharedSlots>
+		<gridTotalDedicatedSlots>
+			<name>Total Dedicated Slots</name>
+			<direction>output</direction>
+			<query_name>dedicatedSlots</query_name>
+		</gridTotalDedicatedSlots>
+		<gridOpenDedicatedSlots>
+			<name>Open Dedicated Slots</name>
+			<direction>output</direction>
+			<query_name>openDedicatedSlots</query_name>
+		</gridOpenDedicatedSlots>
+		<memSlotUtil>
+			<name>Memory Slot Utilization</name>
+			<direction>output</direction>
+			<query_name>memSlotUtil</query_name>
+		</memSlotUtil>
+		<slotUtil>
+			<name>Job Slot Utilization</name>
+			<direction>output</direction>
+			<query_name>slotUtil</query_name>
+		</slotUtil>
+		<cpuUtil>
+			<name>CPU Utilization</name>
+			<direction>output</direction>
+			<query_name>cpuUtil</query_name>
+		</cpuUtil>
+		<memUsed>
+			<name>Memory Used</name>
+			<direction>output</direction>
+			<query_name>memUsed</query_name>
+		</memUsed>
+		<memRequested>
+			<name>Memory Requested</name>
+			<direction>output</direction>
+			<query_name>memRequested</query_name>
+		</memRequested>
+		<memReserved>
+			<name>Memory Reserved</name>
+			<direction>output</direction>
+			<query_name>memReserved</query_name>
+		</memReserved>
+	</fields>
+</interface>

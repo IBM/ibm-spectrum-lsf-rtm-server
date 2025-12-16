@@ -1,0 +1,244 @@
+/* $Id$ */
+.deviceUpFull {
+	background-color: rgba(125, 181, 60, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 14%;
+	color: #0A0A0A;
+}
+
+.deviceDownFull {
+	background-color: rgba(227, 82, 32, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 14%;
+	color: #0A0A0A;
+}
+
+.deviceUnknownFull {
+	background-color: rgba(208, 230, 204, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 14%;
+	color: #0A0A0A;
+}
+
+.deviceDisabledFull {
+	background-color: rgba(194, 194, 194, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 14%;
+	color: #0A0A0A;
+}
+
+.deviceRecoveringFull {
+	background-color: rgba(244, 224, 85, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 14%;
+	color: #0A0A0A;
+}
+
+.deviceErrorFull {
+	background-color: rgba(117, 15, 125, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 14%;
+	color: #0A0A0A;
+}
+
+.deviceNotMonFull {
+	background-color: rgba(160, 204, 153, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 14%;
+	color: #0A0A0A;
+}
+
+.tholdAlertNotify {
+	background-color: rgba(242, 25, 36, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 12.5%;
+	color: #0A0A0A;
+}
+
+.tholdAlert2Warn {
+	background-color: rgba(200, 25, 36, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 12.5%;
+	color: #0A0A0A;
+}
+
+.tholdWarningNotify {
+	background-color: rgba(251, 74, 20, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 12.5%;
+	color: #0A0A0A;
+}
+
+.tholdReTriggerNotify {
+	background-color: rgba(200, 125, 88, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 12.5%;
+	color: #0A0A0A;
+}
+
+.tholdReTriggerEvent {
+	background-color: rgba(255, 122, 48, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 12.5%;
+	color: #0A0A0A;
+}
+
+.tholdTriggerEvent {
+	background-color: rgba(250, 253, 158, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 12.5%;
+	color: #0A0A0A;
+}
+
+.tholdWarnTrigger {
+	background-color: rgba(210, 223, 128, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 12.5%;
+	color: #0A0A0A;
+}
+
+.tholdRestoralNotify {
+	background-color: rgba(204, 255, 204, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 12.5%;
+	color: #0A0A0A;
+}
+
+.tholdRestoralEvent {
+	background-color: rgba(205, 207, 196, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 12.5%;
+	color: #0A0A0A;
+}
+
+.tholdRestore {
+	background-color: rgba(204, 255, 204, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 14%;
+	color: #0A0A0A;
+}
+
+.tholdAlertTrigger {
+	background-color: rgba(242, 23, 33, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 14%;
+	color: #0A0A0A;
+}
+
+.tholdReTrigger {
+	background-color: rgba(250, 116, 32, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 14%;
+	color: #0A0A0A;
+}
+
+.tholdWarning {
+	background-color: rgba(243, 184, 30, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 14%;
+	color: #0A0A0A;
+}
+
+.tholdAlert {
+	background-color: rgba(227, 82, 32, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 14%;
+	color: #0A0A0A;
+}
+
+.tholdAcknowledgment {
+	background-color: rgba(242, 120, 88, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 14%;
+	color: #0A0A0A;
+}
+
+.tholdBaseAlert {
+	background-color: rgba(244, 224, 85, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 14%;
+	color: #0A0A0A;
+}
+
+.tholdNotice {
+	background-color: rgba(250, 253, 158, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 14%;
+	color: #0A0A0A;
+}
+
+.tholdOk {
+	background-color: rgba(125, 181, 60, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 14%;
+	color: #0A0A0A;
+}
+
+.tholdDisabled {
+	background-color: rgba(194, 194, 194, 0.8);
+	text-align: center;
+	white-space: nowrap;
+	width: 14%;
+	color: #0A0A0A;
+}
+
+.tholdGlyphEdit {
+	color: #666666;
+}
+
+.tholdGlyphDisable {
+	color: #990000;
+}
+
+.tholdGlyphEnable {
+	color: #006600;
+}
+
+.tholdGlyphChart {
+	color: #996600;
+}
+
+.tholdGlyphLog {
+	color: #999900;
+}
+
+.tholdGlyphAcknowledge {
+	color: #336600;
+}
+
+.tholdGlyphAcknowledge {
+	color: #336600;
+}
+
+.tholdGlyphAcknowledgeSuspend {
+	color: #336600;
+}
+
+.tholdLog {
+	white-space: pre-wrap !important;
+}
