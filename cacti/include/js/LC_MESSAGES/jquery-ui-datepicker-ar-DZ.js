@@ -1,3 +1,4 @@
+// $Id$
 /* Algerian Arabic Translation for jQuery UI date picker plugin.
 /* Used in most of Maghreb countries, primarily in Algeria, Tunisia, Morocco.
 /* Mohamed Cherif BOUCHELAGHEM -- cherifbouchelaghem@yahoo.fr */

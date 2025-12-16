@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright IBM Corp. 2006, 2023                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -72,10 +72,6 @@ function plugin_gridalarms_install($upgrade = false) {
 
 	// Common JavaScript and CSS
 	api_plugin_register_hook('gridalarms', 'page_head', 'gridalarms_page_head', 'setup.php', 1);
-
-	// Remove/Disable cluster related alarms
-	api_plugin_register_hook('gridalarms', 'grid_cluster_remove', 'gridalarms_grid_cluster_remove', 'setup.php');
-
 
 	if ($upgrade) {
         plugin_gridalarms_upgrade();
@@ -491,34 +487,4 @@ function get_gridalarms_version() {
 		return $info['version'];
 	}
 	return RTM_VERSION;
-}
-
-function gridalarms_grid_cluster_remove($cluster){
-	global $config;
-
-	if (!isset($cluster) || !isset($cluster['clusterid']) || !isset($cluster['delete_type'])){
-		return $cluster;
-	}
-
-	db_execute_prepared('UPDATE gridalarms_template SET clusterid=0 WHERE clusterid=?', array($cluster['clusterid']));
-
-	if ($cluster['delete_type'] == 1){
-		db_execute_prepared('UPDATE gridalarms_alarm SET alarm_enabled="off" WHERE clusterid=?', array($cluster['clusterid']));
-	} else if ($cluster['delete_type'] == 2){
-		include_once($config['base_path'] . '/plugins/gridalarms/lib/gridalarms_functions.php');
-
-		$alarms = db_fetch_assoc_prepared('SELECT *
-			FROM gridalarms_alarm
-			WHERE clusterid = ?',
-			array($cluster['clusterid']));
-
-		if (!empty($alarms)) {
-			foreach ($alarms as $alarm) {
-				$del = $alarm['id'];
-				api_alarm_remove($del);
-			}
-		}
-	}
-
-    return $cluster;
 }

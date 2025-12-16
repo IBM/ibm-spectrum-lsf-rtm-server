@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -35,6 +35,7 @@ function plugin_syslog_install() {
 	syslog_connect();
 
 	$syslog_exists = sizeof(syslog_db_fetch_row('SHOW TABLES FROM `' . $syslogdb_default . "` LIKE 'syslog'"));
+	$db_version    = syslog_get_mysql_version('syslog');
 
 	/* ================= input validation ================= */
 	get_filter_request_var('days');
@@ -75,7 +76,7 @@ function plugin_syslog_install() {
 		header('Location:' . $config['url_path'] . 'plugins.php?mode=uninstall&id=syslog&uninstall&uninstall_method=all');
 		exit;
 	} else {
-		syslog_install_advisor($syslog_exists);
+		syslog_install_advisor($syslog_exists, $db_version);
 		exit;
 	}
 }
@@ -408,8 +409,22 @@ function syslog_check_upgrade() {
 	}
 }
 
+function syslog_get_mysql_version($db = 'cacti') {
+	if ($db == 'cacti') {
+		$dbInfo = db_fetch_row("SHOW GLOBAL VARIABLES LIKE 'version'");
+	} else {
+		$dbInfo = syslog_db_fetch_row("SHOW GLOBAL VARIABLES LIKE 'version'");
+	}
+
+	if (cacti_sizeof($dbInfo)) {
+		return floatval(str_replace('-MariaDB', '', $dbInfo['Value']));
+	}
+
+	return '';
+}
+
 function syslog_create_partitioned_syslog_table($engine = 'InnoDB', $days = 30) {
-	global $config, $syslogdb_default, $syslog_levels;
+	global $config, $mysqlVersion, $syslogdb_default, $syslog_levels;
 
 	syslog_determine_config();
 	syslog_connect();
@@ -420,7 +435,7 @@ function syslog_create_partitioned_syslog_table($engine = 'InnoDB', $days = 30) 
 		program_id int(10) unsigned default NULL,
 		host_id int(10) unsigned default NULL,
 		logtime DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
-		message varchar(1024) NOT NULL default '',
+		message " . ($mysqlVersion > 5 ? "varchar(1024)":"text") . " NOT NULL default '',
 		seq bigint unsigned NOT NULL auto_increment,
 		PRIMARY KEY(seq, logtime),
 		INDEX `seq` (`seq`),
@@ -447,7 +462,7 @@ function syslog_create_partitioned_syslog_table($engine = 'InnoDB', $days = 30) 
 }
 
 function syslog_setup_table_new($options) {
-	global $config, $settings, $syslogdb_default, $syslog_levels;
+	global $config, $settings, $syslogdb_default, $mysqlVersion, $syslog_levels;
 
 	syslog_determine_config();
 	syslog_connect();
@@ -491,6 +506,7 @@ function syslog_setup_table_new($options) {
 	}
 
 	/* validate some simple information */
+	$mysqlVersion = syslog_get_mysql_version('syslog');
 	$truncate     = isset($options['upgrade_type']) && $options['upgrade_type'] == 'truncate' ? true:false;
 	$engine       = isset($options['engine']) && $options['engine'] == 'innodb' ? 'InnoDB':'MyISAM';
 	$partitioned  = isset($options['db_type']) && $options['db_type'] == 'part' ? true:false;
@@ -554,10 +570,7 @@ function syslog_setup_table_new($options) {
 		PRIMARY KEY (id))
 		ENGINE=$engine;");
 
-	if ($truncate) {
-		syslog_db_execute("DROP TABLE IF EXISTS `" . $syslogdb_default . "`.`syslog_incoming`");
-	}
-
+	if ($truncate) syslog_db_execute("DROP TABLE IF EXISTS `" . $syslogdb_default . "`.`syslog_incoming`");
 	syslog_db_execute("CREATE TABLE IF NOT EXISTS `" . $syslogdb_default . "`.`syslog_incoming` (
 		facility_id int(10) unsigned default NULL,
 		priority_id int(10) unsigned default NULL,
@@ -572,10 +585,7 @@ function syslog_setup_table_new($options) {
 		INDEX `status` (`status`))
 		ENGINE=$engine;");
 
-	if ($truncate) {
-		syslog_db_execute("DROP TABLE IF EXISTS `" . $syslogdb_default . "`.`syslog_remove`");
-	}
-
+	if ($truncate) syslog_db_execute("DROP TABLE IF EXISTS `" . $syslogdb_default . "`.`syslog_remove`");
 	syslog_db_execute("CREATE TABLE IF NOT EXISTS `" . $syslogdb_default . "`.`syslog_remove` (
 		id int(10) NOT NULL auto_increment,
 		`hash` varchar(32) NOT NULL default '',
@@ -598,10 +608,7 @@ function syslog_setup_table_new($options) {
 		$newreport = true;
 	}
 
-	if ($truncate || !$newreport) {
-		syslog_db_execute("DROP TABLE IF EXISTS `" . $syslogdb_default . "`.`syslog_reports`");
-	}
-
+	if ($truncate || !$newreport) syslog_db_execute("DROP TABLE IF EXISTS `" . $syslogdb_default . "`.`syslog_reports`");
 	syslog_db_execute("CREATE TABLE IF NOT EXISTS `" . $syslogdb_default . "`.`syslog_reports` (
 		id int(10) NOT NULL auto_increment,
 		`hash` varchar(32) NOT NULL default '',
@@ -621,10 +628,7 @@ function syslog_setup_table_new($options) {
 		PRIMARY KEY (id))
 		ENGINE=$engine;");
 
-	if ($truncate) {
-		syslog_db_execute("DROP TABLE IF EXISTS `" . $syslogdb_default . "`.`syslog_hosts`");
-	}
-
+	if ($truncate) syslog_db_execute("DROP TABLE IF EXISTS `" . $syslogdb_default . "`.`syslog_hosts`");
 	syslog_db_execute("CREATE TABLE IF NOT EXISTS `" . $syslogdb_default . "`.`syslog_programs` (
 		`program_id` int(10) unsigned NOT NULL auto_increment,
 		`program` VARCHAR(40) NOT NULL,
@@ -646,7 +650,6 @@ function syslog_setup_table_new($options) {
 		COMMENT='Contains all hosts currently in the syslog table'");
 
 	syslog_db_execute("DROP TABLE IF EXISTS `" . $syslogdb_default . "`.`syslog_facilities`");
-
 	syslog_db_execute("CREATE TABLE IF NOT EXISTS `". $syslogdb_default . "`.`syslog_facilities` (
 		`facility_id` int(10) unsigned NOT NULL,
 		`facility` varchar(10) NOT NULL,
@@ -662,7 +665,6 @@ function syslog_setup_table_new($options) {
 		(22,'local6'), (23,'local7');");
 
 	syslog_db_execute("DROP TABLE IF EXISTS `" . $syslogdb_default . "`.`syslog_priorities`");
-
 	syslog_db_execute("CREATE TABLE IF NOT EXISTS `". $syslogdb_default . "`.`syslog_priorities` (
 		`priority_id` int(10) unsigned NOT NULL,
 		`priority` varchar(10) NOT NULL,
@@ -681,10 +683,7 @@ function syslog_setup_table_new($options) {
 		PRIMARY KEY  (`host_id`,`facility_id`))
 		ENGINE=$engine;");
 
-	if ($truncate) {
-		syslog_db_execute("DROP TABLE IF EXISTS `" . $syslogdb_default . "`.`syslog_removed`");
-	}
-
+	if ($truncate) syslog_db_execute("DROP TABLE IF EXISTS `" . $syslogdb_default . "`.`syslog_removed`");
 	syslog_db_execute("CREATE TABLE IF NOT EXISTS `" . $syslogdb_default . "`.`syslog_removed` LIKE `" . $syslogdb_default . "`.`syslog`");
 
 	syslog_db_execute("CREATE TABLE IF NOT EXISTS `" . $syslogdb_default . "`.`syslog_logs` (
@@ -747,7 +746,7 @@ function syslog_replicate_out($data) {
 		$rcnn_id          = $data['rcnn_id'];
 		$class            = $data['class'];
 
-		cacti_log('INFO: Replicating for the Syslog Plugin', false, 'REPLICATE');
+		cacti_log('INFO: Replacting for the Syslog Plugin', false, 'REPLICATE');
 
 		if ($class == 'all') {
 			$tdata = syslog_db_fetch_assoc('SELECT * FROM syslog_alert');
@@ -845,7 +844,7 @@ function syslog_poller_bottom() {
 	}
 }
 
-function syslog_install_advisor($syslog_exists) {
+function syslog_install_advisor($syslog_exists, $db_version) {
 	global $config, $syslog_retentions;
 
 	top_header();
@@ -867,7 +866,7 @@ function syslog_install_advisor($syslog_exists) {
 		'engine' => array(
 			'method' => 'drop_array',
 			'friendly_name' => __('Database Storage Engine', 'syslog'),
-			'description' => __('You have the option to make this a partitioned table by days.', 'syslog'),
+			'description' => __('In MySQL 5.1.6 and above, you have the option to make this a partitioned table by days.  Prior to this release, you only have the traditional table structure available.', 'syslog'),
 			'value' => 'innodb',
 			'array' => array(
 				'myisam' => __('MyISAM Storage', 'syslog'),
@@ -877,12 +876,16 @@ function syslog_install_advisor($syslog_exists) {
 		'db_type' => array(
 			'method' => 'drop_array',
 			'friendly_name' => __('Database Architecture', 'syslog'),
-			'description' => __('You have the option to make this a partitioned table by days.  You can create multiple partitions per day.', 'syslog'),
-			'value' => 'part',
-			'array' => array(
+			'description' => __('In MySQL 5.1.6 and above, you have the option to make this a partitioned table by days.  In MySQL 5.5 and above, you can create multiple partitions per day.  Prior to MySQL 5.1.6, you only have the traditional table structure available.', 'syslog'),
+			'value' => 'trad',
+			'array' => ($db_version >= '5.1' ?
+				array(
 				'trad' => __('Traditional Table', 'syslog'),
-				'part' => __('Partitioned Table', 'syslog')
-			)
+				'part' => __('Partitioned Table', 'syslog')) :
+				array(
+					'trad' => __('Traditional Table', 'syslog')
+				)
+			),
 		),
 		'days' => array(
 			'method' => 'drop_array',
@@ -905,19 +908,21 @@ function syslog_install_advisor($syslog_exists) {
 		)
 	);
 
-	$fields_syslog_update['dayparts'] = array(
-		'method' => 'drop_array',
-		'friendly_name' => __('Partitions per Day', 'syslog'),
-		'description' => __('Select the number of partitions per day that you wish to create.', 'syslog'),
-		'value' => '1',
-		'array' => array(
-			'1'  => __('%d Per Day', 1, 'syslog'),
-			'2'  => __('%d Per Day', 2, 'syslog'),
-			'4'  => __('%d Per Day', 4, 'syslog'),
-			'6'  => __('%d Per Day', 6, 'syslog'),
-			'12' => __('%d Per Day', 12, 'syslog')
-		)
-	);
+	if ($db_version >= 5.5) {
+		$fields_syslog_update['dayparts'] = array(
+			'method' => 'drop_array',
+			'friendly_name' => __('Partitions per Day', 'syslog'),
+			'description' => __('Select the number of partitions per day that you wish to create.', 'syslog'),
+			'value' => '1',
+			'array' => array(
+				'1'  => __('%d Per Day', 1, 'syslog'),
+				'2'  => __('%d Per Day', 2, 'syslog'),
+				'4'  => __('%d Per Day', 4, 'syslog'),
+				'6'  => __('%d Per Day', 6, 'syslog'),
+				'12' => __('%d Per Day', 12, 'syslog')
+			)
+		);
+	}
 
 	if ($syslog_exists) {
 		$type = __('Upgrade', 'syslog');
@@ -934,7 +939,7 @@ function syslog_install_advisor($syslog_exists) {
 		print "<p>" . __('The upgrade of the \'main\' syslog table can be a very time consuming process.  As such, it is recommended that you either reduce the size of your syslog table prior to upgrading, or choose the background option</p> <p>If you choose the background option, your legacy syslog table will be renamed, and a new syslog table will be created.  Then, an upgrade process will be launched in the background.  Again, this background process can quite a bit of time to complete.  However, your data will be preserved</p> <p>Regardless of your choice, all existing removal and alert rules will be maintained during the upgrade process.</p> <p>Press <b>\'Upgrade\'</b> to proceed with the upgrade, or <b>\'Cancel\'</b> to return to the Plugins menu.', 'syslog') . "</p></td></tr>";
 	} else {
 		unset($fields_syslog_update['upgrade_type']);
-		print "<p>" . __('You have several options to choose from when installing Syslog.  The first is the Database Architecture.  You should elect to utilize Table Partitioning to prevent the size of the tables from becoming excessive thus slowing queries.', 'syslog') . '</p><p>' . __('You can also set the MySQL storage engine.  If you have not tuned you system for InnoDB storage properties, it is strongly recommended that you utilize the MyISAM storage engine.', 'syslog') . '</p><p>' . __('You can also select the retention duration.  Please keep in mind that if you have several hosts logging to syslog, this table can become quite large.  So, if not using partitioning, you might want to keep the size smaller.', 'syslog') . "</p></td></tr>";
+		print "<p>" . __('You have several options to choose from when installing Syslog.  The first is the Database Architecture.  Starting with MySQL 5.1.6, you can elect to utilize Table Partitioning to prevent the size of the tables from becoming excessive thus slowing queries.', 'syslog') . '</p><p>' . __('You can also set the MySQL storage engine.  If you have not tuned you system for InnoDB storage properties, it is strongly recommended that you utilize the MyISAM storage engine.', 'syslog') . '</p><p>' . __('You can also select the retention duration.  Please keep in mind that if you have several hosts logging to syslog, this table can become quite large.  So, if not using partitioning, you might want to keep the size smaller.', 'syslog') . "</p></td></tr>";
 	}
 	html_end_box();
 	print "<form action='plugins.php' method='get'>\n";

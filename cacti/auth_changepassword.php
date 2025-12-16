@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -52,29 +48,6 @@ switch ($action) {
 			header('Location: index.php');
 			exit;
 		}
-}
-
-if (isset($_SERVER['HTTP_REFERER'])) {
-	$return = $_SERVER['HTTP_REFERER'];
-
-	if (basename($return) != 'auth_changepassword.php') {
-		if (strpos($return, '/plugins/') !== false) {
-			$parts  = explode('/plugins/', $return);
-			$return = $config['url_path'] . 'plugins/' . $parts[1];
-		} else {
-			$return = $config['url_path'] . basename($return);
-		}
-
-		$_SESSION['acp_return'] = $return;
-	} else {
-		if (isset($_SESSION['acp_return'])) {
-			$return = $_SESSION['acp_return'];
-		} else {
-			$return = $config['url_path'] . 'index.php';
-		}
-	}
-} else {
-	$return = $config['url_path'] . 'index.php';
 }
 
 $user = db_fetch_row_prepared('SELECT *
@@ -331,58 +304,6 @@ $secpass_tooltip .= $secpass_body;
 
 $selectedTheme = get_selected_theme();
 
-if (isset_request_var('ref')) {
-	$ref_parts   = parse_url(get_nfilter_request_var('ref'));
-	$valid       = true;
-
-	if (isset($ref_parts['user']) || isset($ref_parts['pass'])) {
-		$valid = false;
-	} elseif (!isset($ref_parts['host'])) {
-		$value = true;
-	} elseif (isset($ref_parts['host'])) {
-		$server_addr = $_SERVER['SERVER_ADDR'];
-		if (!filter_var($_SERVER['SERVER_NAME'], FILTER_VALIDATE_IP)) {
-			$server_info = dns_get_record($_SERVER['SERVER_NAME'], DNS_ANY);
-			$server_ref  = gethostbyname($ref_parts['host']);
-
-			if ($server_ref != $server_addr) {
-				$valid = false;
-			}
-
-			if (!$valid && cacti_sizeof($server_info)) {
-				foreach($server_info as $record) {
-					if (isset($record['host']) && $record['host'] == $server_ref) {
-						$valid = true;
-						break;
-					} elseif (isset($record['target']) && $record['target'] == $server_ref) {
-						$valid = true;
-						break;
-					} elseif (isset($record['ip']) && $record['ip'] == $server_addr) {
-						$valid = true;
-						break;
-					}
-				}
-			}
-		} else {
-			$server_ip   = gethostbyname($_SERVER['SERVER_NAME']);
-			$server_ref  = gethostbyname($ref_parts['host']);
-			if ($server_ip == $server_ref) {
-				$valid = true;
-			}
-		}
-	} else {
-		$valid = false;
-	}
-
-	if (!$valid) {
-		cacti_log('WARNING: User attempted to access Cacti from unkonwn URL', false, 'AUTH');
-
-		raise_message('problems_with_page', __('There are problems with the Change Password page.  Contact your Cacti administrator right away.'), MESSAGE_LEVEL_ERROR);
-		header('Location:index.php');
-		exit;
-	}
-}
-
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -431,7 +352,7 @@ if ($skip_current) {
 						</tr>
 						<tr>
 							<td class='nowrap' colspan='2'><input type='submit' class='ui-button ui-corner-all ui-widget' value='<?php print __esc('Save'); ?>'>
-								<?php print $user['must_change_password'] != 'on' ? "<input type='button' class='ui-button ui-corner-all ui-widget' onClick='document.location=\"$return\"' value='".  __esc('Return') . "'>":"";?>
+								<?php print $user['must_change_password'] != 'on' ? "<input type='button' class='ui-button ui-corner-all ui-widget' onClick='window.history.go(-1)' value='".  __esc('Return') . "'>":"";?>
 							</td>
 						</tr>
 					</table>
@@ -439,7 +360,7 @@ if ($skip_current) {
 			</form>
 			<div class='loginErrors'><?php print $errorMessage ?></div>
 		</div>
-		<div class='versionInfo'><?php __('Version %s | %s', $version, COPYRIGHT_YEARS_SHORT); ?></div>
+		<div class='versionInfo'><?php __('Version %1$s | %2$s', $version, COPYRIGHT_YEARS_SHORT); ?></div>
 	</div>
 	<div class='loginRight'></div>
 	<script type='text/javascript'>

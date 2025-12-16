@@ -1,3 +1,4 @@
+// $Id$
 /*!
 * tablesorter (FORK) pager plugin
 * updated 2018-03-26 (v2.30.2)

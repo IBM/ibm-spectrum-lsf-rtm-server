@@ -1,4 +1,5 @@
 <?php
+// $Id$
 namespace Gettext\Languages\Exporter;
 
 class Php extends Exporter

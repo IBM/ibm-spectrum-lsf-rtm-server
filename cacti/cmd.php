@@ -1,8 +1,9 @@
 #!/usr/bin/env php
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -13,11 +14,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -392,6 +388,7 @@ if (cacti_sizeof($poller_items) && read_config_option('poller_enabled') == 'on')
 
 			if (read_config_option('poller_debug') == 'on' && strlen($output) > $maxwidth) {
 				$width_dses[] = $ds;
+				$width_errors++;
 			}
 
 			if ($set_spike_kill && !substr_count($output, ':')) {
@@ -497,43 +494,6 @@ if (cacti_sizeof($poller_items) && read_config_option('poller_enabled') == 'on')
 		$tot_errors), $print_data_to_stdout, 'POLLER', $medium);
 } else {
 	cacti_log('NOTE: There are no items in your poller for this polling cycle!', true, 'POLLER', $medium);
-}
-
-// Try to check device status only for devices without poller items
-if ($allhost) {
-	$sql_where = 'AND h.poller_id = ?';
-	$params    = array($poller_id);
-} else {
-	$sql_where = 'AND h.poller_id = ? AND h.id >= ? AND h.id <= ? ';
-	$params    = array($poller_id, $first, $last);
-}
-
-$hosts = db_fetch_assoc_prepared("SELECT h.id, h.hostname, h.ping_port, h.ping_method, h.ping_retries, h.ping_timeout, h.availability_method
-	FROM host AS h
-	LEFT JOIN poller_item AS pi
-	ON h.id=pi.host_id
-	WHERE pi.host_id IS NULL
-	AND (h.disabled = '' OR h.disabled IS NULL)
-	$sql_where",
-	$params);
-
-if (cacti_sizeof($hosts)) {
-	cacti_log('NOTE: Found ' . cacti_sizeof($hosts) . ' Device(s) for up/down validation only', true, 'POLLER', $medium);
-
-	foreach ($hosts as $host) {
-		$ping = new Net_Ping;
-		$ping->host = $host;
-		$ping->port = $host['ping_port'];
-
-		// perform the appropriate ping check of the host
-		if ($ping->ping($host['availability_method'], $host['ping_method'], $host['ping_timeout'], $host['ping_retries'])) {
-			update_host_status(HOST_UP, $host['id'], $ping, $host['availability_method'], $print_data_to_stdout);
-			cacti_log("Device[" . $host['id'] ."] STATUS: Device '" . $host['hostname'] . "' is UP.", $print_data_to_stdout, 'POLLER', debug_level($host['id'], POLLER_VERBOSITY_MEDIUM));
-		} else {
-			update_host_status(HOST_DOWN, $host['id'], $ping, $host['availability_method'], $print_data_to_stdout);
-			cacti_log("Device[" . $host['id'] . "] STATUS: Device '" . $host['hostname'] . "' is Down.", $print_data_to_stdout, 'POLLER', debug_level($host['id'], POLLER_VERBOSITY_MEDIUM));
-		}
-	}
 }
 
 // record the process as having completed
@@ -764,7 +724,7 @@ function collect_device_data(&$item, &$error_ds) {
 		default:
 			$error_ds[$ds] = $ds;
 
-			cacti_log("Device[$host_id] DS[$ds] ERROR: Invalid polling option: " . $item['action'], $print_data_to_stdout, 'POLLER');
+			cacti_log("Device[$host_id] DS[$ds] ERROR: Invalid polling option: " . $item['action'], $stdout, 'POLLER');
 	}
 
 	return $output;
@@ -953,7 +913,7 @@ function ping_and_reindex_check(&$item, $mibs) {
 
 					// spike kill logic
 					if (($assert_fail) &&
-						(($index_item['op'] == '<') || ($index_item['arg1'] == '.1.3.6.1.2.1.1.3.0' || $index_item['arg1'] == '.1.3.6.1.6.3.10.2.1.3.0'))) {
+						(($index_item['op'] == '<') || ($index_item['arg1'] == '.1.3.6.1.2.1.1.3.0'))) {
 						// don't spike kill unless we are certain
 						if (!empty($output)) {
 							$set_spike_kill = true;

@@ -1,8 +1,9 @@
 #!/usr/bin/env php
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -13,11 +14,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -57,13 +53,12 @@ set_time_limit(0);
 
 /* we do not need so much memory */
 ini_set('memory_limit', '-1');
-ini_set('max_execution_time', '0');
+ini_set('max_execution_time', '-1');
 
 // default values
 $hostname   = gethostname();
 $debug      = false;
 $foreground = false;
-$logrecon   = false;
 
 chdir(__DIR__);
 include_once('./include/cli_check.php');
@@ -148,13 +143,12 @@ sleep(2);
 while (true) {
 	wait_for_start($frequency);
 
-	db_check_reconnect(false, $logrecon);
+	db_check_reconnect();
 
 	run_poller();
 
 	// Force Cacti to check the service start frequency dynamically
 	$frequency = -1;
-	$logrecon  = true;
 }
 
 function wait_for_start($frequency = -1) {

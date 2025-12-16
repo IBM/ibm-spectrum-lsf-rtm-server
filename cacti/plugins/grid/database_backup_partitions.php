@@ -3,7 +3,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright IBM Corp. 2006, 2023                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -112,13 +112,10 @@ function grid_backup_cacti_db_partition($poller = true, $force = false, $backup_
 		if (empty($backup_path)) {
 			$backup_path = read_config_option('grid_backup_path') . '/partition_backups';
 		}
-		if (!is_dir($backup_path)) {
-			//Remove '@' and check existing by is_dir because '@' does not silent error in RHEL/CentOS 9 + PHP 8.1
-			mkdir($backup_path);
-		}
+		@mkdir($backup_path);
 
 		/* check if directory exists */
-		if (is_dir($backup_path) && is_writable($backup_path)) {
+		if (file_exists($backup_path) && is_writable($backup_path)) {
 			if ($config['cacti_server_os'] == 'win32') {
 				$tmp_backup_dir = getenv('TEMP');
 			} else {

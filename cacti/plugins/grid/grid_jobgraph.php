@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -77,7 +77,7 @@ $filebase        = $jobid . "_" .  $indexid . "_" .  $clusterid . "_" .  $submit
 if($host_name != null){
 	$filebase	.= "_" . $host_name;
 }
-if($gpu_id !== null){
+if($gpu_id != null){
 	$filebase	.= "_" . $gpu_id;
 }
 $pngfile         = $cache_directory . '/' . $filebase . '_' . $graph_type . '.png';
@@ -109,7 +109,7 @@ if (cacti_sizeof($jobs)) {
 
 if (strlen($cache_directory)) {
 	if (is_dir($cache_directory)) {
-		if ($gpu_id !== null) {
+		if ($gpu_id != null) {
 			$recreate_png = update_job_rrds_gpu($table_name, $cache_directory, $filebase,
 												$clusterid, $jobid, $indexid, $submit_time,
 												$data_class, $rrdtool_pipe, $host_name, $gpu_id);
@@ -152,16 +152,11 @@ if (is_numeric($job_update_interval)) {
 }
 
 if (file_exists($pngfile)) {
-	$filesize = filesize($pngfile);
-	$filetype = exif_imagetype($pngfile);
-	if ($filesize > 0 && $filetype > 0 && $filetype < 19){
-		$file = fopen($pngfile, 'rb');
-		$data = fread($file, $filesize);
-		fclose($file);
-		input_validate_input_regex_xss_attack($data);
-		print $data;
-	}else{
-		cacti_log('WARNING: Invalid image file: '. $pngfile);
-	}
+	$file = fopen($pngfile, 'rb');
+	$data = fread($file, filesize($pngfile));
+	fclose($file);
+	input_validate_input_regex_xss_attack($data);
+	print $data;
+	exit;
 }
 

@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -49,7 +45,6 @@ function repopulate_poller_cache() {
 	$poller_items   = array();
 	$local_data_ids = array();
 	$poller_prev    = 1;
-
 	$i = 0;
 	$j = 0;
 
@@ -63,9 +58,7 @@ function repopulate_poller_cache() {
 
 			if ($i > 500 || $poller_prev != $poller_id) {
 				poller_update_poller_cache_from_buffer($local_data_ids, $poller_items, $poller_prev);
-
 				$i = 0;
-
 				$local_data_ids = array();
 				$poller_items   = array();
 			}
@@ -73,7 +66,6 @@ function repopulate_poller_cache() {
 			$poller_prev      = $poller_id;
 			$poller_items     = array_merge($poller_items, update_poller_cache($data));
 			$local_data_ids[] = $data['id'];
-
 			$i++;
 			$j++;
 		}
@@ -99,20 +91,17 @@ function repopulate_poller_cache() {
 	db_execute('TRUNCATE TABLE poller_data_template_field_mappings');
 	db_execute('INSERT IGNORE INTO poller_data_template_field_mappings
 		SELECT dtr.data_template_id, dif.data_name,
-		GROUP_CONCAT(DISTINCT dtr.data_source_name ORDER BY dtr.data_source_name) AS data_source_names, NOW()
-		FROM graph_templates_item AS gti
-		INNER JOIN data_template_rrd AS dtr
-		ON gti.task_item_id = dtr.id
+		GROUP_CONCAT(dtr.data_source_name ORDER BY dtr.data_source_name) AS data_source_names, NOW()
+		FROM data_template_rrd AS dtr
 		INNER JOIN data_input_fields AS dif
 		ON dtr.data_input_field_id = dif.id
 		WHERE dtr.local_data_id = 0
-		AND gti.local_graph_id = 0
 		GROUP BY dtr.data_template_id, dif.data_name');
 
 	if (isset($_SESSION['sess_user_id'])) {
-		cacti_log('NOTE: Poller Cache repopulated by user ' . get_username($_SESSION['sess_user_id']), false, 'PCACHE');
+		cacti_log('NOTE: Poller Cache repopulated by user ' . get_username($_SESSION['sess_user_id']), false, 'WEBUI');
 	} else {
-		cacti_log('NOTE: Poller Cache repopulated by cli script', false, 'PCACHE');
+		cacti_log('NOTE: Poller Cache repopulated by cli script');
 	}
 }
 
@@ -164,11 +153,6 @@ function update_poller_cache_from_query($host_id, $data_query_id, $local_data_id
 function update_poller_cache($data_source, $commit = false) {
 	global $config;
 
-	static $template_data_id_data    = array();
-	static $host_field_data          = array();
-	static $data_template_field_data = array();
-	static $num_outfields_data       = array();
-
 	include_once($config['library_path'] . '/data_query.php');
 	include_once($config['library_path'] . '/api_poller.php');
 
@@ -189,7 +173,7 @@ function update_poller_cache($data_source, $commit = false) {
 	$poller_id = db_fetch_cell_prepared('SELECT poller_id
 		FROM host AS h
 		INNER JOIN data_local AS dl
-		ON h.id = dl.host_id
+		ON h.id=dl.host_id
 		WHERE dl.id = ?',
 		array($data_source['id']));
 
@@ -198,7 +182,7 @@ function update_poller_cache($data_source, $commit = false) {
 		dtd.data_template_id, dtd.active, dtd.rrd_step
 		FROM data_template_data AS dtd
 		INNER JOIN data_input AS di
-		ON dtd.data_input_id = di.id
+		ON dtd.data_input_id=di.id
 		WHERE dtd.local_data_id = ?',
 		array($data_source['id']));
 
@@ -246,18 +230,12 @@ function update_poller_cache($data_source, $commit = false) {
 					$script_path = get_full_script_path($data_source['id']);
 				}
 
-				if (!isset($num_outfields_data[$data_input['id']])) {
-					$num_output_fields = cacti_sizeof(db_fetch_assoc_prepared('SELECT ' . SQL_NO_CACHE . ' id
-						FROM data_input_fields
-						WHERE data_input_id = ?
-						AND input_output = "out"
-						AND update_rra = "on"',
-						array($data_input['id'])));
-
-					$num_outfields_data[$data_input['id']] = $num_output_fields;
-				} else {
-					$num_output_fields = $num_outfields_data[$data_input['id']];
-				}
+				$num_output_fields = cacti_sizeof(db_fetch_assoc_prepared('SELECT ' . SQL_NO_CACHE . ' id
+					FROM data_input_fields
+					WHERE data_input_id = ?
+					AND input_output = "out"
+					AND update_rra="on"',
+					array($data_input['id'])));
 
 				if ($num_output_fields == 1) {
 					$data_template_rrd_id = db_fetch_cell_prepared('SELECT ' . SQL_NO_CACHE . ' id
@@ -273,61 +251,34 @@ function update_poller_cache($data_source, $commit = false) {
 				$poller_items[] = api_poller_cache_item_add($data_source['host_id'], array(), $data_source['id'], $data_input['rrd_step'], $action, $data_source_item_name, 1, $script_path);
 			} elseif ($data_input['type_id'] == DATA_INPUT_TYPE_SNMP) {
 				/* get the host override fields */
-				if (!isset($data_source['data_template_id'])) {
-					$data_template_id = db_fetch_cell_prepared('SELECT ' . SQL_NO_CACHE . ' data_template_id
-						FROM data_template_data
-						WHERE local_data_id = ?',
-						array($data_source['id']));
-				} else {
-					$data_template_id = $data_source['data_template_id'];
-				}
-
-				if (!isset($template_data_id_data[$data_template_id])) {
-					$template_data_template_data_id = db_fetch_cell_prepared('SELECT ' . SQL_NO_CACHE . ' id
-						FROM data_template_data
-						WHERE data_template_id = ?
-						AND local_data_id = 0',
-						array($data_template_id));
-
-					$template_data_id_data[$data_template_id] = $template_data_template_data_id;
-				} else {
-					$template_data_template_data_id = $template_data_id_data[$data_template_id];
-				}
+				$data_template_id = db_fetch_cell_prepared('SELECT ' . SQL_NO_CACHE . ' data_template_id
+					FROM data_template_data
+					WHERE local_data_id = ?',
+					array($data_source['id']));
 
 				/* get host fields first */
-				if (!isset($host_field_data[$data_input['data_template_data_id']])) {
-					$host_fields = array_rekey(
-						db_fetch_assoc_prepared('SELECT ' . SQL_NO_CACHE . ' dif.type_code, did.value
-							FROM data_input_fields AS dif
-							LEFT JOIN data_input_data AS did
-							ON dif.id = did.data_input_field_id
-							WHERE (type_code LIKE "snmp_%" OR type_code IN("hostname", "host_id"))
-							AND did.data_template_data_id = ?
-							AND did.value != ""', array($data_input['data_template_data_id'])),
-						'type_code', 'value'
-					);
+				$host_fields = array_rekey(
+					db_fetch_assoc_prepared('SELECT ' . SQL_NO_CACHE . ' dif.type_code, did.value
+						FROM data_input_fields AS dif
+						LEFT JOIN data_input_data AS did
+						ON dif.id=did.data_input_field_id
+						WHERE (type_code LIKE "snmp_%" OR type_code IN("hostname","host_id"))
+						AND did.data_template_data_id = ?
+						AND did.value != ""', array($data_input['data_template_data_id'])),
+					'type_code', 'value'
+				);
 
-					$host_field_data[$data_input['data_template_data_id']] = $host_fields;
-				} else {
-					$host_fields = $host_field_data[$data_input['data_template_data_id']];
-				}
-
-				if (!isset($data_template_field_data[$template_data_template_data_id])) {
-					$data_template_fields = array_rekey(
-						db_fetch_assoc_prepared('SELECT ' . SQL_NO_CACHE . ' dif.type_code, did.value
-							FROM data_input_fields AS dif
-							LEFT JOIN data_input_data AS did
-							ON dif.id = did.data_input_field_id
-							WHERE (type_code LIKE "snmp_%" OR type_code = "hostname")
-							AND did.data_template_data_id = ?
-							AND did.value != ""', array($template_data_template_data_id)),
-						'type_code', 'value'
-					);
-
-					$data_template_field_data[$template_data_template_data_id] = $data_template_fields;
-				} else {
-					$data_template_fields = $data_template_field_data[$template_data_template_data_id];
-				}
+				$data_template_fields = array_rekey(
+					db_fetch_assoc_prepared('SELECT ' . SQL_NO_CACHE . ' dif.type_code, did.value
+						FROM data_input_fields AS dif
+						LEFT JOIN data_input_data AS did
+						ON dif.id=did.data_input_field_id
+						WHERE (type_code LIKE "snmp_%" OR type_code="hostname")
+						AND did.data_template_data_id = ?
+						AND data_template_data_id = ?
+						AND did.value != ""', array($data_template_id, $data_template_id)),
+					'type_code', 'value'
+				);
 
 				if (cacti_sizeof($host_fields)) {
 					if (cacti_sizeof($data_template_fields)) {
@@ -351,61 +302,34 @@ function update_poller_cache($data_source, $commit = false) {
 				$snmp_queries = get_data_query_array($data_source['snmp_query_id']);
 
 				/* get the host override fields */
-				if (!isset($data_source['data_template_id'])) {
-					$data_template_id = db_fetch_cell_prepared('SELECT ' . SQL_NO_CACHE . ' data_template_id
-						FROM data_template_data
-						WHERE local_data_id = ?',
-						array($data_source['id']));
-				} else {
-					$data_template_id = $data_source['data_template_id'];
-				}
-
-				if (!isset($template_data_id_data[$data_template_id])) {
-					$template_data_template_data_id = db_fetch_cell_prepared('SELECT ' . SQL_NO_CACHE . ' id
-						FROM data_template_data
-						WHERE data_template_id = ?
-						AND local_data_id = 0',
-						array($data_template_id));
-
-					$template_data_id_data[$data_template_id] = $template_data_template_data_id;
-				} else {
-					$template_data_template_data_id = $template_data_id_data[$data_template_id];
-				}
+				$data_template_id = db_fetch_cell_prepared('SELECT ' . SQL_NO_CACHE . ' data_template_id
+					FROM data_template_data
+					WHERE local_data_id = ?',
+					array($data_source['id']));
 
 				/* get host fields first */
-				if (!isset($host_field_data[$data_input['data_template_data_id']])) {
-					$host_fields = array_rekey(
-						db_fetch_assoc_prepared('SELECT ' . SQL_NO_CACHE . ' dif.type_code, did.value
-							FROM data_input_fields AS dif
-							LEFT JOIN data_input_data AS did
-							ON dif.id = did.data_input_field_id
-							WHERE (type_code LIKE "snmp_%" OR type_code IN("hostname", "host_id"))
-							AND did.data_template_data_id = ?
-							AND did.value != ""', array($data_input['data_template_data_id'])),
-						'type_code', 'value'
-					);
+				$host_fields = array_rekey(
+					db_fetch_assoc_prepared('SELECT ' . SQL_NO_CACHE . ' dif.type_code, did.value
+						FROM data_input_fields AS dif
+						LEFT JOIN data_input_data AS did
+						ON dif.id=did.data_input_field_id
+						WHERE (type_code LIKE "snmp_%" OR type_code="hostname")
+						AND did.data_template_data_id = ?
+						AND did.value != ""', array($data_input['data_template_data_id'])),
+					'type_code', 'value'
+				);
 
-					$host_field_data[$data_input['data_template_data_id']] = $host_fields;
-				} else {
-					$host_fields = $host_field_data[$data_input['data_template_data_id']];
-				}
-
-				if (!isset($data_template_field_data[$template_data_template_data_id])) {
-					$data_template_fields = array_rekey(
-						db_fetch_assoc_prepared('SELECT ' . SQL_NO_CACHE . ' dif.type_code, did.value
-							FROM data_input_fields AS dif
-							LEFT JOIN data_input_data AS did
-							ON dif.id = did.data_input_field_id
-							WHERE (type_code LIKE "snmp_%" OR type_code = "hostname")
-							AND did.data_template_data_id = ?
-							AND did.value != ""', array($template_data_template_data_id)),
-						'type_code', 'value'
-					);
-
-					$data_template_field_data[$template_data_template_data_id] = $data_template_fields;
-				} else {
-					$data_template_fields = $data_template_field_data[$template_data_template_data_id];
-				}
+				$data_template_fields = array_rekey(
+					db_fetch_assoc_prepared('SELECT ' . SQL_NO_CACHE . ' dif.type_code, did.value
+						FROM data_input_fields AS dif
+						LEFT JOIN data_input_data AS did
+						ON dif.id=did.data_input_field_id
+						WHERE (type_code LIKE "snmp_%" OR type_code="hostname")
+						AND did.data_template_data_id = ?
+						AND data_template_data_id = ?
+						AND did.value != ""', array($data_template_id, $data_template_id)),
+					'type_code', 'value'
+				);
 
 				if (cacti_sizeof($host_fields)) {
 					if (cacti_sizeof($data_template_fields)) {
@@ -439,55 +363,34 @@ function update_poller_cache($data_source, $commit = false) {
 				$script_queries = get_data_query_array($data_source['snmp_query_id']);
 
 				/* get the host override fields */
-				if (!isset($data_source['data_template_id'])) {
-					$data_template_id = db_fetch_cell_prepared('SELECT ' . SQL_NO_CACHE . ' data_template_id
-						FROM data_template_data
-						WHERE local_data_id = ?',
-						array($data_source['id']));
-				} else {
-					$data_template_id = $data_source['data_template_id'];
-				}
-
-				$template_data_template_data_id = db_fetch_cell_prepared('SELECT ' . SQL_NO_CACHE . ' id
+				$data_template_id = db_fetch_cell_prepared('SELECT ' . SQL_NO_CACHE . ' data_template_id
 					FROM data_template_data
-					WHERE data_template_id = ?
-					AND local_data_id = 0',
-					array($data_template_id));
+					WHERE local_data_id = ?',
+					array($data_source['id']));
 
 				/* get host fields first */
-				if (!isset($host_field_data[$data_input['data_template_data_id']])) {
-					$host_fields = array_rekey(
-						db_fetch_assoc_prepared('SELECT ' . SQL_NO_CACHE . ' dif.type_code, did.value
-							FROM data_input_fields AS dif
-							LEFT JOIN data_input_data AS did
-							ON dif.id = did.data_input_field_id
-							WHERE (type_code LIKE "snmp_%" OR type_code IN("hostname", "host_id"))
-							AND did.data_template_data_id = ?
-							AND did.value != ""', array($data_input['data_template_data_id'])),
-						'type_code', 'value'
-					);
+				$host_fields = array_rekey(
+					db_fetch_assoc_prepared('SELECT ' . SQL_NO_CACHE . ' dif.type_code, did.value
+						FROM data_input_fields AS dif
+						LEFT JOIN data_input_data AS did
+						ON dif.id=did.data_input_field_id
+						WHERE (type_code LIKE "snmp_%" OR type_code="hostname")
+						AND did.data_template_data_id = ?
+						AND did.value != ""', array($data_input['data_template_data_id'])),
+					'type_code', 'value'
+				);
 
-					$host_field_data[$data_input['data_template_data_id']] = $host_fields;
-				} else {
-					$host_fields = $host_field_data[$data_input['data_template_data_id']];
-				}
-
-				if (!isset($data_template_field_data[$template_data_template_data_id])) {
-					$data_template_fields = array_rekey(
-						db_fetch_assoc_prepared('SELECT ' . SQL_NO_CACHE . ' dif.type_code, did.value
-							FROM data_input_fields AS dif
-							LEFT JOIN data_input_data AS did
-							ON dif.id = did.data_input_field_id
-							WHERE (type_code LIKE "snmp_%" OR type_code = "hostname")
-							AND did.data_template_data_id = ?
-							AND did.value != ""', array($template_data_template_data_id)),
-						'type_code', 'value'
-					);
-
-					$data_template_field_data[$template_data_template_data_id] = $data_template_fields;
-				} else {
-					$data_template_fields = $data_template_field_data[$template_data_template_data_id];
-				}
+				$data_template_fields = array_rekey(
+					db_fetch_assoc_prepared('SELECT ' . SQL_NO_CACHE . ' dif.type_code, did.value
+						FROM data_input_fields AS dif
+						LEFT JOIN data_input_data AS did
+						ON dif.id=did.data_input_field_id
+						WHERE (type_code LIKE "snmp_%" OR type_code="hostname")
+						AND data_template_data_id = ?
+						AND did.data_template_data_id = ?
+						AND did.value != ""', array($data_template_id, $data_template_id)),
+					'type_code', 'value'
+				);
 
 				if (cacti_sizeof($host_fields)) {
 					if (cacti_sizeof($data_template_fields)) {
@@ -514,10 +417,10 @@ function update_poller_cache($data_source, $commit = false) {
 									$prepend = $script_queries['arg_prepend'];
 								}
 
-								$script_path = get_script_query_path(trim($prepend . ' ' . $script_queries['arg_get'] . ' ' . $identifier . ' "' . $data_source['snmp_index'] . '"'), $script_queries['script_path'] . ' ' . $script_queries['script_function'], $data_source['host_id']);
+								$script_path = get_script_query_path(trim($prepend . ' ' . $script_queries['arg_get'] . ' ' . $identifier . ' ' . $data_source['snmp_index']), $script_queries['script_path'] . ' ' . $script_queries['script_function'], $data_source['host_id']);
 							} else {
 								$action = POLLER_ACTION_SCRIPT;
-								$script_path = get_script_query_path(trim((isset($script_queries['arg_prepend']) ? $script_queries['arg_prepend'] : '') . ' ' . $script_queries['arg_get'] . ' ' . $identifier . ' "' . $data_source['snmp_index'] . '"'), $script_queries['script_path'], $data_source['host_id']);
+								$script_path = get_script_query_path(trim((isset($script_queries['arg_prepend']) ? $script_queries['arg_prepend'] : '') . ' ' . $script_queries['arg_get'] . ' ' . $identifier . ' ' . $data_source['snmp_index']), $script_queries['script_path'], $data_source['host_id']);
 							}
 						}
 
@@ -550,7 +453,7 @@ function update_poller_cache($data_source, $commit = false) {
 			array($data_source['id']));
 
 		if (cacti_sizeof($data_template_data) && $data_template_data['data_input_id'] > 0) {
-			cacti_log('WARNING: Repopulate Poller Cache found Data Input Missing for Data Source ' . $data_source['id'] . '.  Database may be corrupted', false, 'PCACHE');
+			cacti_log('WARNING: Repopulate Poller Cache found Data Input Missing for Data Source ' . $data_source['id'] . '.  Database may be corrupted');
 		}
 	}
 
@@ -647,36 +550,20 @@ function poller_update_poller_cache_from_buffer($local_data_ids, &$poller_items,
 	}
 
 	/* setup the database call */
-	$sql_prefix = 'INSERT INTO poller_item (local_data_id, poller_id, host_id, action, hostname, ' .
+	$sql_prefix   = 'INSERT INTO poller_item (local_data_id, poller_id, host_id, action, hostname, ' .
 		'snmp_community, snmp_version, snmp_timeout, snmp_username, snmp_password, ' .
 		'snmp_auth_protocol, snmp_priv_passphrase, snmp_priv_protocol, snmp_context, snmp_engine_id, ' .
 		'snmp_port, rrd_name, rrd_path, rrd_num, rrd_step, rrd_next_step, arg1, arg2, arg3, present) ' .
 		'VALUES';
 
-	$sql_suffix = ' ON DUPLICATE KEY UPDATE
-		poller_id = VALUES(poller_id),
-		host_id = VALUES(host_id),
-		action = VALUES(action),
-		hostname = VALUES(hostname),
-		snmp_community = VALUES(snmp_community),
-		snmp_version = VALUES(snmp_version),
-		snmp_timeout = VALUES(snmp_timeout),
-		snmp_username = VALUES(snmp_username),
-		snmp_password = VALUES(snmp_password),
-		snmp_auth_protocol = VALUES(snmp_auth_protocol),
-		snmp_priv_passphrase = VALUES(snmp_priv_passphrase),
-		snmp_priv_protocol = VALUES(snmp_priv_protocol),
-		snmp_context = VALUES(snmp_context),
-		snmp_engine_id = VALUES(snmp_engine_id),
-		snmp_port = VALUES(snmp_port),
-		rrd_path = VALUES(rrd_path),
-		rrd_num = VALUES(rrd_num),
-		rrd_step = VALUES(rrd_step),
-		rrd_next_step = VALUES(rrd_next_step),
-		arg1 = VALUES(arg1),
-		arg2 = VALUES(arg2),
-		arg3 = VALUES(arg3),
-		present = 1';
+	$sql_suffix   = ' ON DUPLICATE KEY UPDATE poller_id=VALUES(poller_id), host_id=VALUES(host_id), action=VALUES(action), hostname=VALUES(hostname), ' .
+		'snmp_community=VALUES(snmp_community), snmp_version=VALUES(snmp_version), snmp_timeout=VALUES(snmp_timeout), ' .
+		'snmp_username=VALUES(snmp_username), snmp_password=VALUES(snmp_password), snmp_auth_protocol=VALUES(snmp_auth_protocol), ' .
+		'snmp_priv_passphrase=VALUES(snmp_priv_passphrase), snmp_priv_protocol=VALUES(snmp_priv_protocol), ' .
+		'snmp_context=VALUES(snmp_context), snmp_engine_id=VALUES(snmp_engine_id), snmp_port=VALUES(snmp_port), ' .
+		'rrd_path=VALUES(rrd_path), rrd_num=VALUES(rrd_num), ' .
+		'rrd_step=VALUES(rrd_step), rrd_next_step=VALUES(rrd_next_step), arg1=VALUES(arg1), arg2=VALUES(arg2), ' .
+		'arg3=VALUES(arg3), present=VALUES(present)';
 
 	/* use a reasonable insert buffer, the default is 1MByte */
 	$max_packet   = 256000;
@@ -800,35 +687,30 @@ function push_out_host($host_id, $local_data_id = 0, $data_template_id = 0) {
 	$hosts           = array();
 	$template_fields = array();
 	$sql_where       = '';
-	$sql_where_p     = '';
 
 	/* setup the sql where, and if using a host, get it's host information */
-	if ($host_id > 0) {
+	if ($host_id != 0) {
 		/* get all information about this host so we can write it to the data source */
 		$hosts[$host_id] = db_fetch_row_prepared('SELECT ' . SQL_NO_CACHE . ' id AS host_id, host.*
 			FROM host WHERE id = ?',
 			array($host_id));
 
-		$sql_where   .= ' AND dl.host_id=' . $host_id;
-		$sql_where_p .= ' dl.host_id=' . $host_id;
+		$sql_where .= ' AND dl.host_id=' . $host_id;
 	}
 
 	/* sql WHERE for local_data_id */
-	if ($local_data_id > 0) {
-		$sql_where   .= ' AND dl.id = ' . $local_data_id;
-		$sql_where_p .= ($sql_where_p != '' ? ' AND':'') . ' dl.id = ' . $local_data_id;
+	if ($local_data_id != 0) {
+		$sql_where .= ' AND dl.id = ' . $local_data_id;
 	}
 
 	/* sql WHERE for data_template_id */
-	if ($data_template_id > 0) {
-		$sql_where   .= ' AND dtd.data_template_id = ' . $data_template_id;
-		$sql_where_p .= ($sql_where_p != '' ? ' AND':'') . ' dtd.data_template_id = ' . $data_template_id;
+	if ($data_template_id != 0) {
+		$sql_where .= ' AND dtd.data_template_id = ' . $data_template_id;
 	}
 
 	$data_sources = db_fetch_assoc('SELECT ' . SQL_NO_CACHE . " dtd.id,
 		dtd.data_input_id, dtd.local_data_id,
 		dtd.local_data_template_data_id, dl.host_id,
-		dl.data_template_id,
 		dl.snmp_query_id, dl.snmp_index
 		FROM data_local AS dl
 		INNER JOIN data_template_data AS dtd
@@ -836,17 +718,6 @@ function push_out_host($host_id, $local_data_id = 0, $data_template_id = 0) {
 		WHERE dtd.data_input_id > 0
 		AND (dl.snmp_query_id = 0 OR (dl.snmp_query_id > 0 AND dl.snmp_index != ''))
 		$sql_where");
-
-	/**
-	 * Mark poller_item as not present to remove stray entries in the end
-	 */
-	db_execute_prepared("UPDATE poller_item AS pi
-		INNER JOIN data_local AS dl
-		ON pi.local_data_id = dl.id
-		INNER JOIN data_template_data AS dtd
-		ON dl.id = dtd.local_data_id
-		SET pi.present = 0
-		WHERE $sql_where_p");
 
 	/* loop through each matching data source */
 	if (cacti_sizeof($data_sources)) {
@@ -867,11 +738,11 @@ function push_out_host($host_id, $local_data_id = 0, $data_template_id = 0) {
 				$template_fields[$data_source['local_data_template_data_id']] = db_fetch_assoc_prepared('SELECT ' . SQL_NO_CACHE . '
 					did.value, did.t_value, dif.id, dif.type_code
 					FROM data_input_fields AS dif
-					INNER JOIN data_input_data AS did
+					LEFT JOIN data_input_data AS did
 					ON dif.id = did.data_input_field_id
 					WHERE dif.data_input_id = ?
 					AND did.data_template_data_id = ?
-					AND (did.t_value = "" OR did.t_value IS NULL OR (did.t_value = "on" AND did.value = ""))
+					AND ((did.t_value = "" OR did.t_value IS NULL) OR (did.t_value = "on" AND did.value = ""))
 					AND dif.input_output = "in"',
 					array($data_source['data_input_id'], $data_source['local_data_template_data_id']));
 			}
@@ -891,15 +762,12 @@ function push_out_host($host_id, $local_data_id = 0, $data_template_id = 0) {
 						$field = 'id';
 					}
 
-					// Only override if the template value is null as this point
-					if (preg_match('/^' . VALID_HOST_FIELDS . '$/i', $template_field['type_code'])) {
-						if ($template_field['t_value'] != 'on') {
-							// It's a valid host type-code
-							$update = true;
+					if (preg_match('/^' . VALID_HOST_FIELDS . '$/i', $template_field['type_code']) && $template_field['t_value'] != 'on') {
+						// It's a valid host type-code
+						$update = true;
 
-							if ($template_field['type_code'] != 'host_id') {
-								$field = $template_field['type_code'];
-							}
+						if ($template_field['type_code'] != 'host_id') {
+							$field = $template_field['type_code'];
 						}
 					}
 
@@ -907,16 +775,6 @@ function push_out_host($host_id, $local_data_id = 0, $data_template_id = 0) {
 						// Don't mess with a field that does not exist
 						// In the host table
 						if (isset($host[$field])) {
-							$old_data = db_fetch_row_prepared('SELECT *
-								FROM data_input_data
-								WHERE data_input_field_id = ?
-								AND data_template_data_id = ?',
-								array($template_field['id'], $data_source['id']));
-
-							if ($old_data['value'] != $host[$field]) {
-								cacti_log("WARNING: Poller Cache updated Device[{$host['id']}], Field[$field], Old[{$old_data['value']}], New[{$host[$field]}]", false, 'PCACHE', POLLER_VERBOSITY_MEDIUM);
-							}
-
 							db_execute_prepared('REPLACE INTO data_input_data
 								(data_input_field_id, data_template_data_id, value)
 								VALUES (?, ?, ?)',
@@ -940,8 +798,6 @@ function push_out_host($host_id, $local_data_id = 0, $data_template_id = 0) {
 	}
 
 	if (cacti_sizeof($hosts)) {
-		$poller_ids = array();
-
 		foreach($hosts as $host) {
 			if (isset($host['poller_id'])) {
 				$poller_ids[$host['poller_id']] = $host['poller_id'];
@@ -949,7 +805,7 @@ function push_out_host($host_id, $local_data_id = 0, $data_template_id = 0) {
 		}
 
 		if (cacti_sizeof($poller_ids) > 1) {
-			cacti_log('WARNING: function push_out_host() discovered more than a single host', false, 'PCACHE');
+			cacti_log('WARNING: function push_out_host() discovered more than a single host', false, 'POLLER');
 		}
 	}
 
@@ -961,19 +817,6 @@ function push_out_host($host_id, $local_data_id = 0, $data_template_id = 0) {
 	if (cacti_sizeof($local_data_ids)) {
 		poller_update_poller_cache_from_buffer($local_data_ids, $poller_items, $poller_id);
 	}
-
-	/**
-	 * Remove orphaned entries now
-	 */
-	$sql_where_p .= ($sql_where_p != '' ? ' AND ':'') . ' present = 0';
-
-	db_execute_prepared("DELETE pi
-		FROM poller_item AS pi
-		INNER JOIN data_local AS dl
-		ON pi.local_data_id = dl.id
-		INNER JOIN data_template_data AS dtd
-		ON dl.id = dtd.local_data_id
-		WHERE $sql_where_p");
 
 	api_data_source_cache_crc_update($poller_id);
 }
@@ -1096,7 +939,7 @@ function utilities_get_mysql_recommendations() {
 			'class' => 'warning',
 			'measure' => 'ge',
 			'comment' => __('MySQL 5.6+ and MariaDB 10.0+ are great releases, and are very good versions to choose. Make sure you run the very latest release though which fixes a long standing low level networking issue that was causing spine many issues with reliability.')
-		)
+			)
 	);
 
 	if (isset($variables['innodb_version']) && version_compare($variables['innodb_version'], '5.6', '<')) {
@@ -1137,9 +980,7 @@ function utilities_get_mysql_recommendations() {
 		);
 	} else {
 		if (version_compare($link_ver, '5.2', '>=')) {
-			if (!isset($variables['innodb_version']) &&
-				($database == 'MySQL' || ($database == 'MariaDB' && version_compare($link_ver, '10.7', '<')))) {
-
+			if (!isset($variables['innodb_version'])) {
 				$recommendations += array(
 					'innodb' => array(
 						'value' => 'ON',
@@ -1429,7 +1270,6 @@ function utilities_get_mysql_recommendations() {
 				$compare = '>=';
 				$passed = (version_compare($value_current, $value_recommend, '>='));
 				break;
-			case 'eq':
 			case 'equalint':
 			case 'equal':
 				$compare = '=';
@@ -1674,7 +1514,7 @@ function utilities_php_modules() {
 	$php_info = str_replace("\n", '', $php_info);
 	$php_info = preg_replace('/^.*\<body\>/', '', $php_info);
 	$php_info = preg_replace('/\<\/body\>.*$/', '', $php_info);
-	$php_info = preg_replace('/(\<a name.*\>)([^<>]*)(\<\/a\>)/U', '$2', $php_info);
+	$php_info = preg_replace('/(\<a name.*\>)([^<>]*)(\<\/a\>)/U', '$2<hr>', $php_info);
 	$php_info = preg_replace('/\<img.*\>/U', '', $php_info);
 	$php_info = preg_replace('/\<div[^<>]*\>\<\/div\>/U', '', $php_info);
 	$php_info = preg_replace('/\<\/?address\>/', '', $php_info);
@@ -1916,12 +1756,9 @@ function utility_php_verify_recommends(&$recommends, $source) {
 	$memory_limit   = utility_get_formatted_bytes($memory_ini, 'M', $memory_ini, 'B');
 
 	$execute_time   = ini_get('max_execution_time');
-	$timezone       = ini_get('date.timezone');
+	$ini_values     = parse_ini_file(get_cfg_var('cfg_file_path'));
 
-	$cfg_values     = parse_ini_file(get_cfg_var('cfg_file_path'));
-	$cfg_mem_limit  = empty($cfg_values['memory_limit']) ? '' : $cfg_values['memory_limit'];
-	$cfg_timezone   = empty($cfg_values['date.timezone']) ? '' : $cfg_values['date.timezone'];
-	$cfg_max_exec   = empty($cfg_values['max_execution_time']) ? '' : $cfg_values['max_execution_time'];
+	$timezone       = ini_get('date.timezone');
 
 	$recommends = array(
 		array(
@@ -1940,19 +1777,19 @@ function utility_php_verify_recommends(&$recommends, $source) {
 			'name'        => 'memory_limit',
 			'value'       => $rec_memory_mb,
 			'current'     => $memory_ini,
-			'status'      => (($memory_limit <= 0 || $memory_limit >= $rec_memory) ? DB_STATUS_SUCCESS :($memory_limit != $cfg_mem_limit ? DB_STATUS_RESTART :  DB_STATUS_WARNING)),
+			'status'      => (($memory_limit <= 0 || $memory_limit >= $rec_memory) ? DB_STATUS_SUCCESS :($memory_limit != $ini_values['memory_limit'] ? DB_STATUS_RESTART :  DB_STATUS_WARNING)),
 		),
 		array(
 			'name'        => 'max_execution_time',
 			'value'       => $rec_execute,
 			'current'     => $execute_time,
-			'status'      => (($execute_time <= 0 || $execute_time >= $rec_execute) ? DB_STATUS_SUCCESS : ($execute_time != $cfg_max_exec ? DB_STATUS_RESTART : DB_STATUS_WARNING)),
+			'status'      => (($execute_time <= 0 || $execute_time >= $rec_execute) ? DB_STATUS_SUCCESS : ($execute_time != $ini_values['max_execution_time'] ? DB_STATUS_RESTART : DB_STATUS_WARNING)),
 		),
 		array(
 			'name'        => 'date.timezone',
 			'value'       => '<timezone>',
 			'current'     => $timezone,
-			'status'      => ($timezone ? DB_STATUS_SUCCESS : ($timezone != $cfg_timezone ? DB_STATUS_RESTART : DB_STATUS_ERROR)),
+			'status'      => ($timezone ? DB_STATUS_SUCCESS : ($timezone != $ini_values['date.timezone'] ? DB_STATUS_RESTART : DB_STATUS_ERROR)),
 		),
 	);
 }

@@ -134,12 +134,12 @@
 				<db_table></db_table>
 				<sql_query>SELECT gj.clusterid, gc.clustername, jobid, indexid, submit_time, stat, user,
 effectiveEligiblePendingTimeLimit,
-(CAST(pend_time AS SIGNED) - CAST(ineligiblePendingTime AS SIGNED))  AS EligiblePendingTime
+(pend_time - ineligiblePendingTime)  AS EligiblePendingTime
 FROM grid_jobs AS gj, grid_clusters AS gc
 WHERE gj.clusterid = gc.clusterid
 AND stat in (&#039;PEND&#039;,&#039;USUSP&#039;, &#039;PSUSP&#039;, &#039;SSUSP&#039;)
 AND effectiveEligiblePendingTimeLimit &gt;0
-AND (CAST(pend_time AS SIGNED) - CAST(ineligiblePendingTime AS SIGNED)) &gt; effectiveEligiblePendingTimeLimit
+AND (pend_time - ineligiblePendingTime)  &gt; effectiveEligiblePendingTimeLimit
 
 </sql_query>
 				<script_thold></script_thold>

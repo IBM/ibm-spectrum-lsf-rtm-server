@@ -1,3 +1,4 @@
+// $Id$
 /* Japanese initialisation for the jQuery UI date picker plugin. */
 /* Written by Kentaro SATO (kentaro@ranvis.com). */
 ( function( factory ) {

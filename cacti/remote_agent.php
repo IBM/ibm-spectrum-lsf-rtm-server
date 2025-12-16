@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -51,7 +47,7 @@ if ($config['poller_id'] > 1 && $config['connection'] == 'online') {
 }
 
 if (!remote_client_authorized()) {
-	print 'FATAL: Client authorization failed.  You are not authorized to use this service';
+	print 'FATAL: You are not authorized to use this service';
 	exit;
 }
 
@@ -130,7 +126,7 @@ function remote_agent_strip_domain($host) {
 }
 
 function remote_client_authorized() {
-	global $config, $poller_db_cnn_id;
+	global $poller_db_cnn_id;
 
 	/* don't allow to run from the command line */
 	$client_addr = get_client_addr();
@@ -151,9 +147,9 @@ function remote_client_authorized() {
 		$client_name = remote_agent_strip_domain($client_name);
 	}
 
-	$pollers = db_fetch_assoc('SELECT * FROM poller WHERE disabled = ""', true, $poller_db_cnn_id);
+	$pollers = db_fetch_assoc('SELECT * FROM poller', true, $poller_db_cnn_id);
 
-	if (cacti_sizeof($pollers) > 1) {
+	if (cacti_sizeof($pollers)) {
 		foreach($pollers as $poller) {
 			if (remote_agent_strip_domain($poller['hostname']) == $client_name) {
 				return true;
@@ -298,13 +294,8 @@ function poll_for_data() {
 
 	$local_data_ids = get_nfilter_request_var('local_data_ids');
 	$host_id        = get_filter_request_var('host_id');
-	$poller_id      = get_nfilter_request_var('poller_id');
+	$poller_id      = get_filter_request_var('poller_id');
 	$return         = array();
-
-	/* ensure we have a valid poller_id */
-	if (!preg_match('/^[a-z0-9]+$/i', $poller_id)) {
-		return array();
-	}
 
 	$i = 0;
 

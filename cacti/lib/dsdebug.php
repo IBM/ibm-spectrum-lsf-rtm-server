@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -99,7 +95,7 @@ function dsdebug_error_handler($errno, $errmsg, $filename, $linenum, $vars = [])
 }
 
 function dsdebug_poller_output(&$rrd_update_array) {
-	global $config;
+	global $config, $ds_types, $ds_last, $ds_steps, $ds_multi;
 
 	/* suppress warnings */
 	if (defined('E_DEPRECATED')) {
@@ -219,106 +215,100 @@ function dsdebug_poller_bottom() {
 				}
 
 				// rrd_match
-				$rrdinfo = rrdtool_function_info($c['datasource']);
+				$rrdinfo                 = rrdtool_function_info($c['datasource']);
+				$comp                    = rrdtool_cacti_compare($c['datasource'], $rrdinfo);
+				$info['rrd_match']       = (is_array($comp) && empty($comp) ? 1 : 0);
+				$info['rrd_match_array'] = $comp;
+				$info['rrd_info']        = $rrdinfo;
 
-				if (cacti_sizeof($rrdinfo)) {
-					$comp                    = rrdtool_cacti_compare($c['datasource'], $rrdinfo);
-					$info['rrd_match']       = (is_array($comp) && empty($comp) ? 1 : 0);
-					$info['rrd_match_array'] = $comp;
-					$info['rrd_info']        = $rrdinfo;
+				// rra_timestamp
+				if ($info['rra_timestamp'] != ''
+					&& isset($rrdinfo['last_update'])
+					&& $info['rra_timestamp'] != $rrdinfo['last_update']) {
 
-					// rra_timestamp
-					if ($info['rra_timestamp'] != ''
-						&& isset($rrdinfo['last_update'])
-						&& $info['rra_timestamp'] != $rrdinfo['last_update']) {
+					$info['rra_timestamp2'] = $rrdinfo['last_update'];
+				}
 
-						$info['rra_timestamp2'] = $rrdinfo['last_update'];
+				if (isset($rrdinfo['last_update']) && $info['rra_timestamp'] == '') {
+					$info['rra_timestamp'] = $rrdinfo['last_update'];
+				}
+
+				$c['done'] = 1;
+				$f = array();
+				foreach ($info as $k => $v) {
+					if ($v === '') {
+						$c['done'] = 0;
+						$f[] = $k;
 					}
+				}
 
-					if (isset($rrdinfo['last_update']) && $info['rra_timestamp'] == '') {
-						$info['rra_timestamp'] = $rrdinfo['last_update'];
-					}
-
+				if ($c['started'] < time() - ($dtd['rrd_step'] * 5)) {
 					$c['done'] = 1;
-					$f = array();
-					foreach ($info as $k => $v) {
-						if ($v === '') {
-							$c['done'] = 0;
-							$f[] = $k;
-						}
-					}
+					$c['issue'][] = __('Debug not completed after 5 pollings');
+					$c['issue'][] = __('Failed fields: ') . implode(', ', $f);
 
-					if ($c['started'] < time() - ($dtd['rrd_step'] * 5)) {
-						$c['done'] = 1;
-						$c['issue'][] = __('Debug not completed after 5 pollings');
-						$c['issue'][] = __('Failed fields: ') . implode(', ', $f);
-
-						$total_issues++;
-					}
-
-					// Try to determine issue
-					// Not set as Active
-					// Log permanent fails first
-					if ($info['active'] != 'on') {
-						$c['issue'][] = __('Data Source is not set as Active');
-						$c['done'] = 1;
-
-						$total_issues++;
-					}
-
-					// File Permissions
-					if ((!$info['rrd_exists'] || !$info['rrd_writable']) && !$info['rrd_folder_writable']) {
-						$c['issue'][] = __('RRDfile Folder (rra) is not writable by Poller.  Folder owner: %s.  Poller runs as: %s', $o, $info['runas_poller']);
-						$c['done'] = 1;
-
-						$total_issues++;
-					} elseif (!$info['rrd_writable']) {
-						$c['issue'][] = __('RRDfile is not writable by Poller.  RRDfile owner: %s.  Poller runs as %s', $o, $info['runas_poller']);
-						$c['done'] = 1;
-
-						$total_issues++;
-					}
-
-					// For errors that only appear after so many errors next
-					if ($c['done'] == 1) {
-						if ($info['rrd_match'] == 0) {
-							$c['issue'][] = __('RRDfile does not match Data Source');
-							$total_issues++;
-						}
-
-						if ($info['rra_timestamp2'] == '') {
-							$c['issue'][] = __('RRDfile not updated after polling');
-							$total_issues++;
-						}
-
-						if (is_array($info['last_result']) && !empty($info['last_result'])) {
-							foreach ($info['last_result'] as $k => $l) {
-								if ($l == 'U') {
-									$c['issue'][] = __('Data Source returned Bad Results for ' . $k);
-									$total_issues++;
-								}
-							}
-						} elseif ($info['last_result'] == '') {
-							$c['issue'][] = __('Data Source was not polled');
-							$total_issues++;
-						}
-
-						if ($c['issue'] == '') {
-							$c['issue'][] = __('No issues found');
-						}
-					}
-				} else {
-					$c['issue'][] = __('RRDfile not created yet');
 					$total_issues++;
 				}
 
-				$info = serialize($info);
+				// Try to determine issue
+				// Not set as Active
+				// Log permanent fails first
+				if ($info['active'] != 'on') {
+					$c['issue'][] = __('Data Source is not set as Active');
+					$c['done'] = 1;
 
-				db_execute_prepared('UPDATE data_debug
-					SET `done` = ?, `info` = ?, `issue` = ?
-					WHERE id = ?',
-					array($c['done'], $info, trim(implode("\n", $c['issue'])), $c['id']));
+					$total_issues++;
+				}
+
+				// File Permissions
+				if ((!$info['rrd_exists'] || !$info['rrd_writable']) && !$info['rrd_folder_writable']) {
+					$c['issue'][] = __('RRDfile Folder (rra) is not writable by Poller.  Folder owner: %s.  Poller runs as: %s', $o, $info['runas_poller']);
+					$c['done'] = 1;
+
+					$total_issues++;
+				} elseif (!$info['rrd_writable']) {
+					$c['issue'][] = __('RRDfile is not writable by Poller.  RRDfile owner: %s.  Poller runs as %s', $o, $info['runas_poller']);
+					$c['done'] = 1;
+
+					$total_issues++;
+				}
+
+				// For errors that only appear after so many errors next
+				if ($c['done'] == 1) {
+					if ($info['rrd_match'] == 0) {
+						$c['issue'][] = __('RRDfile does not match Data Source');
+						$total_issues++;
+					}
+
+					if ($info['rra_timestamp2'] == '') {
+						$c['issue'][] = __('RRDfile not updated after polling');
+						$total_issues++;
+					}
+
+					if (is_array($info['last_result']) && !empty($info['last_result'])) {
+						foreach ($info['last_result'] as $k => $l) {
+							if ($l == 'U') {
+								$c['issue'][] = __('Data Source returned Bad Results for ' . $k);
+								$total_issues++;
+							}
+						}
+					} elseif ($info['last_result'] == '') {
+						$c['issue'][] = __('Data Source was not polled');
+						$total_issues++;
+					}
+
+					if ($c['issue'] == '') {
+						$c['issue'][] = __('No issues found');
+					}
+				}
 			}
+
+			$info = serialize($info);
+
+			db_execute_prepared('UPDATE data_debug
+				SET `done` = ?, `info` = ?, `issue` = ?
+				WHERE id = ?',
+				array($c['done'], $info, trim(implode("\n", $c['issue'])), $c['id']));
 		}
 
 		log_dsdebug_statistics('poller', cacti_sizeof($checks), $total_issues);

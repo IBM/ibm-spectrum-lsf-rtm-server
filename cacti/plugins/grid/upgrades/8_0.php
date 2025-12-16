@@ -283,7 +283,7 @@ function upgrade_to_8_0() {
 		PRIMARY KEY  (`issusp`,`reason_code`,`sub_reason_code`)
 		) ENGINE=InnoDB;");
 
-	/* Drop legacy tables for PDB#153339 */
+	/* drop old tables */
 	db_execute("DROP TABLE IF EXISTS grid_cont_users");
 	db_execute("DROP TABLE IF EXISTS grid_job_collection_details");
 	db_execute("DROP TABLE IF EXISTS grid_job_collection_members");

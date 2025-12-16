@@ -24,7 +24,7 @@
 </code></pre>
 <p>You should receive quite a bit of output depending on the size of your system. To increase the number of Threads and concurrent processes, you must modify the setting when editing your Data Collector under <code>Console &gt; Data Collection &gt; Data Collectors</code>.</p>
 <p>While Spine is really fast, choosing the correct setup will ensure that all processor resources are used. Required settings for Maximum Concurrent Poller Processes are 1-2 times the number of CPU cores available for Spine.</p>
-<p>When using spine, you must be senstivive to the number of connections that are available for MySQL or MariaDB. Under <code>Console &gt; Utilities &gt; System Utilities &gt; General</code> Cacti will provide a recommended <code>max_connection</code> for MySQL/MariaDB.</p>
+<p>When using spine, you must be senstivive to the numer of connections that are available for MySQL or MariaDB. Under <code>Console &gt; Utilities &gt; System Utilities &gt; General</code> Cacti will provide a recommended <code>max_connection</code> for MySQL/MariaDB.</p>
 <h6 id="table-15-1-spine-parameters-maintained-at-the-system-level">Table 15-1. Spine Parameters maintained at the System Level</h6>
 <table>
 <thead>
@@ -153,8 +153,8 @@ SPINE: Using spine config file [../etc/spine.conf]
 2021-01-08 14:31:40 - SPINE: Poller[1] PID[13804] DEBUG: The Value of Active Threads is 0 for Device ID 38
 2021-01-08 14:31:40 - SPINE: Poller[1] PID[13804] POLLER: Active Threads is 0, Pending is 0
 </code></pre>
-<h4 id="running-spine-for-a-specific-host">Running spine for a specific host</h4>
-<p>If you want to run spine for a specific host you are able to do that with the following command:</p>
+<h4 id="running-spine-for-a-specifc-host">Running spine for a specifc host</h4>
+<p>If you want to run spine for a specifc host you are able to do that with the following command:</p>
 <pre class="shell"><code>/usr/local/spine/bin# ./spine -R -f 42 -l 42 -V 5
 SPINE: Using spine config file [../etc/spine.conf]
 2021-01-08 14:34:14 - SPINE: Poller[1] PID[14296] DEBUG: The path_php_server variable is /var/www/html/cacti/script_server.php
@@ -196,6 +196,6 @@ SPINE: Using spine config file [../etc/spine.conf]
 <pre class="shell"><code>chmod u+s /usr/local/spine/bin/spine
 </code></pre>
 <hr />
-<p>Copyright (c) 2004-2024 The Cacti Group</p>
+<p><copy>Copyright (c) 2004-2023 The Cacti Group</copy></p>
 </body>
 </html>

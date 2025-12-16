@@ -1,3 +1,4 @@
+// $Id$
 /* French translation for the jQuery Timepicker Addon */
 /* Written by Thomas Lété */
 (function($) {

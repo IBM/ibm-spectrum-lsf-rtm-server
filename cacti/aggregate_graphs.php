@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -548,6 +544,71 @@ function form_actions() {
 	bottom_footer();
 }
 
+/* -----------------------
+    item - Graph Items
+   ----------------------- */
+
+function item() {
+	global $consolidation_functions, $graph_item_types, $struct_graph_item;
+
+	// Remove filter item
+	unset($struct_graph_item['data_template_id']);
+
+	/* ================= input validation ================= */
+	get_filter_request_var('id');
+	/* ==================================================== */
+
+	if (isempty_request_var('id')) {
+		$template_item_list = array();
+
+		$header_label = __('Graph Items [new]');
+	} else {
+		$template_item_list = db_fetch_assoc_prepared('SELECT
+			gti.id, gti.text_format, gti.value, gti.hard_return, gti.graph_type_id,
+			gti.consolidation_function_id, dtr.data_source_name, gti.alpha,
+			cdef.name AS cdef_name, vdef.name AS vdef_name, colors.hex,
+			gtgp.name AS gprint_name
+			FROM graph_templates_item AS gti
+			LEFT JOIN data_template_rrd AS dtr
+			ON gti.task_item_id=dtr.id
+			LEFT JOIN data_local AS dl
+			ON dtr.local_data_id=dl.id
+			LEFT JOIN data_template_data AS dtd
+			ON dl.id=dtd.local_data_id
+			LEFT JOIN cdef
+			ON gti.cdef_id=cdef.id
+			LEFT JOIN vdef
+			ON gti.vdef_id=vdef.id
+			LEFT JOIN graph_templates_gprint gtgp
+			ON gti.gprint_id=gtgp.id
+			LEFT JOIN colors
+			ON gti.color_id=colors.id
+			WHERE gti.local_graph_id = ?
+			ORDER BY gti.sequence',
+			array(get_request_var('id')));
+
+		$header_label = __esc('Graph Items [edit: %s]', get_graph_title(get_request_var('id')));
+	}
+
+	$graph_template_id = db_fetch_cell_prepared('SELECT graph_template_id
+		FROM graph_local
+		WHERE id = ?', array(get_request_var('id')));
+
+	if (empty($graph_template_id)) {
+		$add_text = 'aggregate_items.php?action=item_edit&local_graph_id=' . get_request_var('id');
+	} else {
+		$add_text = '';
+	}
+
+	html_start_box($header_label, '100%', '', '3', 'center', $add_text);
+	draw_graph_items_list($template_item_list, 'aggregate_items.php', 'local_graph_id=' . get_request_var('id') , (empty($graph_template_id) ? false : true));
+	html_end_box(false);
+}
+
+/* ------------------------------------
+    graph - Graphs
+   ------------------------------------ */
+
 function graph_edit() {
 	global $config, $struct_graph, $struct_aggregate_graph, $image_types, $consolidation_functions, $graph_item_types, $struct_graph_item;
 
@@ -951,11 +1012,11 @@ function graph_edit() {
 
 			function changeTotalsType() {
 				if ($('#total_type').val() == <?php print AGGREGATE_TOTAL_TYPE_SIMILAR;?>) {
-					if ($('#total_prefix').val() == '' && $('#id').val() == 0) {
+					if ($('#total_prefix').val() == '') {
 						$('#total_prefix').attr('value', '<?php print __('Total');?>');
 					}
 				} else if ($('#total_type').val() == <?php print AGGREGATE_TOTAL_TYPE_ALL;?>) {
-					if ($('#total_prefix').val() == '' && $('#id').val() == 0) {
+					if ($('#total_prefix').val() == '') {
 						$('#total_prefix').attr('value', '<?php print __('All Items');?>');
 					}
 				}
@@ -972,6 +1033,11 @@ function graph_edit() {
 		<input type='hidden' id='graph_template_graph_id' name='graph_template_graph_id' value='<?php print (isset($graphs) ? $graphs['id'] : '0');?>'>
 		<input type='hidden' id='local_graph_template_graph_id' name='local_graph_template_graph_id' value='<?php print (isset($graphs) ? $graphs['local_graph_template_graph_id'] : '0');?>'>
 		<?php
+
+		/* graph item list goes here */
+		if (empty($graphs['graph_template_id']) && cacti_sizeof($template) == 0) {
+			item();
+		}
 
 		if (empty($graphs['graph_template_id'])) {
 			html_start_box(__('Graph Configuration'), '100%', true, '3', 'center', '');
@@ -1122,7 +1188,7 @@ function aggregate_items() {
 	if (get_request_var('rfilter') == '') {
 		$sql_where = '';
 	} elseif (validate_is_regex(get_request_var('rfilter'))) {
-		$sql_where = "WHERE gtg.title_cache RLIKE '" . get_request_var('rfilter') . "'";
+		$sql_where = 'WHERE gtg.title_cache RLIKE "' . get_request_var('rfilter') . '"';
 	} else {
 		$filters = explode(' ', get_request_var('rfilter'));
 		$sql_where = '';

@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2025                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -151,7 +151,6 @@ function grid_validate_job_request_variables() {
 			$job_array = explode('[', str_replace(']', '', get_request_var('jobid')));
 			$job_id    = $job_array[0];
 			$index_id  = $job_array[1];
-			set_request_var('jobid', $job_id);
 		} elseif (strlen(get_request_var('jobid'))) {
 			$job_id    = get_request_var('jobid');
 			$index_id  = '';
@@ -164,6 +163,7 @@ function grid_validate_job_request_variables() {
 		$index_id = '';
 	}
 
+	set_request_var('jobid', $job_id);
 	set_request_var('indexid', $index_id);
 
     /* ================= input validation and session storage ================= */
@@ -448,19 +448,19 @@ function grid_view_export_jobs() {
 			$rowsquery = "";//$rowsquery is not required for export
 			//$rowsquery2 = '';
 
-			get_jobs_query('grid_jobs', false, $jobsquery, $rowsquery, get_request_var('resource_str_search_by'));
+			get_jobs_query('grid_jobs', false, $jobsquery, $rowsquery, $_REQUEST['resource_str_search_by']);
 			$grid_jobs_query = $jobsquery;
 
-			get_jobs_query('grid_jobs_finished', false, $jobsquery, $rowsquery, get_request_var('resource_str_search_by'));
+			get_jobs_query('grid_jobs_finished', false, $jobsquery, $rowsquery, $_REQUEST['resource_str_search_by']);
 			$grid_jobs_finished_query = $jobsquery;
 
 			$union_jobs_query = union_grids($grid_jobs_query, $grid_jobs_finished_query, true, read_config_option('grid_xport_rows'), $total_rows);
 			$jobs  = db_fetch_assoc($union_jobs_query);
 		} else {
-			$jobs = grid_view_get_jobs_records($total_rows, $table_name, true, false, read_config_option('grid_xport_rows'), get_request_var('resource_str_search_by'));
+			$jobs = grid_view_get_jobs_records($total_rows, $table_name, true, false, read_config_option('grid_xport_rows'), $_REQUEST['resource_str_search_by']);
 		}
 	} else {
-		$jobs = grid_view_get_jobs_records($total_rows, $table_name, false, false, read_config_option('grid_xport_rows'), get_request_var('resource_str_search_by'));
+		$jobs = grid_view_get_jobs_records($total_rows, $table_name, false, false, read_config_option('grid_xport_rows'), $_REQUEST['resource_str_search_by']);
 	}
 
 	$queue_nice_levels = array_rekey(db_fetch_assoc("SELECT
@@ -472,7 +472,7 @@ function grid_view_export_jobs() {
 	array_push($xport_array, grid_jobs_build_export_header());
 
 	if (!empty($jobs)) {
-		foreach(array_unique_multidimensional($jobs) as $job) {
+		foreach($jobs as $job) {
 			array_push($xport_array, grid_jobs_build_export_row($job, $queue_nice_levels));
 		}
 	}
@@ -493,8 +493,8 @@ function grid_view_get_jobs_records(&$total_rows, $table_name, $authfull = false
 	$rowsquery2 = '';
 
 	$sql_order = ' ' . get_order_string();
-	//Remove the wasted_memory from order clause, if NOT displayed
-	if (strpos($sql_order, "wasted_memory") && read_grid_config_option('show_wasted_memory') != 'on') {
+	//Remove the wasted_memory from where clause, if it is NOT the job export column
+	if (strpos($sql_order, "wasted_memory") && read_grid_config_option('export_wasted_memory') != 'on') {
 		$sql_order = "";
 	}
 
@@ -1146,22 +1146,22 @@ function grid_view_jobs() {
 			$total_rows = 0;
 
 			//get_jobs_query('grid_jobs', false, $jobsquery, $rowsquery);
-			get_jobs_query('grid_jobs', false, $grid_jobs_query, $rowsquery1, get_request_var('resource_str_search_by'));
+			get_jobs_query('grid_jobs', false, $grid_jobs_query, $rowsquery1, $_REQUEST['resource_str_search_by']);
 			//$grid_jobs_query = $jobsquery;
 
 			//$rowsquery  = '';
 			//get_jobs_query('grid_jobs_finished', false, $jobsquery, $rowsquery);
-			get_jobs_query('grid_jobs_finished', false, $grid_jobs_finished_query, $rowsquery2, get_request_var('resource_str_search_by'));
+			get_jobs_query('grid_jobs_finished', false, $grid_jobs_finished_query, $rowsquery2, $_REQUEST['resource_str_search_by']);
 			//$grid_jobs_finished_query = $jobsquery;
 
 			$union_jobs_query = union_grids($grid_jobs_query, $grid_jobs_finished_query, true, $rows, $total_rows);
 
 			$job_results  = db_fetch_assoc($union_jobs_query);
 		} else {
-			$job_results = grid_view_get_jobs_records($total_rows, $table_name, true, true, $rows, get_request_var('resource_str_search_by'));
+			$job_results = grid_view_get_jobs_records($total_rows, $table_name, true, true, $rows, $_REQUEST['resource_str_search_by']);
 		}
 	} else {
-		$job_results = grid_view_get_jobs_records($total_rows, $table_name, false, true, $rows, get_request_var('resource_str_search_by'));
+		$job_results = grid_view_get_jobs_records($total_rows, $table_name, false, true, $rows, $_REQUEST['resource_str_search_by']);
 	}
 
 	general_header();
@@ -1682,7 +1682,7 @@ function grid_view_jobs() {
 
 	$jobs_page = $config['url_path'] . 'plugins/grid/grid_bjobs.php';
 
-	display_job_results($jobs_page, $table_name, array_unique_multidimensional($job_results), $rows, $total_rows);
+	display_job_results($jobs_page, $table_name, $job_results, $rows, $total_rows);
 
 	display_job_legend();
 

@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -168,10 +164,6 @@ function clog_view_logfile() {
 			'filter'  => FILTER_VALIDATE_INT,
 			'default' => '1'
 		),
-		'matches' => array(
-			'filter'  => FILTER_VALIDATE_INT,
-			'default' => '1'
-		),
 		'rfilter' => array(
 			'filter'  => FILTER_VALIDATE_IS_REGEX,
 			'default' => '',
@@ -262,7 +254,7 @@ function clog_view_logfile() {
 	$total_rows      = 0;
 	$number_of_lines = get_request_var('tail_lines') < 0 ? read_config_option('max_display_rows') : get_request_var('tail_lines');
 
-	$logcontents = tail_file($logfile, $number_of_lines, get_request_var('message_type'), get_request_var('rfilter'), $page_nr, $total_rows, get_request_var('matches'));
+	$logcontents = tail_file($logfile, $number_of_lines, get_request_var('message_type'), get_request_var('rfilter'), $page_nr, $total_rows);
 
 	if (get_request_var('reverse') == 1) {
 		$logcontents = array_reverse($logcontents);
@@ -428,7 +420,7 @@ function clog_get_logfiles() {
 				continue;
 			}
 
-			if (!empty($stderrLogBase) && strpos($logFile, $stderrLogBase) === 0){
+			if (!empty($stderrlogbase) && strpos($logFile, $stderrLogBase) === 0){
 				$stdErrFileArray[] = $logFile;
 			} else {
 				$stdLogFileArray[] = $logFile;
@@ -608,12 +600,6 @@ function filter($clogAdmin, $selectedFile) {
 						<?php print __('Search');?>
 					</td>
 					<td>
-						<select id='matches'>
-							<option value='1'<?php if (get_request_var('matches') == '1') {?> selected<?php }?>><?php print __('Matches');?></option>
-							<option value='0'<?php if (get_request_var('matches') == '0') {?> selected<?php }?>><?php print __('Does Not Match');?></option>
-						</select>
-					</td>
-					<td>
 						<input type='text' class='ui-state-default ui-corner-all' id='rfilter' size='75' value='<?php print html_escape_request_var('rfilter');?>'>
 					</td>
 				</tr>
@@ -622,7 +608,7 @@ function filter($clogAdmin, $selectedFile) {
 		<script type='text/javascript'>
 
 		$(function() {
-			$('#rfilter, #reverse, #refresh, #message_type, #filename, #tail_lines, #matches').unbind().change(function() {
+			$('#rfilter, #reverse, #refresh, #message_type, #filename, #tail_lines').unbind().change(function() {
 				applyFilter();
 			});
 
@@ -649,7 +635,6 @@ function filter($clogAdmin, $selectedFile) {
 				'?rfilter=' + base64_encode($('#rfilter').val())+
 				'&reverse='+$('#reverse').val()+
 				'&refresh='+$('#refresh').val()+
-				'&matches='+$('#matches').val()+
 				'&message_type='+$('#message_type').val()+
 				'&tail_lines='+$('#tail_lines').val()+
 				'&filename='+$('#filename').val()+

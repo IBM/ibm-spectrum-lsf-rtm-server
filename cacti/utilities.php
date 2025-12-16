@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -313,12 +309,12 @@ function utilities_view_tech() {
 
 		form_alternate_row();
 		print '<td>' . __('Devices') . '</td>';
-		print '<td>' . number_format_i18n($host_count) . '</td>';
+		print '<td>' . number_format_i18n($host_count, -1) . '</td>';
 		form_end_row();
 
 		form_alternate_row();
 		print '<td>' . __('Graphs') . '</td>';
-		print '<td>' . number_format_i18n($graph_count) . '</td>';
+		print '<td>' . number_format_i18n($graph_count, -1) . '</td>';
 		form_end_row();
 
 		form_alternate_row();
@@ -327,10 +323,10 @@ function utilities_view_tech() {
 		$data_total = 0;
 		if (cacti_sizeof($data_count)) {
 			foreach ($data_count as $item) {
-				print $input_types[$item['type_id']] . ': ' . number_format_i18n($item['total']) . '<br>';
+				print $input_types[$item['type_id']] . ': ' . number_format_i18n($item['total'], -1) . '<br>';
 				$data_total += $item['total'];
 			}
-			print __('Total: %s', number_format_i18n($data_total));
+			print __('Total: %s', number_format_i18n($data_total, -1));
 		} else {
 			print "<span class='deviceDown'>0</span>";
 		}
@@ -363,10 +359,10 @@ function utilities_view_tech() {
 		$total = 0;
 		if (cacti_sizeof($poller_item)) {
 			foreach ($poller_item as $item) {
-				print __('Action[%s]', $item['action']) . ': ' . number_format_i18n($item['total']) . '<br>';
+				print __('Action[%s]', $item['action']) . ': ' . number_format_i18n($item['total'], -1) . '<br>';
 				$total += $item['total'];
 			}
-			print __('Total: %s', number_format_i18n($total));
+			print __('Total: %s', number_format_i18n($total, -1));
 		} else {
 			print "<span class='deviceDown'>" . __('No items to poll') . "</span>";
 		}
@@ -515,7 +511,7 @@ function utilities_view_tech() {
 
 						form_alternate_row();
 						print "<td>$name</td>";
-						print '<td>' . __('%s GB', number_format_i18n($value, 2, 1000)) . '</td>';
+						print '<td>' . __('%0.2f GB', number_format_i18n($value, 2, 1000)) . '</td>';
 						form_end_row();
 
 						if ($name == 'MemTotal') {
@@ -648,7 +644,7 @@ function utilities_view_tech() {
 			if ($maxPossibleMyMemory > ($total_memory * 0.8)) {
 				form_alternate_row();
 				print '<td>' . __('Max Total Memory Possible') . '</td>';
-				print '<td class="deviceDown">' . __('%s GB', number_format_i18n($maxPossibleMyMemory, 2, 1000)) . '</td>';
+				print '<td class="deviceDown">' . __('%0.2f GB', number_format_i18n($maxPossibleMyMemory, 2, 1000)) . '</td>';
 				form_end_row();
 				form_alternate_row();
 				print '<td></td>';
@@ -657,13 +653,13 @@ function utilities_view_tech() {
 			} else {
 				form_alternate_row();
 				print '<td>' . __('Max Total Memory Possible') . '</td>';
-				print '<td class="deviceUp">' . __('%s GB', number_format_i18n($maxPossibleMyMemory, 2, 1000)) . '</td>';
+				print '<td class="deviceUp">' . __('%0.2f GB', number_format_i18n($maxPossibleMyMemory, 2, 1000)) . '</td>';
 				form_end_row();
 			}
 		} else {
 			form_alternate_row();
 			print '<td>' . __('Max Total Memory Possible') . '</td>';
-			print '<td>' . __('%s GB', number_format_i18n($maxPossibleMyMemory, 2, 1000)) . '</td>';
+			print '<td>' . __('%0.2f GB', number_format_i18n($maxPossibleMyMemory, 2, 1000)) . '</td>';
 			form_end_row();
 		}
 
@@ -671,12 +667,12 @@ function utilities_view_tech() {
 			if ($systemMemory > ($total_memory * 0.8)) {
 				form_alternate_row();
 				print '<td>' . __('Max Core Memory Possible') . '</td>';
-				print '<td class="deviceDown">' . __('%s GB', number_format_i18n($systemMemory, 2, 1000)) . '&nbsp;&nbsp;(' . __('Reduce Total Core Memory') . '</td>';
+				print '<td class="deviceDown">' . __('%0.2f GB', number_format_i18n($systemMemory, 2, 1000)) . '&nbsp;&nbsp;(' . __('Reduce Total Core Memory') . '</td>';
 				form_end_row();
 			} else {
 				form_alternate_row();
 				print '<td>' . __('Max Core Memory Possible') . '</td>';
-				print '<td class="deviceUp">' . __('%s GB', number_format_i18n($systemMemory, 2, 1000)) . '</td>';
+				print '<td class="deviceUp">' . __('%0.2f GB', number_format_i18n($systemMemory, 2, 1000)) . '</td>';
 				form_end_row();
 			}
 
@@ -688,12 +684,12 @@ function utilities_view_tech() {
 			if ($clientMemory > ($total_memory * 0.8)) {
 				form_alternate_row();
 				print '<td>' . __('Max Connection Memory Possible') . '</td>';
-				print '<td class="deviceDown">' . __('%s GB', number_format_i18n($clientMemory, 2, 1000)) . '&nbsp;&nbsp;(' . __('Reduce Total Client Memory') . ')</td>';
+				print '<td class="deviceDown">' . __('%0.2f GB', number_format_i18n($clientMemory, 2, 1000)) . '&nbsp;&nbsp;(' . __('Reduce Total Client Memory') . ')</td>';
 				form_end_row();
 			} else {
 				form_alternate_row();
 				print '<td>' . __('Max Connection Memory Possible') . '</td>';
-				print '<td class="deviceUp">' . __('%s GB', number_format_i18n($clientMemory, 2, 1000)) . '</td>';
+				print '<td class="deviceUp">' . __('%0.2f GB', number_format_i18n($clientMemory, 2, 1000)) . '</td>';
 				form_end_row();
 			}
 
@@ -704,12 +700,12 @@ function utilities_view_tech() {
 		} else {
 			form_alternate_row();
 			print '<td>' . __('Max Core Memory Possible') . '</td>';
-			print '<td class="deviceUp">' . __('%s GB', number_format_i18n($systemMemory, 2, 1000)) . '</td>';
+			print '<td class="deviceUp">' . __('%0.2f GB', number_format_i18n($systemMemory, 2, 1000)) . '</td>';
 			form_end_row();
 
 			form_alternate_row();
 			print '<td>' . __('Max Connection Memory Possible') . '</td>';
-			print '<td>' . __('%s GB', number_format_i18n($clientMemory, 2, 1000)) . '</td>';
+			print '<td>' . __('%0.2f GB', number_format_i18n($clientMemory, 2, 1000)) . '</td>';
 			form_end_row();
 		}
 
@@ -802,7 +798,7 @@ function utilities_view_tech() {
 		foreach($status as $s) {
 			form_alternate_row();
 			print '<td>' . $s['Variable_name'] . '</td>';
-			print '<td>' . (is_numeric($s['Value']) ? number_format_i18n($s['Value']):$s['Value']) . '</td>';
+			print '<td>' . (is_numeric($s['Value']) ? number_format_i18n($s['Value'], -1):$s['Value']) . '</td>';
 			form_end_row();
 		}
 	} elseif (get_request_var('tab') == 'dbsettings') {
@@ -823,7 +819,7 @@ function utilities_view_tech() {
 			if (strlen($s['Value']) > 70) {
 				$s['Value'] = str_replace(',', ', ', $s['Value']);
 			}
-			print '<td>' . (is_numeric($s['Value']) ? number_format_i18n($s['Value']):$s['Value']) . '</td>';
+			print '<td>' . (is_numeric($s['Value']) ? number_format_i18n($s['Value'], -1):$s['Value']) . '</td>';
 			form_end_row();
 		}
 	} elseif (get_request_var('tab') == 'changelog') {
@@ -831,7 +827,7 @@ function utilities_view_tech() {
 
 		foreach($changelog as $s) {
 			if (strlen(trim($s)) && stripos($s, 'CHANGELOG') === false) {
-				if (strpos($s, '-') === false) {
+				if (strpos($s, '-') === false || strpos($s, '-') !== 0) {
 					html_section_header(__('Version %s', $s), 2);
 				} else {
 					form_alternate_row();
@@ -876,10 +872,10 @@ function utilities_view_tech() {
 				form_alternate_row();
 				print '<td>' . $table['TABLE_NAME'] . '</td>';
 				print '<td>' . $table['ENGINE'] . '</td>';
-				print '<td class="right">' . number_format_i18n($table['TABLE_ROWS']) . '</td>';
-				print '<td class="right">' . number_format_i18n($table['AVG_ROW_LENGTH']) . '</td>';
-				print '<td class="right">' . number_format_i18n($table['DATA_LENGTH']) . '</td>';
-				print '<td class="right">' . number_format_i18n($table['INDEX_LENGTH']) . '</td>';
+				print '<td class="right">' . number_format_i18n($table['TABLE_ROWS'], -1) . '</td>';
+				print '<td class="right">' . number_format_i18n($table['AVG_ROW_LENGTH'], -1) . '</td>';
+				print '<td class="right">' . number_format_i18n($table['DATA_LENGTH'], -1) . '</td>';
+				print '<td class="right">' . number_format_i18n($table['INDEX_LENGTH'], -1) . '</td>';
 				print '<td>' . $table['TABLE_COLLATION'] . '</td>';
 				print '<td>' . $table['ROW_FORMAT'] . '</td>';
 				print '<td>' . $table['TABLE_COMMENT'] . '</td>';
@@ -1737,20 +1733,18 @@ function utilities_view_snmp_cache() {
 								$snmp_queries = db_fetch_assoc('SELECT DISTINCT sq.id, sq.name
 									FROM host_snmp_cache AS hsc
 									INNER JOIN snmp_query AS sq
-									ON hsc.snmp_query_id = sq.id
+									ON hsc.snmp_query_id=sq.id
 									INNER JOIN host AS h
-									ON hsc.host_id = h.id
+									ON hsc.host_id=h.id
 									ORDER by sq.name');
 							} else {
 								$snmp_queries = db_fetch_assoc_prepared("SELECT DISTINCT sq.id, sq.name
 									FROM host_snmp_cache AS hsc
 									INNER JOIN snmp_query AS sq
-									ON hsc.snmp_query_id = sq.id
+									ON hsc.snmp_query_id=sq.id
 									INNER JOIN host AS h
-									ON hsc.host_id = h.id
-									WHERE h.id = ?
-									ORDER by sq.name",
-									array(get_request_var('host_id')));
+									ON hsc.host_id=h.id
+									ORDER by sq.name", array(get_request_var('host_id')));
 							}
 
 							if (cacti_sizeof($snmp_queries)) {
@@ -2286,11 +2280,7 @@ function utilities() {
 		__('Rebuild Poller Cache') => array(
 			'link'  => 'utilities.php?action=clear_poller_cache',
 			'mode'  => 'online',
-			'description' => __('The Poller Cache will be re-generated if you select this option. Use this option only in the event of a database crash if you are experiencing issues after the crash and have already run the database repair tools.  Alternatively, if you are having problems with a specific Device, simply re-save that Device to rebuild its Poller Cache.  There is also a command line interface equivalent to this command that is recommended for large systems.'),
-			'note'        => array (
-				'message' => __('NOTE: On large systems, this command may take several minutes to hours to complete and therefore should not be run from the Cacti UI.  You can simply run \'php -q cli/rebuild_poller_cache.php --help\' at the command line for more information.'),
-				'class'   => 'textWarning'
-			)
+			'description' => __('The Poller Cache will be re-generated if you select this option. Use this option only in the event of a database crash if you are experiencing issues after the crash and have already run the database repair tools.  Alternatively, if you are having problems with a specific Device, simply re-save that Device to rebuild its Poller Cache.  There is also a command line interface equivalent to this command that is recommended for large systems.  <i class="deviceDown">NOTE: On large systems, this command may take several minutes to hours to complete and therefore should not be run from the Cacti UI.  You can simply run \'php -q cli/rebuild_poller_cache.php --help\' at the command line for more information.</i>')
 		),
 		__('Rebuild Resource Cache') => array(
 			'link'  => 'utilities.php?action=rebuild_resource_cache',
@@ -2373,11 +2363,6 @@ function utilities() {
 				print '</td>';
 				print '<td>';
 				print html_escape($details['description']);
-
-				if(isset($details['note'])) {
-					print '<br/><i class="' . $details['note']['class'] . '">' . html_escape($details['note']['message']) . '</i>';
-				}
-
 				print '</td>';
 				form_end_row();
 
@@ -2535,14 +2520,10 @@ function boost_display_run_status() {
 	$avg_row_length = ($total_records ? intval($data_length / $total_records) : 0);
 
 	$boost_status = read_config_option('boost_poller_status', true);
-	if ($boost_status != '' && $boost_status != 'disabled') {
+	if ($boost_status != '' && $boost_status != 'Disabled') {
 		$boost_status_array = explode(':', $boost_status);
 
-		if (isset($boost_status_array[1])) {
-			$boost_status_date = $boost_status_array[1];
-		} else {
-			$boost_status_date = null;
-		}
+		$boost_status_date  = $boost_status_array[1];
 
 		if (substr_count($boost_status_array[0], 'complete')) {
 			$status = '<span class="deviceRecovering">' . __('Idle') . '</span>';
@@ -2557,7 +2538,7 @@ function boost_display_run_status() {
 		}
 	} else {
 		$status = '<span class="deviceDisabled">' . __('Disabled') . '</span>';
-		$boost_status_date = null;
+		$boost_status_date = '';
 	}
 
 	$stats_boost = read_config_option('stats_boost', true);
@@ -2635,28 +2616,28 @@ function boost_display_run_status() {
 	}
 
 	form_alternate_row();
-	print '<td>' . __('Total Poller Items:') . '</td><td>' . number_format_i18n($poller_items) . '</td>';
+	print '<td>' . __('Total Poller Items:') . '</td><td>' . number_format_i18n($poller_items, -1) . '</td>';
 
 	$premaining = ($data_sources ? (round(($pending_ds / $data_sources) * 100, 1)) : 0);
 
 	if ($total_records) {
 		form_alternate_row();
-		print '<td>' . __('Total Data Sources:') . '</td><td>' . number_format_i18n($data_sources) . '</td>';
+		print '<td>' . __('Total Data Sources:') . '</td><td>' . number_format_i18n($data_sources, -1) . '</td>';
 
 		if ($config['connection'] == 'online') {
 			form_alternate_row();
-			print '<td>' . __('Remaining Data Sources:') . '</td><td>' . ($pending_ds > 0 ? number_format_i18n($pending_ds) . " ($premaining %)":__('TBD')) . '</td>';
+			print '<td>' . __('Remaining Data Sources:') . '</td><td>' . ($pending_ds > 0 ? number_format_i18n($pending_ds, -1) . " ($premaining %)":__('TBD')) . '</td>';
 		}
 
 		form_alternate_row();
-		print '<td>' . __('Queued Boost Records:') . '</td><td>' . number_format_i18n($pending_records) . '</td>';
+		print '<td>' . __('Queued Boost Records:') . '</td><td>' . number_format_i18n($pending_records, -1) . '</td>';
 
 		if ($config['connection'] == 'online') {
 			form_alternate_row();
-			print '<td>' . __('Approximate in Process:') . '</td><td>' . number_format_i18n($remaining) . '</td>';
+			print '<td>' . __('Approximate in Process:') . '</td><td>' . number_format_i18n($remaining, -1) . '</td>';
 
 			form_alternate_row();
-			print '<td>' . __('Total Boost Records:') . '</td><td>' . number_format_i18n($total_records) . '</td>';
+			print '<td>' . __('Total Boost Records:') . '</td><td>' . number_format_i18n($total_records, -1) . '</td>';
 		}
 	}
 
@@ -2726,12 +2707,6 @@ function boost_display_run_status() {
 		form_alternate_row();
 		print '<td class="utilityPick">' . __('Last Start Time:') . '</td><td>' . (is_numeric($last_run_time) ? date('Y-m-d H:i:s', $last_run_time):$last_run_time) . '</td>';
 
-		/* get the last end time */
-		$last_end_time = read_config_option('boost_last_end_time', true);
-
-		form_alternate_row();
-		print '<td class="utilityPick">' . __('Last End Time:') . '</td><td>' . ($last_end_time != '' ? date('Y-m-d H:i:s', $last_end_time):__('Never Run')) . '</td>';
-
 		form_alternate_row();
 		print '<td class="utilityPick">' . __('Last Run Duration:') . '</td><td>';
 
@@ -2747,24 +2722,13 @@ function boost_display_run_status() {
 		print '</td>';
 
 		form_alternate_row();
-		print '<td class="utilityPick">' . __('RRD Updates:') . '</td><td>' . ($boost_rrds_updated != '' ? number_format_i18n($boost_rrds_updated):'-') . '</td>';
+		print '<td class="utilityPick">' . __('RRD Updates:') . '</td><td>' . ($boost_rrds_updated != '' ? number_format_i18n($boost_rrds_updated, -1):'-') . '</td>';
 
 		form_alternate_row();
 		print '<td class="utilityPick">' . __('Peak Poller Memory:') . '</td><td>' . ((read_config_option('boost_peak_memory') != '' && is_numeric(read_config_option('boost_peak_memory'))) ? (round(read_config_option('boost_peak_memory')/1024/1024,2)) . ' ' . __('MBytes') : __('N/A')) . '</td>';
 
 		form_alternate_row();
-
-		$memory_limit = read_config_option('boost_poller_mem_limit');
-
-		if ($memory_limit == -1) {
-			$memory_limit = __('Unlimited');
-		} elseif ($memory_limit != '') {
-			$memory_limit = __('%s MBytes', number_format_i18n($memory_limit) );
-		} else {
-			$memory_limit = __('N/A');
-		}
-
-		print '<td class="utilityPick">' . __('Max Poller Memory Allowed:') . '</td><td>' . $memory_limit . '</td>';
+		print '<td class="utilityPick">' . __('Max Poller Memory Allowed:') . '</td><td>' . ((read_config_option('boost_poller_mem_limit') != '') ? (read_config_option('boost_poller_mem_limit')) . ' ' . __('MBytes') : __('N/A')) . '</td>';
 
 		/* boost last runtime display */
 		html_section_header(__('Detailed Runtime Statistics'), 2);
@@ -2830,9 +2794,9 @@ function boost_display_run_status() {
 				form_alternate_row();
 
 				if ($rows_to_process > 0) {
-					print '<td class="utilityPick">' . __esc('Process: %d', $process) . '</td><td>' . __('Status: <span class="deviceUp"><b>Running</b></span>, Remaining: %s (dses), CurrentRuntime: %s (secs), PrevRuntime: %s (secs), PrevProcessed: %10s (ds rows)', number_format_i18n((int) $rows_to_process), number_format_i18n((float) $runtime), number_format_i18n((float) $time), number_format_i18n((int) $rrds)) . '</td>';
+					print '<td class="utilityPick">' . __esc('Process: %d', $process) . '</td><td>' . __('Status: <span class="deviceUp"><b>Running</b></span>, Remaining: %s (dses), CurrentRuntime: %s (secs), PrevRuntime: %s (secs), PrevProcessed: %10s (ds rows)', number_format_i18n($rows_to_process), number_format_i18n($runtime), number_format_i18n($time), number_format_i18n($rrds)) . '</td>';
 				} else {
-					print '<td class="utilityPick">' . __esc('Process: %d', $process) . '</td><td>' . __('Status: <span class="deviceRecovering"><b>Idle</b></span>, PrevRuntime: %s (secs), PrevProcessed: %10s (ds rows)', number_format_i18n((float) $time), number_format_i18n((int) $rrds)) . '</td>';
+					print '<td class="utilityPick">' . __esc('Process: %d', $process) . '</td><td>' . __('Status: <span class="deviceRecovering"><b>Idle</b></span>, PrevRuntime: %s (secs), PrevProcessed: %10s (ds rows)', number_format_i18n($time), number_format_i18n($rrds)) . '</td>';
 				}
 			}
 		}
@@ -2850,7 +2814,7 @@ function boost_display_run_status() {
 		print '<td class="utilityPick">' . __('Next Start Time:') . '</td><td>' . (is_numeric($next_run_time) ? date('Y-m-d H:i:s', $next_run_time):$next_run_time) . '</td>';
 
 		form_alternate_row();
-		print '<td class="utilityPick">' . __('Maximum Records:') . '</td><td>' . number_format_i18n($max_records) . ' ' . __('Records') . '</td>';
+		print '<td class="utilityPick">' . __('Maximum Records:') . '</td><td>' . number_format_i18n($max_records, -1) . ' ' . __('Records') . '</td>';
 
 		form_alternate_row();
 		print '<td class="utilityPick">' . __('Maximum Allowed Runtime:') . '</td><td>' . $boost_max_runtime[$max_runtime] . '</td>';
@@ -3088,15 +3052,13 @@ function snmpagent_utilities_run_cache() {
 
 	?>
 	<script type='text/javascript'>
-	$(function() {
 		$('.tooltip').tooltip({
 			track: true,
 			show: 250,
 			hide: 250,
 			position: { collision: 'flipfit' },
-			content: function() { return DOMPurify.sanitize($(this).attr('title')); }
+			content: function() { return $(this).attr('title'); }
 		});
-	});
 	</script>
 	<?php
 }

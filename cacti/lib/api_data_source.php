@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -70,7 +66,7 @@ function api_data_source_remove($local_data_id) {
 			WHERE local_data_id = ?', array($local_data_id));
 
 		if (cacti_sizeof($dsinfo)) {
-			$filename = str_replace('<path_rra>/', '', $dsinfo['data_source_path']);
+			$filename = str_replace('<path_cacti>/', '', $dsinfo['data_source_path']);
 			db_execute_prepared('INSERT INTO data_source_purge_action
 				(local_data_id, name, action) VALUES (?, ?, ?)
 				ON DUPLICATE KEY UPDATE action=VALUES(action)',
@@ -237,15 +233,6 @@ function api_data_source_remove_multi($local_data_ids) {
 
 		}
 
-		/* prepare auto-clean if enabled */
-		if ($autoclean == 'on') {
-			db_execute("INSERT INTO data_source_purge_action (local_data_id, name, action)
-				SELECT local_data_id, REPLACE(data_source_path, '<path_rra>/', ''), '" . $acmethod . "'
-				FROM data_template_data
-				WHERE local_data_id IN (" . $ids_to_delete . ')
-				ON DUPLICATE KEY UPDATE action=VALUES(action)');
-		}
-
 		/* core data */
 		db_execute('DELETE FROM data_template_data
 			WHERE local_data_id IN (' . $ids_to_delete . ')');
@@ -258,9 +245,6 @@ function api_data_source_remove_multi($local_data_ids) {
 
 		db_execute('DELETE FROM data_local
 			WHERE id IN (' . $ids_to_delete . ')');
-
-		db_execute('DELETE FROM data_debug
-			WHERE datasource IN (' . $ids_to_delete . ')');
 
 		/* dsstats */
 		db_execute('DELETE FROM data_source_stats_daily
@@ -290,6 +274,14 @@ function api_data_source_remove_multi($local_data_ids) {
 
 		db_execute('DELETE FROM poller_output_boost
 			WHERE local_data_id IN (' . $ids_to_delete . ')');
+
+		if ($autoclean == 'on') {
+			db_execute("INSERT INTO data_source_purge_action (local_data_id, name, action)
+				SELECT local_data_id, REPLACE(data_source_path, '<path_cacti>/', ''), '" . $acmethod . "'
+				FROM data_template_data
+				WHERE local_data_id IN (" . $ids_to_delete . ')
+				ON DUPLICATE KEY UPDATE action=VALUES(action)');
+		}
 
 		if (cacti_sizeof($poller_ids)) {
 			foreach ($poller_ids as $poller_id) {
@@ -601,14 +593,10 @@ function api_duplicate_data_source($_local_data_id, $_data_template_id, $data_so
 	global $struct_data_source, $struct_data_source_item;
 
 	if (!empty($_local_data_id)) {
-		$data_local = db_fetch_row_prepared('SELECT *
+		$data_local         = db_fetch_row_prepared('SELECT *
 			FROM data_local
 			WHERE id = ?',
 			array($_local_data_id));
-
-		if (!cacti_sizeof($data_local)) {
-			return false;
-		}
 
 		$data_template_data = db_fetch_row_prepared('SELECT *
 			FROM data_template_data
@@ -636,28 +624,24 @@ function api_duplicate_data_source($_local_data_id, $_data_template_id, $data_so
 
 		$data_template_data['name'] = str_replace('<ds_title>', $data_template_data['name'], $data_source_title);
 	} elseif (!empty($_data_template_id)) {
-		$data_template = db_fetch_row_prepared('SELECT *
+		$data_template      = db_fetch_row_prepared('SELECT *
 			FROM data_template
 			WHERE id = ?',
 			array($_data_template_id));
 
-		if (!cacti_sizeof($data_template)) {
-			return false;
-		}
-
 		$data_template_data = db_fetch_row_prepared('SELECT *
 			FROM data_template_data
 			WHERE data_template_id = ?
-			AND local_data_id = 0',
+			AND local_data_id=0',
 			array($_data_template_id));
 
 		$data_template_rrds = db_fetch_assoc_prepared('SELECT *
 			FROM data_template_rrd
 			WHERE data_template_id = ?
-			AND local_data_id = 0',
+			AND local_data_id=0',
 			array($_data_template_id));
 
-		$data_input_datas = db_fetch_assoc_prepared('SELECT *
+		$data_input_datas   = db_fetch_assoc_prepared('SELECT *
 			FROM data_input_data
 			WHERE data_template_data_id = ?',
 			array($data_template_data['id']));
@@ -699,9 +683,8 @@ function api_duplicate_data_source($_local_data_id, $_data_template_id, $data_so
 			$save['local_data_id']              = (isset($local_data_id) ? $local_data_id : 0);
 			$save['local_data_template_rrd_id'] = (isset($data_template_rrd['local_data_template_rrd_id']) ? $data_template_rrd['local_data_template_rrd_id'] : 0);
 			$save['data_template_id']           = (!empty($_local_data_id) ? $data_template_rrd['data_template_id'] : $data_template_id);
-
 			if ($save['local_data_id'] == 0) {
-				$save['hash'] = get_hash_data_template($data_template_rrd['local_data_template_rrd_id'], 'data_template_item');
+				$save['hash']                   = get_hash_data_template($data_template_rrd['local_data_template_rrd_id'], 'data_template_item');
 			} else {
 				$save['hash'] = '';
 			}
@@ -721,7 +704,7 @@ function api_duplicate_data_source($_local_data_id, $_data_template_id, $data_so
 	/* create new entry(s): data_input_data */
 	if (cacti_sizeof($data_input_datas)) {
 		foreach ($data_input_datas as $data_input_data) {
-			db_execute_prepared('INSERT IGNORE INTO data_input_data
+			db_execute_prepared('INSERT INTO data_input_data
 				(data_input_field_id, data_template_data_id, t_value, value)
 				VALUES (?, ?, ?, ?)',
 				array($data_input_data['data_input_field_id'], $data_template_data_id, $data_input_data['t_value'], $data_input_data['value']));
@@ -730,105 +713,6 @@ function api_duplicate_data_source($_local_data_id, $_data_template_id, $data_so
 
 	if (!empty($_local_data_id)) {
 		update_data_source_title_cache($local_data_id);
-	}
-
-	if ($_local_data_id > 0) {
-		return $local_data_id;
-	} elseif ($_data_template_id > 0) {
-		return $data_template_id;
-	} else {
-		return false;
-	}
-}
-
-function api_duplicate_data_input($_data_input_id, $input_title) {
-	$orig_input = db_fetch_row_prepared('SELECT *
-		FROM data_input
-		WHERE id = ?',
-		array($_data_input_id));
-
-	if (cacti_sizeof($orig_input)) {
-		unset($save);
-		$save['id']           = 0;
-		$save['hash']         = get_hash_data_input(0);
-		$save['name']         = str_replace('<input_title>', $orig_input['name'], $input_title);
-		$save['input_string'] = $orig_input['input_string'];
-		$save['type_id']      = $orig_input['type_id'];
-
-		$data_input_id = sql_save($save, 'data_input');
-
-		if (!empty($data_input_id)) {
-			$data_input_fields = db_fetch_assoc_prepared('SELECT *
-				FROM data_input_fields
-				WHERE data_input_id = ?',
-				array($_data_input_id));
-
-			if (cacti_sizeof($data_input_fields)) {
-				foreach($data_input_fields as $dif) {
-					unset($save);
-					$save['id']            = 0;
-					$save['hash']          = get_hash_data_input(0, 'data_input_field');
-					$save['data_input_id'] = $data_input_id;
-					$save['name']          = $dif['name'];
-					$save['data_name']     = $dif['data_name'];
-					$save['input_output']  = $dif['input_output'];
-					$save['update_rra']    = $dif['update_rra'];
-					$save['sequence']      = $dif['sequence'];
-					$save['type_code']     = $dif['type_code'];
-					$save['regexp_match']  = $dif['regexp_match'];
-					$save['allow_nulls']   = $dif['allow_nulls'];
-
-					$data_input_field_id = sql_save($save, 'data_input_fields');
-				}
-			}
-		}
-
-		return $data_input_id;
-	}
-
-	return false;
-}
-
-function api_data_input_remove($id) {
-	$data_input_fields = db_fetch_assoc_prepared('SELECT id
-		FROM data_input_fields
-		WHERE data_input_id = ?',
-		array($id));
-
-	if (is_array($data_input_fields)) {
-		foreach ($data_input_fields as $data_input_field) {
-			db_execute_prepared('DELETE FROM data_input_data
-				WHERE data_input_field_id = ?',
-				array($data_input_field['id']));
-		}
-	}
-
-	db_execute_prepared('DELETE FROM data_input
-		WHERE id = ?',
-		array($id));
-
-	db_execute_prepared('DELETE FROM data_input_fields
-		WHERE data_input_id = ?',
-		array($id));
-
-	update_replication_crc(0, 'poller_replicate_data_input_fields_crc');
-	update_replication_crc(0, 'poller_replicate_data_input_crc');
-}
-
-function api_data_input_more_inputs($id, $input_string) {
-	$input_string = str_replace('<path_cacti>', '', $input_string);
-	$inputs = substr_count($input_string, '<');
-
-	$existing = db_fetch_cell_prepared('SELECT COUNT(*)
-		FROM data_input_fields
-		WHERE data_input_id = ?
-		AND input_output = "in"',
-		array($id));
-
-	if ($inputs > $existing) {
-		return true;
-	} else {
-		return false;
 	}
 }
 

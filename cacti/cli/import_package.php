@@ -1,8 +1,9 @@
 #!/usr/bin/env php
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -13,11 +14,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -50,11 +46,10 @@ if (cacti_sizeof($parms)) {
 	$preview_only    = false;
 	$info_only       = false;
 	$profile_id      = '';
-	$profile_set     = false;
 
 	foreach($parms as $parameter) {
 		if (strpos($parameter, '=')) {
-			list($arg, $value) = explode('=', $parameter, 2);
+			list($arg, $value) = explode('=', $parameter);
 		} else {
 			$arg = $parameter;
 			$value = '';
@@ -63,17 +58,6 @@ if (cacti_sizeof($parms)) {
 		switch ($arg) {
 			case '--filename':
 				$filename = trim($value);
-
-				break;
-			case '--with-profile':
-				if ($profile_set) {
-					print 'The argument --with-profile can not be used in conjunction with --profile-id.' . PHP_EOL;
-					exit(1);
-				}
-
-				$profile_set = true;
-
-				$profile_id = db_fetch_cell('SELECT id FROM data_source_profiles WHERE `default` = "on"');
 
 				break;
 			case '--use-profile':
@@ -89,13 +73,6 @@ if (cacti_sizeof($parms)) {
 
 				break;
 			case '--profile-id':
-				if ($profile_set) {
-					print 'The argument --profile-id can not be used in conjunction with --with-profile.' . PHP_EOL;
-					exit(1);
-				}
-
-				$profile_set = true;
-
 				$profile_id = trim($value);
 
 				break;
@@ -103,7 +80,7 @@ if (cacti_sizeof($parms)) {
 				$preview_only = true;
 
 				break;
-			case '--info':
+			case '--info-only':
 				$info_only = true;
 
 				break;
@@ -198,12 +175,12 @@ function display_version() {
 function display_help() {
 	display_version();
 
-	print PHP_EOL . 'usage: import_package.php --filename=[filename] [--info] [--remove-orphans] [--replace-svalues] [--with-profile] [--profile-id=N' . PHP_EOL . PHP_EOL;
+	print PHP_EOL . 'usage: import_package.php --filename=[filename] [--only-info] [--remove-orphans] [--replace-svalues] [--with-profile] [--profile-id=N' . PHP_EOL . PHP_EOL;
 	print 'A utility to allow signed Cacti Packages to be imported from the command line.' . PHP_EOL . PHP_EOL;
 	print 'Required:' . PHP_EOL;
 	print '    --filename              The name of the gzipped package file to import' . PHP_EOL . PHP_EOL;
 	print 'Optional:' . PHP_EOL;
-	print '    --info            Output the info section of the package, do not import' . PHP_EOL;
+	print '    --only-info       Output the info section of the package, do not import' . PHP_EOL;
 	print '    --preview         Preview the Template Import, do not import' . PHP_EOL;
 	print '    --with-profile    Use the default system Data Source Profile' . PHP_EOL;
 	print '    --profile-id=N    Use the specific profile id when importing' . PHP_EOL;

@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -515,7 +511,7 @@ function graphs() {
 		}
 
 		load_current_session_value('page' . get_request_var('graph_type'), 'sess_grn_page' . get_request_var('graph_type'), '1');
-	} else if (get_request_var('graph_type') == -2) {
+	}else if (get_request_var('graph_type') == -2) {
 		foreach($snmp_queries as $query) {
 			/* validate the page filter */
 			if (isset_request_var('page' . $query['id'])) {
@@ -529,7 +525,7 @@ function graphs() {
 	$script = "<script type='text/javascript'>\nvar created_graphs = new Array();\n";
 
 	if (get_request_var('graph_type') < 0) {
-		html_start_box(__('New Graph Template'), '100%', '', '3', 'center', '');
+		html_start_box(__('New Graph Template'), '', '100%', '', '3', 'center', '');
 
 		$available_graph_templates = db_fetch_assoc_prepared('SELECT gt.id, gt.name
 			FROM graph_templates AS gt
@@ -774,9 +770,9 @@ function graphs() {
 						if (isset($xml_array['index_order_type'])) {
 							if ($xml_array['index_order_type'] == 'numeric') {
 								$sql_order = 'ORDER BY CAST(snmp_index AS unsigned)';
-							} else if ($xml_array['index_order_type'] == 'alphabetic') {
+							}else if ($xml_array['index_order_type'] == 'alphabetic') {
 								$sql_order = 'ORDER BY snmp_index';
-							} else if ($xml_array['index_order_type'] == 'natural') {
+							}else if ($xml_array['index_order_type'] == 'natural') {
 								$sql_order = 'ORDER BY INET_ATON(snmp_index)';
 							} else {
 								$sql_order = '';
@@ -857,7 +853,7 @@ function graphs() {
 						}
 
 						if (!cacti_sizeof($snmp_query_indexes)) {
-							print "<tr class='odd'><td>" . __('This Data Query returned 0 rows, perhaps there was a problem executing this Data Query.') . "<a href='" . html_escape('host.php?action=query_verbose&id=' . $snmp_query['id'] . '&host_id=' . $host['id']) . "'>" . __('You can run this Data Query in debug mode') . "</a> " . __('From there you can get more information.') . '</td></tr>';
+							print "<tr class='odd'><td>" . __('This Data Query returned 0 rows, perhaps there was a problem executing this Data Query.') . "<a href='" . html_escape('host.php?action=query_verbose&header=true&id=' . $snmp_query['id'] . '&host_id=' . $host['id']) . "'>" . __('You can run this Data Query in debug mode') . "</a> " . __('From there you can get more information.') . '</td></tr>';
 						} else {
 							print "<tr class='tableHeader'>
 									$html_dq_header
@@ -896,7 +892,7 @@ function graphs() {
 									if ($field_array['direction'] == 'input' || $field_array['direction'] == 'input-output') {
 										if (in_array($field_name, $fields)) {
 											if (isset($row[$field_name])) {
-												print "<td title='" . html_escape($row[$field_name]) . "'><span class='textOverflow' id='text$query_row" . '_' . $column_counter . "'>" . filter_value($row[$field_name], get_request_var('filter')) . '</span></td>';
+												print "<td><span class='textOverflow' id='text$query_row" . '_' . $column_counter . "'>" . filter_value($row[$field_name], get_request_var('filter')) . '</span></td>';
 											} else {
 												print "<td><span class='textOverflow' id='text$query_row" . '_' . $column_counter . "'></span></td>";
 											}
@@ -985,24 +981,8 @@ function graphs() {
 		form_hidden_box('host_template_id', $host['host_template_id'], '0');
 	}
 
-	if (isset($_SERVER['HTTP_REFERER']) && $_SERVER['HTTP_REFERER'] != '') {
-		$referer_url = parse_url($_SERVER['HTTP_REFERER']);
-
-		if ($_SERVER['SERVER_NAME'] != $referer_url['host']) {
-			/* Potential security exploit 1 */
-			set_request_var('returnto', 'host.php');
-		} elseif (strpos($_SERVER['HTTP_REFERER'], 'graphs_new') === false) {
-			set_request_var('returnto', basename($_SERVER['HTTP_REFERER']));
-		} else {
-			set_request_var('returnto', 'host.php');
-		}
-	} elseif (isset_request_var('returnto') && get_nfilter_request_var('returnto') != '') {
-		$returnto_url = parse_url(get_nfilter_request_var('returnto'));
-
-		if ($_SERVER['SERVER_NAME'] != $returnto_url['host']) {
-			/* Potential security exploit 2 */
-			set_request_var('returnto', 'host.php');
-		}
+	if (isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'graphs_new') === false) {
+		set_request_var('returnto', basename($_SERVER['HTTP_REFERER']));
 	}
 
 	load_current_session_value('returnto', 'sess_grn_returnto', '');

@@ -104,5 +104,3 @@ stable and robust versions of thold ever published.  We are always looking for
 new ideas.  So, this won't be the last release of thold, you can rest assured of
 that.
 
------------------------------------------------
-Copyright (c) 2004-2024 - The Cacti Group, Inc.

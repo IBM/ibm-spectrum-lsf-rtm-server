@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright IBM Corp. 2006, 2023                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -722,7 +722,7 @@ function grid_view_users() {
 				$url = $config['url_path'] . 'plugins/grid/grid_bjobs.php' .
 					'?action=viewlist&reset=1' .
 					'&clusterid=' . $user['clusterid'] .
-					'&queue=' . $user['queue'] . 
+					'&queue=' . $user['queue'] .
 					'&job_user=' . $user['user_or_group'] .
 					'&status=RUNNING&page=1';
 

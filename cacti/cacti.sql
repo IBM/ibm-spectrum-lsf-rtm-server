@@ -1,6 +1,9 @@
+--
+-- $Id$
+--
 /*
   +-------------------------------------------------------------------------+
-  | Copyright (C) 2004-2024 The Cacti Group                                 |
+  | Copyright (C) 2004-2023 The Cacti Group                                 |
   |                                                                         |
   | This program is free software; you can redistribute it and/or           |
   | modify it under the terms of the GNU General Public License             |
@@ -12,11 +15,6 @@
   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
   | GNU General Public License for more details.                            |
   +-------------------------------------------------------------------------+
-  | Cacti: The Complete RRDTool-based Graphing Solution                     |
-  +-------------------------------------------------------------------------+
-  | This code is designed, written, and maintained by the Cacti Group. See  |
-  | about.php and/or the AUTHORS file for specific developer information.   |
-  +-------------------------------------------------------------------------+
   | http://www.cacti.net/                                                   |
   +-------------------------------------------------------------------------+
 */
@@ -27,10 +25,60 @@
 
 DELIMITER //
 
-SET @sqlmode= "";
-SET SESSION sql_mode = @sqlmode;
+DROP FUNCTION IF EXISTS NOAUTOCREATENEEDED//
+CREATE FUNCTION NOAUTOCREATENEEDED()
+RETURNS BOOL
+READS SQL DATA
+DETERMINISTIC
+BEGIN
 
-ALTER DATABASE DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+DECLARE ret BOOL;
+DECLARE ismaria BOOL;
+
+DECLARE majv INT;
+DECLARE medv INT;
+DECLARE minv INT;
+
+DECLARE realversion VARCHAR(16);
+
+DECLARE majn INT;
+DECLARE medn INT;
+DECLARE minn INT;
+
+SET ret = TRUE;
+
+
+SELECT LOCATE('MariaDB', @@version) > 0 INTO ismaria;
+
+IF ismaria THEN
+        -- MariaDB version NO_AUTO_CREATE_USER started to be default
+        SET majn = 10;
+        SET medn = 1;
+        SET minn = 7;
+ELSE
+        -- MySQL version it started to be default (8.0.11)
+        SET majn = 8;
+        SET medn = 0;
+        SET minn = 11;
+END IF;
+
+SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(@@VERSION, '.', 3),'-',1) INTO realversion;
+SELECT CONVERT(SUBSTRING_INDEX(realversion, '.', 1), SIGNED INTEGER) INTO majv;
+SELECT CONVERT(SUBSTRING_INDEX(SUBSTRING_INDEX(realversion, '.', 2), '.', -1), SIGNED INTEGER) INTO medv;
+SELECT CONVERT(SUBSTRING_INDEX(SUBSTRING_INDEX(realversion, '.', 3), '.', -1), SIGNED INTEGER) INTO minv;
+
+IF majv >= majn AND medv >= medn AND minv >= minn THEN
+        SET ret = FALSE;
+END IF;
+
+RETURN ret;
+END //
+
+DELIMITER ;
+
+SET @sqlmode= "";
+SELECT IF(NOAUTOCREATENEEDED(), 'NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION', 'NO_ENGINE_SUBSTITUTION') INTO @sqlmode;
+SET SESSION sql_mode = @sqlmode;
 
 --
 -- Table structure for table `aggregate_graph_templates`
@@ -442,6 +490,8 @@ CREATE TABLE `automation_templates` (
 --
 -- Dumping data for table `automation_templates`
 --
+
+INSERT INTO `automation_templates` VALUES (1,3,2,'Linux','','',2),(2,1,2,'HP ETHERNET','','',1);
 
 --
 -- Table structure for table `automation_tree_rule_items`
@@ -1889,7 +1939,7 @@ CREATE TABLE host (
   snmp_password varchar(50) default NULL,
   snmp_auth_protocol char(6) default '',
   snmp_priv_passphrase varchar(200) default '',
-  snmp_priv_protocol char(7) default '',
+  snmp_priv_protocol char(6) default '',
   snmp_context varchar(64) default '',
   snmp_engine_id varchar(64) default '',
   snmp_port mediumint(8) unsigned NOT NULL default '161',
@@ -2194,7 +2244,7 @@ CREATE TABLE poller_item (
   `snmp_password` varchar(50) NOT NULL default '',
   `snmp_auth_protocol` char(6) NOT NULL default '',
   `snmp_priv_passphrase` varchar(200) NOT NULL default '',
-  `snmp_priv_protocol` char(7) NOT NULL default '',
+  `snmp_priv_protocol` char(6) NOT NULL default '',
   `snmp_context` varchar(64) default '',
   `snmp_engine_id` varchar(64) default '',
   `snmp_port` mediumint(8) unsigned NOT NULL default '161',
@@ -2409,8 +2459,8 @@ CREATE TABLE `reports_items` (
 --
 
 CREATE TABLE settings (
-  name varchar(75) NOT NULL default '',
-  value varchar(4096) NOT NULL default '',
+  name varchar(50) NOT NULL default '',
+  value varchar(2048) NOT NULL default '',
   PRIMARY KEY (name)
 ) ENGINE=InnoDB ROW_FORMAT=Dynamic;
 
@@ -2427,14 +2477,15 @@ INSERT INTO settings VALUES ('selected_theme', 'modern');
 
 CREATE TABLE settings_user (
   user_id smallint(8) unsigned NOT NULL default '0',
-  name varchar(75) NOT NULL default '',
-  value varchar(4096) NOT NULL default '',
+  name varchar(50) NOT NULL default '',
+  value varchar(2048) NOT NULL default '',
   PRIMARY KEY (user_id, name)
 ) ENGINE=InnoDB ROW_FORMAT=Dynamic;
 
 --
 -- Dumping data for table `settings_user`
 --
+
 
 --
 -- Table structure for table `settings_user_group`

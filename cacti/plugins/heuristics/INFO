@@ -1,10 +1,10 @@
 [info]
 name = heuristics
-version = 10.2.0.15
+version = 10.2.0.14
 longname = IBM Spectrum LSF RTM User Heuristics Dashboard
 author = IBM Corporation
 email =
-homepage = "https://www.ibm.com/docs/en/spectrum-lsf-rtm/10.2.0?topic=basics-settings-rtm-plugins"
+homepage = http://www.ibm.com
 compat = 1.2.10
 requires = grid RTM
 capabilities = online_view:1, online_mgmt:1, offline_view:0, offline_mgmt:0, remote_collect:0

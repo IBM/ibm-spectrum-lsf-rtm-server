@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -284,7 +280,6 @@ function html_graph_template_multiselect() {
 */
 function html_graph_area(&$graph_array, $no_graphs_message = '', $extra_url_args = '', $header = '', $columns = 0, $tree_id = 0, $branch_id = 0) {
 	global $config;
-
 	$i = 0; $k = 0; $j = 0;
 
 	$num_graphs = cacti_sizeof($graph_array);
@@ -307,21 +302,12 @@ function html_graph_area(&$graph_array, $no_graphs_message = '', $extra_url_args
 		}
 
 		foreach ($graph_array as $graph) {
-			if (!isset($graph['host_id'])) {
-				list($graph['host_id'], $graph['disabled']) = db_fetch_row_prepared('SELECT host_id, disabled
-    					FROM graph_local AS gl
-	 				LEFT JOIN host AS h
-					ON gl.host_id = h.id
-     					WHERE gl.id = ?',
-					array($graph['local_graph_id']));
-			}
-
 			if ($i == 0) {
 				print "<tr class='tableRowGraph'>";
 			}
 
 			?>
-			<td class='graphWrapperOuter' data-disabled='<?php print ($graph['disabled'] == 'on' ? 'true':'false');?>' style='width:<?php print round(100 / $columns, 2);?>%;'>
+			<td style='width:<?php print round(100 / $columns, 2);?>%;'>
 				<div>
 				<table style='text-align:center;margin:auto;'>
 					<tr>
@@ -396,15 +382,6 @@ function html_graph_thumbnail_area(&$graph_array, $no_graphs_message = '', $extr
 
 		$start = true;
 		foreach ($graph_array as $graph) {
-			if (!isset($graph['host_id'])) {
-				list($graph['host_id'], $graph['disabled']) = db_fetch_row_prepared('SELECT host_id, disabled
-    					FROM graph_local AS gl
-	 				LEFT JOIN host AS h
-      					ON gl.host_id = h.id
-	   				WHERE gl.id = ?',
-					array($graph['local_graph_id']));
-			}
-
 			if (isset($graph['graph_template_name'])) {
 				if (isset($prev_graph_template_name)) {
 					if ($prev_graph_template_name != $graph['graph_template_name']) {
@@ -449,8 +426,7 @@ function html_graph_thumbnail_area(&$graph_array, $no_graphs_message = '', $extr
 			}
 
 			?>
-			<td class='graphWrapperOuter' data-disabled='<?php print ($graph['disabled'] == 'on' ? 'true':'false');?>' style='width:<?php print round(100 / $columns, 2);?>%;'>
-				<div>
+			<td style='width:<?php print round(100 / $columns, 2);?>%;'>
 				<table style='text-align:center;margin:auto;'>
 					<tr>
 						<td>
@@ -462,7 +438,6 @@ function html_graph_thumbnail_area(&$graph_array, $no_graphs_message = '', $extr
 						</td><?php } ?>
 					</tr>
 				</table>
-				</div>
 			</td>
 			<?php
 
@@ -651,8 +626,6 @@ function html_nav_bar($base_url, $max_pages, $current_page, $rows_per_page, $tot
    @arg $url - a base url to redirect sort actions to
    @arg $return_to - the id of the object to inject output into as a result of the sort action */
 function html_header_sort($header_items, $sort_column, $sort_direction, $last_item_colspan = 1, $url = '', $return_to = '') {
-	static $page_count = 0;
-
 	/* reverse the sort direction */
 	if ($sort_direction == 'ASC') {
 		$new_sort_direction = 'DESC';
@@ -660,8 +633,7 @@ function html_header_sort($header_items, $sort_column, $sort_direction, $last_it
 		$new_sort_direction = 'ASC';
 	}
 
-	$page = $page_count . '_' . str_replace('.php', '', basename($_SERVER['SCRIPT_NAME']));
-
+	$page = str_replace('.php', '', basename($_SERVER['SCRIPT_NAME']));
 	if (isset_request_var('action')) {
 		$page .= '_' . get_request_var('action');
 	}
@@ -795,8 +767,6 @@ function html_header_sort($header_items, $sort_column, $sort_direction, $last_it
 	}
 
 	print '</tr>';
-
-	$page_count++;
 }
 
 /* html_header_sort_checkbox - draws a header row with a 'select all' checkbox in the last cell
@@ -813,7 +783,7 @@ function html_header_sort($header_items, $sort_column, $sort_direction, $last_it
    @arg $form_action - the url to post the 'select all' form to
    @arg $return_to - the id of the object to inject output into as a result of the sort action */
 function html_header_sort_checkbox($header_items, $sort_column, $sort_direction, $include_form = true, $form_action = '', $return_to = '', $prefix = 'chk') {
-	static $page_count = 0;
+	static $page = 0;
 
 	/* reverse the sort direction */
 	if ($sort_direction == 'ASC') {
@@ -822,8 +792,7 @@ function html_header_sort_checkbox($header_items, $sort_column, $sort_direction,
 		$new_sort_direction = 'ASC';
 	}
 
-	$page = $page_count . '_' . str_replace('.php', '', basename($_SERVER['SCRIPT_NAME']));
-
+	$page = str_replace('.php', '', basename($_SERVER['SCRIPT_NAME']));
 	if (isset_request_var('action')) {
 		$page .= '_' . get_request_var('action');
 	}
@@ -960,7 +929,7 @@ function html_header_sort_checkbox($header_items, $sort_column, $sort_direction,
 	print "<th class='tableSubHeaderCheckbox'><input id='selectall' class='checkbox' type='checkbox' title='" . __esc('Select All Rows'). "' onClick='selectAll(\"$prefix\",this.checked)'><label class='formCheckboxLabel' title='" . __esc('Select All Rows') . "' for='selectall'></label></th>" . ($include_form ? "<th style='display:none;'><form id='$prefix' name='$prefix' method='post' action='$form_action'></th>":'');
 	print '</tr>';
 
-	$page_count++;
+	$page++;
 }
 
 /* html_header - draws a header row suitable for display inside of a box element
@@ -1658,23 +1627,19 @@ function DrawMatrixHeaderItem($matrix_name, $matrix_text_color, $column_span = 1
 	<?php
 }
 
-function form_area($text) {
-	?>
+function form_area($text) { ?>
 	<tr>
 		<td class='textArea'>
-			<?php print html_escape($text);?>
+			<?php print $text;?>
 		</td>
 	</tr>
-	<?php
-}
+<?php }
 
-/**
- * is_console_page - determines if current passed url is considered to be a console page
- *
- * @param url - url to be checked
- *
- * @return true if console page, false if not
- */
+/* is_console_page - determines if current passed url is considered to be
+          a console page
+   @arg url - url to be checked
+   @returns true if console page, false if not
+*/
 function is_console_page($url) {
 	global $menu;
 
@@ -1794,7 +1759,7 @@ function html_show_tabs_left() {
 							}
 						}
 
-						print '<a id="tab-link' . $tab['id'] . '" href="' . $config['url_path'] . 'link.php?id=' . $tab['id'] . '"><img src="' . get_classic_tabimage($tab['title'], $down) . '" alt="' . html_escape($tab['title']) . '"></a>';
+						print '<a id="tab-link' . $tab['id'] . '" href="' . $config['url_path'] . 'link.php?id=' . $tab['id'] . '"><img src="' . get_classic_tabimage($tab['title'], $down) . '" alt="' . $tab['title'] . '"></a>';
 					}
 				}
 			}
@@ -2177,46 +2142,6 @@ function html_site_filter($site_id = '-1', $call_back = 'applyFilter', $sql_wher
 	<?php
 }
 
-function html_location_filter($location = '', $call_back = 'applyFilter', $sql_where = '', $noany = false, $nonone = false) {
-	$theme = get_selected_theme();
-
-	if (strpos($call_back, '()') === false) {
-		$call_back .= '()';
-	}
-
-	?>
-	<td>
-		<?php print __('Location');?>
-	</td>
-	<td>
-		<select id='location' onChange='<?php print $call_back;?>'>
-			<?php if (!$noany) {?><option value='-1'<?php if ($location == '-1') {?> selected<?php }?>><?php print __('Any');?></option><?php }?>
-			<?php if (!$nonone) {?><option value='0'<?php if ($location == '0') {?> selected<?php }?>><?php print __('None');?></option><?php }?>
-			<?php
-
-			$locations = array_rekey(
-				db_fetch_assoc("SELECT DISTINCT location
-					FROM host
-					$sql_where
-					ORDER BY location ASC"),
-				'location', 'location'
-			);
-
-			if (cacti_sizeof($locations)) {
-				foreach ($locations as $l) {
-					if ($l == '') {
-						continue;
-					}
-
-					print "<option value='" . html_escape($l) . "'"; if ($location == $l) { print ' selected'; } print '>' . html_escape($l) . '</option>';
-				}
-			}
-			?>
-		</select>
-	</td>
-	<?php
-}
-
 function html_spikekill_actions() {
 	switch(get_nfilter_request_var('action')) {
 		case 'spikemenu':
@@ -2533,7 +2458,7 @@ function html_common_header($title, $selectedTheme = '') {
 		var theme='<?php print $selectedTheme;?>';
 		var hScroll=<?php print read_user_setting('enable_hscroll', '') == 'on' ? 'true':'false';?>;
 		var userSettings=<?php print is_view_allowed('graph_settings') ? 'true':'false';?>;
-		var tableConstraints='<?php print __esc('Allow or limit the table columns to extend beyond the current windows limits.');?>';
+		var tableConstraints='<?php print __('Allow or limit the table columns to extend beyond the current windows limits.');?>';
 		var searchFilter='<?php print __esc('Enter a search term');?>';
 		var searchRFilter='<?php print __esc('Enter a regular expression');?>';
 		var noFileSelected='<?php print __esc('No file selected');?>';
@@ -2658,7 +2583,7 @@ function html_common_header($title, $selectedTheme = '') {
 	print get_md5_include_css('include/themes/' . $selectedTheme .'/pace.css');
 	print get_md5_include_css('include/themes/' . $selectedTheme .'/Diff.css');
 	print get_md5_include_css('include/fa/css/all.css');
-	print get_md5_include_css('include/vendor/flag-icons/css/flag-icons.css');
+	print get_md5_include_css('include/vendor/flag-icon-css/css/flag-icon.css');
 	print get_md5_include_css('include/themes/' . $selectedTheme .'/main.css');
 	print get_md5_include_js('include/js/screenfull.js', true);
 	print get_md5_include_js('include/js/jquery.js');
@@ -2684,7 +2609,6 @@ function html_common_header($title, $selectedTheme = '') {
 	print get_md5_include_js('include/js/billboard.js');
 	print get_md5_include_js('include/layout.js');
 	print get_md5_include_js('include/js/pace.js');
-	print get_md5_include_js('include/js/purify.js');
 	print get_md5_include_js('include/realtime.js');
 	print get_md5_include_js('include/themes/' . $selectedTheme .'/main.js');
 
@@ -2721,7 +2645,7 @@ function html_help_page($page) {
 	$help = array(
 		'aggregates.php'              => 'Aggregates.html',
 		'aggregate_templates.php'     => 'Aggregate-Templates.html',
-		'automation_networks.php'     => 'Automation-Networks.html',
+		'automation_networks.php'     => 'Automation-Networks.php',
 		'cdef.php'                    => 'CDEFs.html',
 		'color_templates.php'         => 'Color-Templates.html',
 		'color.php'                   => 'Colors.html',

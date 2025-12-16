@@ -1,3 +1,4 @@
+<!-- $Id$ -->
 <query>
    <name>Get Disk I/O</name>
    <description>Queries a net-snmp host for a device I/O listing</description>

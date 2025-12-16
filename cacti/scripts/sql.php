@@ -1,4 +1,5 @@
 <?php
+// $Id$
 
 error_reporting(0);
 

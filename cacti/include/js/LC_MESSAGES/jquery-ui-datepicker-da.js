@@ -1,3 +1,4 @@
+// $Id$
 /* Danish initialisation for the jQuery UI date picker plugin. */
 /* Written by Jan Christensen ( deletestuff@gmail.com). */
 ( function( factory ) {

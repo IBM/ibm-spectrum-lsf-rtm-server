@@ -590,17 +590,11 @@ function disku_config_arrays() {
 		'message' => __('Duplicated Extension. The Extension will map to more than one application.', 'disku'),
 		'type' => 'info');
 	$messages[304] = array(
-		'message' => __('Need to provide an absolute Path to Monitor.', 'disku'),
+		'message' => __('A absolute path is needed.', 'disku'),
 		'type' => 'error');
 	$messages[305] = array(
 		'message' => __('Duplicated Path. The Path of the Poller has existed already.', 'disku'),
 		'type' => 'error');
-	$messages[306] = array(
-		'message' => __('Need to provide a Path Name.', 'disku'),
-		'type' => 'error');
-	$messages[307] = array(
-		'message' => __('The disk usage poller is not available.  Install the rtm-client.', 'disku'),
-		'type' => 'error');	
 }
 
 function disku_config_settings() {

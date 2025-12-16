@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright IBM Corp. 2006, 2023                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -1033,8 +1033,8 @@ function treeFilter() {
 						<input type='hidden' id='page' value='1'>
 						<input type='hidden' id='action' value='viewqueue'>
 						<input type='hidden' id='tab' value='share'>
-						<input type='hidden' id='queue' value='<?php print html_escape_request_var('queue');?>'>
-						<input type='hidden' id='clusterid' value='<?php print html_escape_request_var('clusterid');?>'>
+						<input type='hidden' id='queue' value='<?php print html_escape(get_request_var('queue'));?>'>
+						<input type='hidden' id='clusterid' value='<?php print html_escape(get_request_var('clusterid'));?>'>
 
 						&nbsp;<input type='button' id='go' value='Go' title='Search'>
 						&nbsp;<input type='button' id='clear' value='<?php print __('Clear');?>' title='<?php print __('Clear Filters');?>'>
@@ -1804,7 +1804,7 @@ function queuesFilter() {
 						<?php print __('Search', 'grid');?>
 					</td>
 					<td>
-						<input type='text' id='filter' size='30' value="<?php print html_escape_request_var('filter');?>">
+						<input type='text' id='filter' size='30' value="<?php print html_escape(get_request_var('filter'));?>">
 					</td>
 					<td>
 						<input type='checkbox' id='unused'<?php if ((get_request_var('unused') == 'true') || (get_request_var('unused') == 'on')) print ' checked="true"';?>>
@@ -2376,7 +2376,7 @@ function get_fairshare_tree_data() {
 }
 
 function get_header() {
-	return ' ' . __('[ Queue: %s, Cluster: %s ]', html_escape_request_var('queue'), grid_get_clustername(get_request_var('clusterid')), 'grid');
+	return ' ' . __('[ Queue: %s, Cluster: %s ]', html_escape(get_request_var('queue')), grid_get_clustername(get_request_var('clusterid')), 'grid');
 }
 
 function grid_view_queue_fairshare($queue) {
@@ -2428,7 +2428,7 @@ function grid_view_queue_fairshare($queue) {
 			core : {
 				data : {
 					expand_selected_onload : true,
-					url : 'grid_bqueues.php?action=get_fairshare_tree&clusterid=<?php print html_escape_request_var('clusterid');?>&queue=<?php print html_escape_request_var('queue');?>',
+					url : 'grid_bqueues.php?action=get_fairshare_tree&clusterid=<?php print html_escape(get_request_var('clusterid'));?>&queue=<?php print html_escape(get_request_var('queue'));?>',
 					data : function(node) {
 						resizeTreeData();
 						return { 'id' : node.id }
@@ -2687,8 +2687,6 @@ function grid_view_queue_fairshare($queue) {
 			applyJS();
 			resizeTreeData();
 			doing_apply_filter = 0;
-			clearTimeout(myRefresh);
-			myRefresh=setTimeout(function() { applyFilter() }, $('#refresh').val()*1000);
 		});
 
 	$(function() {
@@ -3029,13 +3027,10 @@ function grid_view_queue_graphs($queue) {
 		gtg.local_graph_id,
 		gtg.width,
 		gtg.height,
-		gtg.title_cache,
-		gl.host_id, h.disabled
+		gtg.title_cache
 		FROM graph_templates_graph AS gtg
 		INNER JOIN graph_local AS gl
 		ON gtg.local_graph_id=gl.id
-		LEFT JOIN host AS h
-		ON gl.host_id = h.id
 		$sql_where
 		ORDER BY gtg.title_cache
 		LIMIT " . (get_request_var('graphs')*(get_request_var('page')-1)) . "," . get_request_var('graphs'), $sql_params);
@@ -3330,8 +3325,8 @@ function grid_bqueues_graph_view_filter($queue) {
 					<td>
 						<input type='hidden' id='clusterid' value="<?php print html_escape($queue['clusterid']);?>">
 						<input type='hidden' id='queue' value="<?php print html_escape($queue['queuename']);?>">
-						<input type='hidden' id='action' value="<?php print html_escape_request_var('action');?>">
-						<input type='hidden' id='tab' value="<?php print html_escape_request_var('tab');?>">
+						<input type='hidden' id='action' value="<?php print html_escape(get_request_var('action'));?>">
+						<input type='hidden' id='tab' value="<?php print html_escape(get_request_var('tab'));?>">
 					</td>
 				</tr>
 			</table>

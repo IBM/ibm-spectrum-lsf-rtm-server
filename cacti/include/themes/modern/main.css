@@ -1,26 +1,4 @@
-/*
- +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
- |                                                                         |
- | This program is free software; you can redistribute it and/or           |
- | modify it under the terms of the GNU General Public License             |
- | as published by the Free Software Foundation; either version 2          |
- | of the License, or (at your option) any later version.                  |
- |                                                                         |
- | This program is distributed in the hope that it will be useful,         |
- | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
- | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
- | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
- +-------------------------------------------------------------------------+
- | http://www.cacti.net/                                                   |
- +-------------------------------------------------------------------------+
-*/
-
+/* $Id$ */
 /* main styles */
 
 ::-webkit-scrollbar {
@@ -573,34 +551,31 @@ label {
 
 .reloadquery {
 	cursor: pointer;
-	padding: 1px;
+	padding: 2px;
 	vertical-align: middle;
 	color: lime;
 	font-size: 14px;
-	margin-right: 10px;
 }
 
 .verbosequery {
 	cursor: pointer;
-	padding: 1px;
+	padding: 2px;
 	vertical-align: middle;
 	color: rgba(255, 204, 0, 0.8);
 	font-size: 14px;
-	margin-right: 10px;
 }
 
 .deletequery {
 	color: red !important;
 	cursor: pointer;
-	padding: 1px;
+	padding: 2px;
 	vertical-align: middle;
 	font-size: 14px;
-	margin-right: 10px;
 }
 
 .deletequery:hover {
 	text-decoration: none;
-	padding: 1px;
+	padding: 2px;
 	vertical-align: middle;
 }
 
@@ -608,25 +583,22 @@ label {
 	background: none repeat scroll 0 0 #F5F5F5;
 	border: none;
 	box-shadow: 0 0 1px rgba(0, 0, 0, 0.1);
-	height: 20px;
 }
 
 .odd td, .even td, .even-alternate td, .selectable td {
-	padding-left: 3px;
+	padding: 3px;
 }
 
 .even {
 	background: none repeat scroll 0 0 #E5E5E5;
 	border: none;
 	box-shadow: 0 0 1px rgba(0, 0, 0, 0.1);
-	height: 20px;
 }
 
 .even-alternate {
 	background: none repeat scroll 0 0 #E7E9F2;
 	border: none;
 	box-shadow: 0 0 1px rgba(0, 0, 0, 0.1);
-	height: 20px;
 }
 
 .saveRow {
@@ -721,7 +693,7 @@ label {
 }
 
 .cactiGraphPageHeadBackdrop {
-	background: transparent url("./images/cacti_logo.svg") no-repeat scroll left 40% / 380px auto;
+	background: transparent;
 	padding-bottom: 0px;
 	float: right;
 	width: 400px;
@@ -733,7 +705,7 @@ label {
 }
 
 .cactiConsolePageHeadBackdrop {
-	background: transparent url("./images/cacti_logo.svg") no-repeat scroll left 40% / 380px auto;
+	background: transparent;
 	padding-bottom: 0px;
 	float: right;
 	width: 400px;
@@ -875,7 +847,7 @@ ul#breadcrumbs {
 	clear: both;
 	width: 100%;
 	vertical-align: top;
-	padding-top: 62px;
+	padding-top: 56px;
 }
 
 .cactiTreeNavigationArea {
@@ -923,7 +895,7 @@ ul#breadcrumbs {
 }
 
 .cactiLogo {
-	background: #efefef url('./images/cacti_logo.svg') no-repeat 30px;
+	background: #efefef;
 	display: block;
 	cursor: pointer;
 	padding-bottom: 160px;
@@ -963,7 +935,7 @@ ul#breadcrumbs {
 .cactiLoginLogo, .cactiLogoutLogo {
 	position: relative;
 	float: right;
-	background: transparent url('./images/cacti_logo.svg') no-repeat center;
+	background: transparent;
 	width: 120px;
 	height: 148px;
 	z-index: 2;
@@ -1105,7 +1077,7 @@ legend {
 
 .cactiGraphContentArea {
 	height: 100vh;
-	padding-top: 5px;
+	padding-top: 10px;
 	padding-right: 5px;
 	padding-left: 5px;
 	display: none;
@@ -1126,7 +1098,7 @@ legend {
 }
 
 .cactiConsoleContentArea {
-	padding-top: 5px;
+	padding-top: 10px;
 	padding-right: 5px;
 	padding-left: 5px;
 	vertical-align: top;
@@ -1356,6 +1328,12 @@ legend {
 	background: -o-linear-gradient(top, rgba(98,125,77,1) 0%, rgba(31,59,8,1) 100%);
 	background: -ms-linear-gradient(top, rgba(98,125,77,1) 0%, rgba(31,59,8,1) 100%);
 	color: snow;
+}
+
+tr.cactiTableTitle th, tr.cactiTableTitle td{
+    color: snow;
+    padding: 0px 5px;
+    font-size: 12px;
 }
 
 .cactiTableButton {
@@ -1715,8 +1693,12 @@ legend {
 }
 
 .tableRow {
-    border: 2px solid rgba(0,0,0,0);
-	min-height: 25px;
+	line-height: 20px;
+}
+
+.tableRowGraph td {
+	padding: 3px 0px;
+	vertical-align: top;
 }
 
 .image_table {
@@ -1906,7 +1888,6 @@ legend {
 	height: 14px !important;
 	vertical-align: middle;
 	text-decoration: none !important;
-	padding-right: 7px !important;
 }
 
 .deleteMarker:hover {
@@ -1918,7 +1899,6 @@ legend {
 	height: 14px !important;
 	vertical-align: middle;
 	text-decoration: none !important;
-	padding-right: 7px !important;
 }
 
 .deleteMarkerDisabled:hover {
@@ -1941,7 +1921,7 @@ legend {
 
 .moveArrowNone {
 	display: inline-block;
-	width: 14.75px;
+	width: 11.75px;
 }
 
 .action, .shiftArrow, .calendar {
@@ -1968,7 +1948,7 @@ td#tabs {
 }
 
 .cactiGraphHeaderBackground {
-	background: transparent url("./images/cacti_logo.svg") no-repeat scroll left 10% / 380px auto;
+	background: transparent;
 	height: 35px;
 	width: 400px;
 	float: right;
@@ -2144,27 +2124,6 @@ div.submenu span {
 	display: block;
 }
 
-tr td:last-child .checkbox {
-	margin-right: 10px !important;
-}
-
-tr th:last-child .checkbox {
-	margin-right: 10px !important;
-}
-
-.fa-angle-double-up, .fa-angle-double-down {
-	margin-right: 10px;
-}
-
-.fa-plus, .fa-question-circle {
-	margin-right: 10px;
-}
-
-.fa-compress, .fa-expand {
-	margin-right: 10px;
-}
-
-
 /* Navigation Area */
 #nav {
 	float: left;
@@ -2265,8 +2224,8 @@ tr.selected a {
 
 ul#nav {
 	list-style: none;
-	padding: 0px;
-	padding-top: 0px;
+	padding: 0;
+	padding-top: 4px;
 	width: 100%;
 }
 
@@ -2295,8 +2254,7 @@ ul#nav {
 }
 
 .clogStats td, .clogDebug td, .clogSQL td, .clogWarning td, .clogError td, .clogLimit td {
-	padding: 2px;
-	height: 20px;
+	padding: 3px;
 }
 
 @media print {
@@ -2492,10 +2450,6 @@ tr#realtime td:first-child {
 	position: relative;
 }
 
-.graphWrapperOuter[data-disabled="true"] {
-	background-color: rgba(255, 241, 118, 0.3);
-}
-
 .code {
 	font-family: Consolas, Courier New;
 	font-size: 0.8em;
@@ -2586,7 +2540,6 @@ tr#realtime td:first-child {
 	left: 4px;
 	bottom: 4px;
 	background-color: white;
-	background-image: url('./images/cacti_logo.svg');
 	background-repeat: no-repeat;
 	background-size: 7px;
 	background-position: center;
@@ -2668,7 +2621,6 @@ input:checked + .checkboxSlider:before {
 	left: 4px;
 	bottom: 4px;
 	background-color: white;
-	background-image: url('./images/cacti_logo.svg');
 	background-repeat: no-repeat;
 	background-size: 7px;
 	background-position: center;
@@ -2739,10 +2691,5 @@ td.center > table {
 }
 
 .tableRowGraph {
-	border: 2px solid rgba(0,0,0,0);
-	min-height: 20px;
-}
-
-.tableRowGraph td {
-    padding-left: 3px;
+     border: 2px solid rgba(0,0,0,0);
 }

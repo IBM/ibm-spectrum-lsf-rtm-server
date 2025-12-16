@@ -1,8 +1,9 @@
 #!/usr/bin/env php
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -13,11 +14,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -150,20 +146,22 @@ function timeToRun() {
 	$lastrun   = read_config_option('spikekill_lastrun');
 	$frequency = read_config_option('spikekill_batch') * 3600;
 	$basetime  = strtotime(read_config_option('spikekill_basetime'));
-	$baseupper = $basetime + 300;
-	$baselower = $basetime - 300;
+	$baseupper = 300;
+	$baselower = $frequency - 300;
 	$now       = time();
 
 	debug("LastRun:'$lastrun', Frequency:'$frequency', BaseTime:'" . date('Y-m-d H:i:s', $basetime) . "', BaseUpper:'$baseupper', BaseLower:'$baselower', Now:'" . date('Y-m-d H:i:s', $now) . "'");
-
 	if ($frequency > 0 && ($now - $lastrun > $frequency)) {
 		debug("Frequency is '$frequency' Seconds");
 
-		if (empty($lastrun) && ($now < $baseupper) && ($now > $baselower)) {
+		$nowfreq = $now % $frequency;
+		debug("Now Frequency is '$nowfreq'");
+
+		if ((empty($lastrun)) && ($nowfreq > $baseupper) && ($nowfreq < $baselower)) {
 			debug('Time to Run');
 			db_execute_prepared('REPLACE INTO settings (name,value) VALUES ("spikekill_lastrun", ?)', array(time()));
 			return true;
-		} elseif (($now - $lastrun > $frequency) && ($now < $baseupper) && ($now > $baselower)) {
+		} elseif (($now - $lastrun > 3600) && ($nowfreq > $baseupper) && ($nowfreq < $baselower)) {
 			debug('Time to Run');
 			db_execute_prepared('REPLACE INTO settings (name,value) VALUES ("spikekill_lastrun", ?)', array(time()));
 			return true;

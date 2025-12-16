@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -342,7 +338,7 @@ function api_get_graphs_from_datasource($local_data_id) {
 		AND data_template_rrd.local_data_id = ?', array($local_data_id)), 'id', 'name');
 }
 
-function api_duplicate_graph($_local_graph_id, $_graph_template_id, $graph_title, $map_to_data_query = true) {
+function api_duplicate_graph($_local_graph_id, $_graph_template_id, $graph_title) {
 	global $struct_graph, $struct_graph_item;
 
 	if (!empty($_local_graph_id)) {
@@ -350,10 +346,6 @@ function api_duplicate_graph($_local_graph_id, $_graph_template_id, $graph_title
 			FROM graph_local
 			WHERE id = ?',
 			array($_local_graph_id));
-
-		if (!cacti_sizeof($graph_local)) {
-			return false;
-		}
 
 		$graph_template_graph = db_fetch_row_prepared('SELECT *
 			FROM graph_templates_graph
@@ -380,10 +372,6 @@ function api_duplicate_graph($_local_graph_id, $_graph_template_id, $graph_title
 			FROM graph_templates
 			WHERE id = ?',
 			array($_graph_template_id));
-
-		if (!cacti_sizeof($graph_template)) {
-			return false;
-		}
 
 		$graph_template_graph  = db_fetch_row_prepared('SELECT *
 			FROM graph_templates_graph
@@ -487,7 +475,7 @@ function api_duplicate_graph($_local_graph_id, $_graph_template_id, $graph_title
 
 	if (!empty($_local_graph_id)) {
 		update_graph_title_cache($local_graph_id);
-	} elseif ($map_to_data_query) {
+	} else {
 		// Graph Template, Check for Data Query Associated Graph Template
 		$data_query_graphs = db_fetch_assoc_prepared('SELECT *
 			FROM snmp_query_graph
@@ -588,14 +576,6 @@ function api_duplicate_graph($_local_graph_id, $_graph_template_id, $graph_title
 	 * for Caching.
 	 */
 	set_config_option('time_last_change_graph', time());
-
-	if ($_local_graph_id > 0) {
-		return $local_graph_id;
-	} elseif ($_graph_template_id > 0) {
-		return $graph_template_id;
-	} else {
-		return false;
-	}
 }
 
 function api_graph_change_device($local_graph_id, $host_id) {

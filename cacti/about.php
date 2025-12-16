@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -37,7 +33,7 @@ html_start_box(__('About Cacti'), '100%', '', '3', 'center', '');
 </tr>
 <tr>
 	<td valign='top' class='odd' class='textArea'>
-		<div style='float:right;'><a href='http://www.cacti.net/'><img class='right' src='images/cacti_about_logo.gif' alt='raXnet'></a></div>
+		<div style='float:right;'><a href='http://www.cacti.net/'><img class='right' src='<?php print $config['url_path']; ?>images/cacti_about_logo.gif' alt='raXnet'></a></div>
 
 		<p><?php print __('Cacti is designed to be a complete graphing solution based on the RRDtool Time Series Database (TSDB) and Graphing solution. Its goal is to make the Network Administrator\'s job easier by taking care of all the important details necessary to create meaningful Graphs.'); ?></p>
 

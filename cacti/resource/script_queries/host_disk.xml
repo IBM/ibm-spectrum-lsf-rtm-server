@@ -1,3 +1,4 @@
+<!-- $Id$ -->
 <interface>
 	<name>Get Host MIB Partitions</name>
 	<script_path>|path_php_binary| -q |path_cacti|/scripts/query_host_partitions.php</script_path>

@@ -1,3 +1,4 @@
+// $Id$
 /* Belarusian initialisation for the jQuery UI date picker plugin. */
 /* Written by Pavel Selitskas <p.selitskas@gmail.com> */
 ( function( factory ) {

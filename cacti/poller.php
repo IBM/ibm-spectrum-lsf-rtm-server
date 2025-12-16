@@ -1,8 +1,9 @@
 #!/usr/bin/env php
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -13,11 +14,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -350,7 +346,7 @@ if (isset($items_perhost) && cacti_sizeof($items_perhost)) {
 
 // some text formatting for platform specific vocabulary
 if ($config['cacti_server_os'] == 'unix') {
-	$task_type = 'Cactid/Cron';
+	$task_type = 'Cron';
 } else {
 	$task_type = 'Scheduled Task';
 }
@@ -387,7 +383,7 @@ if ((isset($poller_lastrun) && isset($poller_interval) && $poller_lastrun > 0) &
 /* check to see whether we have the poller interval set lower than
  * the poller is actually ran, if so, issue a warning
  */
-if ((($poller_start - $poller_lastrun - 10) > MAX_POLLER_RUNTIME) && ($poller_lastrun > 0)) {
+if ((($poller_start - $poller_lastrun - 5) > MAX_POLLER_RUNTIME) && ($poller_lastrun > 0)) {
 	cacti_log("WARNING: $task_type is out of sync with the Poller Interval!  The Poller Interval is '$poller_interval' seconds, with a maximum of a '$min_period' second $task_type, but " . number_format_i18n($poller_start - $poller_lastrun, 1) . ' seconds have passed since the last poll!', true, 'POLLER');
 	admin_email(__('Cacti System Warning'), __('WARNING: %s is out of sync with the Poller Interval for poller id %d!  The Poller Interval is %d seconds, with a maximum of a %d seconds, but %d seconds have passed since the last poll!', $task_type, $poller_id, $poller_interval, $min_period, number_format_i18n($poller_start - $poller_lastrun, 1)));
 }
@@ -802,12 +798,11 @@ while ($poller_runs_completed < $poller_runs) {
 					}
 				}
 			}
-
-			if ($poller_id == 1) {
-				rrd_close($rrdtool_pipe);
-			}
 		}
 
+		if ($poller_id == 1) {
+			rrd_close($rrdtool_pipe);
+		}
 
 		// process poller commands
 		$commands = db_fetch_cell_prepared('SELECT ' . SQL_NO_CACHE . ' COUNT(*)
@@ -891,37 +886,13 @@ while ($poller_runs_completed < $poller_runs) {
 				ON h.id = pi.host_id ' . $sql_where);
 		}
 	} else {
-		cacti_log('WARNING: Cacti Polling Cycle Exceeded Poller Interval by ' . round($loop_end-$loop_start-$poller_interval, 2) . ' seconds', true, 'POLLER', $level);
-		admin_email(__('Cacti System Warning'), __('WARNING: Cacti Polling Cycle Exceeded Poller Interval by ' . round($loop_end-$loop_start-$poller_interval, 2) . ' seconds', true, 'POLLER', $level));
+		cacti_log('WARNING: Cacti Polling Cycle Exceeded Poller Interval by ' . ($loop_end-$loop_start-$poller_interval) . ' seconds', true, 'POLLER', $level);
+                admin_email(__('Cacti System Warning'), __('WARNING: Cacti Polling Cycle Exceeded Poller Interval by ' . ($loop_end-$loop_start-$poller_interval) . ' seconds', true, 'POLLER', $level));
 	}
 
 	if (!$logged) {
 		log_cacti_stats($loop_start, $method, $concurrent_processes, $max_threads,
 			($poller_id == '1' ? $total_polling_hosts - 1 : $total_polling_hosts), $hosts_per_process, $num_polling_items, $rrds_processed);
-	}
-}
-
-function poller_heartbeat_check() {
-	$poller_interval = read_config_option('poller_interval');
-
-	$heartbeat_pollers = db_fetch_assoc_prepared('SELECT *, UNIX_TIMESTAMP() - UNIX_TIMESTAMP(last_status) AS heartbeat
-		FROM poller
-		WHERE disabled = ""
-		HAVING heartbeat > ? * 2
-		OR status = 6',
-		array($poller_interval));
-
-	if (cacti_sizeof($heartbeat_pollers)) {
-		foreach($heartbeat_pollers as $p) {
-			db_execute_prepared('UPDATE poller SET status = 6 WHERE id = ?', array($p['id']));
-
-			if (debounce_run_notification('poller_heartbeat_' . $p['id'], 1800)) {
-				$log_message = sprintf('WARNING: Poller[%s] with Name:%s is in Heartbeat Status', $p['id'], $p['name']);
-				$email_message = __('WARNING: PollerID:%s with Name:%s is in Heartbeat Status', $p['id'], $p['name']);
-				cacti_log($log_message, false, 'POLLER');
-				admin_email(__('Poller in Heartbeat Mode'), $email_message);
-			}
-		}
 	}
 }
 
@@ -941,7 +912,6 @@ if ($poller_id == 1) {
 	api_plugin_hook('poller_bottom');
 	bad_index_check($mibs);
 	host_status_cache_check();
-	poller_heartbeat_check();
 } else {
 	// flush the boost table if in recovery mode
 	if ($poller_id > 1 && $config['connection'] == 'recovery') {
@@ -1152,14 +1122,13 @@ function log_cacti_stats($loop_start, $method, $concurrent_processes, $max_threa
 			(id, total_time, min_time, max_time, avg_time, total_polls, last_update, last_status, status)
 			VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW(), 2)
 			ON DUPLICATE KEY UPDATE
-			total_time = VALUES(total_time),
-			min_time = VALUES(min_time),
-			max_time = VALUES(max_time),
-			avg_time = VALUES(avg_time),
-			total_polls = VALUES(total_polls),
-			last_update = VALUES(last_update),
-			last_status = VALUES(last_status),
-			status = VALUES(status)',
+			total_time=VALUES(total_time),
+			min_time=VALUES(min_time),
+			max_time=VALUES(max_time),
+			avg_time=VALUES(avg_time),
+			total_polls=VALUES(total_polls),
+			last_update=VALUES(last_update),
+			last_status=VALUES(last_status), status=VALUES(status)',
 			array($poller_id, round($total_time, 4), $min_time, $max_time, $avg_time, $total_polls + 1), true, $poller_db_cnn_id);
 	}
 

@@ -1,44 +1,12 @@
-# +-------------------------------------------------------------------------+
-# | Copyright (C) 2004-2024 The Cacti Group                                 |
-# |                                                                         |
-# | This program is free software; you can redistribute it and/or           |
-# | modify it under the terms of the GNU General Public License             |
-# | as published by the Free Software Foundation; either version 2          |
-# | of the License, or (at your option) any later version.                  |
-# |                                                                         |
-# | This program is distributed in the hope that it will be useful,         |
-# | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
-# | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
-# | GNU General Public License for more details.                            |
-# +-------------------------------------------------------------------------+
-# | http://www.cacti.net/                                                   |
-# +-------------------------------------------------------------------------+
-
-# --------------------------------------------------------------------------
-# To install this service, you will have to make a few changes.  They
-# include:
-#
-# - Change <CACTIDIR> to your installed Cacti directory
-# - Change the mariadb.service to mysql.service if using the MySQL database
-#
-# Then follow these steps:
-#
-# - copy this file into /etc/systemd/system directory
-# - run 'systemctl daemon-reload'
-# - start the service using 'systemctl start thold_daemon'
-# - check that the process is running using 'systemctl status thold_daemon'
-# - enable the Thold Daemon from Console > Configuration > Settings > Thold/Alerting
-
 [Unit]
 Description=Cacti Threshold Daemon Service
-Required=mariadb.service
-After=network.target auditd.service mariadb.service 
+After=network.target auditd.service mariadb.service php7.0-fpm.service nginx.service
 
 [Service]
+Type=forking
 User=apache
 Group=root
-Type=forking
-ExecStart=/usr/bin/php <CACTIDIR>/plugins/thold/thold_daemon.php
+ExecStart=/usr/bin/php -q /usr/share/cacti/site/plugins/thold/thold_daemon.php
 KillMode=process
 Restart=on-failure
 

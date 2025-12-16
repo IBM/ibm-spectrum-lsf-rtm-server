@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -31,7 +27,7 @@
      the html form. see the arrays contained in include/global_settings.php
      for the extract syntax of this array */
 function draw_edit_form($array) {
-	if (cacti_sizeof($array)) {
+	if (cacti_sizeof($array) > 0) {
 		foreach ($array as $top_branch => $top_children) {
 			if ($top_branch == 'config') {
 				$config_array = $top_children;
@@ -41,7 +37,7 @@ function draw_edit_form($array) {
 		}
 	}
 
-	if (cacti_sizeof($fields_array)) {
+	if (cacti_sizeof($fields_array) > 0) {
 		if (!isset($config_array['no_form_tag'])) {
 			print "<form class='cactiForm' method='post' autocomplete='off' action='" . ((isset($config_array['post_to'])) ? $config_array['post_to'] : get_current_page()) . "'" . ((isset($config_array['form_name'])) ? " name='" . $config_array['form_name'] . "'" : '') . ((isset($config_array['enctype'])) ? " enctype='" . $config_array['enctype'] . "'" : '') . ">\n";
 		}
@@ -51,34 +47,10 @@ function draw_edit_form($array) {
 
 		foreach ($fields_array as $field_name => $field_array) {
 			if ($field_array['method'] == 'hidden') {
-				if (!isset($field_array['value'])) {
-					cacti_log("WARNING: Cacti Form field '$field_name' does not include a 'value' Column.  Using default.", false);
-					cacti_debug_backtrace('form_edit');
-
-					if (isset($field_array['default'])) {
-						$field_array['value'] = $field_array['default'];
-					} else {
-						cacti_log("WARNING: Cacti Form field '$field_name' does not include a 'default' Column.  Using empty string.", false);
-						$field_array['value'] = '';
-					}
-				}
-
 				print '<div class="hidden formRow">';
 				form_hidden_box($field_name, $field_array['value'], ((isset($field_array['default'])) ? $field_array['default'] : ''), true);
 				print '</div>';
 			} elseif ($field_array['method'] == 'hidden_zero') {
-				if (!isset($field_array['value'])) {
-					cacti_log("WARNING: Cacti Form field '$field_name' does not include a 'value' Column.  Using default.", false);
-					cacti_debug_backtrace('form_edit');
-
-					if (isset($field_array['default'])) {
-						$field_array['value'] = $field_array['default'];
-					} else {
-						cacti_log("WARNING: Cacti Form field '$field_name' does not include a 'default' Column.  Using '0'.", false);
-						$field_array['value'] = '0';
-					}
-				}
-
 				print '<div class="hidden formRow">';
 				form_hidden_box($field_name, $field_array['value'], '0', true);
 				print '</div>';
@@ -107,18 +79,6 @@ function draw_edit_form($array) {
 				print "<div class='formFieldName'>";
 
 				if (isset($field_array['sub_checkbox'])) {
-					if (!isset($field_array['sub_checkbox']['value'])) {
-						cacti_log("WARNING: Cacti Form field '$field_name' does not include a sub_checkbox 'value' Column.  Using default", false);
-						cacti_debug_backtrace('form_edit');
-
-						if (isset($field_array['sub_checkbox']['default'])) {
-							$field_array['sub_checkbox']['value'] = $field_array['default'];
-						} else {
-							cacti_log("WARNING: Cacti Form field '$field_name' does not include a 'default' Column.  Using ''.", false);
-							$field_array['sub_checkbox']['value'] = '';
-						}
-					}
-
 					form_checkbox($field_array['sub_checkbox']['name'],
 						$field_array['sub_checkbox']['value'],
 						'',
@@ -157,10 +117,6 @@ function draw_edit_form($array) {
 			}
 
 			$i++;
-		}
-
-		if (isset($_SESSION['sess_error_fields'])) {
-			kill_session_var('sess_error_fields');
 		}
 	}
 }
@@ -290,13 +246,13 @@ function draw_edit_control($field_name, &$field_array) {
 				}
 
 				if (cacti_sizeof($files)) {
-					foreach($files as $file) {
-						if (is_readable($dir . '/' . $file) && $file != '.' && $file != '..') {
-							if (!in_array($file, $field_array['exclusions'])) {
-								$array_files[basename($file)] = basename($file);
-							}
+				foreach($files as $file) {
+					if (is_readable($dir . '/' . $file) && $file != '.' && $file != '..') {
+						if (!in_array($file, $field_array['exclusions'])) {
+							$array_files[basename($file)] = basename($file);
 						}
 					}
+				}
 				}
 			}
 		}
@@ -836,7 +792,7 @@ function form_droplanguage($form_name, $column_display, $column_id, $form_previo
 			$flagName = strtolower($flags[0]);
 		}
 
-		print '<option value=\'' . $key . '\'' . $selected . ' data-class=\'fi-' . $flagName . '\'><span class="fi fis fi-' . $flagName . '"></span>' . __($value) . '</option>';
+		print '<option value=\'' . $key . '\'' . $selected . ' data-class=\'flag-icon-' . $flagName . '\'><span class="flag-icon flag-icon-squared flag-icon-' . $flagName . '"></span>' . __($value) . '</option>';
 	}
 
 	print '</select>';
@@ -896,7 +852,7 @@ function form_callback($form_name, $classic_sql, $column_display, $column_id, $c
 
 		$(function() {
 		    $('#<?php print $form_name;?>_input').autocomplete({
-				source: '<?php print get_current_page();?>?action=<?php print $callback;?>',
+		        source: '<?php print get_current_page();?>?action=<?php print $callback;?>',
 				autoFocus: true,
 				minLength: 0,
 				select: function(event,ui) {
@@ -928,6 +884,8 @@ function form_callback($form_name, $classic_sql, $column_display, $column_id, $c
 					}, 200);
 				}
 				$('#<?php print $form_name;?>_input').select();
+			}).on('keyup', function() {
+				$('#<?php print $form_name;?>').val($('#<?php print $form_name;?>_input').val());
 			}).on('mouseleave', function() {
 				<?php print $form_name;?>Timer = setTimeout(function() { $('#<?php print $form_name;?>_input').autocomplete('close'); }, 800);
 			});
@@ -965,7 +923,7 @@ function form_callback($form_name, $classic_sql, $column_display, $column_id, $c
 	}
 }
 
-/* form_checkbox - draws a standard html checkbox
+/** form_checkbox - draws a standard html checkbox
    @param string $form_name - the name of this form element
    @param string $form_previous_value - the current value of this form element
    @param string $form_caption - the text to display to the right of the checkbox
@@ -980,7 +938,7 @@ function form_callback($form_name, $classic_sql, $column_display, $column_id, $c
    @param boolean $show_label - show the form caption in the checkbox
 */
 function form_checkbox($form_name, $form_previous_value, $form_caption, $form_default_value, $current_id = 0, $class = '', $on_change = '', $title = '', $show_label = false) {
-	if (($form_previous_value === null) && (empty($current_id))) {
+	if (($form_previous_value == '') && (empty($current_id))) {
 		$form_previous_value = $form_default_value;
 	}
 
@@ -1205,7 +1163,7 @@ function form_color_dropdown($form_name, $form_previous_value, $form_none_entry,
 		print "<option value='0'>$form_none_entry</option>";
 	}
 
-	if (cacti_sizeof($colors_list)) {
+	if (cacti_sizeof($colors_list) > 0) {
 		foreach ($colors_list as $color) {
 			if ($color['name'] == '') {
 				$display = __('Cacti Color (%s)', $color['hex']);
@@ -1346,7 +1304,7 @@ function form_save_button($cancel_url, $force_type = '', $key_field = 'id', $aja
 	}
 
 	if ($force_type != 'import' && $force_type != 'export' && $force_type != 'save' && $force_type != 'close' && $cancel_url != '') {
-		$cancel_action = "<input type='button' class='ui-button ui-corner-all ui-widget' onClick='cactiReturnTo(\"" . html_escape(sanitize_uri($cancel_url)) . "\")' value='" . $calt . "'>";
+		$cancel_action = "<input type='button' class='ui-button ui-corner-all ui-widget' onClick='cactiReturnTo(\"" . html_escape($cancel_url, ENT_QUOTES) . "\")' value='" . $calt . "'>";
 	} else {
 		$cancel_action = '';
 	}
@@ -1418,7 +1376,7 @@ function form_end($ajax = true) {
 			title='<?php print __esc('Warning Unsaved Form Data');?>';
 			returnStr = '<div id="messageContainer" style="display:none">' +
 				'<h4><?php print __('Unsaved Changes Detected');?></h4>' +
-				'<p style="display:table-cell;overflow:auto"><?php print __esc("You have unsaved changes on this form.  If you press 'Continue' these changes will be discarded.  Press 'Cancel' to continue editing the form.");?></p>' +
+				'<p style="display:table-cell;overflow:auto"><?php print __('You have unsaved changes on this form.  If you press &#39;Continue&#39; these changes will be discarded.  Press &#39;Cancel&#39; to continue editing the form.');?></p>' +
 				'</div>';
 
 			$('#messageContainer').remove();

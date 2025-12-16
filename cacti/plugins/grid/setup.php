@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2025                                          |
+ | Copyright IBM Corp. 2006, 2023                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -290,14 +290,6 @@ function grid_device_table_replace($hosts) {
 
 			$graphs_url      = $config['url_path'] . 'graphs.php?reset=1&host_id=' . $host['id'];
 			$data_source_url = $config['url_path'] . 'data_sources.php?reset=1&host_id=' . $host['id'];
-
-			if (empty($host['graphs'])) {
-				$host['graphs'] = 0;
-			}
-
-			if (empty($host['data_sources'])) {
-				$host['data_sources'] = 0;
-			}
 
 			form_alternate_row('line' . $host['id'], true);
 			form_selectable_cell(filter_value($host['description'], get_request_var('filter'), 'host.php?action=edit&id=' . $host['id']), $host['id']);
@@ -3447,20 +3439,6 @@ function grid_config_settings () {
 				'queuemap' => __('Host groups associated with queues', 'grid')
 			)
 		),
-		'grid_job_pend_pump_infile' => array(
-			'friendly_name' => __('Hostgroup Pend Jobs Data Save to Temp File', 'grid'),
-			'description' => __('Save the hostgroup intermediate pend jobs data to temp file before load to DB. Need to grant RTM DB user \'FILE\' privilege. e.g. GRANT FILE on *.* to \'dbuser\'@\'rtmhost\'', 'grid'),
-			'default' => '',
-			'method' => 'checkbox'
-		),
-		'grid_job_pump_infile_dir' => array(
-			'friendly_name' => __('Temp Directory to Save Hostgroup Pend Jobs Data', 'grid'),
-			'description' => __('The directory on DB server to save temp files, \'mysql\' user needs full access to the directory. Please clean up old temp files in the directory regularly.', 'grid'),
-			'method' => 'dirpath',
-			'default' => '',
-			'size' => '60',
-			'max_length' => '255'
-		)
 	);
 
 	$grid_settings_system['grid_paths'] = array(
@@ -4405,11 +4383,6 @@ function grid_config_settings () {
 				'method' => 'checkbox',
 				'default' => ''
 				),
-			'show_job_user_priority' => array(
-				'friendly_name' => __('Job Priority (User Priority)', 'grid'),
-				'method' => 'checkbox',
-				'default' => ''
-				),
 			'jobtime_header' => array(
 				'friendly_name' => __('Job Time State Options', 'grid'),
 				'method' => 'spacer',
@@ -4560,16 +4533,6 @@ function grid_config_settings () {
 				'method' => 'checkbox',
 				'default' => ''
 				),
-			'export_job_priority_from_job_detail' => array(
-				'friendly_name' => __('Job Priority', 'grid'),
-				'method' => 'checkbox',
-				'default' => ''
-				),
-			'export_user_priority_from_job_detail' => array(
-				'friendly_name' => __('User Priority', 'grid'),
-				'method' => 'checkbox',
-				'default' => ''
-				),
 			'jobcmdrelated_header' => array(
 				'friendly_name' => __('Job Command Related', 'grid'),
 				'method' => 'spacer',
@@ -4591,11 +4554,6 @@ function grid_config_settings () {
 				),
 			'export_command' => array(
 				'friendly_name' => __('Job Command', 'grid'),
-				'method' => 'checkbox',
-				'default' => ''
-				),
-			'export_working_directory' => array(
-				'friendly_name' => __('Working Directory', 'grid'),
 				'method' => 'checkbox',
 				'default' => ''
 				),
@@ -6218,7 +6176,7 @@ function grid_config_arrays () {
 	include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
 	include_once($config['base_path'] . '/plugins/grid/lib/grid_validate.php');
 
-	set_config_option('grid_copyright_year', '2006-2024');
+	set_config_option('grid_copyright_year', '2006-2022');
 
 	$elim_data_input_hash = '01cde0749ae68fd14b20fc2710d0d2ee';
 	/* hook define in global_arrays.php for import/export */
@@ -6736,8 +6694,6 @@ function grid_config_arrays () {
 		'3months' => __('%d Months', 3, 'grid'),
 		'4months' => __('%d Months', 4, 'grid'),
 		'6months' => __('%d Months', 6, 'grid'),
-		'8months' => __('%d Months', 8, 'grid'),
-		'10months' => __('%d Months', 10, 'grid'),
 		'1year'   => __('%d Year', 1, 'grid')
 	);
 
@@ -6751,8 +6707,6 @@ function grid_config_arrays () {
 		'3months' => __('%d Months', 3, 'grid'),
 		'4months' => __('%d Months', 4, 'grid'),
 		'6months' => __('%d Months', 6, 'grid'),
-		'8months' => __('%d Months', 8, 'grid'),
-		'10months' => __('%d Months', 10, 'grid'),
 		'1year'   => __('%d Year', 1, 'grid'),
 		'2years'  => __('%d Years', 2, 'grid'),
 		'3years'  => __('%d Years', 3, 'grid'),

@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -350,6 +346,8 @@ function html_graph_preview_filter($page, $action, $devices_where = '', $templat
 		</form>
 		<script type='text/javascript'>
 
+    	var refreshIsLogout = false;
+		var refreshMSeconds = <?php print read_user_setting('page_refresh')*1000;?>;
 		var graph_start     = <?php print get_current_graph_start();?>;
 		var graph_end       = <?php print get_current_graph_end();?>;
 		var timeOffset      = <?php print date('Z');?>;
@@ -403,12 +401,6 @@ function html_graph_preview_filter($page, $action, $devices_where = '', $templat
 		}
 
 		$(function() {
-			refreshIsLogout = false;
-			refreshIsLogout = false;
-			refreshMSeconds = <?php print read_user_setting('page_refresh')*1000;?>;
-
-			setupPageTimeout();
-
 			$('#go').off('click').on('click', function(event) {
 				event.preventDefault();
 				applyGraphFilter();

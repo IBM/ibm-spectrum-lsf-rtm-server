@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -301,7 +301,7 @@ function form_actions() {
 				for ($i=0;($i<count($selected_items));$i++) {
 					db_execute_prepared("UPDATE grid_blstat_collectors SET disabled='' WHERE lsid=?", array($selected_items[$i]));
 				}
-			} elseif (get_request_var('drp_action') == '3') { /* disable */
+			} elseif (get_request_var('drp_action') == '3') { /* enable */
 				for ($i=0;($i<count($selected_items));$i++) {
 					db_execute_prepared("UPDATE grid_blstat_collectors SET disabled='on' WHERE lsid=?", array($selected_items[$i]));
 				}
@@ -671,7 +671,7 @@ function filter() {
 				<tr>
 					<td><?php print __('Search', 'gridblstat');?></td>
 					<td>
-						<input type='text' id='filter' size='20' value='<?php print html_escape_request_var('filter');?>'>
+						<input type='text' id='filter' size='20' value='<?php print html_escape(get_request_var('filter'));?>'>
 					</td>
 					<td><?php print __('Rows', 'gridblstat');?></td>
 					<td>

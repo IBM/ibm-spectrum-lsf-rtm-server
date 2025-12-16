@@ -1,4 +1,5 @@
 <?php
+// $Id$
 
 /**
  * Pure-PHP PKCS#1 (v2.1) compliant implementation of RSA.
@@ -570,7 +571,6 @@ class RSA
             $publickey = call_user_func_array(array($this, '_convertPublicKey'), array_values($this->_parseKey($publickey, self::PUBLIC_FORMAT_PKCS1)));
 
             // clear the buffer of error strings stemming from a minimalistic openssl.cnf
-            // https://github.com/php/php-src/issues/11054 talks about other errors this'll pick up
             while (openssl_error_string() !== false) {
             }
 

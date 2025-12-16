@@ -2,8 +2,8 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright (C) 2004-2022 The Cacti Group                                 |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -232,7 +232,7 @@ function rtm_shift_time(&$span, $direction, $shift_size, $prefix = 'sess_ldst', 
 	# now custom time settings in effect
 	$_SESSION[$prefix . '_current_timespan'] = GT_CUSTOM;
 	$_SESSION[$prefix . '_custom'] = 1;
-	set_request_var('predefined_timespan',GT_CUSTOM);
+	set_request_var('cont_predefined_timespan',GT_CUSTOM);
 }
 
 ?>

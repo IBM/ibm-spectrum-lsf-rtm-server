@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -403,7 +399,7 @@ function aggregate_graphs_insert_graph_items($_new_graph_id, $_old_graph_id, $_g
 					$prepend = false;
 					$prepend_cnt++;
 				} elseif (strpos($save['text_format'], ':current:')) {
-					if ($_total_type == AGGREGATE_TOTAL_TYPE_ALL || $_total_type == AGGREGATE_TOTAL_TYPE_SIMILAR) {
+					if ($_total_type == AGGREGATE_TOTAL_TYPE_ALL) {
 						// All so use sum functions
 						$save['text_format'] = str_replace(':current:', ':aggregate_sum:', $save['text_format']);
 					} else {
@@ -411,7 +407,7 @@ function aggregate_graphs_insert_graph_items($_new_graph_id, $_old_graph_id, $_g
 						$save['text_format'] = str_replace(':current:', ':current:', $save['text_format']);
 					}
 				} elseif (strpos($save['text_format'], ':max:')) {
-					if ($_total_type == AGGREGATE_TOTAL_TYPE_ALL || $_total_type == AGGREGATE_TOTAL_TYPE_SIMILAR) {
+					if ($_total_type == AGGREGATE_TOTAL_TYPE_ALL) {
 						// All so use sum functions
 						$save['text_format'] = str_replace(':max:', ':aggregate_sum:', $save['text_format']);
 					} else {
@@ -1036,8 +1032,7 @@ function push_out_aggregates($aggregate_template_id, $local_graph_id = 0) {
 	if (cacti_sizeof($aggregate_graphs)) {
 		foreach($aggregate_graphs as $ag) {
 			$member_graphs = array();
-
-			$graphs = db_fetch_assoc_prepared('SELECT DISTINCT agi.local_graph_id
+			$graphs        = db_fetch_assoc_prepared('SELECT DISTINCT agi.local_graph_id
 				FROM aggregate_graphs AS ag
 				INNER JOIN aggregate_graphs_items AS agi
 				ON ag.id=agi.aggregate_graph_id
@@ -1070,6 +1065,8 @@ function push_out_aggregates($aggregate_template_id, $local_graph_id = 0) {
  *  */
 function aggregate_create_update(&$local_graph_id, $member_graphs, $attribs) {
 	global $config;
+
+	include_once($config['base_path'] . '/lib/api_aggregate.php');
 
 	cacti_log(__FUNCTION__ . ' called. Graph id: ' . $local_graph_id, true, 'AGGREGATE', POLLER_VERBOSITY_DEVDBG);
 
@@ -1316,44 +1313,12 @@ function aggregate_create_update(&$local_graph_id, $member_graphs, $attribs) {
 }
 
 function aggregate_handle_ptile_type($member_graphs, $skipped_items, $local_graph_id, $_total, $_total_type) {
-	$special_comments = null;
-	$special_hrules   = null;
-
-	$agg_info = db_fetch_row_prepared('SELECT *
-		FROM aggregate_graphs
-		WHERE local_graph_id = ?',
-		array($local_graph_id));
-
-	if (cacti_sizeof($agg_info)) {
-		$comments_hrules = db_fetch_assoc_prepared('SELECT *
-			FROM graph_templates_item
-			WHERE graph_type_id IN (?, ?)
-			AND graph_template_id = ?
-			AND local_graph_id = 0
-			AND (text_format != "" || value != "")
-			ORDER BY sequence ASC',
-			array(GRAPH_ITEM_TYPE_COMMENT, GRAPH_ITEM_TYPE_HRULE, $agg_info['graph_template_id']));
-
-		$graph_template_id = $agg_info['graph_template_id'];
-	} else {
-		if (cacti_sizeof($member_graphs)) {
-			$template_graph[] = $member_graphs[0];
-		} else {
-			$template_graph   = array();
-		}
-
-		$comments_hrules = db_fetch_assoc('SELECT *
-			FROM graph_templates_item
-			WHERE graph_type_id IN(' . GRAPH_ITEM_TYPE_COMMENT . ',' . GRAPH_ITEM_TYPE_HRULE . ')' .
-			(cacti_sizeof($template_graph) ? ' AND ' . array_to_sql_or($template_graph, 'local_graph_id'):'') .
-			(cacti_sizeof($skipped_items) ? ' AND local_graph_id NOT IN(' . implode(',', $skipped_items) . ')':'') . '
-			AND (text_format != "" || value != "")
-			ORDER BY local_graph_id, sequence ASC');
-
-		if (cacti_sizeof($comments_hrules)) {
-			$graph_template_id = $comments_hrules[0]['graph_template_id'];
-		}
-	}
+	$comments_hrules = db_fetch_assoc('SELECT *
+		FROM graph_templates_item
+		WHERE graph_type_id IN(' . GRAPH_ITEM_TYPE_COMMENT . ',' . GRAPH_ITEM_TYPE_HRULE . ')' .
+		(cacti_sizeof($member_graphs) ? ' AND ' . array_to_sql_or($member_graphs, 'local_graph_id'):'') .
+		(cacti_sizeof($skipped_items) ? ' AND local_graph_id NOT IN(' . implode(',', $skipped_items) . ')':'') . '
+		ORDER BY graph_type_id DESC');
 
 	$next_item_sequence = db_fetch_cell_prepared('SELECT MAX(sequence)
 		FROM graph_templates_item
@@ -1361,12 +1326,15 @@ function aggregate_handle_ptile_type($member_graphs, $skipped_items, $local_grap
 		array($local_graph_id));
 
 	if (cacti_sizeof($comments_hrules)) {
+		$hrule_found = false;
+		$comment_found = false;
+
 		foreach ($comments_hrules as $item) {
 			switch($item['graph_type_id']) {
 				case GRAPH_ITEM_TYPE_COMMENT:
-					if (!isset($special_comments[$item['text_format'] . '|' . $item['value'] . '|' . $item['task_item_id']])) {
+					if (!$comment_found) {
 						if (preg_match('/(:bits:|:bytes:)/', $item['text_format'])) {
-							$special_comments[$item['text_format'] . '|' . $item['value'] . '|' . $item['task_item_id']] = true;
+							$comment_found = true;
 
 							$parts = explode('|', $item['text_format']);
 
@@ -1374,14 +1342,14 @@ function aggregate_handle_ptile_type($member_graphs, $skipped_items, $local_grap
 								$pparts = explode(':', $parts[1]);
 
 								if (isset($pparts[3])) {
-									if ($_total_type == AGGREGATE_TOTAL_TYPE_ALL || $_total_type == AGGREGATE_TOTAL_TYPE_SIMILAR) {
+									if ($_total_type == AGGREGATE_TOTAL_TYPE_ALL) {
 										// All so use sum functions
 										$pparts[3] = str_replace('current', 'aggregate_sum', $pparts[3]);
-										$pparts[3] = str_replace('max',     'aggregate_sum_peak', $pparts[3]);
+										$pparts[3] = str_replace('max',     'aggregate_sum', $pparts[3]);
 									} else {
 										// Similar to separate
-										$pparts[3] = str_replace('current', 'aggregate_current', $pparts[3]);
-										$pparts[3] = str_replace('max',     'aggregate_current_peak', $pparts[3]);
+										$pparts[3] = str_replace('current', 'aggregate', $pparts[3]);
+										$pparts[3] = str_replace('max',     'aggregate_peak', $pparts[3]);
 									}
 
 									switch($pparts[3]) {
@@ -1403,9 +1371,7 @@ function aggregate_handle_ptile_type($member_graphs, $skipped_items, $local_grap
 											$new_ppart = 'aggregate_peak';
 											break;
 										case 'aggregate_sum':
-										case 'aggregate_sum_peak':
 										case 'aggregate_current':
-										case 'aggregate_current_peak':
 										case 'aggregate':
 										case 'aggregate_peak':
 											$new_ppart = $pparts[3];
@@ -1420,11 +1386,9 @@ function aggregate_handle_ptile_type($member_graphs, $skipped_items, $local_grap
 							}
 
 							db_execute_prepared("INSERT INTO graph_templates_item
-								(graph_template_id, local_graph_id, task_item_id, graph_type_id, consolidation_function_id, text_format, value, hard_return, gprint_id, sequence)
-								VALUES (?, ?, ?, ?, 1, ?, '', ?, 2, ?)", array(
-									$graph_template_id,
+								(local_graph_id, graph_type_id, consolidation_function_id, text_format, value, hard_return, gprint_id, sequence)
+								VALUES (?, ?, 1, ?, '', ?, 2, ?)", array(
 									$local_graph_id,
-									$item['task_item_id'],
 									GRAPH_ITEM_TYPE_COMMENT,
 									$item['text_format'],
 									$item['hard_return'],
@@ -1436,23 +1400,23 @@ function aggregate_handle_ptile_type($member_graphs, $skipped_items, $local_grap
 
 					break;
 				case GRAPH_ITEM_TYPE_HRULE:
-					if (!isset($special_hrules[$item['text_format'] . '|' . $item['value'] . '|' . $item['task_item_id']])) {
+					if (!$hrule_found) {
 						if (preg_match('/(:bits:|:bytes:)/', $item['value'])) {
-							$special_hrules[$item['text_format'] . '|' . $item['value'] . '|' . $item['task_item_id']] = true;
+							$hrule_found = true;
 
 							$parts = explode('|', $item['value']);
 							if (isset($parts[1])) {
 								$pparts = explode(':', $parts[1]);
 
 								if (isset($pparts[3])) {
-									if ($_total_type == AGGREGATE_TOTAL_TYPE_ALL || $_total_type == AGGREGATE_TOTAL_TYPE_SIMILAR) {
+									if ($_total_type == AGGREGATE_TOTAL_TYPE_ALL) {
 										// All so use sum functions
 										$pparts[3] = str_replace('current', 'aggregate_sum', $pparts[3]);
-										$pparts[3] = str_replace('max',     'aggregate_sum_peak', $pparts[3]);
+										$pparts[3] = str_replace('max',     'aggregate_sum', $pparts[3]);
 									} else {
 										// Similar to separate
-										$pparts[3] = str_replace('current', 'aggregate_current', $pparts[3]);
-										$pparts[3] = str_replace('max',     'aggregate_current_peak', $pparts[3]);
+										$pparts[3] = str_replace('current', 'aggregate', $pparts[3]);
+										$pparts[3] = str_replace('max',     'aggregate_peak', $pparts[3]);
 									}
 
 									switch($pparts[3]) {
@@ -1475,9 +1439,7 @@ function aggregate_handle_ptile_type($member_graphs, $skipped_items, $local_grap
 											break;
 										case 'aggregate_peak':
 										case 'aggregate_sum':
-										case 'aggregate_sum_peak':
 										case 'aggregate_current':
-										case 'aggregate_current_peak':
 										case 'aggregate':
 											$new_ppart = $pparts[3];
 											break;
@@ -1490,19 +1452,15 @@ function aggregate_handle_ptile_type($member_graphs, $skipped_items, $local_grap
 								}
 							}
 
-							// add an empty line before nth percentile for the first item only
-							if (cacti_sizeof($special_hrules) == 1) {
-								db_execute_prepared("INSERT INTO graph_templates_item
-									(graph_template_id, local_graph_id, graph_type_id, consolidation_function_id, text_format, value, hard_return, gprint_id, sequence)
-									VALUES (?, ?, 1, 1, '', '', 'on', 2, ?)", array($graph_template_id, $local_graph_id, $next_item_sequence++));
-							}
+							// add an empty line before nth percentile
+							db_execute_prepared("INSERT INTO graph_templates_item
+								(local_graph_id, graph_type_id, consolidation_function_id, text_format, value, hard_return, gprint_id, sequence)
+								VALUES (?, 1, 1, '', '', 'on', 2, ?)", array($local_graph_id, $next_item_sequence++));
 
 							db_execute_prepared("INSERT INTO graph_templates_item
-								(graph_template_id, local_graph_id, task_item_id, graph_type_id, color_id, consolidation_function_id, text_format, value, hard_return, gprint_id, sequence)
-								VALUES (?, ?, ?, ?, ?, 1, ?, ?, '', 2, ?)", array(
-									$graph_template_id,
+								(local_graph_id, graph_type_id, color_id, consolidation_function_id, text_format, value, hard_return, gprint_id, sequence)
+								VALUES (?, ?, ?, 1, ?, ?, '', 2, ?)", array(
 									$local_graph_id,
-									$item['task_item_id'],
 									GRAPH_ITEM_TYPE_HRULE,
 									$item['color_id'],
 									$item['text_format'],
@@ -1514,6 +1472,10 @@ function aggregate_handle_ptile_type($member_graphs, $skipped_items, $local_grap
 					}
 
 					break;
+			}
+
+			if ($hrule_found && $comment_found) {
+				break;
 			}
 		}
 	}
@@ -1836,7 +1798,8 @@ function draw_aggregate_graph_items_list($_graph_id = 0, $_graph_template_id = 0
 			} else {
 				/* existing aggregate template or graph with no templating */
 				/* create a link to graph item editor */
-				print '<span title="' . __esc('Aggregate Items are not editable') . '">' . __('Item # %d', ($i+1)) . '</span>';
+				//print '<a class="pic" href="aggregate_items.php?action=item_edit&'.$item_editor_link_param.'&id='.$item['id'].'">' . __('Item # %d', ($i+1)) . '</a>';
+				print '<a title="' . __esc('Aggregate Items are not editable') . '" class="pic" href="#">' . __('Item # %d', ($i+1)) . '</a>';
 			}
 			print "</td>";
 

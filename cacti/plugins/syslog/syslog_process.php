@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2007-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -106,10 +106,10 @@ if (read_config_option('syslog_enabled') == '') {
  */
 if ($config['poller_id'] > 1) {
 	if (read_config_option('syslog_remote_enabled') !== 'on') {
-		$message = 'WARNING: Syslog is offline and Remote Data Collector Message Processing is disabled!';
+      $message = 'WARNING: Syslog is offline and Remote Data Collector Message Processing is disabled!';
 
-		cacti_log($message, false, 'SYSLOG', POLLER_VERBOSITY_MEDIUM);
-		print $message . PHP_EOL;
+      cacti_log($message, false, 'SYSLOG');
+      print $message . PHP_EOL;
 
 		exit(1);
 	}

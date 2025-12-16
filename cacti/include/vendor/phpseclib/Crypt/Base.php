@@ -1,4 +1,5 @@
 <?php
+// $Id$
 
 /**
  * Base Class for all \phpseclib\Crypt\* cipher classes
@@ -514,8 +515,6 @@ abstract class Base
             switch (true) {
                 // PHP_OS & "\xDF\xDF\xDF" == strtoupper(substr(PHP_OS, 0, 3)), but a lot faster
                 case (PHP_OS & "\xDF\xDF\xDF") === 'WIN':
-                case !function_exists('php_uname'):
-                case !is_string(php_uname('m')):
                 case (php_uname('m') & "\xDF\xDF\xDF") != 'ARM':
                 case PHP_INT_SIZE == 8:
                     define('CRYPT_BASE_USE_REG_INTVAL', true);
@@ -2894,16 +2893,5 @@ abstract class Base
      */
     function do_nothing()
     {
-    }
-
-    /**
-     * Is the continuous buffer enabled?
-     *
-     * @access public
-     * @return boolean
-     */
-    function continuousBufferEnabled()
-    {
-        return $this->continuousBuffer;
     }
 }

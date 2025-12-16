@@ -1,4 +1,5 @@
 <?php
+// $Id$
 /**
  * Inline HTML diff generator for PHP DiffLib.
  *

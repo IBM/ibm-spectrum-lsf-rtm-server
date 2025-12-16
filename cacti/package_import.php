@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -184,15 +180,8 @@ function form_save() {
 
 		$package_name = import_package_get_name($xmlfile);
 
-		$details = import_package_get_details($xmlfile);
-		if (isset($details['class'])) {
-			$class = $details['class'];
-		} else {
-			$class = '';
-		}
-
 		/* obtain debug information if it's set */
-		$data = import_package($xmlfile, $profile_id, $remove_orphans, $replace_svalues, $preview_only, false, false, $hashes, $files, $class);
+		$data = import_package($xmlfile, $profile_id, $remove_orphans, $replace_svalues, $preview_only, false, false, $hashes, $files);
 
 		if ($preview_only) {
 			package_prepare_import_array($templates, $files, $package_name, $xmlfile, $data);
@@ -446,7 +435,7 @@ function package_validate_signature($xmlfile) {
 }
 
 function import_display_package_data($templates, $files, $package_name, $xmlfile, $data) {
-	global $config, $device_classes;
+	global $config;
 
 	$details = import_package_get_details($xmlfile);
 
@@ -461,9 +450,6 @@ function import_display_package_data($templates, $files, $package_name, $xmlfile
 		),
 		array(
 			'display' => __('Email')
-		),
-		array(
-			'display' => __('Device class')
 		),
 		array(
 			'display' => __('Version')
@@ -481,11 +467,6 @@ function import_display_package_data($templates, $files, $package_name, $xmlfile
 	form_selectable_cell($details['author'], $id);
 	form_selectable_cell($details['homepage'], $id);
 	form_selectable_cell($details['email'], $id);
-	if (isset($details['class']) && array_key_exists($details['class'], $device_classes)) {
-		form_selectable_cell($device_classes[$details['class']], $id);
-	} else {
-		form_selectable_cell(__('Unknown'), $id);
-	}
 	form_selectable_cell($details['version'], $id);
 	form_selectable_cell($details['copyright'], $id);
 	form_end_row();
@@ -1078,12 +1059,19 @@ function package_prepare_import_array(&$templates, &$files, $package_name, $pack
 				foreach ($type_array as $index => $vals) {
 					$hash = $vals['hash'];
 
-					$templates[$hash]['package']      = $package_name;
-					$templates[$hash]['package_file'] = $package_filename;
-					$templates[$hash]['status']       = $vals['type'];
-					$templates[$hash]['type']         = $type;
-					$templates[$hash]['type_name']    = $hash_type_names[$type];
-					$templates[$hash]['name']         = $vals['title'];
+					if (!isset($templates[$hash])) {
+						$templates[$hash]['package']      = $package_name;
+						$templates[$hash]['package_file'] = $package_filename;
+						$templates[$hash]['status']       = $vals['type'];;
+					} else {
+						$templates[$hash]['package']      .= '<br>' . $package_name;
+						$templates[$hash]['package_file'] .= '<br>' . $package_filename;
+						$templates[$hash]['status']       .= '<br>' . $vals['type'];;
+					}
+
+					$templates[$hash]['type']      = $type;
+					$templates[$hash]['type_name'] = $hash_type_names[$type];
+					$templates[$hash]['name']      = $vals['title'];
 
 					unset($vals['title']);
 					unset($vals['result']);

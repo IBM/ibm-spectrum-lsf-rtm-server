@@ -1,8 +1,9 @@
 #!/usr/bin/env php
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -13,11 +14,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -33,7 +29,6 @@ global $debug;
 
 $innodb      = false;
 $utf8        = false;
-$latin       = false;
 $debug       = false;
 $size        = 1000000;
 $force       = false;
@@ -47,7 +42,7 @@ $local       = false;
 if (cacti_sizeof($parms)) {
 	foreach($parms as $parameter) {
 		if (strpos($parameter, '=')) {
-			list($arg, $value) = explode('=', $parameter, 2);
+			list($arg, $value) = explode('=', $parameter);
 		} else {
 			$arg = $parameter;
 			$value = '';
@@ -79,10 +74,6 @@ if (cacti_sizeof($parms)) {
 			case '-i':
 			case '--innodb':
 				$innodb = true;
-				break;
-			case '-l':
-			case '--latin1':
-				$latin = true;
 				break;
 			case '-n':
 			case '--skip-innodb':
@@ -124,8 +115,8 @@ if (cacti_sizeof($skip_tables) && $table_name != '') {
 	exit;
 }
 
-if (!($innodb || $utf8 || $latin)) {
-	print_or_log($installer,  "ERROR: Must select either UTF8, LATIN1 or InnoDB conversion.\n\n");
+if (!($innodb || $utf8)) {
+	print_or_log($installer,  "ERROR: Must select either UTF8 or InnoDB conversion.\n\n");
 	display_help();
 	exit;
 }
@@ -174,79 +165,59 @@ if ($innodb) {
 }
 
 if (strlen($table_name)) {
-	$tables = array($table_name);
+	$tables = db_fetch_assoc('SHOW TABLE STATUS LIKE \''.$table_name .'\'');
 } else {
-	$tables = get_cacti_base_tables();
+	$tables = db_fetch_assoc('SHOW TABLE STATUS');
 }
 
 if (cacti_sizeof($tables)) {
 	foreach($tables AS $table) {
-		$table_data = db_fetch_row_prepared('SELECT *
-			FROM information_schema.TABLES
-			WHERE TABLE_NAME = ?
-			AND TABLE_SCHEMA = ?',
-			array($table, $database_default));
-
 		$canConvert = $rebuild;
 		$canInnoDB  = false;
 		if (!$canConvert && $innodb) {
-			if ($table_data['ENGINE'] == 'MyISAM') {
-				$canConvert = true;
-				$canInnoDB  = true;
-			} elseif ($table_data['ENGINE'] == 'Aria') {
-				$canConvert = true;
-			}
+			$canConvert = $table['Engine'] == 'MyISAM';
+			$canInnoDB  = true;
 		}
 
-		if (in_array($table, $skip_tables)) {
+		if (in_array($table['Name'], $skip_tables)) {
 			$canInnoDB = false;
 		}
 
 		if (!$canConvert && $utf8) {
-			$canConvert = $table_data['TABLE_COLLATION'] != 'utf8mb4_unicode_ci';
+			$canConvert = $table['Collation'] != 'utf8mb4_unicode_ci';
 		}
 
-		if (!$canConvert && $latin) {
-			$canConvert = $table_data['TABLE_COLLATION'] != 'latin1';
-		}
-
-		if ($dynamic && $table_data['ROW_FORMAT'] == 'Compact') {
+		if ($dynamic && $table['Row_format'] == 'Compact') {
 			$canConvert = true;
 		}
 
-		if ($dynamic && $table_data['ROW_FORMAT'] == 'Page') {
-			$canConvert = false;
-		}
-
 		if ($canConvert) {
-			if ($table_data['TABLE_ROWS'] < $size || $force) {
-				print_or_log($installer,  "Converting Table > '$table'");
+			if ($table['Rows'] < $size || $force) {
+				print_or_log($installer,  "Converting Table -> '" . $table['Name'] . "'");
 
 				$sql = '';
 				if ($utf8) {
 					$sql .= ' CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci';
-				} elseif ($latin) {
-					$sql .= ' CONVERT TO CHARACTER SET latin1';
 				}
 
 				if ($innodb && $canInnoDB) {
 					$sql .= (strlen($sql) ? ',' : '') . ' ENGINE=Innodb';
 				}
 
-				$status = db_execute("ALTER TABLE `$table`" . ($dynamic ? ' ROW_FORMAT=Dynamic, ':'') . $sql);
+				$status = db_execute('ALTER TABLE `' . $table['Name'] . '`' . ($dynamic ? ' ROW_FORMAT=Dynamic, ':'') . $sql);
 
 				if ($status === false) {
 					print_or_log($installer,  ' Failed' . PHP_EOL);
 
-					record_log($installer, "FATAL: Conversion of Table '$table' Failed.  Command: 'ALTER TABLE `$table` $sql'");
+					record_log($installer, "FATAL: Conversion of Table '" . $table['Name'] . "' Failed.  Command: 'ALTER TABLE `" . $table['Name'] . "` $sql'");
 				} else {
 					print_or_log($installer,  ' Successful' . PHP_EOL);
 				}
 			} else {
-				print_or_log($installer,  "Skipping Table > '$table' too many rows '{$table_data['TABLE_ROWS']}'" . PHP_EOL);
+				print_or_log($installer,  "Skipping Table -> '" . $table['Name'] . " too many rows '" . $table['Rows'] . "'" . PHP_EOL);
 			}
 		} else {
-			print_or_log($installer,  "Skipping Table > '$table'" . PHP_EOL);
+			print_or_log($installer,  "Skipping Table -> '" . $table['Name'] . "'" . PHP_EOL);
 		}
 	}
 }
@@ -277,13 +248,12 @@ function display_version() {
 function display_help () {
 	display_version();
 
-	print "\nusage: convert_tables.php [--debug] [--innodb] [--utf8] [--latin1] [--table=N] [--size=N] [--rebuild] [--dynamic]\n\n";
+	print "\nusage: convert_tables.php [--debug] [--innodb] [--utf8] [--table=N] [--size=N] [--rebuild] [--dynamic]\n\n";
 	print "A utility to convert a Cacti Database from MyISAM to the InnoDB table format.\n";
 	print "MEMORY tables are not converted to InnoDB in this process.\n\n";
 	print "Required (one or more):\n";
 	print "-i | --innodb  - Convert any MyISAM tables to InnoDB\n";
-	print "-u | --utf8    - Convert any non-UTF8 tables to utf8mb4_unicode_ci\n";
-	print "-l | --latin1  - Convert any non-latin1 tables to latin1\n\n";
+	print "-u | --utf8    - Convert any non-UTF8 tables to utf8mb4_unicode_ci\n\n";
 	print "Optional:\n";
 	print "-t | --table=S - The name of a single table to change\n";
 	print "-n | --skip-innodb=\"table1 table2 ...\" - Skip converting tables to InnoDB\n";

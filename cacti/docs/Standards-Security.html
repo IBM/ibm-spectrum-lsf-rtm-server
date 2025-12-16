@@ -87,7 +87,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><p>get_filter_request_var('somevariable', 'options') - This version of the function can do all sorts of verification and sanitization.</p></li>
 <li><p>set_request_var('somevariable', 'somevalue') - This function will set the Cacti request variable superglobal with a value.</p></li>
 </ul>
-<p>Generally speaking, you should never use either <code>$_GET</code>, <code>$_REQUEST</code> or <code>$_POST</code> in your Cacti code. Use the validators. When you do, you can turn on the Cacti setting <code>Log Input Validation Issues</code> when you are developing, and you Cacti log will include warnings when an invalidate variable has been encountered.</p>
+<p>Generally speaking, you should never use either <code>$_GET</code>, <code>$_REQUEST</code> or <code>$_POST</code> in your Cacti code. Use the validators. When you do, you can turn on the Cacti setting <code>Log Input Validation Issues</code> when you are developing, and you Cacti log will include warnings when an unvalidate variable has been encountered.</p>
 <h2 id="prepared-statements">Prepared Statements</h2>
 <p>The second method of hardening your Cacti application is through the use of prepared SQL statements. When you use prepared SQL statements, the Database API will validate that all variables have been properly escaped making it much more difficult to perform SQL injection attacks on Cacti.</p>
 <p>Examples of non-prepared function calls and prepared include:</p>
@@ -103,12 +103,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Cacti provides an escaping function to reduce the likelihood of XSS vulnerabilities in Cacti leading to exploitation of other Web Sites. Cacti itself has a very restrictive XSS mitigation policy in affect by default, but following proper output escaping minimizes problems.</p>
 <p>The following example is how to, and not to escape output:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">print</span> <span class="st">&quot;&lt;tr&gt;&lt;td&gt;&quot;</span> . <span class="kw">$some_variable</span> . <span class="st">&quot;&lt;/td&gt;&lt;/tr&gt;&quot;</span><span class="ot">;</span></a></code></pre></div>
-<p>Using the print statement above, for values that come from the database can lead to Stored XSS vulnerabilities in your code. So, it's better to use the following:</p>
+<p>Using the print statement above, for values that come from the database can lead to Stored XSS vunerabilities in your code. So, it's better to use the following:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode php"><code class="sourceCode php"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">print</span> <span class="st">&quot;&lt;tr&gt;&lt;td&gt;&quot;</span> . html_escape<span class="ot">(</span><span class="kw">$some_variable</span><span class="ot">)</span> . <span class="st">&quot;&lt;/td&gt;&lt;/tr&gt;&quot;</span><span class="ot">;</span></a></code></pre></div>
 <h2 id="javascript-validation">JavaScript Validation</h2>
 <p>Relying on JavaScript-based validation is nice for instant feedback to the user, but should not replace validation checking in the PHP code.</p>
 <p>If you follow the simple rules above, your Plugin will be much safer for others to use and will more easily pass internal security and pen tests.</p>
 <hr />
-<p>Copyright (c) 2004-2024 The Cacti Group</p>
+<p><copy>Copyright (c) 2004-2023 The Cacti Group</copy></p>
 </body>
 </html>

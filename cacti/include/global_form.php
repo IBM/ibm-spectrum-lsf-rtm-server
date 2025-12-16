@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -172,7 +168,7 @@ $fields_snmp_item_with_oids = $fields_snmp_item + array(
 		'friendly_name' => __('Bulk Walk Maximum Repetitions'),
 		'description'   => __('For SNMPv2 and SNMPv3 Devices, the SNMP Bulk Walk max-repetitions size. The default is to \'Auto Detect on Re-Index\'. For very large switches, high performance servers, Jumbo Frame Networks or for high latency WAN connections, increasing this value may increase poller performance. More data is packed into a single SNMP packet which can reduce data query run time. However, some devices may completely refuse to respond to packets with a max-repetition size which is set too large. This can be especially true for lower-powered IoT type devices or smaller embedded IT appliances. Special attention to the overall network path MTU should also be considered since setting a value which is too high could lead to packet fragmentation.'),
 		'value'         => '|arg1:bulk_walk_size|',
-		'default'       => '0',
+		'default'       => '-1',
 		'array' => array(
 			-1 => __('Auto Detect on Re-Index'),
 			0  => __('Auto Detect/Set on first Re-Index'),
@@ -1269,7 +1265,7 @@ $fields_host_edit = array(
 		),
 	'ping_method' => array(
 		'friendly_name' => __('Ping Method'),
-		'description' => __('The type of ping packet to sent.  <br><i>NOTE: ICMP on Linux/UNIX requires root privileges.</i>  <br><i>NOTE: TCP Ping Closed - Even if the tcp ping is not successful, the device can be considered UP.</i>'),
+		'description' => __('The type of ping packet to sent.  <br><i>NOTE: ICMP on Linux/UNIX requires root privileges.</i>'),
 		'on_change' => 'changeHostForm()',
 		'value' => '|arg1:ping_method|',
 		'method' => 'drop_array',
@@ -1686,7 +1682,7 @@ $fields_template_import = array(
 		'method' => 'file'
 	),
 	'data_header' => array(
-		'friendly_name' => __('Data Source Overrides'),
+		'friendly_name' => __('Data Source Overrides', 'package'),
 		'collapsible' => 'true',
 		'method' => 'spacer',
 	),
@@ -1700,7 +1696,7 @@ $fields_template_import = array(
 		'default' => '1'
 	),
 	'graph_header' => array(
-		'friendly_name' => __('Graph/Data Template Overrides'),
+		'friendly_name' => __('Graph/Data Template Overrides', 'package'),
 		'collapsible' => 'true',
 		'method' => 'spacer',
 	),
@@ -1719,23 +1715,23 @@ $fields_template_import = array(
 		'default' => ''
 	),
 	'image_format' => array(
-		'friendly_name' => __('Graph Template Image Format'),
-		'description' => __('The Image Format to be used when importing or updating Graph Templates.'),
+		'friendly_name' => __('Graph Template Image Format', 'package'),
+		'description' => __('The Image Format to be used when importing or updating Graph Templates.', 'package'),
 		'method' => 'drop_array',
 		'default' => read_config_option('default_image_format'),
 		'array' => $image_types,
 	),
 	'graph_height' => array(
 		'friendly_name' => __('Graph Template Height', 'pagkage'),
-		'description' => __('The Height to be used when importing or updating Graph Templates.'),
+		'description' => __('The Height to be used when importing or updating Graph Templates.', 'package'),
 		'method' => 'textbox',
 		'default' => read_config_option('default_graph_height'),
 		'size' => '5',
 		'max_length' => '5'
 	),
 	'graph_width' => array(
-		'friendly_name' => __('Graph Template Width'),
-		'description' => __('The Width to be used when importing or updating Graph Templates.'),
+		'friendly_name' => __('Graph Template Width', 'package'),
+		'description' => __('The Width to be used when importing or updating Graph Templates.', 'package'),
 		'method' => 'textbox',
 		'default' => read_config_option('default_graph_width'),
 		'size' => '5',

@@ -26,7 +26,7 @@
 <p>Some of the most important information about the device will be required in this window which includes</p>
 <ul>
 <li><strong>Description</strong> - The name that will appear on <strong>Graphs</strong> by default</li>
-<li><strong>IP/Hostname</strong> - The DNS or IP address of the actual <strong>Device</strong>. IPv6 address insert into brackets (example: [2001<span class="emoji" data-emoji="abcd">🔡</span>1234::1])</li>
+<li><strong>IP/Hostname</strong> - The DNS or IP address of the actual <strong>Device</strong></li>
 <li><strong>Poller Association</strong> - Defines which <strong>Data Collector</strong> is responsible for pulling information about the <strong>Device</strong></li>
 <li><strong>Device Template</strong> - Cisco, Net-SNMP, Linux, etc - The Cacti object that holds all the <strong>Graph Templates</strong> and <strong>Data Queries</strong> to be graphed</li>
 <li><strong>Site, Location</strong> - Very important to performing Meta queries, or for Site level Graph organization on Cacti <strong>Graph Trees</strong></li>
@@ -44,7 +44,7 @@
 <li><strong>Ping and SNMP Uptime</strong> - Ping the device but also check the SNMP Uptime Instance OID</li>
 <li><strong>Ping</strong> - Either ICMP, TCP at a port, or UDP as a port</li>
 <li><strong>Ping or SNMP Uptime</strong> - Only one needs to be working for Cacti to collect data</li>
-<li><strong>SNMP Desc</strong> - Query the SNMP sysDescription in cases where the SNMP Uptime OID is not available</li>
+<li><strong>SNMP Desc</strong> - Query the SNMP sysDecription in cases where the SNMP Uptime OID is not available</li>
 <li><strong>SNMP GetNext</strong> - Query the first available OID in the OID tree for the <strong>Device</strong> Used for certain devices that have limited SNMP support.</li>
 </ul>
 <h2 id="snmp-credentials">SNMP Credentials</h2>
@@ -89,6 +89,6 @@ Adding test (192.168.1.15) as &quot;Cacti Stats&quot; using SNMP v3 with communi
 Success - new device-id: (45)
 </code></pre>
 <hr />
-<p>Copyright (c) 2004-2024 The Cacti Group</p>
+<p><copy>Copyright (c) 2004-2023 The Cacti Group</copy></p>
 </body>
 </html>

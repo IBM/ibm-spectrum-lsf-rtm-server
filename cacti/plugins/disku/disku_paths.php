@@ -64,13 +64,13 @@ function form_save() {
 	if ((isset_request_var('save_component')) && (isempty_request_var('add_dq_y'))) {
 		input_validate_input_number(get_request_var('id'));
 
-		$save['path']        = form_input_validate(get_request_var('path'), 'path', '^\/', false, 304);
-		$save['name']        = form_input_validate(get_request_var('name'), 'name', '^[A-Za-z0-9\:\._\\\@\ -]+$', false, 306);
+		$save['name']        = get_request_var('name');
 		$save['description'] = get_request_var('description');
 		$save['tagname']     = get_request_var('tagname');
+		$save['path']        = form_input_validate(get_request_var('path'), 'path', '^\/', false, 304);
 		$save['threads']     = get_request_var('threads');
 		$save['depth']       = get_request_var('depth');
-		$save['poller_id']   = form_input_validate((isset_request_var('poller_id') ? get_request_var('poller_id'): ''), 'poller_id', '^[0-9]+$', false, 307);
+		$save['poller_id']   = form_input_validate((isset_request_var('poller_id') ? get_request_var('poller_id'): ''), 'poller_id', '^[0-9]+$', false, 3);
 		$save['disabled']    = (isset_request_var('disabled') ? 'on':'');
 
 		if (!isempty_request_var('id')) {
@@ -87,7 +87,6 @@ function form_save() {
 			if (!empty($path_exist)) {
 				raise_message(305);
 			}
-
 		}
 
 		if (!is_error_message()) {

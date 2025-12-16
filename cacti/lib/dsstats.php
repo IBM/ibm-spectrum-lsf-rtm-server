@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -43,7 +39,7 @@ function get_rrdfile_names($thread_id = 1, $max_threads = 1) {
 			WHERE pi.local_data_id IS NOT NULL
 			AND data_source_path != ""
 			AND dtd.local_data_id != 0');
-	} elseif (cacti_sizeof($newrows)) {
+	} elseif (sizeof($newrows)) {
 		return $newrows[$thread_id];
 	} else {
 		$dsses_total = db_fetch_cell('SELECT SUM(rrd_num)
@@ -109,13 +105,12 @@ function dsstats_debug($message) {
  *   and stores that information into the various database tables.
  *
  * @param $interval  - (string) either 'daily', 'weekly', 'monthly', or 'yearly'
- * @param $type      - (string) the statistics type to store
  * @param $thread_id - (int) the dsstats parallel thread id
  *
  * @return - NULL
  */
-function dsstats_get_and_store_ds_avgpeak_values($interval, $type, $thread_id = 1) {
-	global $config;
+function dsstats_get_and_store_ds_avgpeak_values($interval, $thread_id = 1) {
+	global $config, $type;
 
 	global $total_user, $total_system, $total_real, $total_dsses;
 	global $user_time, $system_time, $real_time, $rrd_files;
@@ -152,12 +147,10 @@ function dsstats_get_and_store_ds_avgpeak_values($interval, $type, $thread_id = 
 		foreach ($rrdfiles as $file) {
 			$dsses += $file['dsses'];
 
-			$local_data_id = $file['local_data_id'];
-
 			if ($file['data_source_path'] != '') {
 				$rrdfile = str_replace('<path_rra>', $config['rra_path'], $file['data_source_path']);
 
-				$stats[$file['local_data_id']] = dsstats_obtain_data_source_avgpeak_values($local_data_id, $rrdfile, $interval, $pipes);
+				$stats[$file['local_data_id']] = dsstats_obtain_data_source_avgpeak_values($rrdfile, $interval, $pipes);
 			} else {
 				$data_source_name = db_fetch_cell_prepared('SELECT name_cache
 					FROM data_template_data
@@ -260,14 +253,13 @@ function dsstats_write_buffer(&$stats_array, $interval) {
  *   components and then calculates the AVERAGE and MAX values from that data and returns an array to the calling
  *   function for storage into the respective database table.
  *
- * @param $local_data_id - (string) The rrdfile to process
- * @param $rrdfile       - (string) The rrdfile to process
- * @param $interval      - (string) The interval type to process
- * @param $pipes         - (resource) Pipes to the background RRDtool process
+ * @param $rrdfile  - (string) The rrdfile to process
+ * @param $interval - (string) The interval type to process
+ * @param $pipes    - (resource) Pipes to the background RRDtool process
  *
  * @return - (mixed) An array of AVERAGE, and MAX values in an RRDfile by Data Source name
  */
-function dsstats_obtain_data_source_avgpeak_values($local_data_id, $rrdfile, $interval, &$pipes) {
+function dsstats_obtain_data_source_avgpeak_values($rrdfile, $interval, &$pipes) {
 	global $config, $user_time, $system_time, $real_time;
 
 	$use_proxy = (read_config_option('storage_location') ? true : false);
@@ -438,10 +430,8 @@ function dsstats_obtain_data_source_avgpeak_values($local_data_id, $rrdfile, $in
 
 								break;
 							} else {
-								if (isset($position[$index]) && cacti_sizeof($position[$index])) {
-									foreach($position[$index] as $dsname => $stat) {
-										$dsvalues[$dsname][$stat] = trim($line);
-									}
+								foreach($position[$index] as $dsname => $stat) {
+									$dsvalues[$dsname][$stat] = trim($line);
 								}
 							}
 						}
@@ -451,9 +441,11 @@ function dsstats_obtain_data_source_avgpeak_values($local_data_id, $rrdfile, $in
 				}
 			}
 		}
-	} elseif (($interval == 'daily') || ($interval == 'day')) {
+	} else {
 		/* only alarm if performing the 'daily' averages */
-		cacti_log("WARNING: File does not exist!  DS[$local_data_id], FILE[" . $rrdfile . "]", false, 'DSSTATS');
+		if (($interval == 'daily') || ($interval == 'day')) {
+			cacti_log("WARNING: File '" . $rrdfile . "' Does not exist", false, 'DSSTATS');
+		}
 	}
 }
 
@@ -515,8 +507,8 @@ function dsstats_log_statistics($type) {
 
 		db_execute("DELETE FROM settings
 			WHERE name LIKE 'dsstats_rrd_%$sub_type%'
-			OR name LIKE 'dsstats_total_rrds%_$sub_type%'
-			OR name LIKE 'dsstats_total_dsses%_$sub_type%'");
+			OR name LIKE 'dsstats_total_rrds_%$sub_type%'
+			OR name LIKE 'dsstats_total_dsses_%$sub_type%'");
 	} else {
 		$cacti_stats = sprintf('Time:%01.2f Type:%s', $end-$start, $type);
 	}
@@ -624,7 +616,7 @@ function dsstats_error_handler($errno, $errmsg, $filename, $linenum, $vars = [])
 /**
  * dsstats_poller_output - this routine runs in parallel with the cacti poller and
  *   populates the last and cache tables.  On larger systems, it should be noted that
- *   the memory overhead for the global arrays, $ds_types, $ds_last, $ds_multi
+ *   the memory overhead for the global arrays, $ds_types, $ds_last, $ds_steps, $ds_multi
  *   could be serval hundred megabytes.  So, this should be kept in mind when running the
  *   sizing your system.
  *
@@ -635,6 +627,7 @@ function dsstats_error_handler($errno, $errmsg, $filename, $linenum, $vars = [])
  *   $ds_types - The type of data source, keyed by the local_data_id and the rrd_name stored inside
  *               of the RRDfile.
  *   $ds_last  - For the COUNTER, and DERIVE DS types, the last measured and stored value.
+ *   $ds_steps - Records the poller interval for every Data Source so that rates can be stored.
  *   $ds_multi - For Multi Part responses, stores the mapping of the Data Input Fields to the
  *               Internal RRDfile DS names.
  *
@@ -652,10 +645,7 @@ function dsstats_error_handler($errno, $errmsg, $filename, $linenum, $vars = [])
  * @return - NULL
  */
 function dsstats_poller_output(&$rrd_update_array) {
-	global $config;
-
-	static $ds_types = array();
-	static $ds_multi = array();
+	global $config, $ds_types, $ds_last, $ds_steps, $ds_multi;
 
 	/* suppress warnings */
 	if (defined('E_DEPRECATED')) {
@@ -683,32 +673,28 @@ function dsstats_poller_output(&$rrd_update_array) {
 			$overhead_last    = strlen($sql_last_prefix) + strlen($sql_last_suffix);
 
 			/* determine the keyvalue pairs to decide on how to store data */
-			if (!cacti_sizeof($ds_types)) {
-				$ds_types = array_rekey(
-					db_fetch_assoc('SELECT DISTINCT data_source_name, data_source_type_id, rrd_step, rrd_maximum
-						FROM data_template_rrd AS dtr
-						INNER JOIN data_template_data AS dtd
-						ON dtd.local_data_id = dtr.local_data_id
-						WHERE dtd.local_data_id > 0'),
-					'data_source_name', array('data_source_type_id', 'rrd_step', 'rrd_maximum')
-				);
-			}
+			$ds_types = array_rekey(
+				db_fetch_assoc('SELECT DISTINCT data_source_name, data_source_type_id, rrd_step, rrd_maximum
+					FROM data_template_rrd AS dtr
+					INNER JOIN data_template_data AS dtd
+					ON dtd.local_data_id = dtr.local_data_id
+					WHERE dtd.local_data_id > 0'),
+				'data_source_name', array('data_source_type_id', 'rrd_step', 'rrd_maximum')
+			);
 
 			/* make the association between the multi-part name value pairs and the RRDfile internal
 			 * data source names.
 			 */
-			if (!cacti_sizeof($ds_multi)) {
-				$ds_multi = array_rekey(
-					db_fetch_assoc('SELECT DISTINCT data_name, data_source_name
-						FROM graph_templates_item AS gti
-						INNER JOIN data_template_rrd AS dtr
-						ON gti.task_item_id = dtr.id
-						INNER JOIN data_input_fields AS dif
-						ON dif.id = dtr.data_input_field_id
-						WHERE dtr.data_input_field_id != 0'),
-					'data_name', 'data_source_name'
-				);
-			}
+			$ds_multi = array_rekey(
+				db_fetch_assoc('SELECT DISTINCT data_name, data_source_name
+					FROM graph_templates_item AS gti
+					INNER JOIN data_template_rrd AS dtr
+					ON gti.task_item_id = dtr.id
+					INNER JOIN data_input_fields AS dif
+					ON dif.id = dtr.data_input_field_id
+					WHERE dtr.data_input_field_id != 0'),
+				'data_name', 'data_source_name'
+			);
 
 			/* required for updating tables */
 			$cache_i      = 1;
@@ -978,7 +964,7 @@ function dsstats_boost_bottom() {
 			sleep(2);
 		}
 
-		dsstats_get_and_store_ds_avgpeak_values('daily', 'child', 0);
+		dsstats_get_and_store_ds_avgpeak_values('daily');
 
 		dsstats_log_statistics('DAILY');
 	}
@@ -1163,7 +1149,6 @@ function dsstats_launch_children($type) {
 function dsstats_get_subtype($type) {
 	switch($type) {
 		case 'master':
-		case 'pmaster':
 			return 'child';
 			break;
 		case 'bmaster':

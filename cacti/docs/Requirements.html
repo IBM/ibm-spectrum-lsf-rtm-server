@@ -99,12 +99,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>snmp (falls back to NetSNMP)</li>
 </ul></li>
 </ul></li>
-<li><p>Problematic software and configuration</p>
-<ul>
-<li><p>On Linux OS do not turn on SELinux</p></li>
-<li><p>On web server do not turn on ModSecurity</p>
-<p>SELinux and ModSecurity can cause problem with ICMP ping, socket connections, ...</p></li>
-</ul></li>
 <li><p>MySQL 5.6 or MariaDB 5.5 or greater</p>
 <ul>
 <li><p>Timezone support must be enabled</p></li>
@@ -116,8 +110,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>It is recommended that you enable InnoDB in any MySQL/MariaDB version greater than 5.1.</p></li>
 <li><p><strong>collation_server = utf8mb4_unicode_ci</strong></p>
 <p>When using Cacti with languages other than English, it is important to use the utf8_general_ci collation type as some characters take more than a single byte. If you are first just now installing Cacti, stop, make the changes and start over again. If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages.</p></li>
-<li><p><strong>character_set_client = utf8mb4</strong></p></li>
-<li><p><strong>character_set_server = utf8mb4</strong></p>
+<li><p>**character_set_client = utf8mb4</p></li>
+<li><p>**character_set_server = utf8mb4</p>
 <p>When using Cacti with languages other than English, it is important to use the utf8 character set as some characters take more than a single byte. If you are first just now installing Cacti, stop, make the changes and start over again. If your Cacti has been running and is in production, see the internet for instructions on converting your databases and tables if you plan on supporting other languages.</p></li>
 <li><p><strong>max_connections &gt;= 100</strong></p>
 <p>Depending on the number of logins and use of spine data collector, MySQL/MariaDB will need many connections. The calculation for spine is:</p>
@@ -186,6 +180,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
  innodb_large_prefix = 1
 </code></pre>
 <hr />
-<p>Copyright (c) 2004-2024 The Cacti Group</p>
+<p><copy>Copyright (c) 2004-2023 The Cacti Group</copy></p>
 </body>
 </html>

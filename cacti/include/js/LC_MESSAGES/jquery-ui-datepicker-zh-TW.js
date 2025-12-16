@@ -1,3 +1,4 @@
+// $Id$
 /* Chinese initialisation for the jQuery UI date picker plugin. */
 /* Written by Ressol (ressol@gmail.com). */
 ( function( factory ) {

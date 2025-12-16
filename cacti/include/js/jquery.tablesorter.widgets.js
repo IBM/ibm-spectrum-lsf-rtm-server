@@ -1,3 +1,4 @@
+// $Id$
 /*! tablesorter (FORK) - updated 2018-07-10 (v2.30.7)*/
 /* Includes widgets ( storage,uitheme,columns,filter,stickyHeaders,resizable,saveSort ) */
 (function(factory) {

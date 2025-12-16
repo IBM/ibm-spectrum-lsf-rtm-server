@@ -1,4 +1,5 @@
 <?php
+// $Id$
 /**
  * Polish PHPMailer language file: refer to English translation for definitive list
  * @package PHPMailer

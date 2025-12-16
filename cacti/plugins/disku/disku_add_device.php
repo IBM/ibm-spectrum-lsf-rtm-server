@@ -3,7 +3,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2025                                          |
+ | Copyright IBM Corp. 2006, 2023                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -109,10 +109,6 @@ if (!isset($called_by_script_server)) {
 function disku_add_fs_device($force=false, $templates=false){
 	global $php_bin, $path_web, $path_disku, $debug, $graphs, $reindex;
 
-	if (read_config_option('log_verbosity') >= POLLER_VERBOSITY_DEBUG || $debug) {
-		echo "DEBUG:  Entered:  disku_add_fs_device\n";
-	}
-
 	// initialise default variables
 	$queryid          = 'all';
 
@@ -164,14 +160,7 @@ function disku_add_fs_device($force=false, $templates=false){
 
 	$disku_pollers = db_fetch_assoc("SELECT id, hostname, cacti_host FROM disku_pollers;");
 	foreach ($disku_pollers as $disku_poller){
-		if (read_config_option('log_verbosity') >= POLLER_VERBOSITY_DEBUG || $debug) {
-			echo "DEBUG: disku_add_fs_device : Foreach loop  disku_poller =  [ id = " . $disku_poller['id'] . "  hostname = " . $disku_poller['hostname'] . "  cacti_host = " .$disku_poller['cacti_host'] .  "  ] \n"; 
-		}
 		if($disku_poller['cacti_host'] != 0){
-			if (read_config_option('log_verbosity') >= POLLER_VERBOSITY_DEBUG || $debug) {
-				echo "DEBUG: disku_add_fs_device : The cacti_host is != 0.  We should replace\n";
-			}
-			
 			/* check for host that has association with the cluster */
 			$get_cacti_host_id = db_fetch_cell_prepared("SELECT id FROM host WHERE id=?", array($disku_poller['cacti_host']));
 			if (empty($get_cacti_host_id)){
@@ -180,22 +169,8 @@ function disku_add_fs_device($force=false, $templates=false){
 				$disku_poller['cacti_host'] = 0;
 			}
 		}
-		
-		$device_name = 'Disku_'. $disku_poller['hostname'];
-
 		if (empty($disku_poller['cacti_host'])) {
-			if (read_config_option('log_verbosity') >= POLLER_VERBOSITY_DEBUG || $debug) {
-				echo "DEBUG: disku_add_fs_device : The cacti_host is empty.  Create new entries\n";
-			}
-	
-			if (read_config_option('log_verbosity') >= POLLER_VERBOSITY_DEBUG || $debug) {
-				echo "DEBUG: disku_add_fs_device : device_name = " . $device_name . " \n";
-				echo "DEBUG: disku_add_fs_device : calling :  api_device_save( 0 , $host_template_id , $device_name , " . $disku_poller['hostname'] . " \n";
-				echo "DEBUG: disku_add_fs_device :                             , $snmp_community , $snmp_version , $snmp_username , $snmp_password , $snmp_port , $snmp_timeout, $disabled \n";
-				echo "DEBUG: disku_add_fs_device :                             , $avail_method , $ping_method , $ping_port, $ping_timeout , $ping_retries , $notes \n";
-				echo "DEBUG: disku_add_fs_device :                             , $auth_protocol , $priv_passphrase , $priv_protocol , $snmp_context , $max_oids )\n";
-			}
-
+			$device_name = 'Disku_'. $disku_poller['hostname'];
 			$host_id = api_device_save('0', $host_template_id, $device_name, $disku_poller['hostname'],
 				$snmp_community, $snmp_version, $snmp_username, $snmp_password, $snmp_port, $snmp_timeout, $disabled,
 				$avail_method, $ping_method, $ping_port, $ping_timeout, $ping_retries,$notes,
@@ -220,97 +195,53 @@ function disku_add_fs_device($force=false, $templates=false){
 				}
 				return;
 			}
-
-		} else {
-			//The cacti_host exists use it as host_id to re-create DB entries  
-			$host_id = $disku_poller['cacti_host'];
-		}
-
-		if (!empty($host_id) || $templates) {
-			if (read_config_option('log_verbosity') >= POLLER_VERBOSITY_DEBUG || $debug) {
-				echo "DEBUG: disku_add_fs_device : calling :   adding_disku_graphs( " . $host_id . " ) \n"; 
+			if (!empty($host_id) || $templates) {
+				adding_disku_graphs($host_id);
 			}
-			adding_disku_graphs($host_id);
-		}
 
-		$snmp_queries= db_fetch_assoc_prepared("SELECT sq.id, sq.name, hsq.reindex_method
-			FROM snmp_query AS sq
-			INNER JOIN host_snmp_query AS hsq
-			ON sq.id=hsq.snmp_query_id
-			WHERE hsq.host_id=?
-			ORDER BY sq.id", array($host_id));
+			$snmp_queries= db_fetch_assoc_prepared("SELECT sq.id, sq.name, hsq.reindex_method
+				FROM snmp_query AS sq
+				INNER JOIN host_snmp_query AS hsq
+				ON sq.id=hsq.snmp_query_id
+				WHERE hsq.host_id=?
+				ORDER BY sq.id", array($host_id));
 
-		if ( cacti_sizeof($snmp_queries) && ( $debug || read_config_option('log_verbosity') >= POLLER_VERBOSITY_DEBUG )) {
-			echo "DEBUG: disku_add_fs_device :  Called Sql:  SELECT sq.id, sq.name, hsq.reindex_method FROM snmp_query AS sq INNER JOIN host_snmp_query AS hsq ...";
-			echo "DEBUG: disku_add_fs_device :  Returned: \n";
-			foreach ($snmp_queries as $snmp_query) {
-				echo "DEBUG: disku_add_fs_device :         id = " . $snmp_query['id'] . "  name = " . $snmp_query['name'] . "  reindex_method = " . $snmp_query['reindex_method'] . "\n";
-			}
-		}
-
-		/* correct a bug in cacti that does not allow '0' as the reindex method */
-		if (!empty($host_id) && cacti_sizeof($snmp_queries)) {
-			if (read_config_option('log_verbosity') >= POLLER_VERBOSITY_DEBUG || $debug) {
-				echo "DEBUG: disku_add_fs_device : fix reindex method \n"; 
-			}
-			foreach ($snmp_queries as $snmp_query) {
-				db_execute_prepared("UPDATE host_snmp_query SET reindex_method=0
-					WHERE host_id=? AND snmp_query_id=?", array($host_id, $snmp_query['id']));
-				db_execute_prepared("DELETE FROM poller_reindex WHERE host_id=? AND data_query_id=?",  array($host_id, $snmp_query['id']));
-				if (read_config_option('log_verbosity') >= POLLER_VERBOSITY_DEBUG || $debug) {
-					echo "DEBUG: disku_add_fs_device :  Called Sql:  UPDATE host_snmp_query SET reindex_method=0 WHERE host_id= $host_id  AND snmp_query_id= " . $snmp_query['id'] . "\n";
-					echo "DEBUG: disku_add_fs_device :  Called Sql:  DELETE FROM poller_reindex WHERE host_id= $host_id  AND data_query_id= " . $snmp_query['id'] . "\n";
+			/* correct a bug in cacti that does not allow '0' as the reindex method */
+			if (!empty($host_id) && cacti_sizeof($snmp_queries)) {
+				foreach ($snmp_queries as $snmp_query) {
+					db_execute_prepared("UPDATE host_snmp_query SET reindex_method=0
+						WHERE host_id=? AND snmp_query_id=?", array($host_id, $snmp_query['id']));
+					db_execute_prepared("DELETE FROM poller_reindex WHERE host_id=? AND data_query_id=?",  array($host_id, $snmp_query['id']));
 				}
 			}
-		}
 
-		if ($reindex) {
-			if (read_config_option('log_verbosity') >= POLLER_VERBOSITY_DEBUG || $debug) {
-				echo "DEBUG: disku_add_fs_device :  Need to reindex \n"; 
+			if ($reindex) {
+				foreach ($snmp_queries as $snmp_query){
+					passthru("$php_bin -q $path_web/cli/poller_reindex_hosts.php -id=$host_id -qid=" . $snmp_query['id'] . ' -d');
+				}
 			}
+
 			foreach ($snmp_queries as $snmp_query){
-				if (read_config_option('log_verbosity') >= POLLER_VERBOSITY_DEBUG || $debug) {
-					echo "DEBUG:      Calling:  $php_bin -q $path_web /cli/poller_reindex_hosts.php -id=$host_id -qid=" . $snmp_query['id'] . " -d \n";
-				}
-				passthru("$php_bin -q $path_web/cli/poller_reindex_hosts.php -id=$host_id -qid=" . $snmp_query['id'] . ' -d');
-			}
-		}
+				$snmp_query_types = db_fetch_assoc_prepared("SELECT id, name, graph_template_id
+					FROM snmp_query_graph
+					WHERE snmp_query_id=?
+					ORDER BY id", array($snmp_query['id']));
 
-		foreach ($snmp_queries as $snmp_query){
-			if (read_config_option('log_verbosity') >= POLLER_VERBOSITY_DEBUG || $debug) {
-				echo "DEBUG: disku_add_fs_device :  Calling Sql:  SELECT id, name, graph_template_id FROM snmp_query_graph WHERE snmp_query_id=" . $snmp_query['id'] . " ORDER BY id \n";
-			}
-			$snmp_query_types = db_fetch_assoc_prepared("SELECT id, name, graph_template_id
-				FROM snmp_query_graph
-				WHERE snmp_query_id=?
-				ORDER BY id", array($snmp_query['id']));
+				$query_field_name = get_disku_query_field_name($host_id, $snmp_query['id']);
 
-			if (read_config_option('log_verbosity') >= POLLER_VERBOSITY_DEBUG || $debug) {
-				echo "DEBUG: disku_add_fs_device :  Calling :  get_disku_query_field_name( " . $host_id . ", " . $snmp_query['id'] . " ) \n";
-			}
-			$query_field_name = get_disku_query_field_name($host_id, $snmp_query['id']);
+				echo "NOTE: The Query Field name is '$query_field_name' on device $device_name\n";
 
-			if (read_config_option('log_verbosity') >= POLLER_VERBOSITY_DEBUG || $debug) {
-				echo "DEBUG: disku_add_fs_device :  NOTE: The Query Field name is '$query_field_name' on device $device_name\n";
-			}
+				if (cacti_sizeof($snmp_query_types)) {
+					foreach ($snmp_query_types as $snmp_query_type) {
+						echo "NOTE: Adding/Updating Graphs for " . $snmp_query_type['name'] . "\n";
 
-			if (cacti_sizeof($snmp_query_types)) {
-				if (read_config_option('log_verbosity') >= POLLER_VERBOSITY_DEBUG || $debug) {
-					echo "DEBUG: disku_add_fs_device :  Update graphs\n";
-				}
-				foreach ($snmp_query_types as $snmp_query_type) {
-					if (read_config_option('log_verbosity') >= POLLER_VERBOSITY_DEBUG || $debug) {
-						echo "DEBUG: disku_add_fs_device :  Calling :  add_disku_data_query_graphs( $host_id , " . $snmp_query_type['graph_template_id'] . " , " . $snmp_query['id'] . " , " . $snmp_query_type['id'] . " ,\n";
-						echo "DEBUG: disku_add_fs_device :                                          , $query_field_name , " . $snmp_query_type['name'] . " \n";
+						add_disku_data_query_graphs($host_id, $snmp_query_type['graph_template_id'], $snmp_query['id'], $snmp_query_type['id'], $query_field_name, $snmp_query_type['name']);
+
+						echo "NOTE: Finished Adding/Updating Graphs for " . $snmp_query_type['name'] . "\n";
 					}
-					echo "**** Adding/Updating Graphs for " . $snmp_query_type['name'] . "\n";
-
-					add_disku_data_query_graphs($host_id, $snmp_query_type['graph_template_id'], $snmp_query['id'], $snmp_query_type['id'], $query_field_name, $snmp_query_type['name']);
-
-					echo "**** Finished Adding/Updating Graphs for " . $snmp_query_type['name'] . "\n";
 				}
 			}
-		}
+		}//end if empty
 	}
 
 	if (!$force) {
@@ -318,17 +249,10 @@ function disku_add_fs_device($force=false, $templates=false){
 			cacti_log('INFO: Updating Disk Filesystem Device time now');
 		}
 	}
-	if (read_config_option('log_verbosity') >= POLLER_VERBOSITY_DEBUG || $debug) {
-		echo "DEBUG: disku_add_fs_device : Finished\n"; 
-	}
 }
 
 function disku_add_device($host_id, $force=false, $templates=false){
 	global $php_bin, $path_web, $path_disku, $debug, $graphs, $reindex;
-
-	if (read_config_option('log_verbosity') >= POLLER_VERBOSITY_DEBUG || $debug) {
-		echo "DEBUG:  disku_add_device : Entered : host_id = $host_id \n";
-	}
 
 	// initialise default variables
 	$queryid          = 'all';
@@ -366,7 +290,6 @@ function disku_add_device($host_id, $force=false, $templates=false){
 	if (!$force) {
 		if (read_config_option('disku_device_add') == 'on'){
 			//check whether user has enable this option
-	
 		} else {
 			if (read_config_option('log_verbosity') >= POLLER_VERBOSITY_MEDIUM || $debug){
 				cacti_log('DISKU INFO: Addition of Disk Monitoring Device is not enabled.');
@@ -413,17 +336,11 @@ function disku_add_device($host_id, $force=false, $templates=false){
 			$avail_method, $ping_method, $ping_port, $ping_timeout, $ping_retries,$notes,
 			$auth_protocol, $priv_passphrase, $priv_protocol, $snmp_context, $max_oids);
 
-		if (read_config_option('log_verbosity') >= POLLER_VERBOSITY_DEBUG || $debug) {
-			echo "DEBUG: disku_add_device : NEW host_id = $host_id \n";
-		}
-
 		if (!empty($host_id)) {
 			if (read_config_option('log_verbosity') >= POLLER_VERBOSITY_MEDIUM || $debug){
 				cacti_log('DISKU INFO : Disk Monitoring Device has been added to Cacti.');
 			}
-			if (read_config_option('log_verbosity') >= POLLER_VERBOSITY_DEBUG || $debug) {
-				echo "DEBUG: disku_add_device :  Calling : push_out_host($host_id)";
-			}
+
 			push_out_host($host_id);
 
 			if (read_config_option('log_verbosity') >= POLLER_VERBOSITY_MEDIUM || $debug){
@@ -508,10 +425,6 @@ function get_disku_query_field_name($host_id, $query_id) {
 function add_disku_data_query_graphs($host_id, $graph_template_id, $snmp_query_id, $snmp_query_type_id, $snmp_field_name, $snmp_query_name='', $regmatch = '', $include = 'on'){
 	global $php_bin, $path_web, $path_disku, $graphs, $debug;
 
-	if (read_config_option('log_verbosity') >= POLLER_VERBOSITY_DEBUG || $debug) {
-		echo "DEBUG:  add_disku_data_query_graphs  : Entered\n";
-	}
-
 	/* let's see what queries are defined for this host */
 	$found = db_fetch_cell_prepared("SELECT COUNT(*)
 			FROM host_snmp_query AS hsq
@@ -576,9 +489,7 @@ function add_disku_data_query_graphs($host_id, $graph_template_id, $snmp_query_i
 
 function adding_disku_graphs($host_id) {
 	global $php_bin, $path_web, $path_disku, $debug, $graphs;
-	if (read_config_option('log_verbosity') >= POLLER_VERBOSITY_DEBUG || $debug) {
-		echo "DEBUG:  adding_disku_graphs  : Entered\n";
-	}
+
 	/* get cluster templates */
 	$templates = db_fetch_assoc("SELECT ht.name AS host_template_name, gt.name AS graph_template_name,
 		ht.id AS host_template_id, htg.graph_template_id AS host_template_graph_id
@@ -601,11 +512,6 @@ function adding_disku_graphs($host_id) {
 
 			/* add the graph */
 			if (!$found) {
-				if (read_config_option('log_verbosity') >= POLLER_VERBOSITY_DEBUG || $debug) {
-					echo "DEBUG:  adding_disku_graphs  : Running: $php_bin -q $path_web/cli/add_graphs.php --graph-type=cg --graph-template-id=  --host-id=$host_id"; 
-					echo "DEBUG:  adding_disku_graphs  :                " . $template['host_template_graph_id'] ;
-				}
-
 				echo trim(shell_exec("$php_bin -q $path_web/cli/add_graphs.php --graph-type=cg --graph-template-id=" .$template['host_template_graph_id']. " --host-id=" . $host_id));
 				echo "\n";
 				$graphs++;

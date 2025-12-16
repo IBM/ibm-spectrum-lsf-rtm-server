@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -210,7 +206,7 @@ function __rrd_proxy_close($rrdp) {
 function encrypt($output, $rsa_key) {
 	global $encryption;
 
-	if ($encryption) {
+	if($encryption) {
 		$rsa = new \phpseclib\Crypt\RSA();
 		$aes = new \phpseclib\Crypt\Rijndael();
 		$aes_key = \phpseclib\Crypt\Random::string(192);
@@ -222,15 +218,15 @@ function encrypt($output, $rsa_key) {
 		$aes_key_length = str_pad(dechex(strlen($aes_key)),3,'0',STR_PAD_LEFT);
 
 		return $aes_key_length . $aes_key . $ciphertext;
-	} else {
+	}else {
 		return $output;
 	}
 }
 
-function decrypt($input) {
+function decrypt($input){
 	global $encryption;
 
-	if ($encryption) {
+	if($encryption) {
 		$rsa = new \phpseclib\Crypt\RSA();
 		$aes = new \phpseclib\Crypt\Rijndael();
 
@@ -246,7 +242,7 @@ function decrypt($input) {
 		$plaintext = $aes->decrypt($ciphertext);
 
 		return $plaintext;
-	} else {
+	}else {
 		return $input;
 	}
 }
@@ -419,8 +415,6 @@ function __rrd_execute($command_line, $log_to_stdout, $output_flag, $rrdtool_pip
 }
 
 function rrdtool_trim_output(&$output) {
-	global $config;
-
 	/* When using RRDtool with proc_open for long strings
 	 * and using the '-' to handle standard in from inside
 	 * the process, RRDtool automatically appends stderr
@@ -428,14 +422,9 @@ function rrdtool_trim_output(&$output) {
 	 * string.  So, therefore, we have to prune that
 	 * output.
 	 */
-	if ($config['cacti_server_os'] == 'win32') {
-		$output = rtrim($output, "OK \n\r");
-		$okpos  = strlen($output);
-	} else {
-		$okpos = strrpos($output, 'OK u:');
-		if ($okpos !== false) {
-			$output = substr($output, 0, $okpos);
-		}
+	$okpos = strrpos($output, 'OK u:');
+	if ($okpos !== false) {
+		$output = substr($output, 0, $okpos);
 	}
 }
 
@@ -506,11 +495,11 @@ function __rrd_proxy_execute($command_line, $log_to_stdout, $output_flag, $rrdp=
 				foreach ($transactions as $transaction) {
 					$packet = $transaction;
 					$transaction = decrypt($transaction);
-					if ($transaction === false) {
+					if($transaction === false){
 						cacti_log("CACTI2RRDP ERROR: Proxy message decryption failed: ###". $packet . '###', $log_to_stdout, $logopt, POLLER_VERBOSITY_LOW);
 						break 2;
 					}
-					if (strpos($transaction, "\x1f\x8b") === 0) {
+					if(strpos($transaction, "\x1f\x8b") === 0) {
 						$transaction = gzdecode($transaction);
 					}
 					$output .= $transaction;
@@ -640,33 +629,19 @@ function rrdtool_function_create($local_data_id, $show_source, $rrdtool_pipe = f
 	$create_ds = RRD_NL . '--start 0 --step '. $rras[0]['rrd_step'] . ' ' . RRD_NL;
 
 	/**
-	 * We have to check for Non-Templated Data Source first as they may not include
-	 * a graph.  So, for that case, we need the RRDfile to include all data sources
+	 * Only use the Data Sources that are included in the Graph in the case that there
+	 * is a Data Template that includes more Data Sources than there Graph Template
+	 * uses.
 	 */
-	$data_template_id = db_fetch_cell_prepared('SELECT data_template_id
-		FROM data_local
-		WHERE id = ?',
-		array($local_data_id));
-
-	if ($data_template_id > 0) {
-		$data_sources = db_fetch_assoc_prepared('SELECT DISTINCT dtr.id, dtr.data_source_name, dtr.rrd_heartbeat,
-			dtr.rrd_minimum, dtr.rrd_maximum, dtr.data_source_type_id
-			FROM data_template_rrd AS dtr
-			INNER JOIN graph_templates_item AS gti
-			ON dtr.id = gti.task_item_id
-			WHERE local_data_id = ?
-			ORDER BY local_data_template_rrd_id',
-			array($local_data_id)
-		);
-	} else {
-		$data_sources = db_fetch_assoc_prepared('SELECT DISTINCT dtr.id, dtr.data_source_name, dtr.rrd_heartbeat,
-			dtr.rrd_minimum, dtr.rrd_maximum, dtr.data_source_type_id
-			FROM data_template_rrd AS dtr
-			WHERE local_data_id = ?
-			ORDER BY local_data_template_rrd_id',
-			array($local_data_id)
-		);
-	}
+	$data_sources = db_fetch_assoc_prepared('SELECT DISTINCT dtr.id, dtr.data_source_name, dtr.rrd_heartbeat,
+		dtr.rrd_minimum, dtr.rrd_maximum, dtr.data_source_type_id
+		FROM data_template_rrd AS dtr
+		INNER JOIN graph_templates_item AS gti
+		ON dtr.id = gti.task_item_id
+		WHERE local_data_id = ?
+		ORDER BY local_data_template_rrd_id',
+		array($local_data_id)
+	);
 
 	/**
 	 * ONLY make a new DS entry if:
@@ -818,29 +793,15 @@ function rrdtool_function_update($update_cache_array, $rrdtool_pipe = false) {
 				$create_rrd_file = true;
 			}
 
-			if (isset($rrd_fields['data_template_id'])) {
-				$data_template_id = $rrd_fields['data_template_id'];
-			} else {
-				$data_template_id = db_fetch_cell_prepared('SELECT data_template_id
-					FROM data_local
-					WHERE id = ?',
-					array($rrd_fields['local_data_id']));
-			}
-
-			if ($data_template_id > 0) {
-				$unused_data_source_names = array_rekey(
-					db_fetch_assoc_prepared('SELECT DISTINCT dtr.data_source_name, dtr.data_source_name
-						FROM data_template_rrd AS dtr
-						LEFT JOIN graph_templates_item AS gti
-						ON dtr.id = gti.task_item_id
-						WHERE dtr.local_data_id = ?
-						AND gti.task_item_id IS NULL',
-						array($rrd_fields['local_data_id'])),
-					'data_source_name', 'data_source_name'
-				);
-			} else {
-				$unused_data_source_names = array();
-			}
+			$unused_data_source_names = array_rekey(
+				db_fetch_assoc_prepared('SELECT DISTINCT dtr.data_source_name, dtr.data_source_name
+					FROM data_template_rrd AS dtr
+					LEFT JOIN graph_templates_item AS gti
+					ON dtr.id = gti.task_item_id
+					WHERE dtr.local_data_id = ? AND gti.task_item_id IS NULL',
+					array($rrd_fields['local_data_id'])),
+				'data_source_name', 'data_source_name'
+			);
 
 			foreach ($rrd_fields['times'] as $update_time => $field_array) {
 				if (empty($update_time)) {
@@ -1367,26 +1328,7 @@ function rrdtool_function_graph($local_graph_id, $rra_id, $graph_data_array, $rr
 	}
 
 	if (empty($graph_data_array['graph_end'])) {
-		$main_last_run = read_config_option('poller_lastrun_1');
-		$now_time      = time();
-		$default_delta = (int) read_config_option('poller_interval') * -1;
-
-		if (!empty($main_last_run)) {
-			$delta_time = $main_last_run - $now_time;
-
-			/* DST time change detected */
-			if ($delta_time > 0) {
-				$delta_time = $default_delta;
-			}
-		} else {
-			$delta_time = $default_delta;
-		}
-
-		if ($delta_time <= $graph_data_array['graph_start']) {
-			$delta_time = $now_time;
-		}
-
-		$graph_data_array['graph_end'] = $delta_time;
+		$graph_data_array['graph_end']   = -300;
 	}
 
 	$local_data_ids = array_rekey(
@@ -1531,7 +1473,7 @@ function rrdtool_function_graph($local_graph_id, $rra_id, $graph_data_array, $rr
 	} else {
 		/* basic export options */
 		$graph_opts =
-			'--start=' . cacti_escapeshellarg($graph_start-1) . RRD_NL .
+			'--start=' . cacti_escapeshellarg($graph_start) . RRD_NL .
 			'--end=' . cacti_escapeshellarg($graph_end) . RRD_NL .
 			'--maxrows=10000' . RRD_NL;
 	}
@@ -1711,7 +1653,7 @@ function rrdtool_function_graph($local_graph_id, $rra_id, $graph_data_array, $rr
 				$graph_variables[$field_name][$graph_item_id] = rrd_substitute_host_query_data($graph_variables[$field_name][$graph_item_id], $graph, $graph_item);
 
 				/* Nth percentile */
-				if (preg_match_all('/\|([0-9]{1,2}):(bits|bytes):(\d):(current|total|max|total_peak|all_max_current|all_max_peak|aggregate_max|aggregate_sum|aggregate_sum_peak|aggregate_current|aggregate_current_peak|aggregate_peak|aggregate):(\d)?\|/', $graph_variables[$field_name][$graph_item_id], $matches, PREG_SET_ORDER)) {
+				if (preg_match_all('/\|([0-9]{1,2}):(bits|bytes):(\d):(current|total|max|total_peak|all_max_current|all_max_peak|aggregate_max|aggregate_sum|aggregate_current|aggregate_peak|aggregate):(\d)?\|/', $graph_variables[$field_name][$graph_item_id], $matches, PREG_SET_ORDER)) {
 					foreach ($matches as $match) {
 						$search[]  = $match[0];
 						$value     = variable_nth_percentile($match, $graph, $graph_item, $graph_items, $graph_start, $graph_end);
@@ -2207,7 +2149,7 @@ function rrdtool_function_graph($local_graph_id, $rra_id, $graph_data_array, $rr
 						$max = read_config_option('max_title_length') - 20;
 						if (strlen($comment_arg) > $max) {
 							$comments = explode("\n", wordwrap($comment_arg, $max));
-						} else {
+						}else{
 							$comments[] = $comment_arg;
 						}
 
@@ -2296,8 +2238,8 @@ function rrdtool_function_graph($local_graph_id, $rra_id, $graph_data_array, $rr
 
 					if (read_config_option('enable_rrdtool_gradient_support') == 'on') {
 						/* End color is a 40% (0.4) darkened (negative number) version of the original color */
-						$end_color        = colourBrightness('#' . $graph_item['hex'], -0.4);
-						$txt_graph_items .= gradient($data_source_name, $graph_item_color_code, $end_color . $graph_item['alpha'], $text_format, 20, false, $graph_item['alpha']);
+						$end_color        = colourBrightness( "#" . $graph_item[ "hex" ], -0.4 );
+						$txt_graph_items .= gradient($data_source_name, $graph_item_color_code, $end_color . $graph_item['alpha'], cacti_escapeshellarg($graph_variables['text_format'][$graph_item_id] . $hardreturn[$graph_item_id]), 20, false, $graph_item[ "alpha" ]);
 					} else {
 						$txt_graph_items .= $graph_item_types[$graph_item['graph_type_id']] . ':' . $data_source_name . $graph_item_color_code . ':' . cacti_escapeshellarg($text_format . $hardreturn[$graph_item_id]) . ' ';
 					}
@@ -2309,7 +2251,7 @@ function rrdtool_function_graph($local_graph_id, $rra_id, $graph_data_array, $rr
 
 					break;
 				case GRAPH_ITEM_TYPE_STACK:
-					$text_format = rrdtool_escape_string(html_escape($graph_variables['text_format'][$graph_item_id] != '' ? str_pad($graph_variables['text_format'][$graph_item_id], $pad_number):''));
+					$text_format = rrdtool_escape_string(html_escape($graph_variables['text_format'][$graph_item_id] != '' ? str_pad($graph_variables['text_format'][$graph_item_id],$pad_number):''));
 
 					$txt_graph_items .= 'AREA:' . $data_source_name . $graph_item_color_code . ':' . cacti_escapeshellarg($text_format . $hardreturn[$graph_item_id]) . ':STACK';
 
@@ -2423,10 +2365,10 @@ function rrdtool_function_graph($local_graph_id, $rra_id, $graph_data_array, $rr
 		if (isset($graph_data_array['print_source'])) {
 			$source_command_line = read_config_option('path_rrdtool') . ' graph ' . $graph_opts . $graph_defs . $txt_graph_items;
 			$source_command_line_lengths = strlen(str_replace("\\\n", ' ', $source_command_line));
-			print '<pre>' . wordwrap(html_escape($source_command_line), 160, PHP_EOL, true) . '</pre>';
+			print '<PRE>' . html_escape($source_command_line) . '</PRE>';
 			print '<span class="textInfo">' . 'RRDtool Command lengths = ' . $source_command_line_lengths . ' characters.</span><br>';
 			if ( $config['cacti_server_os'] == 'win32' && $source_command_line_lengths > 8191 ) {
-				print '<pre>' . 'Warning: The Cacti OS is Windows system, RRDtool Command lengths should not exceed 8191 characters.' . '</pre>';
+				print '<PRE>' . 'Warning: The Cacti OS is Windows system, RRDtool Command lengths should not exceed 8191 characters.' . '</PRE>';
 			}
 		} else {
 			if (isset($graph_data_array['graphv'])) {
@@ -2558,7 +2500,7 @@ function rrdtool_function_theme_font_options(&$graph_data_array) {
 		$rrdversion = get_rrdtool_version();
 		include($rrdtheme);
 
-		if (isset($_COOKIE['CactiColorMode']) && in_array($_COOKIE['CactiColorMode'], array('dark', 'light', 'dark-dimmed'))) {
+		if(isset($_COOKIE['CactiColorMode']) && in_array($_COOKIE['CactiColorMode'], array('dark', 'light', 'dark-dimmed'))) {
 				$themecolors = 'rrdcolors_' . $_COOKIE['CactiColorMode'];
 				$themeborder = 'rrdborder_' . $_COOKIE['CactiColorMode'];
 				if (!isset($$themecolors) || !is_array($$themecolors)) {
@@ -2667,8 +2609,8 @@ function rrd_substitute_host_query_data($txt_graph_item, $graph, $graph_item) {
 	$txt_graph_item = substitute_host_data($txt_graph_item, '|', '|', $host_id);
 
 	/* replace query variables in graph elements */
-	if (strpos($txt_graph_item, '|query_') !== false) {
-		if (isset($graph_item['snmp_query_id'])) {
+	if (strpos($txt_graph_item, '|query_') !== false){
+		if(isset($graph_item['snmp_query_id'])) {
 			$txt_graph_item = substitute_snmp_query_data($txt_graph_item, $host_id, $graph_item['snmp_query_id'], $graph_item['snmp_index']);
 		} else if (isset($graph['snmp_query_id'])) {
 			$txt_graph_item = substitute_snmp_query_data($txt_graph_item, $host_id, $graph['snmp_query_id'], $graph['snmp_index']);
@@ -2777,107 +2719,6 @@ function rrdtool_function_info($local_data_id) {
 	return $rrd_info;
 }
 
-function rrdtool_function_info_from_ds($data_source_id) {
-	global $data_source_types, $consolidation_functions;
-
-	/* construct the skeleton of the info array */
-	$info_array['rra']      = array();
-	$info_array['ds']       = array();
-	$info_array['step']     = 0;
-	$info_array['filename'] = clean_up_path(get_data_source_path($data_source_id, true));
-
-	/* get cacti header information for given data source id */
-	$cacti_header_array = db_fetch_row_prepared('SELECT
-		local_data_template_data_id, rrd_step, data_source_profile_id
-		FROM data_template_data
-		WHERE local_data_id = ?',
-		array($data_source_id));
-
-	$data_template_id = db_fetch_cell_prepared('SELECT data_template_id
-		FROM data_local
-		WHERE id = ?',
-		array($data_source_id));
-
-	/* get cacti DS information */
-	if ($data_template_id > 0) {
-		$cacti_ds_array = db_fetch_assoc_prepared('SELECT DISTINCT dtr.id, dtr.data_source_name, dtr.data_source_type_id,
-			dtr.rrd_heartbeat, dtr.rrd_maximum, dtr.rrd_minimum
-			FROM data_template_rrd AS dtr
-			INNER JOIN graph_templates_item AS gti
-			ON dtr.id = gti.task_item_id
-			WHERE local_data_id = ?',
-			array($data_source_id));
-	} else {
-		$cacti_ds_array = db_fetch_assoc_prepared('SELECT DISTINCT dtr.id, dtr.data_source_name, dtr.data_source_type_id,
-			dtr.rrd_heartbeat, dtr.rrd_maximum, dtr.rrd_minimum
-			FROM data_template_rrd AS dtr
-			WHERE local_data_id = ?',
-			array($data_source_id));
-	}
-
-	if (cacti_sizeof($cacti_header_array) && cacti_sizeof($cacti_ds_array)) {
-		$info_array['step'] = $cacti_header_array['rrd_step'];
-
-		/* get cacti RRA information */
-		$cacti_rra_array = db_fetch_assoc_prepared('SELECT
-			dspc.consolidation_function_id AS cf,
-			dsp.x_files_factor AS xff,
-			dsp.heartbeat,
-			dspr.steps AS steps,
-			dspr.rows AS `rows`
-			FROM data_source_profiles AS dsp
-			INNER JOIN data_source_profiles_cf AS dspc
-			ON dsp.id = dspc.data_source_profile_id
-			INNER JOIN data_source_profiles_rra AS dspr
-			ON dsp.id = dspr.data_source_profile_id
-			WHERE dsp.id = ?
-			ORDER BY dspc.consolidation_function_id, dspr.steps',
-			array($cacti_header_array['data_source_profile_id']));
-
-		/* get the data source information */
-		$data_local = db_fetch_row_prepared('SELECT host_id, snmp_query_id, snmp_index
-			FROM data_local
-			WHERE id = ?',
-			array($data_source_id));
-
-		/* get the speed just in case we have replacement data */
-		$speed = rrdtool_function_interface_speed($data_local);
-
-		/* complete the 'ds' component of the info array */
-		foreach($cacti_ds_array as $index => $ds) {
-			$info_array['ds'][$ds['data_source_name']]['index'] = $index;
-			$info_array['ds'][$ds['data_source_name']]['type']  = $data_source_types[$ds['data_source_type_id']];
-			$info_array['ds'][$ds['data_source_name']]['min']   = $ds['rrd_minimum'];
-
-			if ($ds['rrd_maximum'] == '|query_ifSpeed|' || $ds['rrd_maximum'] == '|query_ifHighSpeed|') {
-				$info_array['ds'][$ds['data_source_name']]['max'] = $speed;
-			} else {
-				$info_array['ds'][$ds['data_source_name']]['max'] = $ds['rrd_maximum'];
-			}
-
-			$info_array['ds'][$ds['data_source_name']]['minimal_heartbeat'] = $ds['rrd_heartbeat'];
-		}
-
-		/* complete the 'rra' component of the info array */
-		if (cacti_sizeof($cacti_rra_array)) {
-			foreach($cacti_rra_array as $index => $rra) {
-				foreach($cacti_ds_array as $ds) {
-					$info_array['rra'][$index]['cf']    = $consolidation_functions[$rra['cf']];
-					$info_array['rra'][$index]['rows']  = $rra['rows'];
-					$info_array['rra'][$index]['xff']   = $rra['xff'];
-					$info_array['rra'][$index]['steps'] = $rra['steps'];
-				}
-			}
-
-			return $info_array;
-		} else {
-			return array();
-		}
-	} else {
-		return array();
-	}
-}
-
 /**
  * rrdtool_function_contains_cf  verifies if the RRDfile contains the 'MAX' consolidation function
  *
@@ -2913,211 +2754,239 @@ function rrdtool_function_contains_cf($local_data_id, $cf) {
 function rrdtool_cacti_compare($data_source_id, &$info) {
 	global $data_source_types, $consolidation_functions;
 
-	/**
-	 * This function will be passed the RRDtool info rrdfile output
-	 * formatted as an array with multiple indexes.  They include:
-	 *
-	 * 'ds'  => An array of data source items including name, min/max, heartbeat, and type
-	 * 'rra' => An array of consolidation functions, rows, xff and other misc data from
-	 *          the RRDfile.
-	 *
-	 * The the $cacti_info array includes the same structure, but from the current database
-	 * settings, which may differ from the original rrdfile that is on disk.
-	 *
-	 * Once we have these two pieces of information, we can do a comparison and provide some
-	 * guidance as to how to correct the format of the RRDfile.  Some of the possible
-	 * differences can result in what would effectively be missing data, so care must be taken
-	 * when providing these recommendations.
-	 */
+	/* get cacti header information for given data source id */
+	$cacti_header_array = db_fetch_row_prepared('SELECT
+		local_data_template_data_id, rrd_step, data_source_profile_id
+		FROM data_template_data
+		WHERE local_data_id = ?',
+		array($data_source_id));
 
-	$cacti_info = rrdtool_function_info_from_ds($data_source_id);
+	/* get cacti DS information */
+	$cacti_ds_array = db_fetch_assoc_prepared('SELECT DISTINCT dtr.id, dtr.data_source_name, dtr.data_source_type_id,
+		dtr.rrd_heartbeat, dtr.rrd_maximum, dtr.rrd_minimum
+		FROM data_template_rrd AS dtr
+		INNER JOIN graph_templates_item AS gti
+		ON dtr.id = gti.task_item_id
+		WHERE local_data_id = ?',
+		array($data_source_id));
 
-	/* create an empty diff array to hold the differences */
+	/* get cacti RRA information */
+	$cacti_rra_array = db_fetch_assoc_prepared('SELECT
+		dspc.consolidation_function_id AS cf,
+		dsp.x_files_factor AS xff,
+		dsp.heartbeat,
+		dspr.steps AS steps,
+		dspr.rows AS `rows`
+		FROM data_source_profiles AS dsp
+		INNER JOIN data_source_profiles_cf AS dspc
+		ON dsp.id=dspc.data_source_profile_id
+		INNER JOIN data_source_profiles_rra AS dspr
+		ON dsp.id=dspr.data_source_profile_id
+		WHERE dsp.id = ?
+		ORDER BY dspc.consolidation_function_id, dspr.steps',
+		array($cacti_header_array['data_source_profile_id']));
+
+	$profile_heartbeat = db_fetch_cell_prepared('SELECT heartbeat
+		FROM data_source_profiles
+		WHERE id = ?',
+		array($cacti_header_array['data_source_profile_id']));
+
 	$diff = array();
-
-	if ($cacti_info['step'] != $info['step']) {
-		$diff['step'] = __("The required RRDfile step size is '%s' but observed step is '%s'", $cacti_info['step'], $info['step']);
+	/* -----------------------------------------------------------------------------------
+	 * header information
+	 -----------------------------------------------------------------------------------*/
+	if ($cacti_header_array['rrd_step'] != $info['step']) {
+		$diff['step'] = __("Required RRD step size is '%s'", $cacti_header_array['rrd_step']);
 	}
 
 	/* -----------------------------------------------------------------------------------
 	 * data source information
 	 -----------------------------------------------------------------------------------*/
-	if (cacti_sizeof($cacti_info) && cacti_sizeof($info)) {
-		/* get the heartbeat from the profile */
-		$profile_heartbeat = db_fetch_cell_prepared('SELECT heartbeat
-			FROM data_source_profiles AS dsp
-			INNER JOIN data_template_data AS dtd
-			ON dsp.id = dtd.data_source_profile_id
-			WHERE dtd.local_data_id = ?',
-			array($data_source_id));
+	if (cacti_sizeof($cacti_ds_array)) {
+		$data_local = db_fetch_row_prepared('SELECT host_id,
+			snmp_query_id, snmp_index
+			FROM data_local
+			WHERE id = ?',
+			array($data_source_id)
+		);
 
-		/* cursory checks on total data sources */
-		if (isset($cacti_info['ds']) && isset($info['ds'])) {
-			if (cacti_sizeof($cacti_info['ds']) != cacti_sizeof($info['ds'])) {
-				// Need to warn here about the total number of data sources not matchhing
+		$speed = rrdtool_function_interface_speed($data_local);
+
+		foreach ($cacti_ds_array as $key => $data_source) {
+			/**
+			 * Accomodate a Cacti bug where the heartbeat was not
+			 * propagated.
+			 */
+			if ($data_source['rrd_heartbeat'] != $profile_heartbeat) {
+				cacti_log(sprintf('NOTE: Incorrect Data Source heartbeat found and corrected for Local Data ID %s and Data Source \'%s\'', $data_source_id, $data_source['data_source_name']), false, 'DSDEBUG');
+
+				db_execute_prepared('UPDATE data_template_rrd
+					SET rrd_heartbeat = ?
+					WHERE id = ?',
+					array($profile_heartbeat, $data_source['id']));
+
+				$data_source['rrd_heartbeat'] = $profile_heartbeat;
 			}
 
-			foreach($cacti_info['ds'] as $data_source_name => $data_source) {
-				/**
-				 * This should be a rare case today where the RRDfile does not
-				 * have the data source, but Cacti does.
-				 */
-				if (!isset($info['ds'][$data_source_name])) {
-					/* cacti knows this ds, but the rrd file does not */
-					$info['ds'][$data_source_name]['type'] = $data_source['type'];
-					$info['ds'][$data_source_name]['minimal_heartbeat'] = $data_source['minimal_heartbeat'];
-					$info['ds'][$data_source_name]['min'] = $data_source['min'];
-					$info['ds'][$data_source_name]['max'] = $data_source['max'];
-					$info['ds'][$data_source_name]['seen'] = true;
+			$ds_name = $data_source['data_source_name'];
 
+			/* try to print matching rrd file's ds information */
+			if (isset($info['ds'][$ds_name]) ) {
+				if (!isset($info['ds'][$ds_name]['seen'])) {
+					$info['ds'][$ds_name]['seen'] = true;
+				} else {
 					continue;
 				}
 
-				/**
-				 * Accomodate a Cacti bug where the heartbeat was not
-				 * propagated.
-				 */
-				if ($data_source['minimal_heartbeat'] != $profile_heartbeat) {
-					cacti_log(sprintf('NOTE: Incorrect Data Source heartbeat found and corrected for Local Data ID %s and Data Source \'%s\'', $data_source_id, $data_source_name), false, 'DSDEBUG');
-
-					db_execute_prepared('UPDATE data_template_rrd
-						SET rrd_heartbeat = ?
-						WHERE local_data_id = ?
-						AND data_source_name = ?',
-						array($profile_heartbeat, $data_source_id, $data_source_name));
-
-					$cacti_info['ds'][$data_source_name]['minimal_heartbeat'] = $profile_heartbeat;
+				$ds_type = trim($info['ds'][$ds_name]['type'], '"');
+				if ($data_source_types[$data_source['data_source_type_id']] != $ds_type) {
+					$diff['ds'][$ds_name]['type'] = __("Type for Data Source '%s' should be '%s'", $ds_name, $data_source_types[$data_source['data_source_type_id']]);
+					$diff['tune'][] = $info['filename'] . ' ' . '--data-source-type ' . $ds_name . ':' . $data_source_types[$data_source['data_source_type_id']];
 				}
 
-				/* verity that all data sources are seen */
-				if (isset($info['ds'][$data_source_name])) {
-					$info['ds'][$data_source_name]['seen'] = true;
+				if ($data_source['rrd_heartbeat'] != $info['ds'][$ds_name]['minimal_heartbeat']) {
+					$diff['ds'][$ds_name]['minimal_heartbeat'] = __("Heartbeat for Data Source '%s' should be '%s'", $ds_name, $data_source['rrd_heartbeat']);
+					$diff['tune'][] = $info['filename'] . ' ' . '--heartbeat ' . $ds_name . ':' . $data_source['rrd_heartbeat'];
 				}
 
-				/* check the data source type */
-				if ($data_source['type'] != $info['ds'][$data_source_name]['type']) {
-					$diff['ds'][$data_source_name]['type'] = __("Type for Data Source '%s' should be '%s'", $data_source_name, $data_source['type']);
-					$diff['tune'][] = $info['filename'] . ' ' . '--data-source-type ' . $data_source_name . ':' . $data_source['type'];
-				}
-
-				/* check the mimimal heartbeat */
-				if ($data_source['minimal_heartbeat'] != $info['ds'][$data_source_name]['minimal_heartbeat']) {
-					$diff['ds'][$data_source_name]['minimal_heartbeat'] = __("Heartbeat for Data Source '%s' should be '%s'", $data_source_name, $data_source['minimal_heartbeat']);
-					$diff['tune'][] = $info['filename'] . ' ' . '--heartbeat ' . $data_source_name . ':' . $data_source['minimal_heartbeat'];
-				}
-
-				/* check the minimums and maximums and correct for legacy behavior */
-				if ($data_source['min'] != $info['ds'][$data_source_name]['min']) {
-					if (($data_source['min'] == '0' || $data_source['max'] == 'U') && $info['ds'][$data_source_name]['min'] == 'NaN') {
-						$info['ds'][$data_source_name]['min'] = 'U';
+				if ($data_source['rrd_minimum'] != $info['ds'][$ds_name]['min']) {
+					if (($data_source['rrd_minimum'] == '0' || $data_source['rrd_maximum'] == 'U') &&
+						$info['ds'][$ds_name]['min'] == 'NaN') {
+						$info['ds'][$ds_name]['min'] = 'U';
 					}
 				}
 
-				if ($data_source['min'] != $info['ds'][$data_source_name]['min']) {
-					$diff['ds'][$data_source_name]['min'] = __("RRD minimum for Data Source '%s' should be '%s'", $data_source_name, $data_source['min']);
-					$diff['tune'][] = $info['filename'] . ' ' . '--minimum ' . $data_source_name . ':' . $data_source['min'];
+				if ($data_source['rrd_minimum'] != $info['ds'][$ds_name]['min']) {
+					$diff['ds'][$ds_name]['min'] = __("RRD minimum for Data Source '%s' should be '%s'", $ds_name, $data_source['rrd_minimum']);
+					$diff['tune'][] = $info['filename'] . ' ' . '--minimum ' . $ds_name . ':' . $data_source['rrd_minimum'];
 				}
+
+				// Trim the max value
+				$data_source['rrd_maximum'] = trim($data_source['rrd_maximum']);
+
+				if ($data_source['rrd_maximum'] != $info['ds'][$ds_name]['max']) {
+					if ($data_source['rrd_maximum'] == '|query_ifSpeed|' ||
+						$data_source['rrd_maximum'] == '|query_ifHighSpeed|') {
+						$data_source['rrd_maximum'] = $speed;
+					} elseif (($data_source['rrd_maximum'] == '0' || $data_source['rrd_maximum'] == 'U') &&
+						$info['ds'][$ds_name]['max'] == 'NaN') {
+						$info['ds'][$ds_name]['max'] = 'U';
+					} else {
+						$data_source['rrd_maximum'] = substitute_snmp_query_data($data_source['rrd_maximum'], $data_local['host_id'], $data_local['snmp_query_id'], $data_local['snmp_index']);
+					}
+				}
+
+				if ($data_source['rrd_maximum'] != $info['ds'][$ds_name]['max']) {
+					$diff['ds'][$ds_name]['max'] = __("RRD maximum for Data Source '%s' should be '%s'", $ds_name, $data_source['rrd_maximum']);
+					$diff['tune'][] = $info['filename'] . ' ' . '--maximum ' . $ds_name . ':' . $data_source['rrd_maximum'];
+				}
+			} else {
+				# cacti knows this ds, but the rrd file does not
+				$info['ds'][$ds_name]['type'] = $data_source_types[$data_source['data_source_type_id']];
+				$info['ds'][$ds_name]['minimal_heartbeat'] = $data_source['rrd_heartbeat'];
+				$info['ds'][$ds_name]['min'] = $data_source['rrd_minimum'];
+				$info['ds'][$ds_name]['max'] = $data_source['rrd_maximum'];
+				$info['ds'][$ds_name]['seen'] = true;
+				$diff['ds'][$ds_name]['error'] = __("DS '%s' missing in RRDfile", $ds_name);
 			}
 		}
+	}
 
-		/* if there are data sources missing log that now */
-		foreach ($info['ds'] as $data_source_name => $data_source) {
+	/* print all data sources still known to the rrd file (no match to cacti ds will happen here) */
+	if (cacti_sizeof($info['ds']) > 0) {
+		foreach ($info['ds'] as $ds_name => $data_source) {
 			if (!isset($data_source['seen'])) {
-				$diff['ds'][$data_source_name]['error'] = __("DS '%s' missing in Cacti definition", $data_source_name);
+				$diff['ds'][$ds_name]['error'] = __("DS '%s' missing in Cacti definition", $ds_name);
 			}
 		}
+	}
 
-		if (isset($cacti_info['rra']) && isset($info['rra'])) {
-			$resize = true; // assume a resize operation as long as no rra duplicates are found
+	/* -----------------------------------------------------------------------------------
+	 * RRA information
+	 -----------------------------------------------------------------------------------*/
+	$resize = true;		# assume a resize operation as long as no rra duplicates are found
 
-			/* scan cacti rra information for duplicates of (CF, STEPS) */
-			foreach($cacti_info['rra'] as $index => $rra) {
-				$cf    = $rra['cf'];
-				$steps = $rra['steps'];
-
-				foreach($cacti_info['rra'] as $cacti_rra_id => $cacti_rra) {
-					if ($cf == $cacti_rra['cf'] && $steps == $cacti_rra['steps'] && ($index != $cacti_rra_id)) {
-						$diff['rra'][$index]['error']        = __("Cacti RRA '%s' has same CF/steps (%s, %s) as '%s'", $index, $cf, $steps, $cacti_rra_id);
-						$diff['rra'][$cacti_rra_id]['error'] = __("Cacti RRA '%s' has same CF/steps (%s, %s) as '%s'", $cacti_rra_id, $cf, $steps, $index);
-						$resize = false;
-					}
+	/* scan cacti rra information for duplicates of (CF, STEPS) */
+	if (cacti_sizeof($cacti_rra_array) > 0) {
+		for ($i=0; $i<= cacti_sizeof($cacti_rra_array)-1; $i++) {
+			$cf = $cacti_rra_array[$i]['cf'];
+			$steps = $cacti_rra_array[$i]['steps'];
+			foreach($cacti_rra_array as $cacti_rra_id => $cacti_rra) {
+				if ($cf == $cacti_rra['cf'] && $steps == $cacti_rra['steps'] && ($i != $cacti_rra_id)) {
+					$diff['rra'][$i]['error'] = __("Cacti RRA '%s' has same CF/steps (%s, %s) as '%s'", $i, $consolidation_functions[$cf], $steps, $cacti_rra_id);
+					$diff['rra'][$cacti_rra_id]['error'] = __("Cacti RRA '%s' has same CF/steps (%s, %s) as '%s'", $cacti_rra_id, $consolidation_functions[$cf], $steps, $i);
+					$resize = false;
 				}
 			}
+		}
+	}
 
-			/* scan file rra information for duplicates of (CF, PDP_PER_ROWS) */
-			foreach($info['rra'] as $index => $rra) {
-				$cf    = $rra['cf'];
-				$steps = $rra['pdp_per_row'];
-				$i     = 0;
-
-				foreach($info['rra'] as $file_rra_id => $file_rra) {
-					if (($cf == $file_rra['cf']) && ($steps == $file_rra['pdp_per_row']) && ($index != $file_rra_id)) {
-						$diff['rra'][$i]['error']           = __("File RRA '%s' has same CF/steps (%s, %s) as '%s'", $index, $cf, $steps, $file_rra_id);
-						$diff['rra'][$file_rra_id]['error'] = __("File RRA '%s' has same CF/steps (%s, %s) as '%s'", $file_rra_id, $cf, $steps, $index);
-
-						$resize = false;
-					}
-
-					$i++;
+	/* scan file rra information for duplicates of (CF, PDP_PER_ROWS) */
+	if (cacti_sizeof($info['rra']) > 0) {
+		for ($i=0; $i<= cacti_sizeof($info['rra'])-1; $i++) {
+			$cf = $info['rra'][$i]['cf'];
+			$steps = $info['rra'][$i]['pdp_per_row'];
+			foreach($info['rra'] as $file_rra_id => $file_rra) {
+				if (($cf == $file_rra['cf']) && ($steps == $file_rra['pdp_per_row']) && ($i != $file_rra_id)) {
+					$diff['rra'][$i]['error'] = __("File RRA '%s' has same CF/steps (%s, %s) as '%s'", $i, $cf, $steps, $file_rra_id);
+					$diff['rra'][$file_rra_id]['error'] = __("File RRA '%s' has same CF/steps (%s, %s) as '%s'", $file_rra_id, $cf, $steps, $i);
+					$resize = false;
 				}
 			}
+		}
+	}
 
-			foreach($cacti_info['rra'] as $cacti_rra_id => $cacti_rra) {
-				/**
-				 * find matching rra info from rrd file
-				 * do NOT assume, that rra sequence is kept ($cacti_rra_id != $file_rra_id may happen)!
-				 * Match is assumed, if CF and STEPS/PDP_PER_ROW match; so go for it
-				 */
-				foreach ($info['rra'] as $file_rra_id => $file_rra) {
-					/* in case of mismatch, $file_rra['pdp_per_row'] might not be defined */
-					if (!isset($file_rra['pdp_per_row'])) {
-						$file_rra['pdp_per_row'] = 0;
+	/* print all RRAs known to cacti and add those from matching rrd file */
+	if (cacti_sizeof($cacti_rra_array) > 0) {
+		foreach($cacti_rra_array as $cacti_rra_id => $cacti_rra) {
+			/* find matching rra info from rrd file
+			 * do NOT assume, that rra sequence is kept ($cacti_rra_id != $file_rra_id may happen)!
+			 * Match is assumed, if CF and STEPS/PDP_PER_ROW match; so go for it */
+			foreach ($info['rra'] as $file_rra_id => $file_rra) {
+				/* in case of mismatch, $file_rra['pdp_per_row'] might not be defined */
+				if (!isset($file_rra['pdp_per_row'])) {
+					$file_rra['pdp_per_row'] = 0;
+				}
+
+				if ($consolidation_functions[$cacti_rra['cf']] == trim($file_rra['cf'], '"') &&
+					$cacti_rra['steps'] == $file_rra['pdp_per_row']) {
+
+					if (isset($info['rra'][$file_rra_id]['seen'])) {
+						continue;
 					}
 
-					/* corrrect issue with older rrdtools */
-					$file_rra['cf'] = trim($file_rra['cf'], '"');
+					# mark both rra id's as seen to avoid printing them as non-matching
+					$info['rra'][$file_rra_id]['seen'] = true;
+					$cacti_rra_array[$cacti_rra_id]['seen'] = true;
 
-					if ($cacti_rra['cf'] == $file_rra['cf'] && $cacti_rra_id == $file_rra_id) {
-						if (isset($info['rra'][$file_rra_id]['seen'])) {
-							continue;
-						}
+					if ($cacti_rra['xff'] != $file_rra['xff']) {
+						$diff['rra'][$file_rra_id]['xff'] = __("XFF for cacti RRA id '%s' should be '%s'", $cacti_rra_id, $cacti_rra['xff']);
+					}
 
-						/* mark both rra id's as seen to avoid printing them as non-matching */
-						$info['rra'][$file_rra_id]['seen']        = true;
-						$cacti_info['rra'][$cacti_rra_id]['seen'] = true;
-
-						if ($cacti_rra['steps'] != $file_rra['pdp_per_row']) {
-							$diff['rra'][$file_rra_id]['pdp_per_row_error'] = __("The pdp_per_row of '%s' is invalid for RRA '%s' should be '%s'.  Consider deleting and allowing Cacti to re-create RRDfile.", $file_rra['pdp_per_row'], $cacti_rra_id, $cacti_rra['steps']);
-						}
-
-						if ($cacti_rra['xff'] != $file_rra['xff']) {
-							$diff['rra'][$file_rra_id]['xff'] = __("The XFF for Cacti RRA id is '%s' but should be '%s'", $cacti_rra_id, $cacti_rra['xff']);
-						}
-
-						if ($cacti_rra['rows'] != $file_rra['rows'] && $resize) {
-							$diff['rra'][$file_rra_id]['rows'] = __("The number of rows for Cacti RRA id '%s' is incorrect.  The number of rows are '%s' but should be '%s'", $cacti_rra_id, $file_rra['rows'], $cacti_rra['rows']);
-							if ($cacti_rra['rows'] > $file_rra['rows']) {
-								$diff['resize'][] = $info['filename'] . ' ' . $cacti_rra_id . ' GROW ' . ($cacti_rra['rows'] - $file_rra['rows']);
-							} else {
-								$diff['resize'][] = $info['filename'] . ' ' . $cacti_rra_id . ' SHRINK ' . ($file_rra['rows'] - $cacti_rra['rows']);
-							}
+					if ($cacti_rra['rows'] != $file_rra['rows'] && $resize) {
+						$diff['rra'][$file_rra_id]['rows'] = __("Number of rows for Cacti RRA id '%s' should be '%s'", $cacti_rra_id, $cacti_rra['rows']);
+						if ($cacti_rra['rows'] > $file_rra['rows']) {
+							$diff['resize'][] = $info['filename'] . ' ' . $cacti_rra_id . ' GROW ' . ($cacti_rra['rows'] - $file_rra['rows']);
+						} else {
+							$diff['resize'][] = $info['filename'] . ' ' . $cacti_rra_id . ' SHRINK ' . ($file_rra['rows'] - $cacti_rra['rows']);
 						}
 					}
 				}
 			}
-
-			/* if cacti knows an rra that has no match, consider this as an error */
-			if (!isset($cacti_info['rra'][$cacti_rra_id]['seen'])) {
-				/* add to info array for printing, the index $cacti_rra_id has no real meaning */
-				$info['rra']['cacti_' . $cacti_rra_id]['cf']    = $cacti_rra['cf'];
+			# if cacti knows an rra that has no match, consider this as an error
+			if (!isset($cacti_rra_array[$cacti_rra_id]['seen'])) {
+				# add to info array for printing, the index $cacti_rra_id has no real meaning
+				$info['rra']['cacti_' . $cacti_rra_id]['cf']    = $consolidation_functions[$cacti_rra['cf']];
 				$info['rra']['cacti_' . $cacti_rra_id]['steps'] = $cacti_rra['steps'];
 				$info['rra']['cacti_' . $cacti_rra_id]['xff']   = $cacti_rra['xff'];
 				$info['rra']['cacti_' . $cacti_rra_id]['rows']  = $cacti_rra['rows'];
-				$diff['rra']['cacti_' . $cacti_rra_id]['error'] = __("The RRA '%s' missing in the existing Cacti RRDfile", $cacti_rra_id);
+				$diff['rra']['cacti_' . $cacti_rra_id]['error'] = __("RRA '%s' missing in RRDfile", $cacti_rra_id);
 			}
 		}
+	}
 
-		/* if the rrd file has an rra that has no cacti match, consider this as an error */
+	# if the rrd file has an rra that has no cacti match, consider this as an error
+	if (cacti_sizeof($info['rra']) > 0) {
 		foreach ($info['rra'] as $file_rra_id => $file_rra) {
 			if (!isset($info['rra'][$file_rra_id]['seen'])) {
 				$diff['rra'][$file_rra_id]['error'] = __("RRA '%s' missing in Cacti definition", $file_rra_id);
@@ -3126,6 +2995,7 @@ function rrdtool_cacti_compare($data_source_id, &$info) {
 	}
 
 	return $diff;
+
 }
 
 /**
@@ -3208,7 +3078,7 @@ function rrdtool_info2html($info_array, $diff=array()) {
 			}
 
 			if (isset($value['max'])) {
-				if ($value['max'] == 'U' || $value['max'] == 'NaN') {
+				if ($value['max'] == 'U') {
 					form_selectable_cell($value['max'], 'max', '', 'right');
 				} elseif (is_numeric($value['max'])) {
 					form_selectable_cell(number_format_i18n($value['max']), 'max', '', 'right');
@@ -3273,54 +3143,38 @@ function rrdtool_info2html($info_array, $diff=array()) {
  * @param (bool)   $show_source - only show text+commands or execute all commands, execute is for cli mode only!
  */
 function rrdtool_tune($rrd_file, $diff, $show_source = true) {
-	$rrd_path = read_config_option('path_rrdtool');
-
-	function print_leaves($array) {
+	function print_leaves($array, $nl) {
 		foreach ($array as $key => $line) {
 			if (!is_array($line)) {
-				if (CACTI_CLI) {
-					print $line . PHP_EOL;
-				} else {
-					print '<tr><td>' . $line . '</td></tr>';
-				}
+				print $line . $nl;
 			} else {
 				if ($key === 'tune') continue;
 				if ($key === 'resize') continue;
-				print_leaves($line);
+				print_leaves($line, $nl);
 			}
 		}
 
 	}
 
+
 	$cmd = array();
-
-	if ($show_source && cacti_sizeof($diff)) {
-		if (!CACTI_CLI) {
-			html_header(array(__('Errors Found')));
-		}
-
-		print_leaves($diff);
-
-		if (!CACTI_CLI) {
-			html_end_box();
-		}
+	# for html/cli mode
+	if (CACTI_CLI) {
+		$nl = "\n";
+	} else {
+		$nl = '<br/>';
 	}
 
-	if (isset($diff['tune']) || isset($diff['resize'])) {
-		if (!CACTI_CLI) {
-			html_header(array(__('Optional Tuning Recommendations')));
-		}
+	if ($show_source && cacti_sizeof($diff)) {
+		# print error descriptions
+		print_leaves($diff, $nl);
 	}
 
 	if (isset($diff['tune']) && cacti_sizeof($diff['tune'])) {
-		/* create tune commands */
+		# create tune commands
 		foreach ($diff['tune'] as $line) {
 			if ($show_source == true) {
-				if (CACTI_CLI) {
-					print $rrd_path . ' tune ' . $line . PHP_EOL;
-				} else {
-					print '<tr><td>' . $rrd_path . ' tune ' . $line . '</td></tr>';
-				}
+				print read_config_option('path_rrdtool') . ' tune ' . $line . $nl;
 			} else {
 				rrdtool_execute("tune $line", true, RRDTOOL_OUTPUT_STDOUT);
 			}
@@ -3328,26 +3182,15 @@ function rrdtool_tune($rrd_file, $diff, $show_source = true) {
 	}
 
 	if (isset($diff['resize']) && cacti_sizeof($diff['resize'])) {
-		// each resize goes into an extra line
+		# each resize goes into an extra line
 		foreach ($diff['resize'] as $line) {
 			if ($show_source == true) {
-				if (CACTI_CLI) {
-					print read_config_option('path_rrdtool') . ' resize ' . $line . PHP_EOL;
-					print __('rename %s to %s', dirname($rrd_file) . '/resize.rrd', $rrd_file) . PHP_EOL;
-				} else {
-					print '<tr><td>' . read_config_option('path_rrdtool') . ' resize ' . $line . '</td></tr>';
-					print '<tr><td>' . __('rename %s to %s', dirname($rrd_file) . '/resize.rrd', $rrd_file) . '</td></tr>';
-				}
+				print read_config_option('path_rrdtool') . ' resize ' . $line . $nl;
+				print __('rename %s to %s', dirname($rrd_file) . '/resize.rrd', $rrd_file) . $nl;
 			} else {
 				rrdtool_execute("resize $line", true, RRDTOOL_OUTPUT_STDOUT);
 				rename(dirname($rrd_file) . '/resize.rrd', $rrd_file);
 			}
-		}
-	}
-
-	if (isset($diff['tune']) || isset($diff['resize'])) {
-		if (!CACTI_CLI) {
-			html_end_box();
 		}
 	}
 }
@@ -3415,7 +3258,7 @@ function rrd_datasource_add($file_array, $ds_array, $debug) {
 		/* now start XML processing */
 		foreach ($ds_array as $ds) {
 			/* first, append the <DS> structure in the rrd header */
-			if ($ds['type'] === $data_source_types[5]) {
+			if ($ds['type'] === $data_source_types[DATA_SOURCE_TYPE_COMPUTE]) {
 				rrd_append_compute_ds($dom, $version, $ds['name'], $ds['type'], $ds['cdef']);
 			} else {
 				rrd_append_ds($dom, $version, $ds['name'], $ds['type'], $ds['heartbeat'], $ds['min'], $ds['max']);
@@ -3427,7 +3270,7 @@ function rrd_datasource_add($file_array, $ds_array, $debug) {
 		}
 
 		if ($debug) {
-			print $dom->saveXML();
+			echo $dom->saveXML();
 		} else {
 			/* for rrdtool restore, we need a file, so write the XML to disk */
 			$xml_file = $file . '.xml';
@@ -3485,7 +3328,7 @@ function rrd_rra_delete($file_array, $rra_array, $debug) {
 		}
 
 		if ($debug) {
-			print $dom->saveXML();
+			echo $dom->saveXML();
 		} else {
 			/* for rrdtool restore, we need a file, so write the XML to disk */
 			$xml_file = $file . '.xml';
@@ -3544,7 +3387,7 @@ function rrd_rra_clone($file_array, $cf, $rra_array, $debug) {
 		}
 
 		if ($debug) {
-			print $dom->saveXML();
+			echo $dom->saveXML();
 		} else {
 			/* for rrdtool restore, we need a file, so write the XML to disk */
 			$xml_file = $file . '.xml';
@@ -3617,7 +3460,7 @@ function rrd_append_ds($dom, $version, $name, $type, $min_hb, $min, $max) {
 
 	/* create a node element from new document */
 	$new_node = $new_dom->getElementsByTagName('ds')->item(0);
-	#print $new_dom->saveXML();	# print new node
+	#echo $new_dom->saveXML();	# print new node
 
 	/* get XPATH notation required for positioning */
 	#$xpath = new DOMXPath($dom);
@@ -4054,58 +3897,61 @@ function rrdtool_create_error_image($string, $width = '', $height = '') {
  * License: GPLv2
  * Original Code: https://github.com/lingej/pnp4nagios/blob/master/share/pnp/application/helpers/rrd.php
  */
-function gradient($vname = false, $start_color = '#0000a0', $end_color = '#f0f0f0', $label = false, $steps = 20, $lower = false, $alpha = 'FF') {
+function gradient($vname=FALSE, $start_color='#0000a0', $end_color='#f0f0f0', $label=FALSE, $steps=20, $lower=FALSE, $alpha='FF'){
+	$label = preg_replace("/'/", "", $label);
+	$label = preg_replace("/:/", "\:", $label);
+
 	if (preg_match('/^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})/i',$start_color,$matches)) {
-		$r1 = hexdec($matches[1]);
-		$g1 = hexdec($matches[2]);
-		$b1 = hexdec($matches[3]);
+		$r1=hexdec($matches[1]);
+		$g1=hexdec($matches[2]);
+		$b1=hexdec($matches[3]);
 	}
 
 	if (preg_match('/^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})/i',$end_color,$matches)) {
-		$r2 = hexdec($matches[1]);
-		$g2 = hexdec($matches[2]);
-		$b2 = hexdec($matches[3]);
+		$r2=hexdec($matches[1]);
+		$g2=hexdec($matches[2]);
+		$b2=hexdec($matches[3]);
 	}
 
-	$diff_r = $r2 - $r1;
-	$diff_g = $g2 - $g1;
-	$diff_b = $b2 - $b1;
-	$spline =  '';
-	$spline_vname = 'var' . substr(sha1(rand()), 1, 4);
-	$vnamet = $vname.substr(sha1(rand()), 1, 4);
+	$diff_r=$r2-$r1;
+	$diff_g=$g2-$g1;
+	$diff_b=$b2-$b1;
+	$spline =  "";
+	$spline_vname = "var".substr(sha1(rand()),1,4);
+	$vnamet = $vname.substr(sha1(rand()),1,4);
 
-	if (preg_match('/^([0-9]{1,3})%$/', $lower, $matches)) {
+	if(preg_match('/^([0-9]{1,3})%$/', $lower, $matches)) {
 		$lower   = $matches[1];
-		$spline .= sprintf("CDEF:%sminimum=%s,100,/,%d,* " . RRD_NL, $vnamet, $vname, $lower);
+		$spline .= sprintf("CDEF:%sminimum=%s,100,/,%d,* ".RRD_NL, $vnamet, $vname, $lower);
 	} elseif (preg_match('/^([0-9]+)$/', $lower, $matches)) {
 		$lower   = $matches[1];
-		$spline .= sprintf("CDEF:%sminimum=%s,%d,- " . RRD_NL, $vnamet, $vname, $lower);
+		$spline .= sprintf("CDEF:%sminimum=%s,%d,- ".RRD_NL, $vnamet, $vname, $lower);
 	} else {
 		$lower   = 0;
-		$spline .= sprintf("CDEF:%sminimum=%s,%s,- " . RRD_NL, $vnamet, $vname, $vname);
+		$spline .= sprintf("CDEF:%sminimum=%s,%s,- ".RRD_NL, $vnamet, $vname, $vname);
 	}
 
-	for ($i = $steps; $i > 0; $i--) {
-		$spline .=  sprintf("CDEF:%s%d=%s,%sminimum,-,%d,/,%d,*,%sminimum,+ " . RRD_NL, $spline_vname, $i, $vname, $vnamet, $steps, $i, $vnamet);
+	for ($i=$steps; $i>0; $i--){
+		$spline .=  sprintf("CDEF:%s%d=%s,%sminimum,-,%d,/,%d,*,%sminimum,+ ".RRD_NL,$spline_vname,$i,$vname,$vnamet,$steps,$i,$vnamet);
 	}
 
 	// We don't use alpha blending for the area right now
 	$alpha = 'ff';
 
-	for ($i = $steps; $i > 0; $i--) {
-		$factor = $i / $steps;
-		$r = round($r1 + $diff_r * $factor);
-		$g = round($g1 + $diff_g * $factor);
-		$b = round($b1 + $diff_b * $factor);
+	for ($i=$steps; $i>0; $i--){
+		$factor=$i / $steps;
+		$r=round($r1 + $diff_r * $factor);
+		$g=round($g1 + $diff_g * $factor);
+		$b=round($b1 + $diff_b * $factor);
 
-		if ($i == $steps && $label != false && strlen($label) > 2) {
-			$spline .=  sprintf("AREA:%s%d#%02X%02X%02X%s:\"%s\" " . RRD_NL, $spline_vname, $i, $r, $g, $b, $alpha, $label);
+		if (($i == $steps) && ($label != false) && (strlen($label) > 2)) {
+			$spline .=  sprintf("AREA:%s%d#%02X%02X%02X%s:\"%s\" ".RRD_NL, $spline_vname,$i,$r,$g,$b,$alpha,$label);
 		} else {
-			$spline .=  sprintf("AREA:%s%d#%02X%02X%02X%s " . RRD_NL, $spline_vname, $i, $r, $g, $b, $alpha);
+			$spline .=  sprintf("AREA:%s%d#%02X%02X%02X%s ".RRD_NL, $spline_vname,$i,$r,$g,$b,$alpha);
 		}
 	}
 
-	$spline .=  sprintf("AREA:%s%d#%02X%02X%02X%s " . RRD_NL, $spline_vname, $steps, $r2, $g2, $b2, '00', $label);
+	$spline .=  sprintf("AREA:%s%d#%02X%02X%02X%s ".RRD_NL, $spline_vname,$steps,$r2,$g2,$b2,'00',$label);
 
 	return $spline;
 }
@@ -4125,23 +3971,23 @@ function colourBrightness($hex, $percent) {
  	// Work out if hash given
 	$hash = '';
 
-	if (stristr($hex, '#')) {
-		$hex  = str_replace('#', '', $hex);
+	if (stristr($hex,'#')) {
+		$hex = str_replace('#','',$hex);
 		$hash = '#';
 	}
 
 	/// HEX TO RGB
-	$rgb = array(hexdec(substr($hex, 0, 2)), hexdec(substr($hex, 2, 2)), hexdec(substr($hex, 4, 2)));
+	$rgb = array(hexdec(substr($hex,0,2)), hexdec(substr($hex,2,2)), hexdec(substr($hex,4,2)));
 
 	//// CALCULATE
-	for ($i = 0; $i < 3; $i++) { // See if brighter or darker
+	for ($i=0; $i<3; $i++) { // See if brighter or darker
 		if ($percent > 0) {
 			// Lighter
-			$rgb[$i] = round($rgb[$i] * $percent) + round(255 * (1 - $percent));
+			$rgb[$i] = round($rgb[$i] * $percent) + round(255 * (1-$percent));
 		} else {
 			// Darker
 			$positivePercent = $percent - ($percent*2);
-			$rgb[$i] = round($rgb[$i] * (1 - $positivePercent)); // round($rgb[$i] * (1-$positivePercent));
+			$rgb[$i] = round($rgb[$i] * (1-$positivePercent)); // round($rgb[$i] * (1-$positivePercent));
 		}
 
 		// In case rounding up causes us to go to 256
@@ -4190,8 +4036,8 @@ function add_business_hours($data) {
         preg_match('/(\d+)\:(\d+)/',read_config_option('business_hours_start'), $bh_start_matches);
         preg_match('/(\d+)\:(\d+)/',read_config_option('business_hours_end'), $bh_end_matches);
 
-        $start_bh_time = mktime($bh_start_matches[1], $bh_start_matches[2], 0, date('m', $bh_graph_start), date('d', $bh_graph_start), date('Y', $bh_graph_start));
-        $end_bh_time   = mktime($bh_end_matches[1], $bh_end_matches[2], 0, date('m', $bh_graph_end), date('d', $bh_graph_end), date('Y', $bh_graph_end));
+        $start_bh_time = mktime( $bh_start_matches[1],$bh_start_matches[2],0,date('m',$bh_graph_start),date('d',$bh_graph_start),date('Y',$bh_graph_start));
+        $end_bh_time   = mktime( $bh_end_matches[1],$bh_end_matches[2],0,date('m',$bh_graph_end),date('d',$bh_graph_end),date('Y',$bh_graph_end));
 
         if ($start_bh_time < $bh_graph_start) {
             if ($start_bh_time < $end_bh_time) {
@@ -4207,8 +4053,8 @@ function add_business_hours($data) {
 
         if ($num_of_days <= read_config_option('business_hours_max_days')) {
             for ($day=0; $day<$num_of_days; $day++ ) {
-                $current_start_bh_time = mktime($bh_start_matches[1], $bh_start_matches[2], 0, date('m', $start_bh_time), date('d', $start_bh_time) + $day, date('Y',$start_bh_time));
-                $current_end_bh_time   = mktime($bh_end_matches[1], $bh_end_matches[2], 0, date('m', $start_bh_time), date('d', $start_bh_time) + $day, date('Y', $start_bh_time));
+                $current_start_bh_time = mktime($bh_start_matches[1],$bh_start_matches[2],0,date('m',$start_bh_time),date('d',$start_bh_time)+$day,date('Y',$start_bh_time));
+                $current_end_bh_time   = mktime( $bh_end_matches[1],$bh_end_matches[2],0,date('m',$start_bh_time),date('d',$start_bh_time)+$day,date('Y',$start_bh_time));
 
                 if ($current_start_bh_time < $bh_graph_start) {
                     $current_start_bh_time = $bh_graph_start;

@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -87,7 +87,7 @@ function upgrade_to_10_1_0_3() {
 		execute_sql("Add Queue Fairshare data query to host template 'Grid Summary'", "REPLACE INTO host_template_snmp_query
 			select ht.id, sq.id from  host_template as ht, snmp_query as sq where ht.hash='d8ff1374e732012338d9cd47b9da18d4' and sq.hash='cf395279d717d8a77e45d18dfd3af2bd';");
 
-		// 2) Add fairshare data query to all existing grid summary devices
+		// 2) Add benchmark data query to all existing grid summary devices
 		$grid_summary_devices=db_fetch_assoc("select host.id from host, host_template where host.host_template_id =host_template.id and host_template.hash='d8ff1374e732012338d9cd47b9da18d4';");
 		if (cacti_sizeof($grid_summary_devices)) {
 		    foreach($grid_summary_devices as $grid_summary_device) {

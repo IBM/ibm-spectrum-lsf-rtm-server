@@ -1,3 +1,4 @@
+// $Id$
 /* German translation for the jQuery Timepicker Addon */
 /* Written by Marvin */
 (function($) {

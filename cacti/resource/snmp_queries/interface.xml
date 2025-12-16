@@ -1,3 +1,4 @@
+<!-- $Id$ -->
 <interface>
 	<name>Get SNMP Interfaces</name>
 	<description>Queries a host for a list of monitorable interfaces</description>

@@ -1,3 +1,4 @@
+// $Id$
 /* Inicialización en español para la extensión 'UI date picker' para jQuery. */
 /* Traducido por Vester (xvester@gmail.com). */
 ( function( factory ) {

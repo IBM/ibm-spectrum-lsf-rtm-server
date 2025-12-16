@@ -1,3 +1,4 @@
+// $Id$
 /* Danish translation for the jQuery Timepicker Addon */
 /* Written by Lars H. Jensen (http://www.larshj.dk) */
 (function ($) {

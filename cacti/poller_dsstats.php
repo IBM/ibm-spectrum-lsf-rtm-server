@@ -1,8 +1,9 @@
 #!/usr/bin/env php
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -13,11 +14,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -142,7 +138,7 @@ if (!$forcerun) {
 switch ($type) {
 	case 'pmaster':
 		if (read_config_option('dsstats_enable') == 'on' || $forcerun) {
-			dsstats_master_handler($type, $forcerun);
+			dsstats_master_handler($forcerun);
 		}
 
 		break;
@@ -162,7 +158,7 @@ switch ($type) {
 	case 'bchild': // Launched by the boost process
 		$child_start = microtime(true);
 
-		dsstats_get_and_store_ds_avgpeak_values('daily', $type, $thread_id);
+		dsstats_get_and_store_ds_avgpeak_values('daily', $thread_id);
 
 		$total_time = microtime(true) - $child_start;
 
@@ -173,9 +169,9 @@ switch ($type) {
 		$child_start = microtime(true);
 
 		dsstats_debug(sprintf('Daily Stats Master Child %s Executing', $thread_id));
-		dsstats_get_and_store_ds_avgpeak_values('weekly', $type, $thread_id);
-		dsstats_get_and_store_ds_avgpeak_values('monthly', $type, $thread_id);
-		dsstats_get_and_store_ds_avgpeak_values('yearly', $type, $thread_id);
+		dsstats_get_and_store_ds_avgpeak_values('weekly', $thread_id);
+		dsstats_get_and_store_ds_avgpeak_values('monthly', $thread_id);
+		dsstats_get_and_store_ds_avgpeak_values('yearly', $thread_id);
 
 		$total_time = microtime(true) - $child_start;
 
@@ -212,7 +208,9 @@ function dsstats_insert_hourly_data_into_cache() {
 		ON DUPLICATE KEY UPDATE average=VALUES(average), peak=VALUES(peak)");
 }
 
-function dsstats_master_handler($type, $forcerun) {
+function dsstats_master_handler($forcerun) {
+	global $type;
+
 	/* read some important settings relative to timing from the database */
 	$major_time     = date('H:i:s', strtotime(read_config_option('dsstats_major_update_time')));
 	$daily_interval = read_config_option('dsstats_daily_interval');
@@ -227,7 +225,7 @@ function dsstats_master_handler($type, $forcerun) {
 	// Insert new rows into cache
 	dsstats_insert_hourly_data_into_cache();
 
-	dsstats_log_statistics('HOURLY', $type);
+	dsstats_log_statistics('HOURLY');
 
 	/* see if boost is active or not */
 	$boost_active = read_config_option('boost_rrd_update_enable');
@@ -266,7 +264,7 @@ function dsstats_master_handler($type, $forcerun) {
 				sleep(2);
 			}
 
-			dsstats_log_statistics('DAILY', $type);
+			dsstats_log_statistics('DAILY');
 		}
 	}
 

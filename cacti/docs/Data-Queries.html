@@ -79,8 +79,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <body>
 <h1 id="data-queries">Data Queries</h1>
 <h2 id="overview">Overview</h2>
-<p>Cacti <strong>Data Queries</strong> are not a replacement for <strong>Data Input Methods</strong> in Cacti. Instead they provide an easy way to extend Data Input methods to interpret multidimensional objects, or list data based upon an index, making the data easier to graph. The most common use of a **Data Query within Cacti is to retrieve a list of network interfaces via SNMP.</p>
-<p>If you want to graph the traffic of a network interface, first Cacti must retrieve a list of interfaces on the host. Second, Cacti can use that information to create the necessary <strong>Graphs</strong> and <strong>Data Sources</strong>. <strong>Data Queries</strong> are only concerned with the first step of the process, that is obtaining a list of network interfaces and not creating the graphs/data sources for them. While listing network interfaces is a common use for **Data Queries**, they also have other uses such as listing partitions, processors, or even cards in a router.</p>
+<p>Cacti <strong>Data Queries</strong> are not a replacement for <strong>Data Input Methods</strong> in Cacti. Instead they provide an easy way to extend Data Input methods to interpret multidimensional objects, or list data based upon an index, making the data easier to graph. The most common use of a **Data Query within Cacti is to retrieve a list of network interfaces via SNMP. If you want to graph the traffic of a network interface, first Cacti must retrieve a list of interfaces on the host. Second, Cacti can use that information to create the necessary <strong>Graphs</strong> and <strong>Data Sources</strong>. <strong>Data Queries</strong> are only concerned with the first step of the process, that is obtaining a list of network interfaces and not creating the graphs/data sources for them. While listing network interfaces is a common use for <strong>Data Queries</strong>, they also have other uses such as listing partitions, processors, or even cards in a router.</p>
 <p>One requirement for any <strong>Data Query</strong> in Cacti, is that it has some unique value that defines each row in the list. This concept follows that of a 'primary key' in SQL, and makes sure that each row in the list can be uniquely referenced. Examples of these index values are 'ifIndex' for SNMP network interfaces or the device name for partitions.</p>
 <p>There are three types of <strong>Data queries</strong> that you will see referred to throughout Cacti. They are script queries, script server queries, and SNMP queries. Script, Script Server and SNMP queries are virtually identical in their functionality and only differ in how they obtain their information. Script and Script Server queries will call an external command or script and an SNMP query will make an SNMP call to retrieve a list of data.</p>
 <h2 id="user-interface">User Interface</h2>
@@ -219,7 +218,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </tr>
 <tr class="even">
 <td>index_transient</td>
-<td>If set to 'true', this field instructs Cacti not to stop attempting to Graph an index if it disappears from the host cache as a result of a re-index. This setting is for indexes that come and go, for example PPPoE statistics or user statistics which appear when a user log's in, but disappear a few hours after the connection is terminated.</td>
+<td>If set to 'true', this field instructs Cacti not to stop attempting to Graph an index if it disappears from the host cache as a result of a re-index. This setting is for indexes that come and go, for example PPPoE statitics or user statistics which appear when a user log's in, but disappear a few hours after the connection is terminated.</td>
 </tr>
 <tr class="odd">
 <td>index_order_type</td>
@@ -263,7 +262,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </tr>
 <tr class="even">
 <td>oid_rewrite_pattern</td>
-<td>You can specify and <strong>OID/REGEXP</strong> string which will be replaced by the oid_rewrite_replacement string if found.</td>
+<td>You can specifv and <strong>OID/REGEXP</strong> string which will be replaced by the oid_rewrite_replacement string if found.</td>
 </tr>
 <tr class="odd">
 <td>oid_rewrite_replacement</td>
@@ -352,7 +351,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </tr>
 <tr class="even">
 <td>index_transient</td>
-<td>If set to 'true', this field instructs Cacti not to stop attempting to Graph an index if it disappears from the host cache as a result of a re-index. This setting is for indexes that come and go, for example PPPoE statistics or user statistics which appear when a user log's in, but disappear a few hours after the connection is terminated.</td>
+<td>If set to 'true', this field instructs Cacti not to stop attempting to Graph an index if it disappears from the host cache as a result of a re-index. This setting is for indexes that come and go, for example PPPoE statitics or user statistics which appear when a user log's in, but disappear a few hours after the connection is terminated.</td>
 </tr>
 <tr class="odd">
 <td>index_order_type</td>
@@ -474,7 +473,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </tr>
 <tr class="even">
 <td>index_transient</td>
-<td>If set to 'true', this field instructs Cacti not to stop attempting to Graph an index if it disappears from the host cache as a result of a re-index. This setting is for indexes that come and go, for example PPPoE statistics or user statistics which appear when a user log's in, but disappear a few hours after the connection is terminated.</td>
+<td>If set to 'true', this field instructs Cacti not to stop attempting to Graph an index if it disappears from the host cache as a result of a re-index. This setting is for indexes that come and go, for example PPPoE statitics or user statistics which appear when a user log's in, but disappear a few hours after the connection is terminated.</td>
 </tr>
 <tr class="odd">
 <td>index_order_type</td>
@@ -511,6 +510,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </tbody>
 </table>
 <hr />
-<p>Copyright (c) 2004-2024 The Cacti Group</p>
+<p><copy>Copyright (c) 2004-2023 The Cacti Group</copy></p>
 </body>
 </html>

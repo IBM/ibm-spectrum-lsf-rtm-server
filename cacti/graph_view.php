@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -329,26 +325,19 @@ case 'tree_content':
 
 	?>
 	<script type='text/javascript'>
-
+	var refreshIsLogout = false;
+	var refreshPage     = '<?php print str_replace('tree_content', 'tree', sanitize_uri($_SERVER['REQUEST_URI']));?>';
+	var refreshMSeconds = <?php print read_user_setting('page_refresh')*1000;?>;
 	var graph_start     = <?php print get_current_graph_start();?>;
 	var graph_end       = <?php print get_current_graph_end();?>;
 	var timeOffset      = <?php print date('Z');?>
 
-	/**
-	 * Adjust the height of the tree and set the page refresh
-	 */
+	// Adjust the height of the tree
 	$(function() {
-		/* these are all global variables */
-		refreshIsLogout = false;
-		refreshPage     = '<?php print str_replace('tree_content', 'tree', sanitize_uri($_SERVER['REQUEST_URI']));?>';
-		refreshMSeconds = <?php print read_user_setting('page_refresh')*1000;?>;
-		pageAction      = 'tree';
-		navHeight       = $('.cactiTreeNavigationArea').height();
-		windowHeight    = $(window).height();
-		navOffset       = $('.cactiTreeNavigationArea').offset();
-
-		setupPageTimeout();
-
+		pageAction   = 'tree';
+		navHeight    = $('.cactiTreeNavigationArea').height();
+		windowHeight = $(window).height();
+		navOffset    = $('.cactiTreeNavigationArea').offset();
 		if (navHeight + navOffset.top < windowHeight) {
 			$('.cactiTreeNavigationArea').height(windowHeight - navOffset.top);
 		}
@@ -532,49 +521,38 @@ case 'list':
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '-1'
-		),
+			),
 		'page' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'default' => '1'
-		),
+			),
 		'rfilter' => array(
 			'filter' => FILTER_VALIDATE_IS_REGEX,
 			'pageset' => true,
 			'default' => '',
-		),
+			),
 		'graph_template_id' => array(
 			'filter' => FILTER_VALIDATE_IS_NUMERIC_LIST,
 			'pageset' => true,
 			'default' => '-1'
-		),
-		'site_id' => array(
-			'filter' => FILTER_VALIDATE_INT,
-			'pageset' => true,
-			'default' => '-1'
-		),
+			),
 		'host_id' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '-1'
-		),
-		'location' => array(
-			'filter' => FILTER_CALLBACK,
-			'pageset' => true,
-			'default' => '-1',
-			'options' => array('options' => 'sanitize_search_string')
-		),
+			),
 		'graph_add' => array(
 			'filter' => FILTER_VALIDATE_IS_NUMERIC_LIST,
 			'default' => ''
-		),
+			),
 		'graph_list' => array(
 			'filter' => FILTER_VALIDATE_IS_NUMERIC_LIST,
 			'default' => ''
-		),
+			),
 		'graph_remove' => array(
 			'filter' => FILTER_VALIDATE_IS_NUMERIC_LIST,
 			'default' => ''
-		)
+			)
 	);
 
 	validate_store_request_vars($filters, 'sess_gl');
@@ -584,21 +562,6 @@ case 'list':
 		$rows = read_config_option('num_rows_table');
 	} else {
 		$rows = get_request_var('rows');
-	}
-
-	/* check to see if site_id and location are mismatched */
-	if (get_request_var('site_id') >= 0) {
-		if (get_request_var('location') != '0' && get_request_var('location') != '-1') {
-			$exists = db_fetch_cell_prepared('SELECT COUNT(*)
-				FROM host
-				WHERE site_id = ?
-				AND location = ?',
-				array(get_request_var('site_id'), get_request_var('location')));
-
-			if (!$exists) {
-				set_request_var('location', '-1');
-			}
-		}
 	}
 
 	$graph_list = array();
@@ -671,17 +634,6 @@ case 'list':
 			</table>
 			<table class='filterTable'>
 				<tr>
-					<?php html_site_filter(get_request_var('site_id'));?>
-					<?php
-
-					if (get_request_var('site_id') >= 0) {
-						$loc_where = 'WHERE site_id = ' . db_qstr(get_request_var('site_id'));
-					} else {
-						$loc_where = '';
-					}
-
-					html_location_filter(get_request_var('location'), 'applyFilter', $loc_where);
-					?>
 					<td>
 						<?php print __('Template');?>
 					</td>
@@ -753,22 +705,10 @@ case 'list':
 		$sql_where .= " gtg.title_cache RLIKE '" . get_request_var('rfilter') . "'";
 	}
 
-	if (!isempty_request_var('site_id') && get_request_var('site_id') > 0) {
-		$sql_where .= ($sql_where == '' ? '' : ' AND') . ' h.site_id=' . get_request_var('site_id');
-	} elseif (isempty_request_var('site_id')) {
-		$sql_where .= ($sql_where == '' ? '' : ' AND') . ' h.site_id=0';
-	}
-
 	if (!isempty_request_var('host_id') && get_request_var('host_id') > 0) {
 		$sql_where .= ($sql_where == '' ? '' : ' AND') . ' gl.host_id=' . get_request_var('host_id');
 	} elseif (isempty_request_var('host_id')) {
 		$sql_where .= ($sql_where == '' ? '' : ' AND') . ' gl.host_id=0';
-	}
-
-	if (get_request_var('location') != '' && get_request_var('location') != '-1' && get_request_var('location') != '0') {
-		$sql_where .= ($sql_where == '' ? '' : ' AND') . ' h.location = ' . db_qstr(get_request_var('location'));
-	} elseif (get_request_var('location') == '0') {
-		$sql_where .= ($sql_where == '' ? '' : ' AND') . ' h.location = ""';
 	}
 
 	if (!isempty_request_var('graph_template_id') && get_request_var('graph_template_id') != '-1' && get_request_var('graph_template_id') != '0') {
@@ -922,9 +862,7 @@ case 'list':
 
 	function applyFilter() {
 		strURL = 'graph_view.php?action=list&header=false&page=1';
-		strURL += '&site_id=' + $('#site_id').val();
 		strURL += '&host_id=' + $('#host_id').val();
-		strURL += '&location=' + $('#location').val();
 		strURL += '&rows=' + $('#rows').val();
 		strURL += '&graph_template_id=' + $('#graph_template_id').val();
 		strURL += '&rfilter=' + base64_encode($('#rfilter').val());
@@ -1040,14 +978,14 @@ case 'list':
 
 						$(this).dialog('close');
 
-						strURL = 'graph_view.php?action=ajax_reports' +
+						strURL = 'graph_view.php?action=ajax_reports';
 							'&header=false' +
-							'&report_id='   + $('#report_id').val()   +
-							'&timespan='    + $('#timespan').val()    +
-							'&align='       + $('#align').val()       +
+							'&report_id='   + $('#report_id').val()  +
+							'&timespan='    + $('#timespan').val()   +
+							'&align='       + $('#align').val()      +
 							'&graph_list='  + $('#graph_list').val();
 
-						loadPageUsingPost(strURL);
+						loadPageNoHeader(strURL);
 					}
 				}
 			],

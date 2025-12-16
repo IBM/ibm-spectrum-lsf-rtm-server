@@ -1,3 +1,4 @@
+// $Id$
 /* Vietnamese translation for the jQuery Timepicker Addon */
 /* Written by Nguyen Dinh Trung */
 (function($) {

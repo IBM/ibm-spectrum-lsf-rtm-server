@@ -1,4 +1,5 @@
 <?php
+// $Id$
 
 /**
  * Pure-PHP ANSI Decoder

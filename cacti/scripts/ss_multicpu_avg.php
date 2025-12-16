@@ -1,4 +1,5 @@
 <?php
+// $Id$
 
 include_once(dirname(__FILE__) . '/../include/cli_check.php');
 include_once(dirname(__FILE__) . '/../lib/snmp.php');

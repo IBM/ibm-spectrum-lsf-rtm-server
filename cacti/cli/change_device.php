@@ -1,8 +1,9 @@
 #!/usr/bin/env php
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -13,11 +14,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -54,7 +50,7 @@ $quietMode            = false;
 $overrides = array();
 foreach($parms as $parameter) {
 	if (strpos($parameter, '=')) {
-		list($arg, $value) = explode('=', $parameter, 2);
+		list($arg, $value) = explode('=', $parameter);
 	} else {
 		$arg = $parameter;
 		$value = '';
@@ -82,11 +78,11 @@ foreach($parms as $parameter) {
 			break;
 
 		case '--template':
-			$overrides['host_template_id'] = $value;
+			$overrides['template_id'] = $value;
 			break;
 
 		case '--community':
-			$overrides['snmp_community'] = trim($value);
+			$overrides['community'] = trim($value);
 			break;
 
 		case '--version':
@@ -301,11 +297,6 @@ if (!cacti_sizeof($host)) {
 /* merge overriden parameters onto host */
 $host    = array_merge($host, $overrides);
 
-/* exception for IP */
-if (isset($overrides['ip'])) {
-	$host['hostname'] = $overrides['ip'];
-}
-
 /* process the various lists into validation arrays */
 $host_templates = getHostTemplates();
 $hosts          = getHostsByDescription();
@@ -372,7 +363,7 @@ if (!$quietMode) {
 	print "Changing device-id: $device_id to {$host['description']} ({$host['hostname']}) as \"{$host_templates[$host['host_template_id']]}\" using SNMP v{$host['snmp_version']} with community \"{$host['snmp_community']}\"\n";
 }
 
-$host_id = api_device_save($device_id, $host['host_template_id'], $host['description'], $host['hostname'],
+$host_id = api_device_save($device_id, $host['host_template_id'], $host['description'], $host['ip'],
 	$host['snmp_community'], $host['snmp_version'], $host['snmp_username'], $host['snmp_password'],
 	$host['snmp_port'], $host['snmp_timeout'], $host['disabled'], $host['availability_method'], $host['ping_method'],
 	$host['ping_port'], $host['ping_timeout'], $host['ping_retries'], $host['notes'],

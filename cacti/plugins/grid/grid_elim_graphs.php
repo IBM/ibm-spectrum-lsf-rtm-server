@@ -2,8 +2,8 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright (C) 2004-2022 The Cacti Group                                 |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -629,15 +629,6 @@ function instance_edit_real() {
 
 	html_start_box($header_label, '100%', '', '3', 'center', '');
 
-	if (db_table_exists('data_source_profiles')) {
-		$def_profile = db_fetch_cell('SELECT id
-			FROM data_source_profiles
-			ORDER BY `default` DESC, `id`
-			LIMIT 1');
-	} else {
-		$def_profile = '1';
-	}
-
 	$form_array = array(
 		'grid_elim_template_id' => array(
 			'method' => 'drop_sql',
@@ -673,7 +664,7 @@ function instance_edit_real() {
 			'method' => 'drop_sql',
 			'friendly_name' => __('Data Source Profile', 'grid'),
 			'description' => __('Select the Data Source Profile.  The Data Source Profile controls polling interval, the data aggregation, and retention policy for the resulting Data Sources.', 'grid'),
-			'value' => (isset($elim_instance) ? $elim_instance['data_source_profile_id'] : $def_profile),
+			'value' => (isset($elim_instance) ? $elim_instance['data_source_profile_id'] : '1'),
 			'sql' => 'SELECT id, name FROM data_source_profiles ORDER BY name'
 			)
 		);

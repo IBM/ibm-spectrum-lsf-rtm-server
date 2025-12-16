@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2006-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -20,7 +20,6 @@
 
 chdir('../..');
 include('./include/auth.php');
-include_once($config['base_path'] . '/lib/reports.php');
 include_once($config['base_path'] . '/plugins/thold/thold_functions.php');
 include($config['base_path'] . '/plugins/thold/includes/arrays.php');
 
@@ -75,11 +74,8 @@ function form_save() {
 	if (isset_request_var('save_component')) {
 		$save['id']          = get_filter_request_var('id');
 		$save['name']        = form_input_validate(get_nfilter_request_var('name'), 'name', '', false, 3);
-		$save['enabled']     = isset_request_var('enabled') ? 'on':'';
 		$save['description'] = form_input_validate(get_nfilter_request_var('description'), 'description', '', false, 3);
-		$save['emails']      = form_input_validate(get_nfilter_request_var('emails'), 'emails', '', true, 3);
-		$save['bcc_emails']  = form_input_validate(get_nfilter_request_var('bcc_emails'), 'bcc_emails', '', true, 3);
-		$save['format_file'] = form_input_validate(get_nfilter_request_var('format_file'), 'format_file', '', true, 3);
+		$save['emails']      = form_input_validate(get_nfilter_request_var('emails'), 'emails', '', false, 3);
 
 		if (!is_error_message()) {
 			$id = sql_save($save, 'plugin_notification_lists');
@@ -175,7 +171,6 @@ function form_actions() {
 						$save['name']        = $name;
 						$save['description'] = $list['description'];
 						$save['emails']      = $list['emails'];
-						$save['bcc_emails']  = $list['bcc_emails'];
 
 						$id = sql_save($save, 'plugin_notification_lists');
 
@@ -509,21 +504,21 @@ function form_actions() {
 				print "<tr>
 					<td class='textArea'>
 						<p>" . __('Click \'Continue\' to Delete Notification Lists(s).  Any Device(s) or Threshold(s) associated with the List(s) will be reverted to the default.', 'thold'). "</p>
-						<div class='itemlist'><ul>$list</ul></div>
+						<ul>$list</ul>
 					</td>
-				</tr>";
+				</tr>\n";
 
 				$save_html = "<input type='button' value='" . __esc('Cancel', 'thold') . "' onClick='cactiReturnTo()'>&nbsp;<input type='submit' value='" . __esc('Continue', 'thold') . "' title='" . __esc('Delete Notification List(s)', 'thold') . "'>";
 			} elseif (get_request_var('drp_action') == '2') { /* duplicate */
 				print "<tr>
 					<td class='textArea'>
 						<p>" . __('Click \'Continue\' to Duplicate the following Notification List(s).', 'thold') . "</p>
-						<div class='itemlist'><ul>$list</ul></div>
+						<ul>$list</ul>
 					<p>" . __('New List Name') . '<br>';
 					form_text_box('name', __('New Notification List'), '', '255', '40', 'text');
 
 				print "</p></td>
-				</tr>";
+				</tr>\n";
 
 				$save_html = "<input type='button' value='" . __esc('Cancel', 'thold') . "' onClick='cactiReturnTo()'>&nbsp;<input type='submit' value='" . __esc('Continue', 'thold') . "' title='" . __esc('Duplicate Notification List(s)', 'thold') . "'>";
 			}
@@ -541,7 +536,7 @@ function form_actions() {
 				<input type='hidden' name='drp_action' value='" . get_request_var('drp_action') . "'>
 				$save_html
 			</td>
-		</tr>";
+		</tr>\n";
 
 		html_end_box();
 
@@ -577,22 +572,22 @@ function form_actions() {
 				print "<tr>
 					<td class='textArea'>
 						<p>" . __esc('Click \'Continue\' to Association the Notification List \'%s\' with the Threshold Template(s) below.', $list_name, 'thold') . "</p>
-						<div class='itemlist'><ul>$list</ul></div>
+						<ul>$list</ul>
 						<p>" . __('Warning Membership:', 'thold') . "<br>"; form_dropdown('notification_warning_action', array(0 => __('No Change', 'thold'), 1 => __('Notification List Only', 'thold'), 2 => __('Notification List, Retain Other Settings', 'thold')), '', '', 1, '', ''); print "</p>
 						<p>" . __('Alert Membership:', 'thold') . "<br>"; form_dropdown('notification_alert_action', array(0 => __('No Change', 'thold'), 1 => __('Notification List Only', 'thold'), 2 => __('Notification List, Retain Other Settings', 'thold')), '', '', 1, '', ''); print "</p>
 					</td>
-				</tr>";
+				</tr>\n";
 
 				$save_html = "<input type='button' value='" . __esc('Cancel', 'thold') . "' onClick='cactiReturnTo()'>&nbsp;<input type='submit' value='" . __esc('Continue', 'thold') . "' title='" . __esc('Associate Notification List(s)', 'thold') . "'>";
 			} elseif (get_request_var('drp_action') == '2') { /* disassociate */
 				print "<tr>
 					<td class='textArea'>
 						<p>" . __esc('Click \'Continue\' to Disassociate the Notification List \'%s\' from the Thresholds Template(s) below.', $list_name, 'thold') . "</p>
-						<div class='itemlist'><ul>$list</ul></div>
+						<ul>$list</ul>
 						<p>" . __('Warning Membership:', 'thold') . "<br>"; form_dropdown('notification_warning_action', array(0 => __('No Change', 'thold'), 1 => __('Remove List', 'thold')), '', '', 1, '', ''); print "</p>
 						<p>" . __('Alert Membership:', 'thold') . "<br>"; form_dropdown('notification_alert_action', array(0 => __('No Change', 'thold'), 1 => __('Remove List', 'thold')), '', '', 1, '', ''); print "</p>
 					</td>
-				</tr>";
+				</tr>\n";
 
 				$save_html = "<input type='button' value='" . __esc('Cancel', 'thold') . "' onClick='cactiReturnTo()'>&nbsp;<input type='submit' value='" . __esc('Continue', 'thold') . "' title='" . __esc('Disassociate Notification List(s)', 'thold') . "'>";
 			}
@@ -611,7 +606,7 @@ function form_actions() {
 				<input type='hidden' name='drp_action' value='" . get_request_var('drp_action') . "'>
 				$save_html
 			</td>
-		</tr>";
+		</tr>\n";
 
 		html_end_box();
 
@@ -647,22 +642,22 @@ function form_actions() {
 				print "<tr>
 					<td class='textArea'>
 						<p>" . __esc('Click \'Continue\' to Associate the Notification List \'%s\' with the Threshold(s) below.', $list_name, 'thold') . "</p>
-						<div class='itemlist'><ul>$list</ul></div>
+						<ul>$list</ul>
 						<p>" . __('Warning Membership:', 'thold') . "<br>"; form_dropdown('notification_warning_action', array(0 => __('No Change', 'thold'), 1 => __('Notification List Only', 'thold'), 2 => __('Notification List, Retain Other Settings', 'thold')), '', '', 1, '', ''); print "</p>
 						<p>" . __('Alert Membership:', 'thold') . "<br>"; form_dropdown('notification_alert_action', array(0 => __('No Change', 'thold'), 1 => __('Notification List Only', 'thold'), 2 => __('Notification List, Retain Other Settings', 'thold')), '', '', 1, '', ''); print "</p>
 					</td>
-				</tr>";
+				</tr>\n";
 
 				$save_html = "<input type='button' value='" . __esc('Cancel', 'thold') . "' onClick='cactiReturnTo()'>&nbsp;<input type='submit' value='" . __esc('Continue', 'thold') . "' title='" . __esc('Associate Notification List(s)', 'thold') . "'>";
 			} elseif (get_request_var('drp_action') == '2') { /* disassociate */
 				print "<tr>
 					<td class='textArea'>
 						<p>" . __esc('Click \'Continue\' to Disassociate the Notification List \'%s\' from the Thresholds(s) below.', $list_name, 'thold') . "</p>
-						<div class='itemlist'><ul>$list</ul></div>
+						<ul>$list</ul>
 						<p>" . __('Warning Membership:', 'thold') . "<br>"; form_dropdown('notification_warning_action', array(0 => __('No Change', 'thold'), 1 => __('Remove List', 'thold')), '', '', 1, '', ''); print "</p>
 						<p>" . __('Alert Membership:', 'thold') . "<br>"; form_dropdown('notification_alert_action', array(0 => __('No Change', 'thold'), 1 => __('Remove List', 'thold')), '', '', 1, '', ''); print "</p>
 					</td>
-				</tr>";
+				</tr>\n";
 
 				$save_html = "<input type='button' value='" . __esc('Cancel', 'thold') . "' onClick='cactiReturnTo()'>&nbsp;<input type='submit' value='" . __esc('Continue', 'thold') . "' title='" . __esc('Disassociate Notification List(s)', 'thold') . "'>";
 			}
@@ -681,7 +676,7 @@ function form_actions() {
 				<input type='hidden' name='drp_action' value='" . get_request_var('drp_action') . "'>
 				$save_html
 			</td>
-		</tr>";
+		</tr>\n";
 
 		html_end_box();
 
@@ -717,12 +712,12 @@ function form_actions() {
 					<td class='textArea'>
 						<p>" . __esc('Click \'Continue\' to Associate the Notification List \'%s\' with the Device(s) below.', $list_name, 'thold') . "</p>
 						<p>" . __('You may also Associate the Devices Thresholds as well. However, these Device Thresholds will allow the Threshold Notification List to be overwritten.', 'thold') . "</p>
-						<div class='itemlist'><ul>$list</ul></div>
+						<ul>$list</ul>
 						<p>" . __('Resulting Membership:', 'thold'). "<br>"; form_dropdown('notification_action', array(2 => __('Notification List Only', 'thold'), 3 => __('Notification and Global Lists', 'thold')), '', '', 2, '', ''); print "</p>
 						<p>" . __('Device Threshold Warning Membership:', 'thold') . "<br>"; form_dropdown('notification_warning_action', array(0 => __('No Change', 'thold'), 1 => __('Notification List Only', 'thold'), 2 => __('Notification List, Retain Other Settings', 'thold')), '', '', 1, '', ''); print "</p>
 						<p>" . __('Device Threshold Alert Membership:', 'thold') . "<br>"; form_dropdown('notification_alert_action', array(0 => __('No Change', 'thold'), 1 => __('Notification List Only', 'thold'), 2 => __('Notification List, Retain Other Settings', 'thold')), '', '', 1, '', ''); print "</p>
 					</td>
-				</tr>";
+				</tr>\n";
 
 				$save_html = "<input type='button' value='" . __esc('Cancel', 'thold'). "' onClick='cactiReturnTo()'>&nbsp;<input type='submit' value='" . __esc('Continue', 'thold'). "' title='" . __esc('Associate Notification List(s)', 'thold'). "'>";
 			} elseif (get_request_var('drp_action') == '2') { /* disassociate */
@@ -730,12 +725,12 @@ function form_actions() {
 					<td class='textArea'>
 						<p>" . __esc('Click \'Continue\' to Disassociate the Notification List \'%s\' from the Device(s) below.', $list_name, 'thold') . "</p>
 						<p>" . __('You may also Disassociate the Devices Thresholds as well. However, these Device Thresholds will allow the Threshold Notification List to be overwritten.', 'thold') . "</p>
-						<div class='itemlist'><ul>$list</ul></div>
+						<ul>$list</ul>
 						<p>" . __('Resulting Membership:', 'thold') . "<br>"; form_dropdown('notification_action', array(1 => __('Global List', 'thold'), 0 => __('Disabled', 'thold')), '', '', 1, '', ''); print "</p>
 						<p>" . __('Device Threshold Warning Membership:', 'thold') . "<br>"; form_dropdown('notification_warning_action', array(0 => __('No Change', 'thold'), 1 => __('Remove List', 'thold')), '', '', 1, '', ''); print "</p>
 						<p>" . __('Device Threshold Alert Membership:', 'thold') . "<br>"; form_dropdown('notification_alert_action', array(0 => __('No Change', 'thold'), 1 => __('Remove List', 'thold')), '', '', 1, '', ''); print "</p>
 					</td>
-				</tr>";
+				</tr>\n";
 
 				$save_html = "<input type='button' value='" . __esc('Cancel', 'thold') . "' onClick='cactiReturnTo()'>&nbsp;<input type='submit' value='" . __('Continue', 'thold') . "' title='" . __esc('Disassociate Notification List(s)', 'thold') . "'>";
 			}
@@ -754,7 +749,7 @@ function form_actions() {
 				<input type='hidden' name='drp_action' value='" . get_request_var('drp_action') . "'>
 				$save_html
 			</td>
-		</tr>";
+		</tr>\n";
 
 		html_end_box();
 
@@ -799,22 +794,20 @@ function edit() {
 	$current_tab = get_request_var('tab');
 
 	if (cacti_sizeof($tabs_thold) && isset_request_var('id')) {
-		print "<div class='tabs'><nav><ul>";
+		print "<div class='tabs'><nav><ul>\n";
 
 		foreach (array_keys($tabs_thold) as $tab_short_name) {
 			print "<li><a class='pic" . (($tab_short_name == $current_tab) ? ' selected' : '') .  "' href='" . $config['url_path'] .
 				'plugins/thold/notify_lists.php' .
 				'?action=edit&id=' . get_filter_request_var('id') .
 				'&tab=' . $tab_short_name .
-				"'>" . $tabs_thold[$tab_short_name] . '</a></li>';
+				"'>" . $tabs_thold[$tab_short_name] . "</a></li>\n";
 		}
 
-		print '</ul></nav></div>';
+		print "</ul></nav></div>\n";
 	}
 
 	$header_label = get_notification_header_label();
-
-	$formats = reports_get_format_files();
 
 	if (isset_request_var('id')) {
 		$list = db_fetch_row_prepared('SELECT *
@@ -848,38 +841,14 @@ function edit() {
 				'textarea_rows' => '2',
 				'textarea_cols' => '80'
 			),
-			'enabled' => array(
-				'method' => 'checkbox',
-				'friendly_name' => __('Enabled'),
-				'description' => __('To disable all notifications from this Notification List, you can simply disable it here.', 'thold'),
-				'default' => '',
-				'value' => '|arg1:enabled|'
-			),
 			'emails' => array(
 				'method' => 'textarea',
-				'friendly_name' => __('To Email Addresses', 'thold'),
+				'friendly_name' => __('Email Addresses', 'thold'),
 				'description' => __('Enter a comma separated list of Email addresses for this Notification List.', 'thold'),
 				'value' => '|arg1:emails|',
 				'class' => 'textAreaNotes',
 				'textarea_rows' => '4',
 				'textarea_cols' => '80'
-			),
-			'bcc_emails' => array(
-				'method' => 'textarea',
-				'friendly_name' => __('BCC Email Addresses', 'thold'),
-				'description' => __('Enter a comma separated list of Email addresses for this Notification List to be blind copied.', 'thold'),
-				'value' => '|arg1:bcc_emails|',
-				'class' => 'textAreaNotes',
-				'textarea_rows' => '4',
-				'textarea_cols' => '80'
-			),
-			'format_file' => array(
-				'friendly_name' => __('Email Style/Format File', 'thold'),
-				'method' => 'drop_array',
-				'default' => 'default.format',
-				'description' => __('Choose the custom html wrapper and CSS file to use.  This file contains both html and CSS to wrap around your report.  If it contains more than simply CSS, you need to place a special <REPORT> tag inside of the file.  This format tag will be replaced by the report content.  These files are located in the \'formats\' directory.', 'thold'),
-				'value' => '|arg1:format_file|',
-				'array' => $formats
 			),
 			'id' => array(
 				'method' => 'hidden_zero',
@@ -891,12 +860,10 @@ function edit() {
 			)
 		);
 
-		draw_edit_form(
-			array(
-				'config' => array(),
-				'fields' => inject_form_variables($fields_notification, (isset($list) ? $list : array()))
-			)
-		);
+		draw_edit_form(array(
+			'config' => array(),
+			'fields' => inject_form_variables($fields_notification, (isset($list) ? $list : array()))
+			));
 
 		html_end_box();
 
@@ -926,41 +893,41 @@ function hosts($header_label) {
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '-1'
-		),
+			),
 		'page' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'default' => '1'
-		),
+			),
 		'site_id' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '-1'
-		),
+			),
 		'rfilter' => array(
 			'filter' => FILTER_VALIDATE_IS_REGEX,
 			'pageset' => true,
 			'default' => ''
-		),
+			),
 		'sort_column' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => 'description',
 			'options' => array('options' => 'sanitize_search_string')
-		),
+			),
 		'sort_direction' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => 'ASC',
 			'options' => array('options' => 'sanitize_search_string')
-		),
+			),
 		'associated' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => 'true',
 			'options' => array('options' => 'sanitize_search_string')
-		),
+			),
 		'host_template_id' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '-1'
-		)
+			)
 	);
 
 	validate_store_request_vars($filters, 'sess_nlh');
@@ -999,14 +966,14 @@ function hosts($header_label) {
 
 							if (cacti_sizeof($sites)) {
 								foreach ($sites as $site) {
-									print "<option value='" . $site['id'] . "'" . (get_request_var('site_id') == $site['id'] ? ' selected':'') . '>' . html_escape($site['name']) . '</option>';
+									print "<option value='" . $site['id'] . "'"; if (get_request_var('site_id') == $site['id']) { print ' selected'; } print '>' . html_escape($site['name']) . "</option>\n";
 								}
 							}
 							?>
 						</select>
 					</td>
 					<td>
-						<?php print __('Device Template', 'thold');?>
+						<?php print __('Type', 'thold');?>
 					</td>
 					<td>
 						<select id='host_template_id' onChange='applyFilter()'>
@@ -1019,7 +986,7 @@ function hosts($header_label) {
 
 							if (cacti_sizeof($host_templates)) {
 								foreach ($host_templates as $host_template) {
-									print "<option value='" . $host_template['id'] . "'" . (get_request_var('host_template_id') == $host_template['id'] ? ' selected':'') . '>' . html_escape($host_template['name']) . '</option>';
+									print "<option value='" . $host_template['id'] . "'"; if (get_request_var('host_template_id') == $host_template['id']) { print ' selected'; } print '>' . html_escape($host_template['name']) . "</option>\n";
 								}
 							}
 							?>
@@ -1034,7 +1001,7 @@ function hosts($header_label) {
 							<?php
 							if (cacti_sizeof($item_rows)) {
 								foreach ($item_rows as $key => $value) {
-									print "<option value='" . $key . "'" . (get_request_var('rows') == $key ? ' selected':'') . '>' . html_escape($value) . '</option>';
+									print "<option value='" . $key . "'"; if (get_request_var('rows') == $key) { print ' selected'; } print '>' . html_escape($value) . "</option>\n";
 								}
 							}
 							?>
@@ -1090,52 +1057,41 @@ function hosts($header_label) {
 
 	html_end_box();
 
-	$sql_where  = '';
-	$sql_params = array();
-
 	/* form the 'where' clause for our main sql query */
 	if (strlen(get_request_var('rfilter'))) {
-		$sql_where = "WHERE (
-			h.hostname RLIKE ?
-			OR h.description RLIKE ?)";
-
-		$sql_params[] = get_request_var('rfilter');
-		$sql_params[] = get_request_var('rfilter');
+		$sql_where = 'WHERE (
+			host.hostname RLIKE "'       . get_request_var('rfilter') . '"
+			OR host.description RLIKE "' . get_request_var('rfilter')  . '")';
+	} else {
+		$sql_where = '';
 	}
 
 	if (get_request_var('site_id') == '-1') {
 		/* Show all items */
 	} elseif (get_request_var('site_id') == '0') {
-		$sql_where .= ($sql_where == '' ? '' : ' AND ') . ' h.site_id = 0';
+		$sql_where .= ($sql_where == '' ? '' : ' AND ') . ' host.site_id=0';
 	} elseif (!isempty_request_var('site_id')) {
-		$sql_where .= ($sql_where == '' ? '' : ' AND ') . ' h.site_id = ?';
-		$sql_params[] = get_request_var('site_id');
+		$sql_where .= ($sql_where == '' ? '' : ' AND ') . ' host.site_id=' . get_request_var('site_id');
 	}
 
 	if (get_request_var('host_template_id') == '-1') {
 		/* Show all items */
 	} elseif (get_request_var('host_template_id') == '0') {
-		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . ' h.host_template_id = 0';
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . ' host.host_template_id=0';
 	} elseif (!isempty_request_var('host_template_id')) {
-		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . ' h.host_template_id = ?';
-		$sql_params[] = get_request_var('host_template_id');
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . ' host.host_template_id=' . get_request_var('host_template_id');
 	}
 
 	if (get_request_var('associated') == 'false') {
 		/* Show all items */
 	} else {
-		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . ' (h.thold_send_email > 1 AND h.thold_host_email = ?)';
-		$sql_params[] = get_request_var('id');
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . ' (host.thold_send_email>1 AND host.thold_host_email=' . get_request_var('id') . ')';
 	}
 
-	$sql_limit = 'LIMIT ' . ($rows*(get_request_var('page')-1)) . ',' . $rows;
-	$sql_order = get_order_string();
-
-	$total_rows = db_fetch_cell_prepared("SELECT
-		COUNT(h.id)
-		FROM host AS h
-		$sql_where",
-		$sql_params);
+	$total_rows = db_fetch_cell("select
+		COUNT(host.id)
+		from host
+		$sql_where");
 
 	$host_graphs = array_rekey(
 		db_fetch_assoc('SELECT host_id, COUNT(*) AS graphs
@@ -1146,20 +1102,19 @@ function hosts($header_label) {
 
 	$host_data_sources = array_rekey(
 		db_fetch_assoc('SELECT host_id, COUNT(*) AS data_sources
-			FROM data_local
-			GROUP BY host_id'),
+			FROM data_local GROUP BY host_id'),
 		'host_id', 'data_sources'
 	);
 
-	$sql_query = "SELECT h.*, s.name AS site_name
-		FROM host AS h
-		LEFT JOIN sites AS s
-		ON h.site_id = s.id
+	$sql_query = "SELECT host.*, sites.name AS site_name
+		FROM host
+		LEFT JOIN sites
+		ON host.site_id = sites.id
 		$sql_where
-		$sql_order
-		$sql_limit";
+		ORDER BY description
+		LIMIT " . ($rows*(get_request_var('page')-1)) . ',' . $rows;
 
-	$hosts = db_fetch_assoc_prepared($sql_query, $sql_params);
+	$hosts = db_fetch_assoc($sql_query);
 
 	$nav = html_nav_bar('notify_lists.php?action=edit&id=' . get_request_var('id'), MAX_DISPLAY_PAGES, get_request_var('page'), $rows, $total_rows, 10, __('Devices', 'thold'), 'page', 'main');
 
@@ -1170,49 +1125,17 @@ function hosts($header_label) {
 	html_start_box('', '100%', false, '3', 'center', '');
 
 	$display_text = array(
-		'description' => array(
-			'display' => __('Description', 'thold'),
-			'align'   => 'left',
-			'sort'    => 'ASC',
-		),
-		'site_name' => array(
-			'display' => __('Site', 'thold'),
-			'align'   => 'left',
-			'sort'    => 'ASC',
-		),
-		'h.id' => array(
-			'display' => __('ID', 'thold'),
-			'align'   => 'left',
-			'sort'    => 'ASC',
-		),
-		'h.status' => array(
-			'display' => __('Status', 'thold'),
-			'align'   => 'left',
-			'sort'    => 'ASC',
-		),
-		'nosort0' => array(
-			'display' => __('Associated Lists', 'thold'),
-			'align'   => 'left',
-			'sort'    => 'ASC',
-		),
-		'nosort1' => array(
-			'display' => __('Graphs', 'thold'),
-			'align'   => 'right',
-			'sort'    => 'DESC',
-		),
-		'nosort2' => array(
-			'display' => __('Data Sources', 'thold'),
-			'align'   => 'right',
-			'sort'    => 'DESC',
-		),
-		'h.hostname' => array(
-			'display' => __('Hostname', 'thold'),
-			'align'   => 'right',
-			'sort'    => 'ASC',
-		)
+		__('Description', 'thold'),
+		__('Site', 'thold'),
+		__('ID', 'thold'),
+		__('Associated Lists', 'thold'),
+		__('Graphs', 'thold'),
+		__('Data Sources', 'thold'),
+		__('Status', 'thold'),
+		__('Hostname', 'thold')
 	);
 
-	html_header_sort_checkbox($display_text, get_request_var('sort_column'), get_request_var('sort_direction'), false);
+	html_header_checkbox($display_text);
 
 	if (cacti_sizeof($hosts)) {
 		foreach ($hosts as $host) {
@@ -1222,7 +1145,6 @@ function hosts($header_label) {
 
 			form_selectable_ecell($host['site_name'] != '' ? $host['site_name'] : __('None', 'thold'), $host['id']);
 			form_selectable_cell($host['id'], $host['id']);
-			form_selectable_cell(get_colored_device_status(($host['disabled'] == 'on' ? true : false), $host['status']), $host['id']);
 
 			if ($host['thold_send_email'] == 0) {
 				form_selectable_cell('<span class="deviceDisabled">' . __('Disabled', 'thold') . '</span>', $host['id']);
@@ -1245,9 +1167,10 @@ function hosts($header_label) {
 				form_selectable_cell('<span class="deviceDown">' . html_escape($name) . '</span>', $host['id']);
 			}
 
-			form_selectable_cell((isset($host_graphs[$host['id']]) ? $host_graphs[$host['id']] : 0), $host['id'], '', 'right');
-			form_selectable_cell((isset($host_data_sources[$host['id']]) ? $host_data_sources[$host['id']] : 0), $host['id'], '', 'right');
-			form_selectable_cell(filter_value($host['hostname'], get_request_var('rfilter')), $host['id'], '', 'right');
+			form_selectable_cell((isset($host_graphs[$host['id']]) ? $host_graphs[$host['id']] : 0), $host['id']);
+			form_selectable_cell((isset($host_data_sources[$host['id']]) ? $host_data_sources[$host['id']] : 0), $host['id']);
+			form_selectable_cell(get_colored_device_status(($host['disabled'] == 'on' ? true : false), $host['status']), $host['id']);
+			form_selectable_cell(filter_value($host['hostname'], get_request_var('rfilter')), $host['id']);
 			form_checkbox_cell($host['description'], $host['id']);
 
 			form_end_row();
@@ -1256,7 +1179,7 @@ function hosts($header_label) {
 		print '<tr><td colspan="' . (cacti_sizeof($display_text) + 1) . '"><em>' . __('No Associated Devices Found', 'thold') . '</em></td></tr>';
 	}
 
-	html_end_box();
+	html_end_box(false);
 
 	if (cacti_sizeof($hosts)) {
 		print $nav;
@@ -1283,14 +1206,11 @@ function tholds($header_label) {
 	if (isset_request_var('state')) {
 		if (get_request_var('state') == '-1') {
 			$statefilter = '';
-		} elseif (get_request_var('state') == '0') {
-			$statefilter = "td.thold_enabled = 'off'";
-		} elseif (get_request_var('state') == '2') {
-			$statefilter = "td.thold_enabled = 'on'";
-		} elseif (get_request_var('state') == '1') {
-			$statefilter = '(td.thold_alert != 0 OR td.bl_alert > 0)';
-		} elseif (get_request_var('state') == '3') {
-			$statefilter = '(td.thold_alert != 0 AND td.thold_fail_count >= td.thold_fail_trigger) OR (td.bl_alert > 0 AND td.bl_fail_count >= td.bl_fail_trigger)';
+		} else {
+			if (get_request_var('state') == '0') { $statefilter = "td.thold_enabled='off'"; }
+			if (get_request_var('state') == '2') { $statefilter = "td.thold_enabled='on'"; }
+			if (get_request_var('state') == '1') { $statefilter = '(td.thold_alert!=0 OR td.bl_alert>0)'; }
+			if (get_request_var('state') == '3') { $statefilter = '(td.thold_alert!=0 AND td.thold_fail_count >= td.thold_fail_trigger) OR (td.bl_alert>0 AND td.bl_fail_count >= td.bl_fail_trigger)'; }
 		}
 	}
 
@@ -1319,7 +1239,7 @@ function tholds($header_label) {
 	}
 
 	if (strlen(get_request_var('rfilter'))) {
-		$sql_where .= (!strlen($sql_where) ? '' : ' AND ') . "td.name_cache RLIKE '" . get_request_var('rfilter') . "'";
+		$sql_where .= (!strlen($sql_where) ? '' : ' AND ') . 'td.name_cache RLIKE "' . get_request_var('rfilter') . '"';
 	}
 
 	if ($statefilter != '') {
@@ -1363,7 +1283,7 @@ function tholds($header_label) {
 
 							if (cacti_sizeof($sites)) {
 								foreach ($sites as $site) {
-									print "<option value='" . $site['id'] . "'" . (get_request_var('site_id') == $site['id'] ? ' selected':'') . '>' . html_escape($site['name']) . '</option>';
+									print "<option value='" . $site['id'] . "'"; if (get_request_var('site_id') == $site['id']) { print ' selected'; } print '>' . html_escape($site['name']) . "</option>\n";
 								}
 							}
 							?>
@@ -1403,7 +1323,7 @@ function tholds($header_label) {
 							<?php
 							if (cacti_sizeof($item_rows)) {
 								foreach ($item_rows as $key => $value) {
-									print "<option value='" . $key . "'" . (get_request_var('rows') == $key ? ' selected':'') . '>' . html_escape($value) . '</option>';
+									print "<option value='" . $key . "'"; if (get_request_var('rows') == $key) { print ' selected'; } print '>' . html_escape($value) . "</option>\n";
 								}
 							}
 							?>
@@ -1469,38 +1389,14 @@ function tholds($header_label) {
 	html_start_box('', '100%', false, '3', 'center', '');
 
 	$display_text = array(
-		'name_cache' => array(
-			'display' => __('Name', 'thold'),
-			'sort'    => 'ASC'
-		),
-		'id' => array(
-			'display' => __('ID', 'thold'),
-			'sort'    => 'ASC'
-		),
-		'nosort1' => array(
-			'display' => __('Warning Lists', 'thold'),
-			'sort'    => 'ASC'
-		),
-		'nosort2' => array(
-			'display' => __('Alert Lists', 'thold'),
-			'sort'    => 'ASC'
-		),
-		'thold_type' => array(
-			'display' => __('Type', 'thold'),
-			'sort'    => 'ASC'
-		),
-		'thold_alert' => array(
-			'display' => __('Triggered', 'thold'),
-			'sort'    => 'ASC'
-		),
-		'nosort3' => array(
-			'display' => __('Templated', 'thold'),
-			'sort'    => 'ASC'
-		),
-		'thold_enabled' => array(
-			'display' => __('Enabled', 'thold'),
-			'sort'    => 'ASC'
-		)
+		'name_cache'    => array(__('Name', 'thold'), 'ASC'),
+		'id'            => array(__('ID', 'thold'), 'ASC'),
+		'nosort1'       => array(__('Warning Lists', 'thold'), 'ASC'),
+		'nosort2'       => array(__('Alert Lists', 'thold'), 'ASC'),
+		'thold_type'    => array(__('Type', 'thold'), 'ASC'),
+		'thold_alert'   => array(__('Triggered', 'thold'), 'ASC'),
+		'nosort3'       => array(__('Templated', 'thold'), 'ASC'),
+		'thold_enabled' => array(__('Enabled', 'thold'), 'ASC')
 	);
 
 	html_header_sort_checkbox($display_text, get_request_var('sort_column'), get_request_var('sort_direction'), false, 'notify_lists.php?action=edit&tab=tholds&id=' . get_filter_request_var('id'));
@@ -1615,12 +1511,12 @@ function tholds($header_label) {
 			form_end_row();
 		}
 	} else {
-		print "<tr class='even'><td colspan='" . (cacti_sizeof($display_text) + 1) . "'><i>" . __('No Thresholds Found', 'thold'). "</i></td></tr>";
+		print "<tr class='even' <td colspan='" . (cacti_sizeof($display_text) + 1) . "'><i>" . __('No Thresholds', 'thold'). "</i></td></tr>\n";
 	}
 
 	html_end_box(false);
 
-	if (cacti_sizeof($result)) {
+	if (count($result)) {
 		print $nav;
 	}
 
@@ -1656,7 +1552,7 @@ function templates($header_label) {
 	}
 
 	if (strlen(get_request_var('rfilter'))) {
-		$sql_where .= (!strlen($sql_where) ? 'WHERE ' : ' AND ') . "thold_template.name RLIKE '" . get_request_var('rfilter') . "'";
+		$sql_where .= (!strlen($sql_where) ? 'WHERE ' : ' AND ') . 'thold_template.name RLIKE "' . get_request_var('rfilter') . '"';
 	}
 
 	$sql = "SELECT *
@@ -1689,7 +1585,7 @@ function templates($header_label) {
 							<?php
 							if (cacti_sizeof($item_rows)) {
 								foreach ($item_rows as $key => $value) {
-									print "<option value='" . $key . "'" . (get_request_var('rows') == $key ? ' selected':'') . '>' . html_escape($value) . '</option>';
+									print "<option value='" . $key . "'"; if (get_request_var('rows') == $key) { print ' selected'; } print '>' . html_escape($value) . "</option>\n";
 								}
 							}
 							?>
@@ -1841,7 +1737,7 @@ function templates($header_label) {
 			form_end_row();
 		}
 	} else {
-		print "<tr class='even'><td colspan='" . (cacti_sizeof($display_text) + 1) . "'><i>" . __('No Threshold Templates', 'thold') . "</i></td></tr>";
+		print "<tr class='even'><td colspan='" . (cacti_sizeof($display_text) + 1) . "'><i>" . __('No Templates', 'thold') . "</i></td></tr>\n";
 	}
 
 	html_end_box(false);
@@ -2013,7 +1909,7 @@ function lists() {
 							<?php
 							if (cacti_sizeof($item_rows)) {
 								foreach ($item_rows as $key => $value) {
-									print "<option value='" . $key . "'" . (get_request_var('rows') == $key ? ' selected':'') . '>' . html_escape($value) . '</option>';
+									print "<option value='" . $key . "'"; if (get_request_var('rows') == $key) { print ' selected'; } print '>' . html_escape($value) . "</option>\n";
 								}
 							}
 							?>
@@ -2058,10 +1954,10 @@ function lists() {
 
 	/* form the 'where' clause for our main sql query */
 	if (strlen(get_request_var('rfilter'))) {
-		$sql_where = "WHERE (
-		name RLIKE '"           . get_request_var('rfilter') . "'
-		OR description RLIKE '" . get_request_var('rfilter') . "'
-		OR emails RLIKE '"      . get_request_var('rfilter') . "')";
+		$sql_where = 'WHERE (
+		name RLIKE "'           . get_request_var('rfilter') . '"
+		OR description RLIKE "' . get_request_var('rfilter') . '"
+		OR emails RLIKE "'      . get_request_var('rfilter') . '")';
 	} else {
 		$sql_where = '';
 	}
@@ -2074,7 +1970,7 @@ function lists() {
 	$sql_order = get_order_string();
 	$sql_limit = ' LIMIT ' . ($rows*(get_request_var('page')-1)) . ',' . $rows;
 
-	$lists = db_fetch_assoc("SELECT id, name, enabled, description, emails,
+	$lists = db_fetch_assoc("SELECT id, name, description, emails,
 		(SELECT COUNT(id) FROM thold_data WHERE notify_alert = nl.id) as thold_alerts,
 		(SELECT COUNT(id) FROM thold_data WHERE notify_warning = nl.id) as thold_warnings,
 		(SELECT COUNT(id) FROM thold_template WHERE notify_alert = nl.id) as template_alerts,
@@ -2095,7 +1991,6 @@ function lists() {
 
 	$display_text = array(
 		'name'        => array(__('List Name', 'thold'), 'ASC'),
-		'enabled'     => array(__('Enabled', 'thold'), 'ASC'),
 		'nosort1'     => array(__('Devices', 'thold'), ''),
 		'nosort2'     => array(__('Thresholds', 'thold'), ''),
 		'nosort3'     => array(__('Templates', 'thold'), ''),
@@ -2111,7 +2006,6 @@ function lists() {
 
 			form_alternate_row('line' . $item['id'], true);
 			form_selectable_cell(filter_value($item['name'], get_request_var('rfilter'), 'notify_lists.php?action=edit&id=' . $item['id']), $item['id']);
-			form_selectable_cell($item['enabled'] == 'on' ? __('Yes', 'thold'):__('No', 'thold'), $item['id'], '', 'white-space:pre-wrap');
 			form_selectable_cell(filter_value($item['hosts'], get_request_var('rfilter'), 'notify_lists.php?tab=hosts&action=edit&id='.$item['id']), $item['id']);
 			form_selectable_cell(filter_value('Warn: '.$item['thold_warnings'].', Alert: '.$item['thold_alerts'] , get_request_var('rfilter'), 'notify_lists.php?tab=tholds&action=edit&id='.$item['id']), $item['id']);
 			form_selectable_cell(filter_value('Warn: '.$item['template_warnings'].', Alert: '.$item['template_alerts'] , get_request_var('rfilter'), 'notify_lists.php?tab=templates&action=edit&id='.$item['id']), $item['id']);

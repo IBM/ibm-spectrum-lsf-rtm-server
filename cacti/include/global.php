@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -29,6 +25,7 @@
    include/config.php for user configurable settings.
 
 */
+
 /* load cacti version from file */
 $cacti_version_file = dirname(__FILE__) . '/cacti_version';
 
@@ -95,7 +92,7 @@ if (isset($config['cacti_version'])) {
 }
 
 /* Should we allow proxy ip headers? */
-$config['proxy_headers'] = (isset($proxy_headers) ? $proxy_headers : []);
+$config['proxy_headers'] = (isset($proxy_headers) ? $proxy_headers : null);
 
 /* Set the poller_id */
 if (isset($poller_id)) {
@@ -155,6 +152,7 @@ $no_http_header_files = array(
 	'add_graphs.php',
 	'add_perms.php',
 	'add_tree.php',
+	'boost_rrdupdate.php',
 	'cmd.php',
 	'cmd_realtime.php',
 	'copy_user.php',
@@ -214,7 +212,6 @@ $config['DEBUG_READ_CONFIG_OPTION']         = defined('DEBUG_READ_CONFIG_OPTION'
 $config['DEBUG_READ_CONFIG_OPTION_DB_OPEN'] = defined('DEBUG_READ_CONFIG_OPTION_DB_OPEN');
 $config['DEBUG_SQL_CMD']                    = defined('DEBUG_SQL_CMD');
 $config['DEBUG_SQL_FLOW']                   = defined('DEBUG_SQL_FLOW');
-$config['DEBUG_SQL_CONNECT']                = defined('DEBUG_SQL_CONNECT');
 
 /* check for an empty database port */
 if (empty($database_port)) {
@@ -236,7 +233,6 @@ if ($config['cacti_server_os'] == 'win32') {
 	$config['base_path']    = preg_replace("/(.*)[\/]include/", "\\1", dirname(__FILE__));
 	$config['library_path'] = preg_replace("/(.*[\/])include/", "\\1lib", dirname(__FILE__));
 }
-
 $config['include_path'] = dirname(__FILE__);
 $config['rra_path'] = $config['base_path'] . '/rra';
 
@@ -257,22 +253,6 @@ if (isset($input_whitelist)) {
 	$config['input_whitelist'] = $input_whitelist;
 }
 
-if (isset($i18n_handler)) {
-	$config['i18n_language_handler'] = $i18n_handler;
-}
-
-if (isset($i18n_force_language)) {
-	$config['i18n_force_language'] = $i18n_force_language;
-}
-
-if (isset($i18n_log)) {
-	$config['i18n_log'] = $i18n_log;
-}
-
-if (isset($i18n_text_log)) {
-	$config['i18n_text_log'] = $i18n_text_log;
-}
-
 /* include base modules */
 include_once($config['library_path'] . '/database.php');
 include_once($config['library_path'] . '/functions.php');
@@ -286,11 +266,6 @@ $filename = get_current_page();
 $config['is_web'] = !defined('CACTI_CLI_ONLY');
 if ((isset($no_http_headers) && $no_http_headers == true) || in_array($filename, $no_http_header_files, true)) {
 	$config['is_web'] = false;
-
-	if (isset($_REQUEST) && cacti_sizeof($_REQUEST) || !isset($_SERVER['argv'])) {
-		print 'FATAL: This file can only be called from the command line.' . PHP_EOL;
-		exit;
-	}
 }
 
 $auto_start = ini_get('session.auto_start');
@@ -334,7 +309,9 @@ if ($config['poller_id'] > 1 || isset($rdatabase_hostname)) {
 		$remote_db_cnn_id = db_connect_real($rdatabase_hostname, $rdatabase_username, $rdatabase_password, $rdatabase_default, $rdatabase_type, $rdatabase_port, $database_retries, $rdatabase_ssl, $rdatabase_ssl_key, $rdatabase_ssl_cert, $rdatabase_ssl_ca);
 	}
 
-	if ($config['is_web'] && is_object($remote_db_cnn_id) && $config['connection'] != 'recovery' && $config['cacti_db_version'] != 'new_install' && !defined('IN_CACTI_INSTALL')) {
+	if ($config['is_web'] && is_object($remote_db_cnn_id) &&
+		$config['connection'] != 'recovery' &&
+		$config['cacti_db_version'] != 'new_install') {
 
 		// Connection worked, so now override the default settings so that it will always utilize the remote connection
 		$database_default   = $rdatabase_default;
@@ -632,3 +609,4 @@ api_plugin_hook('config_insert');
 
 /* set config cacti_version for plugins */
 $config['cacti_version'] = CACTI_VERSION;
+

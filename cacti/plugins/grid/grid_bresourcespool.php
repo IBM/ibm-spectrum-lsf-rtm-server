@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright IBM Corp. 2006, 2023                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -240,7 +240,7 @@ function guarPoolFilter() {
                     </td>
                 </tr>
             </table>
-            <input type='hidden' id='tab' value='<?php print html_escape_request_var('tab');?>'>
+            <input type='hidden' id='tab' value='<?php print html_escape(get_request_var('tab'));?>'>
             <input type='hidden' id='page' value='1'>
         </form>
     </td>
@@ -710,7 +710,7 @@ function guarSLAFilter($respools) {
                     </td>
                 </tr>
             </table>
-            <input type='hidden' id='tab' value='<?php print html_escape_request_var('tab');?>'>
+            <input type='hidden' id='tab' value='<?php print html_escape(get_request_var('tab'));?>'>
             <input type='hidden' id='page' value='1'>
         </form>
     </td>

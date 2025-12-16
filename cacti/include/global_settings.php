@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -397,12 +393,6 @@ $settings = array(
 			'collapsible' => 'true',
 			'method' => 'spacer',
 		),
-		'site_location_filter' => array(
-			'friendly_name' => __('Show only site specific locations'),
-			'description' => __('Show only locations that are available at a devices selected site.'),
-			'method' => 'checkbox',
-			'default' => '',
-		),
 		'default_has' => array(
 			'friendly_name' => __('Has Graphs/Data Sources Checked'),
 			'description' => __('Should the Has Graphs and Has Data Sources be Checked by Default.'),
@@ -569,14 +559,14 @@ $settings = array(
 			'friendly_name' => __('Graph Template Image Format'),
 			'description' => __('The default Image Format to be used for all new Graph Templates.'),
 			'method' => 'drop_array',
-			'default' => '3',
+			'default' => '1',
 			'array' => $image_types,
 		),
 		'default_graph_height' => array(
 			'friendly_name' => __('Graph Template Height'),
 			'description' => __('The default Graph Height to be used for all new Graph Templates.'),
 			'method' => 'textbox',
-			'default' => '200',
+			'default' => '150',
 			'size' => '5',
 			'max_length' => '5'
 		),
@@ -584,7 +574,7 @@ $settings = array(
 			'friendly_name' => __('Graph Template Width'),
 			'description' => __('The default Graph Width to be used for all new Graph Templates.'),
 			'method' => 'textbox',
-			'default' => '700',
+			'default' => '500',
 			'size' => '5',
 			'max_length' => '5'
 		)
@@ -599,7 +589,7 @@ $settings = array(
 			'friendly_name' => __('Template'),
 			'description' => __('The default Device Template used on all new Devices.'),
 			'method' => 'drop_sql',
-			'default' => '',
+			'default' => '1',
 			'none_value' => __('None'),
 			'sql' => 'SELECT id, name FROM host_template ORDER BY name',
 		),
@@ -867,7 +857,7 @@ $settings = array(
 		),
 		'autocomplete_rows' => array(
 			'friendly_name' => __('Autocomplete Rows'),
-			'description' => __('The default number of rows to return from an autocomplete based select pattern match.') . ' ' . __('.  This is limited by the php setting \'max_input_vars\', currently:') .  ' ' . ini_get('max_input_vars'),
+			'description' => __('The default number of rows to return from an autocomplete based select pattern match.'),
 			'method' => 'drop_array',
 			'default' => '30',
 			'array' => $item_rows
@@ -887,7 +877,7 @@ $settings = array(
 		),
 		'max_tree_width' => array(
 			'friendly_name' => __('Maximum Tree Width'),
-			'description' => __('The Maximum width of the Tree to expand to, after which time, Tree branches will scroll on the page.') . ' ' . __( '.  This is limited by the php setting \'max_input_vars\', currently:') .  ' ' . ini_get('max_input_vars'),
+			'description' => __('The Maximum width of the Tree to expand to, after which time, Tree branches will scroll on the page.'),
 			'method' => 'textbox',
 			'default' => '300',
 			'max_length' => '5',
@@ -1368,16 +1358,18 @@ $settings = array(
 			)
 		),
 		'rrdcheck_timeout' => array(
-			'friendly_name' => __('RRDChecker Timeout'),
+			'friendly_name' => __('RRDfile Check Timeout'),
 			'description' => __('The maximum amount of time Cacti\'s RRDfile check script can run without generating a timeout error and being killed.'),
 			'method' => 'drop_array',
-			'default' => '3600',
+			'default' => '300',
 			'array' => array(
-				'300'   => __('%s Minutes', 5),
-				'1800'  => __('%s Minutes', 30),
-				'3600'  => __('%s Hour', 1),
-				'7200'  => __('%s Hour', 2),
-				'14400' => __('%s Hour', 4)
+				'60'   => __('%s Minute', 1),
+				'120'  => __('%s Minutes', 2),
+				'300'  => __('%s Minutes', 5),
+				'600'  => __('%s Minutes', 10),
+				'1200' => __('%s Minutes', 20),
+				'1800' => __('%s Minutes', 30),
+				'3600' => __('1 Hour')
 			)
 		),
 		'commands_timeout' => array(
@@ -1757,7 +1749,7 @@ $settings = array(
 		),
 		'ldap_dn' => array(
 			'friendly_name' => __('Distinguished Name (DN)'),
-			'description' => __('The "Distinguished Name" syntax, applicable for both OpenLDAP and Windows AD configurations, offers flexibility in defining user identity. For OpenLDAP, the format follows this structure: <i>"uid=&lt;username&gt;,ou=people,dc=domain,dc=local"</i>. Windows AD provides an alternative syntax: <i>"&lt;username&gt;@win2kdomain.local"</i>, commonly known as "userPrincipalName (UPN)". In this context, "&lt;username&gt;" represents the specific username provided during the login prompt. This is particularly pertinent when operating in "No Searching" mode, or "Require Group Membership" enabled.'),
+			'description' => __('Distinguished Name syntax, such as for windows: <i>"&lt;username&gt;@win2kdomain.local"</i> or for OpenLDAP: <i>"uid=&lt;username&gt;,ou=people,dc=domain,dc=local"</i>.   "&lt;username&gt" is replaced with the username that was supplied at the login prompt.  This is only used when in "No Searching" mode.'),
 			'method' => 'textbox',
 			'max_length' => '255',
 			'size' => '100'
@@ -1781,7 +1773,7 @@ $settings = array(
 		),
 		'ldap_group_attrib' => array(
 			'friendly_name' => __('Group Member Attribute'),
-			'description' => __('This refers to the specific attribute within the LDAP directory that holds the usernames of group members. It is crucial to ensure that the attribute value aligns with the configuration specified in the "Distinguished Name" or that the actual attribute value is searchable using the settings outlined in the "Distinguished Name".'),
+			'description' => __('Name of the attribute that contains the usernames of the members.'),
 			'method' => 'textbox',
 			'max_length' => '255',
 			'size' => '100'
@@ -2287,12 +2279,12 @@ $settings = array(
 			)
 		),
 		'extended_paths_header' => array(
-			'friendly_name' => __('Structure RRDfile Paths'),
+			'friendly_name' => __('Structured RRDfile Paths'),
 			'method' => 'spacer',
 			'collapsible' => 'true'
 		),
 		'extended_paths' => array(
-			'friendly_name' => __('Enable Structured Paths'),
+			'friendly_name' => __('Method'),
 			'description' => __('Use a separate subfolder for each hosts RRD files.  The naming of the RRDfiles will be one of the following:<br><ul><li>&lt;path_cacti&gt;/rra/host_id/local_data_id.rrd,</li><li>&lt;path_cacti&gt;/rra/device_id/data_query_id/local_data_id.rrd,</li><li>&lt;path_cacti&gt;/rra/device_hash/device_id/local_data_id.rrd,</li><li>&lt;path_cacti&gt;/rra/device_hash/device_id/data_query_id/local_data_id.rrd.</li></ul><br>You can make this change after install by running the CLI script <b>structure_rra_paths.php</b> after you make the change.  NOTE: If you change Max Directories value to decrease the number of directories, or if you change the Directory Pattern, empty directories will not be pruned after you rerun the <b>structure_rra_paths.php</b> script.'),
 			'method' => 'checkbox'
 		),
@@ -2871,7 +2863,7 @@ if (!$config['is_web'] || is_realm_allowed(25)) {
 }
 
 if (!$config['is_web'] || is_realm_allowed(8)) {
-	if (read_config_option('auth_method') != 2 && !(read_config_option('auth_cache_enabled') == 'on' && isset($_SESSION['cacti_remembers']) && $_SESSION['cacti_remembers'] == true)) {
+	if (!(read_config_option('auth_cache_enabled') == 'on' && isset($_SESSION['cacti_remembers']) && $_SESSION['cacti_remembers'] == true)) {
 		if (ini_get('session.gc_maxlifetime') > '2147483') {
 			$max_life = '2147483';
 		} else {

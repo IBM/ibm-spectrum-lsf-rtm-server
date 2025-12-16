@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -64,7 +64,7 @@ $rtm = array(
 		'PATH' => RTM_ROOT . DELIM . 'lsf91' . DELIM,
 		'VERSION' => '9.1',
 		'LSF_ENVDIR' => RTM_ROOT . DELIM . 'etc' . DELIM,
-		'RTM_POLLERBINDIR' => RTM_ROOT . DELIM . 'lsf91' . DELIM . 'bin' . DELIM,
+		'RTM_POLLERBINDIR' => RTM_ROOT . DELIM . 'lsf101' . DELIM . 'bin' . DELIM,
 		'LSF_SERVERDIR' => RTM_ROOT . DELIM . 'lsf91' . DELIM . 'etc' . DELIM,
 		'DESC' => 'Poller for LSF 9.1'
 	),

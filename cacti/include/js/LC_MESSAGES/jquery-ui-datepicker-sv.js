@@ -1,3 +1,4 @@
+// $Id$
 /* Swedish initialisation for the jQuery UI date picker plugin. */
 /* Written by Anders Ekdahl ( anders@nomadiz.se). */
 ( function( factory ) {

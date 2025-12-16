@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -72,20 +68,13 @@ if (!cacti_sizeof($page)) {
 		}
 
 		if (preg_match('/^((((ht|f)tp(s?))\:\/\/){1}\S+)/i', $page['contentfile'])) {
-			if (filter_var($page['contentfile'], FILTER_VALIDATE_URL)) {
-				print '<iframe id="content" src="' . html_escape($page['contentfile']) . '" sandbox="allow-scripts allow-popups allow-forms" frameborder="0"></iframe>';
-			} else {
-				$message = __esc("External Link ID '%s' with Title '%s' attempted to inject an invalid URL and was blocked!", $page['id'], $page['title']);
-				cacti_log($message, false, 'SECURITY');
-				raise_message('invalid_url', $message, MESSAGE_LEVEL_ERROR);
-			}
+			print '<iframe id="content" src="' . $page['contentfile'] . '" frameborder="0"></iframe>';
 		} else {
 			print '<div id="content">';
 
-			$basepath = $config['base_path'] . '/include/content';
-			$file     = realpath($basepath . '/' . $page['contentfile']);
+			$file = $config['base_path'] . "/include/content/" . str_replace('../', '', $page['contentfile']);
 
-			if ($file !== false && substr($file, 0, strlen($basepath)) == $basepath) {
+			if (file_exists($file)) {
 				include_once($file);
 			} else {
 				print '<h1>The file \'' . html_escape($page['contentfile']) . '\' does not exist!!</h1>';

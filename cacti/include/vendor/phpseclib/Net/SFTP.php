@@ -1,4 +1,5 @@
 <?php
+// $Id$
 
 /**
  * Pure-PHP implementation of SFTP.
@@ -319,38 +320,6 @@ class SFTP extends SSH2
     var $partial_init = false;
 
     /**
-     * http://tools.ietf.org/html/draft-ietf-secsh-filexfer-13#section-7.1
-     * the order, in this case, matters quite a lot - see \phpseclib3\Net\SFTP::_parseAttributes() to understand why
-     *
-     * @var array
-     * @access private
-     */
-    var $attributes = array();
-
-    /**
-     * @var array
-     * @access private
-     */
-    var $open_flags = array();
-
-    /**
-     * SFTPv5+ changed the flags up:
-     * https://datatracker.ietf.org/doc/html/draft-ietf-secsh-filexfer-13#section-8.1.1.3
-     *
-     * @var array
-     * @access private
-     */
-    var $open_flags5 = array();
-
-    /**
-     * http://tools.ietf.org/html/draft-ietf-secsh-filexfer-04#section-5.2
-     * see \phpseclib\Net\SFTP::_parseLongname() for an explanation
-     *
-     * @var array
-     */
-    var $file_types = array();
-
-    /**
      * Default Constructor.
      *
      * Connects to an SFTP server
@@ -454,7 +423,7 @@ class SFTP extends SSH2
             // yields inconsistent behavior depending on how php is compiled.  so we left shift -1 (which, in
             // two's compliment, consists of all 1 bits) by 31.  on 64-bit systems this'll yield 0xFFFFFFFF80000000.
             // that's not a problem, however, and 'anded' and a 32-bit number, as all the leading 1 bits are ignored.
-            (PHP_INT_SIZE == 4 ? (-1 << 31) : 0x80000000) => 'NET_SFTP_ATTR_EXTENDED'
+            (-1 << 31) & 0xFFFFFFFF => 'NET_SFTP_ATTR_EXTENDED'
         );
         $this->open_flags = array(
             0x00000001 => 'NET_SFTP_OPEN_READ',
@@ -871,7 +840,7 @@ class SFTP extends SSH2
 
         $error = $this->status_codes[$status];
 
-        if ($this->version > 2) {
+        if ($this->version > 2 || strlen($response) < 4) {
             extract(unpack('Nlength', $this->_string_shift($response, 4)));
             $this->sftp_errors[] = $error . ': ' . $this->_string_shift($response, $length);
         } else {
@@ -923,7 +892,7 @@ class SFTP extends SSH2
             }
 
             $parts = explode('/', $path);
-            $afterPWD = $beforePWD = array();
+            $afterPWD = $beforePWD = [];
             foreach ($parts as $part) {
                 switch ($part) {
                     //case '': // some SFTP servers /require/ double /'s. see https://github.com/phpseclib/phpseclib/pull/1137
@@ -1082,12 +1051,6 @@ class SFTP extends SSH2
     {
         $files = $this->_list($dir, false);
 
-        // If we get an int back, then that is an "unexpected" status.
-        // We do not have a file list, so return false.
-        if (is_int($files)) {
-            return false;
-        }
-
         if (!$recursive || $files === false) {
             return $files;
         }
@@ -1123,13 +1086,6 @@ class SFTP extends SSH2
     function rawlist($dir = '.', $recursive = false)
     {
         $files = $this->_list($dir, true);
-
-        // If we get an int back, then that is an "unexpected" status.
-        // We do not have a file list, so return false.
-        if (is_int($files)) {
-            return false;
-        }
-
         if (!$recursive || $files === false) {
             return $files;
         }
@@ -1197,12 +1153,8 @@ class SFTP extends SSH2
                 break;
             case NET_SFTP_STATUS:
                 // presumably SSH_FX_NO_SUCH_FILE or SSH_FX_PERMISSION_DENIED
-                if (strlen($response) < 4) {
-                    return false;
-                }
-                extract(unpack('Nstatus', $this->_string_shift($response, 4)));
-                $this->_logError($response, $status);
-                return $status;
+                $this->_logError($response);
+                return false;
             default:
                 user_error('Expected SSH_FXP_HANDLE or SSH_FXP_STATUS');
                 return false;
@@ -1271,7 +1223,7 @@ class SFTP extends SSH2
                     extract(unpack('Nstatus', $this->_string_shift($response, 4)));
                     if ($status != NET_SFTP_STATUS_EOF) {
                         $this->_logError($response, $status);
-                        return $status;
+                        return false;
                     }
                     break 2;
                 default:
@@ -1947,7 +1899,7 @@ class SFTP extends SSH2
         $i = 0;
         $entries = $this->_list($path, true);
 
-        if ($entries === false || is_int($entries)) {
+        if ($entries === false) {
             return $this->_setstat($path, $attr, false);
         }
 
@@ -2312,7 +2264,7 @@ class SFTP extends SSH2
 
         if ($start >= 0) {
             $offset = $start;
-        } elseif ($mode & (self::RESUME | self::RESUME_START)) {
+        } elseif ($mode & self::RESUME) {
             // if NET_SFTP_OPEN_APPEND worked as it should _size() wouldn't need to be called
             $size = $this->size($remote_file);
             $offset = $size !== false ? $size : 0;
@@ -2385,11 +2337,7 @@ class SFTP extends SSH2
             if ($local_start >= 0) {
                 fseek($fp, $local_start);
                 $size-= $local_start;
-            } elseif ($mode & self::RESUME) {
-                fseek($fp, $offset);
-                $size-= $offset;
             }
-
         } elseif ($dataCallback) {
             $size = 0;
         } else {
@@ -2693,6 +2641,14 @@ class SFTP extends SSH2
             }
         }
 
+        if ($length > 0 && $length <= $offset - $start) {
+            if ($local_file === false) {
+                $content = substr($content, 0, $length);
+            } else {
+                ftruncate($fp, $length + $res_offset);
+            }
+        }
+
         if ($fclose_check) {
             fclose($fp);
 
@@ -2788,14 +2744,9 @@ class SFTP extends SSH2
         $i = 0;
         $entries = $this->_list($path, true);
 
-        // The folder does not exist at all, so we cannot delete it.
-        if ($entries === NET_SFTP_STATUS_NO_SUCH_FILE) {
-            return false;
-        }
-
-        // Normally $entries would have at least . and .. but it might not if the directories
-        // permissions didn't allow reading. If this happens then default to an empty list of files.
-        if ($entries === false || is_int($entries)) {
+        // normally $entries would have at least . and .. but it might not if the directories
+        // permissions didn't allow reading
+        if (empty($entries)) {
             $entries = array();
         }
 
@@ -3640,7 +3591,6 @@ class SFTP extends SSH2
         $this->use_request_id = false;
         $this->pwd = false;
         $this->requestBuffer = array();
-        $this->partial_init = false;
     }
 
     /**

@@ -1,3 +1,4 @@
+// $Id$
 /* Korean translation for the jQuery Timepicker Addon */
 /* Written by Genie */
 (function($) {

@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -519,13 +515,13 @@ function get_auth_realms($login = false) {
 		if (cacti_sizeof($drealms)) {
 			if ($login) {
 				$new_realms['0'] = array(
-					'name'     => __('Local'),
+					'name' => __('Local'),
 					'selected' => false
 				);
 
 				foreach($drealms as $realm) {
 					$new_realms[1000+$realm['domain_id']] = array(
-						'name'     => $realm['domain_name'],
+						'name' => $realm['domain_name'],
 						'selected' => false
 					);
 				}
@@ -549,18 +545,13 @@ function get_auth_realms($login = false) {
 
 			return $new_realms;
 		}
-	} elseif ($login) {
-		return array(
-			'0' => array('name' => __('Local')),
-			'3' => array('name' => __('LDAP'))
-		);
-	} else {
-		return array(
-			'0' => __('Local'),
-			'3' => __('LDAP'),
-			'2' => __('Web Basic'),
-		);
 	}
+
+	return array(
+		'0' => __('Local'),
+		'3' => __('LDAP'),
+		'2' => __('Web Basic')
+	);
 }
 
 /**
@@ -622,8 +613,8 @@ function auth_augment_roles($role_name, $files) {
 				$user_auth_roles[$role_name][] = $user_auth_realm_filenames[$file];
 			}
 		} else {
-			if (isset($_SESSION['sess_auth_names'][$file])) {
-				$realm_id = $_SESSION['sess_auth_names'][$file];
+			if (isset($_SESSION['sess_auth_names'][$role_name])) {
+				$realm_id = $_SESSION['sess_auth_names'][$role_name];
 			} else {
 				$realm_id = db_fetch_cell_prepared('SELECT id+100 AS realm
 					FROM plugin_realms
@@ -640,7 +631,7 @@ function auth_augment_roles($role_name, $files) {
 				);
 
 				if ($realm_id > 0) {
-					$_SESSION['sess_auth_names'][$file] = $realm_id;
+					$_SESSION['sess_auth_names'][$role_name] = $realm_id;
 				}
 			}
 
@@ -907,15 +898,12 @@ function is_tree_branch_empty($tree_id, $parent = 0) {
 		), 'site_id', 'site_id'
 	);
 
-	$total_rows = -1;
-
 	if (!cacti_sizeof($sites)) {
-		if (cacti_sizeof($hosts) && cacti_sizeof(get_allowed_devices('h.id IN(' . implode(',', $hosts) . ')', 'description', '', $total_rows)) > 0) {
+		if (cacti_sizeof($hosts) && cacti_sizeof(get_allowed_devices('h.id IN(' . implode(',', $hosts) . ')'), 'description', '', -1) > 0) {
 			return false;
 		}
 	} else {
 		$site_hosts = array();
-
 		foreach($sites as $site) {
 			$site_hosts += array_rekey(
 				db_fetch_assoc_prepared('SELECT id
@@ -926,7 +914,7 @@ function is_tree_branch_empty($tree_id, $parent = 0) {
 			);
 		}
 
-		if (cacti_sizeof($site_hosts) && cacti_sizeof(get_allowed_devices('h.id IN(' . implode(',', $site_hosts) . ')', 'description', '', $total_rows)) > 0) {
+		if (cacti_sizeof($site_hosts) && cacti_sizeof(get_allowed_devices('h.id IN(' . implode(',', $site_hosts) . ')'), 'description', '', -1) > 0) {
 			return false;
 		}
 	}
@@ -1101,10 +1089,6 @@ function is_realm_allowed($realm, $check_user = false) {
  * @return (array) An array of Tree branch items that a re allowed (graphs, devices)
  */
 function get_allowed_tree_level($tree_id, $parent_id, $editing = false, $user_id = 0) {
-	if (!auth_valid_user($user_id)) {
-		return array();
-	}
-
 	$items = db_fetch_assoc_prepared('SELECT gti.id, gti.title, gti.host_id,
 		gti.site_id, gti.local_graph_id, gti.host_grouping_type,
 		h.description AS hostname, s.name AS sitename
@@ -1157,10 +1141,6 @@ function get_allowed_tree_level($tree_id, $parent_id, $editing = false, $user_id
  * @return (array) An array of Tree branch items that a re allowed (graphs, devices)
  */
 function get_allowed_tree_content($tree_id, $parent = 0, $sql_where = '', $sql_order = '', $sql_limit = '', &$total_rows = 0, $user_id = 0) {
-	if (!auth_valid_user($user_id)) {
-		return array();
-	}
-
 	if ($sql_limit != '' && $sql_limit != -1) {
 		$sql_limit = "LIMIT $sql_limit";
 	} else {
@@ -1291,30 +1271,12 @@ function get_policies($user_id) {
  * @return (array) Array of tree header graphs to display
  */
 function get_allowed_tree_header_graphs($tree_id, $leaf_id = 0, $sql_where = '', $sql_order = 'gti.position', $sql_limit = '', &$total_rows = 0, $user_id = 0) {
-	if (!auth_valid_user($user_id)) {
-		return array();
-	}
-
 	if (!is_numeric($tree_id)) {
 		return array();
 	}
 
 	if (!is_numeric($leaf_id)) {
 		return array();
-	}
-
-	if ($user_id == -1) {
-		$auth_method = 0;
-	} else {
-		$auth_method = read_config_option('auth_method');
-	}
-
-	if ($auth_method > 0 && $user_id == 0) {
-		if (isset($_SESSION['sess_user_id'])) {
-			$user_id = $_SESSION['sess_user_id'];
-		} else {
-			return array();
-		}
 	}
 
 	if ($sql_limit != '' && $sql_limit != -1) {
@@ -1333,8 +1295,22 @@ function get_allowed_tree_header_graphs($tree_id, $leaf_id = 0, $sql_where = '',
 
 	$sql_where = "WHERE (gti.graph_tree_id=$tree_id AND gti.parent=$leaf_id)" . $sql_where;
 
-	if (read_user_setting('hide_disabled', false, false, $user_id) == 'on') {
+	if (read_user_setting('hide_disabled') == 'on') {
 		$sql_where .= ($sql_where != '' ? ' AND ':'') . '(h.disabled = "" OR h.disabled IS NULL)';
+	}
+
+	if ($user_id == -1) {
+		$auth_method = 0;
+	} else {
+		$auth_method = read_config_option('auth_method');
+	}
+
+	if ($auth_method > 0 && $user_id == 0) {
+		if (isset($_SESSION['sess_user_id'])) {
+			$user_id = $_SESSION['sess_user_id'];
+		} else {
+			return array();
+		}
 	}
 
 	$graph_auth_method = read_config_option('graph_auth_method');
@@ -1347,7 +1323,7 @@ function get_allowed_tree_header_graphs($tree_id, $leaf_id = 0, $sql_where = '',
 	}
 
 	$graphs = db_fetch_assoc("SELECT gti.id, gti.title, gtg.local_graph_id, h.description,
-		gt.name AS template_name, gtg.title_cache, gtg.width, gtg.height, gl.host_id, h.disabled,
+		gt.name AS template_name, gtg.title_cache, gtg.width, gtg.height,
 		gl.snmp_index, gl.snmp_query_id
 		FROM graph_templates_graph AS gtg
 		INNER JOIN graph_local AS gl
@@ -1393,8 +1369,28 @@ function get_allowed_tree_header_graphs($tree_id, $leaf_id = 0, $sql_where = '',
  * @return (array) Array of allowed graphs
  */
 function get_allowed_graphs($sql_where = '', $sql_order = 'gtg.title_cache', $sql_limit = '', &$total_rows = 0, $user_id = 0, $graph_id = 0) {
-	if (!auth_valid_user($user_id)) {
-		return array();
+	if ($sql_limit != '') {
+		$sql_limit = "LIMIT $sql_limit";
+	} else {
+		$sql_limit = '';
+	}
+
+	if ($sql_order != '') {
+		$sql_order = "ORDER BY $sql_order";
+	}
+
+	if ($graph_id > 0) {
+		$sql_where .= ($sql_where != '' ? ' AND ' : ' ') . " gl.id = $graph_id";
+	}
+
+	if (read_user_setting('hide_disabled') == 'on') {
+		$sql_where .= ($sql_where != '' ? ' AND ':'') . '(h.disabled = "" OR h.disabled IS NULL)';
+	}
+
+	if ($sql_where != '') {
+		$sql_where = "WHERE ((h.id > 0 AND h.deleted = '') OR h.id IS NULL) AND $sql_where";
+	} else {
+		$sql_where = "WHERE ((h.id > 0 AND h.deleted = '') OR h.id IS NULL)";
 	}
 
 	if ($user_id == -1) {
@@ -1411,30 +1407,6 @@ function get_allowed_graphs($sql_where = '', $sql_order = 'gtg.title_cache', $sq
 		}
 	}
 
-	if ($sql_limit != '') {
-		$sql_limit = "LIMIT $sql_limit";
-	} else {
-		$sql_limit = '';
-	}
-
-	if ($sql_order != '') {
-		$sql_order = "ORDER BY $sql_order";
-	}
-
-	if ($graph_id > 0) {
-		$sql_where .= ($sql_where != '' ? ' AND ' : ' ') . " gl.id = $graph_id";
-	}
-
-	if (read_user_setting('hide_disabled', false, false, $user_id) == 'on') {
-		$sql_where .= ($sql_where != '' ? ' AND ':'') . '(h.disabled = "" OR h.disabled IS NULL)';
-	}
-
-	if ($sql_where != '') {
-		$sql_where = "WHERE ((h.id > 0 AND h.deleted = '') OR h.id IS NULL) AND $sql_where";
-	} else {
-		$sql_where = "WHERE ((h.id > 0 AND h.deleted = '') OR h.id IS NULL)";
-	}
-
 	/* see if permissions are simple */
 	$simple_perms = get_simple_graph_perms($user_id);
 
@@ -1449,7 +1421,7 @@ function get_allowed_graphs($sql_where = '', $sql_order = 'gtg.title_cache', $sq
 	}
 
 	$graphs = db_fetch_assoc("SELECT gtg.local_graph_id, h.description, gt.name AS template_name,
-		gtg.title_cache, gtg.width, gtg.height, gl.snmp_index, gl.snmp_query_id, gl.host_id, h.disabled,
+		gtg.title_cache, gtg.width, gtg.height, gl.snmp_index, gl.snmp_query_id,
 		IF(gl.graph_template_id=0, 0, IF(gl.snmp_query_id=0, 2, 1)) AS graph_source
 		FROM graph_templates_graph AS gtg
 		INNER JOIN graph_local AS gl
@@ -1495,8 +1467,28 @@ function get_allowed_graphs($sql_where = '', $sql_order = 'gtg.title_cache', $sq
  * @return (array) Array of allowed graphs
  */
 function get_allowed_aggregate_graphs($sql_where = '', $sql_order = 'gtg.title_cache', $sql_limit = '', &$total_rows = 0, $user_id = 0, $graph_id = 0) {
-	if (!auth_valid_user($user_id)) {
-		return array();
+	if ($sql_limit != '' && $sql_limit != -1) {
+		$sql_limit = "LIMIT $sql_limit";
+	} else {
+		$sql_limit = '';
+	}
+
+	if ($sql_order != '') {
+		$sql_order = "ORDER BY $sql_order";
+	}
+
+	if ($graph_id > 0) {
+		$sql_where .= ($sql_where != '' ? ' AND ' : ' ') . " gl.id = $graph_id";
+	}
+
+	if (read_user_setting('hide_disabled') == 'on') {
+		$sql_where .= ($sql_where != '' ? ' AND ':'') . '(h.disabled = "" OR h.disabled IS NULL)';
+	}
+
+	if ($sql_where != '') {
+		$sql_where = "WHERE ((h.id > 0 AND h.deleted = '') OR h.id IS NULL) AND $sql_where";
+	} else {
+		$sql_where = "WHERE ((h.id > 0 AND h.deleted = '') OR h.id IS NULL)";
 	}
 
 	if ($user_id == -1) {
@@ -1513,30 +1505,6 @@ function get_allowed_aggregate_graphs($sql_where = '', $sql_order = 'gtg.title_c
 		}
 	}
 
-	if ($sql_limit != '' && $sql_limit != -1) {
-		$sql_limit = "LIMIT $sql_limit";
-	} else {
-		$sql_limit = '';
-	}
-
-	if ($sql_order != '') {
-		$sql_order = "ORDER BY $sql_order";
-	}
-
-	if ($graph_id > 0) {
-		$sql_where .= ($sql_where != '' ? ' AND ' : ' ') . " gl.id = $graph_id";
-	}
-
-	if (read_user_setting('hide_disabled', false, false, $user_id) == 'on') {
-		$sql_where .= ($sql_where != '' ? ' AND ':'') . '(h.disabled = "" OR h.disabled IS NULL)';
-	}
-
-	if ($sql_where != '') {
-		$sql_where = "WHERE ((h.id > 0 AND h.deleted = '') OR h.id IS NULL) AND $sql_where";
-	} else {
-		$sql_where = "WHERE ((h.id > 0 AND h.deleted = '') OR h.id IS NULL)";
-	}
-
 	/* see if permissions are simple */
 	$simple_perms = get_simple_graph_perms($user_id);
 
@@ -1551,7 +1519,7 @@ function get_allowed_aggregate_graphs($sql_where = '', $sql_order = 'gtg.title_c
 	}
 
 	$graphs = db_fetch_assoc("SELECT gtg.local_graph_id, '' AS description, gt.name AS template_name,
-		gtg.title_cache, gtg.width, gtg.height, gl.snmp_index, gl.snmp_query_id, gl.host_id, h.disabled
+		gtg.title_cache, gtg.width, gtg.height, gl.snmp_index, gl.snmp_query_id
 		FROM graph_templates_graph AS gtg
 		INNER JOIN (
 			SELECT ag.local_graph_id AS id, gl.host_id, gl.graph_template_id,
@@ -1770,16 +1738,6 @@ function get_simple_graph_template_perms($user_id) {
  * @return (array)  An array of permitted Graph Templates
  */
 function get_allowed_graph_templates($sql_where = '', $sql_order = 'gt.name', $sql_limit = '', &$total_rows = 0, $user_id = 0, $graph_template_id = 0) {
-	if (!auth_valid_user($user_id)) {
-		return array();
-	}
-
-	if ($user_id == -1) {
-		$auth_method = 0;
-	} else {
-		$auth_method = read_config_option('auth_method');
-	}
-
 	if ($user_id == 0) {
 		if (isset($_SESSION['sess_user_id'])) {
 			$user_id = $_SESSION['sess_user_id'];
@@ -1810,6 +1768,20 @@ function get_allowed_graph_templates($sql_where = '', $sql_order = 'gt.name', $s
 	}
 
 	$sql_where = 'WHERE ' . ($sql_where != '' ? $sql_where . ' AND ':' ') . '(gt.id IS NOT NULL) ';
+
+	if ($user_id == -1) {
+		$auth_method = 0;
+	} else {
+		$auth_method = read_config_option('auth_method');
+	}
+
+	if ($auth_method > 0 && $user_id == 0) {
+		if (isset($_SESSION['sess_user_id'])) {
+			$user_id = $_SESSION['sess_user_id'];
+		} else {
+			return array();
+		}
+	}
 
 	/* see if permissions are simple */
 	$simple_perms = get_simple_graph_perms($user_id);
@@ -2418,10 +2390,6 @@ function get_permission_string(&$graph, &$policies) {
  * @return (string|array)  An array of permitted Trees or the SQL to gather them
  */
 function get_allowed_trees($edit = false, $return_sql = false, $sql_where = '', $sql_order = 'name', $sql_limit = '', &$total_rows = 0, $user_id = 0) {
-	if (!auth_valid_user($user_id)) {
-		return array();
-	}
-
 	if ($sql_limit != '' && $sql_limit != -1) {
 		$sql_limit = "LIMIT $sql_limit";
 	} else {
@@ -2535,10 +2503,6 @@ function get_allowed_trees($edit = false, $return_sql = false, $sql_where = '', 
  * @return (array)  An array of permitted Tree branches
  */
 function get_allowed_branches($sql_where = '', $sql_order = 'name', $sql_limit = '', &$total_rows = 0, $user_id = 0) {
-	if (!auth_valid_user($user_id)) {
-		return array();
-	}
-
 	if ($sql_limit != '' && $sql_limit != -1) {
 		$sql_limit = "LIMIT $sql_limit";
 	} else {
@@ -2703,10 +2667,6 @@ function get_allowed_branches($sql_where = '', $sql_order = 'name', $sql_limit =
  * @return (array)  An array of permitted devices
  */
 function get_allowed_devices($sql_where = '', $sql_order = 'description', $sql_limit = '', &$total_rows = 0, $user_id = 0, $device_id = 0) {
-	if (!auth_valid_user($user_id)) {
-		return array();
-	}
-
 	if ($user_id == -1) {
 		$auth_method = 0;
 	} else {
@@ -2737,7 +2697,7 @@ function get_allowed_devices($sql_where = '', $sql_order = 'description', $sql_l
 		$sql_order = "ORDER BY $sql_order";
 	}
 
-	if (read_user_setting('hide_disabled', false, false, $user_id) == 'on') {
+	if (read_user_setting('hide_disabled') == 'on') {
 		$sql_where .= ($sql_where != '' ? ' AND ':'') . '(h.disabled = "" OR h.disabled IS NULL)';
 	}
 
@@ -2821,10 +2781,6 @@ function get_allowed_devices($sql_where = '', $sql_order = 'description', $sql_l
  * @return (array)  An array of permitted sites
  */
 function get_allowed_sites($sql_where = '', $sql_order = 'name', $sql_limit = '', &$total_rows = 0, $user_id = 0, $site_id = 0) {
-	if (!auth_valid_user($user_id)) {
-		return array();
-	}
-
 	if ($sql_limit != '' && $sql_limit != -1) {
 		$sql_limit = "LIMIT $sql_limit";
 	} else {
@@ -2890,10 +2846,6 @@ function get_allowed_sites($sql_where = '', $sql_order = 'name', $sql_limit = ''
  * @return (array)  An array of permitted site devices
  */
 function get_allowed_site_devices($site_id, $sql_where = '', $sql_order = 'description', $sql_limit = '', &$total_rows = 0, $user_id = 0) {
-	if (!auth_valid_user($user_id)) {
-		return array();
-	}
-
 	if ($user_id == -1) {
 		$auth_method = 0;
 	} else {
@@ -2924,7 +2876,7 @@ function get_allowed_site_devices($site_id, $sql_where = '', $sql_order = 'descr
 		$sql_order = "ORDER BY $sql_order";
 	}
 
-	if (read_user_setting('hide_disabled', false, false, $user_id) == 'on') {
+	if (read_user_setting('hide_disabled') == 'on') {
 		$sql_where .= ($sql_where != '' ? ' AND ':'') . '(h.disabled = "" OR h.disabled IS NULL)';
 	}
 
@@ -3001,10 +2953,6 @@ function get_allowed_site_devices($site_id, $sql_where = '', $sql_order = 'descr
  * @return (array)  An array of permitted and normalized graph templates
  */
 function get_allowed_graph_templates_normalized($sql_where = '', $sql_order = 'name', $sql_limit = '', &$total_rows = 0, $user_id = 0, $graph_template_id = 0) {
-	if (!auth_valid_user($user_id)) {
-		return array();
-	}
-
 	$templates = array_rekey(get_allowed_graph_templates($sql_where, $sql_order, $sql_limit, $total_rows, $user_id, $graph_template_id), 'id', 'name');
 
 	if (!cacti_sizeof($templates)) {
@@ -3042,44 +2990,6 @@ function get_allowed_graph_templates_normalized($sql_where = '', $sql_order = 'n
 		$sql_limit");
 
 	return $templates;
-}
-
-/**
- * auth_valid_user - Returns true or false depending on if the user is valid for the system
- *   users with an id of 0 or -1 are special cases.  All non-zero users should be found in the
- *   user_auth table.
- *
- * @param  int   A valid or invalid user.
- *
- * @return bool  True is valid otherwise false
- */
-function auth_valid_user($user_id) {
-	static $users = array();
-
-	// perform a check if the user exists
-	if ($user_id > 0) {
-		if (isset($users[$user_id]) && $users[$user_id] == true) {
-			return true;
-		} elseif (isset($users[$user_id])) {
-			return false;
-		} else {
-			$exists = db_fetch_cell_prepared('SELECT id FROM user_auth WHERE id = ?', array($user_id));
-
-			if (empty($exists)) {
-				cacti_log(sprintf('ERROR: Invalid Cacti User ID %d is being used in a permission that does not exist', $user_id), false, 'AUTH');
-
-				cacti_debug_backtrace('Invalid User Accound');
-
-				$users[$user_id] = false;
-
-				return false;
-			}
-
-			$users[$user_id] = true;
-		}
-	}
-
-	return true;
 }
 
 /**
@@ -3179,12 +3089,6 @@ function get_host_array() {
  *   settings
  */
 function get_allowed_ajax_hosts($include_any = true, $include_none = true, $sql_where = '') {
-	$user_id = $_SESSION['sess_user_id'];
-
-	if (!auth_valid_user($user_id)) {
-		return array();
-	}
-
 	$return = array();
 
 	$term = get_filter_request_var('term', FILTER_CALLBACK, array('options' => 'sanitize_search_string'));
@@ -3230,12 +3134,6 @@ function get_allowed_ajax_hosts($include_any = true, $include_none = true, $sql_
  *   settings
  */
 function get_allowed_ajax_graph_templates($include_any = true, $include_none = true, $sql_where = '') {
-	$user_id = $_SESSION['sess_user_id'];
-
-	if (!auth_valid_user($user_id)) {
-		return array();
-	}
-
 	$return = array();
 
 	$term = get_filter_request_var('term', FILTER_CALLBACK, array('options' => 'sanitize_search_string'));
@@ -3276,13 +3174,7 @@ function get_allowed_ajax_graph_templates($include_any = true, $include_none = t
  *   settings
  */
 function get_allowed_ajax_graph_items($include_none = true, $sql_where = '') {
-	$user_id = $_SESSION['sess_user_id'];
-
-	if (!auth_valid_user($user_id)) {
-		return array();
-	}
-
-	$return = array();
+	$return    = array();
 
 	$term = get_filter_request_var('term', FILTER_CALLBACK, array('options' => 'sanitize_search_string'));
 	if ($term != '') {
@@ -3318,12 +3210,6 @@ function get_allowed_ajax_graph_items($include_none = true, $sql_where = '') {
  *   settings
  */
 function get_allowed_ajax_graphs($sql_where = '') {
-	$user_id = $_SESSION['sess_user_id'];
-
-	if (!auth_valid_user($user_id)) {
-		return array();
-	}
-
 	$return = array();
 
 	$term = get_filter_request_var('term', FILTER_CALLBACK, array('options' => 'sanitize_search_string'));
@@ -3356,10 +3242,6 @@ function get_allowed_ajax_graphs($sql_where = '') {
  * @return (array) An array of permitted graph items
  */
 function get_allowed_graph_items($sql_where, $sql_order = 'name', $sql_limit = 20, $user_id = 0) {
-	if (!auth_valid_user($user_id)) {
-		return array();
-	}
-
 	$return = array();
 
 	if ($user_id == 0 && isset($_SESSION['sess_user_id'])) {
@@ -3587,8 +3469,8 @@ function auth_process_lockout($username, $realm) {
 					$error     = true;
 					$error_msg = __('Access Denied!  Login Failed.');
 				}
-			} else {
-				cacti_log("LOGIN FAILED: Local Login Failed to find user '" . $username . "' from IP Address '" . get_client_addr() . "'.", false, 'AUTH');
+			} elseif ($user['locked'] == 'on') {
+				cacti_log("LOGIN FAILED: Local Login Failed for user '" . $username . "' from IP Address '" . get_client_addr() . "'.", false, 'AUTH');
 
 				$error     = true;
 				$error_msg = __('Access Denied!  Login Failed.');
@@ -3874,7 +3756,7 @@ function domains_login_process($username) {
 							array($realm-1000));
 
 						if ($cn_full_name != '' || $cn_email != '') {
-							$ldap_cn_search_response = domains_ldap_search_cn($username, array($cn_full_name, $cn_email), $realm);
+							$ldap_cn_search_response = cacti_ldap_search_cn($username, array($cn_full_name, $cn_email));
 
 							if (isset($ldap_cn_search_response['cn'])) {
 								$data_override = array();
@@ -3922,7 +3804,7 @@ function domains_login_process($username) {
 				cacti_log('LOGIN FAILED: LDAP Error: ' . $ldap_auth_response['error_text'], false, 'AUTH');
 
 				if ($ldap_auth_response['error_text'] == 1) {
-					auth_process_lockout($username, $realm);
+					auth_lockout_process($username, $realm);
 				}
 			}
 		}
@@ -4075,64 +3957,6 @@ function domains_ldap_search_dn($username, $realm) {
 	}
 }
 
-function domains_ldap_search_cn($username, $cn = array(), $realm = 0) {
-	$ldap = new Ldap;
-
-	if (!empty($username)) $ldap->username = $username;
-
-	$ld = db_fetch_row_prepared('SELECT *
-		FROM user_domains_ldap
-		WHERE domain_id = ?',
-		array($realm-1000));
-
-	if (cacti_sizeof($ld)) {
-		if (!empty($ld['dn']))                $ldap->dn                = $ld['dn'];
-		if (!empty($ld['server']))            $ldap->host              = $ld['server'];
-		if (!empty($ld['port']))              $ldap->port              = $ld['port'];
-		if (!empty($ld['port_ssl']))          $ldap->port_ssl          = $ld['port_ssl'];
-		if (!empty($ld['proto_version']))     $ldap->version           = $ld['proto_version'];
-		if (!empty($ld['encryption']))        $ldap->encryption        = $ld['encryption'];
-		if (!empty($ld['referrals']))         $ldap->referrals         = $ld['referrals'];
-
-		if (!empty($ld['mode']))              $ldap->mode              = $ld['mode'];
-		if (!empty($ld['search_base']))       $ldap->search_base       = $ld['search_base'];
-		if (!empty($ld['search_filter']))     $ldap->search_filter     = $ld['search_filter'];
-		if (!empty($ld['specific_dn']))       $ldap->specific_dn       = $ld['specific_dn'];
-		if (!empty($ld['specific_password'])) $ldap->specific_password = $ld['specific_password'];
-
-		$ldap->cn = $cn;
-
-		if ($ld['group_require'] == 'on') {
-			$ldap->group_require = true;
-		} else {
-			$ldap->group_require = false;
-		}
-
-		if (!empty($ld['group_dn']))          $ldap->group_dn          = $ld['group_dn'];
-		if (!empty($ld['group_attrib']))      $ldap->group_attrib      = $ld['group_attrib'];
-		if (!empty($ld['group_member_type'])) $ldap->group_member_type = $ld['group_member_type'];
-
-		/* If the server list is a space delimited set of servers
-		 * process each server until you get a bind, or fail
-		 */
-		$ldap_servers = preg_split('/\s+/', $ldap->host);
-
-		foreach($ldap_servers as $ldap_server) {
-			$ldap->host = $ldap_server;
-
-			$response = $ldap->Getcn();
-
-			if ($response['error_num'] == 0) {
-				return $response;
-			}
-		}
-
-		return $response;
-	} else {
-		return false;
-	}
-}
-
 /**
  * secpass_login_process - process a local login checking for triggers
  *   such as those that would force a password check and take the appropriate action.
@@ -4164,29 +3988,22 @@ function secpass_login_process($username) {
 	}
 
 	if (db_column_exists('user_auth', 'lastfail')) {
-		$user = db_fetch_row_prepared("SELECT id, username, lastfail, failed_attempts, `locked`, enabled, password
+		$user = db_fetch_row_prepared("SELECT id, username, lastfail, failed_attempts, `locked`, password
 			FROM user_auth
 			WHERE username = ?
-			AND realm = 0",
+			AND realm = 0
+			AND enabled = 'on'",
 			array($username));
 	} else {
-		$user = db_fetch_row_prepared("SELECT id, username, password, enabled
+		$user = db_fetch_row_prepared("SELECT id, username, password
 			FROM user_auth
 			WHERE username = ?
-			AND realm = 0",
+			AND realm = 0
+			AND enabled = 'on'",
 			array($username));
 	}
 
 	if (cacti_sizeof($user)) {
-		if ($user['enabled'] != 'on') {
-			$error     = true;
-			$error_msg = __('Access Denied!  Login Failed.');
-
-			cacti_log(sprintf('LOGIN FAILED: User %s, account disabled.', $username), false, 'AUTH');
-
-			return array();
-		}
-
 		if (trim($password) == '') {
 			/* error */
 			$error     = true;
@@ -4461,7 +4278,7 @@ function compat_password_verify($password, $hash) {
 
 	$md5 = md5($password);
 
-	return ($md5 === $hash);
+	return ($md5 == $hash);
 }
 
 /**
@@ -4751,7 +4568,7 @@ function auth_login_create_user_from_template($username, $realm) {
 			if ($cn_full_name != '' || $cn_email != '') {
 				$ldap_cn_search_response = cacti_ldap_search_cn($username, array($cn_full_name, $cn_email));
 
-				if (isset($ldap_cn_search_response['cn'])) {
+  					if (isset($ldap_cn_search_response['cn'])) {
 					$data_override = array();
 
 					if (array_key_exists($cn_full_name, $ldap_cn_search_response['cn'])) {
@@ -4811,7 +4628,7 @@ function auth_login_create_user_from_template($username, $realm) {
  * @return (bool) Returns false on failure to set user account, otherwise redirects
  */
 function check_reset_no_authentication($auth_method) {
-	global $config, $error, $error_msg;
+	global $error, $error_msg;
 
 	if ($auth_method == 0) {
 		$admin_id = db_execute_prepared('SELECT id

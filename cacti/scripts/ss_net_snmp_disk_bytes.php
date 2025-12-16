@@ -1,5 +1,6 @@
 #!/usr/bin/env php
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2023 The Cacti Group                                 |
@@ -13,11 +14,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -160,17 +156,9 @@ function ss_net_snmp_disk_bytes($host_id_or_hostname = '') {
 				} elseif (!isset($previous["br$index"])) {
 					$bytesread = 'U';
 				} elseif ($previous["br$index"] > $measure['value']) {
-					if ($bytesread != 'U') {
-						$bytesread += $measure['value'] + 18446744073709551615 - $previous["br$index"] - $previous["br$index"];
-					} else {
-						$bytesread = $measure['value'] + 18446744073709551615 - $previous["br$index"] - $previous["br$index"];
-					}
+					$bytesread += $measure['value'] + 18446744073709551615 - $previous["br$index"] - $previous["br$index"];
 				} else {
-					if ($bytesread != 'U') {
-						$bytesread += $measure['value'] - $previous["br$index"];
-					} else {
-						$bytesread = $measure['value'] - $previous["br$index"];
-					}
+					$bytesread += $measure['value'] - $previous["br$index"];
 				}
 
 				$current["br$index"] = $measure['value'];
@@ -206,25 +194,17 @@ function ss_net_snmp_disk_bytes($host_id_or_hostname = '') {
 				} elseif (!isset($previous["bw$index"])) {
 					$byteswritten = 'U';
 				} elseif ($previous["bw$index"] > $measure['value']) {
-					if ($byteswritten != 'U') {
-						$byteswritten += $measure['value'] + 18446744073709551615 - $previous["bw$index"] - $previous["bw$index"];
-					} else {
-						$byteswritten = $measure['value'] + 18446744073709551615 - $previous["bw$index"] - $previous["bw$index"];
-					}
+					$byteswritten += $measure['value'] + 18446744073709551615 - $previous["bw$index"] - $previous["bw$index"];
 				} else {
-					if ($byteswritten != 'U') {
-						$byteswritten += $measure['value'] - $previous["bw$index"];
-					} else {
-						$byteswritten = $measure['value'] - $previous["bw$index"];
-					}
+					$byteswritten += $measure['value'] - $previous["bw$index"];
 				}
 
 				$current["bw$index"] = $measure['value'];
 			}
 		}
 
-		$data = json_encode($current);
-		file_put_contents("$tmpdir/$tmpfile", $data);
+		$data = "'" . json_encode($current) . "'";
+		shell_exec("echo $data > $tmpdir/$tmpfile");
 	}
 
 	if ($found) {

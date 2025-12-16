@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright IBM Corp. 2006, 2023                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -125,7 +125,7 @@ function gridalarms_get_template_sql_columns($expression_id) {
  * @param $triggerct		- unused, the current trigger count
  * @returns					- none
  */
-function rtm_logger($syslog_level, $syslog_facility, $name, $breach_up, $threshld, $currentval, $trigger, $triggerct) {
+function logger($syslog_level, $syslog_facility, $name, $breach_up, $threshld, $currentval, $trigger, $triggerct) {
 	if (function_exists('define_syslog_variables')) define_syslog_variables();
 
 	if (!isset($syslog_level)) {
@@ -309,7 +309,7 @@ function gridalarms_build_email_list($alarm) {
 			}
 		}
 
-		if (isset($alarm['notify_extra']) && strlen(trim($alarm['notify_extra']))) {
+		if (strlen(trim($alarm['notify_extra']))) {
 			$emails = explode(',', $alarm['notify_extra']);
 			foreach ($emails as $e) {
 				$e = trim($e);
@@ -754,7 +754,7 @@ function gridalarms_check_alarm($alarm, $force = false) {
 
 			if ($status == 1 || $status == 2) {
 				if ($syslog_set) {
-					rtm_logger($alarm_syslog_priority, $alarm_syslog_facility, $alarm['name'], $breach_up, ($breach_up ? $alarm['alarm_hi'] : $alarm['alarm_low']), $currentval, $trigger, $alarm['alarm_fail_count']);
+					logger($alarm_syslog_priority, $alarm_syslog_facility, $alarm['name'], $breach_up, ($breach_up ? $alarm['alarm_hi'] : $alarm['alarm_low']), $currentval, $trigger, $alarm['alarm_fail_count']);
 				}
 
 				if (trim($alarm_emails) != '') {
@@ -861,7 +861,7 @@ function gridalarms_check_alarm($alarm, $force = false) {
 				$logmsg = $subject = 'NORMAL: ' . $alarm['name'] . " restored to normal with value $currentval";
 
 				if ($syslog_set) {
-					rtm_logger($alarm_syslog_priority, $alarm_syslog_facility, $alarm['name'], 'ok', 0, $currentval, $trigger, $alarm['alarm_fail_count']);
+					logger($alarm_syslog_priority, $alarm_syslog_facility, $alarm['name'], 'ok', 0, $currentval, $trigger, $alarm['alarm_fail_count']);
 				}
 
 				if ($alarm['alarm_fail_count'] >= $trigger) {
@@ -989,7 +989,7 @@ function gridalarms_check_alarm($alarm, $force = false) {
 
 			if ($notify) {
 				if ($syslog_set) {
-					rtm_logger($alarm_syslog_priority, $alarm_syslog_facility, $alarm['name'], $breach_up, ($breach_up ? $alarm['time_hi'] : $alarm['time_low']), $currentval, $trigger, $failures);
+					logger($alarm_syslog_priority, $alarm_syslog_facility, $alarm['name'], $breach_up, ($breach_up ? $alarm['time_hi'] : $alarm['time_low']), $currentval, $trigger, $failures);
 				}
 
 				if (trim($alarm_emails) != '') {
@@ -1086,7 +1086,7 @@ function gridalarms_check_alarm($alarm, $force = false) {
 		} else {
 			if ($alertstat != 0 && $failures < $trigger) {
 				if ($syslog_set) {
-					rtm_logger($alarm_syslog_priority, $alarm_syslog_facility, $alarm['name'], 'ok', 0, $currentval, $trigger, $alarm['alarm_fail_count']);
+					logger($alarm_syslog_priority, $alarm_syslog_facility, $alarm['name'], 'ok', 0, $currentval, $trigger, $alarm['alarm_fail_count']);
 				}
 
 				$logmsg = $subject = 'NORMAL: ' . $alarm['name'] . " restored to normal with value $currentval";
@@ -2017,7 +2017,7 @@ function alarm_log($save) {
  * @param $desc				- the message that was entered by the admin
  * @returns					- null
  */
-function alarm_ack_logging($id, $desc, $email = false) {
+function ack_logging($id, $desc, $email = false) {
 	$alarm = get_alarm_by_id($id);
 
 	if (isset($_SESSION['sess_user_id'])) {
@@ -3167,7 +3167,7 @@ function list_alarm_log($admin = true) {
 						<?php print __('Search', 'gridalarms');?>
 					</td>
 					<td>
-						<input type='text' id='filter' size='25' value='<?php print html_escape_request_var('filter');?>'>
+						<input type='text' id='filter' size='25' value='<?php print html_escape(get_request_var('filter'));?>'>
 					</td>
 					<td>
 						<?php print __('Alert', 'gridalarms');?>
@@ -4425,7 +4425,7 @@ function list_templates($admin = true) {
 						<?php print __('Search', 'gridalarms');?>
 					</td>
 					<td>
-						<input type='text' size='25' id='filter' value='<?php print html_escape_request_var('filter');?>'>
+						<input type='text' size='25' id='filter' value='<?php print html_escape(get_request_var('filter'));?>'>
 					</td>
 					<td>
 						<?php print __('Cluster', 'gridalarms');?>
@@ -4697,7 +4697,7 @@ function list_alarms($admin = true) {
 						<?php print __('Search', 'gridalarms');?>
 					</td>
 					<td>
-						<input type='text' id='filter' size='25' value='<?php print html_escape_request_var('filter');?>'>
+						<input type='text' id='filter' size='25' value='<?php print html_escape(get_request_var('filter'));?>'>
 					</td>
 					<td>
 						<?php print __('Cluster', 'gridalarms');?>
@@ -5008,80 +5008,6 @@ function alarm_log_purge() {
 	db_execute("TRUNCATE gridalarms_alarm_log");
 }
 
-function api_alarm_remove($alarm_id){
-	$expression_id = db_fetch_cell_prepared('SELECT expression_id
-		FROM gridalarms_alarm
-		WHERE id = ?',
-		array($alarm_id));
-
-	/* delete non relational data first */
-	db_execute_prepared('DELETE FROM gridalarms_alarm
-		WHERE id = ?',
-		array($alarm_id));
-
-	db_execute_prepared('DELETE FROM gridalarms_alarm_contacts
-		WHERE alarm_id = ?',
-		array($alarm_id));
-
-	db_execute_prepared('DELETE FROM gridalarms_alarm_layout
-		WHERE alarm_id = ?',
-		array($alarm_id));
-
-	db_execute_prepared('DELETE FROM gridalarms_alarm_log
-		WHERE alarm_id = ?',
-		array($alarm_id));
-
-	db_execute_prepared('DELETE FROM gridalarms_alarm_log_items
-		WHERE alarm_id = ?',
-		array($alarm_id));
-
-	api_plugin_hook_function('gridalarms_delete_hostsalarm',$alarm_id);
-
-	/* delete the expression next */
-	if (!empty($expression_id)) {
-		db_execute_prepared('DELETE FROM gridalarms_expression
-			WHERE id = ?',
-			array($expression_id));
-
-		db_execute_prepared('DELETE FROM gridalarms_expression_input
-			WHERE expression_id = ?',
-			array($expression_id));
-
-		db_execute_prepared('DELETE FROM gridalarms_expression_item
-			WHERE expression_id = ?',
-			array($expression_id));
-
-		/* remove any non-shared metrics */
-		$metrics = db_fetch_assoc_prepared('SELECT metric_id
-			FROM gridalarms_metric_expression
-			WHERE expression_id = ?',
-			array($expression_id));
-
-		if (cacti_sizeof($metrics)) {
-			foreach ($metrics as $m) {
-				$shared_metric = db_fetch_cell_prepared('SELECT COUNT(*)
-					FROM gridalarms_metric_expression
-					WHERE metric_id = ?
-					AND expression_id != ?',
-					array($m['metric_id'], $expression_id));
-
-				if (!$shared_metric) {
-					db_execute_prepared('DELETE FROM gridalarms_metric
-						WHERE id = ?',
-						array($m['metric_id']));
-				}
-			}
-		}
-
-		/* remove any relationship of the expression to the metric */
-		db_execute_prepared('DELETE FROM gridalarms_metric_expression WHERE expression_id=?', array($expression_id));
-	}
-}
-
-function api_alarm_remove_multi(){
-	;
-}
-
 function do_alarms($from = 'console') {
 	global $config;
 
@@ -5107,7 +5033,73 @@ function do_alarms($from = 'console') {
 
 				if ($alarm != false) {
 					foreach ($alarm as $del => $me) {
-						api_alarm_remove($del);
+						$expression_id = db_fetch_cell_prepared('SELECT expression_id
+							FROM gridalarms_alarm
+							WHERE id = ?',
+							array($del));
+
+						/* delete non relational data first */
+						db_execute_prepared('DELETE FROM gridalarms_alarm
+							WHERE id = ?',
+							array($del));
+
+						db_execute_prepared('DELETE FROM gridalarms_alarm_contacts
+							WHERE alarm_id = ?',
+							array($del));
+
+						db_execute_prepared('DELETE FROM gridalarms_alarm_layout
+							WHERE alarm_id = ?',
+							array($del));
+
+						db_execute_prepared('DELETE FROM gridalarms_alarm_log
+							WHERE alarm_id = ?',
+							array($del));
+
+						db_execute_prepared('DELETE FROM gridalarms_alarm_log_items
+							WHERE alarm_id = ?',
+							array($del));
+
+						api_plugin_hook_function('gridalarms_delete_hostsalarm',$del);
+
+						/* delete the expression next */
+						if (!empty($expression_id)) {
+							db_execute_prepared('DELETE FROM gridalarms_expression
+								WHERE id = ?',
+								array($expression_id));
+
+							db_execute_prepared('DELETE FROM gridalarms_expression_input
+								WHERE expression_id = ?',
+								array($expression_id));
+
+							db_execute_prepared('DELETE FROM gridalarms_expression_item
+								WHERE expression_id = ?',
+								array($expression_id));
+
+							/* remove any non-shared metrics */
+							$metrics = db_fetch_assoc_prepared('SELECT metric_id
+								FROM gridalarms_metric_expression
+								WHERE expression_id = ?',
+								array($expression_id));
+
+							if (cacti_sizeof($metrics)) {
+								foreach ($metrics as $m) {
+									$shared_metric = db_fetch_cell_prepared('SELECT COUNT(*)
+										FROM gridalarms_metric_expression
+										WHERE metric_id = ?
+										AND expression_id != ?',
+										array($m['metric_id'], $expression_id));
+
+									if (!$shared_metric) {
+										db_execute_prepared('DELETE FROM gridalarms_metric
+											WHERE id = ?',
+											array($m['metric_id']));
+									}
+								}
+							}
+
+							/* remove any relationship of the expression to the metric */
+							db_execute_prepared('DELETE FROM gridalarms_metric_expression WHERE expression_id=?', array($expression_id));
+						}
 					}
 				}
 
@@ -5320,7 +5312,7 @@ function do_alarms($from = 'console') {
 							WHERE id = ?',
 							array($del));
 
-						alarm_ack_logging($del, get_nfilter_request_var('message'), get_nfilter_request_var('email'));
+						ack_logging($del, get_nfilter_request_var('message'), get_nfilter_request_var('email'));
 					}
 				}
 
@@ -5403,7 +5395,7 @@ function do_alarms($from = 'console') {
 							WHERE id = ?',
 							array($del));
 
-						alarm_ack_logging($del, __('Acknowledgement Reset', 'gridalarms'));
+						ack_logging($del, __('Acknowledgement Reset', 'gridalarms'));
 					}
 				}
 
@@ -7161,9 +7153,8 @@ function do_title_replacement(&$alarm) {
 			if ($input_names[$m2]) {
 				$ret_title = str_replace('|input_' . $m2 . '|', "'" . $input_names[$m2] . "'", $ret_title);
 			} else {
-				raise_message ('gridalarms_title_replacement_failure', 
-					__('Alert name has unused custom data input ' . '|input_' . $m2 . '|, please remove from alert name.'),
-					MESSAGE_LEVEL_WARN);
+				raise_message ('gridalarms_title_replacement_failure');
+				return -1;
 			}
 		}
 	}

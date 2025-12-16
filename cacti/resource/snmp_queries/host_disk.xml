@@ -1,3 +1,4 @@
+<!-- $Id$ -->
 <interface>
 	<name>Get Host Partition Information</name>
 	<index_order>hrStorageDescr:hrStorageIndex</index_order>

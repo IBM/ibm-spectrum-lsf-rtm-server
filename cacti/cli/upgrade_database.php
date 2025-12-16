@@ -1,8 +1,9 @@
 #!/usr/bin/env php
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -13,11 +14,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -49,7 +45,7 @@ $forcever    = '';
 if (cacti_sizeof($parms)) {
 	foreach($parms as $parameter) {
 		if (strpos($parameter, '=')) {
-			list($arg, $value) = explode('=', $parameter, 2);
+			list($arg, $value) = explode('=', $parameter);
 		} else {
 			$arg = $parameter;
 			$value = '';
@@ -136,9 +132,7 @@ foreach ($cacti_version_codes as $cacti_upgrade_version => $hash_code)  {
 	// check for upgrade version file, then include, check for function and execute
 	if (file_exists($upgrade_file)) {
 		print 'Upgrading from v' . $prev_cacti_version .' (DB ' . $orig_cacti_version . ') to v' . $cacti_upgrade_version . PHP_EOL;
-
 		include($upgrade_file);
-
 		if (function_exists($upgrade_function)) {
 			call_user_func($upgrade_function);
 			$status = db_install_errors($cacti_upgrade_version);
@@ -152,22 +146,18 @@ foreach ($cacti_version_codes as $cacti_upgrade_version => $hash_code)  {
 		}
 
 		if (cacti_version_compare($orig_cacti_version, $cacti_upgrade_version, '<')) {
-			db_execute_prepared("UPDATE version SET cacti = ?", array($cacti_upgrade_version));
-
+			db_execute("UPDATE version SET cacti = '" . $cacti_upgrade_version . "'");
 			$orig_cacti_version = $cacti_upgrade_version;
 		}
-
 		$prev_cacti_version = $cacti_upgrade_version;
 	}
 
-	db_execute_prepared("UPDATE version SET cacti = ?", array($cacti_upgrade_version));
+	db_execute("UPDATE version SET cacti = '" . $cacti_upgrade_version . "'");
 
 	if (CACTI_VERSION == $cacti_upgrade_version) {
 		break;
 	}
 }
-
-print PHP_EOL;
 
 function db_install_errors($cacti_version) {
 	global $database_upgrade_status, $debug, $database_statuses;

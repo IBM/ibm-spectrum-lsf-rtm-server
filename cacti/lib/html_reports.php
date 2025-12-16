@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -1463,10 +1459,10 @@ function reports_edit() {
 	reports_tabs(get_request_var('id'));
 
 	if (isset($report['id'])) {
-		$report['mailtime'] = date('Y-m-d H:i', strtotime(date('Y-m-d H:i:00', $report['mailtime'])));
+		$report['mailtime'] = date(reports_date_time_format(), $report['mailtime']);
 		$header_label = __('[edit: %s]', $report['name']);
 	} else {
-		$report['mailtime'] = date('Y-m-d H:i', strtotime(date('Y-m-d H:i:00', floor(time() / read_config_option('poller_interval')) * read_config_option('poller_interval'))));
+		$report['mailtime'] = date(reports_date_time_format(), floor(time() / read_config_option('poller_interval')) * read_config_option('poller_interval'));
 		$header_label = __('[new]');
 	}
 
@@ -1509,7 +1505,6 @@ function reports_edit() {
 			$('#mailtime').datetimepicker({
 				minuteGrid: 10,
 				stepMinute: 1,
-				showSecond: false,
 				showAnim: 'slideDown',
 				numberOfMonths: 1,
 				timeFormat: 'HH:mm',

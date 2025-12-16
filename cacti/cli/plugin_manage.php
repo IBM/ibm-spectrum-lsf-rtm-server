@@ -1,8 +1,9 @@
 #!/usr/bin/env php
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -13,11 +14,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -51,48 +47,44 @@ if (cacti_sizeof($parms)) {
 
 	foreach($options as $arg => $value) {
 		switch($arg) {
-			case 'plugin':
-				if (is_array($value)) {
-					$plugins = $value;
-				} else {
-					$plugins[] = $value;
-				}
+		case 'plugin':
+			$plugins = $value;
+			break;
 
-				break;
-			case 'install':
-				$install = true;
+		case 'install':
+			$install = true;
+			break;
 
-				break;
-			case 'uninstall':
-				$uninstall = true;
+		case 'uninstall':
+			$uninstall = true;
 
-				break;
-			case 'disable':
-				$disable = true;
+			break;
+		case 'disable':
+			$disable = true;
 
-				break;
-			case 'enable':
-				$enable = true;
+			break;
+		case 'enable':
+			$enable = true;
 
-				break;
-			case 'allperms':
-				$allperms = true;
+			break;
+		case 'allperms':
+			$allperms = true;
 
-				break;
-			case 'version':
-			case 'V':
-			case 'v':
-				display_version();
-				exit(0);
-			case 'help':
-			case 'H':
-			case 'h':
-				display_help();
-				exit(0);
-			default:
-				print "ERROR: Invalid Argument: ($arg)" . PHP_EOL . PHP_EOL;
-				display_help();
-				exit(1);
+			break;
+		case 'version':
+		case 'V':
+		case 'v':
+			display_version();
+			exit(0);
+		case 'help':
+		case 'H':
+		case 'h':
+			display_help();
+			exit(0);
+		default:
+			print "ERROR: Invalid Argument: ($arg)" . PHP_EOL . PHP_EOL;
+			display_help();
+			exit(1);
 		}
 	}
 
@@ -158,9 +150,18 @@ if (cacti_sizeof($plugins)) {
 			}
 
 			if ($installed && $allperms) {
-				plugin_manage_install_allrealms($plugin);
+				print "NOTE: Enabling Plugin '$plugin' permissions for administrative accounts" . PHP_EOL;
+
+				$realms = db_fetch_assoc_prepared('SELECT *
+					FROM plugin_realms
+					WHERE plugin = ?',
+					array($plugin));
+
+				foreach($realms as $realm) {
+					api_plugin_register_realm($plugin, $realm['file'], $realm['display'], 1);
+				}
 			}
-		} elseif ($uninstall || $disable || $enable) {
+		} elseif ($uninstall || $disable) {
 			if ($disable) {
 				print "NOTE: Disabling Plugin $plugin." . PHP_EOL;
 				api_plugin_disable($plugin);
@@ -170,25 +171,7 @@ if (cacti_sizeof($plugins)) {
 				print "NOTE: Uninstalling Plugin $plugin." . PHP_EOL;
 				api_plugin_uninstall($plugin);
 			}
-
-			if ($enable) {
-				print "NOTE: Enabling Plugin $plugin." . PHP_EOL;
-				api_plugin_enable($plugin);
-			}
 		}
-	}
-}
-
-function plugin_manage_install_allrealms($plugin) {
-	print "NOTE: Enabling Plugin '$plugin' permissions for administrative accounts" . PHP_EOL;
-
-	$realms = db_fetch_assoc_prepared('SELECT *
-		FROM plugin_realms
-		WHERE plugin = ?',
-		array($plugin));
-
-	foreach($realms as $realm) {
-		api_plugin_register_realm($plugin, $realm['file'], $realm['display'], 1);
 	}
 }
 

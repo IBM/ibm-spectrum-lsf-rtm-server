@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -1136,7 +1132,7 @@ function display_matching_trees ($rule_id, $rule_type, $item, $url) {
 	if ($leaf_type == TREE_ITEM_TYPE_HOST) {
 		$sql_tables = 'FROM host AS h
 			LEFT JOIN host_template AS ht
-			ON (h.host_template_id = ht.id)';
+			ON (h.host_template_id=ht.id)';
 
 		$sql_where = 'WHERE h.deleted = ""';
 	} elseif ($leaf_type == TREE_ITEM_TYPE_GRAPH) {
@@ -1185,14 +1181,7 @@ function display_matching_trees ($rule_id, $rule_type, $item, $url) {
 	$sql_filter = build_matching_objects_filter($rule_id, AUTOMATION_RULE_TYPE_TREE_MATCH);
 
 	$templates = array();
-
-	if (api_automation_column_exists($item['field'], array('host', 'host_template', 'graph_local', 'graph_templates_graph', 'graph_templates'))) {
-		$sql_field = $item['field'] . ' AS source ';
-	} else {
-		$sql_field = '"SQL Injection" AS source ';
-		cacti_log("Attempted SQL Injection found in Tree Automation for the field variable {$item['field']}.", false, 'AUTOM8');
-		raise_message('sql_injection', __("Attempted SQL Injection found in Tree Automation for the field variable {$item['field']}."), MESSAGE_LEVEL_ERROR);
-	}
+	$sql_field = $item['field'] . ' AS source ';
 
 	/* now we build up a new query for counting the rows */
 	$rows_query = "SELECT h.id AS host_id, h.hostname, h.description,
@@ -1276,20 +1265,6 @@ function display_matching_trees ($rule_id, $rule_type, $item, $url) {
 	}
 
 	print "</form>\n";
-}
-
-function api_automation_column_exists($column, $tables) {
-	$column = str_replace(array('h.', 'ht.', 'gt.', 'gl.', 'gtg.'), array('', '', '', '', ''), $column);
-
-	if (cacti_sizeof($tables)) {
-		foreach($tables as $table) {
-			if (db_column_exists($table, $column)) {
-				return true;
-			}
-		}
-	}
-
-	return false;
 }
 
 function display_match_rule_items($title, $rule_id, $rule_type, $module) {
@@ -1454,7 +1429,7 @@ function display_tree_rule_items($title, $rule_id, $item_type, $rule_type, $modu
 			form_alternate_row();
 			$form_data = '<td><a class="linkEditMain" href="' . html_escape($module . '?action=item_edit&id=' . $rule_id. '&item_id=' . $item['id'] . '&rule_type=' . $rule_type) . '">' . __('Item#%d', $i+1) . '</a></td>';
 			$form_data .= '<td>' . 	$item['sequence'] . '</td>';
-			$form_data .= '<td>' . 	html_escape($field_name) . '</td>';
+			$form_data .= '<td>' . 	$field_name . '</td>';
 			$form_data .= '<td>' . 	$tree_sort_types[$item['sort_type']] . '</td>';
 			$form_data .= '<td>' . 	($item['propagate_changes'] ? __('Yes'):__('No')) . '</td>';
 			$form_data .= '<td>' . 	html_escape($item['search_pattern']) . '</td>';
@@ -1587,7 +1562,7 @@ function build_graph_object_sql_having($rule, $filter) {
 			$i = 0;
 
 			foreach($field_names as $column) {
-				$sql_having .= ($i == 0 ? '':' OR ') . '`' . implode('`.`', explode('.', $column['field_name'])) . '`' . ' LIKE ' . db_qstr('%' . $filter . '%');
+				$sql_having .= ($i == 0 ? '':' OR ') . '`' . implode('`.`', explode('.', $column['field_name'])) . '`' . ' LIKE "%' . $filter . '%"';
 				$i++;
 			}
 
@@ -2339,7 +2314,6 @@ function automation_graph_automation_eligible($graph_template_id) {
 				AND dtd.local_data_id = 0
 				AND dif.input_output = "in"
 				AND dif.type_code = ""
-				AND dif.allow_nulls = ""
 				AND did.t_value = "on"
 				AND did.value = ""',
 				array($dtd['id']));
@@ -3086,35 +3060,20 @@ function automation_add_tree($host_id, $tree) {
 function automation_find_os($sysDescr, $sysObject, $sysName) {
 	$sql_where  = '';
 
-	if ($sysDescr != '') {
-		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . "(? REGEXP CONCAT('/', sysDescr, '/') OR ? LIKE CONCAT('%%', sysDescr, '%%'))";
+	$qsysObject = trim(db_qstr($sysObject), "'");
+	$qsysDescr  = trim(db_qstr($sysDescr), "'");
+	$qsysName   = trim(db_qstr($sysName), "'");
 
-		$params[] = $sysDescr;
-		$params[] = $sysDescr;
-	}
+	$sql_where .= trim($sysDescr)  != '' ? 'WHERE (sysDescr REGEXP "(' . preg_quote($qsysDescr) . ')" OR ' . db_qstr($sysDescr) . ' LIKE CONCAT("%", sysDescr, "%"))':'';
+	$sql_where .= trim($sysObject) != '' ? ($sql_where != '' ? ' AND':'WHERE') . ' (sysOID REGEXP "(' . preg_quote($qsysObject) . ')" OR ' . db_qstr($sysObject) . ' LIKE CONCAT("%", sysOid, "%"))':'';
+	$sql_where .= trim($sysName)   != '' ? ($sql_where != '' ? ' AND':'WHERE') . ' (sysName REGEXP "(' . preg_quote($qsysName) . ')" OR ' . db_qstr($sysName) . ' LIKE CONCAT("%", sysName, "%"))':'';
 
-	if ($sysObject != '') {
-		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . "(? REGEXP CONCAT('/', sysOid, '/') OR ? LIKE CONCAT('%%', sysOid, '%%'))";
-
-		$params[] = $sysObject;
-		$params[] = $sysObject;
-	}
-
-	if ($sysName != '') {
-		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . "(? REGEXP CONCAT('/', sysName, '/') OR ? LIKE CONCAT('%%', sysName, '%%'))";
-
-		$params[] = $sysName;
-		$params[] = $sysName;
-	}
-
-	$params = array($sysDescr, $sysDescr, $sysObject, $sysObject, $sysName, $sysName);
-
-	$result = db_fetch_row_prepared("SELECT at.*, ht.name
+	$result = db_fetch_row("SELECT at.*,ht.name
 		FROM automation_templates AS at
 		INNER JOIN host_template AS ht
 		ON ht.id=at.host_template
 		$sql_where
-		ORDER BY sequence LIMIT 1", $params);
+		ORDER BY sequence LIMIT 1");
 
 	if (cacti_sizeof($result)) {
 		return $result;
@@ -3742,7 +3701,7 @@ function api_automation_is_time_to_start($network_id) {
 	case '5':
 		$next = calculateNextStart($net, $now);
 
-		db_execute_prepared('UPDATE automation_networks
+		db_execute_prepared('UPDATE analytics_report_templates
 			SET next_start = ?
 			WHERE id = ?',
 			array(date('Y-m-d H:i', $next), $network_id));

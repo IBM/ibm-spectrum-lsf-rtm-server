@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright IBM Corp. 2006, 2023                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -1324,7 +1324,7 @@ function confirm_layout_remove() {
 
 	print "<tr>
 		<td class='textArea'>
-			<p>" . __('Click \'Continue\' to Delete this Layout Column <b>\'%s\'</b>.', html_escape_request_var('column'), 'gridalarms') . "</p>
+			<p>" . __('Click \'Continue\' to Delete this Layout Column <b>\'%s\'</b>.', html_escape(get_request_var('column')), 'gridalarms') . "</p>
 		</td>
 	</tr>\n";
 
@@ -1336,7 +1336,7 @@ function confirm_layout_remove() {
 		<td class='saveRow'>
 			<input type='hidden' name='action' value='layout_remove'>
 			<input type='hidden' name='id' value='" . get_request_var('id') . "'>
-			<input type='hidden' name='column' value='" . html_escape_request_var('column') . "'>
+			<input type='hidden' name='column' value='" . html_escape(get_request_var('column')) . "'>
 			<input type='hidden' name='confirm_layout_remove' value='1'>
 			$save_html
 		</td>
@@ -1959,9 +1959,7 @@ function gridalarms_expression_edit() {
 			if (type_value != '') {
 				$('#type').val(type_value);
 				$.get('gridalarms_template_edit.php',{'action':'gettables', 'type': type_value}, function(data){
-					$('#db_table').html(data).trigger('change').selectmenu('refresh');
-					// Get first visible option text and update the displayed text
-    				$("#db_table-button .ui-selectmenu-text").text($("#db_table option:selected").text());  
+					$('select#db_table').empty().html(data);
 				});
 			}
 		});

@@ -1,8 +1,9 @@
 #!/usr/bin/env php
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -13,11 +14,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -310,7 +306,7 @@ function plugin_installed($plugin) {
 }
 
 function repair_database($run = true) {
-	global $altersopt, $database_default;
+	global $altersopt;
 
 	$alters = report_audit_results(false);
 
@@ -321,20 +317,14 @@ function repair_database($run = true) {
 		foreach($alters as $table => $changes) {
 			$tblinfo = db_fetch_row_prepared('SELECT ENGINE, SUBSTRING_INDEX(TABLE_COLLATION, "_", 1) AS COLLATION
 				FROM information_schema.tables
-				WHERE TABLE_SCHEMA = ?
+				WHERE TABLE_SCHEMA="cacti"
 				AND TABLE_NAME = ?',
-				array($database_default, $table));
-
-			if (isset($tblinfo['COLLATION'])) {
-				$collation = $tblinfo['COLLATION'];
-			} else {
-				$collation = 'utf8mb4';
-			}
+				array($table));
 
 			if ($tblinfo['ENGINE'] == 'MyISAM') {
-				$suffix = ",\n   ENGINE=InnoDB ROW_FORMAT=Dynamic CHARSET=" . $collation;
+				$suffix = ",\n   ENGINE=InnoDB ROW_FORMAT=Dynamic CHARSET=" . $tblinfo['COLLATION'];
 			} else {
-				$suffix = ",\n   ROW_FORMAT=Dynamic CHARSET=" . $collation;
+				$suffix = ",\n   ROW_FORMAT=Dynamic CHARSET=" . $tblinfo['COLLATION'];
 			}
 
 			$sql = 'ALTER TABLE `' . $table . "`\n   " . implode(",\n   ", $changes) . $suffix . ';';

@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright IBM Corp. 2006, 2023                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -911,29 +911,28 @@ function api_grid_cluster_remove($clusterid) {
 	$cacti_tree = db_fetch_cell_prepared('SELECT cacti_tree FROM grid_clusters WHERE clusterid = ?', array($clusterid));
 
 	if ($cacti_host != '' && $cacti_host != 0) {
+		$data_sources_to_act_on = array();
+		$graphs_to_act_on       = array();
 		$devices_to_act_on      = array();
 
-		if (get_request_var('delete_type') == 2) {
-			$data_sources_to_act_on = array();
-			$graphs_to_act_on       = array();
+		$data_sources = db_fetch_assoc_prepared('SELECT
+			data_local.id AS local_data_id
+			FROM data_local
+			WHERE data_local.host_id = ?
+			OR data_local.host_id IN (
+				SELECT id
+				FROM host
+				WHERE clusterid = ?
+			)',
+			array($cacti_host, $clusterid));
 
-			$data_sources = db_fetch_assoc_prepared('SELECT
-				data_local.id AS local_data_id
-				FROM data_local
-				WHERE data_local.host_id = ?
-				OR data_local.host_id IN (
-					SELECT id
-					FROM host
-					WHERE clusterid = ?
-				)',
-				array($cacti_host, $clusterid));
-
-			if (cacti_sizeof($data_sources)) {
-				foreach ($data_sources as $data_source) {
-					$data_sources_to_act_on[] = $data_source['local_data_id'];
-				}
+		if (cacti_sizeof($data_sources)) {
+			foreach ($data_sources as $data_source) {
+				$data_sources_to_act_on[] = $data_source['local_data_id'];
 			}
+		}
 
+		if (get_request_var('delete_type') == 2) {
 			$graphs = db_fetch_assoc_prepared('SELECT
 				graph_local.id AS local_graph_id
 				FROM graph_local
@@ -961,8 +960,6 @@ function api_grid_cluster_remove($clusterid) {
 		);
 	}
 
-	api_plugin_hook_function('grid_cluster_remove', array('clusterid' => $clusterid, 'delete_type' => get_request_var('delete_type')));
-
 	switch (get_request_var('delete_type')) {
 		case '1': /* leave tree/devices/graphs and data_sources in place, disable the hosts */
 			/* disable all devices */
@@ -975,8 +972,6 @@ function api_grid_cluster_remove($clusterid) {
 
 			if (isset($data_sources_to_act_on)) api_data_source_remove_multi($data_sources_to_act_on);
 			if (isset($graphs_to_act_on)) api_graph_remove_multi($graphs_to_act_on);
-			//ELIM graph data will be remove by graphs_remove hook
-			//ToDo: disable/remove metadata or set clusterid to zero,
 
 			/* remove all devices */
 			if (isset($devices_to_act_on)) api_device_remove_multi($devices_to_act_on);
@@ -987,97 +982,103 @@ function api_grid_cluster_remove($clusterid) {
 				array($clusterid));
 
 			if ($cacti_tree != '' && $cacti_tree != 0) {
-				/* Cacti does not have a general API to delete whole graph tree now */
 				db_execute_prepared('DELETE FROM graph_tree WHERE id = ?', array($cacti_tree));
 				db_execute_prepared('DELETE FROM graph_tree_items WHERE graph_tree_id = ?', array($cacti_tree));
-				/* Save the last time a tree or branch was created/updated for Caching. */
-				set_config_option('time_last_change_tree', time());
-				set_config_option('time_last_change_branch', time());
 			}
 
-			/*Move del_alarm_by_clusterid to gridalarms plugin as gridalarms_grid_cluster_remove(). */
-			//del_alarm_by_clusterid($clusterid);
+			/*remove alarms*/
+			del_alarm_by_clusterid($clusterid);
 
 			break;
 	}
 
 	db_execute_prepared('DELETE FROM grid_clusters WHERE clusterid = ?', array($clusterid));
 
-	//Clean cluster related data:
-	//0. Ignore partition-able tables
-	//1. poller raw data from grid binary tables to grid_* tables
-	$grid_raw_tables_for_cleanup = array(
-		'grid_clusters_perfmon_metrics',
-		'grid_clusters_perfmon_status',
-		'grid_clusters_perfmon_summary',
-		'grid_guarantee_pool',
-		'grid_guarantee_pool_distribution',
-		'grid_guarantee_pool_hosts',
-		'grid_guarantee_pool_loan_queues',
-		'grid_host_closure_lockids',
-		'grid_hostgroups',
-		'grid_hostinfo',
-		'grid_hostinfo_gpu',
-		'grid_hostresources',
+	// remove cluster reference entries in grid_* tables
+	$grid_tables_for_cleanup = array(
+		'grid_arrays',
 		'grid_hosts',
-		'grid_hosts_gpu',
+		'grid_hostgroups',
+		'grid_hostgroups_stats',
+		'grid_hostinfo',
+		'grid_hostresources',
+		'grid_hosts_jobtraffic',
 		'grid_hosts_resources',
-		'grid_host_threshold',
-		'grid_jobs_exec_hosts',
-		'grid_jobs_queues',
-		'grid_jobs_stats',
-		'grid_jobs_users',
+		'grid_license_projects',
 		'grid_load',
 		'grid_params',
+		'grid_projects',
 		'grid_queues',
 		'grid_queues_hosts',
 		'grid_queues_shares',
 		'grid_queues_users',
-		'grid_service_class',
-		'grid_service_class_access_control',
-		'grid_service_class_goals',
-		'grid_service_class_groups',
-		'grid_sharedresources',
-		'grid_user_group_members',
-		'grid_users_or_groups'
-	);
-	//Ignore XL tables: grid_xl_host, host_temp, XL was obsoleted
-	//Clean poller raw data from grid_* tables
-	$grid_stats_tables_for_cleanup = array(
-		'grid_applications',
-		'grid_groups',
-		'grid_hostgroups_stats',
-		'grid_license_projects',
-		'grid_projects',
-		'grid_queues_stats',
-		'grid_user_group_stats',
-		'grid_clusters_reportdata',
-		'grid_hosts_alarm',
-		'grid_jobs_idled',
-		'grid_jobs_memvio',
-		'grid_jobs_runtime',
 		'grid_queues_users_stats',
-		'grid_summary',
-		'grid_summary_timeinstate',
-		'grid_hosts_jobtraffic',
-		'grid_job_interval_stats'
+		'grid_user_group_members',
+		'grid_user_group_stats',
+		'grid_users_or_groups',
+		'grid_host_threshold',
+		'grid_hosts_alarm'
 	);
 
 	if ($clusterid > 0) {
-		foreach ($grid_raw_tables_for_cleanup as $table) {
+		foreach ($grid_tables_for_cleanup as $table) {
 			db_execute_prepared("DELETE FROM $table WHERE clusterid= ?", array($clusterid));
 		}
-		foreach ($grid_stats_tables_for_cleanup as $table) {
-			db_execute_prepared("DELETE FROM $table WHERE clusterid= ?", array($clusterid));
-		}
-		//grid_queues_distrib is not a fixed table. It's dropped/created with different LSF data and Web operation 
-		if (db_table_exists('grid_queues_distrib')) {
-			db_execute_prepared("DELETE FROM grid_queues_distrib WHERE clusterid= ?", array($clusterid));
-		}
-		//Clean poller binary heartbeat
-		db_execute_prepared('DELETE FROM grid_processes WHERE taskid=?', array($clusterid));
 	}
 }
+
+function del_alarm_by_clusterid($clusterid) {
+	$alarms = db_fetch_assoc_prepared('SELECT *
+		FROM gridalarms_alarm
+		WHERE clusterid = ?',
+		array($clusterid));
+
+	if (!empty($alarms)) {
+	foreach ($alarms as $alarm) {
+		$expression_id = $alarm['expression_id'];
+		$del = $alarm['id'];
+
+		/* delete non relational data first */
+		db_execute_prepared('DELETE FROM gridalarms_alarm WHERE id = ?', array($del));
+		db_execute_prepared('DELETE FROM gridalarms_alarm_contacts WHERE alarm_id = ?', array($del));
+		db_execute_prepared('DELETE FROM gridalarms_alarm_layout WHERE alarm_id = ?', array($del));
+		db_execute_prepared('DELETE FROM gridalarms_alarm_log WHERE alarm_id = ?', array($del));
+		db_execute_prepared('DELETE FROM gridalarms_alarm_log_items WHERE alarm_id = ?', array($del));
+		api_plugin_hook_function('gridalarms_delete_hostsalarm', $del);
+
+		/* delete the expression next */
+		if (!empty($expression_id)) {
+			db_execute_prepared('DELETE FROM gridalarms_expression WHERE id = ?', array($expression_id));
+			db_execute_prepared('DELETE FROM gridalarms_expression_input WHERE expression_id = ?', array($expression_id));
+			db_execute_prepared('DELETE FROM gridalarms_expression_item WHERE expression_id = ?', array($expression_id));
+
+			/* remove any non-shared metrics */
+			$metrics = db_fetch_assoc_prepared('SELECT metric_id
+				FROM gridalarms_metric_expression
+				WHERE expression_id = ?',
+				array($expression_id));
+
+			if (cacti_sizeof($metrics)) {
+				foreach($metrics as $m) {
+					$shared_metric = db_fetch_cell_prepared('SELECT count(*)
+						FROM gridalarms_metric_expression
+						WHERE metric_id = ?
+						AND expression_id != ?',
+						array($m['metric_id'], $expression_id));
+
+					if (!$shared_metric) {
+						db_execute_prepared('DELETE FROM gridalarms_metric WHERE id = ?', array($m['metric_id']));
+					}
+				}
+			}
+
+			/* remove any relationship of the expression to the metric */
+			db_execute_prepared('DELETE FROM gridalarms_metric_expression WHERE expression_id = ?', array($expression_id));
+		}
+	}
+	}
+}
+
 
 function api_grid_cluster_disable($clusterid) {
 	db_execute_prepared('UPDATE grid_clusters SET disabled="on" WHERE clusterid = ?', array($clusterid));

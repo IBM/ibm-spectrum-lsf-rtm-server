@@ -1,3 +1,4 @@
+// $Id$
 /* Canadian-French initialisation for the jQuery UI date picker plugin. */
 ( function( factory ) {
 	if ( typeof define === "function" && define.amd ) {

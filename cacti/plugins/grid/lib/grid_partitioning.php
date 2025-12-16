@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright IBM Corp. 2006, 2023                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -139,11 +139,11 @@ function partition_create($table, $min_time_field, $max_time_field, $partition_v
 							FROM $new_table
 							WHERE ?>'1971-02-01'", array($max_time_field));
 
-					$alt_min_time2 = db_fetch_cell_prepared("SELECT MIN($min_time_field)
+					$alt_min_time2 = db_fetch_cell("SELECT MIN($min_time_field)
 							FROM $new_table");
 				}
 
-				$max_time = db_fetch_cell_prepared("SELECT MAX($max_time_field)
+				$max_time = db_fetch_cell("SELECT MAX($max_time_field)
 					FROM $new_table");
 
 				if ((!empty($alt_min_time1) && (strtotime($alt_min_time1) > 87000))
@@ -158,34 +158,17 @@ function partition_create($table, $min_time_field, $max_time_field, $partition_v
 				if (strtotime($min_time) < 87000) {
 					cacti_log("ERROR: Min Time Field is 0 for '$new_table'", true, "GRID");
 				}
-				if (strtotime($max_time) < 87000) {
-					//Generally, max_time should be always valid for a partition-able table
-					cacti_log("ERROR: Max Time Field is 0 for '$new_table'", true, "GRID");
-				}
 			} else {
 				if ($min_time_field != "submit_time")  {
 					$min_time = db_fetch_cell_prepared("SELECT MIN($min_time_field)
 							FROM $new_table
 							WHERE ?>'1971-02-01'", array($min_time_field));
 				} else {
-					$min_time = db_fetch_cell_prepared("SELECT MIN($min_time_field)
+					$min_time = db_fetch_cell("SELECT MIN($min_time_field)
 							FROM $new_table");
 				}
-				$max_time = db_fetch_cell_prepared("SELECT MAX($max_time_field)
+				$max_time = db_fetch_cell("SELECT MAX($max_time_field)
 					FROM $new_table");
-
-				//Before fixing, current_timesamp is inserted for these empty job-subtable
-				//After fixing, use current_timesamp-0.5d  for min_time, current_timesamp for max_time
-				$tmp_mx_time = time();
-				$tmp_mn_time = $tmp_mx_time - 43200;
-				if (empty($min_time) || strtotime($min_time) < 87000) {
-					//cacti_log("ERROR: Min Time Field is 0 for '$new_table'", true, "GRID");
-					$min_time = date('Y-m-d H:i:s', $tmp_mn_time);
-				}
-				if (empty($max_time) || strtotime($max_time) < 87000) {
-					//cacti_log("ERROR: Max Time Field is 0 for '$new_table'", true, "GRID");
-					$max_time = date('Y-m-d H:i:s', $tmp_mx_time);
-				}
 			}
 
 			/* record statistics in the partitions table */
@@ -294,14 +277,6 @@ function partition_timefor_create($table, $time_field) {
 	include_once($config['base_path'] . '/plugins/grid/lib/grid_functions.php');
 
 	$time_interval = time() - strtotime("-" . read_config_option("grid_partitioning_time_range"));
-	
-	//check time elapsed since last partition time
-	$sql = "SELECT ROUND(UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(IFNULL(MAX(max_time), '1971-02-01'))) 
-			FROM grid_table_partitions where table_name = ?";
-	grid_debug($sql);
-	$db_interval = db_fetch_cell_prepared($sql, array($table));
-	if ($db_interval + 21600 <= $time_interval) return false;
-	
 	$sql = "SELECT UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(MIN($time_field))
 		FROM $table WHERE $time_field>'1971-02-01'";
 

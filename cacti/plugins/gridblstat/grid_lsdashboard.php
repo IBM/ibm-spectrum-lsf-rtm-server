@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright IBM Corp. 2006, 2023                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -1602,7 +1602,7 @@ function grid_view_get_users_records(&$sql_where, $apply_limits = true, $rows = 
 					gj.clusterid, gj.user, '-' AS host, gj.pendReasons,
 					gj.licenseProject AS project, '0000-00-00 00:00:00' AS start_time,
 					substring_index(substring_index(pendReasons,'(', -1), ')', 1) as resource,
-					'Demanding' AS service_domain, gj.res_requirements AS rusage, '0' AS run_time, '0000-00-00 00:00:00' AS gjst
+					'Demanding' AS service_domain, '1' AS rusage, '0' AS run_time, '0000-00-00 00:00:00' AS gjst
 					FROM grid_jobs AS gj
 					INNER JOIN grid_clusters AS gc
 					ON gj.clusterid=gc.clusterid
@@ -1620,7 +1620,7 @@ function grid_view_get_users_records(&$sql_where, $apply_limits = true, $rows = 
 				FROM (
 					SELECT '-' AS region, gj.jobid, gj.indexid, gc.lsf_clustername AS cluster, gj.clusterid, gj.user, '-' AS host,
 					gj.licenseProject AS project, '0000-00-00 00:00:00' AS start_time, subreason AS resource,gj.stat,
-					'Demanding' AS service_domain, gj.res_requirements AS rusage, '0' AS run_time, '0000-00-00 00:00:00' AS gjst
+					'Demanding' AS service_domain, '1' AS rusage, '0' AS run_time, '0000-00-00 00:00:00' AS gjst
 					FROM grid_jobs AS gj
 					INNER JOIN grid_clusters AS gc
 					ON gj.clusterid=gc.clusterid
@@ -1944,12 +1944,6 @@ function grid_view_users() {
 
 			if ($graph_select) {
 				$actions_url .= "<a href='" . html_escape($config['url_path'] . 'graph_view.php?' . $graph_select) . "'><img src='" . $config['url_path'] . "plugins/grid/images/view_graphs.gif' title='" . __esc('View User Graphs', 'gridblstat') . "'></a>";
-			}
-
-			if (preg_match('/'.preg_quote($user['resource'],'/').'=([0-9]+)/', $user['rusage'], $m)) {
-    				$user['rusage'] = $m[1];
-			}else {
-				$user['rusage'] = 1;
 			}
 
 			form_alternate_row();
@@ -2856,7 +2850,7 @@ function build_reservers_details_display_array() {
 			'sort' => 'ASC'
 		),
 		'maxtokens' => array(
-			'display' => __('Total Jobs', 'gridblstat'),
+			'display' => __('User Total', 'gridblstat'),
 			'align' => 'right',
 			'sort' => 'DESC'
 		),
@@ -2888,7 +2882,7 @@ function build_violation_details_display_array() {
 			'sort' => 'ASC'
 		),
 		'maxtokens' => array(
-			'display' => __('Total Jobs', 'gridblstat'),
+			'display' => __('User Total', 'gridblstat'),
 			'align' => 'right',
 			'sort' => 'DESC'
 		),
@@ -5081,13 +5075,10 @@ function grid_blstat_view_graphs() {
 	$graphs = db_fetch_assoc("SELECT
 		gtg.width, gtg.height,
 		gtg.local_graph_id,
-		gtg.title_cache,
-		gl.host_id, h.disabled
+		gtg.title_cache
 		FROM graph_templates_graph AS gtg
 		INNER JOIN graph_local AS gl
 		ON gtg.local_graph_id=gl.id
-                LEFT JOIN host AS h
-                ON gl.host_id = h.id
 		$sql_where
 		ORDER BY gtg.title_cache
 		LIMIT " . (get_request_var('graphs_per_page_count')*(get_request_var('page')-1)) . "," . get_request_var('graphs_per_page_count'));

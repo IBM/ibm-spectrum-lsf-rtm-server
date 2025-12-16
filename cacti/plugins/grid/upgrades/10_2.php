@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -124,6 +124,10 @@ function upgrade_to_10_2() {
 	//meta
 	plugin_rtm_migrate_realms('meta', 40987, 'View Metadata', 'metadata.php', $version);
 	plugin_rtm_migrate_realms('meta', 40988, 'Edit Metadata', 'Edit_Metadata', $version);
+
+	//benchmark
+	plugin_rtm_migrate_realms('benchmark', 876525, 'View Benchmark Job', 'grid_benchmark_jobs.php,grid_benchmark_summary.php', $version);
+	plugin_rtm_migrate_realms('benchmark', 876526, 'Edit Benchmark Job Configuration', 'benchmark.php', $version);
 
 	//gridcstat
 	plugin_rtm_migrate_realms('gridcstat', 1012, 'View Statistical Dashboard', 'gridcstat.php', $version);

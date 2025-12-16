@@ -2087,7 +2087,7 @@
 		<items>
 			<hash_08002471a613c547998a2ae1d8cd21fe1cd595>
 				<t_data_source_name></t_data_source_name>
-				<data_source_name>avail_slots</data_source_name>
+				<data_source_name>ok_slots</data_source_name>
 				<t_rrd_minimum></t_rrd_minimum>
 				<rrd_minimum>0</rrd_minimum>
 				<t_rrd_maximum></t_rrd_maximum>

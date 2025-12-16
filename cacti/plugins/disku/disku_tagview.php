@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright IBM Corp. 2006, 2023                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -120,7 +120,7 @@ function disku_tagview() {
 						<?php print __('Search', 'disku');?>
 					</td>
 					<td width='1'>
-						<input type='text' id='filter' size='30' value='<?php print html_escape_request_var('filter');?>'>
+						<input type='text' id='filter' size='30' value='<?php print html_escape(get_request_var('filter'));?>'>
 					</td>
 					<td>
 						<?php print __('Tags', 'disku');?>

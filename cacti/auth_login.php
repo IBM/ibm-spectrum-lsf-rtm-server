@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -155,14 +151,13 @@ if (get_nfilter_request_var('action') == 'login' || $auth_method == 2) {
 
 	/* We have a valid user, do final checks, log their login attempt, and redirect as required */
 	if (!$error && cacti_sizeof($user)) {
+		if (!$guest_user) {
+			cacti_log("LOGIN: User '" . $user['username'] . "' authenticated", false, 'AUTH');
+		} else {
+			cacti_log("LOGIN: Guest User '" . $user['username'] . "' in use", false, 'AUTH');
+		}
 
 		$client_addr = get_client_addr();
-
-		if (!$guest_user) {
-			cacti_log("LOGIN: User '" . $user['username'] . "' authenticated from IP Address '" . $client_addr . "'", false, 'AUTH');
-		} else {
-			cacti_log("LOGIN: Guest User '" . $user['username'] . "' in use from IP Address '" . $client_addr . "'", false, 'AUTH');
-		}
 
 		db_execute_prepared('INSERT IGNORE INTO user_log
 			(username, user_id, result, ip, time)
@@ -324,11 +319,11 @@ $selectedTheme = get_selected_theme();
 								$realms = api_plugin_hook_function('login_realms',
 									array(
 										'1' => array(
-											'name'     => __('Local'),
+											'name' => __('Local'),
 											'selected' => false
 										),
 										'2' => array(
-											'name'     => __('LDAP'),
+											'name' => __('LDAP'),
 											'selected' => true
 										)
 									)
@@ -384,7 +379,7 @@ $selectedTheme = get_selected_theme();
 				?>
 			</div>
 		</div>
-		<div class='versionInfo'><?php print __('Version %s | %s', $version, COPYRIGHT_YEARS_SHORT);?></div>
+		<div class='versionInfo'><?php print __('Version %1$s | %2$s', $version, COPYRIGHT_YEARS_SHORT);?></div>
 	</div>
 	<div class='loginRight'></div>
 	<script type='text/javascript'>

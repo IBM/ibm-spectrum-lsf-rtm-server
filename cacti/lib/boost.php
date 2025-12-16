@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -701,7 +697,11 @@ function boost_process_poller_output($local_data_id, $rrdtool_pipe = '') {
 
 	$data_ids_to_get = read_config_option('boost_rrd_update_max_records_per_select');
 
-	$archive_tables = boost_get_arch_table_names($archive_table);
+	$query_string = '';
+	$arch_tables  = db_fetch_assoc("SELECT table_name AS name
+		FROM information_schema.tables
+		WHERE table_schema = SCHEMA()
+		AND table_name LIKE 'poller_output_boost_arch_%'");
 
 	$results = array();
 
@@ -714,76 +714,60 @@ function boost_process_poller_output($local_data_id, $rrdtool_pipe = '') {
 		$timestamp = time() - 10;
 	}
 
-	$query_string        = '';
-	$sql_params          = array();
-	$locks               = false;
-	$temp_table          = false;
+	boost_timer('get_records', BOOST_TIMER_START);
 
-	if (cacti_count($archive_tables)) {
-		$temp_table = 'poller_output_boost_temp_' . $local_data_id . '_' . mt_rand();
+	if (cacti_count($arch_tables)) {
+		foreach($arch_tables as $table) {
+			$tresults = db_fetch_assoc_prepared('SELECT local_data_id,
+				UNIX_TIMESTAMP(time) AS timestamp, rrd_name, output
+				FROM ' . $table['name'] . "
+				WHERE local_data_id = ?
+				AND time < FROM_UNIXTIME(?)
+				ORDER BY time ASC, rrd_name ASC",
+				array($local_data_id, $timestamp), false);
 
-		db_execute("CREATE TEMPORARY TABLE $temp_table LIKE poller_output_boost");
-
-		foreach($archive_tables as $index => $table) {
-			db_execute_prepared("INSERT INTO $temp_table
-				SELECT *
-				FROM $table
-				WHERE local_data_id = ?",
-				array($local_data_id), false);
+			if (cacti_sizeof($tresults)) {
+				$results = array_merge($results, $tresults);
+			}
 		}
 	}
 
-	if ($temp_table !== false) {
-		db_execute_prepared("INSERT INTO $temp_table
-			SELECT *
-			FROM poller_output_boost
-			WHERE local_data_id = ?
-			AND time < FROM_UNIXTIME(?)",
-			array($local_data_id, $timestamp), false);
+	$arch_results = cacti_sizeof($results);
 
-		$query_string = "SELECT po.local_data_id, dl.data_template_id,
-			UNIX_TIMESTAMP(po.time) AS timestamp, po.rrd_name, po.output
-			FROM $temp_table AS po
-			INNER JOIN data_local AS dl
-			ON po.local_data_id = dl.id
-			WHERE po.local_data_id = ?
-			AND po.time < FROM_UNIXTIME(?)
-			ORDER BY time ASC, rrd_name ASC";
-	} else {
-		$query_string = "SELECT po.local_data_id, dl.data_template_id,
-			UNIX_TIMESTAMP(po.time) AS timestamp, po.rrd_name, po.output
-			FROM poller_output_boost AS po
-			INNER JOIN data_local AS dl
-			ON po.local_data_id = dl.id
-			WHERE po.local_data_id = ?
-			AND po.time < FROM_UNIXTIME(?)
-			ORDER BY time ASC, rrd_name ASC";
+	$tresults = db_fetch_assoc_prepared("SELECT local_data_id,
+		UNIX_TIMESTAMP(time) AS timestamp, rrd_name, output
+		FROM poller_output_boost
+		WHERE local_data_id = ?
+		AND time < FROM_UNIXTIME(?)
+		ORDER BY time, rrd_name",
+		array($local_data_id, $timestamp));
+
+	$boost_results = cacti_sizeof($tresults);
+
+	if (cacti_sizeof($tresults)) {
+		$results = array_merge($results, $tresults);
 	}
 
-	$sql_params[] = $local_data_id;
-	$sql_params[] = $timestamp;
-
-	boost_timer('get_records', BOOST_TIMER_START);
-	$results = db_fetch_assoc_prepared($query_string, $sql_params);
 	boost_timer('get_records', BOOST_TIMER_END);
 
-	$boost_results = cacti_sizeof($results);
+	cacti_log('Local Data ID: ' . $local_data_id . ', Archive Results: ' . $arch_results . ', Boost Results: ' . $boost_results, false, 'BOOST', POLLER_VERBOSITY_MEDIUM);
 
-	if ($temp_table !== false) {
-		db_execute("DROP TEMPORARY TABLE $temp_table");
-	}
+	$sorted = boost_array_orderby($results, 'timestamp', SORT_ASC, 'rrd_name', SORT_ASC);
 
-	cacti_log('Local Data ID: ' . $local_data_id . ', Boost Results: ' . $boost_results, false, 'BOOST', POLLER_VERBOSITY_MEDIUM);
+	$sorted_results = cacti_sizeof($sorted);
+
+	$results = $sorted;
+
+	cacti_log('Local Data ID: ' . $local_data_id . ', Sorted Results: ' . $sorted_results, false, 'BOOST', POLLER_VERBOSITY_MEDIUM);
 
 	/* remove the entries from the table */
 	boost_timer('delete', BOOST_TIMER_START);
 
-	if (cacti_count($archive_tables)) {
-		foreach($archive_tables as $table) {
-			db_execute_prepared("DELETE IGNORE
-				FROM $table
-				WHERE local_data_id = ?",
-				array($local_data_id), false);
+	if (cacti_count($arch_tables)) {
+		foreach($arch_tables as $table) {
+			db_execute_prepared('DELETE IGNORE FROM ' . $table['name'] . '
+				WHERE local_data_id = ?',
+				array($local_data_id));
 		}
 	}
 
@@ -791,7 +775,7 @@ function boost_process_poller_output($local_data_id, $rrdtool_pipe = '') {
 		db_execute_prepared('DELETE FROM poller_output_boost
 			WHERE local_data_id = ?
 			AND time < FROM_UNIXTIME(?)',
-			array($local_data_id, $timestamp), false);
+			array($local_data_id, $timestamp));
 	}
 
 	boost_timer('delete', BOOST_TIMER_END);
@@ -854,25 +838,10 @@ function boost_process_poller_output($local_data_id, $rrdtool_pipe = '') {
 		cacti_log('The RRDpath is ' . $rrd_path, false, 'BOOST', POLLER_VERBOSITY_MEDIUM);
 		cacti_log('The RRDpath template is ' . $rrd_tmpl, false, 'BOOST', POLLER_VERBOSITY_MEDIUM);
 
-		$unused_data_source_names = array_rekey(
-			db_fetch_assoc_prepared('SELECT DISTINCT dtr.data_source_name, dtr.data_source_name
-				FROM data_template_rrd AS dtr
-				LEFT JOIN graph_templates_item AS gti
-				ON dtr.id = gti.task_item_id
-				WHERE dtr.local_data_id = ?
-				AND gti.task_item_id IS NULL',
-				array($local_data_id)),
-			'data_source_name', 'data_source_name'
-		);
-
 		boost_timer('results_cycle', BOOST_TIMER_START);
 
 		/* go through each poller_output_boost entries and process */
 		foreach ($results as $item) {
-			if (cacti_sizeof($unused_data_source_names) && isset($unused_data_source_names[$item['rrd_name']])) {
-				continue;
-			}
-
 			/**
 			 * detect duplicate records, this should not happen,
 			 * but adding just in case.
@@ -919,7 +888,7 @@ function boost_process_poller_output($local_data_id, $rrdtool_pipe = '') {
 			/* single one value output */
 			if (strpos($value, 'DNP') !== false) {
 				/* continue, bad time */
-			} elseif ((is_numeric($value)) || ($value == 'U' && $item['rrd_name'] != '')) {
+			} elseif ((is_numeric($value)) || ($value == 'U')) {
 				$output  = ':' . $value;
 				$outbuf .= $output;
 				$outlen += strlen($output);
@@ -929,46 +898,21 @@ function boost_process_poller_output($local_data_id, $rrdtool_pipe = '') {
 				$outbuf .= $output;
 				$outlen += strlen($output);
 				$vals_in_buffer++;
-			} elseif (strpos($value, ':') !== false) {
+			} elseif ($value != '') {
 				$values = preg_split('/\s+/', $value);
 
 				if (!$multi_vals_set) {
-					if ($item['data_template_id'] > 0) {
-						$rrd_field_names = array_rekey(
-							db_fetch_assoc_prepared('SELECT DISTINCT dtr.data_source_name, dif.data_name
-								FROM graph_templates_item AS gti
-								INNER JOIN data_template_rrd AS dtr
-								ON gti.task_item_id = dtr.id
-								INNER JOIN data_input_fields AS dif
-								ON dtr.data_input_field_id = dif.id
-								WHERE dtr.local_data_id = ?',
-								array($item['local_data_id'])),
-							'data_name', 'data_source_name'
-						);
-
-						$unused_data_source_names = array_rekey(
-							db_fetch_assoc_prepared('SELECT DISTINCT dtr.data_source_name, dtr.data_source_name
-								FROM data_template_rrd AS dtr
-								LEFT JOIN graph_templates_item AS gti
-								ON dtr.id = gti.task_item_id
-								WHERE dtr.local_data_id = ?
-								AND gti.task_item_id IS NULL',
-								array($item['local_data_id'])),
-							'data_source_name', 'data_source_name'
-						);
-					} else {
-						$rrd_field_names = array_rekey(
-							db_fetch_assoc_prepared('SELECT DISTINCT dtr.data_source_name, dif.data_name
-								FROM data_template_rrd AS dtr
-								INNER JOIN data_input_fields AS dif
-								ON dtr.data_input_field_id = dif.id
-								WHERE dtr.local_data_id = ?',
-								array($item['local_data_id'])),
-							'data_name', 'data_source_name'
-						);
-
-						$unused_data_source_names = array();
-					}
+					$rrd_field_names = array_rekey(
+						db_fetch_assoc_prepared('SELECT DISTINCT dtr.data_source_name, dif.data_name
+							FROM graph_templates_item AS gti
+							INNER JOIN data_template_rrd AS dtr
+							ON gti.task_item_id = dtr.id
+							INNER JOIN data_input_fields AS dif
+							ON dtr.data_input_field_id = dif.id
+							WHERE dtr.local_data_id = ?',
+							array($item['local_data_id'])),
+						'data_name', 'data_source_name'
+					);
 
 					$rrd_tmpl = '';
 				}
@@ -981,12 +925,6 @@ function boost_process_poller_output($local_data_id, $rrdtool_pipe = '') {
 						$matches = explode(':', $value);
 
 						if (isset($rrd_field_names[$matches[0]])) {
-							$field = $rrd_field_names[$matches[0]];
-
-							if (cacti_sizeof($unused_data_source_names) && isset($unused_data_source_names[$field])) {
-								continue;
-							}
-
 							$multi_ok = true;
 
 							if (!$multi_vals_set) {
@@ -994,7 +932,7 @@ function boost_process_poller_output($local_data_id, $rrdtool_pipe = '') {
 									$rrd_tmpl .= ':';
 								}
 
-								$rrd_tmpl .= $rrd_field_names[$matches[0]];
+								$rrd_tmpl  .= $rrd_field_names[$matches[0]];
 								$first_tmpl = false;
 							}
 
@@ -1024,70 +962,7 @@ function boost_process_poller_output($local_data_id, $rrdtool_pipe = '') {
 					$vals_in_buffer++;
 				}
 			} else {
-				if (!$multi_vals_set) {
-					if ($item['data_template_id'] > 0) {
-						$rrd_field_names = array_rekey(
-							db_fetch_assoc_prepared('SELECT DISTINCT dtr.data_source_name, dif.data_name
-								FROM graph_templates_item AS gti
-								INNER JOIN data_template_rrd AS dtr
-								ON gti.task_item_id = dtr.id
-								INNER JOIN data_input_fields AS dif
-								ON dtr.data_input_field_id = dif.id
-								WHERE dtr.local_data_id = ?',
-								array($item['local_data_id'])),
-							'data_name', 'data_source_name'
-						);
-
-						$unused_data_source_names = array_rekey(
-							db_fetch_assoc_prepared('SELECT DISTINCT dtr.data_source_name, dtr.data_source_name
-								FROM data_template_rrd AS dtr
-								LEFT JOIN graph_templates_item AS gti
-								ON dtr.id = gti.task_item_id
-								WHERE dtr.local_data_id = ?
-								AND gti.task_item_id IS NULL',
-								array($item['local_data_id'])),
-							'data_source_name', 'data_source_name'
-						);
-					} else {
-						$rrd_field_names = array_rekey(
-							db_fetch_assoc_prepared('SELECT DISTINCT dtr.data_source_name, dif.data_name
-								FROM data_template_rrd AS dtr
-								INNER JOIN data_input_fields AS dif
-								ON dtr.data_input_field_id = dif.id
-								WHERE dtr.local_data_id = ?',
-								array($item['local_data_id'])),
-							'data_name', 'data_source_name'
-						);
-
-						$unused_data_source_names = array();
-					}
-
-					$rrd_tmpl = '';
-				}
-
-				$expected = '';
-
-				if (cacti_sizeof($nt_rrd_field_names)) {
-					foreach($nt_rrd_field_names as $field) {
-						if (cacti_sizeof($unused_data_source_names) && isset($unused_data_source_names[$field])) {
-							continue;
-						}
-
-						$expected .= ($expected != '' ? ' ':'') . "$field:value";
-
-						if ($reset_template) {
-							$rrd_tmpl .= ($rrd_tmpl != '' ? ':':'') . $field;
-						}
-
-						$tv_tmpl[$field] = 'U';
-						$buflen += 2;
-					}
-				}
-
-				cacti_log(sprintf('WARNING: Invalid output! MULTI DS[%d] Encountered [%s] Expected [%s]', $item['local_data_id'], $value, $expected), false, 'POLLER');
-
-				$vals_in_buffer++;
-				$multi_vals_set = true;
+				cacti_log('WARNING: Local Data Id [' . $item['local_data_id'] . '] Contains an empty value', false, 'BOOST');
 			}
 		}
 
@@ -1186,32 +1061,16 @@ function boost_get_rrd_filename_and_template($local_data_id) {
 	$ds_null      = array();
 	$ds_nnull     = array();
 
-	$data_template_id = db_fetch_cell_prepared('SELECT data_template_id
-		FROM data_local
-		WHERE id = ?',
+	$ds_names = db_fetch_assoc_prepared("SELECT DISTINCT data_source_name, rrd_name, rrd_path
+		FROM data_template_rrd AS dtr
+		INNER JOIN graph_templates_item AS gti
+		ON gti.task_item_id = dtr.id
+		INNER JOIN poller_item AS pi
+		ON pi.local_data_id = dtr.local_data_id
+		AND (pi.rrd_name = dtr.data_source_name OR pi.rrd_name = '')
+		WHERE dtr.local_data_id = ?
+		ORDER BY data_source_name ASC",
 		array($local_data_id));
-
-	if ($data_template_id > 0) {
-		$ds_names = db_fetch_assoc_prepared("SELECT DISTINCT data_source_name, rrd_name, rrd_path
-			FROM data_template_rrd AS dtr
-			INNER JOIN graph_templates_item AS gti
-			ON gti.task_item_id = dtr.id
-			INNER JOIN poller_item AS pi
-			ON pi.local_data_id = dtr.local_data_id
-			AND (pi.rrd_name = dtr.data_source_name OR pi.rrd_name = '')
-			WHERE dtr.local_data_id = ?
-			ORDER BY data_source_name ASC",
-			array($local_data_id));
-	} else {
-		$ds_names = db_fetch_assoc_prepared("SELECT DISTINCT data_source_name, rrd_name, rrd_path
-			FROM data_template_rrd AS dtr
-			INNER JOIN poller_item AS pi
-			ON pi.local_data_id = dtr.local_data_id
-			AND (pi.rrd_name = dtr.data_source_name OR pi.rrd_name = '')
-			WHERE dtr.local_data_id = ?
-			ORDER BY data_source_name ASC",
-			array($local_data_id));
-	}
 
 	if (cacti_sizeof($ds_names)) {
 		foreach($ds_names as $ds_name) {
@@ -1297,31 +1156,18 @@ function boost_rrdtool_function_create($local_data_id, $show_source, &$rrdtool_p
 	$create_ds = RRD_NL . '--start 0 --step '. $rras[0]['rrd_step'] . ' ' . RRD_NL;
 
 	/**
-	 * We have to check for Non-Templated Data Source first as they may not include
-	 * a graph.  So, for that case, we need the RRDfile to include all data sources
-     */
-	$data_template_id = db_fetch_cell_prepared('SELECT data_template_id
-		FROM data_local
-		WHERE id = ?',
+	 * Only use the Data Sources that are included in the Graph in the case that there
+	 * is a Data Template that includes more Data Sources than there Graph Template
+	 * uses.
+	 */
+	$data_sources = db_fetch_assoc_prepared('SELECT DISTINCT dtr.id, dtr.data_source_name, dtr.rrd_heartbeat,
+		dtr.rrd_minimum, dtr.rrd_maximum, dtr.data_source_type_id
+		FROM data_template_rrd AS dtr
+		INNER JOIN graph_templates_item AS gti
+		ON dtr.id = gti.task_item_id
+		WHERE dtr.local_data_id = ?
+		ORDER BY local_data_template_rrd_id',
 		array($local_data_id));
-
-	if ($data_template_id > 0) {
-		$data_sources = db_fetch_assoc_prepared('SELECT DISTINCT dtr.id, dtr.data_source_name, dtr.rrd_heartbeat,
-			dtr.rrd_minimum, dtr.rrd_maximum, dtr.data_source_type_id
-			FROM data_template_rrd AS dtr
-			INNER JOIN graph_templates_item AS gti
-			ON dtr.id = gti.task_item_id
-			WHERE dtr.local_data_id = ?
-			ORDER BY local_data_template_rrd_id',
-			array($local_data_id));
-	} else {
-		$data_sources = db_fetch_assoc_prepared('SELECT DISTINCT dtr.id, dtr.data_source_name, dtr.rrd_heartbeat,
-			dtr.rrd_minimum, dtr.rrd_maximum, dtr.data_source_type_id
-			FROM data_template_rrd AS dtr
-			WHERE dtr.local_data_id = ?
-			ORDER BY local_data_template_rrd_id',
-			array($local_data_id));
-	}
 
 	/**
 	 * ONLY make a new DS entry if:
@@ -1444,8 +1290,6 @@ function boost_rrdtool_function_create($local_data_id, $show_source, &$rrdtool_p
    @arg $rrd_update_template  - the order in which values need to be added
    @arg $rrd_update_values    - values to include in the database */
 function boost_rrdtool_function_update($local_data_id, $rrd_path, $rrd_update_template, &$rrd_update_values, &$rrdtool_pipe) {
-	global $debug;
-
 	/* lets count the number of rrd files processed */
 	$rrds_processed = 0;
 
@@ -1486,12 +1330,9 @@ function boost_rrdtool_function_update($local_data_id, $rrd_path, $rrd_update_te
 
 	if ($valid_entry) {
 		if ($rrd_update_template != '') {
-			cacti_log("update $rrd_path $update_options --template $rrd_update_template $rrd_update_values", true, 'BOOST', ($debug ? POLLER_VERBOSITY_NONE:POLLER_VERBOSITY_HIGH));
-
 			rrdtool_execute("update $rrd_path $update_options --template $rrd_update_template $rrd_update_values", false, RRDTOOL_OUTPUT_STDOUT, $rrdtool_pipe, 'BOOST');
 		} else {
-			cacti_log("update $rrd_path $update_options $rrd_update_values", true, 'BOOST', ($debug ? POLLER_VERBOSITY_NONE:POLLER_VERBOSITY_HIGH));
-
+			cacti_log("update $rrd_path $update_options $rrd_update_values", false, 'BOOST', POLLER_VERBOSITY_MEDIUM);
 			rrdtool_execute("update $rrd_path $update_options $rrd_update_values", false, RRDTOOL_OUTPUT_STDOUT, $rrdtool_pipe, 'BOOST');
 		}
 
@@ -1500,13 +1341,7 @@ function boost_rrdtool_function_update($local_data_id, $rrd_path, $rrd_update_te
 }
 
 function boost_memory_limit() {
-	$memory_limit = read_config_option('boost_poller_mem_limit');
-
-	if ($memory_limit != '-1') {
-		ini_set('memory_limit', $memory_limit . 'M');
-	} else {
-		ini_set('memory_limit', -1);
-	}
+	ini_set('memory_limit', read_config_option('boost_poller_mem_limit') . 'M');
 }
 
 function boost_poller_bottom() {

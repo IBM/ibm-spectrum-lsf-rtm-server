@@ -3445,7 +3445,7 @@
 			<t_width></t_width>
 			<width>500</width>
 			<t_base_value></t_base_value>
-			<base_value>1000</base_value>
+			<base_value>1024</base_value>
 			<t_slope_mode></t_slope_mode>
 			<slope_mode>on</slope_mode>
 			<t_auto_scale></t_auto_scale>
@@ -3686,25 +3686,6 @@
 				<dash_offset></dash_offset>
 				<sequence>10</sequence>
 			</hash_1001024fc4c097b0b6fcf592aa8195b8a633cd>
-			<hash_100103de2ce7290d3da89ba596d6308fde3ba6>
-				<graph_type_id>1</graph_type_id>
-				<task_item_id>0</task_item_id>
-				<color_id>0</color_id>
-				<alpha>FF</alpha>
-				<consolidation_function_id>1</consolidation_function_id>
-				<cdef_id>0</cdef_id>
-				<vdef_id>0</vdef_id>
-				<shift></shift>
-				<value></value>
-				<gprint_id>hash_060103e9c43831e54eca8069317a2ce8c6f751</gprint_id>
-				<textalign></textalign>
-				<text_format>Y-axis: m = milli, u = micro, k = kilo, M = mega</text_format>
-				<hard_return>on</hard_return>
-				<line_width>1.00</line_width>
-				<dashes></dashes>
-				<dash_offset>0</dash_offset>
-				<sequence>11</sequence>
-			</hash_100103de2ce7290d3da89ba596d6308fde3ba6>
 		</items>
 		<inputs>
 			<hash_0901025250c58dd402646dde503d20ae93fc4e>
@@ -4378,7 +4359,7 @@
 			<t_width></t_width>
 			<width>500</width>
 			<t_base_value></t_base_value>
-			<base_value>1000</base_value>
+			<base_value>1024</base_value>
 			<t_slope_mode></t_slope_mode>
 			<slope_mode>on</slope_mode>
 			<t_auto_scale></t_auto_scale>
@@ -4657,25 +4638,6 @@
 				<dash_offset></dash_offset>
 				<sequence>12</sequence>
 			</hash_10010267f306ab7dcbf7a938f505521138a8ec>
-			<hash_100103df02f22e93d1c5e46fca9b114c25d6fa>
-				<graph_type_id>1</graph_type_id>
-				<task_item_id>hash_080103512d00cab4bef3f5e5a599269c0693ce</task_item_id>
-				<color_id>0</color_id>
-				<alpha>FF</alpha>
-				<consolidation_function_id>1</consolidation_function_id>
-				<cdef_id>0</cdef_id>
-				<vdef_id>0</vdef_id>
-				<shift></shift>
-				<value></value>
-				<gprint_id>hash_060103e9c43831e54eca8069317a2ce8c6f751</gprint_id>
-				<textalign></textalign>
-				<text_format>Y-axis: m = milli, u = micro, k = kilo, M = mega</text_format>
-				<hard_return>on</hard_return>
-				<line_width>1.00</line_width>
-				<dashes></dashes>
-				<dash_offset>0</dash_offset>
-				<sequence>13</sequence>
-			</hash_100103df02f22e93d1c5e46fca9b114c25d6fa>
 		</items>
 		<inputs>
 			<hash_09010284a784903efcf0a0b26bd31d891b7802>
@@ -18242,7 +18204,7 @@
 			<t_width></t_width>
 			<width>600</width>
 			<t_base_value></t_base_value>
-			<base_value>1000</base_value>
+			<base_value>1024</base_value>
 			<t_slope_mode></t_slope_mode>
 			<slope_mode>on</slope_mode>
 			<t_auto_scale></t_auto_scale>
@@ -18502,25 +18464,6 @@
 				<dash_offset></dash_offset>
 				<sequence>11</sequence>
 			</hash_10010257ca60d201e8bd79fe3a1319505f85e0>
-			<hash_100103a2a833b9b5ea23b9f2ac0ee60569a5a6>
-				<graph_type_id>1</graph_type_id>
-				<task_item_id>0</task_item_id>
-				<color_id>0</color_id>
-				<alpha>FF</alpha>
-				<consolidation_function_id>1</consolidation_function_id>
-				<cdef_id>0</cdef_id>
-				<vdef_id>0</vdef_id>
-				<shift></shift>
-				<value></value>
-				<gprint_id>hash_060103e9c43831e54eca8069317a2ce8c6f751</gprint_id>
-				<textalign></textalign>
-				<text_format>Y-axis: m = milli, u = micro, k = kilo, M = mega</text_format>
-				<hard_return>on</hard_return>
-				<line_width>1.00</line_width>
-				<dashes></dashes>
-				<dash_offset>0</dash_offset>
-				<sequence>12</sequence>
-			</hash_100103a2a833b9b5ea23b9f2ac0ee60569a5a6>
 		</items>
 		<inputs>
 			<hash_09010271cbc83180b53df44126f9f754089135>

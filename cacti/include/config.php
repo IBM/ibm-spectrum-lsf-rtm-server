@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -44,8 +44,8 @@ $database_persist  = false;
 #$rdatabase_type     = 'mysql';
 #$rdatabase_default  = 'cacti';
 #$rdatabase_hostname = 'localhost';
-#$rdatabase_username = 'cactiuser';
-#$rdatabase_password = 'cactiuser';
+#$rdatabase_username = 'cacti';
+#$rdatabase_password = 'admin';
 #$rdatabase_port     = '3306';
 #$rdatabase_retries  = 5;
 #$rdatabase_ssl      = false;
@@ -193,35 +193,3 @@ $path_csrf_secret = '/opt/IBM/rtm/etc/csrf-secret.php';
  *		'REMOTE_ADDR',
  */
 $proxy_headers = null;
-
-/*
- * Set this to define the default i18n handler if not set
- * in the database.  For valid values, see CACTI_LANGUAGE_HANDLER
- * constants but only use the value not the constant name
- * here because we have not included global_constants.php
- * yet
- */
-$i18n_handler = null;
-
-/*
- * Set this to define ignore everything else and force a
- * specific language.  Should be in the format of a string
- * such as 'es-ES'
- */
-$i18n_force_language = null;
-
-/**
- * Define the location to log general i18n function calls
- * to for debugging purposes.  Note that if you use /tmp
- * some systemd systems will remap that folder to special
- * locations under /tmp/systemd<uniqueid>/tmp
- */
-$i18n_log = null;
-
-/**
- * Define the location to log translation i18n function calls
- * to for debugging purposes.  Note that if you use /tmp
- * some systemd systems will remap that folder to special
- * locations under /tmp/systemd<uniqueid>/tmp
- */
-$i18n_text_log = null;

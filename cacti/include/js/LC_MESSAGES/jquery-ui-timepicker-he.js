@@ -1,3 +1,4 @@
+// $Id$
 /* Hebrew translation for the jQuery Timepicker Addon */
 /* Written by Lior Lapid */
 (function($) {

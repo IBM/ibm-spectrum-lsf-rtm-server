@@ -1,3 +1,4 @@
+// $Id$
 /*
  * JS Storage Plugin
  *

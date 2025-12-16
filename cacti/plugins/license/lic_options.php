@@ -629,7 +629,7 @@ function get_inuse_values($service_id, $feature, $otype, $oname, &$name = '') {
 	if ($otype == 'PER_USER') {
 		$url = trim(read_config_option('lic_ldap_search_uri'));
 
-		if (!empty($url)) {
+		if (strlen($url)) {
 			$name = "<a class='hyper' href='" . htmlspecialchars(str_replace('|group_name|',$oname,$url)) . "' title='View Group Information' target='_blank'>" . $oname . "</a>";
 		}
 
@@ -668,7 +668,7 @@ function get_inuse_values($service_id, $feature, $otype, $oname, &$name = '') {
 	}elseif ($otype == 'GROUP') {
 		$url = read_config_option('lic_ldap_search_uri');
 
-		if (!empty($url)) {
+		if (strlen($url)) {
 			$ldap_group = db_fetch_cell_prepared("SELECT ldap_group
 				FROM lic_ldap_to_flex_groups
 				WHERE flex_group=?", array($oname));

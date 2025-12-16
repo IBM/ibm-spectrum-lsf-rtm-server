@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -64,7 +64,7 @@ function benchmark_status_filter($location = 'summary') {
 }
 
 function benchmark_get_time($value) {
-	return __('%s sec', number_format_i18n($value, 2));
+	return __('%.2f sec', number_format(round($value,2),2));
 }
 
 function benchmark_get_exit_code($status, $reason) {
@@ -176,13 +176,6 @@ function view_benchmark_details() {
 	echo "<td style='width:40%;' colspan='3'>" . htmlspecialchars($bm['command']) . "</td>\n";
 	echo "<td style='width:10%;font-weight:bold;'>" . __('ResReq') . "</td>\n";
 	echo "<td style='width:40%;' colspan='3'>" . htmlspecialchars($bm['res_req']) . "</td>\n";
-	form_end_row();
-
-	form_alternate_row();
-	echo "<td style='width:10%;font-weight:bold;'>" . __('Task Number') . "</td>\n";
-	echo "<td style='width:15%;'>" . ($bm['task_num_in_job'] == '' ? __('N/A'):htmlspecialchars($bm['task_num_in_job'])) . "</td>\n";
-	echo "<td style='width:10%;font-weight:bold;'>" . __('Exclusive Job') . "</td>\n";
-	echo "<td style='width:65%;' colspan='5'>" . ($bm['exclusive_job'] == 'on' ? __('Yes'):__('No')) . "</td>\n";
 	form_end_row();
 
 	html_end_box();

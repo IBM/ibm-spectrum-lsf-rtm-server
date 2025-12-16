@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2025                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -167,14 +167,6 @@ default:
 
     ?>
     <script type='text/javascript'>
-    
-    	var currentTab = '<?php print $current_tab;?>';
-    	if (currentTab == 'grid_aggregation') {
-        	initPumpDir();
-        	$('#grid_job_pend_hostgroup, #grid_job_pend_pump_infile').off('change').on('change', function() {
-        		initPumpDir();
-        	});
-    	}
 
 	$('.subTab').find('a').click(function(event) {
 		event.preventDefault();
@@ -191,20 +183,6 @@ default:
 			applySkin();
 		});
 	});
-	
-	function initPumpDir() {
-		if ($('#grid_job_pend_hostgroup').val() == 'hostmap') {
-			$('#row_grid_job_pend_pump_infile').show();
-			if ($('#grid_job_pend_pump_infile').is(':checked')) {
-				$('#row_grid_job_pump_infile_dir').show();
-			} else {
-				$('#row_grid_job_pump_infile_dir').hide();
-			}		
-		} else {
-			$('#row_grid_job_pend_pump_infile').hide();
-			$('#row_grid_job_pump_infile_dir').hide();
-		}
-	}
 
 	</script>
 	<?php

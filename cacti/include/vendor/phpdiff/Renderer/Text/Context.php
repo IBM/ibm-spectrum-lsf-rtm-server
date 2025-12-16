@@ -1,4 +1,5 @@
 <?php
+// $Id$
 /**
  * Context diff generator for PHP DiffLib.
  *

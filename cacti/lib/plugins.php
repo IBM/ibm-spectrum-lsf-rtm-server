@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -73,28 +69,16 @@ function api_plugin_hook($name) {
 
 	if (!empty($result)) {
 		foreach ($result as $hdata) {
-			$plugin_name = $hdata['name'];
-			$plugin_file = $hdata['file'];
-
-			// Security check
-			if (strpos($plugin_file, '..') !== false) {
-				cacti_log("ERROR: Attempted inclusion of not plugin file $plugin_file from $plugin_name with the hook name $name", false, 'SECURITY');
-				continue;
-			}
-
-			if (!in_array($plugin_name, $plugins_integrated, true)) {
-				$plugin_func = $hdata['function'];
-				$full_path   = $config['base_path'] . '/plugins/' . $plugin_name . '/' . $plugin_file;
-				$debounce    = 'mpf_' . $plugin_name . '_' . $plugin_func;
-
-				if (file_exists($full_path)) {
-					include_once($full_path);
+			if (!in_array($hdata['name'], $plugins_integrated, true)) {
+				if (file_exists($config['base_path'] . '/plugins/' . $hdata['name'] . '/' . $hdata['file'])) {
+					include_once($config['base_path'] . '/plugins/' . $hdata['name'] . '/' . $hdata['file']);
 				}
 
-				if (function_exists($plugin_func)) {
-					api_plugin_run_plugin_hook($name, $plugin_name, $plugin_func, $args);
-				} else if (debounce_run_notification($debounce)) {
-					cacti_log(sprintf('WARNING: Function "%s" does not exist in %s/%s for hook "%s"' . PHP_EOL, $plugin_func, $plugin_name, $plugin_file, $name), false, 'PLUGIN', POLLER_VERBOSITY_MEDIUM);
+				$function = $hdata['function'];
+				if (function_exists($function)) {
+					api_plugin_run_plugin_hook($name, $hdata['name'], $function, $args);
+				} else {
+					cacti_log(sprintf('WARNING: Function does not exist %s with function %s' . PHP_EOL, $name, $hdata['function']), false, 'PLUGIN', POLLER_VERBOSITY_MEDIUM);
 				}
 			}
 		}
@@ -733,12 +717,6 @@ function api_plugin_install($plugin) {
 
 		$author  = $info['author'];
 		$version = $info['version'];
-	} elseif (strpos($plugin, 'plugin_') !== false) {
-		raise_message('directory_error', __('The Plugin directory \'%s\' needs to be renamed to remove \'plugin_\' from the name before it can be installed.', $plugin), MESSAGE_LEVEL_ERROR);
-		return false;
-	} else {
-		raise_message('version_error', __('The Plugin in the directory \'%s\' does not include an version function \'%s()\'.  This function must exist for the plugin to be installed.', $plugin, $function), MESSAGE_LEVEL_ERROR);
-		return false;
 	}
 
 	db_execute_prepared('INSERT INTO plugin_config
@@ -763,9 +741,6 @@ function api_plugin_install($plugin) {
 				WHERE directory = ?',
 				array($plugin));
 		}
-	} else {
-		raise_message('install_error', __('The Plugin in the directory \'%s\' does not include an install function \'%s()\'.  This function must exist for the plugin to be installed.', $plugin, $function), MESSAGE_LEVEL_ERROR);
-		return false;
 	}
 
 	api_plugin_replicate_config();
@@ -779,18 +754,8 @@ function api_plugin_uninstall_integrated() {
 	}
 }
 
-function api_plugin_hooks_found($plugin) {
-	return db_fetch_cell_prepared('SELECT COUNT(*) FROM plugin_hooks WHERE name = ?', array($plugin)) ? true:false;
-}
-
-function api_plugin_realms_found($plugin) {
-	return db_fetch_cell_prepared('SELECT COUNT(*) FROM plugin_realms WHERE plugin = ?', array($plugin)) ? true:false;
-}
-
 function api_plugin_uninstall($plugin, $tables = true) {
 	global $config;
-
-	$plugin_found = false;
 
 	if (file_exists($config['base_path'] . "/plugins/$plugin/setup.php")) {
 		include_once($config['base_path'] . "/plugins/$plugin/setup.php");
@@ -800,18 +765,11 @@ function api_plugin_uninstall($plugin, $tables = true) {
 
 		if (function_exists($function)) {
 			$function();
-
-			$plugin_found = true;
 		}
 	}
 
-	if (api_plugin_hooks_found($plugin)) {
-		api_plugin_remove_hooks($plugin);
-	}
-
-	if (api_plugin_realms_found($plugin)) {
-		api_plugin_remove_realms($plugin);
-	}
+	api_plugin_remove_hooks($plugin);
+	api_plugin_remove_realms($plugin);
 
 	db_execute_prepared('DELETE FROM plugin_config
 		WHERE directory = ?',
@@ -825,9 +783,7 @@ function api_plugin_uninstall($plugin, $tables = true) {
 			array($plugin));
 	}
 
-	if ($plugin_found) {
-		api_plugin_replicate_config();
-	}
+	api_plugin_replicate_config();
 }
 
 function api_plugin_check_config($plugin) {

@@ -1,3 +1,4 @@
+// $Id$
 /* Indonesian translation for the jQuery Timepicker Addon */
 /* Written by Nia */
 (function($) {

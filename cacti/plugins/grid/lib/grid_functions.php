@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2025                                          |
+ | Copyright IBM Corp. 2006, 2023                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -734,7 +734,7 @@ function grid_show_efficiency_state($state, $cluster_status, $clusterid) {
 
 function grid_get_group_jobname($job) {
 	/* let's display job arrays better */
-	$max_display_length = 3000;
+	$max_display_length = 119;
 	if ($job['indexid'] > 0) {
 		/* find out where we need to break the jobname for display */
 		$split_pos = strpos($job['jobname'], '[');
@@ -852,7 +852,7 @@ function grid_get_master_lsf_status($clusterid) {
 
 	if ($cluster_status['lsf_master'] == '') {
 		$is_master = 'U';
-	} elseif (strpos(trim($cluster_status['lsf_masterhosts']), $cluster_status['lsf_master']) > 0) {
+} elseif (strpos(trim($cluster_status['lsf_masterhosts']), $cluster_status['lsf_master']) > 0) {
 		$is_master = 'A';
 	} else {
 		$is_master = 'P';
@@ -1058,7 +1058,7 @@ function display_ut($value, $round = 2) {
 }
 
 function display_job_effic($value, $run_time, $round = 2) {
-	if (($value < 0) || ($run_time == 0)) {
+	if (($value <= 0) || ($run_time == 0)) {
 		return '-';
 	} else {
 		return add_dec($value,$round) . '%';
@@ -2083,16 +2083,17 @@ function perform_grid_db_maint($start_time, $optimize = false) {
 				alter_table_engine('grid_jobs_host_rusage', 'Innodb');
 			}
 
-			// if a new grid_jobs_finished partition created and grid_jobs_gpu_rusage table not empty, then create grid_jobs_gpu_rusage partition
-			if ($job_finished_partition_version != -1 && !isEmptyTable("grid_jobs_gpu_rusage")) {
+			if (partition_timefor_create("grid_jobs_gpu_rusage", "update_time")) {
 				partition_create("grid_jobs_gpu_rusage", "submit_time", "update_time");
 
 				//TODO: Should take similar action for grid_jobs_rusage/grid_jobs_host_rusage
 				//      To Keep one job rusage data into one partition table.
 				foreach($new_partition_tables as $new_partition_table){
-					if(strstr($new_partition_table, "grid_jobs_gpu_rusage")){
+					if(strstr($new_partition_table , "grid_jobs_gpu_rusage")){
 						//keep history for the requeue job which use less GPU after requeue.
-						$new_grid_jobs_finished = "grid_jobs_finished_v" . $job_finished_partition_version;
+						$new_grid_jobs_finished = "grid_jobs_finished";
+						if($job_finished_partition_version != -1)
+							$new_grid_jobs_finished .= "_v" . $job_finished_partition_version;
 						db_execute("INSERT IGNORE INTO grid_jobs_gpu_rusage (clusterid, jobid, indexid, submit_time,
 							start_time, update_time, host, gpu_id, exec_time, energy, sm_ut_avg, sm_ut_max,
 							sm_ut_min, mem_ut_avg, mem_ut_max, mem_ut_min, gpu_mused_max)
@@ -2115,29 +2116,6 @@ function perform_grid_db_maint($start_time, $optimize = false) {
 							AND grid_jobs.indexid=gjgr.indexid
 							AND grid_jobs.submit_time=gjgr.submit_time
 							WHERE grid_jobs.jobid IS NULL;");
-							
-						 $gpu_partition = substr($new_partition_table, -3);
-						 if (isEmptyTable($new_partition_table)) {
-						 	db_execute('DROP TABLE IF EXISTS ' . $new_partition_table);
-						 	db_execute_prepared("DELETE FROM grid_table_partitions WHERE table_name=? and `partition` = ?", 
-						 		array("grid_jobs_gpu_rusage", $gpu_partition));
-						 	$curmax = db_fetch_row_prepared("SELECT `partition`, max_time FROM grid_table_partitions 
-						 		WHERE table_name=? ORDER BY max_time DESC LIMIT 1", array("grid_jobs_gpu_rusage"));
-						 		
-						 	if (cacti_sizeof($curmax)) {
-						 		db_execute_prepared('UPDATE settings set value = ? where name = ?',
-						 			array($curmax, 'grid_jobs_gpu_rusage_partitioning_version'));
-						 	} else {
-						 		db_execute_prepared('DELETE FROM settings where name = ?',
-						 			array('grid_jobs_gpu_rusage_partitioning_version'));
-						 	}
-						 } else {
-						 	$gpu_min_time = db_fetch_cell("SELECT MIN(submit_time) FROM $new_partition_table WHERE submit_time > '1971-02-01'");
-						 	$gpu_max_time = db_fetch_cell("SELECT MAX(update_time) FROM $new_partition_table");
-						 	db_execute_prepared("UPDATE grid_table_partitions SET min_time = ?, max_time = ? 
-						 		WHERE table_name = 'grid_jobs_gpu_rusage' and `partition` = ?", 
-						 		array($gpu_min_time, $gpu_max_time, $gpu_partition));
-						 }
 					}
 				}
 
@@ -2180,28 +2158,6 @@ function perform_grid_db_maint($start_time, $optimize = false) {
 			$new_partition_tables_1 = implode(',', $new_partition_tables);
 			set_config_option('run_partition_optimization', $new_partition_tables_1);
 		}
-
-        //issue 510
-        if(!api_plugin_is_enabled("heuristics")){
-            $optimize_args = '';
-            if (read_config_option('run_optimization') > 0) {
-                 $optimize_args .= '--ntables ';
-            }
-
-            $new_partition_tables = read_config_option('run_partition_optimization');
-
-            if (!empty($new_partition_tables)) {
-                 $optimize_args .= "--otables=$new_partition_tables ";
-            }
-
-            if (!empty($optimize_args)) {
-                 $path_rtm_top=grid_get_path_rtm_top();
-                 $cmd = read_config_option('path_php_binary') . " $path_rtm_top/cacti/plugins/grid/database_optimization.php $optimize_args >/dev/null &";
-                 cacti_log('OPTIMIZE cmd: ' . $cmd ,true,'SYSTEM');
-                 exec ($cmd);
-            }
-
-         }
 
 		if (read_config_option('gridmemvio_enabled') == 'on') {
 			$php_binary_path = read_config_option('path_php_binary');
@@ -3781,54 +3737,44 @@ function update_fairshare_tree_information() {
 
 	}
 
+	//update all users running jobs/slots in table grid_queues_shares. users not in temp table will be assigned to null by left join
 	grid_debug("grid_queues_shares users running jobs/slots update");
 
-	$q_start_time = db_fetch_cell("SELECT NOW()");
-	
-	// For jobmap, reset pend jobs/slots to zero in case user or usergroup no longer have pend jobs in grid_jobs table
-	if (read_config_option("grid_usergroup_method") == "jobmap") {
-		db_execute("UPDATE grid_queues_shares SET pend_jobs = 0, pend_slots = 0, last_updated = NOW() where present = 1 and pend_slots > 0");
-	}
-	
 	$clusters = db_fetch_assoc("SELECT DISTINCT clusterid FROM grid_clusters WHERE disabled!='on'");
 
-	//Update last_updated=NOW() for all found shareAcctPath
 	if (cacti_sizeof($clusters)) {
 		grid_debug("Processing '" . cacti_sizeof($clusters) . "' Clusters");
 		foreach($clusters as $cluster) {
-			//update all users raw running jobs/slots in table grid_queues_shares.
 			db_execute_prepared("UPDATE grid_queues_shares AS gqs
-				INNER JOIN $temp_table AS tt
+				LEFT JOIN $temp_table AS tt
 				ON tt.clusterid=gqs.clusterid
 				AND gqs.queue=tt.queue
 				AND gqs.shareAcctPath = tt.shareAcctPath
 				AND gqs.user_or_group=tt.user
-				SET gqs.run_jobs = tt.run_jobs, gqs.run_slots = tt.run_slots, gqs.last_updated = NOW()
+				SET gqs.run_jobs = tt.run_jobs, gqs.run_slots = tt.run_slots
 				WHERE gqs.clusterid=?", array($cluster['clusterid']));
 
-			//update all users pending jobs/slots in table grid_queues_shares.
+			//update all users pending jobs/slots in table grid_queues_shares. users not in temp table will be assigned to null by left join
 			grid_debug("grid_queues_shares users pending jobs/slots update");
 
 			if (read_config_option("grid_usergroup_method") == "jobmap") {
-				//For jobmap, update all users pending jobs/slots in table grid_queues_shares, shareAcctPath must end of job.usergroup
 				db_execute_prepared("UPDATE grid_queues_shares AS gqs
-					INNER JOIN temp_grid_jobs_jobmap AS tt FORCE INDEX (clusterid_queue_user_jobmap)
+					LEFT JOIN temp_grid_jobs_jobmap AS tt FORCE INDEX (clusterid_queue_user_jobmap)
 					ON gqs.clusterid=tt.clusterid
 					AND gqs.queue=tt.queue
 					AND gqs.shareAcctPath LIKE CONCAT('%/', tt.usergroup)
 					AND gqs.user_or_group=tt.user
-					SET gqs.pend_jobs = tt.pend_jobs, gqs.pend_slots = tt.pend_slots, gqs.last_updated = NOW()
+					SET gqs.pend_jobs = tt.pend_jobs, gqs.pend_slots = tt.pend_slots
 					WHERE gqs.clusterid=?", array($cluster['clusterid']));
 			} else {
-				//For usermap, update all users pending jobs/slots in table grid_queues_shares, only compare combination of job.queue and job.user
 				db_execute_prepared("UPDATE grid_queues_shares AS gqs
-					INNER JOIN $temp_table AS tt FORCE INDEX (clusterid_queue_user)
+					LEFT JOIN $temp_table AS tt FORCE INDEX (clusterid_queue_user)
 					ON tt.clusterid=gqs.clusterid
 					AND gqs.queue=tt.queue
 					AND gqs.shareAcctPath = tt.shareAcctPath
 					AND tt.shareAcctPath = ''
 					AND gqs.user_or_group=tt.user
-					SET gqs.pend_jobs = tt.pend_jobs, gqs.pend_slots = tt.pend_slots, gqs.last_updated = NOW()
+					SET gqs.pend_jobs = tt.pend_jobs, gqs.pend_slots = tt.pend_slots
 					WHERE gqs.clusterid=?", array($cluster['clusterid']));
 			}
 		}
@@ -3837,18 +3783,11 @@ function update_fairshare_tree_information() {
 	//update group running/pending jobs/slots in table grid_queues_shares
 	$count_total = 0;
 
-   //Update last_updated=NOW() for all up-level fairshae container of found shareAcctPath
-	if (read_config_option("grid_usergroup_method") == "jobmap") {
-		$sql_prefix_group = "INSERT INTO grid_queues_shares (clusterid, queue, shareAcctPath, user_or_group, run_jobs, run_slots, last_updated) VALUES ";
-		$sql_suffix_group = " ON DUPLICATE KEY UPDATE run_jobs = VALUES(run_jobs), run_slots = VALUES(run_slots), last_updated=VALUES(last_updated)";
-	} else {
-		$sql_prefix_group = "INSERT INTO grid_queues_shares (clusterid, queue, shareAcctPath, user_or_group, run_jobs, run_slots, pend_jobs, pend_slots, last_updated) VALUES ";
-		$sql_suffix_group = " ON DUPLICATE KEY UPDATE run_jobs = VALUES(run_jobs), run_slots = VALUES(run_slots), pend_jobs=VALUES(pend_jobs), pend_slots=VALUES(pend_slots), last_updated=VALUES(last_updated)";
-	}
+	$sql_prefix_group = "INSERT INTO grid_queues_shares (clusterid, queue, shareAcctPath, user_or_group, run_jobs, run_slots, pend_jobs, pend_slots) VALUES ";
+	$sql_suffix_group = " ON DUPLICATE KEY UPDATE run_jobs = VALUES(run_jobs), run_slots = VALUES(run_slots), pend_jobs=VALUES(pend_jobs), pend_slots=VALUES(pend_slots)";
 	$sql_group = '';
 	$sql_group_cnt = 0;
 
-	//Get queue share info for all usergroup(leaf-node) of fairshare tree
 	$grid_queue_shares = db_fetch_assoc("SELECT gqs.clusterid, queue, gqs.user_or_group, shareAcctPath,
 		gqs.run_jobs, gqs.run_slots, gqs.pend_jobs, gqs.pend_slots, type
 		FROM grid_queues_shares AS gqs FORCE INDEX (clusterid_user_or_group)
@@ -3871,16 +3810,14 @@ function update_fairshare_tree_information() {
 
 		$pre_run_jobs = empty($grid_queue_share['run_jobs'])? 0 : $grid_queue_share['run_jobs'];
 		$pre_run_slots = empty($grid_queue_share['run_slots'])? 0 : $grid_queue_share['run_slots'];
-		if (read_config_option("grid_usergroup_method") == "usermap") {
-			$pre_pend_jobs = empty($grid_queue_share['pend_jobs'])? 0 : $grid_queue_share['pend_jobs'];
-			$pre_pend_slots = empty($grid_queue_share['pend_slots'])? 0 : $grid_queue_share['pend_slots'];
-		}
+		$pre_pend_jobs = empty($grid_queue_share['pend_jobs'])? 0 : $grid_queue_share['pend_jobs'];
+		$pre_pend_slots = empty($grid_queue_share['pend_slots'])? 0 : $grid_queue_share['pend_slots'];
 
 		//current user_or_group is group name
 		$group = $user_or_group;
 		$charged_group = $share_acct_path . "/" . $user_or_group;
 
-		//aggregate sub-group and member user running jobs/slots from grid_jobs aggregation table <temp_grid_jobs_aggregation>
+		//get group running jobs/slots
 		$result = db_fetch_row_prepared("SELECT SUM(run_jobs) AS run_jobs, SUM(run_slots) AS run_slots
 			FROM $temp_table AS gj
 			WHERE gj.clusterid = ?
@@ -3890,8 +3827,12 @@ function update_fairshare_tree_information() {
 		$run_jobs = empty($result['run_jobs'])? 0 : $result['run_jobs'];
 		$run_slots = empty($result['run_slots'])? 0 : $result['run_slots'];
 
-		if (read_config_option("grid_usergroup_method") == "usermap") {
-			//get usergroup pending jobs/slots
+
+		if (read_config_option("grid_usergroup_method") == "jobmap") {
+			$result['pend_jobs'] = 0;
+			$result['pend_slots'] = 0;
+		} else {
+			//get group pending jobs/slots
 			$result = db_fetch_row_prepared("SELECT SUM(pend_jobs) AS pend_jobs, SUM(pend_slots) AS pend_slots
 				FROM $temp_table AS gj
 				INNER JOIN (
@@ -3908,16 +3849,15 @@ function update_fairshare_tree_information() {
 				AND gj.user=ug.username
 				WHERE gj.clusterid = ?
 				AND gj.queue = ? ", array($clusterid, $group, $clusterid, $queue));
+		}
 
-			$pend_jobs = empty($result['pend_jobs'])? 0 : $result['pend_jobs'];
-			$pend_slots = empty($result['pend_slots'])? 0 : $result['pend_slots'];
+		$pend_jobs = empty($result['pend_jobs'])? 0 : $result['pend_jobs'];
+		$pend_slots = empty($result['pend_slots'])? 0 : $result['pend_slots'];
+
+		if (!($run_jobs == $pre_run_jobs && $run_slots == $pre_run_slots && $pend_jobs == $pre_pend_jobs && $pend_slots == $pre_pend_slots)) {
+			$sql_group .= ($sql_group_cnt == 0 ? "(":",(") . "'$clusterid', '$queue', '$share_acct_path', '$group', '$run_jobs', '$run_slots', '$pend_jobs', '$pend_slots')";
+			$sql_group_cnt ++;
 		}
-		$sql_group .= ($sql_group_cnt == 0 ? "(":",(") . "'$clusterid', '$queue', '$share_acct_path', '$group', '$run_jobs', '$run_slots',";
-		if (read_config_option("grid_usergroup_method") == "usermap") {
-				$sql_group .= " '$pend_jobs', '$pend_slots',";
-		}
-		$sql_group .= " NOW())";
-		$sql_group_cnt ++;
 
 		if ($sql_group_cnt > 0 && $sql_group_cnt % 1000 == 0) {
 			db_execute($sql_prefix_group . $sql_group . $sql_suffix_group);
@@ -3937,18 +3877,6 @@ function update_fairshare_tree_information() {
 
 	//update groups pending jobs/slots when user group aggregation menthod is "job specification"
 	if (read_config_option("grid_usergroup_method") == "jobmap") {
-		db_execute("DROP TABLE IF EXISTS temp_grid_queues_shares_jobmap;");
-		db_execute("CREATE TEMPORARY TABLE temp_grid_queues_shares_jobmap (
-			`clusterid` int(10) unsigned NOT NULL,
-			`queue` varchar(30) NOT NULL default '',
-			`shareAcctPath` varchar(256) default '',
-			`usergroup` varchar(40) NOT NULL default '',
-			`pend_jobs` int(10) unsigned NOT NULL default '0',
-			`pend_slots` int(10) unsigned NOT NULL default '0',
-			PRIMARY KEY  (`clusterid`,`queue`, `shareAcctPath`, `usergroup`),
-			KEY `clusterid_queue_ugroup` (`clusterid`, `queue`, `usergroup`))
-			ENGINE=MEMORY;");
-
 		$pend_jobmap_groups = db_fetch_assoc("SELECT * FROM temp_grid_jobs_jobmap;");
 		grid_debug("jobmap aggregation update groups pending jobs/slots total= " . cacti_sizeof($pend_jobmap_groups));
 
@@ -3962,44 +3890,25 @@ function update_fairshare_tree_information() {
 			$pend_slots = $pend_jobmap_group['pend_slots'];
 
 			//aggregate each user pending jobs/slots to all of its charged user groups
-			$share_acct_paths = db_fetch_assoc_prepared("SELECT shareAcctPath from grid_queues_shares
+			$share_acct_path = db_fetch_cell_prepared("SELECT shareAcctPath from grid_queues_shares
 				WHERE clusterid = ?
 				AND queue = ?
 				AND user_or_group = ?
 				AND shareAcctPath LIKE CONCAT('%/', ?)", array($clusterid, $queue, $user, $usergroup));
 
-			if (!cacti_sizeof($share_acct_paths))
-				continue;
+			if (empty($share_acct_path)) continue;
 
-			foreach ($share_acct_paths as $share_acct_path) {
-				$str_groups = str_replace("'',", "", "'" . implode("','", explode("/",$share_acct_path['shareAcctPath'])) . "'");
+			$str_groups = str_replace("'',", "", "'" . implode("','", explode("/",$share_acct_path)) . "'");
 
-				db_execute_prepared("INSERT INTO temp_grid_queues_shares_jobmap (clusterid, queue, shareAcctPath, usergroup, pend_jobs, pend_slots)
-					SELECT clusterid, queue, shareAcctPath, user_or_group, ? AS pend_jobs, ? AS pend_slots FROM grid_queues_shares
-					WHERE clusterid = ? AND queue = ? AND user_or_group IN ($str_groups)
-					ON DUPLICATE KEY UPDATE pend_jobs = temp_grid_queues_shares_jobmap.pend_jobs + VALUES(pend_jobs), pend_slots = temp_grid_queues_shares_jobmap.pend_slots + VALUES(pend_slots)",
-					array($pend_jobs, $pend_slots, $clusterid, $queue));
-				               
-			}
+			db_execute_prepared("UPDATE grid_queues_shares
+				SET pend_jobs = IFNULL(pend_jobs,0) + ?, pend_slots = IFNULL(pend_slots,0) + ?
+				WHERE clusterid = ?
+				AND queue = ?
+				AND user_or_group IN ($str_groups);", array($pend_jobs, $pend_slots, $clusterid, $queue));
 		}
 		}
 
-		db_execute_prepared("INSERT INTO grid_queues_shares (clusterid, queue, shareAcctPath, user_or_group, pend_jobs, pend_slots, last_updated)
-			SELECT clusterid, queue, shareAcctPath, usergroup, pend_jobs, pend_slots, NOW() AS last_updated
-			FROM temp_grid_queues_shares_jobmap
-			ON DUPLICATE KEY UPDATE pend_jobs=VALUES(pend_jobs), pend_slots=VALUES(pend_slots), last_updated=VALUES(last_updated)");
 	}
-
-	//Reset run/pend jobs/slots for all old fairshare container, limit last_updated for performance
-	$poller_interval = read_config_option('poller_interval');
-	if (empty($poller_interval)) {
-		$poller_interval = 300;
-	}
-	$poller_interval = 10*$poller_interval;
-	db_execute_prepared("UPDATE grid_queues_shares
-		SET run_jobs=0, run_slots=0, pend_jobs = 0, pend_slots = 0
-		WHERE (last_updated > DATE_ADD(?, INTERVAL -$poller_interval SECOND)) AND (last_updated < ?)",
-		array($q_start_time, $q_start_time));
 
 	grid_debug("Fairshare update end." );
 }
@@ -4225,45 +4134,6 @@ function delete_records_from_jobs_table($start_time, $start) {
 	}
 
 	db_execute("DROP TABLE IF EXISTS $temp_table");
-}
-
-/**
- * grid_pump_infile - function that runs an ETL using MariaDB/MySQL's INFILE
- * function to reduce implicit locking when using INSERT INTO SELECT * FROM ..
- * type queries
- *
- * @param $table - the table that you are inserting into
- * @param $sql - The SQL that you need to execute to load the OUTFILE
- * @param $params - For prepared statements, the columns that need to be prepared
- * @param $format - The insert columns if there are any
- * @param $ignore - True if you want to ignore insert errors
- * @param $replace - True if you want to replace data when PK duplicated (if ignore and replace both true, only ignore works)
- */
-function grid_pump_infile($table, $sql, $params = array(), $format = array(), $ignore = false, $replace = false) {
-	$columns  = '';
-	$tmp_dir = read_config_option('grid_job_pump_infile_dir');
-	
-	if (!is_dir($tmp_dir)) {
-		cacti_log('WARNING: Temp Directory to Save Hostgroup Pend Jobs Data (' . $tmp_dir . ') does not exist.', false, 'GRID');
-		return 0;
-	}
-	
-	$tmp_file = $tmp_dir . '/' . $table . '.txt';
-	
-	if (file_exists($tmp_file)) {
-		unlink($tmp_file);
-	}
-	
-	if (cacti_sizeof($format)) {
-		$columns = '(`' . implode('`,`', $format) . '`)';
-	}
-	
-	// Create the OUTFILE - It will exist on the Database Server if remote
-	db_execute_prepared($sql . " INTO OUTFILE '$tmp_file'", $params);
-	
-	db_execute("LOAD DATA INFILE '$tmp_file' " . ($ignore ? ' IGNORE ':''.($replace ? ' REPLACE ':'')) . "INTO TABLE $table $columns");
-	
-	return db_affected_rows();
 }
 
 function grid_pump_records($records, $table, $format = array(), $ignore = false, $duplicate = "") {
@@ -6009,9 +5879,8 @@ function gridmemvio_notify_users() {
 				if ($last_cluster > 0) {
 					/* replace tags in main message */
 
-                    $tag_array = array(
-                        // fix of issue #595. Replace following 4 $cc with $last_cluster_details
-						"<CLUSTERNAME>"   => $last_cluster_details["clustername"],
+					$tag_array = array(
+						"<CLUSTERNAME>"   => $cc["clustername"],
 						"<OVERSHOOT>"     => ($overshoot * 100) . " %",
 						"<UNDERSHOOT>"    => ($undershoot * 100) . " %",
 						"<OVERFILTER>"    => $over_filter,
@@ -6048,13 +5917,13 @@ function gridmemvio_notify_users() {
 							if (read_config_option("gridalarm_user_map") == 2) {
 								$column_name = read_config_option("gridalarm_metadata_user_email_map");
 								if (isset($column_name)) {
-									$email_meta = db_fetch_cell_prepared("SELECT " .$column_name . " FROM grid_metadata WHERE object_id=? AND object_type='user' AND cluster_id=?" , array($user, $last_cluster_details['clusterid']));
+									$email_meta = db_fetch_cell_prepared("SELECT " .$column_name . " FROM grid_metadata WHERE object_id=? AND object_type='user' AND cluster_id=?" , array($user, $cc['clusterid']));
 									if (!empty($email_meta)) {
 										$email .= $email_meta;
 									}
 								}
-							} elseif ($last_cluster_details['email_domain'] != "") {
-								$email .= (strlen($email) ? ", ":"") . $user . "@" . $last_cluster_details["email_domain"];
+							} elseif ($cc['email_domain'] != "") {
+								$email .= (strlen($email) ? ", ":"") . $user . "@" . $cc["email_domain"];
 							} else {
 								$email .= (strlen($email) ? ", ":"") . $user;
 							}
@@ -6076,9 +5945,7 @@ function gridmemvio_notify_users() {
 					$outstr = "";
 					$outstr2 = "";
 					$outmessage = "";
-                                        $rank         = 1;
-                                        // fix of issue 595
-                                        $users = array();
+					$rank         = 1;
 				} else {
 					$users        = array();
 					$last_cluster = $record["clusterid"];
@@ -6916,9 +6783,9 @@ function update_user_group_stats() {
 			SUM(CASE WHEN stat='PEND' THEN num_cpus ELSE 0 END) as numPEND,
 			SUM(num_cpus) as numJOBS,
 			(SUM(CASE WHEN stat IN ('RUNNING','PROV') AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (stime+utime) ELSE 0 END) / SUM(CASE WHEN stat IN ('RUNNING','PROV') AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (run_time*max_allocated_processes) ELSE 0 END)) * 100 as efficiency,
-			AVG(CASE WHEN stat IN ('RUNNING','PROV') THEN max_memory ELSE NULL END) as avg_mem,
+			AVG(CASE WHEN stat IN ('RUNNING','PROV') THEN max_memory ELSE 0 END) as avg_mem,
 			MAX(CASE WHEN stat IN ('RUNNING','PROV') THEN max_memory ELSE 0 END) as max_mem,
-			AVG(CASE WHEN stat IN ('RUNNING','PROV') THEN max_swap ELSE NULL END) as avg_swap,
+			AVG(CASE WHEN stat IN ('RUNNING','PROV') THEN max_swap ELSE 0 END) as avg_swap,
 			MAX(CASE WHEN stat IN ('RUNNING','PROV') THEN max_swap ELSE 0 END) as max_swap,
 			SUM(cpu_used) as total_cpu,
 			NOW() AS last_updated,
@@ -7032,9 +6899,9 @@ function update_license_projects() {
 		SUM(CASE WHEN stat='PEND' THEN num_cpus ELSE 0 END) as numPEND,
 		SUM(num_cpus) as numJOBS,
 		(SUM(CASE WHEN stat IN ('RUNNING','PROV') AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (stime+utime) ELSE 0 END) / SUM(CASE WHEN stat IN ('RUNNING','PROV') AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (run_time*max_allocated_processes) ELSE 0 END)) * 100 as efficiency,
-		AVG(CASE WHEN stat IN ('RUNNING','PROV') THEN max_memory ELSE NULL END) as avg_mem,
+		AVG(CASE WHEN stat IN ('RUNNING','PROV') THEN max_memory ELSE 0 END) as avg_mem,
 		MAX(CASE WHEN stat IN ('RUNNING', 'PROV') THEN max_memory ELSE 0 END) as max_mem,
-		AVG(CASE WHEN stat IN ('RUNNING', 'PROV') THEN max_swap ELSE NULL END) as avg_swap,
+		AVG(CASE WHEN stat IN ('RUNNING', 'PROV') THEN max_swap ELSE 0 END) as avg_swap,
 		MAX(CASE WHEN stat IN ('RUNNING', 'PROV') THEN max_swap ELSE 0 END) as max_swap,
 		SUM(cpu_used) as total_cpu,
 		NOW() AS last_updated,
@@ -7205,9 +7072,9 @@ function update_queues() {
 		SUM(CASE WHEN stat='PEND' THEN num_cpus ELSE 0 END) as numPEND,
 		SUM(num_cpus) as numJOBS,
 		(SUM(CASE WHEN stat IN ('RUNNING','PROV') AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (stime+utime) ELSE 0 END) / SUM(CASE WHEN stat='RUNNING' AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (run_time*max_allocated_processes) ELSE 0 END)) * 100 as efficiency,
-		AVG(CASE WHEN stat IN ('RUNNING','PROV') THEN max_memory ELSE NULL END) AS avg_mem,
+		AVG(CASE WHEN stat IN ('RUNNING','PROV') THEN max_memory ELSE 0 END) AS avg_mem,
 		MAX(CASE WHEN stat IN ('RUNNING','PROV') THEN max_memory ELSE 0 END) AS max_mem,
-		AVG(CASE WHEN stat IN ('RUNNING','PROV') THEN max_swap ELSE NULL END) AS avg_swap,
+		AVG(CASE WHEN stat IN ('RUNNING','PROV') THEN max_swap ELSE 0 END) AS avg_swap,
 		MAX(CASE WHEN stat IN ('RUNNING','PROV') THEN max_swap ELSE 0 END) AS max_swap,
 		SUM(cpu_used) as total_cpu,
 		SUM(CASE WHEN stat IN ('RUNNING','PROV') THEN mem_reserved ELSE 0 END) AS memReserved,
@@ -7280,20 +7147,18 @@ function update_queues() {
 function update_hostgroups_stats() {
 	grid_debug("Updating Host Group Stats - Begin");
 	$job_pend_hostgroup = read_config_option('grid_job_pend_hostgroup');
+	if ($job_pend_hostgroup == 'disable') {
+		grid_debug("Updating Host Group Stats - Disabled - Complete");
+		return;
+	}
 
 	/* limit the clusters */
 	$clsql = get_cluster_list('ghg.clusterid');
-	$clsql_new = "";
 	if (strlen($clsql)) {
-		$clsql_new = "WHERE ".$clsql;
 		$clsql = " AND $clsql";
 	}
 	$clsql_j = str_replace("ghg.clusterid", "clusterid", $clsql);
 
- if ($job_pend_hostgroup == 'disable') {
- 	grid_debug("Updating Host Group Stats - pending jobs disabled");
- } else {
- 	grid_debug("Updating Host Group Stats - pending jobs - Start");
 	$format = array("clusterid", "groupName", "numPEND", "last_updated", "present");
 
 	$duplicate = "ON DUPLICATE KEY UPDATE numPEND=VALUES(numPEND),
@@ -7320,62 +7185,23 @@ function update_hostgroups_stats() {
 			AND rset2.queue=rset.queue
 			GROUP BY rset.clusterid, rset.groupName");
 	} else {
-		if (read_config_option('grid_job_pend_pump_infile') == 'on') {
-			$temp_table = "uhs_temp_".time();
-			$sql = "SELECT gj.clusterid, gj.jobid, gj.indexid, gj.submit_time, host, num_cpus 
-				FROM grid_jobs AS gj 
-				INNER JOIN grid_jobs_reqhosts AS gjrh 
-				ON gjrh.jobid = gj.jobid 
-				AND gjrh.clusterid = gj.clusterid 
-				AND gjrh.indexid = gj.indexid 
-				AND gjrh.submit_time = gj.submit_time 
-				WHERE gj.stat = 'PEND'";
-			
-			db_execute("CREATE TEMPORARY TABLE $temp_table (
-				`clusterid` int(10) unsigned NOT NULL,
-				`jobid` int(10) unsigned NOT NULL,
-				`indexid` int(10) unsigned NOT NULL,
-				`submit_time` timestamp NOT NULL default '0000-00-00 00:00:00',
-				`host` varchar(64) NOT NULL,
-				`num_cpus` int(10) unsigned NOT NULL,
-				PRIMARY KEY  (`clusterid`,`jobid`,`indexid`, `submit_time`, `host`))
-				ENGINE=InnoDB
-				ROW_FORMAT=Dynamic");
-		
-			$num_record = grid_pump_infile($temp_table, $sql);
-		
-			if ($num_record > 0) {
-				$records = db_fetch_assoc("SELECT ghg.clusterid, ghg.groupName, SUM(num_cpus) AS numPEND,
-					NOW() AS last_updated, '1' as present 
-					FROM $temp_table as gjrh
-					INNER JOIN grid_hostgroups AS ghg
-					ON ghg.clusterid = gjrh.clusterid
-					AND (ghg.host = gjrh.host OR ghg.groupName = gjrh.host)
-					".$clsql_new."
-					GROUP BY ghg.clusterid, ghg.groupName");
-			} else {
-				$records = array();
-			}
-		} else {
-			$records = db_fetch_assoc("SELECT ghg.clusterid, ghg.groupName, SUM(num_cpus) AS numPEND,
-				NOW() AS last_updated, '1' as present FROM grid_jobs AS gj
-				INNER JOIN grid_jobs_reqhosts AS gjrh
+		$records = db_fetch_assoc("SELECT ghg.clusterid, ghg.groupName, SUM(num_cpus) AS numPEND,
+			NOW() AS last_updated, '1' as present
+			FROM grid_jobs AS gj
+			INNER JOIN grid_jobs_reqhosts AS gjrh
 				ON gjrh.jobid = gj.jobid
 				AND gjrh.clusterid = gj.clusterid
 				AND gjrh.indexid = gj.indexid
 				AND gjrh.submit_time = gj.submit_time
-				INNER JOIN grid_hostgroups AS ghg
+			INNER JOIN grid_hostgroups AS ghg
 				ON ghg.clusterid = gjrh.clusterid
 				AND (ghg.host = gjrh.host OR ghg.groupName = gjrh.host)
-				WHERE gj.stat = 'PEND' $clsql
-				GROUP BY ghg.clusterid, ghg.groupName");
-		}
+			WHERE gj.stat = 'PEND' $clsql
+			GROUP BY ghg.clusterid, ghg.groupName");
 	}
 	db_execute("UPDATE grid_hostgroups_stats SET present=0 WHERE present=1");
 	grid_pump_records($records, "grid_hostgroups_stats", $format, false, $duplicate);
 	db_execute("UPDATE grid_hostgroups_stats SET numPEND=0 WHERE present=0");
-	grid_debug("Updating Host Group Stats - pending jobs - Finish");
-  }
 
 	$format = array("clusterid", "groupName", "memSlotUtil", "slotUtil", "cpuUtil",
 		"last_updated", "present");
@@ -7653,9 +7479,9 @@ function update_group() {
 			SUM(CASE WHEN stat='SSUSP' THEN num_cpus ELSE 0 END) as numSSUSP,
 			SUM(CASE WHEN stat='USUSP' THEN num_cpus ELSE 0 END) as numUSUSP,
 			(SUM(CASE WHEN stat IN ('RUNNING','PROV') AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (stime+utime) ELSE 0 END) / SUM(CASE WHEN stat IN ('RUNNING','PROV') AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (run_time*max_allocated_processes) ELSE 0 END)) * 100 as efficiency,
-			AVG(CASE WHEN stat IN ('RUNNING','PROV') THEN max_memory ELSE NULL END) as avg_mem,
+			AVG(CASE WHEN stat IN ('RUNNING','PROV') THEN max_memory ELSE 0 END) as avg_mem,
 			MAX(CASE WHEN stat IN ('RUNNING','PROV') THEN max_memory ELSE 0 END) as max_mem,
-			AVG(CASE WHEN stat IN ('RUNNING','PROV') THEN max_swap ELSE NULL END) as avg_swap,
+			AVG(CASE WHEN stat IN ('RUNNING','PROV') THEN max_swap ELSE 0 END) as avg_swap,
 			MAX(CASE WHEN stat IN ('RUNNING','PROV') THEN max_swap ELSE 0 END) as max_swap,
 			SUM(cpu_used) as total_cpu,
 			NOW() AS last_updated,
@@ -7713,9 +7539,9 @@ function update_application() {
 		SUM(CASE WHEN stat='PEND' THEN num_cpus ELSE 0 END) as numPEND,
 		SUM(num_cpus) as numJOBS,
 		(SUM(CASE WHEN stat IN ('RUNNING','PROV') AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (stime+utime) ELSE 0 END) / SUM(CASE WHEN stat='RUNNING' AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (run_time*max_allocated_processes) ELSE 0 END)) * 100 as efficiency,
-		AVG(CASE WHEN stat IN ('RUNNING','PROV')  THEN max_memory ELSE NULL END) as avg_mem,
+		AVG(CASE WHEN stat IN ('RUNNING','PROV')  THEN max_memory ELSE 0 END) as avg_mem,
 		MAX(CASE WHEN stat IN ('RUNNING','PROV')  THEN max_memory ELSE 0 END) as max_mem,
-		AVG(CASE WHEN stat IN ('RUNNING','PROV')  THEN max_swap ELSE NULL END) as avg_swap,
+		AVG(CASE WHEN stat IN ('RUNNING','PROV')  THEN max_swap ELSE 0 END) as avg_swap,
 		MAX(CASE WHEN stat IN ('RUNNING','PROV')  THEN max_swap ELSE 0 END) as max_swap,
 		SUM(cpu_used) as total_cpu,
 		NOW() AS last_updated,
@@ -9573,7 +9399,7 @@ function find_archive_jobgraph_rrdfile($clusterid, $jobid, $indexid, $submit_tim
 	if($host_name != null){
 		$file_name .= "_" . $host_name;
 	}
-	if($gpu_id !== null){
+	if($gpu_id != null){
 		$file_name .= "_" . $gpu_id;
 	}
 	$file_name .= ".rrd";
@@ -9628,7 +9454,7 @@ function grid_maint_update_job_rrds($clusterid, $jobid, $indexid, $submit_time, 
 
 		/* update the rrdfiles */
 		if (is_dir($archive_directory)) {
-			if($gpu_id !== null){
+			if($gpu_id != null){
 				$recreate_png = update_job_rrds_gpu("grid_jobs_finished", $archive_directory, $file_base, $clusterid, $jobid, $indexid, $submit_time, $data_class, $rrdtool_pipe, $host_name, $gpu_id);
 			}else if($host_name != null){
 				$recreate_png = update_job_rrds_host("grid_jobs_finished", $archive_directory, $file_base, $clusterid, $jobid, $indexid, $submit_time, $data_class, $rrdtool_pipe, $host_name);
@@ -9672,7 +9498,7 @@ function get_jobgraph_imgele($job, $start_time, $end_time, $rrd_interval,
 	if($host_name != null){
 		$img_base_url .= '&host=' . $host_name;
 	}
-	if($gpu_id !== null){
+	if($gpu_id != null){
 		$img_base_url .= '&gpu_id=' . $gpu_id;
 	}
 	$alt_str = ucfirst($data_class);
@@ -10868,7 +10694,7 @@ function get_jobs_query($table_name, $apply_limits = true, &$jobsquery = '', &$r
 			$sql_where  = 'WHERE ';
 		}
 
-		/* Remove "exactly_match" from job list because it is not a complete design now. By RTC 153954.
+		/*
 		if (isset_request_var('exactly_match') && (get_request_var('exactly_match') == 'true' || get_request_var('exactly_match') == 'on')) {
 			$sql_where_proj = "$table_name.projectName = '" . get_request_var('filter') . "'";
 		} else {
@@ -11380,7 +11206,6 @@ function get_jobs_query($table_name, $apply_limits = true, &$jobsquery = '', &$r
 			}
 		} else {
 			if ($timespan_set) {
-				$jobs_sql_where2 = "";
 				if (strlen($jobs_where)) {
 					$jobs_sql_where1 = $jobs_where . " AND (exec_host='" . get_request_var('exec_host') . "' AND grid_jobs.num_nodes <= 1)";
 					if ($non_single_exechost)
@@ -11391,7 +11216,6 @@ function get_jobs_query($table_name, $apply_limits = true, &$jobsquery = '', &$r
 						$jobs_sql_where2  = "WHERE (grid_jobs_jobhosts.exec_host='" . get_request_var('exec_host') . "' AND grid_jobs.num_nodes > 1)";
 				}
 
-				$jobs_finished_sql_where2 = "";
 				if (strlen($jobs_finished_where)) {
 					$jobs_finished_sql_where1 = $jobs_finished_where . " AND (grid_jobs_finished.exec_host='" . get_request_var('exec_host') . "' AND grid_jobs_finished.num_nodes <= 1)";
 					if ($non_single_exechost)
@@ -11433,7 +11257,6 @@ function get_jobs_query($table_name, $apply_limits = true, &$jobsquery = '', &$r
 				}
 				//print "rowsquery11: $rowsquery<br/>";
 			} else {
-				$sql_where2 = "";
 				if (strlen($sql_where)) {
 					$sql_where1 = $sql_where . " AND (exec_host='" . get_request_var('exec_host') . "' AND grid_jobs.num_nodes <= 1)";
 					if ($non_single_exechost)
@@ -11530,7 +11353,6 @@ function get_jobs_query($table_name, $apply_limits = true, &$jobsquery = '', &$r
 				$jobs_query .= " LIMIT " . ($rows*(get_request_var('page') -1)) . "," . $rows;
 			}
 		} else {
-			$sql_where2 = "";
 			if (strlen($sql_where)) {
 				$sql_where1 = $sql_where . " AND (exec_host='" . get_request_var('exec_host') . "' AND grid_jobs.num_nodes <= 1)";
 				if ($non_single_exechost)
@@ -11917,13 +11739,6 @@ function build_jobs_select_list($table, $reference_table, $full = false, $outer 
 				$fields .= ", $table.clusterid as jobclusterid";
 			}
 		}
-		if (array_key_exists('jobPriority', $jcols)) {
-			/* 
-			 * jobPriority has been added to $fields via the "foreach" above.
-			 * Only add userPriority here.
-			 */
-			$fields .= ", $table.userPriority"; 
-		}
 	}
 
 	//$fields = 'DISTINCT ' . $fields;
@@ -12209,12 +12024,10 @@ function grid_get_rrdcfvalue($ds, $cf, $rrdfile, $start, $end) {
 
 			switch($cf) {
 			case 'MAX':
-				// `number_format_i18n` does not support changing thousands_separator, so we use `number_format` here.
-				return number_format((float)$max,0,'.','');
+				return number_format_i18n((float)$max,0,'.','');
 				break;
 			case 'MIN':
-				// `number_format_i18n` does not support changing thousands_separator, so we use `number_format` here.
-				return number_format((float)$min,0,'.','');
+				return number_format_i18n((float)$min,0,'.','');
 				break;
 			case 'AVERAGE':
 				return $total / $samples;
@@ -12566,8 +12379,7 @@ function create_pending_filter_sqlwhere_ignore() {
 
 	$job_pend_ignore_regexp = read_grid_config_option('general_pending_ignore', true);
 
-	if (isset($job_pend_ignore_regexp) &&
-		strlen($job_pend_ignore_regexp) > 0) {
+	if (strlen($job_pend_ignore_regexp) > 0) {
 		if (strlen($job_pend_proc_sqlwhere_ignore) > 0) {
 			$job_pend_proc_sqlwhere_ignore .= " AND ";
 		}
@@ -12854,7 +12666,7 @@ function get_grid_job_x_rusage_total_rows($jobid, $indexid, $clusterid, $submit_
         	return db_fetch_cell($sql_query);
 	}else{
 		$query  = "";
-		$tables = partition_get_partitions_for_query($tbl_name, date("Y-m-d H:i:s", $submit_time), date("Y-m-d H:i:s"));
+		$tables = partition_get_partitions_for_query($tbl_name, $submit_time, date("Y-m-d H:i:s"));
 
 		if (cacti_sizeof($tables)) {
 			foreach($tables as $table) {
@@ -12920,7 +12732,7 @@ function get_grid_job_hosts($rows) {
 			return $job_hosts;
 	} else {
 		$query  = "";
-		$tables = partition_get_partitions_for_query("grid_jobs_host_rusage", date("Y-m-d H:i:s", get_request_var('submit_time')), date("Y-m-d H:i:s"));
+		$tables = partition_get_partitions_for_query("grid_jobs_host_rusage", get_request_var('submit_time'), date("Y-m-d H:i:s"));
 
 		if (cacti_sizeof($tables)) {
 			foreach ($tables as $table) {
@@ -12964,24 +12776,24 @@ function get_grid_job_hosts_rraarchive($job, $row_limit, $pageno, &$total_rows =
 function get_grid_job_gpus($row_limit){
 	$sql_params = array();
 	if (read_config_option("grid_partitioning_enable") == "") {
-		$sql_query = "SELECT host, gpu_id"
-			. " FROM grid_jobs_gpu_rusage"
-			. " WHERE jobid=?"
-			. " AND indexid=?"
-			. " AND submit_time=?"
-			. " AND clusterid=?"
-			. " GROUP BY host, gpu_id";
-		$sql_params[] = get_request_var('jobid');
-		$sql_params[] = get_request_var('indexid');
-		$sql_params[] = date("Y-m-d H:i:s", get_request_var('submit_time'));
-		$sql_params[] = get_request_var('clusterid');
+        	$sql_query = "SELECT host, gpu_id"
+	        	. " FROM grid_jobs_gpu_rusage"
+        		. " WHERE jobid=" . $_REQUEST["jobid"]
+        		. " AND indexid=" . $_REQUEST["indexid"]
+        		. " AND submit_time='" . date("Y-m-d H:i:s", $_REQUEST["submit_time"]) . "'"
+        		. " AND clusterid=" . $_REQUEST["clusterid"]
+        		. " GROUP BY host, gpu_id";
+		$sql_params[] = $_REQUEST['jobid'];
+		$sql_params[] = $_REQUEST['indexid'];
+		$sql_params[] = date("Y-m-d H:i:s", $_REQUEST['submit_time']);
+		$sql_params[] = $_REQUEST['clusterid'];
 
-		$sql_query .= " LIMIT " . ($row_limit*(get_request_var('page')-1)) . "," . $row_limit;
-		$job_gpus = db_fetch_assoc_prepared($sql_query, $sql_params);
+        	$sql_query .= " LIMIT " . ($row_limit*($_REQUEST["page"]-1)) . "," . $row_limit;
+        	$job_gpus = db_fetch_assoc_prepared($sql_query, $sql_params);
         	return $job_gpus;
 	}else{
 		$query  = "";
-		$tables = partition_get_partitions_for_query("grid_jobs_gpu_rusage", date("Y-m-d H:i:s", get_request_var('submit_time')), date("Y-m-d H:i:s"));
+		$tables = partition_get_partitions_for_query("grid_jobs_gpu_rusage", $_REQUEST["submit_time"], date("Y-m-d H:i:s"));
 
 		if (cacti_sizeof($tables)) {
 			foreach($tables as $table) {
@@ -12995,12 +12807,12 @@ function get_grid_job_gpus($row_limit){
         				. " AND indexid=?"
         				. " AND submit_time=?"
         				. " AND clusterid=?)";
-				$sql_params[] = get_request_var('jobid');
-				$sql_params[] = get_request_var('indexid');
-				$sql_params[] = date("Y-m-d H:i:s", get_request_var('submit_time'));
-				$sql_params[] = get_request_var('clusterid');
+				$sql_params[] = $_REQUEST['jobid'];
+				$sql_params[] = $_REQUEST['indexid'];
+				$sql_params[] = date("Y-m-d H:i:s", $_REQUEST['submit_time']);
+				$sql_params[] = $_REQUEST['clusterid'];
 			}
-			$sql_query = " $query GROUP BY host, gpu_id LIMIT " . ($row_limit*(get_request_var('page')-1)) . "," . $row_limit;
+        	$sql_query = " $query GROUP BY host, gpu_id LIMIT " . ($row_limit*($_REQUEST["page"]-1)) . "," . $row_limit;
         	$job_gpus = db_fetch_assoc_prepared($sql_query, $sql_params);
         	return $job_gpus;
 		}else{
@@ -13498,7 +13310,7 @@ print '</tr></table>';
 					<?php print __('Job ID', 'grid');?>
 				</td>
 				<td width='35%'>
-					<?php print $job['jobid']; if ($job['indexid'] > 0) print '[' . $job['indexid'] . ']'; if (isset($job['remote_jobid']) && isset($job['remote_clusterid'])) print ' (' . $job['remote_jobid'] . ')'; ?>
+					<?php print $job['jobid']; if ($job['indexid'] > 0) print '[' . $job['indexid'] . ']'; if (isset($job['remote_jobid']) && isset($job['remote_clusterid'])) print ' (' . "<a class='pic linkEditMain nowrap' title='" . html_escape($job['remote_jobid']) . "' href='" . html_escape($job_page . '?action=viewjob&clusterid=' . $job['remote_clusterid'] . '&indexid=0&jobid=' . $job['remote_jobid'] . '&submit_time=' . strtotime($job['submit_time'])) . "' class='linkEditMain'>" . $job['remote_jobid'] . '</a>)'; ?>
 				</td>
 				<td width='15%'>
 					<?php print __('Status', 'grid');?>
@@ -13536,7 +13348,7 @@ print '</tr></table>';
 				<td width='15%'>
 					<?php print __('Project', 'grid');?>
 				</td>
-				<td width='35%' style="word-break:break-all;padding-right:20px">
+				<td width='35%'>
 					<?php
 					$proj_showname = api_plugin_hook_function("job_project_name_show", $job);
 					if (!is_array($proj_showname) && ($proj_showname != $job['projectName'])) {
@@ -13548,7 +13360,7 @@ print '</tr></table>';
 				<td width='15%'>
 					<?php print __('License Project', 'grid');?>
 				</td>
-				<td width='35%' style="word-break:break-all;padding-right:20px">
+				<td width='35%'>
 					<?php grid_print_metadata('simple', 'license-project', $job['clusterid'], $job['licenseProject']); ?>
 				</td>
 			</tr>
@@ -14398,7 +14210,7 @@ print '</tr></table>';
 					<?php print display_job_memory($job['max_memory'],3);?>
 				</td>
 				<td width='16%'>
-					<?php print __('Job Avg Efficiency', 'grid');?>
+					<?php print __('Job Efficiency', 'grid');?>
 				</td>
 				<td width='20%'>
 					<?php print display_job_effic($job["efficiency"], $job["run_time"], 2);?>
@@ -14495,14 +14307,8 @@ print '</tr></table>';
 				<td width='16%'>
 					<?php print __('Max V.Memory Size', 'grid');?>
 				</td>
-				<td width='16%'>
+				<td colspan='3' width='52%'>
 					<?php print display_job_memory($job['max_swap'],3);?>
-				</td>
-				<td width='16%'>
-					<?php print __('Mem Peak Efficiency', 'grid');?>
-				</td>
-				<td width='20%'>
-					<?php print display_job_effic($job["memEfficiency"], $job["run_time"], 2);?>
 				</td>
 			</tr>
 
@@ -14522,29 +14328,6 @@ print '</tr></table>';
 					<?php print ((substr_count($job['end_time'], '0000')) ? "-" : $job['end_time']);?>
 				</td>
 			</tr>
-
-			<?php }
-			if (($job['stat'] != "PEND") || ($job['stat'] != "PSUSP")) {
-				form_alternate_row();?>
-					<td width='16%'>
-						<?php print __('CPU Peak', 'grid');?>
-					</td>
-					<td width='16%'>
-						<?php print $job["cpuPeak"];?>
-					</td>
-					<td width='16%'>
-						<?php print __('CPU Peak Duration', 'grid');?>
-					</td>
-					<td width='16%'>
-						<?php print display_job_time($job["cpuPeakReachedTime"]);?>
-					</td>
-					<td width='16%'>
-						<?php print __('Job Peak Efficiency', 'grid');?>
-					</td>
-					<td width='20%'>
-						<?php print display_job_effic($job["peakEfficiency"], $job["run_time"], 2);?>
-					</td>
-				</tr>
 			<?php }
 
 			if ((isset($job['exceptMask']) && $job['exceptMask'] > 0) || (isset($job['stat']) && isset($job['exitInfo']) && $job['stat'] == "EXIT" && $job['exitInfo'] >= 0)) {
@@ -14656,7 +14439,7 @@ print '</tr></table>';
 					$obj_cnt = 2;
 					$num_g_per_obj = 4;
 
-					$total_rows=get_grid_job_hosts_total_rows(get_request_var('jobid'), get_request_var('indexid'), get_request_var('clusterid'), get_request_var('submit_time'));
+					$total_rows=get_grid_job_hosts_total_rows($_REQUEST["jobid"], $_REQUEST["indexid"], $_REQUEST["clusterid"], $_REQUEST["submit_time"]);
 					if($total_rows >0){
 						$grid_job_hosts = get_grid_job_hosts($obj_cnt);
 					}
@@ -14732,7 +14515,7 @@ print '</tr></table>';
 					$obj_cnt = 2;
 					$num_g_per_obj = 6;
 
-					$total_rows=get_grid_job_gpus_total_rows(get_request_var('jobid'), get_request_var('indexid'), get_request_var('clusterid'), get_request_var('submit_time'));
+					$total_rows=get_grid_job_gpus_total_rows($_REQUEST["jobid"], $_REQUEST["indexid"], $_REQUEST["clusterid"], $_REQUEST["submit_time"]);
 					if($total_rows > 0){
 						$grid_job_gpus = get_grid_job_gpus($obj_cnt);
 					}
@@ -15233,13 +15016,6 @@ function build_job_display_array($jobs_page = '') {
 			'dbname'  => 'show_state_changes',
 			'sort'    => 'DESC'
 		),
-		'jobPriority' => array(
-			'display' => __('J(U) Pri', 'grid'),
-			'dbname'  => 'show_job_user_priority',
-			'tip'     => __('Job Priority (User Priority)', 'grid'),
-			'align'	  => 'right',
-			'sort'    => 'ASC',
-		),
 		'nosort0' => array(
 			'display' => __('Nice', 'grid'),
 			'dbname'  => 'show_nice',
@@ -15329,7 +15105,6 @@ function build_job_display_array($jobs_page = '') {
 		),
 		'num_gpus' => array(
 			'display' => __('Num GPUs', 'grid'),
-			'tip'     => __('If this job is running on an NVIDIA MIG (Multi-Instance GPU), shows the number of MIG devices.', 'grid'),
 			'dbname'  => 'show_gpus',
 			'align'	  => 'right',
 			'sort'    => 'DESC'
@@ -15493,9 +15268,6 @@ function grid_job_export_display_array() {
 	if (read_grid_config_option('export_command') == 'on') {
 		$display_array[] .= 'command';
 	}
-	if (read_grid_config_option('export_working_directory') == 'on') {
-		$display_array[] .= 'cwd';
-	}
 	if (read_grid_config_option('export_error_file') == 'on') {
 		$display_array[] .= 'errFile';
 	}
@@ -15614,12 +15386,6 @@ function grid_job_export_display_array() {
 	if (read_grid_config_option('export_jgroup') == 'on') {
 		$display_array[] .= 'jobGroup';
 	}
-	if (read_grid_config_option('export_job_priority_from_job_detail') == 'on') {
-		$display_array[] .= 'jobPriority';
-	}
-	if (read_grid_config_option('export_user_priority_from_job_detail') == 'on') {
-		$display_array[] .= 'userPriority';
-	}
 
 	$display_array[] .= 'mem_used';
 	$display_array[] .= 'swap_used';
@@ -15724,11 +15490,6 @@ function grid_jobs_build_export_row($job, &$queue_nice_levels) {
 	}
 	if (read_grid_config_option("export_command") == "on") {
 		$cmdstring = $job["command"];
-		$cmdstring = str_replace('"','""',$cmdstring);
-		$xport_row .= $cmdstring . '","';
-	}
-	if (read_grid_config_option("export_working_directory") == "on") {
-		$cmdstring = $job["cwd"];
 		$cmdstring = str_replace('"','""',$cmdstring);
 		$xport_row .= $cmdstring . '","';
 	}
@@ -15869,12 +15630,6 @@ function grid_jobs_build_export_row($job, &$queue_nice_levels) {
 	}
 	if (read_grid_config_option("export_jgroup") == "on") {
 		$xport_row .= $job["jobGroup"] . '","';
-	}
-	if (read_grid_config_option("export_job_priority_from_job_detail") == "on") {
-		$xport_row .= $job["jobPriority"] . '","';
-	}
-	if (read_grid_config_option("export_user_priority_from_job_detail") == "on") {
-		$xport_row .= $job["userPriority"] . '","';
 	}
 
 	$xport_row .= $job["mem_used"] . '","';
@@ -16720,10 +16475,10 @@ function jobGraphFilter($job, $job_page) {
 									}
 								}
 								if($total_hrusage_rows <= 0){
-									$total_hrusage_rows = get_grid_job_hosts_total_rows(get_request_var('jobid'), get_request_var('indexid'), get_request_var('clusterid'), get_request_var('submit_time'));
+									$total_hrusage_rows = get_grid_job_hosts_total_rows($_REQUEST["jobid"], $_REQUEST["indexid"], $_REQUEST["clusterid"], $_REQUEST["submit_time"]);
 								}
 								if($total_grusage_rows <= 0){
-									$total_grusage_rows = get_grid_job_gpus_total_rows(get_request_var('jobid'), get_request_var('indexid'), get_request_var('clusterid'), get_request_var('submit_time'));
+									$total_grusage_rows = get_grid_job_gpus_total_rows($_REQUEST["jobid"], $_REQUEST["indexid"], $_REQUEST["clusterid"], $_REQUEST["submit_time"]);
 								}
 							}
 							if($job['stat'] == 'PEND' || ($total_hrusage_rows <= 0 && $total_grusage_rows <= 0)){
@@ -20180,13 +19935,6 @@ function display_job_results($jobs_page, $table_name, $job_results, $rows, $tota
 
 			form_selectable_cell_visible(jc($job, 'stat_changes'), 'show_state_changes', $row_id, 'right');
 
-			$job_user_priority = '-' ;
-			if (isset($job['jobPriority']) && 
-				isset($job['userPriority'])) {
-				$job_user_priority = number_format_i18n($job['jobPriority']) . ' (' . number_format_i18n($job['userPriority']) . ')';
-			}
-			form_selectable_cell_visible($job_user_priority, 'show_job_user_priority', $row_id, 'right');
-	
 			if (isset($queue_nice_levels[$job['clusterid'] . '-' . $job['queue']])) {
 				form_selectable_cell_visible($queue_nice_levels[$job['clusterid'].'-'.$job['queue']], 'show_nice', $row_id, 'right');
 			} else {
@@ -20615,24 +20363,4 @@ function grid_get_lsf_conf_variable_value($lsf_envdir, $arg) {
 	}
 
 	return '';
-}
-
-/**
- * Remove duplicate entries from a multi-dimensional array
- *
- * @param array $input original multi-dimensional array
- * @return array multi-dimensional array without duplicates
- */
-function array_unique_multidimensional($input)
-{
-    if (empty($input)) return $input;
-    $serialized = array_map('serialize', $input);
-    $unique = array_unique($serialized);
-    return array_intersect_key($input, $unique);
-}
-
-function isEmptyTable($table_name) {
-        $rows_in_table = db_fetch_row('SELECT * FROM ' . $table_name . ' LIMIT 1');
-        if (cacti_sizeof($rows_in_table)) return false;
-        return true;
 }

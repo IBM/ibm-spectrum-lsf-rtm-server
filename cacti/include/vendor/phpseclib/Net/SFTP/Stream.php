@@ -1,4 +1,5 @@
 <?php
+// $Id$
 
 /**
  * SFTP Stream Wrapper

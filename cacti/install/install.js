@@ -1,6 +1,7 @@
+// $Id$
 /*
   +-------------------------------------------------------------------------+
-  | Copyright (C) 2004-2024 The Cacti Group                                 |
+  | Copyright (C) 2004-2023 The Cacti Group                                 |
   |                                                                         |
   | This program is free software; you can redistribute it and/or           |
   | modify it under the terms of the GNU General Public License             |
@@ -11,11 +12,6 @@
   | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
   | GNU General Public License for more details.                            |
-  +-------------------------------------------------------------------------+
-  | Cacti: The Complete RRDTool-based Graphing Solution                     |
-  +-------------------------------------------------------------------------+
-  | This code is designed, written, and maintained by the Cacti Group. See  |
-  | about.php and/or the AUTHORS file for specific developer information.   |
   +-------------------------------------------------------------------------+
   | http://www.cacti.net/                                                   |
   +-------------------------------------------------------------------------+
@@ -203,7 +199,7 @@ function getFieldData(fields, fieldData) {
 				}
 
 				$('input[name^="' + prefix + '"]').each(function(index,element) {
-					fieldData[element.id] = $(element).is(':checked');
+					fieldData[element.id] =$(element).is(':checked');
 				});
 			}
 		} else {
@@ -373,7 +369,7 @@ function processStepWelcome(StepData) {
 
 				$( "<span>", {
 					style: item.element.attr( "data-style" ),
-					"class": "fi fis " + item.element.attr( "data-class" )
+					"class": "flag-icon flag-icon-squared " + item.element.attr( "data-class" )
 				}).appendTo( wrapper );
 
 				return li.append( wrapper ).appendTo( ul );
@@ -722,13 +718,6 @@ function performStep(installStep, suppressRefresh, forceReload) {
 				processStepComplete(data.Step, data.StepData);
 			}
 
-			$('input[id^="chk_template"]').each(function() {
-				if ($(this).is(':checked')) {
-					console.log('checked');
-					$(this).closest('tr').addClass('selected');
-				}
-			});
-
 			$(function () {
 				var focusedElement;
 				$(document).on('focus', 'input', function () {
@@ -763,8 +752,6 @@ function performStep(installStep, suppressRefresh, forceReload) {
 						}
 					}
 				}
-
-				applySelectorVisibilityAndActions();
 			});
 		})
 		.fail(function(data) {

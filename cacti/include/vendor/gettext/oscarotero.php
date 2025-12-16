@@ -1,4 +1,5 @@
 <?php
+// $Id$
 // Interfaces first
 require_once(__DIR__ . '/src/TranslatorInterface.php');
 require_once(__DIR__ . '/src/Extractors/ExtractorInterface.php');

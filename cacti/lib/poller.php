@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -442,9 +438,9 @@ function update_reindex_cache($host_id, $data_query_id) {
 					$assert_value = $index['field_value'];
 
 					if ($data_query_type == DATA_INPUT_TYPE_SNMP_QUERY) {
-						$recache_stack[] = "($host_id, $data_query_id, " . POLLER_ACTION_SNMP . ", '=', " . db_qstr($assert_value) . ', ' . db_qstr(($data_query_xml['fields'][$data_query['sort_field']]['source'] == 'index') ? $data_query_xml['oid_index'] . '.' . $index['snmp_index']:$data_query_xml['fields'][$data_query['sort_field']]['oid'] . '.' . $index['snmp_index']) . ", 1)";
+						$recache_stack[] = "($host_id, $data_query_id, " . POLLER_ACTION_SNMP . ", '=', " . db_qstr($assert_value) . ', ' . db_qstr(($data_query_xml['fields'][$data_query['sort_field']]['source'] == 'index') ? $data_query_xml['oid_index']:$data_query_xml['fields'][$data_query['sort_field']]['oid'] . '.' . $index['snmp_index']) . ", 1)";
 					} elseif ($data_query_type == DATA_INPUT_TYPE_SCRIPT_QUERY) {
-						$recache_stack[] = '(' . $host_id . ', ' . $data_query_id . ', ' . POLLER_ACTION_SCRIPT . ", '=', " . db_qstr($assert_value) . ', ' . db_qstr(get_script_query_path((isset($data_query_xml['arg_prepend']) ? $data_query_xml['arg_prepend'] . ' ': '') . $data_query_xml['arg_get'] . ' ' . $data_query_xml['fields'][$data_query['sort_field']]['query_name'] . ' "' . $index['snmp_index'] . '"', $data_query_xml['script_path'], $host_id)) . ", 1)";
+						$recache_stack[] = '(' . $host_id . ', ' . $data_query_id . ', ' . POLLER_ACTION_SCRIPT . ", '=', " . db_qstr($assert_value) . ', ' . db_qstr(get_script_query_path((isset($data_query_xml['arg_prepend']) ? $data_query_xml['arg_prepend'] . ' ': '') . $data_query_xml['arg_get'] . ' ' . $data_query_xml['fields'][$data_query['sort_field']]['query_name'] . ' ' . $index['snmp_index'], $data_query_xml['script_path'], $host_id)) . ", 1)";
 					}
 				}
 			}
@@ -568,17 +564,15 @@ function process_poller_output(&$rrdtool_pipe, $remainder = 0) {
 		/* create an array keyed off of each .rrd file */
 		foreach ($results as $item) {
 			/* trim the default characters, but add single and double quotes */
-			$value            = $item['output'];
-			$unix_time        = $item['unix_time'];
-			$rrd_path         = $item['rrd_path'];
-			$rrd_name         = $item['rrd_name'];
-			$local_data_id    = $item['local_data_id'];
-			$data_template_id = $item['data_template_id'];
-			$rrd_tmpl         = '';
+			$value     = $item['output'];
+			$unix_time = $item['unix_time'];
+			$rrd_path  = $item['rrd_path'];
+			$rrd_name  = $item['rrd_name'];
+			$rrd_tmpl  = '';
 
-			$rrd_update_array[$rrd_path]['local_data_id'] = $local_data_id;
+			$rrd_update_array[$rrd_path]['local_data_id'] = $item['local_data_id'];
 
-			if ((is_numeric($value)) || ($value == 'U' && $rrd_name != '')) {
+			if ((is_numeric($value)) || ($value == 'U')) {
 				/* single one value output */
 				$rrd_update_array[$rrd_path]['times'][$unix_time][$rrd_name] = $value;
 			} elseif (is_hexadecimal($value)) {
@@ -606,92 +600,50 @@ function process_poller_output(&$rrdtool_pipe, $remainder = 0) {
 				/* multiple value output */
 				$values = preg_split('/\s+/', $value);
 
-				if ($data_template_id > 0) {
-					$unused_data_source_names = array_rekey(
-						db_fetch_assoc_prepared('SELECT DISTINCT dtr.data_source_name, dtr.data_source_name
-							FROM data_template_rrd AS dtr
-							LEFT JOIN graph_templates_item AS gti
-							ON dtr.id = gti.task_item_id
-							WHERE dtr.local_data_id = ?
-							AND gti.task_item_id IS NULL',
-							array($local_data_id)),
-						'data_source_name', 'data_source_name'
-					);
-				} else {
-					$unused_data_source_names = array();
-				}
-
 				foreach($values as $value) {
 					$matches = explode(':', $value);
 
 					if (cacti_sizeof($matches) == 2) {
+						$fields = array();
+
 						if (isset($rrd_field_names[$item['data_template_id'] . '_' . $matches[0]])) {
-							$field = $rrd_field_names[$item['data_template_id'] . '_' . $matches[0]]['data_source_name'];
+							$field_map = $rrd_field_names[$item['data_template_id'] . '_' . $matches[0]]['data_source_name'];
 
-							if (cacti_sizeof($unused_data_source_names) && isset($unused_data_source_names[$field])) {
-								continue;
-							}
-
-							cacti_log("Parsed MULTI output field '" . $matches[0] . ':' . $matches[1] . "' [map " . $matches[0] . '->' . $field . ']' , true, 'POLLER', ($debug ? POLLER_VERBOSITY_NONE:POLLER_VERBOSITY_HIGH));
-
-							if (is_numeric($matches[1]) || ($matches[1] == 'U')) {
-								$rrd_update_array[$rrd_path]['times'][$unix_time][$field] = $matches[1];
-							} elseif ((function_exists('is_hexadecimal')) && (is_hexadecimal($matches[1]))) {
-								$rrd_update_array[$rrd_path]['times'][$unix_time][$field] = hexdec($matches[1]);
+							if (strpos($field_map, ',') !== false) {
+								$fields = explode(',', $field_map);
 							} else {
-								$rrd_update_array[$rrd_path]['times'][$unix_time][$field] = 'U';
+								$fields[] = $field_map;
 							}
 
-							$rrd_update_array[$rrd_path]['times'][$unix_time][$field] = $matches[1];
+							foreach($fields as $field) {
+								cacti_log("Parsed MULTI output field '" . $matches[0] . ':' . $matches[1] . "' [map " . $matches[0] . '->' . $field . ']' , true, 'POLLER', ($debug ? POLLER_VERBOSITY_NONE:POLLER_VERBOSITY_HIGH));
+								$rrd_update_array[$rrd_path]['times'][$unix_time][$field] = $matches[1];
 
-							$rrd_tmpl .= ($rrd_tmpl != '' ? ':':'') . $field;
+								$rrd_tmpl .= ($rrd_tmpl != '' ? ':':'') . $field;
+							}
 
 							$rrd_update_array[$rrd_path]['template'] = $rrd_tmpl;
 						} else {
 							// Handle data source without a data template
-							if ($data_template_id > 0) {
-								$nt_rrd_field_names = array_rekey(
-									db_fetch_assoc_prepared('SELECT DISTINCT dtr.data_source_name, dif.data_name
-										FROM graph_templates_item AS gti
-										INNER JOIN data_template_rrd AS dtr
-										ON gti.task_item_id = dtr.id
-										INNER JOIN data_input_fields AS dif
-										ON dtr.data_input_field_id = dif.id
-										WHERE dtr.local_data_id = ?',
-										array($local_data_id)),
-									'data_name', 'data_source_name'
-								);
-							} else {
-								$nt_rrd_field_names = array_rekey(
-									db_fetch_assoc_prepared('SELECT DISTINCT dtr.data_source_name, dif.data_name
-										FROM data_template_rrd AS dtr
-										INNER JOIN data_input_fields AS dif
-										ON dtr.data_input_field_id = dif.id
-										WHERE dtr.local_data_id = ?',
-										array($local_data_id)),
-									'data_name', 'data_source_name'
-								);
-							}
+							$nt_rrd_field_names = array_rekey(
+								db_fetch_assoc_prepared('SELECT DISTINCT dtr.data_source_name, dif.data_name
+									FROM graph_templates_item AS gti
+									INNER JOIN data_template_rrd AS dtr
+									ON gti.task_item_id = dtr.id
+									INNER JOIN data_input_fields AS dif
+									ON dtr.data_input_field_id=dif.id
+									WHERE dtr.local_data_id = ?',
+									array($item['local_data_id'])),
+								'data_name', 'data_source_name'
+							);
 
 							if (cacti_sizeof($nt_rrd_field_names)) {
 								if (isset($nt_rrd_field_names[$matches[0]])) {
-									$field = $nt_rrd_field_names[$matches[0]];
+									cacti_log("Parsed MULTI output field '" . $matches[0] . ':' . $matches[1] . "' [map " . $matches[0] . '->' . $nt_rrd_field_names[$matches[0]] . ']' , true, 'POLLER', ($debug ? POLLER_VERBOSITY_NONE:POLLER_VERBOSITY_HIGH));
 
-									if (cacti_sizeof($unused_data_source_names) && isset($unused_data_source_names[$field])) {
-										continue;
-									}
+									$rrd_update_array[$item['rrd_path']]['times'][$unix_time][$nt_rrd_field_names[$matches[0]]] = $matches[1];
 
-									cacti_log("Parsed MULTI output field '" . $matches[0] . ':' . $matches[1] . "' [map " . $matches[0] . '->' . $field . ']' , true, 'POLLER', ($debug ? POLLER_VERBOSITY_NONE:POLLER_VERBOSITY_HIGH));
-
-									if (is_numeric($matches[1]) || ($matches[1] == 'U')) {
-										$rrd_update_array[$rrd_path]['times'][$unix_time][$field] = $matches[1];
-									} elseif ((function_exists('is_hexadecimal')) && (is_hexadecimal($matches[1]))) {
-										$rrd_update_array[$rrd_path]['times'][$unix_time][$field] = hexdec($matches[1]);
-									} else {
-										$rrd_update_array[$rrd_path]['times'][$unix_time][$field] = 'U';
-									}
-
-									$rrd_tmpl .= ($rrd_tmpl != '' ? ':':'') . $field;
+									$rrd_tmpl .= ($rrd_tmpl != '' ? ':':'') . $nt_rrd_field_names[$matches[0]];
 								}
 							}
 
@@ -699,62 +651,6 @@ function process_poller_output(&$rrdtool_pipe, $remainder = 0) {
 						}
 					}
 				}
-			} else {
-				if ($data_template_id > 0) {
-					$unused_data_source_names = array_rekey(
-						db_fetch_assoc_prepared('SELECT DISTINCT dtr.data_source_name, dtr.data_source_name
-							FROM data_template_rrd AS dtr
-							LEFT JOIN graph_templates_item AS gti
-							ON dtr.id = gti.task_item_id
-							WHERE dtr.local_data_id = ?
-							AND gti.task_item_id IS NULL',
-							array($local_data_id)),
-						'data_source_name', 'data_source_name'
-					);
-
-					$nt_rrd_field_names = array_rekey(
-						db_fetch_assoc_prepared('SELECT DISTINCT dtr.data_source_name, dif.data_name
-							FROM graph_templates_item AS gti
-							INNER JOIN data_template_rrd AS dtr
-							ON gti.task_item_id = dtr.id
-							INNER JOIN data_input_fields AS dif
-							ON dtr.data_input_field_id = dif.id
-							WHERE dtr.local_data_id = ?',
-							array($local_data_id)),
-						'data_name', 'data_source_name'
-					);
-				} else {
-					$unused_data_source_names = array();
-
-					$nt_rrd_field_names = array_rekey(
-						db_fetch_assoc_prepared('SELECT DISTINCT dtr.data_source_name, dif.data_name
-							FROM data_template_rrd AS dtr
-							INNER JOIN data_input_fields AS dif
-							ON dtr.data_input_field_id = dif.id
-							WHERE dtr.local_data_id = ?',
-							array($local_data_id)),
-						'data_name', 'data_source_name'
-					);
-				}
-
-				$expected = '';
-
-				if (cacti_sizeof($nt_rrd_field_names)) {
-					foreach($nt_rrd_field_names as $field) {
-						if (cacti_sizeof($unused_data_source_names) && isset($unused_data_source_names[$field])) {
-							continue;
-						}
-
-						$expected .= ($expected != '' ? ' ':'') . "$field:value";
-
-						$rrd_update_array[$rrd_path]['times'][$unix_time][$field] = 'U';
-						$rrd_tmpl .= ($rrd_tmpl != '' ? ':':'') . $field;
-					}
-
-					$rrd_update_array[$rrd_path]['template'] = $rrd_tmpl;
-				}
-
-				cacti_log(sprintf('WARNING: Invalid output! MULTI DS[%d] Encountered [%s] Expected[%s]', $item['local_data_id'], $value, $expected), false, 'POLLER');
 			}
 
 			/* fallback values */
@@ -1919,26 +1815,11 @@ function replicate_out_table($conn, &$data, $table, $remote_poller_id, $truncate
 
 		replicate_log('INFO: Table ' . $table . ' Replicated to Remote Poller ' . $remote_poller_id . ' With ' . $rows_done . ' Rows Updated', $level);
 	} else {
-		if (!db_table_exists($table, false, $conn)) {
-			replicate_log('NOTE: Replicate Out Detected a missing remote table for ' . $table, $level);
-
-			$create = db_fetch_row('SHOW CREATE TABLE ' . $table);
-
-			if (isset($create["CREATE TABLE `$table`"]) || isset($create['Create Table'])) {
-				replicate_log('NOTE: Replication Creating Remote Table Structure for ' . $table, $level);
-				db_execute('DROP TABLE IF EXISTS ' . $table, true, $conn);
-
-				if (isset($create["CREATE TABLE `$table`"])) {
-					db_execute($create["CREATE TABLE `$table`"], true, $conn);
-				} else {
-					db_execute($create['Create Table'], true, $conn);
-				}
-			}
-		} else {
-			replicate_log('INFO: Table ' . $table . ' Not Replicated to Remote Poller ' . $remote_poller_id . ' Due to No Rows Found', $level);
-
+		if (db_table_exists($table, true, $conn)) {
 			db_execute("TRUNCATE TABLE $table", true, $conn);
 		}
+
+		replicate_log('INFO: Table ' . $table . ' Not Replicated to Remote Poller ' . $remote_poller_id . ' Due to No Rows Found', $level);
 	}
 }
 
@@ -1985,7 +1866,6 @@ function poller_push_reindex_data_to_poller($device_id = 0, $data_query_id = 0, 
 	$sql_params1 = array();
 	$sql_where   = '';
 	$sql_where1  = '';
-	$sql_where2  = '';
 
 	if ($device_id > 0) {
 		$sql_where  .= 'WHERE host_id = ?';
@@ -1993,14 +1873,14 @@ function poller_push_reindex_data_to_poller($device_id = 0, $data_query_id = 0, 
 
 		$sql_params[]  = $device_id;
 		$sql_params1[] = $device_id;
+
+		$sql_params[]  = $data_query_id;
+		$sql_params1[] = $data_query_id;
 	}
 
 	if ($data_query_id > 0) {
 		$sql_where  .= ($sql_where  != '' ? ' AND':'WHERE') . ' snmp_query_id = ?';
 		$sql_where1 .= ($sql_where1 != '' ? ' AND':'WHERE') . ' snmp_query_id = ?';
-
-		$sql_params[]  = $data_query_id;
-		$sql_params1[] = $data_query_id;
 	}
 
 	// Give the snmp query up to an hour to run
@@ -2010,15 +1890,14 @@ function poller_push_reindex_data_to_poller($device_id = 0, $data_query_id = 0, 
 		$sql_params);
 
 	if (!$force) {
-		$sql_where2    = $sql_where1 . ($sql_where1 != '' ? ' AND':'WHERE') . ' UNIX_TIMESTAMP(last_updated) > ?';
-		$sql_params2   = $sql_params1;
-		$sql_params2[] = $min_reindex_cache;
+		$sql_where1   .= ($sql_where1 != '' ? ' AND':'WHERE') . ' UNIX_TIMESTAMP(last_updated) > ?';
+		$sql_params1[] = $min_reindex_cache;
 
 		$recache_hosts = array_rekey(
 			db_fetch_assoc_prepared("SELECT DISTINCT host_id
 				FROM host_snmp_cache
-				$sql_where2",
-				$sql_params2),
+				$sql_where1",
+				$sql_params1),
 			'host_id', 'host_id'
 		);
 	} else {

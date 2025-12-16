@@ -2,8 +2,8 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
- | Copyright IBM Corp. 2017, 2024                                          |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
+ | Copyright IBM Corp. 2017, 2023                                          |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -61,59 +61,6 @@ function rtm_custom_password(){
 	$secpass_tooltip .= $secpass_body;
 
 	$selectedTheme = get_selected_theme();
-
-	if (isset_request_var('ref')) {
-		$ref_parts   = parse_url(get_nfilter_request_var('ref'));
-		$valid       = true;
-
-		if (isset($ref_parts['user']) || isset($ref_parts['pass'])) {
-			$valid = false;
-		} elseif (!isset($ref_parts['host'])) {
-			$value = true;
-		} elseif (isset($ref_parts['host'])) {
-			$server_addr = $_SERVER['SERVER_ADDR'];
-			if (!filter_var($_SERVER['SERVER_NAME'], FILTER_VALIDATE_IP)) {
-				$server_info = dns_get_record($_SERVER['SERVER_NAME'], DNS_ANY);
-				$server_ref  = gethostbyname($ref_parts['host']);
-
-				if ($server_ref != $server_addr) {
-					$valid = false;
-				}
-
-				if (!$valid && sizeof($server_info)) {
-					foreach($server_info as $record) {
-						if (isset($record['host']) && $record['host'] == $server_ref) {
-							$valid = true;
-							break;
-						} elseif (isset($record['target']) && $record['target'] == $server_ref) {
-							$valid = true;
-							break;
-						} elseif (isset($record['ip']) && $record['ip'] == $server_addr) {
-							$valid = true;
-							break;
-						}
-					}
-				}
-			} else {
-				$server_ip   = gethostbyname($_SERVER['SERVER_NAME']);
-				$server_ref  = gethostbyname($ref_parts['host']);
-				if ($server_ip == $server_ref) {
-					$valid = true;
-				}
-			}
-		} else {
-			$valid = false;
-		}
-
-		if (!$valid) {
-			cacti_log('WARNING: User attempted to access RTM from unkonwn URL', false, 'AUTH');
-
-			raise_message('problems_with_page', __('There are problems with the Change Password page.  Contact your RTM administrator right away.'), MESSAGE_LEVEL_ERROR);
-			header('Location:index.php');
-			exit;
-		}
-	}
-
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -128,7 +75,7 @@ function rtm_custom_password(){
 			<legend><?php print RTM_BRAND_NAME_BOLD;?><span class="logo-area"> <?php print RTM_PRODUCT_NAME . " " . RTM_VERSION;?></span></legend>
 			<form name='login' method='post' action='<?php print get_current_page();?>'>
 				<input type='hidden' name='action' value='changepassword'>
-				<input type='hidden' name='ref' value='<?php print html_escape_request_var('ref'); ?>'>
+				<input type='hidden' name='ref' value='<?php print html_escape(get_request_var('ref')); ?>'>
 				<input type='hidden' name='name' value='<?php print isset($user['username']) ? html_escape($user['username']) : '';?>'>
 				<div class='loginTitle'>
 <?php

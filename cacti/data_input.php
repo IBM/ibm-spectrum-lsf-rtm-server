@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -77,9 +73,54 @@ switch (get_request_var('action')) {
 		break;
 }
 
-/**
- * form_save - Saves the data input method
- */
+/* --------------------------
+    The Save Function
+   -------------------------- */
+
+function duplicate_data_input($_data_input_id, $input_title) {
+	$orig_input = db_fetch_row_prepared('SELECT *
+		FROM data_input
+		WHERE id = ?',
+		array($_data_input_id));
+
+	if (cacti_sizeof($orig_input)) {
+		unset($save);
+		$save['id']           = 0;
+		$save['hash']         = get_hash_data_input(0);
+		$save['name']         = str_replace('<input_title>', $orig_input['name'], $input_title);
+		$save['input_string'] = $orig_input['input_string'];
+		$save['type_id']      = $orig_input['type_id'];
+
+		$data_input_id = sql_save($save, 'data_input');
+
+		if (!empty($data_input_id)) {
+			$data_input_fields = db_fetch_assoc_prepared('SELECT *
+				FROM data_input_fields
+				WHERE data_input_id = ?',
+				array($_data_input_id));
+
+			if (cacti_sizeof($data_input_fields)) {
+				foreach($data_input_fields as $dif) {
+					unset($save);
+					$save['id']            = 0;
+					$save['hash']          = get_hash_data_input(0, 'data_input_field');
+					$save['data_input_id'] = $data_input_id;
+					$save['name']          = $dif['name'];
+					$save['data_name']     = $dif['data_name'];
+					$save['input_output']  = $dif['input_output'];
+					$save['update_rra']    = $dif['update_rra'];
+					$save['sequence']      = $dif['sequence'];
+					$save['type_code']     = $dif['type_code'];
+					$save['regexp_match']  = $dif['regexp_match'];
+					$save['allow_nulls']   = $dif['allow_nulls'];
+
+					$data_input_field_id = sql_save($save, 'data_input_fields');
+				}
+			}
+		}
+	}
+}
+
 function form_save() {
 	global $registered_cacti_names;
 
@@ -201,11 +242,11 @@ function form_actions() {
 		if ($selected_items != false) {
 			if (get_request_var('drp_action') == '1') { // delete
 				for ($i=0;($i<cacti_count($selected_items));$i++) {
-					api_data_input_remove($selected_items[$i]);
+					data_remove($selected_items[$i]);
 				}
 			} elseif (get_request_var('drp_action') == '2') { // duplicate
 				for ($i=0;($i<cacti_count($selected_items));$i++) {
-					api_data_input_duplicate($selected_items[$i], get_nfilter_request_var('input_title'));
+					duplicate_data_input($selected_items[$i], get_nfilter_request_var('input_title'));
 				}
 			}
 		}
@@ -345,10 +386,7 @@ function field_remove() {
 	/* ==================================================== */
 
 	/* get information about the field we're going to delete so we can re-order the seqs */
-	$field = db_fetch_row_prepared('SELECT input_output, data_input_id
-		FROM data_input_fields
-		WHERE id = ?',
-		array(get_request_var('id')));
+	$field = db_fetch_row_prepared('SELECT input_output,data_input_id FROM data_input_fields WHERE id = ?', array(get_request_var('id')));
 
 	db_execute_prepared('DELETE FROM data_input_fields WHERE id = ?', array(get_request_var('id')));
 	db_execute_prepared('DELETE FROM data_input_data WHERE data_input_field_id = ?', array(get_request_var('id')));
@@ -402,13 +440,11 @@ function field_edit() {
 			if (in_array($matches[1][$i], $registered_cacti_names) == false) {
 				$current_field_name = $matches[1][$i];
 				$array_field_names[$current_field_name] = $current_field_name;
-
 				if (!isset($field)) {
 					$field_id = db_fetch_cell_prepared('SELECT id FROM data_input_fields
 						WHERE data_name = ?
 						AND data_input_id = ?',
 						array($current_field_name, get_filter_request_var('data_input_id')));
-
 					if (!$field_id > 0) {
 						$field = array();
 						$field['name'] = ucwords($current_field_name);
@@ -474,6 +510,42 @@ function field_edit() {
 /* -----------------------
     Data Input Functions
    ----------------------- */
+
+function data_remove($id) {
+	$data_input_fields = db_fetch_assoc_prepared('SELECT id
+		FROM data_input_fields
+		WHERE data_input_id = ?',
+		array($id));
+
+	if (is_array($data_input_fields)) {
+		foreach ($data_input_fields as $data_input_field) {
+			db_execute_prepared('DELETE FROM data_input_data WHERE data_input_field_id = ?', array($data_input_field['id']));
+		}
+	}
+
+	db_execute_prepared('DELETE FROM data_input WHERE id = ?', array($id));
+	db_execute_prepared('DELETE FROM data_input_fields WHERE data_input_id = ?', array($id));
+
+	update_replication_crc(0, 'poller_replicate_data_input_fields_crc');
+	update_replication_crc(0, 'poller_replicate_data_input_crc');
+}
+
+function data_input_more_inputs($id, $input_string) {
+	$input_string = str_replace('<path_cacti>', '', $input_string);
+	$inputs = substr_count($input_string, '<');
+
+	$existing = db_fetch_cell_prepared('SELECT COUNT(*)
+		FROM data_input_fields
+		WHERE data_input_id = ?
+		AND input_output = "in"',
+		array($id));
+
+	if ($inputs > $existing) {
+		return true;
+	} else {
+		return false;
+	}
+}
 
 function data_edit() {
 	global $config, $fields_data_input_edit;
@@ -548,7 +620,7 @@ function data_edit() {
 	html_end_box(true, true);
 
 	if (!isempty_request_var('id')) {
-		if (api_data_input_more_inputs(get_request_var('id'), $data_input['input_string'])) {
+		if (data_input_more_inputs(get_request_var('id'), $data_input['input_string'])) {
 			$url = 'data_input.php?action=field_edit&type=in&data_input_id=' . get_request_var('id');
 		} else {
 			$url = '';

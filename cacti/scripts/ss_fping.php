@@ -1,8 +1,9 @@
 #!/usr/bin/env php
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -13,11 +14,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -84,32 +80,15 @@ function ss_fping($hostname = '', $ping_sweeps = 6, $ping_type = 'ICMP', $port =
 
 	$i = 0;
 	while ($i < $ping_sweeps) {
-		$start  = microtime(true);
 		$result = $ping->ping(AVAIL_PING, $method, $ping_timeout, 1);
-		$end    = microtime(true);
 
 		if (!$result) {
-			// Error response
 			$failed_results++;
-
-			$time[$i]    = $end - $start;
-			$total_time += $end - $start;
-		} elseif (is_numeric($ping->ping_status)) {
-			$time[$i]    = $ping->ping_status;
-			$total_time += $ping->ping_status;
-			if ($ping->ping_status < $min) {
-				$min = $ping->ping_status;
-			}
-
-			if ($ping->ping_status > $max) {
-				$max = $ping->ping_status;
-			}
 		} else {
-			// Down response
-			$failed_results++;
-
-			$time[$i]    = $end - $start;
-			$total_time += $end - $start;
+			$time[$i] = $ping->ping_status;
+			$total_time += $ping->ping_status;
+			if ($ping->ping_status < $min) $min = $ping->ping_status;
+			if ($ping->ping_status > $max) $max = $ping->ping_status;
 		}
 
 		$i++;

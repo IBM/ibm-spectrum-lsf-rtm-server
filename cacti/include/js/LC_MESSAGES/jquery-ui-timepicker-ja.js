@@ -1,3 +1,4 @@
+// $Id$
 /* Japanese translation for the jQuery Timepicker Addon */
 /* Written by Jun Omae */
 (function($) {

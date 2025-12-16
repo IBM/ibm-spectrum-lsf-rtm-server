@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -272,8 +268,6 @@ function display_template_data(&$templates) {
 
 		html_header_checkbox($display_text, false, '', true, 'import');
 
-		$templates = array_reverse($templates);
-
 		foreach($templates as $hash => $detail) {
 			$id = base64_encode(
 				json_encode(
@@ -290,8 +284,6 @@ function display_template_data(&$templates) {
 				$status = "<span class='updateObject'>" . __('Updated') . '</span>';
 			} elseif ($detail['status'] == 'new') {
 				$status = "<span class='newObject'>" . __('New') . '</span>';
-			} elseif ($detail['status'] == 'damaged') {
-				$status = "<span class='deviceDown'>" . __('Damaged') . '</span>';
 			} else {
 				$status = "<span class='deviceUp'>" . __('Unchanged') . '</span>';
 			}
@@ -325,25 +317,25 @@ function display_template_data(&$templates) {
 					$dep_details['unmet'] = __('Unmet: %d', $unmet_count);
 				}
 
-				form_selectable_cell(implode(', ', $dep_details), $id, '', 'white-space:pre-wrap');
+				form_selectable_cell(implode(', ', $diff_details), $id, '', 'white-space:pre-wrap');
 			} else {
 				form_selectable_cell(__('None'), $id);
 			}
 
-			if ($detail['status'] == 'damaged') {
-				form_selectable_cell(__('Some CDEF Items will not import due to an export error! Contact Template provider for an updated export.'), $id);
-			} elseif (isset($detail['vals'])) {
+			if (isset($detail['vals'])) {
 				$diff_details = '';
 				$diff_array   = array();
 				$orphan_array = array();
 
-				foreach($detail['vals'] as $type => $diffs) {
-					if ($type == 'differences') {
-						foreach($diffs as $item) {
+				foreach($detail['vals'] as $package => $diffs) {
+					if (isset($diffs['differences'])) {
+						foreach($diffs['differences'] as $item) {
 							$diff_array[$item] = $item;
 						}
-					} elseif ($type == 'orphans') {
-						foreach($diffs as $item) {
+					}
+
+					if (isset($diffs['orphans'])) {
+						foreach($diffs['orphans'] as $item) {
 							$orphan_array[$item] = $item;
 						}
 					}
@@ -487,7 +479,7 @@ function import() {
 			$.ajax({
 				type: 'POST',
 				enctype: 'multipart/form-data',
-				url: (urlPath != '/' ? urlPath + '/':'') + 'templates_import.php?preview_only=true',
+				url: urlPath + '/templates_import.php?preview_only=true',
 				data: data,
 				processData: false,
 				contentType: false,

@@ -1,3 +1,4 @@
+// $Id$
 /*!
  * pace.js v1.2.4
  * https://github.com/CodeByZach/pace/

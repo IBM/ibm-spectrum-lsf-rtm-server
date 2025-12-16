@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -30,7 +26,6 @@ class CactiTableFilter {
 	public $form_header    = '';
 	public $form_action    = '';
 	public $form_id        = '';
-	public $form_width     = '';
 	public $action_url     = '';
 	public $action_label   = '';
 	public $session_var    = 'sess_default';
@@ -135,13 +130,13 @@ class CactiTableFilter {
 
 	public function filter_render() {
 		/* setup filter variables */
-		$this->sanitize_filter_variables();
+		sanitize_filter_variables();
 
 		/* render the filter in the page */
-		$this->create_filter();
+		create_filter();
 
 		/* create javascript to operate of the filter */
-		$this->create_javascript();
+		create_javascript();
 
 		return true;
 	}
@@ -153,10 +148,10 @@ class CactiTableFilter {
 
 		html_start_box($this->form_header, $this->form_width, true, '3', 'center', $this->action_url, $this->action_label);
 
-		if (isset($this->filter_array['rows'])) {
-			print "<form id='" . $this->form_id . "' action='" . $this->form_action . "'>\n";
+		if (isset($this->form_array['rows'])) {
+			print "<form id='" . $this->filter_id . "' action='" . $this->filter_action . "'>\n";
 
-			foreach($this->filter_array['rows'] as $index => $row) {
+			foreach($this->form_array['rows'] as $index => $row) {
 				print "<div class='filterTable'>\n";
 				print "<div class='formRow'>\n";
 
@@ -217,8 +212,8 @@ class CactiTableFilter {
 
 		$separator = "\"+\"&";
 
-		if (isset($this->filter_array['rows'])) {
-			foreach($this->filter_array['rows'] as $index => $row) {
+		if (isset($this->form_array['rows'])) {
+			foreach($this->form_array['rows'] as $index => $row) {
 				foreach($row as $field_name => $field_array) {
 					switch($field_array['method']) {
 					case 'button':
@@ -282,8 +277,8 @@ class CactiTableFilter {
 	private function sanitize_filter_variables() {
 		$filters = array();
 
-		if (isset($this->filter_array['rows'])) {
-			foreach($this->filter_array['rows'] as $index => $row) {
+		if (isset($this->form_array['rows'])) {
+			foreach($this->form_array['rows'] as $index => $row) {
 				foreach($row as $field_name => $field_array) {
 					switch($field_array['method']) {
 					case 'button':
@@ -312,14 +307,14 @@ class CactiTableFilter {
 			}
 		}
 
-		if (isset($this->filter_array['sort'])) {
+		if (isset($this->form_array['sort'])) {
 			$filters['sort_column']['filter']     = FILTER_CALLBACK;
 			$filters['sort_column']['options']    = array('options' => 'sanitize_search_string');
-			$filters['sort_column']['default']    = $this->filter_array['sort']['sort_column'];
+			$filters['sort_column']['default']    = $this->form_array['sort']['sort_column'];
 
 			$filters['sort_direction']['filter']  = FILTER_CALLBACK;
 			$filters['sort_direction']['options'] = array('options' => 'sanitize_search_string');
-			$filters['sort_direction']['default'] = $this->filter_array['sort']['sort_direction'];
+			$filters['sort_direction']['default'] = $this->form_array['sort']['sort_direction'];
 		}
 
 		validate_store_request_vars($filters, $this->session_var);

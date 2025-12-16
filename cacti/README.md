@@ -1,12 +1,15 @@
 # Cacti ™
 
-[![Cacti Commit Audit](https://github.com/Cacti/cacti/actions/workflows/syntax.yml/badge.svg)](https://github.com/Cacti/cacti/actions/workflows/syntax.yml)
-[![Project Status](http://opensource.box.com/badges/active.svg)](http://opensource.box.com/badges)
-[![Translation Status](https://translate.cacti.net/widgets/cacti/-/core/svg-badge.svg)](https://translate.cacti.net
-"Translation Status")
-[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/cacti/cacti.svg)](http://isitmaintained.com/project/cacti/cacti
-"Average time to resolve an issue")
-[![Percentage of open issues](http://isitmaintained.com/badge/open/cacti/cacti.svg)](http://isitmaintained.com/project/cacti/cacti
+[![Build Status -
+Develop](https://travis-ci.org/Cacti/cacti.svg?branch=develop)](https://travis-ci.org/Cacti/cacti)
+[![Project
+Status](http://opensource.box.com/badges/active.svg)](http://opensource.box.com/badges)
+[![Translation
+Status](https://translate.cacti.net/widgets/cacti/-/core/svg-badge.svg)](https://translate.cacti.net
+"Translation Status") [![Average time to resolve an
+issue](http://isitmaintained.com/badge/resolution/cacti/cacti.svg)](http://isitmaintained.com/project/cacti/cacti
+"Average time to resolve an issue") [![Percentage of open
+issues](http://isitmaintained.com/badge/open/cacti/cacti.svg)](http://isitmaintained.com/project/cacti/cacti
 "Percentage of issues still open")
 
 -----------------------------------------------------------------------------
@@ -55,7 +58,7 @@ join_buffer_size = XXX
 sort_buffer_size = XXX
 
 # important for compatibility
-sql_mode=NO_ENGINE_SUBSTITUTION
+sql_mode=NO_ENGINE_SUBSTITUTION,NO_AUTO_CREATE_USER
 
 # innodb settings - Cacti provides recommendations at upgrade time
 innodb_buffer_pool_instances = XXX
@@ -324,4 +327,4 @@ Cacti supports most RRDtool graphing abilities including:
 - Text alignment
 
 -----------------------------------------------------------------------------
-Copyright (c) 2004-2024 - The Cacti Group, Inc.
+Copyright (c) 2004-2023 - The Cacti Group, Inc.

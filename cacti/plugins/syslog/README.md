@@ -50,15 +50,15 @@ be quieted using syslog's 'Re-Alert' setting.
 
 ## Important Version 4.0 Release Notes
 
-In prior releases of Syslog, the Individual Alert Method would send an Email,
-open a ticket or run a command per line in the Syslog that matches the pattern.
-However, in Syslog Version 4, if you want an alert per Host, you will have to
-move your Alerts from the `System Level` to the `Host Level` as `System Level`
-Alerts will generate one command execution for all matching messages.
+In prior releases of Syslog, the Individual Alert Method would send an Email, open a ticket
+or run a command per line in the Syslog that matches the pattern.  However, in Syslog
+Version 4, if you want an alert per Host, you will have to move your Alerts from the
+`System Level` to the `Host Level` as `System Level` Alerts will generate one command
+execution for all matching messages.
 
 ## Installation
 
-To install the syslog plugin, simply copy the plugin_syslog directory to Cacti's
+To install the syslog plugin, simply copy the plugin_sylog directory to Cacti's
 plugins directory and rename it to simply 'syslog'. Once you have done this,
 goto Cacti's Plugin Management page, and Install and Enable the plugin. Once
 this is complete, you can grant users permission to view syslog messages, as
@@ -73,29 +73,24 @@ If you are upgrading to 2.0 from a prior install, you must first uninstall
 syslog and insure both the syslog, syslog_removal, and syslog_incoming tables
 are removed, and recreated at install time.
 
-In addition, the rsyslog configuration has changed in 2.5.  So, for example, to
+In addtion, the rsyslog configuration has changed in 2.5.  So, for example, to
 configure modern rsyslog for Cacti, you MUST create a file called cacti.conf in
 the /etc/rsyslog.d/ directory that includes the following:
 
-You have two options for storing syslog information you can either use the existing
+You have two options for storing syslog information you can either use the exisiting
 Cacti Database or use a dedicated database for syslog as syslog databases especially
 for large networks can grow pretty quick it may be wise to create a dedicated database.
 To use a dedicated DB first create a database in mysql and assign a user you will then change
-
 ```console
 $use_cacti_db = true; 
-```
-
 to 
-
-``console
 $use_cacti_db = false;
 ```
 
 You will also need to ensure the cacti user is granted select on the syslog database
 
 ```shell
-GRANT SELECT ON syslog.* TO 'cacti'@'localhost';
+GRANT SELECT  ON syslog.* TO  'cacti'@'localhost';
 ```
 
 
@@ -127,8 +122,7 @@ $template cacti_syslog,"INSERT INTO syslog_incoming(facility_id, priority_id, pr
 
 *.* >localhost,my_database,my_user,my_password;cacti_syslog
 ```
-
-For CentOS/RHEL systems you will all need to install the rsyslog-mysql package
+for centos/rhel systems you will all need to install the rsyslog-mysql package
 
 ```
 yum install rsyslog-mysql
@@ -187,13 +181,11 @@ GitHub.
 
 ## Authors
 
-The syslog plugin has been in development for well over a decade with increasing
+The sylog plugin has been in development for well over a decade with increasing
 functionality and stibility over that time. There have been several contributors
-to thold over the years. Chief amongst them are Jimmy Conner, Larry Adams,
+to thold over the years. Chief amonst them are Jimmy Conner, Larry Adams,
 SideWinder, and Harlequin. We hope that version 2.0 and beyond are the most
 stable and robust versions of syslog ever published. We are always looking for
 new ideas. So, this won't be the last release of syslog, you can rest assured of
 that.
 
------------------------------------------------
-Copyright (c) 2004-2024 - The Cacti Group, Inc.

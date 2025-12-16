@@ -1,3 +1,4 @@
+// $Id$
 /* Catalan translation for the jQuery Timepicker Addon */
 /* Written by Sergi Faber */
 (function($) {

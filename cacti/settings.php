@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -100,7 +96,7 @@ case 'save':
 			} else {
 				$continue = true;
 
-				if ($field_name == 'path_cactilog' || $field_name == 'path_stderrlog') {
+				if ($field_name == 'path_cactilog') {
 					$extension = pathinfo(get_nfilter_request_var($field_name), PATHINFO_EXTENSION);
 
 					if ($extension != 'log') {
@@ -220,7 +216,7 @@ case 'save':
 		}
 
 		if (!isset_request_var('selective_plugin_debug')) {
-			$inserts[] = '("selective_plugin_debug", "")';
+			$inserts[] = '("selective_debug_plugin", "")';
 			db_execute('REPLACE INTO settings
 				(name, value)
 				VALUES ("selective_plugin_debug", "")');
@@ -476,17 +472,12 @@ default:
 	?>
 	<script type='text/javascript'>
 
-	var themeChanged   = false;
-	var langRefresh    = false;
-	var currentTheme   = '';
-	var currentLang    = '';
+	var themeChanged = false;
+	var currentTheme = '';
 	var rrdArchivePath = '';
-	var smtpPath       = '';
-	var currentTab     = '<?php print $current_tab;?>';
+	var smtpPath = '';
+	var currentTab = '<?php print $current_tab;?>';
 	var dataCollectors = '<?php print $data_collectors;?>';
-	var permsTitle     = '<?php print __esc('Changing Permission Model Warning');?>';
-	var permsHeader    = '<?php print __esc('Changing Permission Model will alter a users effective Graph permissions.');?>';
-	var permsMessage   = '<?php print __esc('After you change the Graph Permission Model you should audit your Users and User Groups Effective Graph permission to ensure that you still have adequate control of your Graphs.  NOTE: If you want to restrict all Graphs at the Device or Graph Template Graph Permission Model, the default Graph Policy should be set to \'Deny\'.');?>';
 
 	$(function() {
 		$('.subTab').find('a').click(function(event) {
@@ -506,27 +497,22 @@ default:
 				return false;
 			}
 
-			if (themeChanged == true || langRefresh == true) {
-				$.post('settings.php?tab='+$('#tab').val()+'&header=false', $('input, select, textarea').prop('disabled', false).serialize()).done(function(data) {
-					document.location = 'settings.php?newtheme=1&tab='+$('#tab').val();
-				});
-			} else {
+			if (themeChanged != true) {
 				$.post('settings.php?tab='+$('#tab').val()+'&header=false', $('input, select, textarea').prop('disabled', false).serialize()).done(function(data) {
 					$('#main').hide().html(data);
 					applySkin();
+				});
+			} else {
+				$.post('settings.php?tab='+$('#tab').val()+'&header=false', $('input, select, textarea').prop('disabled', false).serialize()).done(function(data) {
+					document.location = 'settings.php?newtheme=1&tab='+$('#tab').val();
 				});
 			}
 		});
 
 		if (currentTab == 'general') {
-			currentPerms       = $('#graph_auth_method').val();
-			currentLangDetect  = $('#i18n_auto_detection').val();
-			currentLanguage    = $('#i18n_default_language').val();
-			currentLangSupport = $('#i18n_language_support').val();
-
 			$('#selective_plugin_debug').multiselect({
 				menuHeight: $(window).height()*.7,
-				menuWidth: 230,
+				menuWidth: 'auto',
 				linkInfo: faIcons,
 				noneSelectedText: '<?php print __('Select Plugin(s)');?>',
 				selectedText: function(numChecked, numTotal, checkedItems) {
@@ -548,7 +534,7 @@ default:
 
 			$('#selective_debug').multiselect({
 				menuHeight: $(window).height()*.7,
-				menuWidth: 230,
+				menuWidth: 'auto',
 				linkInfo: faIcons,
 				noneSelectedText: '<?php print __('Select File(s)');?>',
 				selectedText: function(numChecked, numTotal, checkedItems) {
@@ -566,14 +552,6 @@ default:
 				label: '<?php print __('Search');?>',
 				placeholder: '<?php print __('Enter keyword');?>',
 				width: '150'
-			});
-
-			$('#graph_auth_method').change(function() {
-				permsChanger();
-			});
-
-			$('#i18n_default_language, #i18n_auto_detection, #i18n_language_support').change(function() {
-				langDetectionChanger();
 			});
 		} else if (currentTab == 'spikes') {
 			$('#spikekill_templates').multiselect({
@@ -866,24 +844,6 @@ default:
 			themeChanged = true;
 		} else {
 			themeChanged = false;
-		}
-	}
-
-	function langDetectionChanger() {
-		var changed = currentLanguage != $('#i18n_default_language').val() ||
-			currentLangDetect         != $('#i18n_auto_detection').val() ||
-			currentLangSupport        != $('#i18n_language_support').val();
-
-		if (changed) {
-			langRefresh = true;
-		} else {
-			langRefresh = false;
-		}
-	}
-
-	function permsChanger() {
-		if ($('#graph_auth_method').val() != currentPerms) {
-			raiseMessage(permsTitle, permsHeader, permsMessage, MESSAGE_LEVEL_MIXED);
 		}
 	}
 
@@ -1351,9 +1311,8 @@ default:
 	</script>
 	<?php
 
-	api_plugin_hook('settings_bottom');
-
 	bottom_footer();
 
 	break;
 }
+

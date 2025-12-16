@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -479,17 +475,14 @@ function variable_nth_percentile(&$regexp_match_array, &$graph, &$graph_item, &$
 				break;
 			case 'aggregate_peak':
 			case 'aggregate_max':
-			case 'aggregate_sum_peak':
 				if (cacti_sizeof($local_data_array)) {
 					$nth_cache = nth_percentile($local_data_array, $graph_start, $graph_end, $percentile, 0, true);
 				}
 
 				break;
 			case 'aggregate_current':
-			case 'aggregate_current_peak':
-				if ($graph_item['data_source_name'] != '') {
-					$local_data_array = array();
-
+				$local_data_array = array();
+				if (!empty($graph_item['data_source_name'])) {
 					foreach ($graph_items as $graph_element) {
 						if ($graph_item['data_source_name'] == $graph_element['data_source_name'] &&
 							!empty($graph_element['data_template_rrd_id']) &&
@@ -500,14 +493,8 @@ function variable_nth_percentile(&$regexp_match_array, &$graph, &$graph_item, &$
 						}
 					}
 
-					if ($type == 'aggregate_current') {
-						if (cacti_sizeof($local_data_array)) {
-							$nth_cache = nth_percentile($local_data_array, $graph_start, $graph_end, $percentile);
-						}
-					} else {
-						if (cacti_sizeof($local_data_array)) {
-							$nth_cache = nth_percentile($local_data_array, $graph_start, $graph_end, $percentile, 0, true);
-						}
+					if (cacti_sizeof($local_data_array)) {
+						$nth_cache = nth_percentile($local_data_array, $graph_start, $graph_end, $percentile);
 					}
 				}
 
@@ -530,7 +517,6 @@ function variable_nth_percentile(&$regexp_match_array, &$graph, &$graph_item, &$
 		case 'total':          // Total of the current data source name
 		case 'total_peak':
 		case 'aggregate_sum':
-		case 'aggregate_sum_peak':
 			if (!empty($nth_cache['nth_percentile_sum'])) {
 				$nth = $nth_cache['nth_percentile_sum'];
 				$nth = ($bytebit == 'bits') ? $nth * 8 : $nth;
@@ -542,7 +528,6 @@ function variable_nth_percentile(&$regexp_match_array, &$graph, &$graph_item, &$
 		case 'all_max_peak':
 		case 'aggregate_max':
 		case 'aggregate_peak':
-		case 'aggregate_current_peak':
 		case 'max':
 			if (!empty($nth_cache['nth_percentile_maximum'])) {
 				$nth = $nth_cache['nth_percentile_maximum'];

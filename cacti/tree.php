@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -506,7 +502,7 @@ function form_save() {
 		$save['name']          = form_input_validate(get_nfilter_request_var('name'), 'name', '', false, 3);
 		$save['sort_type']     = form_input_validate(get_nfilter_request_var('sort_type'), 'sort_type', '', true, 3);
 		$save['last_modified'] = date('Y-m-d H:i:s', time());
-		$save['enabled']       = get_request_var('enabled') == 'true' || get_request_var('enabled') == 'on' ? 'on':'off';
+		$save['enabled']       = get_nfilter_request_var('enabled') == 'true' ? 'on':'-';
 		$save['modified_by']   = $_SESSION['sess_user_id'];
 
 		if (isempty_request_var('sequence')) {
@@ -628,7 +624,7 @@ function form_actions() {
 				set_config_option('time_last_change_branch', time());
 			} elseif (get_nfilter_request_var('drp_action') == '3') { // un-publish
 				db_execute("UPDATE graph_tree
-					SET enabled='off',
+					SET enabled='',
 					last_modified=NOW(),
 					modified_by=" . $_SESSION['sess_user_id'] . '
 					WHERE ' . array_to_sql_or($selected_items, 'id'));
@@ -800,7 +796,7 @@ function tree_edit($partial = false) {
 		$lockdiv = "<div style='padding:5px 5px 5px 0px'><table><tr><td><input type='button' class='ui-button ui-corner-all ui-widget' id='lock' value='" . __esc('Edit Tree') . "'></td><td style='font-weight:bold;'>" . __('To Edit this tree, you must first lock it by pressing the Edit Tree button.') . "</td></tr></table></div>\n";
 		$editable = false;
 	} elseif (isset($tree['locked']) && $tree['locked'] == 1) {
-		$lockdiv = "<div style='padding:5px 5px 5px 0px'><table><tr><td><input type='button' class='ui-button ui-corner-all ui-widget' id='unlock' value='" . __esc('Finish Editing Tree') . "'></td><td><input type='button' class='ui-button ui-corner-all ui-widget' id='addbranch' value='" . __esc('Add Root Branch') . "' onClick='createNode()'></td><td style='font-weight:bold;'>" . __('This tree has been locked for Editing on %s by %s.', $tree['locked_date'], get_username($tree['modified_by']));
+		$lockdiv = "<div style='padding:5px 5px 5px 0px'><table><tr><td><input type='button' class='ui-button ui-corner-all ui-widget' id='unlock' value='" . __esc('Finish Editing Tree') . "'></td><td><input type='button' class='ui-button ui-corner-all ui-widget' id='addbranch' value='" . __esc('Add Root Branch') . "' onClick='createNode()'></td><td style='font-weight:bold;'>" . __('This tree has been locked for Editing on %1$s by %2$s.', $tree['locked_date'], get_username($tree['modified_by']));
 		if ($tree['modified_by'] == $_SESSION['sess_user_id']) {
 			$lockdiv .= '</td></tr></table></div>';
 		} else {
@@ -930,7 +926,7 @@ function tree_edit($partial = false) {
 							<?php print __('Search'); ?>
 						</td>
 						<td>
-							<input type='text'  class='ui-state-default ui-corner-all' id='gfilter' name='gfilter' size='25' value='<?php print html_escape_request_var('gfilter');?>'>
+							<input type='text'  class='ui-state-default ui-corner-all' id='grfilter' name='grfilter' size='25' value='<?php print html_escape_request_var('grfilter');?>'>
 						</td>
 					</tr>
 				</table>
@@ -1000,7 +996,7 @@ function tree_edit($partial = false) {
 		}
 
 		function getGraphData() {
-			$.get('tree.php?action=graphs&filter='+$('#gfilter').val()
+			$.get('tree.php?action=graphs&filter='+$('#grfilter').val()
 				+ '&site_id=' + (selectedItem.site_id ? selectedItem.site_id:'')
 				+ '&host_id=' + (selectedItem.host_id ? selectedItem.host_id:''))
 				.done(function(data) {
@@ -1321,7 +1317,7 @@ function tree_edit($partial = false) {
 		}
 
 		function enableKeyups() {
-			$('#gfilter').keyup(function(data) {
+			$('#grfilter').keyup(function(data) {
 				graphMeTimer && clearTimeout(graphMeTimer);
 				graphMeTimer = setTimeout(getGraphData, 300);
 			});
@@ -1435,7 +1431,7 @@ function tree_edit($partial = false) {
 						__csrf_magic: csrfMagicToken
 					}
 
-					loadPageUsingPost('tree.php', data);
+					postUrl(options, data);
 				}
 			});
 
@@ -1478,7 +1474,7 @@ function tree_edit($partial = false) {
 			// as they would have been.
 			if ($(id).hasClass('jstree')) {
 				$(id).find('.jstree-node').each(function() {
-					var text   = DOMPurify.sanitize($(this).find('.jstree-anchor').text());
+					var text   = $(this).find('.jstree-anchor').text();
 					var id     = $(this).attr('id');
 					var jsdata = $(this).attr('data-jstree');
 

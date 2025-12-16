@@ -1,3 +1,4 @@
+// $Id$
 /*jslint browser: true*/
 /*jslint jquery: true*/
 

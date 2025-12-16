@@ -1,3 +1,4 @@
+// $Id$
 /* Slovenian translation for the jQuery Timepicker Addon */
 /* Written by Hadalin (https://github.com/hadalin) */
 (function($) {

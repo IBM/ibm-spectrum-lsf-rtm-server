@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -469,33 +465,15 @@ function install_setup_get_templates() {
 	}
 
 	$templates = array(
-		'ACME.xml.gz',
-		'AKCP_Device.xml.gz',
-		'APC_InfraStruXure_InRow_CRAC.xml.gz',
-		'APC_InfraStruXure_PDU.xml.gz',
 		'Apache_Webserver.xml.gz',
-		'ArubaOS_switch.xml.gz',
-		'Aruba_OSCX_switch_6x00.xml.gz',
-		'Aruba_Instant_AP_Cluster.xml.gz',
-		'Aruba_Wireless_Controller.xml.gz',
-		'BayTech_PDU.xml.gz',
 		'Cacti_Stats.xml.gz',
 		'Cisco_Router.xml.gz',
 		'Citrix_NetScaler_VPX.xml.gz',
-		'Clearpass_policy_manager.xml.gz',
 		'ESXi_Device.xml.gz',
-		'Fortigate.xml.gz',
 		'Generic_SNMP_Device.xml.gz',
-		'HPE_iLO.xml.gz',
-		'HPE_NimbleAlletra_storage.xml.gz',
 		'Local_Linux_Machine.xml.gz',
-		'MikroTik_Device.xml.gz',
-		'MikroTik_Switch_SWOS.xml.gz',
-		'Motorola_SB6141.xml.gz',
 		'NetSNMP_Device.xml.gz',
 		'PING_Advanced_Ping.xml.gz',
-		'SNMP_Printer.xml.gz',
-		'SNMP_UPS.xml.gz',
 		'Synology_NAS.xml.gz',
 		'Windows_Device.xml.gz'
 	);
@@ -536,8 +514,8 @@ function install_setup_get_templates() {
 			// Loading Template Information from package
 			$myinfo = @json_decode(shell_exec(cacti_escapeshellcmd(read_config_option('path_php_binary')) . ' -q ' . cacti_escapeshellarg($config['base_path'] . '/cli/import_package.php') . ' --filename=' . cacti_escapeshellarg("/$path/$xmlfile") . ' --info-only'), true);
 			$myinfo['filename'] = $xmlfile;
-			$myinfo['name']     = $xmlfile;
 			$info[] = $myinfo;
+			$info[] = array('filename' => $xmlfile, 'name' => $xmlfile);
 		}
 	}
 
@@ -546,44 +524,46 @@ function install_setup_get_templates() {
 
 function install_setup_get_tables() {
 	/* ensure all tables are utf8 enabled */
-	$db_tables = get_cacti_base_tables();
+	$db_tables = db_fetch_assoc("SHOW TABLES");
 	if ($db_tables === false) {
 		return false;
 	}
 
 	$t = array();
-	foreach ($db_tables as $table) {
-		$table_status = db_fetch_row("SHOW TABLE STATUS LIKE '$table'");
+	foreach ($db_tables as $tables) {
+		foreach ($tables as $table) {
+			$table_status = db_fetch_row("SHOW TABLE STATUS LIKE '$table'");
 
-		$collation  = '';
-		$engine     = '';
-		$rows       = 0;
-		$row_format = '';
+			$collation  = '';
+			$engine     = '';
+			$rows       = 0;
+			$row_format = '';
 
-		if ($table_status !== false) {
-			if (isset($table_status['Collation']) && $table_status['Collation'] != 'utf8mb4_unicode_ci') {
-				$collation = $table_status['Collation'];
+			if ($table_status !== false) {
+				if (isset($table_status['Collation']) && $table_status['Collation'] != 'utf8mb4_unicode_ci') {
+					$collation = $table_status['Collation'];
+				}
+
+				if (isset($table_status['Engine']) && $table_status['Engine'] == 'MyISAM') {
+					$engine = $table_status['Engine'];
+				}
+
+				if (isset($table_status['Rows'])) {
+					$rows = $table_status['Rows'];
+				}
+
+				if (isset($table_status['Row_format']) && $table_status['Row_format'] == 'Compact' && $table_status['Engine'] == 'InnoDB') {
+					$row_format = 'Dynamic';
+				}
 			}
 
-			if (isset($table_status['Engine']) && $table_status['Engine'] == 'MyISAM') {
-				$engine = $table_status['Engine'];
+			if ($table_status === false || $collation != '' || $engine != '' || $row_format != '') {
+				$t[$table]['Name']       = $table;
+				$t[$table]['Collation']  = $table_status['Collation'];
+				$t[$table]['Engine']     = $table_status['Engine'];
+				$t[$table]['Rows']       = $rows;
+				$t[$table]['Row_format'] = $table_status['Row_format'];
 			}
-
-			if (isset($table_status['Rows'])) {
-				$rows = $table_status['Rows'];
-			}
-
-			if (isset($table_status['Row_format']) && $table_status['Row_format'] == 'Compact' && $table_status['Engine'] == 'InnoDB') {
-				$row_format = 'Dynamic';
-			}
-		}
-
-		if ($table_status === false || $collation != '' || $engine != '' || $row_format != '') {
-			$t[$table]['Name']       = $table;
-			$t[$table]['Collation']  = $table_status['Collation'];
-			$t[$table]['Engine']     = $table_status['Engine'];
-			$t[$table]['Rows']       = $rows;
-			$t[$table]['Row_format'] = $table_status['Row_format'];
 		}
 	}
 
@@ -619,15 +599,15 @@ function install_tool_path($name, $defaultPaths) {
 	);
 
 	log_install_debug('file', "$name: Locations ($os), Paths: " . clean_up_lines(var_export($defaultPaths, true)));
-	if (isset($settings) && isset($settings['path']) && isset($settings['path']['path_' . $name])) {
-		$tool = $settings['path']['path_' . $name];
+	if (isset($settings) && isset($settings['path']) && isset($settings['path']['path_'.$name])) {
+		$tool = $settings['path']['path_'.$name];
 	} elseif (isset($settings) && isset($settings['mail']) && isset($settings['mail'][$name])) {
 		$tool = $settings['mail'][$name];
 	}
 
 	$which_tool = '';
 	if (config_value_exists('path_' . $name)) {
-		$which_tool = read_config_option('path_' . $name, true);
+		$which_tool = read_config_option('path_'.$name, true);
 		log_install_high('file', "Using config location: $which_tool");
 	}
 
@@ -674,43 +654,43 @@ function install_file_paths() {
 	/* RRDtool Binary Path */
 	$input['path_rrdtool'] = install_tool_path('rrdtool',
 		array(
-			'unix'  => '/usr/bin/rrdtool',
+			'unix'  => '/usr/local/bin/rrdtool',
 			'win32' => 'c:/rrdtool/rrdtool.exe'
 		));
 
 	/* snmpwalk Binary Path */
 	$input['path_snmpwalk'] = install_tool_path('snmpwalk',
 		array(
-			'unix'  => '/usr/bin/snmpwalk',
-			'win32' => 'c:/usr/bin/snmpwalk.exe'
+			'unix'  => '/usr/local/bin/snmpwalk',
+			'win32' => 'c:/net-snmp/bin/snmpwalk.exe'
 		));
 
 	/* snmpget Binary Path */
 	$input['path_snmpget'] = install_tool_path('snmpget',
 		array(
-			'unix'  => '/usr/bin/snmpget',
-			'win32' => 'c:/usr/bin/snmpget.exe'
+			'unix'  => '/usr/local/bin/snmpget',
+			'win32' => 'c:/net-snmp/bin/snmpget.exe'
 		));
 
 	/* snmpbulkwalk Binary Path */
 	$input['path_snmpbulkwalk'] = install_tool_path('snmpbulkwalk',
 		array(
-			'unix'  => '/usr/bin/snmpbulkwalk',
-			'win32' => 'c:/usr/bin/snmpbulkwalk.exe'
+			'unix'  => '/usr/local/bin/snmpbulkwalk',
+			'win32' => 'c:/net-snmp/bin/snmpbulkwalk.exe'
 		));
 
 	/* snmpgetnext Binary Path */
 	$input['path_snmpgetnext'] = install_tool_path('snmpgetnext',
 		array(
-			'unix'  => '/usr/bin/snmpgetnext',
-			'win32' => 'c:/usr/bin/snmpgetnext.exe'
+			'unix'  => '/usr/local/bin/snmpgetnext',
+			'win32' => 'c:/net-snmp/bin/snmpgetnext.exe'
 		));
 
 	/* snmptrap Binary Path */
 	$input['path_snmptrap'] = install_tool_path('snmptrap',
 		array(
-			'unix'  => '/usr/bin/snmptrap',
-			'win32' => 'c:/usr/bin/snmptrap.exe'
+			'unix'  => '/usr/local/bin/snmptrap',
+			'win32' => 'c:/net-snmp/bin/snmptrap.exe'
 		));
 
 	/* sendmail Binary Path */
@@ -873,44 +853,6 @@ function remote_update_config_file() {
 	}
 
 	return $failure;
-}
-
-/**
- * set_install_config_option - Set a config option into the local database only
- *
- * @param $config_name - the name of the configuration setting as specified $settings array
- * @param $value       - the values to be saved
- *
- * @return null        - nothing is returned
- */
-function set_install_config_option($name, $value) {
-	global $config, $local_db_cnn_id;
-
-	/* some additional extension checks */
-	switch($name) {
-		case 'path_cactilog':
-			$extension = pathinfo($value, PATHINFO_EXTENSION);
-
-			if ($extension != 'log') {
-				$value = $config['base_path'] . '/log/cacti.log';
-			}
-
-			break;
-		case 'path_stderrlog':
-			$extension = pathinfo($value, PATHINFO_EXTENSION);
-
-			if ($extension != 'log') {
-				$value = $config['base_path'] . '/log/cacti.stderr.log';
-			}
-
-			break;
-	}
-
-	if (is_object($local_db_cnn_id)) {
-		db_execute_prepared('REPLACE INTO settings (name, value) VALUES (?, ?)', array($name, $value), false, $local_db_cnn_id);
-	} else {
-		set_config_option($name, $value);
-	}
 }
 
 function import_colors() {
@@ -1143,21 +1085,17 @@ function install_full_sync() {
 	$skipped   = array();
 	$timeout   = array();
 
-	$pollers = db_fetch_assoc('SELECT id, status, UNIX_TIMESTAMP() - UNIX_TIMESTAMP(last_update) AS gap
+	$pollers = db_fetch_assoc('SELECT id, status, UNIX_TIMESTAMP() - UNIX_TIMESTAMP(last_update) as gap
 		FROM poller
 		WHERE id > 1
 		AND disabled = ""');
 
 	log_install_always('sync', 'Found ' . cacti_sizeof($pollers) . ' poller(s) to sync');
-
 	if (cacti_sizeof($pollers)) {
 		foreach($pollers as $poller) {
 			log_install_debug('sync', 'Poller ' . $poller['id'] . ' has a status of ' . $poller['status'] . ' with gap ' . $poller['gap']);
-
 			if (($poller['status'] == POLLER_STATUS_NEW) ||
 				($poller['status'] == POLLER_STATUS_DOWN) ||
-				($poller['status'] == POLLER_STATUS_HEARTBEAT) ||
-				($poller['status'] == POLLER_STATUS_RECOVERING) ||
 				($poller['status'] == POLLER_STATUS_DISABLED)) {
 				$skipped[] = $poller['id'];
 			} elseif ($poller['gap'] < $gap_time) {
@@ -1179,7 +1117,6 @@ function install_full_sync() {
 			}
 		}
 	}
-
 	log_install_debug('sync', 'Success: ' . cacti_sizeof($success) . ', Failed: ' . cacti_sizeof($failed) . ', Skipped: ' . cacti_sizeof($skipped) . ', Total: ' . cacti_sizeof($pollers));
 
 	return array(

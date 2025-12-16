@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2006-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -121,7 +121,7 @@ if (!register_process_start('thold', 'child', $thread, $timeout)) {
 			exit(1);
 		} else {
 			unregister_process('thold', 'child', $thread);
-			register_process_start('thold', 'child', $thread, $timeout);
+			register_process('thold', 'child', $thread, $timeout);
 		}
     }
 }
@@ -167,33 +167,28 @@ while (true) {
 				$currentval  = thold_get_currentval($thold_data, $rrd_reindexed, $rrd_time_reindexed, $item, $currenttime);
 
 				switch ($thold_data['data_type']) {
-					case 0:
-
-						break;
-					case 1:
-						if ($thold_data['cdef'] > 0) {
-							$currentval = thold_build_cdef($thold_data['cdef'], $currentval, $thold_data['local_data_id'], $thold_data['data_template_rrd_id']);
-						}
-
-						break;
-					case 2:
-						if ($thold_data['percent_ds'] != '') {
-							$currentval = thold_calculate_percent($thold_data, $currentval, $rrd_reindexed);
-						}
-
-						break;
-					case 3:
-						if ($thold_data['expression'] != '') {
-							$currentval = thold_calculate_expression($thold_data, $currentval, $rrd_reindexed, $rrd_time_reindexed);
-						}
-
-						break;
-					case 4:
-						if ($thold_data['upper_ds'] != '') {
-							$currentval = thold_calculate_lower_upper($thold_data, $currentval, $rrd_reindexed);
-						}
-
-						break;
+				case 0:
+					break;
+				case 1:
+					if ($thold_data['cdef'] > 0) {
+						$currentval = thold_build_cdef($thold_data['cdef'], $currentval, $thold_data['local_data_id'], $thold_data['data_template_rrd_id']);
+					}
+					break;
+				case 2:
+					if ($thold_data['percent_ds'] != '') {
+						$currentval = thold_calculate_percent($thold_data, $currentval, $rrd_reindexed);
+					}
+					break;
+				case 3:
+					if ($thold_data['expression'] != '') {
+						$currentval = thold_calculate_expression($thold_data, $currentval, $rrd_reindexed, $rrd_time_reindexed);
+					}
+					break;
+				case 4:
+					if ($thold_data['upper_ds'] != '') {
+						$currentval = thold_calculate_lower_upper($thold_data, $currentval, $rrd_reindexed);
+					}
+					break;
 				}
 
 				if (is_numeric($currentval)) {
@@ -320,7 +315,6 @@ function thold_get_thresholds_tholdcheck($thread, $start_time) {
 			AND tdd.poller_id = ?
 			AND tdd.time <= FROM_UNIXTIME(?)
 			AND td.thold_enabled = 'on'
-			AND td.thold_per_enabled = 'on'
 			AND td.tcheck = 1
 			AND h.status = 3";
 
@@ -340,7 +334,6 @@ function thold_get_thresholds_tholdcheck($thread, $start_time) {
 			WHERE td.thread_id = ?
 			AND tdd.time <= FROM_UNIXTIME(?)
 			AND td.thold_enabled = 'on'
-			AND td.thold_per_enabled = 'on'
 			AND td.tcheck = 1
 			AND h.status = 3";
 

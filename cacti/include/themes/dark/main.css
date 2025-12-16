@@ -1,26 +1,4 @@
-/*
- +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
- |                                                                         |
- | This program is free software; you can redistribute it and/or           |
- | modify it under the terms of the GNU General Public License             |
- | as published by the Free Software Foundation; either version 2          |
- | of the License, or (at your option) any later version.                  |
- |                                                                         |
- | This program is distributed in the hope that it will be useful,         |
- | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
- | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
- | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
- +-------------------------------------------------------------------------+
- | http://www.cacti.net/                                                   |
- +-------------------------------------------------------------------------+
-*/
-
+/* $Id$ */
 /* main styles */
 
 ::-webkit-scrollbar {
@@ -571,35 +549,32 @@ label {
 
 .reloadquery {
 	cursor: pointer;
-	padding: 1px;
+	padding: 2px;
 	vertical-align: middle;
 	color: rgba(148, 179, 107, 0.8);
 	font-size: 14px;
-	margin-right: 10px;
 }
 
 .verbosequery {
 	cursor: pointer;
-	padding: 1px;
+	padding: 2px;
 	vertical-align: middle;
 	color: rgba(255, 204, 0, 0.8);
 	font-size: 14px;
-	margin-right: 10px;
 }
 
 .deletequery {
 	cursor: pointer;
-	padding: 1px;
+	padding: 2px;
 	vertical-align: middle;
 	color: red;
 	font-size: 14px;
-	margin-right: 10px;
 }
 
 .deletequery:hover {
 	color: red;
 	text-decoration: none;
-	padding: 1px;
+	padding: 2px;
 	vertical-align: middle;
 }
 
@@ -704,7 +679,7 @@ label {
 }
 
 .cactiGraphPageHeadBackdrop {
-	background: transparent url("./images/cacti_logo.svg") no-repeat scroll left 40% / 380px auto;
+	background: transparent;
 	padding-bottom: 0px;
 	float: right;
 	width: 400px;
@@ -716,7 +691,7 @@ label {
 }
 
 .cactiConsolePageHeadBackdrop {
-	background: transparent url("./images/cacti_logo.svg") no-repeat scroll left 40% / 380px auto;
+	background: transparent;
 	padding-bottom: 0px;
 	float: right;
 	width: 400px;
@@ -858,7 +833,7 @@ ul#breadcrumbs {
 	background: #161616 none repeat scroll 0 0;
 	width: 100%;
 	vertical-align: top;
-	padding-top: 62px;
+	padding-top: 56px;
 }
 
 .cactiTreeNavigationArea {
@@ -918,7 +893,7 @@ ul#breadcrumbs {
 }
 
 .cactiLogo {
-	background: #161616 url('./images/cacti_logo.svg') no-repeat 30px;
+	background: #161616;
 	display: block;
 	cursor: pointer;
 	padding-bottom: 178px;
@@ -957,7 +932,7 @@ ul#breadcrumbs {
 .cactiLoginLogo, .cactiLogoutLogo {
 	position: relative;
 	float: right;
-	background: transparent url('./images/cacti_logo.svg') no-repeat center;
+	background: transparent;
 	width: 120px;
 	height: 148px;
 	z-index: 2;
@@ -1091,7 +1066,7 @@ legend {
 
 .cactiGraphContentArea {
 	background: #161616;
-	padding-top: 5px;
+	padding-top: 10px;
 	padding-right: 5px;
 	padding-left: 5px;
 	display: none;
@@ -1104,7 +1079,7 @@ legend {
 .cactiGraphContentAreaPreview {
 	height: 100vh;
 	background: #161616;
-	padding-top: 5px;
+	padding-top: 10px;
 	padding-right: 5px;
 	padding-left: 5px;
 	display: none;
@@ -1115,7 +1090,7 @@ legend {
 
 .cactiConsoleContentArea {
 	background: #161616;
-	padding-top: 5px;
+	padding-top: 10px;
 	padding-right: 5px;
 	padding-left: 5px;
 	vertical-align: top;
@@ -1871,7 +1846,6 @@ legend {
 	height: 14px !important;
 	vertical-align: middle;
 	text-decoration: none !important;
-	padding-right: 7px !important;
 }
 
 .deleteMarker:hover {
@@ -1883,7 +1857,6 @@ legend {
 	height: 14px !important;
 	vertical-align: middle;
 	text-decoration: none !important;
-	padding-right: 7px !important;
 }
 
 .deleteMarkerDisabled:hover {
@@ -1905,7 +1878,7 @@ legend {
 
 .moveArrowNone {
 	display: inline-block;
-	width: 14.75px;
+	width: 11.75px;
 }
 
 .action, .shiftArrow, .calendar {
@@ -1932,7 +1905,7 @@ td#tabs {
 }
 
 .cactiGraphHeaderBackground {
-	background: transparent url("./images/cacti_logo.svg") no-repeat scroll left 10% / 380px auto;
+	background: transparent;
 	height: 35px;
 	width: 500px;
 	float: right;
@@ -2111,26 +2084,6 @@ tr.selectable:hover:not(.selected) a {
 
 tr.selected a {
 	color: black !important;
-}
-
-tr td:last-child .checkbox {
-	margin-right: 10px !important;
-}
-
-tr th:last-child .checkbox {
-	margin-right: 10px !important;
-}
-
-.fa-angle-double-up, .fa-angle-double-down {
-	margin-right: 10px;
-}
-
-.fa-plus, .fa-question-circle {
-	margin-right: 10px;
-}
-
-.fa-compress, .fa-expand {
-	margin-right: 10px;
 }
 
 #nav li a.pic:hover, #nav li a.selected {
@@ -2448,7 +2401,6 @@ tr#realtime td:first-child {
 	left: 4px;
 	bottom: 4px;
 	background-color: white;
-	background-image: url('./images/cacti_logo.svg');
 	background-repeat: no-repeat;
 	background-size: 7px;
 	background-position: center;
@@ -2537,7 +2489,6 @@ input:checked + .checkboxSlider:before {
 	left: 4px;
 	bottom: 4px;
 	background-color: white;
-	background-image: url('./images/cacti_logo.svg');
 	background-repeat: no-repeat;
 	background-size: 7px;
 	background-position: center;

@@ -1,3 +1,4 @@
+// $Id$
 /* German initialisation for the jQuery UI multiselect plugin. */
 /* Written by Sven Tatter (sven.tatter@gmail.com). */
 

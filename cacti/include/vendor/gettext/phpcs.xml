@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<!-- $Id$ -->
 <ruleset name="Gettext coding standard">
     <description>Gettext coding standard</description>
 

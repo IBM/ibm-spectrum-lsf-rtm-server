@@ -3,7 +3,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright IBM Corp. 2006, 2023                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -110,17 +110,12 @@ if (detect_and_correct_running_processes(0, 'LICHIST', $poller_interval*3) || $f
 		db_execute('CREATE TABLE lic_services_feature_history LIKE lic_services_feature_history_template;');
 		db_execute('ALTER TABLE lic_services_feature_history ENGINE=InnoDB');
 	}
-	
-	if (!$custom) {
-		// Partition the history and the job mapping tables
-		$partitionver = do_partitions();
-		if ($partitionver != -1 && $partitionver != -2) {
-			$partno = $partitionver;
-		}
-	}
 
 	// Process Finished Jobs
 	list($job_count, $hist_count) = process_jobs($start_date, $end_date, $partno);
+
+	// Partition the history and the job mapping tables
+	do_partitions();
 
 	remove_process_entry(0, 'LICHIST');
 
@@ -136,15 +131,14 @@ if (detect_and_correct_running_processes(0, 'LICHIST', $poller_interval*3) || $f
 
 // Responsible for creating/deleting partitions under the _history and history_mapping tables
 function do_partitions() {
-	$partition_version = -2;
-	
 	$last_partition_run = read_config_option('lichist_partition_last_run');
-	if (date('z') != $last_partition_run && read_config_option('grid_partitioning_enable') == 'on') {
-		$partition_version = manage_partitions();
+	if (date('z') != $last_partition_run) {
+		if (read_config_option('grid_partitioning_enable') == 'on') {
+			manage_partitions();
+		}
 	}
 
 	db_execute_prepared("REPLACE INTO settings (name,value) VALUES ('lichist_partition_last_run', ?)", array(date('z')));
-	return $partition_version;
 }
 
 // A utility debugging function
@@ -226,7 +220,6 @@ function get_finished_jobs($start_date, $end_date) {
 
 // A function to manage partitions of historical license data
 function manage_partitions() {
-	$partition_version = -2;
 	/* determine if a new partition needs to be created */
 	if (partition_timefor_create('lic_services_feature_history', 'tokens_released_date')) {
 		partition_create('lic_services_feature_history', 'tokens_released_date', 'tokens_released_date');
@@ -245,8 +238,6 @@ function manage_partitions() {
 
 	grid_debug("Pruning Partitions for 'lic_services_feature_history_mapping'");
 	partition_prune_partitions('lic_services_feature_history_mapping');
-	
-	return $partition_version;
 }
 
 // Get all the license events that may relate to a specific job
@@ -312,9 +303,6 @@ function process_jobs($start_date, $end_date, $lichpartno = NULL) {
 	// For each such job......
 	if ($total_jobs > 0) {
 		foreach ($jobs as $job) {
-			if ($job['start_time'] == '0000-00-00 00:00:00') {
-				continue;
-			}
 			$job_start_time = date('Y-m-d H:i:00', strtotime($job['start_time']));
 			$job_end_time   = date('Y-m-d H:i:s', strtotime($job['end_time']));
 

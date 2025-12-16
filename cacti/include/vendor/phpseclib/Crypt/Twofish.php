@@ -1,4 +1,5 @@
 <?php
+// $Id$
 
 /**
  * Pure-PHP implementation of Twofish.

@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright IBM Corp. 2006, 2023                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -143,7 +143,7 @@ function lichist_jobs_tabs($tabs) {
 function lichist_jobs_show_tab() {
 	global $config;
 
-	if (get_request_var('tab') == 'lichist') {
+	if ($_REQUEST['tab'] == 'lichist') {
 		include('./plugins/lichist/grid_lichist.php');
 
 	}

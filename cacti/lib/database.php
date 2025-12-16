@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -49,10 +45,6 @@ function db_connect_real($device, $user, $pass, $db_name, $db_type = 'mysql', $p
 
 	$i = 0;
 	if (isset($database_sessions["$device:$port:$db_name"])) {
-		if (!empty($config['DEBUG_SQL_CONNECT'])) {
-			error_log(sprintf('NOTE: Connect using cached connection %s:%s/%s.', $device, $port, $db_name));
-		}
-
 		return $database_sessions["$device:$port:$db_name"];
 	}
 
@@ -112,10 +104,6 @@ function db_connect_real($device, $user, $pass, $db_name, $db_type = 'mysql', $p
 			}
 			$cnn_id->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
 
-			if (!empty($config['DEBUG_SQL_CONNECT'])) {
-				error_log(sprintf('NOTE: New connection to %s:%s/%s.', $device, $port, $db_name));
-			}
-
 			$bad_modes = array(
 				'STRICT_TRANS_TABLES',
 				'STRICT_ALL_TABLES',
@@ -151,18 +139,12 @@ function db_connect_real($device, $user, $pass, $db_name, $db_type = 'mysql', $p
 			if (strpos($ver, 'MariaDB') !== false) {
 				$srv = 'MariaDB';
 				$ver  = str_replace('-MariaDB', '', $ver);
-				$required_modes[] = 'NO_ENGINE_SUBSTITUTION';
 			} else {
 				$srv = 'MySQL';
+			}
 
-				if (version_compare('8.0.0', $ver, '<=')) {
-					$bad_modes[] = 'NO_AUTO_CREATE_USER';
-					$required_modes[] = 'NO_ENGINE_SUBSTITUTION';
-				}
-
-				if (version_compare('8.1.0', $ver, '<=')) {
-					$bad_modes[] = 'NO_ENGINE_SUBSTITUTION';
-				}
+			if (version_compare('8.0.0', $ver, '<=')) {
+				$bad_modes[] = 'NO_AUTO_CREATE_USER';
 			}
 
 			// Get rid of bad modes
@@ -177,6 +159,7 @@ function db_connect_real($device, $user, $pass, $db_name, $db_type = 'mysql', $p
 
 			// Add Required modes
 			$required_modes[] = 'ALLOW_INVALID_DATES';
+			$required_modes[] = 'NO_ENGINE_SUBSTITUTION';
 
 			foreach($required_modes as $mode) {
 				if (array_search($mode, $new_modes) === false) {
@@ -235,25 +218,10 @@ function db_connect_real($device, $user, $pass, $db_name, $db_type = 'mysql', $p
 	return false;
 }
 
-/**
- * db_check_reconnect - Check the database connection.  If the connection is gone
- *  attempt to reconnect, otherwise return the connection
- *
- * @param bool|object  The connection to check
- * @param bool         Wether or not to log the connection check
- *
- * @return bool        The database true is the database is connected else false
- */
-function db_check_reconnect($db_conn = false, $log = true) {
+function db_check_reconnect($db_conn = false) {
 	global $config, $database_details;
 
-	if (file_exists($config['base_path'] . '/include/config.php')) {
-		include($config['base_path'] . '/include/config.php');
-	} else {
-		global $database_hostname, $database_username, $database_password, $database_default;
-		global $database_type, $database_port, $database_retries;
-		global $database_ssl, $database_ssl_key, $database_ssl_cert, $database_ssl_ca;
-	}
+	include($config['base_path'] . '/include/config.php');
 
 	if (cacti_sizeof($database_details) && $db_conn !== false) {
 		foreach($database_details as $det) {
@@ -289,14 +257,12 @@ function db_check_reconnect($db_conn = false, $log = true) {
 	}
 
 	if ($version === false) {
-		if ($log) {
-			syslog(LOG_ALERT, 'CACTI: Database Connection went away.  Attempting to reconnect!');
-		}
+		syslog(LOG_ALERT, 'CACTI: Database Connection went away.  Attempting to reconnect!');
 
 		db_close();
 
 		// Connect to the database server
-		$cnn_id = db_connect_real(
+		db_connect_real(
 			$database_hostname,
 			$database_username,
 			$database_password,
@@ -309,14 +275,6 @@ function db_check_reconnect($db_conn = false, $log = true) {
 			$database_ssl_cert,
 			$database_ssl_ca
 		);
-
-		if ($cnn_id !== false) {
-			return true;
-		} else {
-			return false;
-		}
-	} else {
-		return true;
 	}
 }
 
@@ -362,47 +320,20 @@ function db_get_active_replicas() {
  *
  * @return (bool) the result of the close command
  */
-function db_close(&$db_conn = false) {
-	global $database_sessions, $error_logged, $database_default, $database_hostname, $database_port, $database_details;
+function db_close($db_conn = false) {
+	global $database_sessions, $database_default, $database_hostname, $database_port;
 
 	/* check for a connection being passed, if not use legacy behavior */
 	if (!is_object($db_conn)) {
-		if (!empty($config['DEBUG_SQL_CONNECT'])) {
-			error_log(sprintf('NOTE: Disconnecting from %s:%s/%s.', $database_hostname, $database_port, $database_default));
-		}
-
 		$db_conn = $database_sessions["$database_hostname:$database_port:$database_default"];
 
 		if (!is_object($db_conn)) {
-			if (!empty($config['DEBUG_SQL_CONNECT'])) {
-				error_log(sprintf('WARNING: Disconnect issues.  Non-object for %s:%s/%s.', $database_hostname, $database_port, $database_default));
-			}
-
 			return false;
-		}
-
-		$database_sessions["$database_hostname:$database_port:$database_default"] = null;
-
-		if (isset($error_logged["$database_hostname:$database_port:$database_default"])) {
-			unset($error_logged["$database_hostname:$database_port:$database_default"]);
-		}
-	} elseif (!empty($config['DEBUG_SQL_CONNECT'])) {
-		$id   = spl_object_id($db_conn);
-		$hash = spl_object_hash($db_conn);
-		if (isset($database_details[$hash])) {
-			$det = $database_details[$hash];
-
-			error_log(sprintf('NOTE: Disconnecting from %s:%s/%s.', $det['database_hostname'], $det['database_port'], $det['database_default']));
-		} else {
-			error_log("WARNING: Disconnecting from unregistered Object ID: $id.");
-		}
-
-		if (isset($error_logged[$id])) {
-			unset($error_logged[$id]);
 		}
 	}
 
 	$db_conn = null;
+	$database_sessions["$database_hostname:$database_port:$database_default"] = null;
 
 	return true;
 }
@@ -435,7 +366,7 @@ function db_execute($sql, $log = true, $db_conn = false) {
  * @return (bool) '1' for success, false for failed
  */
 function db_execute_prepared($sql, $params = array(), $log = true, $db_conn = false, $execute_name = 'Exec', $default_value = true, $return_func = 'no_return_function', $return_params = array()) {
-	global $database_sessions, $error_logged, $database_default, $config, $database_hostname, $database_port, $database_total_queries, $database_last_error, $database_log, $affected_rows, $database_details;
+	global $database_sessions, $database_default, $config, $database_hostname, $database_port, $database_total_queries, $database_last_error, $database_log, $affected_rows;
 
 	$database_total_queries++;
 
@@ -447,36 +378,11 @@ function db_execute_prepared($sql, $params = array(), $log = true, $db_conn = fa
 	if (!is_object($db_conn)) {
 		if (isset($database_sessions["$database_hostname:$database_port:$database_default"])) {
 			$db_conn = $database_sessions["$database_hostname:$database_port:$database_default"];
-		} elseif (!isset($error_logged["$database_hostname:$database_port:$database_default"])) {
-			if (!empty($config['DEBUG_SQL_CONNECT'])) {
-				error_log(sprintf('WARNING: Execute unable to find connection for %s:%s/%s.', $database_hostname, $database_port, $database_default));
-				$error_logged["$database_hostname:$database_port:$database_default"] = true;
-			}
 		}
 
 		if (!is_object($db_conn)) {
-			if (!empty($config['DEBUG_SQL_CONNECT'])) {
-				error_log('FATAL: Unable to find connection Object ID.');
-			}
-
 			$database_last_error = 'DB ' . $execute_name . ' -- No connection found';
-
 			return false;
-		}
-	} elseif (!empty($config['DEBUG_SQL_CONNECT'])) {
-		$id   = spl_object_id($db_conn);
-		$hash = spl_object_hash($db_conn);
-
-		if (!isset($error_logged[$id])) {
-			if (isset($database_details[$hash])) {
-				$det = $database_details[$hash];
-
-				error_log(sprintf("NOTE: Execute Using %s:%s/%s.", $det['database_hostname'], $det['database_port'], $det['database_default']));
-			} else {
-				error_log("WARNING: Execute Using Object ID: $id.");
-			}
-
-			$error_logged[$id] = true;
 		}
 	}
 
@@ -501,7 +407,6 @@ function db_execute_prepared($sql, $params = array(), $log = true, $db_conn = fa
 		}
 
 		set_error_handler('db_warning_handler',E_WARNING | E_NOTICE);
-
 		try {
 			if (empty($params) || cacti_count($params) == 0) {
 				$query->execute();
@@ -1107,14 +1012,8 @@ function db_index_matches($table, $index, $columns, $log = true, $db_conn = fals
 function db_table_exists($table, $log = true, $db_conn = false) {
 	static $results;
 
-	if ($db_conn == false) {
-		$index = '-1';
-	} else {
-		$index = md5(json_encode($db_conn));
-	}
-
-	if (isset($results[$index][$table]) && !defined('IN_CACTI_INSTALL') && !defined('IN_PLUGIN_INSTALL')) {
-		return $results[$index][$table];
+	if (isset($results[$table]) && !defined('IN_CACTI_INSTALL') && !defined('IN_PLUGIN_INSTALL')) {
+		return $results[$table];
 	}
 
 	// Separate the database from the table and remove backticks
@@ -1123,9 +1022,9 @@ function db_table_exists($table, $log = true, $db_conn = false) {
 	if ($matches !== false && array_key_exists('table', $matches)) {
 		$sql = 'SHOW TABLES LIKE \'' . $matches['table'] . '\'';
 
-		$results[$index][$table] = (db_fetch_cell($sql, '', $log, $db_conn) ? true : false);
+		$results[$table] = (db_fetch_cell($sql, '', $log, $db_conn) ? true : false);
 
-		return $results[$index][$table];
+		return $results[$table];
 	}
 
 	return false;
@@ -1184,19 +1083,13 @@ function db_cacti_initialized($is_web = true) {
 function db_column_exists($table, $column, $log = true, $db_conn = false) {
 	static $results = array();
 
-	if ($db_conn == false) {
-		$index = '-1';
-	} else {
-		$index = md5(json_encode($db_conn));
+	if (isset($results[$table][$column]) && !defined('IN_CACTI_INSTALL') && !defined('IN_PLUGIN_INSTALL')) {
+		return $results[$table][$column];
 	}
 
-	if (isset($results[$index][$table][$column]) && !defined('IN_CACTI_INSTALL') && !defined('IN_PLUGIN_INSTALL')) {
-		return $results[$index][$table][$column];
-	}
+	$results[$table][$column] = (db_fetch_cell("SHOW columns FROM `$table` LIKE '$column'", '', $log, $db_conn) ? true : false);
 
-	$results[$index][$table][$column] = (db_fetch_cell("SHOW columns FROM `$table` LIKE '$column'", '', $log, $db_conn) ? true : false);
-
-	return $results[$index][$table][$column];
+	return $results[$table][$column];
 }
 
 /**
@@ -1579,7 +1472,7 @@ function db_table_create($table, $data, $log = true, $db_conn = false) {
 
 		if (db_execute($sql, $log, $db_conn)) {
 			if (isset($data['charset'])) {
-				db_execute("ALTER TABLE `$table` CHARSET = " . $data['charset']);
+				db_execute("ALLTER TABLE `$table` CHARSET = " . $data['charset']);
 			}
 
 			if (isset($data['collate'])) {
@@ -1888,11 +1781,8 @@ function sql_save($array_items, $table_name, $key_cols = 'id', $autoinc = true, 
 				}
 			} elseif (empty($value)) {
 				$array_items[$key] = 0;
-			} elseif (is_numeric($value)) {
-				$array_items[$key] = $value;
 			} else {
-				cacti_log('ERROR: Column: ' . $key . ' contains and invald value: ' . $value, false, 'DBCALL');
-				$array_items[$key] = 0;
+				$array_items[$key] = $value;
 			}
 		} else {
 			$array_items[$key] = db_qstr($value);

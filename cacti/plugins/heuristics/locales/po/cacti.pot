@@ -1334,32 +1334,32 @@ msgstr ""
 msgid "No dependent jobs found"
 msgstr ""
 
-#: heuristics_webapi.php:3431
+#: heuristics_webapi.php:2914
 #, php-format
 msgid ""
-"Your job max runtime is %s, is above the 90th Percentils of %s for "
+"Your Job with a max runtime of %s, is above the 90th Percentils of %s for "
 "Jobs from the Queue/Project"
 msgstr ""
 
-#: heuristics_webapi.php:3437
+#: heuristics_webapi.php:2920
 #, php-format
 msgid ""
-"Your job max runtime is %s, is above the 75th Percentils of %s for "
+"Your Job with a max runtime of %s, is above the 75th Percentils of %s for "
 "Jobs from this Queue/Project"
 msgstr ""
 
-#: heuristics_webapi.php:3439
+#: heuristics_webapi.php:2922
 #, php-format
 msgid ""
-"Your job max runtime is %s, has not exceeded the 75th Percentils of "
+"Your Job with a max runtime of %s, has not exceeded the 75th Percentils of "
 "%s for jobs from this Queue/Project"
 msgstr ""
 
-#: heuristics_webapi.php:3446
+#: heuristics_webapi.php:2929
 #, php-format
 msgid ""
-"Your job max runtime is %s.  Because there is no historical reference data for these "
-"job types, JobIQ cannot determine if these are long running jobs."
+"Your Job with a max runtime of %s.  There is no historiacl data for these "
+"job types, so we canno determine if there are long running jobs."
 msgstr ""
 
 #: heuristics_webapi.php:3141

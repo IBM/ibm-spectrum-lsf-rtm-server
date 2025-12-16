@@ -1,3 +1,4 @@
+// $Id$
 /* Albanian translation for the jQuery Timepicker Addon */
 /* Written by Olti Buzi */
 (function($) {

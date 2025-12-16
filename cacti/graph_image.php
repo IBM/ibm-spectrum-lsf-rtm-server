@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -52,11 +48,7 @@ $graph_data_array = array();
 
 // Determine the graph type of the output
 if (!isset_request_var('image_format')) {
-	$type   = db_fetch_cell_prepared('SELECT image_format_id
-		FROM graph_templates_graph
-		WHERE local_graph_id = ?',
-		array(get_request_var('local_graph_id')));
-
+	$type   = db_fetch_cell_prepared('SELECT image_format_id FROM graph_templates_graph WHERE local_graph_id = ?', array(get_request_var('local_graph_id')));
 	switch($type) {
 	case '1':
 		$gtype = 'png';
@@ -133,31 +125,8 @@ if (isset_request_var('rra_id')) {
 	$rra_id = null;
 }
 
-if ($config['poller_id'] == 1 || read_config_option('storage_location')) {
-	$null_param = array();
-	$output = rrdtool_function_graph(get_request_var('local_graph_id'), $rra_id, $graph_data_array, '', $null_param, $_SESSION['sess_user_id']);
-} else {
-	$url  = $config['url_path'] . 'remote_agent.php?action=graph_json';
-	$url .= '&local_graph_id=' . get_request_var('local_graph_id');
-	$url .= '&rra_id=' . $rra_id;
-
-	foreach($graph_data_array as $variable => $value) {
-		$url .= '&' . $variable . '=' . $value;
-	}
-
-	$output = call_remote_data_collector(1, $url);
-
-	if (is_array($output) && isset($output['image'])) {
-		$output = $output['image'];
-	}
-
-	// Find the beginning of the image definition row
-	$image_begin_pos  = strpos($output, 'image = ');
-	// Find the end of the line of the image definition row, after this the raw image data will come
-	$image_data_pos   = strpos($output, "\n" , $image_begin_pos) + 1;
-	// Insert the raw image data to the array
-	$output  = substr($output, $image_data_pos);
-}
+$null_param = array();
+$output = rrdtool_function_graph(get_request_var('local_graph_id'), $rra_id, $graph_data_array, '', $null_param, $_SESSION['sess_user_id']);
 
 if ($output !== false && $output != '') {
 	/* flush the headers now */

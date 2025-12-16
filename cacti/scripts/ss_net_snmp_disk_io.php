@@ -1,5 +1,6 @@
 #!/usr/bin/env php
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
  | Copyright (C) 2004-2023 The Cacti Group                                 |
@@ -13,11 +14,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -159,17 +155,9 @@ function ss_net_snmp_disk_io($host_id_or_hostname = '') {
 				} elseif (!isset($previous["dr$index"])) {
 					$reads = 'U';
 				} elseif ($previous["dr$index"] > $measure['value']) {
-					if ($reads != 'U') {
-						$reads += intval($measure['value']) + 4294967295 - intval($previous["dr$index"]) - intval($previous["dr$index"]);
-					} else {
-						$reads = intval($measure['value']) + 4294967295 - intval($previous["dr$index"]) - intval($previous["dr$index"]);
-					}
+					$reads += $measure['value'] + 4294967295 - $previous["dr$index"] - $previous["dr$index"];
 				} else {
-					if ($reads != 'U') {
-						$reads += $measure['value'] - $previous["dr$index"];
-					} else {
-						$reads = $measure['value'] - $previous["dr$index"];
-					}
+					$reads += $measure['value'] - $previous["dr$index"];
 				}
 
 				$current["dr$index"] = $measure['value'];
@@ -205,25 +193,17 @@ function ss_net_snmp_disk_io($host_id_or_hostname = '') {
 				} elseif (!isset($previous["dw$index"])) {
 					$writes = 'U';
 				} elseif ($previous["dw$index"] > $measure['value']) {
-					if ($writes != 'U') {
-						$writes += $measure['value'] + 4294967295 - $previous["dw$index"] - $previous["dw$index"];
-					} else {
-						$writes = $measure['value'] + 4294967295 - $previous["dw$index"] - $previous["dw$index"];
-					}
+					$writes += $measure['value'] + 4294967295 - $previous["dw$index"] - $previous["dw$index"];
 				} else {
-					if ($writes != 'U') {
-						$writes += $measure['value'] - $previous["dw$index"];
-					} else {
-						$writes = $measure['value'] - $previous["dw$index"];
-					}
+					$writes += $measure['value'] - $previous["dw$index"];
 				}
 
 				$current["dw$index"] = $measure['value'];
 			}
 		}
 
-		$data = json_encode($current);
-		file_put_contents("$tmpdir/$tmpfile", $data);
+		$data = "'" . json_encode($current) . "'";
+		shell_exec("echo $data > $tmpdir/$tmpfile");
 	}
 
 	if ($found) {

@@ -1,3 +1,4 @@
+// $Id$
 /* Hellenic translation for the jQuery Timepicker Addon */
 /* Written by Christos Pontikis */
 (function($) {

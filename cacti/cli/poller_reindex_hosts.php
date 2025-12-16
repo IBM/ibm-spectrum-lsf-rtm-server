@@ -1,8 +1,9 @@
 #!/usr/bin/env php
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -13,11 +14,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -57,7 +53,7 @@ $force      = false;
 if (cacti_sizeof($parms)) {
 	foreach($parms as $parameter) {
 		if (strpos($parameter, '=')) {
-			list($arg, $value) = explode('=', $parameter, 2);
+			list($arg, $value) = explode('=', $parameter);
 		} else {
 			$arg = $parameter;
 			$value = '';
@@ -152,14 +148,6 @@ $data_queries = db_fetch_assoc_prepared("SELECT description, hostname, host_id, 
 print 'WARNING: Do not interrupt this script.  Reindexing can take quite some time' . PHP_EOL;
 debug("There are '" . cacti_sizeof($data_queries) . "' data queries to run");
 
-/* silently end if the registered process is still running  */
-if (!$force) {
-	if (!register_process_start('reindex', 'master', 0, 86400)) {
-		print "FATAL: Detected an already running process.  Use --force to override" . PHP_EOL;
-		exit(0);
-	}
-}
-
 $i = 1;
 $total_start = microtime(true);
 if (cacti_sizeof($data_queries)) {
@@ -203,10 +191,6 @@ if (cacti_sizeof($data_queries)) {
 
 		$i++;
 	}
-
-	set_config_option('reindex_last_run_time', time());
-	unregister_process('reindex', 'master');
-
 }
 
 function display_version() {
@@ -219,7 +203,7 @@ function display_help () {
 	display_version();
 	print 'usage: poller_reindex_hosts.php --id=[host_id|all] [--qid=[ID|all]]' . PHP_EOL;
 	print '   [--host-descr=[description]] [--debug]' . PHP_EOL . PHP_EOL;
-	print '--id=host_id             - The host_id to have data queries reindexed or \'all\' to reindex all hosts' . PHP_EOL;
+	print '--id=host_id             - The host_id to have data queries reindexed or \'all\' to reindex all hosts\n' . PHP_EOL;
 	print '--qid=query_id           - Only index on a specific data query id; defaults to \'all\'' . PHP_EOL;
 	print '--host-descr=description - The host description to filter by (SQL filters acknowledged)' . PHP_EOL;
 	print '--force                  - Force Graph and Data Source Suggested Name Re-mapping for all items' . PHP_EOL;

@@ -1,3 +1,4 @@
+## $Id$
 # Description: Cacti Group Dark Format
 # Theme: dark
 <html>
@@ -121,7 +122,7 @@ table {
 <tr><td>
 <REPORT>
 </td></tr>
-<tr class='header_row'><td class='footer'>Copyright &copy; 2004-2024 - <a href="http://www.cacti.net">The Cacti Group</a></td></tr>
+<tr class='header_row'><td class='footer'>Copyright &copy; 2004-2022 - <a href="http://www.cacti.net">The Cacti Group</a></td></tr>
 </table>
 </body>
 </html>

@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -371,7 +367,6 @@ abstract class LdapError {
 
 class Ldap {
 	public $dn;
-	public $cn;
 	public $host;
 	public $username;
 	public $password;
@@ -586,9 +581,7 @@ class Ldap {
 			if ($this->referrals == '0') {
 				if (!ldap_set_option($ldap_conn, LDAP_OPT_REFERRALS, 0)) {
 					$output = LdapError::GetErrorDetails(LdapError::ProtocolErrorReferral, $ldap_conn, $this->host);
-
 					Ldap::RecordError($output);
-
 					ldap_close($ldap_conn);
 
 					return array(
@@ -602,9 +595,7 @@ class Ldap {
 			if ($this->encryption == '2') {
 				if (!ldap_start_tls($ldap_conn)) {
 					$output = LdapError::GetErrorDetails(LdapError::ProtocolErrorTls, $ldap_conn, $this->host);
-
 					Ldap::RecordError($output);
-
 					ldap_close($ldap_conn);
 
 					return array(
@@ -613,17 +604,9 @@ class Ldap {
 					);
 				}
 			}
-
-			return array('ldap_conn' => $ldap_conn, 'output' => $output);
-		} else {
-			$output = LdapError::GetErrorDetails(LdapError::ConnectionUnavailable, $ldap_conn, $this->host);
-			Ldap::RecordError($output);
-
-			return array(
-				'ldap_conn' => $ldap_conn,
-				'output'    => $output
-			);
 		}
+
+		return array('ldap_conn' => $ldap_conn, 'output' => $output);
 	}
 
 	function Authenticate() {
@@ -674,7 +657,7 @@ class Ldap {
 					 * And the patch against latest PHP release:
 					 * http://cvsweb.netbsd.org/bsdweb.cgi/pkgsrc/databases/php-ldap/files/ldap-ctrl-exop.patch
 					*/
-					$true_dn_result = ldap_search($ldap_conn, $this->search_base, '(|(uid=' . $this->dn . ')(cn=' . $this->dn . ')(userPrincipalName=' . $this->dn . '))', array('dn'));
+					$true_dn_result = ldap_search($ldap_conn, $this->search_base, 'userPrincipalName=' . $this->dn, array('dn'));
 					$first_entry    = ldap_first_entry($ldap_conn, $true_dn_result);
 
 					/* we will test in two ways */
@@ -709,7 +692,6 @@ class Ldap {
 		} else {
 			/* unable to bind */
 			$ldap_error = ldap_errno($ldap_conn);
-
 			if ($ldap_error == 0x02) {
 				/* protocol error */
 				$output = LdapError::GetErrorDetails(LdapError::ProtocolErrorGeneral, $ldap_conn, $this->host);

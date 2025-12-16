@@ -1,3 +1,4 @@
+// $Id$
 /* Galician localization for 'UI date picker' jQuery extension. */
 /* Translated by Jorge Barreiro <yortx.barry@gmail.com>. */
 ( function( factory ) {

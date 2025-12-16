@@ -1,8 +1,9 @@
 #!/usr/bin/env php
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -13,11 +14,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -50,7 +46,7 @@ if (cacti_sizeof($parms)) {
 	$ip            = '';
 	$poller_id     = $config['poller_id'];
 	$site_id       = read_config_option('default_site');
-	$template_id   = (int) read_config_option('default_template');
+	$template_id   = read_config_option('default_template');
 	$community     = read_config_option('snmp_community');
 	$snmp_ver      = read_config_option('snmp_version');
 	$disable       = 0;
@@ -85,7 +81,7 @@ if (cacti_sizeof($parms)) {
 
 	foreach($parms as $parameter) {
 		if (strpos($parameter, '=')) {
-			list($arg, $value) = explode('=', $parameter, 2);
+			list($arg, $value) = explode('=', $parameter);
 		} else {
 			$arg = $parameter;
 			$value = '';
@@ -282,7 +278,6 @@ if (cacti_sizeof($parms)) {
 				exit(1);
 			}
 
-			break;
 		case '--version':
 		case '-V':
 		case '-v':

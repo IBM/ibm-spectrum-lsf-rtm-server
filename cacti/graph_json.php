@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -177,7 +173,9 @@ if ($config['poller_id'] == 1 || read_config_option('storage_location')) {
 		$graph_data_array['effective_user'] = $_SESSION['sess_user_id'];
 	}
 
-	$url  = $config['url_path'] . 'remote_agent.php?action=graph_json';
+	$hostname = db_fetch_cell('SELECT hostname FROM poller WHERE id = 1');
+
+	$url  = get_url_type() . '://' . $hostname . $config['url_path'] . 'remote_agent.php?action=graph_json';
 	$url .= '&local_graph_id=' . get_request_var('local_graph_id');
 	$url .= '&rra_id=' . $rra_id;
 
@@ -185,7 +183,9 @@ if ($config['poller_id'] == 1 || read_config_option('storage_location')) {
 		$url .= '&' . $variable . '=' . $value;
 	}
 
-	$output = call_remote_data_collector(1, $url);
+	$fgc_contextoption = get_default_contextoption();
+	$fgc_context       = stream_context_create($fgc_contextoption);
+	$output            = @file_get_contents($url, false, $fgc_context);
 }
 
 $output = trim($output);

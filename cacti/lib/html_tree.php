@@ -1,7 +1,8 @@
 <?php
+// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2023 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -12,11 +13,6 @@
  | but WITHOUT ANY WARRANTY; without even the implied warranty of          |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
- +-------------------------------------------------------------------------+
- | Cacti: The Complete RRDtool-based Graphing Solution                     |
- +-------------------------------------------------------------------------+
- | This code is designed, written, and maintained by the Cacti Group. See  |
- | about.php and/or the AUTHORS file for specific developer information.   |
  +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
@@ -318,7 +314,7 @@ function grow_dhtml_trees() {
 				}else {
                     $('#jstree').jstree('search', '', false);
                 }
-			}, 500);
+			}, 250);
 		});
 
 		<?php print api_plugin_hook_function('top_graph_jquery_function');?>
@@ -917,7 +913,7 @@ function grow_right_pane_tree($tree_id, $leaf_id, $host_group_data) {
 			WHERE id = ?',
 			array($host_group_data_array[1]));
 
-		$host_group_data_name = '<strong>' . __('Graph Template:'). '</strong> ' . html_escape($name);
+		$host_group_data_name = '<strong>' . __('Graph Template:'). '</strong> ' . $name;
 		$graph_template_id    = $host_group_data_array[1];
 	} elseif ($host_group_data_array[0] == 'dq') {
 		$name = db_fetch_cell_prepared('SELECT name
@@ -925,7 +921,7 @@ function grow_right_pane_tree($tree_id, $leaf_id, $host_group_data) {
 			WHERE id = ?',
 			array($host_group_data_array[1]));
 
-		$host_group_data_name = '<strong>' . __('Graph Template:') . '</strong> ' . (empty($host_group_data_array[1]) ? __('Non Query Based') : html_escape($name));
+		$host_group_data_name = '<strong>' . __('Graph Template:') . '</strong> ' . (empty($host_group_data_array[1]) ? __('Non Query Based') : $name);
 		$data_query_id        = $host_group_data_array[1];
 	} elseif ($host_group_data_array[0] == 'dqi') {
 		$name = db_fetch_cell_prepared('SELECT name
@@ -933,7 +929,7 @@ function grow_right_pane_tree($tree_id, $leaf_id, $host_group_data) {
 			WHERE id = ?',
 			array($host_group_data_array[1]));
 
-		$host_group_data_name = '<strong>' . __('Graph Template:') . '</strong> ' . (empty($host_group_data_array[1]) ? __('Non Query Based') : html_escape($name)) . '-> ' . (empty($host_group_data_array[2]) ? __('Template Based') : get_formatted_data_query_index($leaf['host_id'], $host_group_data_array[1], $host_group_data_array[2]));
+		$host_group_data_name = '<strong>' . __('Graph Template:') . '</strong> ' . (empty($host_group_data_array[1]) ? __('Non Query Based') : $name) . '-> ' . (empty($host_group_data_array[2]) ? __('Template Based') : get_formatted_data_query_index($leaf['host_id'], $host_group_data_array[1], $host_group_data_array[2]));
 		$data_query_id    = $host_group_data_array[1];
 		$data_query_index = $host_group_data_array[2];
 	}
@@ -966,7 +962,7 @@ function grow_right_pane_tree($tree_id, $leaf_id, $host_group_data) {
 	}
 
 	if ($host_group_data_name != '') {
-		$title .= $title_delimiter . " " . $host_group_data_name;
+		$title .= $title_delimiter . " $host_group_data_name";
 		$title_delimiter = '-> ';
 	}
 
@@ -1283,7 +1279,7 @@ function grow_right_pane_tree($tree_id, $leaf_id, $host_group_data) {
 		$sql_where = '';
 
 		if (get_request_var('rfilter') != '') {
-			$sql_where .= " (gtg.title_cache RLIKE '" . get_request_var('rfilter') . "' OR gtg.title RLIKE '" . get_request_var('rfilter') . "')";
+			$sql_where .= ' (gtg.title_cache RLIKE "' . get_request_var('rfilter') . '" OR gtg.title RLIKE "' . get_request_var('rfilter') . '")';
 		}
 
 		if (isset_request_var('graph_template_id') && get_request_var('graph_template_id') >= 0) {
@@ -1334,7 +1330,7 @@ function grow_right_pane_tree($tree_id, $leaf_id, $host_group_data) {
 		}
 
 		if (get_request_var('rfilter') != '') {
-			$sql_where .= ($sql_where != '' ? ' AND ':'') . "(gtg.title_cache RLIKE '" . get_request_var('rfilter') . "')";
+			$sql_where .= ($sql_where != '' ? ' AND ':'') . '(gtg.title_cache RLIKE "' . get_request_var('rfilter') . '")';
 		}
 
 		if (isset_request_var('graph_template_id') && get_request_var('graph_template_id') >= 0) {
@@ -1450,7 +1446,7 @@ function get_host_graph_list($host_id, $graph_template_id, $data_query_id, $host
 		if (cacti_sizeof($final_templates)) {
 			$sql_where = '';
 			if (get_request_var('rfilter') != '') {
-				$sql_where = " (gtg.title_cache RLIKE '" . get_request_var('rfilter') . "')";
+				$sql_where = ' (gtg.title_cache RLIKE "' . get_request_var('rfilter') . '")';
 			}
 
 			if ($host_id > 0) {
@@ -1520,7 +1516,7 @@ function get_host_graph_list($host_id, $graph_template_id, $data_query_id, $host
 				$sfd = get_formatted_data_query_indexes($host_id, $data_query['id']);
 
 				if (get_request_var('rfilter') != '') {
-					$sql_where = " (gtg.title_cache RLIKE '" . get_request_var('rfilter') . "')";
+					$sql_where = ' (gtg.title_cache RLIKE "' . get_request_var('rfilter') . '")';
 				}
 
 				/* grab a list of all graphs for this host/data query combination */

@@ -1,3 +1,4 @@
+// $Id$
 /* Kazakh (UTF-8) initialisation for the jQuery UI date picker plugin. */
 /* Written by Dmitriy Karasyov (dmitriy.karasyov@gmail.com). */
 ( function( factory ) {

@@ -1,3 +1,4 @@
+// $Id$
 /* Thai translation for the jQuery Timepicker Addon */
 /* Written by Yote Wachirapornpongsa */
 (function($) {

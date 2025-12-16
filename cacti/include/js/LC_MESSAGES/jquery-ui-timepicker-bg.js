@@ -1,3 +1,4 @@
+// $Id$
 /* Bulgarian translation for the jQuery Timepicker Addon */
 /* Written by Plamen Kovandjiev */
 (function($) {

@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright IBM Corp. 2006, 2023                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -560,7 +560,7 @@ function disku_pollers() {
 				WHERE poller_id = ?',
 				array($disku_poller['id']));
 
-			if (isset($disku_poller['heartbeat']) && (time() - strtotime($disku_poller['heartbeat']) < 300)) {
+			if (time() - strtotime($disku_poller['heartbeat']) < 300) {
 				$status = "<span class='deviceUp'>"   . ($procs > 0 ? __('Running', 'disku'):__('Up', 'disku')) . '</span>';
 			} else {
 				$status = "<span class='deviceDown'>" . ($procs > 0 ? __('Orphaned', 'disku'):__('Down', 'disku')) . '</span>';
@@ -625,7 +625,7 @@ function disku_filter() {
 						<?php print __('Search', 'disku');?>
 					</td>
 					<td>
-						<input type='text' id='filter' size='30' value='<?php print html_escape_request_var('filter');?>'>
+						<input type='text' id='filter' size='30' value='<?php print html_escape(get_request_var('filter'));?>'>
 					</td>
 					<td>
 						<?php print __('Pollers', 'disku');?>

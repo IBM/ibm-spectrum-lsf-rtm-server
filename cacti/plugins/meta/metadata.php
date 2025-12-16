@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2025                                          |
+ | Copyright IBM Corp. 2006, 2022                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -58,7 +58,7 @@ function filter() {
 
 			function applyFilter() {
 				strURL  = 'metadata.php?header=false&type=' + $('#type').val();
-				strURL += '&filter=' + encodeURIComponent($('#filter').val());
+				strURL += '&filter=' + escape($('#filter').val());
 				strURL += '&rows=' + $('#rows').val();
 				loadPageNoHeader(strURL);
 			}

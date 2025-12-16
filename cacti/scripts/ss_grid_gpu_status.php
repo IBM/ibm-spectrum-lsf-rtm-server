@@ -4,6 +4,7 @@ $no_http_headers = true;
 
 /* display No errors */
 include_once(dirname(__FILE__) . "/../lib/functions.php");
+error_no_deprecated();
 
 if (!isset($called_by_script_server)) {
 	include(dirname(__FILE__) . "/../include/global.php");
