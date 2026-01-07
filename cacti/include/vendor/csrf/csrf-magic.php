@@ -364,6 +364,7 @@ function csrf_get_secret() {
 		$new_secret = csrf_generate_secret();
 		foreach ($files as $file) {
 			if (csrf_writable($file)) {
+				umask(0027);
 				$fh = fopen($file, 'w');
 				fwrite($fh, $new_secret);
 				fclose($fh);

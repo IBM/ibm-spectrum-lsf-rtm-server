@@ -25,6 +25,7 @@
 $database_type     = 'mysql';
 $database_default  = 'cacti';
 $database_hostname = 'localhost';
+// These are placeholders.  The installer will replace them
 $database_username = 'cacti';
 $database_password = 'admin';
 $database_port     = '3306';
