@@ -72,6 +72,7 @@ function install_create_csrf_secret($file) {
 			$fh = fopen($file, 'w');
 			fwrite($fh, csrf_get_secret());
 			fclose($fh);
+			chmod($file, 0640);
 
 			return true;
 		} else {

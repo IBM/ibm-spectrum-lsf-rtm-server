@@ -22,8 +22,9 @@
 include(dirname(__FILE__) . '/../../include/cli_check.php');
 include_once($config['base_path'] . '/plugins/gridalarms/lib/gridalarms_functions.php');
 include_once($config['base_path'] . '/lib/rtm_functions.php');
-include_once($config['base_path'] . '/lib/import.php');
 include_once($config['base_path'] . '/lib/utility.php');
+include_once($config['base_path'] . '/lib/import.php');
+
 
 /* process calling arguments */
 $parms = $_SERVER['argv'];

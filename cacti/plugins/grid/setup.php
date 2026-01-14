@@ -938,7 +938,7 @@ function grid_config_form () {
 				'description' => __('Specify the LIM port on the master. LSF 7 or above default = 7869.', 'grid'),
 				'value' => '|arg1:lim_port|',
 				'max_length' => '5',
-				'default' => ''
+				'default' => '7869'
 			),
 			'poller_id' => array(
 				'method' => 'drop_sql',
@@ -969,7 +969,7 @@ function grid_config_form () {
 					'Y' => __('Yes', 'grid'),
 					'N' => __('No', 'grid')
 				),
-				'default' => 'N'
+				'default' => 'ENHANCED'
 			),
 			'lsf_krb_auth' => array(
 				'friendly_name' => __('Kerberos Authentication Enabled', 'grid'),
@@ -2656,6 +2656,12 @@ function grid_config_settings () {
 			'method' => 'drop_array',
 			'default' => '1week',
 			'array' => $grid_partition_time_range,
+		),
+		'lic_process_keyfeatures_enable' => array(
+			'friendly_name' => __('Only Process Key License Features', 'grid'),
+			'description' => __('For Large Systems, turn this option on to only process license features that have been identified as key features.  <u><b>NOTE:</b> Please refer to RTM Documentation prior to disabling this setting.</u>', 'grid'),
+			'method' => 'checkbox',
+			'default' => 'on'
 		),
 		'grid_maint_backup_header' => array(
 			'friendly_name' => __('Database Backups', 'grid'),
@@ -6420,7 +6426,10 @@ function grid_config_arrays () {
 		'300'  => __('%d Minutes', 5, 'grid'),
 		'600'  => __('%d Minutes', 10, 'grid'),
 		'900'  => __('%d Minutes', 15, 'grid'),
-		'1200' => __('%d Minutes', 20, 'grid')
+		'1200' => __('%d Minutes', 20, 'grid'),
+		'1800' => __('%d Minutes', 30, 'grid'),
+		'2700' => __('%d Minutes', 45, 'grid'),
+		'3600' => __('%d Minutes', 60, 'grid')
 	);
 
 	$grid_max_nonjob_runtimes = array(

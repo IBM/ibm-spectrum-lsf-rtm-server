@@ -18,9 +18,18 @@
  +-------------------------------------------------------------------------+
 */
 
+function license_page_head() {
+	global $config;
+	print get_md5_include_js('/plugins/RTM/include/select2/select2.min.js');
+	print get_md5_include_css('/plugins/RTM/include/select2/select2.min.css');
+	print get_md5_include_js('/plugins/RTM/include/select2/select2_custom.js');
+	print get_md5_include_css('/plugins/RTM/include/select2/select2_custom.css');
+}
+
 function plugin_license_install(){
 	global $config;
 
+	api_plugin_register_hook('license', 'page_head', 'license_page_head', 'setup.php', 1);
 	api_plugin_register_hook('license', 'top_header_tabs', 'license_show_tab', 'setup.php');
 	api_plugin_register_hook('license', 'top_graph_header_tabs', 'license_show_tab', 'setup.php');
 	api_plugin_register_hook('license', 'config_arrays', 'license_config_arrays', 'setup.php');
@@ -35,7 +44,7 @@ function plugin_license_install(){
 	api_plugin_register_hook('license', 'rtm_landing_page', 'license_rtm_landing_page', 'setup.php');
 	//api_plugin_register_hook('license', 'grid_menu', 'license_grid_menu', 'setup.php');
 	api_plugin_register_realm('license', 'lic_pollers.php,lic_servers.php,lic_managers.php,lic_feature_maps.php,lic_applications.php', 'License Administration', 1);
-	api_plugin_register_realm('license', 'lic_servicedb.php,lic_options.php,lic_details.php,lic_usage.php,lic_checkouts.php,lic_dailystats.php,lic_service_summary.php', 'View License Usage Data', 1);
+	api_plugin_register_realm('license', 'lic_servicedb.php,lic_options.php,lic_details.php,lic_usage.php,lic_checkouts.php,lic_dailystats.php,lic_service_summary.php,lic_daily_project_use.php', 'View License Usage Data', 1);
 	api_plugin_register_realm('license', 'lic_lm_fusion.php', 'View License Admin Data', 1);
 
 	$id = db_fetch_cell("SELECT id FROM plugin_config WHERE directory='license'");
@@ -96,6 +105,9 @@ function license_setup_new_tables() {
 			(5,'61f5397851f315c92f0a635ef5922a6e','DSLS','DSLS License Manager',0,'','licjsonpoller','/opt/IBM/dsls/bin/DSLicSrv','-C',3,0);");
 
 	}
+
+	// Turn on only processing the license key features
+	db_execute("INSERT INTO settings VALUES ('lic_process_keyfeatures_enable', 'on')");
 }
 
 function plugin_license_uninstall(){
@@ -992,6 +1004,12 @@ function license_draw_navigation_text($nav){
 		'mapping' => '' ,
 		'url' => 'lic_lm_fusion.php',
 		'level' => '0');
+	
+	$nav['lic_daily_project_use.php:'] = array(
+		'title' => 'Daily Project Use',
+		'mapping' => '' ,
+		'url' => 'lic_daily_project_use.php',
+		'level' => '0');
 
 	$nav['lic_options.php:'] = array(
 		'title' => 'FLEXlm Usage Policy Dashboard',
@@ -1068,6 +1086,7 @@ function get_lic_menu(){
 		__('Usage Reports')   => array(
 			'plugins/license/lic_dailystats.php' => __('Daily Statistics', 'license'),
 			'plugins/license/lic_lm_fusion.php'  => __('Charts', 'license'),
+			'plugins/license/lic_daily_project_use.php'  => __('Daily Project Use', 'license'),
 		)
 	);
 	return $license_menu;
@@ -1212,13 +1231,15 @@ function license_api_device_save($save){
 function license_poller_bottom () {
 	global $config;
 
-
 	$command_string = read_config_option('path_php_binary');
 	$extra_args = '-q ' . $config['base_path'] . '/plugins/license/poller_license.php';
 
 	exec_background($command_string, $extra_args);
 
 	$extra_args = '-q ' . $config['base_path'] . '/plugins/license/poller_options.php';
+	exec_background($command_string, $extra_args);
+
+	$extra_args = '-q ' . $config['base_path'] . '/plugins/license/poller_feature.php';
 	exec_background($command_string, $extra_args);
 
 	$extra_args = '-q '. $config['base_path'].'/plugins/license/lic_add_license_device.php';

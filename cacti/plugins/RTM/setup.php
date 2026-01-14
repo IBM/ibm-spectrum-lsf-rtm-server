@@ -51,7 +51,7 @@ function rtm_page_head() {
 		var brandName='" . __('IBM Spectrum') . "';
 		var brandNameBold='" . __('IBM <b>Spectrum</b>') . "';
 		var productName='" . __('LSF RTM 10.2.0.15') . "';
-		var copyRight='" . __('© Copyright International Business Machines Corp. 1992, 2025. US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp. Portions Copyright © 2004, 2024 The Cacti Group, Inc.') . "';
+		var copyRight='" . __('© Copyright International Business Machines Corp. 1992, 2026. US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp. Portions Copyright © 2004, 2025 The Cacti Group, Inc.') . "';
 		</script>";
 }
 

@@ -202,7 +202,7 @@ function alarm_mail($to, $from, $subject, $message, $textonly = false) {
 	$headers['User-Agent'] = 'gridalarms-v' . $version;
 
 	$error = mailer(
-		array($from, $from_name),
+		array(array($from, $from_name)),
 		$to,
 		'',
 		'',

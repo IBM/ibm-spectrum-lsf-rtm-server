@@ -66,9 +66,9 @@ function draw_ls_tabs() {
 	/* present a tabbed interface */
 	$tabs = array(
 		'summary'      => __('Summary', 'gridblstat'),
-		'features'     => __('Feature', 'gridblstat'),
+		'features'     => __('LS Feature', 'gridblstat'),
 		'clusters'     => __('Clusters', 'gridblstat'),
-		'projects'     => __('Projects', 'gridblstat'),
+		'projects'     => __('LS Projects', 'gridblstat'),
 		'distribution' => __('Distribution', 'gridblstat'),
 		'users'        => __('Users', 'gridblstat'),
 		'checkouts'    => __('Checkouts', 'gridblstat'),
@@ -268,7 +268,74 @@ function grid_blstat_ajax_search() {
 			print json_encode($values);
 
 			break;
-		}
+
+			case 'msfeatures':
+				header('Content-Type: application/json');
+				$page =  isset_request_var('page') ? get_request_var('page') : 1;
+				$searchTerm = isset_request_var('search') ? get_request_var('search') : "";
+				$recordLimit = 30;
+				$offset = $recordLimit * ($page - 1);
+
+				$columnName = !isempty_request_var("checkout") ? "feature_name" : "bld_feature";
+				$tableName = !isempty_request_var("checkout") ? "lic_services_feature_use" : "grid_blstat_feature_map";
+
+				$fetchRecordsQuery = "SELECT DISTINCT $columnName FROM $tableName " . ($searchTerm ? "WHERE $columnName LIKE ?" : "")  . " LIMIT $recordLimit OFFSET $offset";
+				$fetchRecordsQueryParams = [];
+				if ($searchTerm) {
+				$fetchRecordsQueryParams[] = "%$searchTerm%";
+				}
+
+				$fetchedRecords = db_fetch_assoc_prepared($fetchRecordsQuery, $fetchRecordsQueryParams);
+				
+				$recordsCountQuery = "SELECT COUNT(DISTINCT $columnName) FROM $tableName " . ($searchTerm ? "WHERE $columnName LIKE ?" : "");
+				$recordCount = db_fetch_cell_prepared($recordsCountQuery, $fetchRecordsQueryParams);
+
+				$response = [
+				"results" => [],
+				"pagination" => ["more" => null]
+				];
+
+				foreach ($fetchedRecords as $record) {
+				$response["results"][] = ["id" => $record[$columnName], "text" => $record[$columnName]];
+				}
+
+				$response["pagination"]["more"] = $recordCount > $page * 30;
+
+				echo json_encode($response);
+			break;
+
+			case 'msprojects':
+				header('Content-Type: application/json');
+				$page =  isset_request_var('page') ? get_request_var('page') : 1;
+				$searchTerm = isset_request_var('search') ? get_request_var('search') : "";
+				$recordLimit = 30;
+				$offset = $recordLimit * ($page - 1);
+
+				$fetchRecordsQuery = "SELECT DISTINCT project FROM grid_blstat_projects " . ($searchTerm ? "WHERE project LIKE ?" : "")  . " LIMIT $recordLimit OFFSET $offset";
+				$fetchRecordsQueryParams = [];
+				if ($searchTerm) {
+				$fetchRecordsQueryParams[] = "%$searchTerm%";
+				}
+
+				$fetchedRecords = db_fetch_assoc_prepared($fetchRecordsQuery, $fetchRecordsQueryParams);
+
+				$recordsCountQuery = "SELECT COUNT(DISTINCT project) FROM grid_blstat_projects " . ($searchTerm ? "WHERE project LIKE ?" : "");
+				$recordCount = db_fetch_cell_prepared($recordsCountQuery, $fetchRecordsQueryParams);
+
+				$response = [
+				"results" => [],
+				"pagination" => ["more" => null]
+				];
+
+				foreach ($fetchedRecords as $record) {
+				$response["results"][] = ["id" => $record["project"], "text" => $record["project"]];
+				}
+
+				$response["pagination"]["more"] = $recordCount > $page * 30;
+
+				echo json_encode($response);
+			break;
+	     }
 	}
 }
 

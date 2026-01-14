@@ -49,6 +49,48 @@ CREATE TABLE `lic_application_feature_map` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
+-- Table structure for table `lic_daily_project_stats`
+--
+
+DROP TABLE IF EXISTS `lic_daily_project_stats`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `lic_daily_project_stats` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `service_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `feature_name` varchar(50) NOT NULL DEFAULT '0',
+  `projectName` varchar(50) NOT NULL DEFAULT '',
+  `token_minutes` int(10) unsigned NOT NULL DEFAULT 0,
+  `feature_max_licenses` int(10) unsigned NOT NULL DEFAULT 0,
+  `poll_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`),
+  KEY `idx_feature_name` (`feature_name`),
+  KEY `idx_projectName` (`projectName`),
+  KEY `idx_service_id` (`service_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Table structure for table `lic_daily_project_stats_today`
+--
+
+DROP TABLE IF EXISTS `lic_daily_project_stats_today`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `lic_daily_project_stats_today` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `service_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `feature_name` varchar(50) NOT NULL DEFAULT '0',
+  `projectName` varchar(50) NOT NULL DEFAULT '',
+  `token_minutes` int(10) unsigned NOT NULL DEFAULT 0,
+  `feature_max_licenses` int(10) unsigned NOT NULL DEFAULT 0,
+  `poll_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`),
+  KEY `idx_feature_name` (`feature_name`),
+  KEY `idx_projectName` (`projectName`),
+  KEY `idx_service_id` (`service_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
 -- Table structure for table `lic_daily_stats`
 --
 
@@ -338,6 +380,11 @@ CREATE TABLE `lic_services_feature_details` (
   `tokens_acquired_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `present` tinyint(1) NOT NULL DEFAULT '1',
+  `lm_job_pid` int(10) unsigned DEFAULT 0,
+  `clustername` varchar(128) NOT NULL DEFAULT '',
+  `jobid` bigint(20) DEFAULT 0,
+  `indexid` int(10) DEFAULT 0,
+  `projectName` varchar(255) DEFAULT '',
   PRIMARY KEY (`service_id`,`vendor_daemon`,`feature_name`,`username`,`groupname`,`hostname`,`chkoutid`,`restype`,`status`,`tokens_acquired_date`),
   KEY `idx_vendor_daemon` (`vendor_daemon`),
   KEY `idx_feature_name` (`feature_name`),

@@ -27,6 +27,77 @@ include($config['library_path'] . '/timespan_settings.php');
 include($config['library_path'] . '/rtm_functions.php');
 include($config['base_path'] . '/plugins/gridblstat/lib/functions.php');
 
+
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Saving favourite filters 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['fav_filters']) && !empty($_POST['fav_filter_name']) && !empty($_POST['page_name'])) {
+	if(!isset($_POST['overwrite'])){
+		
+		$sql = sprintf(
+			"SELECT * FROM grid_settings WHERE user_id = %d AND name = %s AND filter_name = %s",
+			(int)$_SESSION['sess_user_id'],
+			db_qstr($_POST['page_name']),
+			db_qstr($_POST['fav_filter_name'])
+		);
+
+		$existing_record = db_fetch_row($sql);
+        if($existing_record){
+			$_SESSION['fav_filter_save_data'] = [
+				"fav_filter_name" => $_POST['fav_filter_name'],
+				"fav_filters" => $_POST['fav_filters']
+			];
+			$_SESSION['fav_filter_save_stat'] = 'fail';
+		} else {
+			db_execute_prepared("INSERT INTO grid_settings (user_id, name, value, filter_name ) VALUES (?,?,?,?)",array($_SESSION['sess_user_id'], $_POST['page_name'], $_POST['fav_filters'], $_POST['fav_filter_name']));
+			$_SESSION['fav_filter_save_stat'] = 'success'; 
+		}
+	}
+	else {
+		db_execute_prepared("UPDATE grid_settings SET value = ? WHERE  user_id = ? AND name = ? AND filter_name = ?",[ $_POST['fav_filters'], $_SESSION['sess_user_id'], $_POST['page_name'], $_POST['fav_filter_name']]);
+		$_SESSION['fav_filter_save_stat'] = 'success';  
+	}
+	header("Location: " . strtok($_SERVER['REQUEST_URI'], '?') . "?action=" . urlencode($v = str_replace('grid_lsdashboard_', '', $_POST['page_name'])) . "&tab=" . urlencode($v));
+	exit;
+}
+
+// Deleting filters 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['fav_filter_name']) && isset($_POST['delete_filter']) && !empty($_POST['page_name'])) { 
+	$success = db_execute_prepared("DELETE FROM grid_settings WHERE  user_id = ? AND name = ? AND filter_name = ?",[$_SESSION['sess_user_id'], $_POST['page_name'], $_POST['fav_filter_name']]);
+	$_SESSION['fav_filter_del_stat'] = $success; 
+	header("Location: " . strtok($_SERVER['REQUEST_URI'], '?') . "?action=" . urlencode($v = str_replace('grid_lsdashboard_', '', $_POST['page_name'])) . "&tab=" . urlencode($v));
+	exit;
+}
+
+$fav_filter_save_stat = null;
+if (isset($_SESSION['fav_filter_save_stat'])) {
+    $fav_filter_save_stat = $_SESSION['fav_filter_save_stat'];
+    unset($_SESSION['fav_filter_save_stat']);
+}
+
+$fav_filter_save_data = null;
+if (isset($_SESSION['fav_filter_save_data'])) {
+    $fav_filter_save_data = $_SESSION['fav_filter_save_data'];
+    unset($_SESSION['fav_filter_save_data']);
+}
+
+if($fav_filter_save_stat == "success"){
+	raise_message("title", "Filters saved successfully.", MESSAGE_LEVEL_INFO);
+}
+
+$fav_filter_del_stat = null;
+if (isset($_SESSION['fav_filter_del_stat'])) {
+    $fav_filter_del_stat = $_SESSION['fav_filter_del_stat'];
+    unset($_SESSION['fav_filter_del_stat']);
+}
+
+if($fav_filter_del_stat  == "success"){
+	raise_message("title", "Filter deleted successfully.", MESSAGE_LEVEL_INFO);
+}
+
 $title = __('IBM Spectrum LSF RTM - License Scheduler Dashboard', 'gridblstat');
 
 if (isset_request_var('action') && get_request_var('action') == 'ajaxsearch') {
@@ -38,13 +109,17 @@ if (isset_request_var('action') && get_request_var('action') == 'ajaxsearch') {
 	grid_view_db();
 }
 
+function normalize_to_array($var) {
+	return is_array($var) ? $var : (!empty($var) ? [$var] : []);
+}
+
 function build_feature_display_array() {
 	$display_text = array(
 		'nosort' => array(
 			'display' => __('Actions', 'gridblstat')
 		),
 		'bfeature' => array(
-			'display' => __('BLD Name', 'gridblstat'),
+			'display' => __('LS Feature', 'gridblstat'),
 			'sort'    => 'ASC',
 			'tip'     => __('License Scheduler token name', 'gridblstat'),
 		),
@@ -126,7 +201,7 @@ function build_distrib_display_array() {
 			'sort'    => 'ASC'
 		),
 		'feature' => array(
-			'display' => __('Feature Name', 'gridblstat'),
+			'display' => __('LS Feature', 'gridblstat'),
 			'sort'    => 'ASC'
 		),
 		'region' => array(
@@ -186,12 +261,12 @@ function build_project_display_array() {
 			'display' => __('Actions', 'gridblstat')
 		),
 		'project' => array(
-			'display' => __('Project', 'gridblstat'),
+			'display' => __('LS Project', 'gridblstat'),
 			'align'   => 'left',
 			'sort'    => 'ASC'
 		),
 		'feature' => array(
-			'display' => __('Feature Name', 'gridblstat'),
+			'display' => __('LS Feature', 'gridblstat'),
 			'sort'    => 'ASC'
 		),
 		'region' => array(
@@ -247,6 +322,7 @@ function build_project_display_array() {
 function grid_view_db() {
 	global $title, $grid_search_types, $grid_rows_selector, $config;
 	global $grid_timespans, $grid_timeshifts, $grid_weekdays, $timespan;
+	global $fav_filter_save_stat, $fav_filter_save_data, $fav_filter_del_stat;
 	$sql_params = array();
 
 	/* ================= input validation ================= */
@@ -404,9 +480,712 @@ function grid_view_db() {
 			$('#graphs').append('<tr class="tableRowGraph"></tr><tr class="stripe"><td width="25%"></td><td align="center" width="50%"><img image_width="100" id="graph_' + id_number + '" src="'+url+'" class="graphimage"></td><td width="25%" id="dd" class="noprint graphDrillDown"></td></tr>');
 		}
 	</script>
-	<?php
 
+	<style>
+		.clusters-blstat-form {
+			margin-bottom: 12px;
+		}
+
+		.clusters-blstat-form label{
+			display : inline-block;
+			min-width: 60px;
+			font-weight: 700;
+		}
+
+		.clusters-blstat-form > div{
+			margin: 4px 0;
+		}
+
+		.clusters-blstat-form > div:nth-child(2) {
+			display:grid; 
+			gap: 0.5rem;
+			grid-template-columns: auto 1fr auto 1fr auto 1fr auto 1fr;
+		}
+
+		.clusters-blstat-form > div:nth-child(4) {
+			display:grid; 
+			gap: 0.5rem;
+			grid-template-columns: auto 1fr auto 1fr auto 1fr  auto 1fr;
+		}
+	</style>
+
+	<?php
 	draw_ls_tabs();
+
+	$pageName = "grid_lsdashboard_" . get_request_var('tab');
+
+	function convertToQueryString($input) {
+    	$pairs = explode('|', $input);
+    	$queryParts = [];
+
+		foreach ($pairs as $pair) {
+			list($key, $value) = explode('=', $pair, 2);
+
+			// If the value has commas, convert it to an array of key[]=value
+			if (strpos($value, ',') !== false) {
+				$items = explode(',', $value);
+				$items = array_map('trim', $items);
+				$joined = implode(" ", $items);
+				$queryParts[] = urlencode($key) . '=' . rawurlencode($joined);
+			} else {
+				$queryParts[] = urlencode($key) . '=' . rawurlencode($value);
+			}	
+		}
+
+		return implode('&', $queryParts);
+	}
+
+	function parseCustomFilterString($input) {
+		$result = [];
+		$pairs = explode('|', $input);
+
+		foreach ($pairs as $pair) {
+			list($key, $value) = explode('=', $pair, 2);
+
+			if (strpos($value, ',') !== false) {
+				$result[$key] = explode(',', $value);
+			} else {
+				$result[$key] = $value;
+			}
+		}
+
+		$result_values = [];
+		$current_tab = get_request_var('tab');
+
+		if($current_tab == "summary"){
+			$result_values["Feature"] = is_array($result["feature"]) ? $result["feature"] : [$result["feature"]];
+			$result_values["Region"] = $result["region"];
+			$result_values["In use"] = $result["inuse"] == "true" || $result["inuse"] == "on" ? "Yes" : "No";
+		}
+
+		else if($current_tab == "clusters"){
+			$result_values["Feature"] = is_array($result["feature"]) ? $result["feature"] : [$result["feature"]];
+			$result_values["Region"] = $result["region"];
+			$result_values["Mode"] =  $result["mode"] == 1 ? "Project" : "Cluster";
+			$result_values["Cluster"] = $result["cluster"] == -1 ? "All" : $result["cluster"];
+			if($result["mode"] == 1){
+					$result_values["Project"] = is_array($result["project"]) ? $result["project"] : [$result["project"]];
+			}
+			$result_values["In use"] = $result["inuse"] == "true" || $result["inuse"] == "on" ? "Yes" : "No";
+		}
+
+		else if($current_tab == "projects"){
+			$result_values["Project"] = is_array($result["project"]) ? $result["project"] : [$result["project"]];
+			$result_values["Feature"] = is_array($result["feature"]) ? $result["feature"] : [$result["feature"]];
+			$result_values["Region"] = $result["region"];
+			$result_values["Domain"] = $result["sd"];
+			$result_values["In use"] = $result["inuse"] == "true" || $result["inuse"] == "on" ? "Yes" : "No";
+		}
+		else if($current_tab == "distribution"){
+			$result_values["Feature"] = is_array($result["feature"]) ? $result["feature"] : [$result["feature"]];
+			$result_values["Region"] = $result["region"];
+			$result_values["Domain"] = $result["sd"];
+			$result_values["In use"] = $result["inuse"] == "true" || $result["inuse"] == "on" ? "Yes" : "No";
+		}
+		else if($current_tab == "users"){
+
+			$result_values["Resource"] = $result["resource"];
+			$result_values["User"] = $result["user"];
+			$result_values["Region"] = $result["region"];
+
+			switch ($result["sd"]) {
+				case "-1":
+					$result_values["Domain"] = "All";
+					break;
+				case "-2":
+					$result_values["Domain"] = "Consuming";
+					break;
+				case "-3":
+					$result_values["Domain"] = "Demanding";
+					break;
+				case "UNKNOWN":
+					$result_values["Domain"] = "Reserving";
+					break;
+				default:
+					$result_values["Domain"] = $result["sd"];
+			}
+
+			$result_values["Host"] = $result["host"];
+			$result_values["Cluster"] = $result["cluster"] == "-1" ? "All" : $result["cluster"];
+			$result_values["Project"] = is_array($result["project"]) ? $result["project"] : [$result["project"]];
+
+		}
+
+		else if($current_tab == 'checkouts'){
+			$result_values["LS Feature"] = is_array($result["ffeature"]) ? $result["ffeature"] : [$result["ffeature"]];
+
+			$result_values["Region"] = $result["region"];
+			$result_values["Domain"] = $result["sd"];
+			$result_values["User"] = $result["user"];
+			$result_values["Host"] = $result["host"];
+
+			switch ($result["except"]) {
+				case "-1":
+					$result_values["Exceptions"] = "All";
+					break;
+				case "-2":
+					$result_values["Exceptions"] = "Yes";
+					break;
+				case "-3":
+					$result_values["Exceptions"] = "No";
+					break;
+				default:
+					$result_values["Exceptions"] = $result["sd"];
+			}
+
+			switch ($result["lsf"]) {
+				case "-1":
+					$result_values["LSF Host"] = "All";
+					break;
+				case "-2":
+					$result_values["LSF Host"] = "Yes";
+					break;
+				case "-3":
+					$result_values["LSF Host"] = "No";
+					break;
+				default:
+					$result_values["LSF Host"] = $result["sd"];
+			}
+		}
+
+		if($current_tab == 'graphs'){
+			$result_values["LS Features"] = is_array($result["feature"]) ? $result["feature"] : [$result["feature"]];
+			$result_values["Projects"] = is_array($result["project"]) ? $result["project"] : [$result["project"]];
+
+			$result_values["Region"] = $result["region"];
+			$result_values["Cluster"] = $result["cluster"] == "-1" ? "All" : $result["cluster"];
+
+			if ($result["region"] == 0){
+				$result_values["Template"] = "Any";
+			} else {
+				$graph_templates = get_graph_templates();
+				$name = "";
+				$id   = get_request_var('template');
+				if (cacti_sizeof($graph_templates)) {
+					foreach ($graph_templates as $template) {
+						if ($template['id'] == $id) {
+							$name = trim(str_replace(
+								'GRID - License Scheduler -', 'LS ',
+								str_replace(
+									'LM License', 'LM ',
+									str_replace('FLEX Feature', 'FLEX - Feature', $template['name'])
+								)
+							), '- ');
+							break;
+						}
+					}
+				}
+				$result_values["Template"] = $name;
+			}
+
+			$result_values["Graphs per page"] = $result["graphs_per_page_count"] == -1 ? "Default : 30" :  $result["graphs_per_page_count"];
+			$result_values["Columns"] = $result["columns"];
+			$result_values["Thumbnails"] = $result["thumbnails"] == "true" || $result["thumbnails"] == "on" ? "Yes" : "No";
+			$result_values["In use"] = $result["inuse"] == "true" || $result["inuse"] == "on" ? "Yes" : "No";
+			$result_values["Search"] = $result["filter"];
+
+		}
+		else {
+			$result_values["Refresh"] = $result["refresh"] == "9999999" ? "Never" : $result["refresh"]/60 . " " . "minutes";
+			$result_values["Records"] = $result["rows"] == -1 ? "Default : 30" :  $result["rows"];
+		}
+		return $result_values;
+	}
+
+	?>
+
+	<div id="save_filters_dialog" title="Save filters" style="display: none" >
+		<div class="filter-form-container">	
+			<form class="filter-form" id="filter-form" method="POST" action='grid_lsdashboard.php'>
+				<label for="region">Filter Name</label>
+				<div style="display:grid; grid-template-rows: auto auto; gap: 4px">
+					<input type="text" name="fav_filter_name" id='fav_filter_name' value=''>
+				    <span style="color: #ff0000; display: none" id="error-filter-input">Specify a filter name.</span>
+				</div>
+				<input type="hidden" name="fav_filters" id="fav_filters">
+				<input type="hidden" name="page_name" id="page_name" value="<?= html_escape($pageName) ?>">
+			</form>
+			<?php
+				html_start_box("Filters", "100%", "", "2", "center", "");
+				echo "<table class='cactiTable' id='save-filter-table' style='width: 100%; table-layout: fixed;'>
+				<tr class='tableHeader'>
+					<th style='width: 20%;'>Name</th>
+					<th style='max-width: 80%;'>Value</th>
+				</tr>
+				";
+				echo "</table>";
+				html_end_box();
+			?>
+		</div>
+		</div>
+		<div id="overwrite_filters_dialog" title="Duplicate record found" style="display: none" >
+			 <form id="overwrite-filter-form" method="POST" action='grid_lsdashboard.php'>
+				<span class="overwrite-filter-form-text">A filter with this name <b><i><?= isset($fav_filter_save_data) ? html_escape($fav_filter_save_data["fav_filter_name"]) : "" ?></i></b> already exists. Do you want to overwrite it?</span>
+				<input type="hidden" name="fav_filter_name"  id='overwrite_fav_filter_name' value=''>
+				<input type="hidden" name="fav_filters" id="overwrite_fav_filters" value=''>
+				<input type="hidden" name="page_name" id="overwrite_fav_page_name" value="<?= $pageName ?>">
+				<input type="hidden" name="overwrite">
+			</form>
+		</div>
+		<div id="all_filters_dialog" title="Saved Filters" style="display: none">
+            <?php $all_filters =  db_fetch_assoc_prepared("SELECT * FROM grid_settings WHERE user_id = ? AND name = ? ", [$_SESSION['sess_user_id'], $pageName]); ?>
+			<?php if(count($all_filters)) : ?>
+				<div id="filter-accordion">
+					<?php  foreach ($all_filters as $filter) : ?>
+						<h3><?= html_escape($filter["filter_name"]) ?></h3>
+						<div style="position: relative">
+							<?php html_start_box("", "100%", "", "2", "center", ""); ?>
+								<table class='cactiTable' id='save-filter-table' style='width: 100%; table-layout: fixed;'>
+								<tr class='tableHeader'>
+									<th style='width: 20%;'>Name</th>
+									<th style='max-width: 80%;'>Value</th>
+								</tr>
+								<?php 
+								    $index = 0; 
+									foreach(parseCustomFilterString($filter["value"]) as $key => $value) 
+									{ 
+										$rowClass = $index % 2 === 0 ? 'even tableRow' : 'odd tableRow';
+								?>
+									<tr class="<?= $rowClass ?>">
+										<td><?= html_escape($key) ?></td>
+										<td>
+										<?php
+											if (is_array($value)) {
+												foreach ($value as $val) {
+													if ($val) {
+														echo '<span class="filter-array-item" title="' . html_escape($val) . '">'
+															. html_escape($val)
+															. '</span>';
+													}
+												}
+											} else {
+												echo html_escape($value);
+											}
+											?>							
+										</td>
+									</tr>
+								<?php $index += 1;  } ?>
+								</table>
+							<?php html_end_box(); $filter_name =  str_replace(' ', '_', $filter["filter_name"]);?>
+							<div style="display: flex; justify-content : flex-end; gap: 0.5rem; margin-top: 0.5rem">
+								<button class="ui-button ui-corner-all ui-widget ui-state-active" id="delete-filter-<?= html_escape($filter_name) ?>">Delete</button>
+								<button onclick="loadPageNoHeader('/cacti/plugins/gridblstat/grid_lsdashboard.php?action=<?= html_escape(get_request_var('tab')) ?>&tab=<?= html_escape(get_request_var('tab')) ?>&header=false&<?= html_escape(convertToQueryString($filter['value'])) ?>')">Apply</button>
+							</div>
+							<div id="delete-filter-dialog-<?=  $filter_name ?>" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: rgba(170, 170, 170, 0.5); z-index: 200; display: flex; justify-content : center; align-items: center">
+								<div style="z-index: 300; width: 500px; background-color: white">
+									<div class="ui-dialog-titlebar ui-corner-all ui-widget-header ui-helper-clearfix ui-draggable-handle">
+										<span class="ui-dialog-title">Delete filter</span>
+										<button type="button"  id="close-delete-icon-confirm-filter-<?=  $filter_name ?>" class="ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-close">
+											<span class="ui-button-icon ui-icon ui-icon-closethick"></span>
+											<span class="ui-button-icon-space"> </span>Close</button>
+									</div>
+									<div class="ui-dialog-content ui-widget-content" style="background-color: white; margin: 16px 0 16px 12px; display: inline-block">Are you sure you want to delete the filter <b><i><?= html_escape($filter["filter_name"]) ?></i></b>?</div>
+									<div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="margin-top : 0">
+										<form class="ui-dialog-buttonset" method="POST" action='grid_lsdashboard.php'>
+											<button type="submit" class="ui-button ui-corner-all ui-widget ui-state-active" id="delete-confirm-filter-<?=  $filter_name ?>">Delete</button>
+											<button type="button" class="ui-button ui-corner-all ui-widget" id="close-delete-confirm-filter-<?=  $filter_name ?>">Close</button>
+											<input type="hidden" name="fav_filter_name" value="<?= html_escape($filter["filter_name"]) ?>">
+											<input type="hidden" name="page_name" value="<?= html_escape($pageName) ?>">
+											<input type="hidden" name="delete_filter" value="">
+										</form>
+									</div>
+								</div>	
+							</div>
+							<script>
+								$(function() {
+									const delete_filter_name = "<?=  $filter_name ?>";
+									$(`#delete-filter-dialog-${delete_filter_name}`).hide();
+									$(`#delete-filter-${delete_filter_name}`).click(function(){
+										$(`#delete-filter-dialog-${delete_filter_name}`).show();
+									});
+									$(`#close-delete-confirm-filter-${delete_filter_name}`).click(function(){
+										$(`#delete-filter-dialog-${delete_filter_name}`).hide();
+									});
+									$(`#close-delete-icon-confirm-filter-${delete_filter_name}`).click(function(){
+										$(`#delete-filter-dialog-${delete_filter_name}`).hide();
+									});
+			                   });
+							</script>
+						</div>
+					<?php endforeach ?>
+				</div>
+			<?php else : ?>	
+				<p style="margin-left: 8px">No filters to display!</p>
+			<?php endif ?>	
+		</div >
+	<script>
+
+		$(function() {
+			templates = <?php echo json_encode(get_graph_templates())?>;  
+			// Save filter dialog
+			const tab = "<?php echo get_request_var('tab') ?>";
+			const filterDialog = $( "#save_filters_dialog" );
+			filterDialog.dialog({
+				autoOpen: false,
+				draggable: true,
+				modal: true,
+				width: 700,
+				open: function () {
+					$('#error-filter-input').hide();
+					$("#fav_filter_name").removeClass("error-filter-input");
+					$(this).parent().find(".ui-dialog-titlebar-close").removeAttr("title");
+					$(this).closest(".ui-dialog").attr("tabindex", -1).focus();
+				},
+				buttons: [
+					{
+						text: "Create",
+						class: "ui-button ui-corner-all ui-widget ui-state-active",
+						click: function () {
+							if(!$("#fav_filter_name").val().length){
+								$("#fav_filter_name").addClass("error-filter-input");
+								$('#error-filter-input').show();
+								return;
+							}
+							$('#filter-form').submit();
+						}
+					},
+					{
+						text: "Cancel",
+						click: function () {
+							filterDialog.dialog( "close" );
+						}
+					}
+				]					 
+			});	
+
+			const getCurrentFilters = () => {
+				const form_filters = {};
+				const form_filter_values = {};
+				if(tab === "clusters"){
+					// features
+					form_filters.feature = $('#clusters_features').val();
+					form_filter_values["Features"] = $('#clusters_features').val();
+
+					// region
+					form_filters.region = $('#region').val();
+					form_filter_values["Region"] = $('#region').val();
+
+					//mode
+					form_filters.mode = $('#mode').val();
+					form_filter_values["Mode"] = $('#mode').val() == 1 ? "Project" : "Cluster";
+
+					//cluster
+					form_filters.cluster = $('#cluster').val();
+					form_filter_values["Cluster"] = $('#cluster').val() == -1 ? "All" :  $('#cluster').val();
+
+					//project
+					form_filters.project =$('#clusters_projects').val() || "";
+					if( $('#mode').val() == 1){
+						form_filter_values["Project"] = form_filters.project ? [form_filters.project] : "";
+					}
+
+					//In use
+					form_filters.inuse = $('#inuse').is(':checked');
+					form_filter_values["In use"] = $('#inuse').is(':checked') ? "Yes" : "No";
+
+				}
+				else if(tab === "summary"){
+					// features
+					form_filters.feature = $('#summary_features').val();
+					form_filter_values["Features"] = $('#summary_features').val();
+
+					// region
+					form_filters.region = $('#region').val();
+					form_filter_values["Region"] = $('#region').val();
+
+					//In use
+					form_filters.inuse = $('#inuse').is(':checked');
+					form_filter_values["In use"] = $('#inuse').is(':checked') ? "Yes" : "No";
+				}
+				else if(tab === "projects"){
+
+					// projects
+					form_filters.project = $('#proj_projects').val();
+					form_filter_values["Projects"] = $('#proj_projects').val();
+
+					// features
+					form_filters.feature = $('#proj_features').val() || "";
+					form_filter_values["Features"] = form_filters.feature ? [form_filters.feature] : "";
+
+					// region
+					form_filters.region = $('#region').val();
+					form_filter_values["Region"] = $('#region').val();
+
+					// domain
+					form_filters.sd = $('#sd').val();
+					form_filter_values["Domain"] = $('#sd').val();
+
+					//In use
+					form_filters.inuse = $('#inuse').is(':checked');
+					form_filter_values["In use"] = $('#inuse').is(':checked') ? "Yes" : "No";
+				}
+				else if(tab === "distribution"){
+					// features
+					form_filters.feature = $('#distribution_features').val();
+					form_filter_values["Features"] = $('#distribution_features').val();
+
+					// region
+					form_filters.region = $('#region').val();
+					form_filter_values["Region"] = $('#region').val();
+
+					// domain
+					form_filters.sd = $('#sd').val();
+					form_filter_values["Domain"] = $('#sd').val();
+
+					//In use
+					form_filters.inuse = $('#inuse').is(':checked');
+					form_filter_values["In use"] = $('#inuse').is(':checked') ? "Yes" : "No";
+				}
+				else if(tab === "users"){
+					// Resources
+					form_filters.resource = $('#resource').val();
+					form_filter_values["Resource"] = $('#resource').val();
+
+					// Users
+					form_filters.user = $('#ls_user').val();
+					form_filter_values["User"] = $('#ls_user').val();
+					
+
+					// region
+					form_filters.region = $('#region').val();
+					form_filter_values["Region"] = $('#region').val();
+
+					// domain
+					form_filters.sd = $('#sd').val();
+
+					switch ($('#sd').val()) {
+						case "-1":
+							form_filter_values["Domain"] = "All"
+							break;
+						case "-2":
+							form_filter_values["Domain"] = "Consuming"
+							break;
+						case "-3":
+							form_filter_values["Domain"] = "Demanding"
+							break;
+						case "UNKNOWN":
+							form_filter_values["Domain"] = "Reserving"
+							break;
+						default:
+							form_filter_values["Domain"] = $('#sd').val()
+					}
+
+					// host
+					form_filters.host = $('#ls_host').val();
+					form_filter_values["Host"] = $('#ls_host').val();
+
+					// Cluster
+					form_filters.cluster = $('#cluster').val();
+					form_filter_values["Cluster"] = $('#cluster').val() == "-1" ? "All" : $('#cluster').val();
+
+					// project
+					form_filters.project = $('#user_project').val() || "";
+					form_filter_values["Project"] = form_filters.project ? [form_filters.project] : "";
+
+				}
+
+				else if(tab === "checkouts"){
+					form_filters.ffeature = $('#checkout_features').val();
+					form_filter_values["LS Feature"] = $('#checkout_features').val();
+
+					form_filters.region = $('#region').val();
+					form_filter_values["Region"] = $('#region').val();
+
+					form_filters.sd = encodeURIComponent($('#sd').val());
+					form_filter_values["Domain"] = encodeURIComponent($('#sd').val());
+
+					form_filters.user = $('#ls_user').val();
+					form_filter_values["User"] = $('#ls_user').val();
+
+					form_filters.host = $('#ls_host').val();
+					form_filter_values["Host"] = $('#ls_host').val();
+
+					form_filters.except = $('#except').val();
+					switch ($('#except').val()) {
+						case "-1":
+							form_filter_values["Exception"] = "All";
+							break;
+						case "-2":
+							form_filter_values["Exception"] = "Yes";
+							break;
+						case "-3":
+							form_filter_values["Exception"] = "No";
+							break;
+					}
+
+					form_filters.lsf = $('#lsf').val();
+					switch ($('#lsf').val()) {
+						case "-1":
+							form_filter_values["LSF Host"] = "All";
+							break;
+						case "-2":
+							form_filter_values["LSF Host"] = "Yes";
+							break;
+						case "-3":
+							form_filter_values["LSF Host"] = "No";
+							break;
+					}
+				
+				}
+
+				else if(tab === "graphs"){
+					// features
+					form_filters.feature = $('#graph_features').val();
+					form_filter_values["LS Features"] = $('#graph_features').val();
+
+					// projects
+					form_filters.project = $('#graph_projects').val();
+					form_filter_values["Projects"] = $('#graph_projects').val();
+
+					form_filters.region = $('#region').val();
+					form_filter_values["Region"] = $('#region').val();
+
+					form_filters.cluster = $('#cluster').val();
+					form_filter_values["Cluster"] = $('#cluster').val() == -1 ? "All" : $('#cluster').val();
+
+					
+					form_filters.template = $('#template').val();
+					template = templates.find(e => e.id == $('#template').val());
+					form_filter_values["Template"] = $('#template').val() == 0 ? "Any" : template?.name.replace(/FLEX Feature/g, "FLEX - Feature").replace(/LM License/g, "LM ").replace(/GRID - License Scheduler -/g, "LS ").trim().replace(/^-+|-+$/g, "").replace(/ $/, "");   
+					
+					form_filters.graphs_per_page_count = $('#graphs_per_page_count').val();
+					form_filter_values["Graphs per page"] = $('#graphs_per_page_count').val() == -1 ? "Default 30" : $('#graphs_per_page_count').val();
+
+					form_filters.columns =  $('#columns').val();;
+					form_filter_values["Columns"] =  $('#columns').val();;
+
+					form_filters.thumbnails = $('#thumbnails').is(':checked');
+					form_filter_values["Thumbnails"] = $('#thumbnails').is(':checked') ? "Yes" : "No";
+
+					form_filters.inuse = $('#inuse').is(':checked');
+					form_filter_values["In use"] = $('#inuse').is(':checked') ? "Yes" : "No";
+
+					form_filters.filter = $('#filter').val();
+					form_filter_values["Search"] = $('#filter').val();
+				
+				}
+
+				if(tab !== "graphs"){
+					//refresh
+					form_filters.refresh = $('#refresh').val();
+					form_filter_values["Refresh"] = $('#refresh').val() == 9999999 ? "Never" : `${$('#refresh').val()/60} minutes`;
+
+					//records
+					form_filters.rows = $('#rows').val();
+					form_filter_values["Records"] = $('#rows').val() == -1 ? "Default : 30" :  $('#rows').val();
+				}
+				return [form_filters, form_filter_values];
+			}
+
+			$("#save-filters").on( "click", function() {
+				const [form_filters, form_filter_values] = getCurrentFilters();	
+				const $table = $('#save-filter-table');
+				$('#save-filter-table tr:not(:first)').remove();
+				Object.entries(form_filter_values).forEach(([key, value], index) => {
+					const rowClass = index % 2 === 0 ? 'even tableRow' : 'odd tableRow';
+					// Format value
+					let valueContent;
+					if (Array.isArray(value)) {
+						valueContent = value.map(item => `<span class="filter-array-item" title="${item}">${item}</span>`).join('');
+					} else {
+						valueContent = value;
+					}
+
+					const $row = $(`
+						<tr class="${rowClass}">
+							<td style="word-wrap: break-word;">${key}</td>
+							<td style="word-wrap: break-word;">${valueContent}</td>
+						</tr>
+					`);
+
+					$table.append($row);
+			    });
+				const post_value = Object.entries(form_filters).map(([k, v]) => `${k}=${v == null ? "" : Array.isArray(v) ? v.join(",") : v}`).join("|");
+				$('#fav_filters').val(post_value);
+			    filterDialog.dialog("open");
+		    });
+
+            const favFilterSaveStatus = "<?= $fav_filter_save_stat ?>";
+		    if(favFilterSaveStatus === 'fail'){
+				$("#overwrite_fav_filter_name").val("<?= isset($fav_filter_save_data) ? $fav_filter_save_data["fav_filter_name"] : "" ?>");
+				$("#overwrite_fav_filters").val("<?= isset($fav_filter_save_data) ? $fav_filter_save_data["fav_filters"]: "" ?>");
+				$("#overwrite_filters_dialog").dialog({
+					modal: true,
+					width: 600,
+					open: function () {
+						$(this).parent().find(".ui-dialog-titlebar-close").removeAttr("title");
+						$(this).closest(".ui-dialog").attr("tabindex", -1).focus();
+				    },
+					buttons: [
+					{
+						text: "Save anyway",
+						class: "ui-button ui-corner-all ui-widget ui-state-active",
+						click: function () {
+							$('#overwrite-filter-form').submit();
+						}
+					},
+					{
+						text: "Cancel",
+						click: function () {
+							$(this).dialog( "close" );
+							$("#fav_filter_name").val("<?= isset($fav_filter_save_data) ? $fav_filter_save_data["fav_filter_name"] : "" ?>");
+							$('#save-filters').click();
+						}
+					}]
+				});
+			}
+
+			//  Show filters 
+			$("#all_filters_dialog").dialog({
+				autoOpen: false,
+					modal: true,
+					width: 700,
+					// minHeight: 400,
+					maxHeight: 600,
+					// position: {                 
+					// 	my: "center",
+					// 	at: "center",
+					// 	of: window
+					// },
+					open: function () {
+						$(this).parent().find(".ui-dialog-titlebar-close").removeAttr("title");
+						$(this).closest(".ui-dialog").attr("tabindex", -1).focus();
+						$(this).css({              
+							'overflow-y': 'auto'
+						});
+				    },
+					buttons: [
+					{
+						text: "Close",
+						click: function () {
+							$(this).dialog( "close" );
+						}
+					}]
+			});
+
+			$("#all_filters").on( "click", function() {
+					$("#all_filters_dialog").dialog("open");
+			})
+
+			// if("<?= $fav_filter_del_stat ?>"){
+			// 	$("#all_filters").click();
+			// }
+
+		    // Accordions
+			$( "#filter-accordion" ).accordion({
+				heightStyle: "content",
+				activate: function(event, ui) {
+					if (ui.newHeader.length) {
+					}  
+					if (ui.oldHeader.length > 0) {
+						$(`#delete-filter-dialog-${ui.oldHeader.text()}`).hide();
+					}
+				} 
+			});
+	   })
+	</script>
+
+    <?php
 
 	if (get_request_var('tab') == 'summary') {
     	/* ================= input validation and session storage ================= */
@@ -459,9 +1238,15 @@ function grid_view_db() {
 		/* ================= input validation ================= */
 
 		$sql_where = ' AND bls.present = 1';
-		if (get_request_var('feature') != '') {
-			$sql_where .= ' AND a.feature LIKE ?';
-			$sql_params[] = "%" . str_replace('_','\_',get_request_var('feature')) . "%";
+
+		if (get_request_var("feature")) {
+			$features = preg_split('/\s+/', get_request_var("feature"), -1, PREG_SPLIT_NO_EMPTY);
+			if (!is_array($features) ) {
+				$features  = [$features];
+			} 
+			$placeholders = implode(',', array_fill(0, count($features), '?'));
+			$sql_where .= ($sql_where != '' ? ' AND ':'WHERE') . " a.feature IN ($placeholders)";
+			$sql_params = array_merge($sql_params, $features);
 		}
 
 		if (get_request_var('region') != '') {
@@ -775,9 +1560,14 @@ function grid_view_db() {
 			$sql_where .= ($sql_where != ''? ' AND ':'WHERE ') . ' (lsf_use>0 OR non_lsf_use>0)';
 		}
 
-		if (get_request_var('feature') != '') {
-			$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . " gbd.feature LIKE ?";
-			$sql_params[] = "%" . str_replace('_','\_',get_request_var('feature')) . "%";
+		if (get_request_var("feature")) {
+			$features = preg_split('/\s+/', get_request_var("feature"), -1, PREG_SPLIT_NO_EMPTY);
+			if (!is_array($features) ) {
+			$features  = [$features];
+			} 
+			$placeholders = implode(',', array_fill(0, count($features), '?'));
+			$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . " gbd.feature IN ($placeholders)";
+			$sql_params = array_merge($sql_params, $features);
 		}
 
 		if (get_request_var('region') != '') {
@@ -944,6 +1734,12 @@ function grid_view_db() {
 				'default' => '',
 				'options' => array('options' => 'sanitize_search_string')
 				),
+			'project' => array(
+				'filter' => FILTER_CALLBACK,
+				'pageset' => true,
+				'default' => '',
+				'options' => array('options' => 'sanitize_search_string')
+				),
 			'region' => array(
 				'filter' => FILTER_CALLBACK,
 				'pageset' => true,
@@ -985,9 +1781,19 @@ function grid_view_db() {
 			$rows = get_request_var('rows');
 		}
 
+		if (get_request_var("project")) {
+			$projects = preg_split('/\s+/', get_request_var("project"), -1, PREG_SPLIT_NO_EMPTY);
+			if (!is_array($projects) ) {
+			$projects  = [$projects];
+			} 
+			$placeholders = implode(',', array_fill(0, count($projects), '?'));
+			$sql_where .= ($sql_where != '' ? ' AND ':'WHERE') . " project IN ($placeholders)";
+			$sql_params = array_merge($sql_params, $projects);
+		}
+
 		if (get_request_var('feature') != '') {
-			$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . " feature LIKE ?";
-			$sql_params[] = "%" . str_replace('_','\_',get_request_var('feature')) . "%";
+			$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . " feature = ?";
+			$sql_params[] = get_request_var('feature');
 		}
 
 		if (get_request_var('region') != '') {
@@ -1154,20 +1960,24 @@ function grid_view_db() {
 
 function grid_summary_filter() {
 	global $config, $grid_rows_selector, $grid_refresh_interval;
-
-	?>
+	$summary_features = preg_split('/\s+/', get_request_var("feature"), -1, PREG_SPLIT_NO_EMPTY);
+?>
 	<tr class='odd noprint'>
 		<td>
 			<form id='form_grid' action='grid_lsdashboard.php'>
 			<table class='filterTable'>
+				<div class="blstat-form">
+					<label style="padding-right:5px">
+						<?php print __('LS Feature', 'gridblstat');?>
+					</label>
+					<select id="summary_features" multiple="multiple" class="select-multi-dd">
+						<?php foreach ($summary_features as $feature) : ?>
+							<option value="<?= html_escape($feature) ?>" selected="selected"><?= html_escape($feature) ?></option>
+						<?php endforeach ?>
+					</select>
+				</div>
 				<tr>
-					<td>
-						<?php print __('Feature', 'gridblstat');?>
-					</td>
-					<td>
-						<input size='20' type="text" id='feature' value='<?php print html_escape_request_var('feature');?>'>
-					</td>
-					<td>
+					<td style="padding-right:9.5px">
 						<?php print __('Region', 'gridblstat');?>
 					</td>
 					<td>
@@ -1213,6 +2023,8 @@ function grid_summary_filter() {
 						<span>
 							<input id='go' type='submit' value='<?php print __('Go', 'gridblstat');?>' onClick='applyFilter()'>
 							<input id='clear' type='button' value='<?php print __('Clear', 'gridblstat');?>' onClick='clearFilter()'>
+						    <input id='save-filters' type='button' value='<?php print __('Save', 'gridblstat');?>'>
+							<input id='all_filters' type='button' value='<?php print __('Filters', 'gridblstat');?>'>
 						</span>
 					</td>
 				</tr>
@@ -1222,7 +2034,13 @@ function grid_summary_filter() {
 
 			function applyFilter() {
 				strURL  = urlPath + 'plugins/gridblstat/grid_lsdashboard.php?action=summary&tab=summary&header=false';
-				strURL += '&feature=' + $('#feature').val();
+				summary_features_values = $('#summary_features').val();
+				if(summary_features_values.length){
+					summary_features_values = summary_features_values.filter(value => value.length);
+					strURL = strURL + '&feature=' + encodeURIComponent(summary_features_values.join(" "));
+				} else {
+					strURL += '&feature='
+				}
 				strURL += '&region=' + $('#region').val();
 				strURL += '&inuse=' + $('#inuse').is(':checked');
 				strURL += '&rows=' + $('#rows').val();
@@ -1240,6 +2058,7 @@ function grid_summary_filter() {
 					event.preventDefault();
 					applyFilter();
 				});
+				initSelect2Multi("summary_features",{url: "grid_lsdashboard.php?action=ajaxsearch&type=msfeatures", preventOpenOnClear: true, triggerFormSubmit: applyFilter});
 			});
 
 			</script>
@@ -1250,23 +2069,41 @@ function grid_summary_filter() {
 
 function grid_project_filter() {
 	global $config, $grid_rows_selector, $grid_refresh_interval, $grid_projectgroup_filter_levels;
+	$proj_projects = preg_split('/\s+/', get_request_var("project"), -1, PREG_SPLIT_NO_EMPTY);
+	$proj_features = html_escape_request_var('feature') ?? "";
 	?>
 	<tr class='odd noprint'>
 		<td>
 			<form id='form_grid' action='grid_lsdashboard.php'>
+			<div class="blstat-form">
+				<label for="proj_projects" style="width:73px"><?php print __('LS Project', 'gridblstat');?></label>
+				<select id="proj_projects" class="select-multi-dd" data-allow-clear="true" multiple="multiple">
+					<?php foreach ($proj_projects as $project) : ?>
+						<option value="<?= html_escape($project) ?>" selected="selected"><?= html_escape($project) ?></option>
+					<?php endforeach ?>
+				</select>
+			</div>
+			<div class="blstat-form">
+				<label for="proj_features" style="width:73px"><?php print __('LS Feature', 'gridblstat');?></label> 
+				<select id="proj_features" class="select-multi-dd" data-allow-clear="true">
+					<?php if ($proj_features) : ?>
+						<option value="<?= html_escape($proj_features) ?>" selected="selected"><?= html_escape($proj_features) ?></option>
+					<?php endif ?>
+				</select>
+			</div>
 			<table class='filterTable'>
 				<tr>
-					<td>
-						<?php print __('Feature', 'gridblstat');?>
-					</td>
-					<td>
-						<input type="text" id='feature' value='<?php print html_escape_request_var('feature');?>'>
-					</td>
-					<td>
+					<td style="width:71px">
 						<?php print __('Region', 'gridblstat');?>
 					</td>
 					<td>
 						<input type="text" id='region' value='<?php print html_escape_request_var('region');?>'>
+					</td>
+					<td>
+						<?php print __('Domain', 'gridblstat');?>
+					</td>
+					<td>
+						<input type="text" id='sd' value='<?php print html_escape_request_var('sd');?>'>
 					</td>
 					<td>
 						<?php print __('Refresh', 'gridblstat');?>
@@ -1285,29 +2122,7 @@ function grid_project_filter() {
 						</select>
 					</td>
 					<td>
-						<input id='inuse' type='checkbox' onChange='applyFilter()' <?php print (get_request_var('inuse') == 'true' || get_request_var('inuse') == 'on' ? ' checked=checked':'');?>>
-					</td>
-					<td>
-						<label for='inuse'><?php print __('In Use', 'gridblstat');?></label>
-					</td>
-					<td>
-						<span>
-							<input id='go' type='submit' value='<?php print __('Go', 'gridblstat');?>'>
-							<input id='clear' type='button' value='<?php print __('Clear', 'gridblstat');?>' onClick='clearFilter()'>
-						</span>
-					</td>
-					<td>
 						<input type='hidden' id='lsid' name='lsid' value='<?php print (isset_request_var('lsid') ? get_request_var('lsid'):'');;?>'>
-					</td>
-				</tr>
-			</table>
-			<table class='filterTable'>
-				<tr>
-					<td>
-						<?php print __('Domain', 'gridblstat');?>
-					</td>
-					<td>
-						<input type="text" id='sd' value='<?php print html_escape_request_var('sd');?>'>
 					</td>
 					<?php if (read_config_option('grid_blstat_project_group_aggregation') == 'on') { ?>
 				 	<td>
@@ -1343,6 +2158,20 @@ function grid_project_filter() {
 							?>
 						</select>
 					</td>
+					<td>
+						<input id='inuse' type='checkbox' onChange='applyFilter()' <?php print (get_request_var('inuse') == 'true' || get_request_var('inuse') == 'on' ? ' checked=checked':'');?>>
+					</td>
+					<td>
+						<label for='inuse'><?php print __('In Use', 'gridblstat');?></label>
+					</td>
+					<td>
+						<span>
+							<input id='go' type='submit' value='<?php print __('Go', 'gridblstat');?>'>
+							<input id='clear' type='button' value='<?php print __('Clear', 'gridblstat');?>' onClick='clearFilter()'>
+							<input id='save-filters' type='button' value='<?php print __('Save', 'gridblstat');?>'>
+							<input id='all_filters' type='button' value='<?php print __('Filters', 'gridblstat');?>'>
+						</span>
+					</td>
 				</tr>
 			</table>
 			</form>
@@ -1351,7 +2180,16 @@ function grid_project_filter() {
 			function applyFilter() {
 				strURL  = urlPath + 'plugins/gridblstat/grid_lsdashboard.php?action=projects&tab=projects&header=false';
 				strURL +=  '&lsid=' + $('#lsid').val();
-				strURL +=  '&feature=' + $('#feature').val();
+
+				proj_project_values = $('#proj_projects').val();
+				if(proj_project_values.length){
+					proj_project_values = proj_project_values.filter(value => value.length);
+					strURL = strURL + '&project=' + encodeURIComponent(proj_project_values.join(" "));
+				} else {
+					strURL += '&project='
+				}
+				
+				strURL +=  '&feature=' + ($('#proj_features').val() || "");
 				strURL +=  '&region=' + $('#region').val();
 				strURL +=  '&rows=' + $('#rows').val();
 				strURL +=  '&level=' + $('#level').val();
@@ -1362,7 +2200,7 @@ function grid_project_filter() {
 			}
 
 			function clearFilter() {
-				strURL  = urlPath + 'plugins/gridblstat/grid_lsdashboard.php?action=projects&tab=projects&feature=&rows=-1&region=&sd=&refresh=-1&level=0&header=false';
+				strURL  = urlPath + 'plugins/gridblstat/grid_lsdashboard.php?action=projects&tab=projects&feature=&project=&rows=-1&region=&sd=&refresh=-1&level=0&header=false';
 				loadPageNoHeader(strURL);
 			}
 
@@ -1371,7 +2209,11 @@ function grid_project_filter() {
 					event.preventDefault();
 					applyFilter();
 				});
+				
+				initSelect2Multi("proj_projects",{url: "grid_lsdashboard.php?action=ajaxsearch&type=msprojects", preventOpenOnClear: true, triggerFormSubmit: applyFilter});
+				initSelect2Single("proj_features",{url: "grid_lsdashboard.php?action=ajaxsearch&type=msfeatures", triggerFormSubmit: applyFilter, preventOpenOnClear: true});
 			});
+
 
 			</script>
 		</td>
@@ -1381,23 +2223,34 @@ function grid_project_filter() {
 
 function grid_distribution_filter() {
 	global $config, $grid_rows_selector, $grid_refresh_interval, $grid_projectgroup_filter_levels;
+	$distribution_features = preg_split('/\s+/', get_request_var("feature"), -1, PREG_SPLIT_NO_EMPTY);
 	?>
 	<tr class='odd noprint'>
 		<td>
 			<form id='form_grid' action='grid_lsdashboard.php'>
+			<div class="blstat-form">
+				<label style="width:73px">
+					<?php print __('LS Feature', 'gridblstat');?>
+				</label>
+				<select id="distribution_features" multiple="multiple" class="select-multi-dd">
+					<?php foreach ($distribution_features as $feature) : ?>
+						<option value="<?= html_escape($feature) ?>" selected="selected"><?= html_escape($feature) ?></option>
+					<?php endforeach ?>
+				</select>
+			</div>
 			<table class='filterTable'>
 				<tr>
-					<td>
-						<?php print __('Feature', 'gridblstat');?>
-					</td>
-					<td>
-						<input type="text" id='feature' value='<?php print html_escape_request_var('feature');?>'>
-					</td>
-					<td>
+					<td style="width:71px">
 						<?php print __('Region', 'gridblstat');?>
 					</td>
 					<td>
 						<input type="text" id='region' value='<?php print html_escape_request_var('region');?>'>
+					</td>
+					<td>
+						<?php print __('Domain', 'gridblstat');?>
+					</td>
+					<td>
+						<input type="text" id='sd' value='<?php print html_escape_request_var('sd');?>'>
 					</td>
 					<td>
 						<?php print __('Refresh', 'gridblstat');?>
@@ -1416,31 +2269,6 @@ function grid_distribution_filter() {
 						</select>
 					</td>
 					<td>
-						<input id='inuse' type='checkbox' onChange='applyFilter()' <?php print (get_request_var('inuse') == 'true' || get_request_var('inuse') == 'on' ? ' checked=checked':'');?>>
-					</td>
-					<td>
-						<label for='inuse'><?php print __('In Use', 'gridblatat');?></label>
-					</td>
-					<td>
-						<span>
-							<input id='go' type='submit' value='<?php print __('Go', 'gridblatat');?>'>
-							<input id='clear' type='button' value='<?php print __('Clear', 'gridblatat');?>' onClick='clearFilter()'>
-						</span>
-					</td>
-					<td>
-						<input type='hidden' id='lsid' name='lsid' value='<?php print (isset_request_var('lsid') ? get_request_var('lsid'):'');?>'>
-					</td>
-				</tr>
-			</table>
-			<table class='filterTable'>
-				<tr>
-					<td>
-						<?php print __('Domain', 'gridblstat');?>
-					</td>
-					<td>
-						<input type="text" id='sd' value='<?php print html_escape_request_var('sd');?>'>
-					</td>
-					<td>
 						<?php print __('Records', 'gridblstat');?>
 					</td>
 					<td>
@@ -1454,15 +2282,43 @@ function grid_distribution_filter() {
 							?>
 						</select>
 					</td>
+					<td>
+						<input id='inuse' type='checkbox' onChange='applyFilter()' <?php print (get_request_var('inuse') == 'true' || get_request_var('inuse') == 'on' ? ' checked=checked':'');?>>
+					</td>
+					<td>
+						<label for='inuse'><?php print __('In Use', 'gridblatat');?></label>
+					</td>
+					<td>
+						<span>
+							<input id='go' type='submit' value='<?php print __('Go', 'gridblatat');?>'>
+							<input id='clear' type='button' value='<?php print __('Clear', 'gridblatat');?>' onClick='clearFilter()'>
+							<input id='save-filters' type='button' value='<?php print __('Save', 'gridblstat');?>'>
+							<input id='all_filters' type='button' value='<?php print __('Filters', 'gridblstat');?>'>
+						</span>
+					</td>
+					<td>
+						<input type='hidden' id='lsid' name='lsid' value='<?php print (isset_request_var('lsid') ? get_request_var('lsid'):'');?>'>
+					</td>
+					
+
 				</tr>
 			</table>
 			</form>
 			<script type='text/javascript'>
 
 			function applyFilter() {
+
 				strURL  = urlPath + 'plugins/gridblstat/grid_lsdashboard.php?action=distribution&tab=distribution&header=false'
 				strURL += '&lsid=' + $('#lsid').val();
-				strURL += '&feature=' + $('#feature').val();
+
+				distribution_features_values = $('#distribution_features').val();
+				if(distribution_features_values.length){
+					distribution_features_values = distribution_features_values.filter(value => value.length);
+					strURL = strURL + '&feature=' + encodeURIComponent(distribution_features_values.join(" "));
+				} else {
+					strURL += '&feature='
+				}
+
 				strURL += '&region=' + $('#region').val();
 				strURL += '&rows=' + $('#rows').val();
 				strURL += '&inuse=' + $('#inuse').is(':checked');
@@ -1481,6 +2337,7 @@ function grid_distribution_filter() {
 					event.preventDefault();
 					applyFilter();
 				});
+				initSelect2Multi("distribution_features",{url: "grid_lsdashboard.php?action=ajaxsearch&type=msfeatures", preventOpenOnClear: true, triggerFormSubmit: applyFilter});
 			});
 
 			</script>
@@ -1579,7 +2436,9 @@ function grid_view_get_users_records(&$sql_where, $apply_limits = true, $rows = 
 			} else {
 				$sql_reason = "AND subreason='" . $parts[0] . "'";
 			}
-		} else {
+		}
+		else 
+		{
 			if ($pendreason != 'on') {
 				$sql_reason = " AND substring_index(substring_index(pendReasons,'(', -1), ')', 1) IN (SELECT DISTINCT substring_index(feature, '@', 1) FROM grid_blstat)";
 			} else {
@@ -1779,6 +2638,8 @@ function grid_view_users() {
 			$sql_where = 'WHERE gbc.lsid < 0';
 		}
 	}
+
+
 
 	$user_results = grid_view_get_users_records($sql_where, true, $rows, $sql_params);
 
@@ -1995,6 +2856,7 @@ function grid_view_users() {
 
 function grid_user_filter() {
 	global $config, $grid_rows_selector, $grid_refresh_interval;
+	$users_project  = html_escape_request_var('project') ?? "";
 	?>
 	<tr class='odd noprint'>
 		<td>
@@ -2006,6 +2868,12 @@ function grid_user_filter() {
 					</td>
 					<td>
 						<input type="text" id='resource' value='<?php print html_escape_request_var('resource');?>'>
+					</td>
+					<td>
+						<?php print __('User', 'gridblstat');?>
+					</td>
+					<td>
+						<input type="text" id='ls_user' value='<?php print html_escape_request_var('user');?>'>
 					</td>
 					<td>
 						<?php print __('Region', 'gridblstat');?>
@@ -2036,47 +2904,10 @@ function grid_user_filter() {
 						</select>
 					</td>
 					<td>
-						<?php print __('Refresh', 'gridblstat');?>
-					</td>
-					<td>
-						<select id='refresh' onChange='applyFilter()'>
-							<?php
-							$max_refresh = read_config_option('grid_minimum_refresh_interval');
-
-							foreach($grid_refresh_interval as $key => $value) {
-								if ($key >= $max_refresh) {
-									print '<option value="' . $key . '"'; if (get_request_var('refresh') == $key) { print ' selected'; } print '>' . $value . '</option>';
-								}
-							}
-							?>
-						</select>
-					</td>
-					<td>
-						<span>
-							<input id='go' type='submit' value='<?php print __('Go', 'gridblstat');?>'>
-							<input id='clear' type='button' value='<?php print __('Clear', 'gridblstat');?>' onClick='clearFilter()'>
-					</td>
-				</tr>
-			</table>
-			<table class='filterTable'>
-				<tr>
-					<td>
-						<?php print __('User', 'gridblstat');?>
-					</td>
-					<td>
-						<input type="text" id='ls_user' value='<?php print html_escape_request_var('user');?>'>
-					</td>
-					<td>
 						<?php print __('Host', 'gridblstat');?>
 					</td>
 					<td>
 						<input type="text" id='ls_host' value='<?php print html_escape_request_var('host');?>'>
-					</td>
-					<td>
-						<?php print __('Project', 'gridblstat');?>
-					</td>
-					<td>
-						<input type="text" id='project' value='<?php print html_escape_request_var('project');?>'>
 					</td>
 					<td>
 						<?php print __('Cluster', 'gridblstat');?>
@@ -2100,6 +2931,18 @@ function grid_user_filter() {
 							?>
 						</select>
 					</td>
+				</tr>
+			</table>
+			<div class="blstat-form">
+				<label for="" ><?php print __('Project', 'gridblstat');?></label>
+				<select id="user_project" class="select-multi-dd" data-allow-clear="true">
+					<?php if ($users_project) : ?>
+						<option value="<?= html_escape($users_project) ?>" selected="selected"><?= html_escape($users_project) ?></option>
+					<?php endif ?>
+				</select>
+			</div>
+			<table class='filterTable'>
+				<tr>
 					<td>
 						<?php print __('Records', 'gridblstat');?>
 					</td>
@@ -2116,6 +2959,26 @@ function grid_user_filter() {
 					</td>
 					<td>
 						<input type='hidden' id='lsid' name='lsid' value='<?php print (isset_request_var('lsid') ? get_request_var('lsid'):'');?>'>
+						<?php print __('Refresh', 'gridblstat');?>
+					</td>
+					<td>
+						<select id='refresh' onChange='applyFilter()'>
+							<?php
+							$max_refresh = read_config_option('grid_minimum_refresh_interval');
+
+							foreach($grid_refresh_interval as $key => $value) {
+								if ($key >= $max_refresh) {
+									print '<option value="' . $key . '"'; if (get_request_var('refresh') == $key) { print ' selected'; } print '>' . $value . '</option>';
+								}
+							}
+							?>
+						</select>
+					</td>
+					<td>
+							<input id='go' type='submit' value='<?php print __('Go', 'gridblstat');?>'>
+							<input id='clear' type='button' value='<?php print __('Clear', 'gridblstat');?>' onClick='clearFilter()'>
+							<input id='save-filters' type='button' value='<?php print __('Save', 'gridblstat');?>'>
+							<input id='all_filters' type='button' value='<?php print __('Filters', 'gridblstat');?>'>
 					</td>
 				</tr>
 			</table>
@@ -2133,7 +2996,7 @@ function grid_user_filter() {
 				strURL +=  '&host=' + $('#ls_host').val();
 				strURL +=  '&sd=' + encodeURIComponent($('#sd').val());
 				strURL +=  '&resource=' + $('#resource').val();
-				strURL +=  '&project=' + $('#project').val();
+				strURL +=  '&project=' + ($('#user_project').val() || "");
 				strURL +=  '&rows=' + $('#rows').val();
 				loadPageNoHeader(strURL);
 			}
@@ -2148,6 +3011,7 @@ function grid_user_filter() {
 					event.preventDefault();
 					applyFilter();
 				});
+				initSelect2Single("user_project",{url: "grid_lsdashboard.php?action=ajaxsearch&type=msprojects", triggerFormSubmit: applyFilter, preventOpenOnClear: true});
 			});
 
 			</script>
@@ -2156,15 +3020,22 @@ function grid_user_filter() {
 	<?php
 }
 
+
+
 function grid_view_get_cluster_records(&$sql_where, $apply_limits = true, $rows = 30, &$sql_params = array()) {
 	if (get_request_var('cluster') != '-1') {
 		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE') . ' a.cluster=' . db_qstr(get_request_var('cluster'));
 		$sql_params[] = get_request_var('cluster');
 	}
 
-	if (get_request_var('feature') != '') {
-		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE') . " feature LIKE ?";
-		$sql_params[] = "%" . str_replace('_','\_',get_request_var('feature')) . "%";
+	if (get_request_var("feature")) {
+		$features = preg_split('/\s+/', get_request_var("feature"), -1, PREG_SPLIT_NO_EMPTY);
+		if (!is_array($features) ) {
+    	  $features  = [$features];
+	    } 
+		$placeholders = implode(',', array_fill(0, count($features), '?'));
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE') . " feature IN ($placeholders)";
+		$sql_params = array_merge($sql_params, $features);
 	}
 
 	if (get_request_var('region') != "") {
@@ -2178,9 +3049,10 @@ function grid_view_get_cluster_records(&$sql_where, $apply_limits = true, $rows 
 		$sql_select=", (demand+need) AS ndemand";
 
 		if (get_request_var('project') != "") {
-			$sql_where .= ($sql_where != '' ? ' AND ':'WHERE') . ' project=?';
+			$sql_where .= ($sql_where != '' ? ' AND ':'WHERE') . " project = ?";
 			$sql_params[] = get_request_var('project');
 		}
+
 	} else {
 		$sql_select = ' ';
 		//Cluster Mode
@@ -2207,8 +3079,6 @@ function grid_view_get_cluster_records(&$sql_where, $apply_limits = true, $rows 
 		$sql_query .= ' LIMIT ' . ($rows*(get_request_var('page')-1)) . ',' . $rows;
 	}
 
-	//print $sql_query;
-
 	return db_fetch_assoc_prepared($sql_query, $sql_params);
 }
 
@@ -2224,7 +3094,7 @@ function build_cluster_display_array() {
 			'sort' => 'ASC'
 		),
 		'feature' => array(
-			'display' => __('Feature Name', 'gridblatat'),
+			'display' => __('LS Feature', 'gridblatat'),
 			'sort' => 'ASC'
 		),
 		'region' => array(
@@ -2326,6 +3196,7 @@ function build_cluster_display_array() {
 }
 
 function grid_view_clusters() {
+		
 	global $title, $report, $grid_search_types, $grid_rows_selector, $grid_refresh_interval, $minimum_user_refresh_intervals, $config;
 	$sql_params = array();
 
@@ -2398,9 +3269,12 @@ function grid_view_clusters() {
 	}
 
 	validate_store_request_vars($filters, 'sess_gbs_clusters');
+
+
 	/* ================= input validation ================= */
 
 	html_start_box(__('Cluster Filter %s', grid_blstat_header(), 'gridblstat'), '100%', '', '3', 'center', '');
+	
 	grid_cluster_filter();
 	html_end_box(true);
 
@@ -2557,41 +3431,63 @@ function grid_view_clusters() {
 
 function grid_cluster_filter() {
 	global $config, $grid_rows_selector, $grid_refresh_interval;
-
+	$cluster_features = preg_split('/\s+/', get_request_var("feature"), -1, PREG_SPLIT_NO_EMPTY);
+	$cluster_projects = html_escape_request_var('project') ?? "";
 	?>
 	<tr class='odd noprint'>
 		<td>
-			<form id='form_grid' action='grid_lsdashboard.php'>
-			<table class='filterTable'>
-				<tr>
-					<td>
-						<?php print __('Feature', 'gridblstat');?>
-					</td>
-					<td>
-						<input type="text" id='feature' value='<?php print html_escape_request_var('feature');?>'>
-					</td>
-					<td>
-						<?php print __('Region', 'gridblstat');?>
-					</td>
-					 <td>
-                        <input type="text" id='region' value='<?php print html_escape_request_var('region');?>'>
-                    </td>
-
-					<td>
-						<?php print __('Mode', 'gridblstat');?>
-					</td>
-					<td>
+			<form id='form_grid' action='grid_lsdashboard.php' class="clusters-blstat-form">
+				<div class="blstat-form">
+					<label for="clusters_features" style="padding-right:6px"><?php print __('LS Feature', 'gridblstat');?></label>
+					<select id="clusters_features" multiple="multiple" class="select-multi-dd">
+						<?php foreach ($cluster_features as $feature) : ?>
+							<option value="<?= html_escape($feature) ?>" selected="selected"><?= html_escape($feature) ?></option>
+						<?php endforeach ?>
+					</select>
+				</div> 
+				<div>
+					<label for="region" style="padding-right:2px"><?php print __('Region', 'gridblstat');?></label>
+					<input type="text" id='region' value='<?php print html_escape_request_var('region');?>'>
+					<label for="mode"><?php print __('Mode', 'gridblstat');?></label>
 					<select id='mode' onChange='applyFilter()'>
 						<option value='1' <?php if (get_request_var('mode')== 1) {print 'selected';}?>><?php print __('Project', 'gridblstat');?></option>
 						<option value='2' <?php if (get_request_var('mode')== 2) {print 'selected';}?>><?php print __('Cluster', 'gridblstat');?> </option>
 					</select>
-					</td>
+					<label for="cluster"><?php print __('Cluster', 'gridblstat');?></label>
+					<select id='cluster' onChange='applyFilter()'>
+						<option value='-1'<?php if (isset_request_var('cluster') && get_request_var('cluster') == '-1') {?> selected<?php }?>><?php print __('All', 'gridblstat');?></option>
+						<?php
+						if (get_request_var('mode')==1) {
+							$clusters = db_fetch_assoc('SELECT DISTINCT cluster
+								FROM grid_blstat_cluster_use WHERE present = 1
+								ORDER BY cluster');
+						} else {
+							$clusters = db_fetch_assoc('SELECT DISTINCT cluster
+								FROM grid_blstat_clusters WHERE present = 1
+								ORDER BY cluster');
+						}
 
-					<td>
-						<?php print __('Refresh', 'gridblstat');?>
-					</td>
-					<td>
-						<select id='refresh' onChange='applyFilter()'>
+						if (cacti_sizeof($clusters)) {
+							foreach ($clusters as $cluster) {
+								print '<option value="' . $cluster['cluster'] .'"'; if (isset_request_var('cluster') && get_request_var('cluster') == $cluster['cluster']) { print ' selected'; } print '>' . $cluster['cluster'] . '</option>';
+							}
+						}
+						?>
+					</select>
+				</div>
+				<div id="clusters_projects_section" class="blstat-form" style="display:<?= get_request_var('mode') == 1 ? "grid" : "none" ?>">
+					<label id='td_project' style="padding-right:8px">
+						<?php print __('Project', 'gridblstat');?>
+					</label>
+					<select id="clusters_projects" class="select-multi-dd" data-allow-clear="true">
+						<?php if ($cluster_projects) : ?>
+							<option value="<?= $cluster_projects ?>" selected="selected"><?= html_escape($cluster_projects) ?></option>
+						<?php endif ?>
+                	</select>
+				</div>
+				<div>
+						<label for="refresh" style="padding-right:2px"><?php print __('Refresh', 'gridblstat');?></label>
+						<select id='refresh' onChange='applyFilter()' style="width: 100%; box-sizing: border-box">
 							<?php
 							$max_refresh = read_config_option('grid_minimum_refresh_interval');
 
@@ -2602,96 +3498,56 @@ function grid_cluster_filter() {
 							}
 							?>
 						</select>
-					</td>
-					<td>
-						<span>
-							<input id='go' type='submit' value='<?php print __('Go', 'gridblstat');?>'>
-							<input id='cancel' type='button' value='<?php print __('Clear', 'gridblstat');?>' name='clear' onClick='clearFilter()'>
-						</span>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<?php print __('Cluster', 'gridblstat');?>
-					</td>
-					<td>
-						<select id='cluster' onChange='applyFilter()'>
-							<option value='-1'<?php if (isset_request_var('cluster') && get_request_var('cluster') == '-1') {?> selected<?php }?>><?php print __('All', 'gridblstat');?></option>
-							<?php
-							if (get_request_var('mode')==1) {
-								$clusters = db_fetch_assoc('SELECT DISTINCT cluster
-									FROM grid_blstat_cluster_use WHERE present = 1
-									ORDER BY cluster');
-							} else {
-								$clusters = db_fetch_assoc('SELECT DISTINCT cluster
-									FROM grid_blstat_clusters WHERE present = 1
-									ORDER BY cluster');
-							}
 
-							if (cacti_sizeof($clusters)) {
-								foreach ($clusters as $cluster) {
-									print '<option value="' . $cluster['cluster'] .'"'; if (isset_request_var('cluster') && get_request_var('cluster') == $cluster['cluster']) { print ' selected'; } print '>' . $cluster['cluster'] . '</option>';
+							
+						<label for=""><?php print __('Records', 'gridblstat');?></label>	
+							<select id='rows' onChange='applyFilter()'>
+								<?php
+								if (cacti_sizeof($grid_rows_selector)) {
+									foreach ($grid_rows_selector as $key => $value) {
+										print '<option value="' . $key . '"'; if (get_request_var('rows') == $key) { print ' selected'; } print '>' . $value . '</option>';
+									}
 								}
-							}
-							?>
-						</select>
-					</td>
-					<?php if (get_request_var('mode') == 1) { ?>
-					<td id='td_project'>
-						<?php print __('Project', 'gridblstat');?>
-					</td>
-					<td id='td_project1'>
-						<input type="text" id='project' value='<?php print html_escape_request_var('project');?>'>
-					</td>
-					<?php } else {?>
-					<td id='td_project' style='display:none'>
-						<?php print __('Project', 'gridblstat');?>
-					</td>
-					<td id='td_project1' style='display:none'>
-						<input type="text" id='project' value='<?php print html_escape_request_var('project');?>'>
-					</td>
-					<?php }?>
-					<td>
-						<?php print __('Records', 'gridblstat');?>
-					</td>
-					<td>
-						<select id='rows' onChange='applyFilter()'>
-							<?php
-							if (cacti_sizeof($grid_rows_selector)) {
-								foreach ($grid_rows_selector as $key => $value) {
-									print '<option value="' . $key . '"'; if (get_request_var('rows') == $key) { print ' selected'; } print '>' . $value . '</option>';
-								}
-							}
-							?>
-						</select>
-					</td>
-					<td>
-						&nbsp; &nbsp; &nbsp;
-						<input id='inuse' type='checkbox' onChange='applyFilter()' <?php print (get_request_var('inuse') == 'true' || get_request_var('inuse') == 'on' ? ' checked=checked':'');?>>
-					</td>
-					<td>
-						<label for='inuse'><?php print __('In Use', 'gridblstat');?></label>
-					</td>
-				</tr>
-			</table>
+								?>
+							</select>
+						<div>
+							<input id='inuse' type='checkbox' onChange='applyFilter()' <?php print (get_request_var('inuse') == 'true' || get_request_var('inuse') == 'on' ? ' checked=checked':'');?>>
+							<label for='inuse'><?php print __('In Use', 'gridblstat');?></label>
+						</div>
+
+							<span>
+								<input id='go' type='submit' value='<?php print __('Go', 'gridblstat');?>'>
+								<input id='cancel' type='button' value='<?php print __('Clear', 'gridblstat');?>' name='clear' onClick='clearFilter()'>
+							    <input id='save-filters' type='button' value='<?php print __('Save', 'gridblstat');?>'>
+								<input id='all_filters' type='button' value='<?php print __('Filters', 'gridblstat');?>'>
+							</span>
+					</div>
 			</form>
+		</td>
+	</tr>
 			<script type="text/javascript">
 
 			function applyFilter() {
 				if ($('#mode').val() == 2) {
-					$('#td_project').hide();
-					$('#td_project1').hide();
+					$('#clusters_projects_section').hide();
 				} else if ($('#mode').val() == 1) {
-					$('#td_project').show();
-					$('#td_project1').show();
+					$('#clusters_projects_section').show();
 				}
 
 				strURL  = urlPath + 'plugins/gridblstat/grid_lsdashboard.php?action=clusters&tab=clusters&header=false';
 				strURL += '&cluster=' + $('#cluster').val();
 				strURL += '&refresh=' + $('#refresh').val();
-				strURL += '&feature=' + $('#feature').val();
+
+				clusters_features_values = $('#clusters_features').val();
+				if(clusters_features_values.length){
+					clusters_features_values = clusters_features_values.filter(value => value.length);
+					strURL = strURL + '&feature=' + encodeURIComponent(clusters_features_values.join(" "));
+				} else {
+					strURL += '&feature='
+				}
+				
 				strURL += '&region='  + $('#region').val();
-				strURL += '&project=' + $('#project').val();
+				strURL +=  '&project=' + ($('#clusters_projects').val() || "");
 				strURL += '&inuse='   + $('#inuse').is(':checked');
 				strURL += '&rows='    + $('#rows').val();
 				strURL += '&mode='    + $('#mode').val();
@@ -2708,6 +3564,9 @@ function grid_cluster_filter() {
 					event.preventDefault();
 					applyFilter();
 				});
+
+				initSelect2Multi("clusters_features",{url: "grid_lsdashboard.php?action=ajaxsearch&type=msfeatures", preventOpenOnClear: true, triggerFormSubmit: applyFilter});
+				initSelect2Single("clusters_projects",{url: "grid_lsdashboard.php?action=ajaxsearch&type=msprojects", triggerFormSubmit: applyFilter, preventOpenOnClear: true});
 			});
 
 			</script>
@@ -2720,7 +3579,7 @@ function build_feature_details_display_array() {
 	$display_text = array();
 
 	$display_text[] = array(
-		'display' => __('Feature', 'gridblstat'),
+		'display' => __('LS Feature', 'gridblstat'),
 		'align' => 'left'
 	);
 
@@ -3106,7 +3965,7 @@ function grid_view_zen() {
 	validate_store_request_vars($filters, 'sess_gbs_featdb');
 	/* ================= input validation ================= */
 
-	html_start_box(__('Feature Dashboard %s', grid_blstat_header(), 'gridblstat'), '100%', '', '3', 'center', '');
+	html_start_box(__('LS Feature Dashboard %s', grid_blstat_header(), 'gridblstat'), '100%', '', '3', 'center', '');
 	grid_feature_filter();
 	html_end_box(true);
 
@@ -3246,7 +4105,7 @@ function grid_view_zen() {
 	}
 
 	if (get_request_var('feature') == '') {
-		html_start_box(__('Summary for Feature', 'gridblstat'), '100%', '', '3', 'center', '');
+		html_start_box(__('Summary for LS Feature', 'gridblstat'), '100%', '', '3', 'center', '');
 
 		$display_text = build_feature_details_display_array();
 		html_header($display_text);
@@ -3259,7 +4118,7 @@ function grid_view_zen() {
 	}
 
 	if (get_request_var('display') < 2) {
-		html_start_box(__('Summary for Feature', 'gridblstat'), '100%', '', '3', 'center', '');
+		html_start_box(__('Summary for LS Feature', 'gridblstat'), '100%', '', '3', 'center', '');
 		$display_text = build_feature_details_display_array();
 
 		html_header($display_text);
@@ -4200,20 +5059,23 @@ function grid_view_zen() {
 }
 
 function grid_feature_filter() {
-	global $config, $grid_top, $grid_refresh_interval;
+		global $config, $grid_top, $grid_refresh_interval;
+		$features_feature = html_escape_request_var('feature') ?: "";
 	?>
 	<tr class='odd noprint'>
 		<td>
 			<form id='form_grid' action='grid_lsdashboard.php'>
+			<div class="blstat-form">
+				<label for="" style="padding-right:5px"><?php print __('LS Feature', 'gridblstat');?></label>
+				<select id="features_feature" class="select-multi-dd" data-allow-clear="true">
+						<?php if ($features_feature) : ?>
+							<option value="<?= html_escape($features_feature) ?>" selected="selected"><?= html_escape($features_feature) ?></option>
+						<?php endif ?>
+                </select>
+			</div>
 			<table class='filterTable'>
 				<tr>
-					<td>
-						<?php print __('Feature', 'gridblstat');?>
-					</td>
-					<td>
-						<input type="text" id='feature' value='<?php print html_escape_request_var('feature');?>'>
-					</td>
-					<td>
+					<td style="padding-right:9.5px">
 						<?php print __('Region', 'gridblstat');?>
 					</td>
 					<td>
@@ -4236,17 +5098,6 @@ function grid_feature_filter() {
 							}?>
                         </select>
                     </td>
-					<td>
-						<span>
-	                        <input id='go' type='submit' value='<?php print __('Go', 'gridblstat');?>'>
-                        	<input id='clear' type='button' value='<?php print __('Clear', 'gridblstat');?>' onClick='clearFilter()'>
-                        	<input id='save' type='button' value='<?php print __('Save', 'gridblstat');?>' onClick='saveFilter()'>
-						</span>
-                    </td>
-				</tr>
-			</table>
-			<table class='filterTable'>
-				<tr>
 					<td>
 						<?php print __('Refresh', 'gridblstat');?>
 					</td>
@@ -4293,6 +5144,13 @@ function grid_feature_filter() {
                     <td>
                         <label for='inuse'><?php print __('In Use', 'gridblstat');?></label>
                     </td>
+					<td>
+						<span>
+	                        <input id='go' type='submit' value='<?php print __('Go', 'gridblstat');?>'>
+                        	<input id='clear' type='button' value='<?php print __('Clear', 'gridblstat');?>' onClick='clearFilter()'>
+                        	<input id='save' type='button' value='<?php print __('Save', 'gridblstat');?>' onClick='saveFilter()'>
+						</span>
+                    </td>
 				</tr>
 			</table>
 			</form>
@@ -4304,7 +5162,7 @@ function grid_feature_filter() {
 					strURL += '&lsid='    + $('#lsid').val();
 				}
 				strURL += '&inuse='   + $('#inuse').is(':checked');
-				strURL += '&feature=' + $('#feature').val();
+				strURL += '&feature=' + ($('#features_feature').val() || "");
 				strURL += '&region='  + $('#region').val();
 				strURL += '&refresh=' + $('#refresh').val();
 				if($('input[type=radio]:checked').length){
@@ -4317,8 +5175,7 @@ function grid_feature_filter() {
 
 			function saveFilter() {
 				strURL  = urlPath + 'plugins/gridblstat/grid_lsdashboard.php?action=ajaxsave&top=' + $('#top').val();
-				strURL +=  '&refresh=' + $('#refresh').val();
-				strURL +=  '&feature=' + $('#feature').val();
+				strURL +=  '&feature=' + ($('#features_feature').val() || "");
 				strURL +=  '&region=' + $('#region').val();
 				strURL +=  '&lsid=' + $('#lsid').val();
 				strURL +=  '&inuse=' + $('#inuse').is(':checked');
@@ -4349,7 +5206,10 @@ function grid_feature_filter() {
 				$('input[type="radio"]').click(function() {
 					applyFilter();
 				});
+
+				initSelect2Single("features_feature",{url: "grid_lsdashboard.php?action=ajaxsearch&type=msfeatures", triggerFormSubmit: applyFilter, preventOpenOnClear: true});
 			});
+
 
 			</script>
 		</td>
@@ -4369,8 +5229,28 @@ function grid_get_checkouts(&$sql_where, $apply_limits = true, $rows = 30, &$tot
 		$sql_params[] = get_request_var('user');
 	}
 
-	if (get_request_var('ffeature') != '') {
-		$sql_where .= ($sql_where != '' ? ' AND':'WHERE') . ' feature_name IN (\'' . implode("','", preg_split('/[ ,]/', get_request_var('ffeature'), -1, PREG_SPLIT_NO_EMPTY)) . '\')';
+	// if (get_request_var('ffeature') != '') {
+	// 	$sql_where .= ($sql_where != '' ? ' AND':'WHERE') . ' feature_name IN (\'' . implode("','", preg_split('/[ ,]/', get_request_var('ffeature'), -1, PREG_SPLIT_NO_EMPTY)) . '\')';
+	// }
+
+	if ($ffeature = preg_split('/\s+/', get_request_var("feature"), -1, PREG_SPLIT_NO_EMPTY)) {
+		$values = [];
+
+		if (!is_array($ffeature)) {
+			$ffeature = [$ffeature];
+		}
+
+		foreach ($ffeature as $item) {
+			$parts = preg_split('/[ ,]/', $item, -1, PREG_SPLIT_NO_EMPTY);
+			$values = array_merge($values, $parts);
+		}
+
+		if (!empty($values)) {
+			$values = array_unique($values);
+			$placeholders = implode(',', array_fill(0, count($values), '?'));
+			$sql_where .= ($sql_where != '' ? ' AND ' : ' WHERE') . " feature_name IN ($placeholders)";
+			$sql_params = array_merge($sql_params, $values);
+		}
 	}
 
 	if (get_request_var('region') != '') {
@@ -4604,7 +5484,7 @@ function grid_view_checkouts() {
 			'display' => __('Actions', 'gridblstat')
 		),
 		'feature_name' => array(
-			'display' => __('Feature Name', 'gridblstat'),
+			'display' => __('LS Feature', 'gridblstat'),
 			'sort' => 'ASC',
 			'tip' => __('Feature name in FLEXlm/RLM', 'gridblstat')
 		),
@@ -4717,20 +5597,26 @@ function grid_view_checkouts() {
 
 function grid_checkouts_filter() {
 	global $config, $lic_refresh_interval, $lic_rows_selector;
-
+	$checkout_features = preg_split('/\s+/', get_request_var("ffeature"), -1, PREG_SPLIT_NO_EMPTY);
 	?>
 	<tr class='odd noprint'>
 		<td>
 			<form id='form_grid' action='grid_lsdashboard.php'>
+
+			<div class="blstat-form">
+				<label style="padding-right:5px">
+					<?php print __('LS Feature', 'gridblstat');?>
+				</label>
+				<select id="checkout_features" multiple="multiple" class="select-multi-dd">
+					<?php foreach ($checkout_features as $feature) : ?>
+						<option value="<?= html_escape($feature) ?>" selected="selected"><?= html_escape($feature) ?></option>
+					<?php endforeach ?>
+				</select>
+			</div>
+
 			<table class='filterTable'>
 				<tr>
-					<td>
-						<?php print __('Feature', 'gridblstat');?>
-					</td>
-					<td>
-						<input type="text" id='ffeature' size='20' value='<?php print html_escape_request_var('ffeature');?>'>
-					</td>
-					<td>
+					<td style="padding-right:10px">
 						<?php print __('Region', 'gridblstat');?>
 					</td>
 					<td>
@@ -4742,36 +5628,7 @@ function grid_checkouts_filter() {
 					<td>
 						<input type="text" id='sd' value='<?php print html_escape_request_var('sd');?>'>
 					</td>
-					<td>
-						<?php print __('Refresh', 'gridblstat');?>
-					</td>
-					<td>
-						<select id='refresh' onChange='applyFilter()'>
-						<?php
-						$max_refresh = read_config_option('grid_minimum_refresh_interval');
-						foreach($lic_refresh_interval as $key => $value) {
-							if ($key >= $max_refresh) {
-								print '<option value="' . $key . '"'; if (get_request_var('refresh') == $key) { print ' selected'; } print '>' . $value . '</option>';
-							}
-						}
-						?>
-						</select>
-					</td>
-					<td>
-						<span>
-							<input type='button' id='go' value='<?php print __('Go', 'gridblstat');?>' onClick='applyFilter()'>
-							<input type='button' id='clear' value='<?php print __('Clear', 'gridblstat');?>' onClick='clearFilter()'>
-						</span>
-					</td>
-					<td>
-						<input type="hidden" value="checkouts" name="action">
-						<input type="hidden" value="checkouts" name="tab">
-					</td>
-				</tr>
-			</table>
-			<table class='filterTable'>
-				<tr>
-					<td>
+										<td>
 						<?php print __('User', 'gridblstat');?>
 					</td>
 					<td>
@@ -4803,7 +5660,11 @@ function grid_checkouts_filter() {
 							<option value='-3'<?php if (get_request_var('lsf') == '-3') {?> selected<?php }?>><?php print __('No', 'gridblstat');?></option>
 						</select>
 					</td>
-					<td>
+				</tr>
+			</table>
+			<table class='filterTable'>
+				<tr>
+					<td style="padding-right:10px">
 						<?php print __('Records', 'gridblstat');?>
 					</td>
 					<td>
@@ -4817,6 +5678,33 @@ function grid_checkouts_filter() {
 							?>
 						</select>
 					</td>
+					<td>
+						<?php print __('Refresh', 'gridblstat');?>
+					</td>
+					<td>
+						<select id='refresh' onChange='applyFilter()'>
+						<?php
+						$max_refresh = read_config_option('grid_minimum_refresh_interval');
+						foreach($lic_refresh_interval as $key => $value) {
+							if ($key >= $max_refresh) {
+								print '<option value="' . $key . '"'; if (get_request_var('refresh') == $key) { print ' selected'; } print '>' . $value . '</option>';
+							}
+						}
+						?>
+						</select>
+					</td>
+					<td>
+						<span>
+							<input type='button' id='go' value='<?php print __('Go', 'gridblstat');?>' onClick='applyFilter()'>
+							<input type='button' id='clear' value='<?php print __('Clear', 'gridblstat');?>' onClick='clearFilter()'>
+						 	<input id='save-filters' type='button' value='<?php print __('Save', 'gridblstat');?>'>
+							<input id='all_filters' type='button' value='<?php print __('Filters', 'gridblstat');?>'>
+						</span>
+					</td>
+					<td>
+						<input type="hidden" value="checkouts" name="action">
+						<input type="hidden" value="checkouts" name="tab">
+					</td>
 				</tr>
 			</table>
 			</form>
@@ -4824,7 +5712,15 @@ function grid_checkouts_filter() {
 
 			function applyFilter() {
 				strURL  = urlPath + 'plugins/gridblstat/grid_lsdashboard.php?action=checkouts&tab=checkouts&header=false';
-				strURL +=  '&ffeature=' + $('#ffeature').val();
+
+				checkout_features_values = $('#checkout_features').val();
+				if(checkout_features_values.length){
+					checkout_features_values = checkout_features_values.filter(value => value.length);
+					strURL = strURL + '&ffeature=' + encodeURIComponent(checkout_features_values.join(" "));
+				} else {
+					strURL += '&ffeature='
+				}
+
 				strURL +=  '&sd=' + encodeURIComponent($('#sd').val());
 				strURL +=  '&region=' + $('#region').val();
 				strURL +=  '&lsf=' + $('#lsf').val();
@@ -4886,6 +5782,9 @@ function grid_checkouts_filter() {
 						applyFilter();
 					}
 				});
+
+				initSelect2Multi("checkout_features",{url: "grid_lsdashboard.php?action=ajaxsearch&type=msfeatures&checkout=true", preventOpenOnClear: true, triggerFormSubmit: applyFilter});
+			
 			});
 
 			</script>
@@ -5057,37 +5956,89 @@ function grid_blstat_view_graphs() {
 		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . " gtg.title_cache LIKE '%" . get_request_var('filter') . "%'";
 	}
 
-	if (get_request_var('project') != "") {
+	if (!empty(get_request_var('project'))) {
+		$projects = preg_split('/\s+/', get_request_var("project"), -1, PREG_SPLIT_NO_EMPTY);
+		if (!is_array($projects)) {
+			$projects = [$projects];
+		}
+
 		$bp = get_data_query_id("276d7b3235d9fe1071346abfcbead663");
 		$bc = get_data_query_id("51b53ceb3f70861c47fd169dae72a3bf");
-		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . " ((gl.snmp_index LIKE '%|" . get_request_var('project') . "|%' AND gl.snmp_query_id='$bc')
-			OR (gl.snmp_index LIKE '%|" . get_request_var('project') . "' AND gl.snmp_query_id='$bp'))";
+
+		$projectClauses = [];
+		foreach ($projects as $proj) {
+			$safe_proj = str_replace("'", "''", $proj); 
+
+			$projectClauses[] = "((gl.snmp_index LIKE '%|$safe_proj|%' AND gl.snmp_query_id='$bc')
+								OR (gl.snmp_index LIKE '%|$safe_proj' AND gl.snmp_query_id='$bp'))";
+		}
+
+		$sql_where .= ($sql_where != '' ? ' AND ' : 'WHERE ') . "(" . implode(" OR ", $projectClauses) . ")";
 
 		if (get_request_var('inuse') == 'on' || get_request_var('inuse') == 'true') {
-			$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . " (gl.snmp_index IN(SELECT snmp_index FROM host_snmp_cache WHERE field_name='cluster' AND field_value IN(SELECT DISTINCT cluster FROM grid_blstat_cluster_use WHERE project='" . get_request_var('project') . "' AND (inuse>0 OR `over`>0 OR need>0) AND present = 1)))";
+			$inuseClauses = [];
+			foreach ($projects as $proj) {
+				$proj_q = db_qstr($proj);
+
+				$inuseClauses[] = "gl.snmp_index IN(
+					SELECT snmp_index 
+					FROM host_snmp_cache 
+					WHERE field_name='cluster' 
+					AND field_value IN(
+						SELECT DISTINCT cluster 
+						FROM grid_blstat_cluster_use 
+						WHERE project=$proj_q 
+							AND (inuse>0 OR `over`>0 OR need>0) 
+							AND present = 1
+					)
+				)";
+			}
+
+			$sql_where .= ($sql_where != '' ? ' AND ' : 'WHERE ') . "(" . implode(" OR ", $inuseClauses) . ")";
 		}
 	}
 
-	if (get_request_var('feature') != "") {
-		$array_feature = explode('@', get_request_var('feature'));
 
-		if (cacti_sizeof($array_feature) > 1) {
-			$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . "(gl.snmp_index LIKE '%|" . str_replace("_","\_",get_request_var('feature')) . "|%' OR gl.snmp_index LIKE '%-" . str_replace("_","\_",get_request_var('feature')) ."-%' OR gl.snmp_index LIKE '%|" . str_replace("_","\_",$array_feature[0]) . "|%' OR gl.snmp_index LIKE '%-" . str_replace("_","\_",$array_feature[0]) ."-%')";
-		} else {
-			$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . "(gl.snmp_index LIKE '%|" . str_replace("_","\_",get_request_var('feature')) . "|%' OR gl.snmp_index LIKE '%-" . str_replace("_","\_",get_request_var('feature')) ."-%')";
+	if (!empty(get_request_var('feature'))) {
+		$features = preg_split('/\s+/', get_request_var("feature"), -1, PREG_SPLIT_NO_EMPTY);
+		if (!is_array($features)) {
+			$features = [$features];
 		}
+
+		$featureClauses = [];
+
+		foreach ($features as $feature) {
+			$array_feature = explode('@', $feature);
+
+			if (cacti_sizeof($array_feature) > 1) {
+				$featureClauses[] = "(" .
+					"gl.snmp_index LIKE '%|" . str_replace("_", "\_", $feature) . "|%' " .
+					"OR gl.snmp_index LIKE '%-" . str_replace("_", "\_", $feature) . "-%' " .
+					"OR gl.snmp_index LIKE '%|" . str_replace("_", "\_", $array_feature[0]) . "|%' " .
+					"OR gl.snmp_index LIKE '%-" . str_replace("_", "\_", $array_feature[0]) . "-%'" .
+				")";
+			} else {
+				$featureClauses[] = "(" .
+					"gl.snmp_index LIKE '%|" . str_replace("_", "\_", $feature) . "|%' " .
+					"OR gl.snmp_index LIKE '%-" . str_replace("_", "\_", $feature) . "-%'" .
+				")";
+			}
+		}
+
+		$sql_where .= ($sql_where != '' ? ' AND ' : 'WHERE ') . "(" . implode(" OR ", $featureClauses) . ")";
 	}
+
 
 	$graphs = db_fetch_assoc("SELECT
 		gtg.width, gtg.height,
 		gtg.local_graph_id,
-		gtg.title_cache,
-		gl.host_id, h.disabled
+		gl.host_id, h.disabled,
+		gtg.title_cache
 		FROM graph_templates_graph AS gtg
 		INNER JOIN graph_local AS gl
 		ON gtg.local_graph_id=gl.id
-                LEFT JOIN host AS h
-                ON gl.host_id = h.id
+		LEFT JOIN host AS h
+		ON gl.host_id = h.id
 		$sql_where
 		ORDER BY gtg.title_cache
 		LIMIT " . (get_request_var('graphs_per_page_count')*(get_request_var('page')-1)) . "," . get_request_var('graphs_per_page_count'));
@@ -5176,30 +6127,40 @@ function grid_blstat_nav_bar($page, $rows_per_page, $total_rows, $nav_url) {
 function grid_blstat_graph_view_filter() {
 	global $config, $grid_rows_selector;
 	global $graph_timespans, $graph_timeshifts;
+	$graph_features = preg_split('/\s+/', get_request_var("feature"), -1, PREG_SPLIT_NO_EMPTY);
+	$users_projects = preg_split('/\s+/', get_request_var("project"), -1, PREG_SPLIT_NO_EMPTY);
 
 	?>
 	<tr class='odd noprint'>
 		<td>
 			<form id='form_grid'>
 			<table class='filterTable'>
+				<div class="blstat-form">
+					<label style="padding-right:5px">
+						<?php print __('LS Feature', 'gridblstat');?>
+					</label>
+					<select id="graph_features" multiple="multiple" class="select-multi-dd">
+						<?php foreach ($graph_features as $feature) : ?>
+							<option value="<?= html_escape($feature) ?>" selected="selected"><?= html_escape($feature) ?></option>
+						<?php endforeach ?>
+					</select>
+				</div>
+				<div class="blstat-form">
+					<label style="min-width:65px">
+						<?php print __('Project', 'gridblstat');?>
+					</label>
+					<select id="graph_projects" multiple="multiple" class="select-multi-dd">
+						<?php foreach ($users_projects as $project) : ?>
+							<option value="<?= html_escape($project) ?>" selected="selected"><?= html_escape($project) ?></option>
+						<?php endforeach ?>
+					</select>
+				</div>
 				<tr>
-					<td>
-						<?php print __('Feature', 'gridblstat');?>
-					</td>
-					<td>
-						<input id='feature' type='text' value='<?php print html_escape_request_var('feature');?>'>
-					</td>
-					<td>
+					<td style="min-width:63px">
 						<?php print __('Region', 'gridblstat');?>
 					</td>
 					<td>
 						<input id='region' type='text' value='<?php print html_escape_request_var('region');?>'>
-					</td>
-					<td>
-						<?php print __('Project', 'gridblstat');?>
-					</td>
-					<td>
-						<input id='project' type='text' value='<?php print html_escape_request_var('project');?>'>
 					</td>
 					<td>
 						<?php print __('Cluster', 'gridblstat');?>
@@ -5222,28 +6183,6 @@ function grid_blstat_graph_view_filter() {
 							}
 							?>
 						</select>
-					</td>
-					<td>
-						<input id='inuse' type='checkbox' <?php print (get_request_var('inuse') == 'true' ? ' checked':''); ?>>
-					</td>
-					<td>
-						<label for='inuse'><?php print __('InUse', 'gridblstat');?></label>
-					</td>
-					<td>
-						<span>
-							<input type='submit' id='go' value='<?php print __esc('Go', 'gridblstat');?>'>
-							<input type='button' id='clear' value='<?php print __esc('Clear', 'gridblstat');?>' onClick='clearFilter()'>
-						</span>
-					</td>
-				</tr>
-			</table>
-			<table class='filterTable'>
-				<tr>
-					<td>
-						<?php print __('Search', 'gridblstat');?>
-					</td>
-					<td>
-						<input id='filter' type='text' size='25' value='<?php print html_escape_request_var('filter');?>'>
 					</td>
 					<td>
 						<?php print __('Template', 'gridblstat');?>
@@ -5298,11 +6237,35 @@ function grid_blstat_graph_view_filter() {
 					<td>
 						<label for='thumbnails'><?php print __('Thumbnails', 'gridblstat');?></label>
 					</td>
+					<td>
+						<input id='inuse' type='checkbox' <?php print (get_request_var('inuse') == 'true' ? ' checked':''); ?>>
+					</td>
+					<td>
+						<label for='inuse'><?php print __('InUse', 'gridblstat');?></label>
+					</td>
 				</tr>
 			</table>
 			<table class='filterTable'>
 				<tr>
+					<td style="min-width:63px">
+						<?php print __('Search', 'gridblstat');?>
+					</td>
 					<td>
+						<input id='filter' type='text' size='25' value='<?php print html_escape_request_var('filter');?>'>
+					</td>
+					<td>
+						<span>
+							<input type='submit' id='go' value='<?php print __esc('Go', 'gridblstat');?>'>
+							<input type='button' id='clear' value='<?php print __esc('Clear', 'gridblstat');?>' onClick='clearFilter()'>
+							<input id='save-filters' type='button' value='<?php print __('Save', 'gridblstat');?>'>
+							<input id='all_filters' type='button' value='<?php print __('Filters', 'gridblstat');?>'>
+						</span>
+					</td>
+				</tr>
+			</table>
+			<table class='filterTable'>
+				<tr>
+					<td style="min-width:63px">
 						<?php print __('Presets', 'gridblstat');?>
 					</td>
 					<td>
@@ -5472,9 +6435,25 @@ function gridblstat_clearGraphTimespanFilter() {
 			strURL += '&inuse=' + $('#inuse').is(':checked');
 			strURL += '&region=' + $('#region').val();
 			strURL += '&filter=' + $('#filter').val();
-			strURL += '&project=' + $('#project').val();
+			
+			graph_projects_values = $('#graph_projects').val();
+			if(graph_projects_values.length){
+				graph_projects_values = graph_projects_values.filter(value => value.length);
+				strURL = strURL + '&project=' + encodeURIComponent(graph_projects_values.join(" "));
+			} else {
+				strURL += '&project='
+			}
+
 			strURL += '&cluster=' + $('#cluster').val();
-			strURL += '&feature=' + $('#feature').val();
+			
+			graph_features_values = $('#graph_features').val();
+			if(graph_features_values.length){
+				graph_features_values = graph_features_values.filter(value => value.length);
+				strURL = strURL + '&feature=' + encodeURIComponent(graph_features_values.join(" "));
+			} else {
+				strURL += '&feature='
+			}
+
 			if(move_flag==1 || move_flag==2){
 				strURL += '&date1=' + $('#date1').val();
 				strURL += '&date2=' + $('#date2').val();
@@ -5560,6 +6539,9 @@ function gridblstat_clearGraphTimespanFilter() {
 			.pipe(function() {
 				initializeGraphs();
 			});
+
+			initSelect2Multi("graph_features",{url: "grid_lsdashboard.php?action=ajaxsearch&type=msfeatures", preventOpenOnClear: true, triggerFormSubmit: applyFilter});
+			initSelect2Multi("graph_projects",{url: "grid_lsdashboard.php?action=ajaxsearch&type=msprojects", triggerFormSubmit: applyFilter, preventOpenOnClear: true});
 		});
 
 		</script>
