@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2023                                          |
+ | Copyright IBM Corp. 2006, 2025                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -67,29 +67,49 @@ function _ajax_search($column_name) {
 	$sql_join_lsf = '';
 	$sql_join_lafm = '';
 
+	// Make the SELECT portion of the query
 	if (get_request_var('rollup') != 'true' && get_request_var('rollup') != 'on') {
-		if (get_request_var('host') != -1) {
-			$sql_where = "WHERE hostname=? ";
-			$sql_where_args[] = get_request_var('host');
-		}
+		$sql_select = "SELECT DISTINCT lsfd.$column_name AS label, lsfd.$column_name AS value
+			FROM lic_services_feature_details AS lsfd ";
+
+		$sql_postfix = " GROUP BY lsfd.feature_name, feature_version, server_name,
+			username, hostname, lsfd.status, tokens_acquired, tokens_acquired_date, chkoutid ";
+	} else {
+		$sql_select = "SELECT DISTINCT lsfd.$column_name AS label, lsfd.$column_name AS value
+			FROM lic_services_feature_details AS lsfd ";
+
+		$sql_postfix = " GROUP BY lsfd.feature_name, username, lsfd.status ";
 	}
 
-	if (get_request_var('user') != -1) {
-		$sql_where .= (strlen($sql_where) ? ' AND ':'WHERE ') . " username=? ";
-		$sql_where_args[] = get_request_var("user");
-	}
-
-	/* license server sql where */
+	// Make the WHERE clause for the lsfd.service_id
+	$sql_svc_id = "WHERE lsfd.service_id IN ( SELECT ls.service_id FROM lic_services AS ls INNER JOIN lic_pollers AS lp ON ls.poller_id=lp.id ";
+	$sql_svc_id_len = strlen($sql_svc_id);
 	if (get_request_var('rollup') != 'true' && get_request_var('rollup') != 'on') {
 		if (get_request_var('service_id') != -1) {
-			$sql_where .= (strlen($sql_where) ? ' AND ':'WHERE ') . ' lsfd.service_id=? ';
+			$sql_svc_id .= (strlen($sql_svc_id) ? ' AND ':'WHERE ') . ' lsfd.service_id=? ';
 			$sql_where_args[] = get_request_var('service_id');
 		}
 	}
 
 	if (get_request_var('poller_type') != 0) {
-		$sql_where .= (strlen($sql_where)  ? ' AND ':'WHERE ') . ' lp.poller_type=? ';
+		$sql_svc_id .= (strlen($sql_svc_id)  ? ' AND ':'WHERE ') . ' lp.poller_type=? ';
 		$sql_where_args[] =  get_request_var('poller_type');
+	}
+	/* Close the first WHERE clause.  */
+	if ($sql_svc_id_len != strlen($sql_svc_id)) {
+		$sql_where .= $sql_svc_id . ') ';
+	}
+
+	// Add the WHERE section for particular Host or User.  Only one host and one user allowed
+	if (get_request_var('rollup') != 'true' && get_request_var('rollup') != 'on') {
+		if (get_request_var('host') != -1) {
+			$sql_where .= (strlen($sql_where) ? ' AND ':'WHERE ') . " lsfd.hostname=? ";
+			$sql_where_args[] = get_request_var('host');
+		}
+	}
+	if (get_request_var('couser') != -1) {
+		$sql_where .= (strlen($sql_where) ? ' AND ':'WHERE ') . " lsfd.username=? ";
+		$sql_where_args[] = get_request_var('couser');
 	}
 
 	if (get_request_var('keyfeat') == 'true' || get_request_var('term') != '') {
@@ -114,61 +134,13 @@ function _ajax_search($column_name) {
 		}
 	}
 
-	if (get_request_var('raw_type') == -1) {
-		// All types
-	} elseif (get_request_var('raw_type') == -2) {
-		$sql_where .= (strlen($sql_where)  ? ' AND ':'WHERE ') . ' (lsfd.status="START" OR lsfd.status="")';
-	} else {
-		$sql_where .= (strlen($sql_where)  ? ' AND ':'WHERE ') . ' lsfd.status="RESERVED"';
-	}
-
-	if (get_request_var('rollup') != 'true' && get_request_var('rollup') != 'on') {
-		if (get_request_var('lsf') == -2) {
-			/* show LSF only hosts */
-			$sql_join_lsf = 'LEFT JOIN grid_hostinfo AS ghi
-				ON ghi.host = lsfd.hostname';
-
-			$sql_where .= ($sql_where != '' ? ' AND':'WHERE ') . " (ghi.host='' OR ghi.host IS NOT NULL)";
-		} else if (get_request_var('lsf') == -3){
-			$sql_join_lsf = 'LEFT JOIN grid_hostinfo AS ghi
-				ON ghi.host = lsfd.hostname';
-
-			$sql_where .= ($sql_where != '' ? ' AND':'WHERE ') . ' (ghi.host IS NULL)';
-		}
-	}
-
 	$sort_order = '';
 
 	if (isset_request_var('sort_column_array') && cacti_sizeof(get_request_var('sort_column_array')) > 0) {
 		$sort_order .= ' ORDER BY ' . lic_build_order_string(get_request_var('sort_column_array'), get_request_var('sort_direction_array'));
 	}
 
-	if (get_request_var('rollup') != 'true' && get_request_var('rollup') != 'on') {
-		$sql_query = "SELECT DISTINCT lsfd.$column_name AS label, lsfd.$column_name AS value
-			FROM lic_services AS ls
-			INNER JOIN lic_services_feature_details AS lsfd
-			ON ls.service_id=lsfd.service_id
-			INNER JOIN lic_pollers AS lp
-			ON ls.poller_id=lp.id
-			$sql_join_lafm
-			$sql_join_lsf
-			$sql_where
-			GROUP BY lsfd.feature_name, feature_version, server_name,
-			username, hostname, lsfd.status, tokens_acquired, tokens_acquired_date, chkoutid
-			$sort_order LIMIT 20";
-	} else {
-		$sql_query = "SELECT DISTINCT lsfd.$column_name AS label, lsfd.$column_name AS value
-			FROM lic_services AS ls
-			INNER JOIN lic_services_feature_details AS lsfd
-			ON ls.service_id=lsfd.service_id
-			INNER JOIN lic_pollers AS lp
-			ON ls.poller_id=lp.id
-			$sql_join_lafm
-			$sql_join_lsf
-			$sql_where
-			GROUP BY lsfd.feature_name, username, lsfd.status
-			$sort_order LIMIT 20";
-	}
+	$sql_query = $sql_select . $sql_join_lafm . $sql_where . " GROUP BY lsfd.feature_name, lsfd.username " . " LIMIT 20";
 
 	//print $sql_query;
 
@@ -180,46 +152,111 @@ function lic_view_get_lic_checkouts($apply_limits = true, $row_limit = 30, &$tot
 	$sql_where_args = array();
 	$sql_join_lsf = '';
 	$sql_join_lafm = '';
+	$add_group_order = 0;        // Flag to remove ORDER and GROUP BY when no filter is provided
+	$add_sort = 0;               // Flag to add the sort ORDER when filters are applied
 
+	// Make the SELECT portion of the query.  When Roll-Up is used sum up the usage by feature and username
+	if (get_request_var('rollup') != 'true' && get_request_var('rollup') != 'on') {
+		// With roll-up
+		$sql_select = "SELECT ls.service_id, lsfd.feature_name, feature_version,
+			server_name, username, hostname, lsfd.status, tokens_acquired,
+			tokens_acquired_date, chkoutid, UNIX_TIMESTAMP()-UNIX_TIMESTAMP(tokens_acquired_date) AS duration
+			FROM lic_services_feature_details AS lsfd
+			INNER JOIN lic_services AS ls
+			ON ls.service_id=lsfd.service_id ";
+
+		$sql_postfix = " GROUP BY feature_name, chkoutid ";
+
+		$sql_rows_select = "SELECT COUNT(*) FROM (
+			SELECT lsfd.feature_name
+			FROM lic_services_feature_details AS lsfd
+			INNER JOIN lic_services AS ls
+			ON ls.service_id=lsfd.service_id ";
+
+	} else {
+		// No roll-up query
+		$sql_select = "SELECT lsfd.feature_name, 'N/A' AS feature_version,
+			'N/A' AS server_name, username, 'N/A' AS hostname, lsfd.status,
+			COUNT(*) AS instances,
+			SUM(tokens_acquired) AS tokens_acquired,
+			MIN(tokens_acquired_date) AS min_date,
+			MAX(tokens_acquired_date) AS max_date, 'N/A' AS chkoutid,
+			SUM(UNIX_TIMESTAMP()-UNIX_TIMESTAMP(tokens_acquired_date)) AS duration
+			FROM lic_services_feature_details AS lsfd
+			INNER JOIN lic_services AS ls
+			ON ls.service_id=lsfd.service_id ";
+
+		$sql_postfix = " GROUP BY feature_name, username, lsfd.status ";
+
+		$sql_rows_select = "SELECT COUNT(*) FROM (
+			SELECT lsfd.feature_name
+			FROM lic_services_feature_details AS lsfd
+			INNER JOIN lic_services AS ls
+			ON ls.service_id=lsfd.service_id " ;
+
+	}
+
+	/* Make the WHERE clause for the lsfd.service_id and poller_type.  Note:
+		If rollup is selected the service_id is ignored in the GUI BUT the 
+		service_id is still set in the GET request.  */
+	if (get_request_var('rollup') != 'true' && get_request_var('rollup') != 'on') {
+		// This is NOT the Roll-Up. 
+		if (get_request_var('service_id') != -1) {
+			// We have a service_id.  This means the Poller_type is not needed
+			$sql_where = 'WHERE lsfd.service_id=? ';
+			$sql_where_args[] = get_request_var('service_id');
+		} else {
+			if (get_request_var('poller_type') != 0) { 
+				// We do not have a service_id but have a poller_type
+				$sql_where = "WHERE lsfd.service_id IN ( SELECT ls.service_id FROM lic_services AS ls INNER JOIN lic_pollers AS lp ON ls.poller_id=lp.id AND lp.poller_type=? )";
+				$sql_where_args[] = get_request_var('poller_type');
+			}
+		}
+	} else {
+		// This is the Roll-Up case.  The service_id is ignored.  Only the poller_type is considered
+		if (get_request_var('poller_type') != 0) { 
+			$sql_where = "WHERE lsfd.service_id IN ( SELECT ls.service_id FROM lic_services AS ls INNER JOIN lic_pollers AS lp ON ls.poller_id=lp.id AND lp.poller_type=? )";
+			$sql_where_args[] = get_request_var('poller_type');
+		}
+		$add_group_order = 1;
+	}
+
+	// Add the WHERE section for particular Host or User.  Only one host and one user allowed
 	if (get_request_var('rollup') != 'true' && get_request_var('rollup') != 'on') {
 		if (get_request_var('host') != -1) {
-			$sql_where = "WHERE hostname=? ";
+			$sql_where .= (strlen($sql_where) ? ' AND ':'WHERE ') . " lsfd.hostname=? ";
 			$sql_where_args[] = get_request_var('host');
+			$add_group_order = 1;
 		}
 	}
-
 	if (get_request_var('couser') != -1) {
-		$sql_where .= (strlen($sql_where) ? ' AND ':'WHERE ') . " username=? ";
+		$sql_where .= (strlen($sql_where) ? ' AND ':'WHERE ') . " lsfd.username=? ";
 		$sql_where_args[] = get_request_var('couser');
+		$add_group_order = 1;
 	}
 
-	/* license server sql where */
-	if (get_request_var('rollup') != 'true' && get_request_var('rollup') != 'on') {
-		if (get_request_var('service_id') != -1) {
-			$sql_where .= (strlen($sql_where) ? ' AND ':'WHERE ') . ' lsfd.service_id=? ';
-			$sql_where_args[] = get_request_var('service_id');
-		}
-	}
-
-	if (get_request_var('poller_type') != 0) {
-		$sql_where .= (strlen($sql_where)  ? ' AND ':'WHERE ') . ' lp.poller_type=? ';
-		$sql_where_args[] =  get_request_var('poller_type');
-	}
-
-	if (get_request_var('keyfeat') == 'true' || get_request_var('filter') != '') {
-		$sql_join_lafm = " LEFT JOIN lic_application_feature_map AS lafm
-			ON lafm.service_id=lsfd.service_id
-			AND lafm.feature_name=lsfd.feature_name";
-
-		if (get_request_var('keyfeat') == 'true') {
-			$sql_where .= (strlen($sql_where)  ? ' AND ':'WHERE ') . ' lafm.critical=1';
-		}
-
+	// Add Key Features to Where clause.  Note filter will work slightly different 
+	if (get_request_var('keyfeat') == 'true') {
+		$sql_where .= (strlen($sql_where) == 0) ? ' WHERE ' : ' AND ';
 		if (get_request_var('filter') != '') {
-			$sql_where .= (strlen($sql_where) ? ' AND':'WHERE') . " (lsfd.feature_name=? OR lafm.user_feature_name=?)";
-			$sql_where_args[] = get_request_var('filter');
-			$sql_where_args[] = get_request_var('filter');
+			$sql_where .= "lsfd.feature_name IN (SELECT lsfd.feature_name FROM lic_services_feature_details AS lsfd
+							INNER JOIN lic_application_feature_map AS lafm
+							ON lsfd.service_id = lafm.service_id AND lsfd.feature_name = lafm.feature_name
+							WHERE lafm.critical=1 AND lafm.feature_name LIKE ?)";
+			$sql_where_args[] = '%' . get_request_var('filter') . '%' ;
+		} else {
+			$sql_where .= "lsfd.feature_name IN (SELECT lsfd.feature_name FROM lic_services_feature_details AS lsfd
+							INNER JOIN lic_application_feature_map AS lafm
+							ON lsfd.service_id = lafm.service_id AND lsfd.feature_name = lafm.feature_name WHERE lafm.critical=1 )";
 		}
+		$add_group_order = 1;
+	} else {
+		if (get_request_var('filter') != '') {
+			$sql_where .= (strlen($sql_where) == 0) ? ' WHERE ' : ' AND ';
+			$sql_where .= "lsfd.feature_name LIKE ? ";
+			$sql_where_args[] = '%' . get_request_var('filter') . '%' ;
+		}
+		$add_sort = 1;
 	}
 
 	if (get_request_var('type') == -1) {
@@ -233,90 +270,43 @@ function lic_view_get_lic_checkouts($apply_limits = true, $row_limit = 30, &$tot
 	if (get_request_var('rollup') != 'true' && get_request_var('rollup') != 'on') {
 		if (get_request_var('lsf') == -2) {
 			/* show LSF only hosts */
-			$sql_join_lsf = 'LEFT JOIN grid_hostinfo AS ghi
-				ON ghi.host = lsfd.hostname';
-
+			$sql_join_lsf = 'LEFT JOIN grid_hostinfo AS ghi ON ghi.host = lsfd.hostname ';
 			$sql_where .= ($sql_where != '' ? ' AND':'WHERE ') . " (ghi.host='' OR ghi.host IS NOT NULL)";
-		} else if (get_request_var('lsf') == -3){
-			$sql_join_lsf = 'LEFT JOIN grid_hostinfo AS ghi
-				ON ghi.host = lsfd.hostname';
 
+		} else if (get_request_var('lsf') == -3){
+			$sql_join_lsf = 'LEFT JOIN grid_hostinfo AS ghi ON ghi.host = lsfd.hostname ';
 			$sql_where .= ($sql_where != '' ? ' AND':'WHERE ') . ' (ghi.host IS NULL)';
 		}
 	}
 
-	$sort_order = get_order_string();
-
-	if (get_request_var('rollup') != 'true' && get_request_var('rollup') != 'on') {
-		$sql_query = "SELECT ls.service_id, lsfd.feature_name, feature_version,
-			server_name, username, hostname, lsfd.status, tokens_acquired,
-			tokens_acquired_date, chkoutid, UNIX_TIMESTAMP()-UNIX_TIMESTAMP(tokens_acquired_date) AS duration
-			FROM lic_services AS ls
-			INNER JOIN lic_services_feature_details AS lsfd
-			ON ls.service_id=lsfd.service_id
-			INNER JOIN lic_pollers AS lp
-			ON ls.poller_id=lp.id
-			$sql_join_lafm
-			$sql_join_lsf
-			$sql_where
-			GROUP BY feature_name, feature_version, server_name,
-			username, hostname, lsfd.status, tokens_acquired, tokens_acquired_date, chkoutid
-			$sort_order";
-
-		$sql_total_rows = "SELECT COUNT(*)
-			FROM (
-				SELECT lsfd.feature_name
-				FROM lic_services AS ls
-				INNER JOIN lic_services_feature_details AS lsfd
-				ON ls.service_id=lsfd.service_id
-				INNER JOIN lic_pollers AS lp
-				ON ls.poller_id=lp.id
-				$sql_join_lafm
-				$sql_join_lsf
-				$sql_where
-				GROUP BY feature_name, server_name, feature_version,
-				username, hostname, lsfd.status,
-				tokens_acquired, tokens_acquired_date, chkoutid
-			) AS a";
-		//echo $sql_total_rows;
-		$total_rows = db_fetch_cell_prepared($sql_total_rows, $sql_where_args);
+	// GROUP and ORDER BY has a significant impact on performance
+	if ($add_group_order) {
+		$sort_order = get_order_string();
+		$sql_query = $sql_select . $sql_join_lsf . $sql_where . $sql_postfix . $sort_order ;
+		$sql_total_rows = $sql_rows_select . $sql_join_lsf . $sql_where . $sql_postfix . " ) AS a" ;
 	} else {
-		$sql_query = "SELECT lsfd.feature_name, 'N/A' AS feature_version,
-			'N/A' AS server_name, username, 'N/A' AS hostname, lsfd.status,
-			COUNT(*) AS instances,
-			SUM(tokens_acquired) AS tokens_acquired,
-			MIN(tokens_acquired_date) AS min_date,
-			MAX(tokens_acquired_date) AS max_date, 'N/A' AS chkoutid,
-			SUM(UNIX_TIMESTAMP()-UNIX_TIMESTAMP(tokens_acquired_date)) AS duration
-			FROM lic_services AS ls
-			INNER JOIN lic_services_feature_details AS lsfd
-			ON ls.service_id=lsfd.service_id
-			INNER JOIN lic_pollers AS lp
-			ON ls.poller_id=lp.id
-			$sql_join_lafm
-			$sql_join_lsf
-			$sql_where
-			GROUP BY feature_name, username, lsfd.status
-			$sort_order";
+		// Add the ORDER if there filters would reduce the amount of selected records enough to respond
+		if($add_sort) {
+			$sort_order = get_order_string();
+			$sql_query = $sql_select . $sql_join_lsf . $sql_where . $sort_order ;
+			$sql_total_rows = $sql_rows_select . $sql_join_lsf . $sql_where . " ) AS a" ;
+		} else {
+			$sql_query = $sql_select . $sql_join_lsf . $sql_where ;
+			$sql_total_rows = $sql_rows_select . $sql_join_lsf . $sql_where . " ) AS a" ;
+		}
 
-		$total_rows = db_fetch_cell_prepared("SELECT COUNT(*)
-			FROM (
-				SELECT lsfd.feature_name
-				FROM lic_services AS ls
-				INNER JOIN lic_services_feature_details AS lsfd
-				ON ls.service_id=lsfd.service_id
-				INNER JOIN lic_pollers AS lp
-				ON ls.poller_id=lp.id
-				$sql_join_lafm
-				$sql_join_lsf
-				$sql_where
-				GROUP BY feature_name, username, lsfd.status
-			) AS a", $sql_where_args);
 	}
 
 	if ($apply_limits) {
 		$sql_query .= ' LIMIT ' . ($row_limit*(get_request_var('page')-1)) . ',' . $row_limit;
+	} else {
+		$sql_query .= ' LIMIT 0,30';
 	}
+
+	// echo "SORT  = $sort_order  <br>";
+	// echo "ROWS  SQL = $sql_total_rows  <br>" ;
+	// echo "QUERY  SQL = $sql_query <br>" ;
+	$total_rows = db_fetch_cell_prepared($sql_total_rows, $sql_where_args);
 
 	//cacti_log("DEBUG: " . str_replace("\n", " ", $sql_query));
 

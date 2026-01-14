@@ -164,4 +164,3 @@ if (file_exists($pngfile)) {
 		cacti_log('WARNING: Invalid image file: '. $pngfile);
 	}
 }
-

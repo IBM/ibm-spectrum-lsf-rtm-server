@@ -73,7 +73,7 @@ function lichist_check_dependencies() {
 
 function lichist_setup_table_new () {
 	db_execute("CREATE TABLE IF NOT EXISTS `lic_services_feature_history_template` (
- 		 `id` bigint NOT NULL AUTO_INCREMENT,
+ 		`id` bigint NOT NULL AUTO_INCREMENT,
   		`service_id` int(10) unsigned NOT NULL DEFAULT '0',
   		`vendor_daemon` varchar(40) NOT NULL DEFAULT '',
   		`feature_name` varchar(50) NOT NULL DEFAULT '0',
@@ -89,6 +89,11 @@ function lichist_setup_table_new () {
   		`tokens_acquired_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   		`last_poll_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   		`tokens_released_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		`lm_job_pid` int(10) unsigned DEFAULT 0,
+		`clustername` varchar(128) NOT NULL DEFAULT '',
+		`jobid` bigint(20) DEFAULT 0,
+		`indexid` int(10) DEFAULT 0,
+		`projectName` varchar(255) DEFAULT '',
   		PRIMARY KEY (`id`),
   		KEY `idx_vendor_daemon` (`vendor_daemon`),
   		KEY `idx_feature_name` (`feature_name`),

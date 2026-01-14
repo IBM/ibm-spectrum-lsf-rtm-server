@@ -163,7 +163,7 @@ function grid_validate_job_request_variables() {
 		$job_id   = '';
 		$index_id = '';
 	}
-
+	
 	set_request_var('indexid', $index_id);
 
     /* ================= input validation and session storage ================= */

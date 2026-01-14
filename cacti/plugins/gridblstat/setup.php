@@ -21,6 +21,15 @@
 /* plugin_gridblstat_install - provides a generic PIA 2.x installer routine to register all plugin
      hook functions.
    @returns - null */
+
+function gridblstat_page_head() {
+	global $config;
+	print get_md5_include_js('/plugins/RTM/include/select2/select2.min.js');
+	print get_md5_include_css('/plugins/RTM/include/select2/select2.min.css');
+	print get_md5_include_js('/plugins/RTM/include/select2/select2_custom.js');
+	print get_md5_include_css('/plugins/RTM/include/select2/select2_custom.css');
+}
+
 function plugin_gridblstat_install () {
 	api_plugin_register_hook('gridblstat', 'config_settings',      'gridblstat_config_settings', 'setup.php');
 	api_plugin_register_hook('gridblstat', 'config_arrays',        'gridblstat_config_arrays',   'setup.php');
@@ -29,7 +38,7 @@ function plugin_gridblstat_install () {
 	//api_plugin_register_hook('gridblstat', 'config_insert',        'gridblstat_config_insert',   'setup.php');
 	api_plugin_register_hook('gridblstat', 'grid_menu',            'gridblstat_grid_menu',       'setup.php');
 	api_plugin_register_hook('gridblstat', 'grid_tab_down',        'gridblstat_grid_tab_down',     'setup.php');
-
+	api_plugin_register_hook('gridblstat', 'page_head',              'gridblstat_page_head',            'setup.php');
 	api_plugin_register_hook('gridblstat', 'grid_cluster_remove', 'gridblstat_grid_cluster_remove', 'setup.php');
 
 	gridblstat_setup_table_new ();

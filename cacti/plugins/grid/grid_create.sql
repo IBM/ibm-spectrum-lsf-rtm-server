@@ -1982,10 +1982,11 @@ CREATE TABLE `grid_service_class_groups` (
 
 DROP TABLE IF EXISTS `grid_settings`;
 CREATE TABLE `grid_settings` (
-  `user_id` smallint(8) unsigned NOT NULL DEFAULT '0',
+  `user_id` smallint(8) unsigned NOT NULL DEFAULT 0,
   `name` varchar(50) NOT NULL DEFAULT '',
-  `value` varchar(1024) NOT NULL DEFAULT '',
-  PRIMARY KEY (`user_id`,`name`)
+  `value` mediumtext NOT NULL DEFAULT '',
+  `filter_name` varchar(100) NOT NULL DEFAULT '',
+  PRIMARY KEY (`user_id`,`name`, `filter_name`)
 ) ENGINE=MyISAM;
 
 --

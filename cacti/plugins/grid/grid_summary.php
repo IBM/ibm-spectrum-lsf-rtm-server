@@ -558,17 +558,16 @@ function grid_ajax_hostinfo() {
 			print "<tr class='tableHeader'><td class='tableSubHeaderColumn' colspan='4'>" . __('Numeric Resources [ Available / Reserved / Total ]', 'grid') . '</td></tr>';
 
 			$i = 0;
+			$roundedValue = 0;
 			foreach($nresources as $r) {
-				if (round($r['totalValue'],0) == $r['totalValue']) {
-					$r['totalValue'] = round($r['totalValue'], 0);
-				} else {
-					$r['totalValue'] = round($r['totalValue'], 3);
+				if (is_numeric($r['totalValue'])) {
+					$roundedValue = round($r['totalValue'], 0);
+					$r['totalValue'] = ($r['totalValue'] == $roundedValue) ? $roundedValue : round($r['totalValue'], 3);
 				}
 
-				if (round($r['reservedValue'],0) == $r['reservedValue']) {
-					$r['reservedValue'] = round($r['reservedValue'], 0);
-				} else {
-					$r['reservedValue'] = round($r['reservedValue'], 3);
+				if (is_numeric($r['reservedValue'])) {
+					$roundedValue = round($r['reservedValue'], 0);
+					$r['reservedValue'] = ($r['reservedValue'] == $roundedValue) ? $roundedValue : round($r['reservedValue'], 3);
 				}
 
 				if ($i % 2 == 0) {
@@ -605,7 +604,7 @@ function grid_ajax_hostinfo() {
 					break;
 				default:
 					print "<td class='nowrap'>" . $r['resource_name'] . "</td>
-						<td class='right'>" . __('%s / %s / NA', number_format_i18n($r['totalValue']), number_format_i18n($r['reservedValue']), 'grid') . '</td>';
+						<td class='right'>" . __('%s / %s / NA', is_numeric($r['totalValue']) ? number_format_i18n($r['totalValue']) : '-', is_numeric($r['reservedValue']) ? number_format_i18n($r['reservedValue']) : '-', 'grid') . '</td>';
 					break;
 				}
 

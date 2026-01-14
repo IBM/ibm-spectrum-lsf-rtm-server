@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2023                                          |
+ | Copyright IBM Corp. 2006, 2025                                        |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -134,6 +134,8 @@ function lic_view_get_lics_records(&$sql_where, &$sql_from_join, $apply_limits =
 	if ($apply_limits) {
 		$sql_query .= ' LIMIT ' . ($row_limit*(get_request_var('page')-1)) . ',' . $row_limit;
 	}
+	// Do not output anything.  It stops the GUI dropdown
+	// echo "sql_query = $sql_query";
 
 	return db_fetch_assoc_prepared($sql_query, $sql_params);
 }

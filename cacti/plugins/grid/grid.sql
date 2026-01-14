@@ -1445,10 +1445,11 @@ CREATE TABLE `grid_sharedresources` (
 
 DROP TABLE IF EXISTS `grid_settings`;
 CREATE TABLE `grid_settings` (
-  `user_id` smallint(8) unsigned NOT NULL default '0',
-  `name` varchar(50) NOT NULL default '',
-  `value` varchar(1024) NOT NULL default '',
-  PRIMARY KEY  (`user_id`,`name`)
+  `user_id` smallint(8) unsigned NOT NULL DEFAULT 0,
+  `name` varchar(50) NOT NULL DEFAULT '',
+  `value` mediumtext NOT NULL DEFAULT '',
+  `filter_name` varchar(100) NOT NULL DEFAULT '',
+  PRIMARY KEY (`user_id`,`name`, `filter_name`)
 ) ENGINE=MyISAM;
 
 --

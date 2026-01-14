@@ -251,7 +251,7 @@ function thold_wizard() {
 			set_request_var('data_template_rrd_id', $data_template_rrd_id);
 			set_request_var('data_template_id', $data_template_id);
 			set_request_var('data_query_id', $data_query_id);
-			set_request_var('snmp_index', $snmp_index);
+			set_request_var('snmp_index', urlencode($snmp_index));
 		} else {
 			return false;
 		}
@@ -264,7 +264,7 @@ function thold_wizard() {
 		$data_template_rrd_id = get_filter_request_var('data_template_rrd_id');
 		$data_template_id     = get_filter_request_var('data_template_id');
 		$data_query_id        = get_filter_request_var('data_query_id');
-		$snmp_index           = get_nfilter_request_var('snmp_index');
+		$snmp_index           = urldecode(get_nfilter_request_var('snmp_index'));
 
 		$templates = db_fetch_assoc('SELECT id, name
 			FROM thold_template
@@ -506,7 +506,7 @@ function thold_wizard() {
 				array($host_id, $data_query_id));
 
 			if ($sort_field != '') {
-				$available_items = array('noneselected' => __('Select and Available Item', 'thold'));
+				$available_items = array('noneselected' => __('Select an Available Item', 'thold'));
 				$available_items += array_rekey(
 					db_fetch_assoc_prepared('SELECT hsc.snmp_index AS id, hsc.field_value AS name
 						FROM host_snmp_cache AS hsc
@@ -520,8 +520,7 @@ function thold_wizard() {
 						ON hsc.host_id = gl.host_id
 						AND hsc.snmp_query_id = gl.snmp_query_id
 						AND hsc.snmp_index = gl.snmp_index
-						WHERE gl.snmp_index IS NULL
-						AND hsc.host_id = ?
+						WHERE hsc.host_id = ?
 						AND hsc.snmp_query_id = ?
 						AND field_name = ?',
 						array(
@@ -823,7 +822,7 @@ function thold_wizard() {
 			}
 
 			if ($('#snmp_index').length && $('#snmp_index').val() != '') {
-				strURL += '&snmp_index=' + $('#snmp_index').val();
+				strURL += '&snmp_index=' + encodeURIComponent($('#snmp_index').val());
 			}
 		}
 
@@ -1012,7 +1011,7 @@ function thold_graph_new_graphs($page, $host_id, $host_template_id, $selected_gr
 	if (isset($_SERVER['HTTP_REFERER']) && !substr_count($_SERVER['HTTP_REFERER'], 'graphs_new')) {
 		set_request_var('returnto', basename($_SERVER['HTTP_REFERER']));
 	}
+	
 	load_current_session_value('returnto', 'sess_grn_returnto', '');
-
 	form_save_button(get_nfilter_request_var('returnto'));
 }

@@ -52,7 +52,7 @@ function themeReady() {
 		var brandName='IBM Spectrum';
 		var brandNameBold='IBM <b>Spectrum</b>';
 		var productName='LSF RTM 10.2.0.15';
-		var copyRight='© Copyright International Business Machines Corp. 1992, 2025. US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp. Portions Copyright © 2004, 2024 The Cacti Group, Inc.';
+		var copyRight='© Copyright International Business Machines Corp. 1992, 2026. US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp. Portions Copyright © 2004, 2025 The Cacti Group, Inc.';
 	}
 
 	logoSVG = '<svg class="company-logo" style="fille: rgb(255,255,255);" aria-hidden="false"><use xlink:href="#LSF"><symbol viewBox="0 0 36 36" id="LSF" xmlns:xlink="http://www.w3.org/1999/xlink"> <polygon points="8.5,15 6.5,15 7.5,13 9.5,13 "></polygon> <polygon points="12.5,15 10.5,15 11.5,13 13.5,13 "></polygon> <polygon points="16.5,15 14.5,15 15.5,13 17.5,13 "></polygon> <polygon points="10,12 8,12 9,10 11,10 "></polygon> <polygon points="14,12 12,12 13,10 15,10 "></polygon> <polygon points="18,12 16,12 17,10 19,10 "></polygon> <polygon points="11.5,9 9.5,9 10.5,7 12.5,7 "></polygon> <polygon points="15.5,9 13.5,9 14.5,7 16.5,7 "></polygon> <polygon points="19.5,9 17.5,9 18.5,7 20.5,7 "></polygon> <polygon points="2,12 0,12 1,10 3,10 "></polygon> <polygon points="6,12 4,12 5,10 7,10 "></polygon> <polygon points="18.3,17 5.5,17 4.5,18 5.5,19 19.5,19 25.1,9.3 23.8,7.6 "></polygon> <g> <polygon points="30.7,27 35.8,18 27.9,4 25.3,4 31,14 25.3,24 18.4,24 20,27  "></polygon> <polygon points="14.3,22 6.3,22 12.1,32 27.9,32 29.3,29 18.6,29  "></polygon> </g> </symbol></use></svg>';

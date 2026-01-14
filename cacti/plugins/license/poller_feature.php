@@ -3,7 +3,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2023                                          |
+ | Copyright IBM Corp. 2025                                                |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -23,6 +23,7 @@ include(dirname(__FILE__) . "/../../include/cli_check.php");
 
 include_once($config["library_path"] . '/rtm_functions.php');
 include_once(dirname(__FILE__) . '/include/lic_functions.php');
+include_once(dirname(__FILE__) . '/include/lic_feature_functions.php');
 
 /* take the start time to log performance data */
 $start = microtime(true);
@@ -43,11 +44,15 @@ array_shift($parms);
 
 global $config, $debug;
 
-$debug	  	= false;
+// $config['DEBUG_SQL_CONNECT'] = 'y';
+// $config['DEBUG_SQL_CMD'] = 'y';
+
+$debug	  	    = false;
 $forcerun       = false;
 $forcerun_maint = false;
 $daily_stats    = false;
 $interval_stats = false;
+$run_tests      = false;
 
 foreach($parms as $parameter) {
 	if (strpos($parameter, '=')) {
@@ -75,6 +80,9 @@ foreach($parms as $parameter) {
 	case '--help':
 		display_help();
 		exit;
+	case '-test':
+		$run_tests = true;
+		break;
 	default:
 		print 'ERROR: Invalid Parameter ' . $parameter . '\n\n';
 		display_help();
@@ -86,8 +94,16 @@ $poller_interval = read_config_option('poller_interval');
 if (empty($poller_interval)){
 	$poller_interval = 300;
 }
+
 if (read_config_option('grid_collection_enabled') != 'on') {
-	lic_debug('DB schema upgrade in process. License poller exit.');
+	lic_debug('Grid collection is disabled.  License feature poller exit.');
+	exit;
+}
+
+if ($run_tests){
+	print "Running tests.  License data will be deleted!\n";
+	include_once(dirname(__FILE__) . '/include/unit_tests.php');
+	license_unit_test();
 	exit;
 }
 
@@ -115,60 +131,51 @@ if (read_config_option('grid_db_upgrade', true) == '1'){
 	$time_till_next_db_maint = $next_db_maint_time - $current_time;
 	if (($time_till_next_db_maint <= 0) || ($forcerun_maint)) {
 		$run_maint = true;
-		lic_debug('The next lic database maintenance is NOW');
+		lic_debug('The next lic feature database maintenance is NOW');
 	} else {
 		$run_maint = false;
-		lic_debug('The next lic database maintenance is "'. date('Y-m-d G:i:s', $next_db_maint_time).'"');
+		lic_debug('The next lic feature database maintenance is "'. date('Y-m-d G:i:s', $next_db_maint_time).'"');
 	}
 }
 
-lic_debug('About to enter License Poller Processing');
 
-$last_interval_stats_start = read_config_option('lic_interval_stats_start_time');
-$last_interval_stats_end   = read_config_option('lic_interval_stats_end_time');
+lic_debug('About to enter License Feature Poller Processing');
 
-$last_daily_stats_start    = read_config_option('lic_daily_stats_start_time');
-$last_daily_stats_end      = read_config_option('lic_daily_stats_end_time');
+$last_interval_stats_start = read_config_option('lic_feature_interval_stats_start_time');
+$last_interval_stats_end   = read_config_option('lic_feature_interval_stats_end_time');
 
-/* check last polled time for each server and update status */
-lic_update_servers_status();
+$last_daily_stats_start    = read_config_option('lic_feature_daily_stats_start_time');
+$last_daily_stats_end      = read_config_option('lic_feature_daily_stats_end_time');
 
 /* update lic_interval_stats */
 if (($poller_interval-($current_date_time - $last_interval_stats_start) <= 30) || ($forcerun)){
-	if (detect_and_correct_running_processes(0, 'LICINTERVALSTAT', $poller_interval*10)){
-		lic_debug('About to enter interval stats updating process');
+	if (detect_and_correct_running_processes(0, 'LICFEATINTERVALSTAT', $poller_interval*3)){
+		lic_debug('About to enter license feature interval stats updating process');
 		$start = microtime(true);
-		lic_update_license_interval_stats($current_date_time);
-		remove_process_entry(0, 'LICINTERVALSTAT');
-		log_lic_statistics('interval');
+		lic_feature_update_license_interval_stats($current_date_time, $last_interval_stats_start);
+		remove_process_entry(0, 'LICFEATINTERVALSTAT');
+		log_lic_feature_statistics('interval');
 	}
 }
 
 if ($run_maint || $forcerun_maint){
-	if (detect_and_correct_running_processes(0, 'LICMAINT', $poller_interval*3)){
+	if (detect_and_correct_running_processes(0, 'LICFEATMAINT', $poller_interval*3)){
 		$start = microtime(true);
-		lic_purge_event($next_db_maint_time, $last_daily_stats_start);
-		remove_process_entry(0, 'LICMAINT');
-		log_lic_statistics('maint');
+		lic_feature_purge_event($next_db_maint_time, $last_daily_stats_start);
+		remove_process_entry(0, 'LICFEATMAINT');
+		log_lic_feature_statistics('maint');
 	}
 
 	/* update lic daily stats */
-	if (detect_and_correct_running_processes(0, 'LICDAILYSTAT', $poller_interval*3)){
+	if (detect_and_correct_running_processes(0, 'LICFEATDAILYSTAT', $poller_interval*10)){
+		lic_debug('About to enter license feature daily stats updating process');
 		$start = microtime(true);
-		lic_debug('About to enter daily stats updating process');
-		lic_update_license_daily_stats($current_date_time);
-		remove_process_entry(0, 'LICDAILYSTAT');
-		log_lic_statistics('daily');
+		lic_feature_update_license_daily_stats($current_date_time);
+		remove_process_entry(0, 'LICFEATDAILYSTAT');
+		log_lic_feature_statistics('daily');
 	}
 }
 
-// run license daily table upgrade shell
-$partition_upgrade_stat = read_config_option('lic_partitions_upgrade_status', true);
-
-if (!empty($partition_upgrade_stat) && $partition_upgrade_stat == 'scheduled') {
-	$path_rtm_top = lic_get_path_rtm_top();
-    exec(read_config_option('path_php_binary') . " $path_rtm_top/cacti/plugins/license/database_upgrade_partitions.php >/dev/null &");
-}
 
 /*      display_help - displays the usage of the function */
 function display_help () {
@@ -176,19 +183,17 @@ function display_help () {
 
 	print 'RTM Master Poller Process ' . read_config_option('grid_version') . "\n";
 	print html_entity_decode('&#169;',ENT_NOQUOTES,'UTF-8'). ' Copyright International Business Machines Corp, ' . read_config_option('grid_copyright_year') . ".\n\n";
-	print "usage: poller_license.php [-fr] [-fm] [-d] [-h] [--help] [-v] [-V] [--version]\n\n";
-	print "-fm		- Force the execution of the database maintenance process\n";
-	print "-fr		- Force the interval process. Used in conjunction with -fm\n";
-	print "-d		- Display verbose output during execution\n";
-	print "-v -V --version	- Display this help message\n";
-	print "-h --help	- display this help message\n\n";
+	print "usage: poller_feature.php [-fr] [-fm] [-d] [-h] [--help] [-v] [-V] [--version]\n\n";
+	print "-fm        - Force the execution of the database maintenance process\n";
+	print "-fr        - Force the interval process. Used in conjunction with -fm\n";
+	print "-d         - Display verbose output during execution\n";
+	print "-test      - DANGER!  Wipe license data and run tests\n";
+	print "-h --help  - display this help message\n";
+	print "-v -V --version	- Display this help message\n\n";
 }
 
-function log_lic_statistics($type = 'collect') {
+function log_lic_feature_statistics($type = 'collect') {
 	global $start;
-
-	$grid_hosts        = db_fetch_cell('SELECT count(*) FROM grid_hosts');
-	$grids             = db_fetch_cell('SELECT count(*) FROM grid_clusters');
 
 	/* take time and log performance data */
 	$end = microtime(true);
@@ -197,26 +202,26 @@ function log_lic_statistics($type = 'collect') {
 		$cacti_stats = sprintf('Time:%01.4f', round($end-$start,4));
 
 		/* log to the database */
-		db_execute("REPLACE INTO settings (name,value) VALUES ('stats_lic_interval', '" . $cacti_stats . "')");
+		db_execute("REPLACE INTO settings (name,value) VALUES ('stats_lic_feature_interval', '" . $cacti_stats . "')");
 
 		/* log to the logfile */
-		cacti_log('LICENSE STATS: ' . $cacti_stats , true, 'SYSTEM');
+		cacti_log('LICENSE FEATURE STATS: ' . $cacti_stats , true, 'SYSTEM');
 	}elseif ($type == 'daily') {
 		$cacti_stats = sprintf('Time:%01.4f', round($end-$start,4));
 
 		/* log to the database */
-		db_execute("REPLACE INTO settings (name,value) VALUES ('stats_lic_daily', '" . $cacti_stats . "')");
+		db_execute("REPLACE INTO settings (name,value) VALUES ('stats_lic_feature_daily', '" . $cacti_stats . "')");
 
 		/* log to the logfile */
-		cacti_log('LICENSE DAILY STATS: ' . $cacti_stats ,true,'SYSTEM');
+		cacti_log('LICENSE FEATURE DAILY STATS: ' . $cacti_stats ,true,'SYSTEM');
 	} else {
 		$cacti_stats = sprintf('Time:%01.4f', round($end-$start,4));
 
 		/* log to the database */
-		db_execute("REPLACE INTO settings (name,value) VALUES ('stats_lic_maint', '" . $cacti_stats . "')");
+		db_execute("REPLACE INTO settings (name,value) VALUES ('stats_lic_feature_maint', '" . $cacti_stats . "')");
 
 		/* log to the logfile */
-		cacti_log('LICENSE MAINT STATS: ' . $cacti_stats ,true,'SYSTEM');
+		cacti_log('LICENSE FEATURE MAINT STATS: ' . $cacti_stats ,true,'SYSTEM');
 	}
 }
 

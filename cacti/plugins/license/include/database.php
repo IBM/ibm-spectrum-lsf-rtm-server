@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2023                                          |
+ | Copyright IBM Corp. 2006, 2025                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -225,22 +225,27 @@ function license_setup_database() {
 	api_plugin_db_table_create ('license', 'lic_services_feature', $data);
 
 	$data = array();
-	$data['columns'][] = array('name' => 'poller_id', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'service_id', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'poller_id',    'type' => 'int(10)',      'NULL' => false, 'default' => '0', 'unsigned' => true);
+	$data['columns'][] = array('name' => 'service_id',   'type' => 'int(10)',      'NULL' => false, 'default' => '0', 'unsigned' => true);
 	$data['columns'][] = array('name' => 'vendor_daemon', 'type' => 'varchar(40)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'feature_name', 'type' => 'varchar(50)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'subfeature', 'type' => 'varchar(50)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'feature_name', 'type' => 'varchar(50)',  'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'subfeature',   'type' => 'varchar(50)',  'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'feature_version', 'type' => 'varchar(50)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'username', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'groupname', 'type' => 'varchar(60)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'hostname', 'type' => 'varchar(64)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'chkoutid', 'type' => 'varchar(20)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'restype', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
-	$data['columns'][] = array('name' => 'status', 'type' => 'varchar(20)', 'NULL' => false, 'default' => '');
-	$data['columns'][] = array('name' => 'tokens_acquired', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'username',     'type' => 'varchar(60)',  'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'groupname',    'type' => 'varchar(60)',  'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'hostname',     'type' => 'varchar(64)',  'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'chkoutid',     'type' => 'varchar(20)',  'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'restype',      'type' => 'int(10)',      'NULL' => false, 'default' => '0', 'unsigned' => true);
+	$data['columns'][] = array('name' => 'status',       'type' => 'varchar(20)',  'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'tokens_acquired', 'type' => 'int(10)',   'NULL' => false, 'default' => '0', 'unsigned' => true);
 	$data['columns'][] = array('name' => 'tokens_acquired_date', 'type' => 'timestamp', 'NULL' => false, 'default' => '0000-00-00 00:00:00');
-	$data['columns'][] = array('name' => 'last_updated', 'type' => 'timestamp', 'NULL' => false, 'default' => 'CURRENT_TIMESTAMP', 'on_update' => 'CURRENT_TIMESTAMP');
-	$data['columns'][] = array('name' => 'present', 'unsigned' => true, 'type' => 'tinyint(3)', 'NULL' => false, 'default' => '1');
+	$data['columns'][] = array('name' => 'last_updated', 'type' => 'timestamp',    'NULL' => false, 'default' => 'CURRENT_TIMESTAMP', 'on_update' => 'CURRENT_TIMESTAMP');
+	$data['columns'][] = array('name' => 'present',      'type' => 'tinyint(3)',   'NULL' => false, 'default' => '1', 'unsigned' => true);
+	$data['columns'][] = array('name' => 'lm_job_pid',   'type' => 'tinyint(10)',  'NULL' => true,  'default' => '0', 'unsigned' => true);
+	$data['columns'][] = array('name' => 'clustername',  'type' => 'varchar(128)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'jobid',        'type' => 'bigint(20)',   'NULL' => true,  'default' => '0');
+	$data['columns'][] = array('name' => 'indexid',      'type' => 'int(10)',      'NULL' => true,  'default' => '0');
+	$data['columns'][] = array('name' => 'projectName',  'type' => 'varchar(255)', 'NULL' => true,  'default' => '');
 	$data['primary'] = 'service_id`,`vendor_daemon`,`feature_name`,`username`,`groupname`,`hostname`,`chkoutid`,`restype`,`status`,`tokens_acquired_date';
 	$data['keys'][] = array('name' => 'idx_service_id', 'columns' => 'service_id');
 	$data['keys'][] = array('name' => 'idx_poller_id', 'columns' => 'poller_id');
@@ -292,6 +297,38 @@ function license_setup_database() {
 	$data['type'] = 'InnoDB';
 	$data['comment'] = '';
 	api_plugin_db_table_create ('license', 'lic_users_winsp', $data);
+
+	$data = array();
+	$data['columns'][] = array('name' => 'id',            'type' => 'bigint(20)',  'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'service_id',    'type' => 'int(10)',     'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'feature_name',  'type' => 'varchar(50)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'projectName',   'type' => 'varchar(50)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'token_minutes', 'type' => 'int(10)',     'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'poll_time',     'type' => 'timestamp',   'NULL' => false, 'default' => '0000-00-00 00:00:00');
+	$data['columns'][] = array('name' => 'feature_max_licenses', 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
+	$data['primary'] = 'id';
+	$data['keys'][] = array('name' => 'idx_feature_name', 'columns' => 'feature_name');
+	$data['keys'][] = array('name' => 'idx_projectName', 'columns' => 'projectName');
+	$data['keys'][] = array('name' => 'idx_service_id', 'columns' => 'service_id');
+	$data['type'] = 'InnoDB';
+	$data['comment'] = '';
+	api_plugin_db_table_create ('license', 'lic_daily_project_stats', $data);
+
+	$data = array();
+	$data['columns'][] = array('name' => 'id',            'type' => 'bigint(20)',  'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'service_id',    'type' => 'int(10)',     'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'feature_name',  'type' => 'varchar(50)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'projectName',   'type' => 'varchar(50)', 'NULL' => false, 'default' => '');
+	$data['columns'][] = array('name' => 'token_minutes', 'type' => 'int(10)',     'NULL' => false, 'default' => '0');
+	$data['columns'][] = array('name' => 'poll_time',     'type' => 'timestamp',   'NULL' => false, 'default' => '0000-00-00 00:00:00');
+	$data['columns'][] = array('name' => 'feature_max_licenses', 'type' => 'int(10)', 'NULL' => false, 'default' => '0');
+	$data['primary'] = 'id';
+	$data['keys'][] = array('name' => 'idx_feature_name', 'columns' => 'feature_name');
+	$data['keys'][] = array('name' => 'idx_projectName', 'columns' => 'projectName');
+	$data['keys'][] = array('name' => 'idx_service_id', 'columns' => 'service_id');
+	$data['type'] = 'InnoDB';
+	$data['comment'] = '';
+	api_plugin_db_table_create ('license', 'lic_daily_project_stats_today', $data);
 
 	db_execute('DROP VIEW IF EXISTS lic_flexlm_servers_feature_details');
 	db_execute('DROP VIEW IF EXISTS lic_flexlm_servers_feature_use');

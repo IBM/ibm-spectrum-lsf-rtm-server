@@ -638,9 +638,8 @@ function form_save() {
 	get_filter_request_var('expression_id');
 	get_filter_request_var('id');
 	get_filter_request_var('template');
-
-	$alarm_id = isempty_request_var('tab') ? get_request_var('alarm_id') : get_request_var('id');
 	
+	$alarm_id = isempty_request_var('tab') ? get_request_var('alarm_id') : get_request_var('id');
 	if (!empty($alarm_id)) {
 		$oldalarm = db_fetch_row_prepared('SELECT base_time_display, alarm_type, frequency, alarm_fail_trigger, repeat_alert
 			FROM gridalarms_alarm
