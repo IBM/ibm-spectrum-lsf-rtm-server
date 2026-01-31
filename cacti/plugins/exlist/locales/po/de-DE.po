@@ -1,0 +1,164 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: developers@cacti.net\n"
+"POT-Creation-Date: 2024-10-03 18:53-0400\n"
+"PO-Revision-Date: 2024-10-03 18:07-0400\n"
+"Last-Translator: The Cacti Group <weblate@cacti.net>\n"
+"Language-Team: German <http://translate.cacti.net/projects/cacti/exlist/de-DE/>\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Poedit 3.4.4\n"
+
+#: exlists.php:29
+msgid "Delete"
+msgstr "Löschen"
+
+#: exlists.php:154
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: exlists.php:154
+msgid "Continue"
+msgstr "Fortsetzen"
+
+#: exlists.php:182
+#, php-format
+msgid "Exception Filter [edit: %s]"
+msgstr "Ausnahmefilter [Bearbeiten: %s]"
+
+#: exlists.php:184
+msgid "Exception Filter [new]"
+msgstr "Ausnahmefilter [neu]"
+
+#: exlists.php:220
+msgid "Filter Name"
+msgstr "Filtername"
+
+#: exlists.php:221
+msgid "Name this filter.  It will appear as both the dropdown and Legend value"
+msgstr "Benennen Sie diesen Filter.  Er wird sowohl als Dropdown-Liste als auch als Legendenwert angezeigt"
+
+#: exlists.php:228
+msgid "Enable Filter"
+msgstr "Filter aktivieren"
+
+#: exlists.php:229
+msgid "When checked this Exception Filter will be enabled."
+msgstr "Wenn diese Option aktiviert ist, wird dieser Ausnahmefilter aktiviert."
+
+#: exlists.php:235
+msgid "Database SQL Where"
+msgstr "Datenbank SQL Wo"
+
+#: exlists.php:236
+msgid "The SQL Where Clause to use for the Exception list.  For example <b>\"max_memory>65000000 AND num_cpus>20\"</b>. The Exceoption Filter is combined with all other Filters on the Job details page."
+msgstr "Die SQL-Where-Klausel, die für die Ausnahmeliste verwendet werden soll.  Beispiel: <b>\"max_memory>65000000 UND num_cpus>20\".</b> Der Exceoption-Filter wird mit allen anderen Filtern auf der Seite \"Jobdetails\" kombiniert."
+
+#: exlists.php:252
+msgid "Select Column name to Append to SQL Where"
+msgstr "Wählen Sie den Spaltennamen aus, der an SQL angehängt werden soll, wobei"
+
+#: exlists.php:286 exlists.php:288 exlists.php:291 exlists.php:297
+#: exlists.php:299
+msgid "Check SQL Syntax"
+msgstr "Überprüfen der SQL-Syntax"
+
+#: exlists.php:369
+msgid "Job Detail Exception Lists"
+msgstr "Ausnahmelisten für Job-Details"
+
+#: exlists.php:378
+msgid "Search"
+msgstr "Suche"
+
+#: exlists.php:384
+msgid "Rows"
+msgstr "Zeilen"
+
+#: exlists.php:388
+msgid "Default"
+msgstr "Voreinstellung"
+
+#: exlists.php:399
+#, fuzzy
+msgid "Go"
+msgstr "Anwenden"
+
+#: exlists.php:399
+msgid "Set/Refresh Filters"
+msgstr "Filter setzen/auffrischen"
+
+#: exlists.php:402
+#, fuzzy
+msgid "Clear"
+msgstr "Löschen"
+
+#: exlists.php:402
+msgid "Clear Filters"
+msgstr "Filter löschen"
+
+#: exlists.php:435
+msgid "List Name"
+msgstr "Listenname"
+
+#: exlists.php:439
+msgid "Enabled"
+msgstr "Aktiviert"
+
+#: exlists.php:443
+msgid "SQL Where"
+msgstr "SQL Wo"
+
+#: exlists.php:448
+msgid "Filters"
+msgstr "Filter"
+
+#: exlists.php:463
+msgid "No"
+msgstr "Nein"
+
+#: exlists.php:463
+msgid "Yes"
+msgstr "Ja"
+
+#: exlists.php:469
+msgid "No Job Detail Exception Filters Found"
+msgstr "Keine Ausnahmefilter für Auftragsdetails gefunden"
+
+#: setup.php:146
+msgid "Data Collection"
+msgstr "Datensammlung"
+
+#: setup.php:147
+msgid "Clusters"
+msgstr "Cluster"
+
+#: setup.php:147
+msgid "Custom Job Filters"
+msgstr "Benutzerdefinierte Job-Filter"
+
+#: setup.php:158 setup.php:163
+msgid "Undefined"
+msgstr "Undefiniert"
+
+#: setup.php:180
+msgid "Job Detail Exception Filters"
+msgstr "Ausnahmefilter für Job-Details"
+
+#: setup.php:187
+msgid "(edit)"
+msgstr "(Bearbeiten)"
+
+#: setup.php:194
+#, fuzzy
+msgid "(actions)"
+msgstr "Aktionen"

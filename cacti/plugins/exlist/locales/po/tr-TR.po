@@ -1,0 +1,162 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: developers@cacti.net\n"
+"POT-Creation-Date: 2024-10-03 18:53-0400\n"
+"PO-Revision-Date: 2024-10-03 18:12-0400\n"
+"Last-Translator: San IPE <sanipe1949@krunsea.com>\n"
+"Language-Team: Turkish <http://translate.cacti.net/projects/cacti/exlist/tr/>\n"
+"Language: tr_TR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Poedit 3.4.4\n"
+
+#: exlists.php:29
+msgid "Delete"
+msgstr "Sil"
+
+#: exlists.php:154
+msgid "Cancel"
+msgstr "İptal"
+
+#: exlists.php:154
+msgid "Continue"
+msgstr "Devam et"
+
+#: exlists.php:182
+#, php-format
+msgid "Exception Filter [edit: %s]"
+msgstr "İstisna Filtresi [değiştir | kaynağı değiştir: %s]"
+
+#: exlists.php:184
+msgid "Exception Filter [new]"
+msgstr "Özel Durum Filtresi [yeni]"
+
+#: exlists.php:220
+msgid "Filter Name"
+msgstr "Filtre Adı"
+
+#: exlists.php:221
+msgid "Name this filter.  It will appear as both the dropdown and Legend value"
+msgstr "Bu filtreye bir ad verin.  Hem açılır menü hem de Gösterge değeri olarak görünecektir"
+
+#: exlists.php:228
+msgid "Enable Filter"
+msgstr "Filtreyi Etkinleştir"
+
+#: exlists.php:229
+msgid "When checked this Exception Filter will be enabled."
+msgstr "İşaretlendiğinde, bu İstisna Filtresi etkinleştirilecektir."
+
+#: exlists.php:235
+msgid "Database SQL Where"
+msgstr "Veritabanı SQL Nerede"
+
+#: exlists.php:236
+msgid "The SQL Where Clause to use for the Exception list.  For example <b>\"max_memory>65000000 AND num_cpus>20\"</b>. The Exceoption Filter is combined with all other Filters on the Job details page."
+msgstr "Özel Durum listesi için kullanılacak SQL Where Yan Tümcesi.  Örneğin <b>, \"max_memory>65000000 VE num_cpus>20\"</b>. Aşma Seçeneği Filtresi, İş ayrıntıları sayfasındaki diğer tüm Filtrelerle birleştirilir."
+
+#: exlists.php:252
+msgid "Select Column name to Append to SQL Where"
+msgstr "SQL'e eklenecek sütun adını seçin Nerede"
+
+#: exlists.php:286 exlists.php:288 exlists.php:291 exlists.php:297
+#: exlists.php:299
+msgid "Check SQL Syntax"
+msgstr "SQL Sözdizimini Kontrol Edin"
+
+#: exlists.php:369
+msgid "Job Detail Exception Lists"
+msgstr "İş Detayı İstisna Listeleri"
+
+#: exlists.php:378
+msgid "Search"
+msgstr "Arama"
+
+#: exlists.php:384
+msgid "Rows"
+msgstr "Satırlar"
+
+#: exlists.php:388
+msgid "Default"
+msgstr "Varsayılan"
+
+#: exlists.php:399
+msgid "Go"
+msgstr "Git"
+
+#: exlists.php:399
+msgid "Set/Refresh Filters"
+msgstr "Filtreleri Ayarla/Yenile"
+
+#: exlists.php:402
+msgid "Clear"
+msgstr "Temizle"
+
+#: exlists.php:402
+msgid "Clear Filters"
+msgstr "Filtreleri Temizle"
+
+#: exlists.php:435
+msgid "List Name"
+msgstr "Liste İsmi"
+
+#: exlists.php:439
+msgid "Enabled"
+msgstr "Etkin"
+
+#: exlists.php:443
+msgid "SQL Where"
+msgstr "SQL Nerede"
+
+#: exlists.php:448
+msgid "Filters"
+msgstr "Filtreler"
+
+#: exlists.php:463
+msgid "No"
+msgstr "Hayır"
+
+#: exlists.php:463
+msgid "Yes"
+msgstr "Evet"
+
+#: exlists.php:469
+msgid "No Job Detail Exception Filters Found"
+msgstr "İş ayrıntısı özel durum filtresi bulunamadı"
+
+#: setup.php:146
+msgid "Data Collection"
+msgstr "Veri Koleksiyonu"
+
+#: setup.php:147
+msgid "Clusters"
+msgstr "Küme"
+
+#: setup.php:147
+msgid "Custom Job Filters"
+msgstr "Özel İş Filtreleri"
+
+#: setup.php:158 setup.php:163
+msgid "Undefined"
+msgstr "Tanımlanmamış"
+
+#: setup.php:180
+msgid "Job Detail Exception Filters"
+msgstr "İş Ayrıntısı İstisna Filtreleri"
+
+#: setup.php:187
+msgid "(edit)"
+msgstr "(Düzenle)"
+
+#: setup.php:194
+#, fuzzy
+msgid "(actions)"
+msgstr "Eylemler"

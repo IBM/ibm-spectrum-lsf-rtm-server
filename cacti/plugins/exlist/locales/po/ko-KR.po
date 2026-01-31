@@ -1,0 +1,161 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: developers@cacti.net\n"
+"POT-Creation-Date: 2024-10-03 18:53-0400\n"
+"PO-Revision-Date: 2024-10-03 18:10-0400\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ko_KR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.4\n"
+
+#: exlists.php:29
+msgid "Delete"
+msgstr "삭제"
+
+#: exlists.php:154
+msgid "Cancel"
+msgstr "취소"
+
+#: exlists.php:154
+msgid "Continue"
+msgstr "계속"
+
+#: exlists.php:182
+#, php-format
+msgid "Exception Filter [edit: %s]"
+msgstr "예외 필터 [편집: %s]"
+
+#: exlists.php:184
+msgid "Exception Filter [new]"
+msgstr "예외 필터[신규]"
+
+#: exlists.php:220
+msgid "Filter Name"
+msgstr "이름 필터"
+
+#: exlists.php:221
+msgid "Name this filter.  It will appear as both the dropdown and Legend value"
+msgstr "이 필터의 이름을 지정합니다.  드롭다운과 범례 값으로 모두 표시됩니다"
+
+#: exlists.php:228
+msgid "Enable Filter"
+msgstr "필터 사용하기"
+
+#: exlists.php:229
+msgid "When checked this Exception Filter will be enabled."
+msgstr "이 옵션을 선택하면 이 예외 필터가 활성화됩니다."
+
+#: exlists.php:235
+msgid "Database SQL Where"
+msgstr "데이터베이스 SQL 여기서"
+
+#: exlists.php:236
+msgid "The SQL Where Clause to use for the Exception list.  For example <b>\"max_memory>65000000 AND num_cpus>20\"</b>. The Exceoption Filter is combined with all other Filters on the Job details page."
+msgstr "예외 목록에 사용할 SQL Where 절입니다.  예를 들어 <b>\"max_memory>65000000 AND num_cpus>20\"</b>입니다. Exceoption 필터는 작업 세부 정보 페이지의 다른 모든 필터와 결합됩니다."
+
+#: exlists.php:252
+msgid "Select Column name to Append to SQL Where"
+msgstr "SQL에 추가할 열 이름 선택 위치"
+
+#: exlists.php:286 exlists.php:288 exlists.php:291 exlists.php:297
+#: exlists.php:299
+msgid "Check SQL Syntax"
+msgstr "SQL 구문 확인"
+
+#: exlists.php:369
+msgid "Job Detail Exception Lists"
+msgstr "작업 세부 정보 예외 목록"
+
+#: exlists.php:378
+msgid "Search"
+msgstr "검색"
+
+#: exlists.php:384
+msgid "Rows"
+msgstr "행"
+
+#: exlists.php:388
+msgid "Default"
+msgstr "기본값"
+
+#: exlists.php:399
+msgid "Go"
+msgstr "가기"
+
+#: exlists.php:399
+msgid "Set/Refresh Filters"
+msgstr "필터 설정/새로 고침"
+
+#: exlists.php:402
+msgid "Clear"
+msgstr "지우기"
+
+#: exlists.php:402
+msgid "Clear Filters"
+msgstr "필터 지우기"
+
+#: exlists.php:435
+msgid "List Name"
+msgstr "리스트 이름"
+
+#: exlists.php:439
+msgid "Enabled"
+msgstr "활성화"
+
+#: exlists.php:443
+msgid "SQL Where"
+msgstr "SQL 여기서"
+
+#: exlists.php:448
+msgid "Filters"
+msgstr "필터"
+
+#: exlists.php:463
+msgid "No"
+msgstr "아니오"
+
+#: exlists.php:463
+msgid "Yes"
+msgstr "예"
+
+#: exlists.php:469
+msgid "No Job Detail Exception Filters Found"
+msgstr "작업 세부 정보 예외 필터를 찾을 수 없습니다."
+
+#: setup.php:146
+msgid "Data Collection"
+msgstr "데이터 수집"
+
+#: setup.php:147
+msgid "Clusters"
+msgstr "클러스터"
+
+#: setup.php:147
+msgid "Custom Job Filters"
+msgstr "사용자 지정 작업 필터"
+
+#: setup.php:158 setup.php:163
+msgid "Undefined"
+msgstr "정의되지 않음"
+
+#: setup.php:180
+msgid "Job Detail Exception Filters"
+msgstr "작업 세부 정보 예외 필터"
+
+#: setup.php:187
+msgid "(edit)"
+msgstr "(편집)"
+
+#: setup.php:194
+#, fuzzy
+msgid "(actions)"
+msgstr "작업"

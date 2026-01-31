@@ -1,0 +1,162 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: developers@cacti.net\n"
+"POT-Creation-Date: 2024-10-03 18:53-0400\n"
+"PO-Revision-Date: 2024-10-03 18:08-0400\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: el_GR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.4\n"
+
+#: exlists.php:29
+msgid "Delete"
+msgstr "Διαγραφή"
+
+#: exlists.php:154
+msgid "Cancel"
+msgstr "Ακύρωση"
+
+#: exlists.php:154
+msgid "Continue"
+msgstr "Συνέχεια"
+
+#: exlists.php:182
+#, php-format
+msgid "Exception Filter [edit: %s]"
+msgstr "Φίλτρο εξαίρεσης [επεξεργασία: %s]"
+
+#: exlists.php:184
+msgid "Exception Filter [new]"
+msgstr "Φίλτρο εξαίρεσης [νέο]"
+
+#: exlists.php:220
+msgid "Filter Name"
+msgstr "Όνομα φίλτρου"
+
+#: exlists.php:221
+msgid "Name this filter.  It will appear as both the dropdown and Legend value"
+msgstr "Ονομάστε αυτό το φίλτρο.  Θα εμφανιστεί τόσο ως αναπτυσσόμενη λίστα όσο και ως τιμή Legend"
+
+#: exlists.php:228
+msgid "Enable Filter"
+msgstr "Ενεργοποίηση φίλτρου"
+
+#: exlists.php:229
+msgid "When checked this Exception Filter will be enabled."
+msgstr "Όταν επιλεγεί, αυτό το φίλτρο εξαίρεσης θα ενεργοποιηθεί."
+
+#: exlists.php:235
+msgid "Database SQL Where"
+msgstr "Βάση δεδομένων SQL όπου"
+
+#: exlists.php:236
+msgid "The SQL Where Clause to use for the Exception list.  For example <b>\"max_memory>65000000 AND num_cpus>20\"</b>. The Exceoption Filter is combined with all other Filters on the Job details page."
+msgstr "Ο όρος SQL Where που θα χρησιμοποιηθεί για τη λίστα εξαιρέσεων.  Για παράδειγμα, <b>\"max_memory>65000000 ΚΑΙ num_cpus>20\".</b> Το φίλτρο υπερεπιλογής συνδυάζεται με όλα τα άλλα φίλτρα στη σελίδα λεπτομερειών εργασίας."
+
+#: exlists.php:252
+msgid "Select Column name to Append to SQL Where"
+msgstr "Επιλέξτε Όνομα στήλης για προσάρτηση σε SQL όπου"
+
+#: exlists.php:286 exlists.php:288 exlists.php:291 exlists.php:297
+#: exlists.php:299
+msgid "Check SQL Syntax"
+msgstr "Ελέγξτε τη σύνταξη SQL"
+
+#: exlists.php:369
+msgid "Job Detail Exception Lists"
+msgstr "Λίστες εξαιρέσεων λεπτομερειών εργασίας"
+
+#: exlists.php:378
+msgid "Search"
+msgstr "Αναζήτηση"
+
+#: exlists.php:384
+msgid "Rows"
+msgstr "Σειρές"
+
+#: exlists.php:388
+msgid "Default"
+msgstr "Προεπιλογή"
+
+#: exlists.php:399
+msgid "Go"
+msgstr "Πήγαινε"
+
+#: exlists.php:399
+msgid "Set/Refresh Filters"
+msgstr "Ορισμός/ανανέωση φίλτρων"
+
+#: exlists.php:402
+msgid "Clear"
+msgstr "Καθαρισμός"
+
+#: exlists.php:402
+msgid "Clear Filters"
+msgstr "Καθαρισμός Φίλτρων"
+
+#: exlists.php:435
+msgid "List Name"
+msgstr "Όνομα Λίστας"
+
+#: exlists.php:439
+msgid "Enabled"
+msgstr "Ενεργοποιημένο"
+
+#: exlists.php:443
+msgid "SQL Where"
+msgstr "SQL όπου"
+
+#: exlists.php:448
+msgid "Filters"
+msgstr "Φίλτρα"
+
+#: exlists.php:463
+msgid "No"
+msgstr "Όχι"
+
+#: exlists.php:463
+msgid "Yes"
+msgstr "Ναι"
+
+#: exlists.php:469
+msgid "No Job Detail Exception Filters Found"
+msgstr "Δεν βρέθηκαν φίλτρα εξαίρεσης λεπτομερειών εργασίας"
+
+#: setup.php:146
+msgid "Data Collection"
+msgstr "Συλλογή δεδομένων"
+
+#: setup.php:147
+msgid "Clusters"
+msgstr "Σμήνη αυτ. πωλητών"
+
+#: setup.php:147
+msgid "Custom Job Filters"
+msgstr "Προσαρμοσμένα φίλτρα εργασίας"
+
+#: setup.php:158 setup.php:163
+msgid "Undefined"
+msgstr "Δεν έχει οριστεί"
+
+#: setup.php:180
+msgid "Job Detail Exception Filters"
+msgstr "Φίλτρα εξαίρεσης λεπτομερειών εργασίας"
+
+#: setup.php:187
+#, fuzzy
+msgid "(edit)"
+msgstr "(Eπεξεργασία)"
+
+#: setup.php:194
+#, fuzzy
+msgid "(actions)"
+msgstr "Ενέργειες"

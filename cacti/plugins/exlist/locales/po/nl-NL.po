@@ -1,0 +1,163 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: developers@cacti.net\n"
+"POT-Creation-Date: 2024-10-03 18:53-0400\n"
+"PO-Revision-Date: 2024-10-03 18:11-0400\n"
+"Last-Translator: Edwin Lankamp <edwin.lankamp@gmail.com>\n"
+"Language-Team: Dutch <http://translate.cacti.net/projects/cacti/exlist/nl/>\n"
+"Language: nl_NL\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Poedit 3.4.4\n"
+
+#: exlists.php:29
+#, fuzzy
+msgid "Delete"
+msgstr "Verwijderen"
+
+#: exlists.php:154
+msgid "Cancel"
+msgstr "Annuleer"
+
+#: exlists.php:154
+msgid "Continue"
+msgstr "Volgende"
+
+#: exlists.php:182
+#, php-format
+msgid "Exception Filter [edit: %s]"
+msgstr "Uitzonderingsfilter [bewerken: %s]"
+
+#: exlists.php:184
+msgid "Exception Filter [new]"
+msgstr "Uitzonderingsfilter [nieuw]"
+
+#: exlists.php:220
+msgid "Filter Name"
+msgstr "Filternaam"
+
+#: exlists.php:221
+msgid "Name this filter.  It will appear as both the dropdown and Legend value"
+msgstr "Geef dit filter een naam.  Het wordt weergegeven als zowel de vervolgkeuzelijst als de legenda-waarde"
+
+#: exlists.php:228
+msgid "Enable Filter"
+msgstr "Filter inschakelen"
+
+#: exlists.php:229
+msgid "When checked this Exception Filter will be enabled."
+msgstr "Als deze optie is ingeschakeld, wordt dit uitzonderingsfilter ingeschakeld."
+
+#: exlists.php:235
+msgid "Database SQL Where"
+msgstr "Database SQL Waar"
+
+#: exlists.php:236
+msgid "The SQL Where Clause to use for the Exception list.  For example <b>\"max_memory>65000000 AND num_cpus>20\"</b>. The Exceoption Filter is combined with all other Filters on the Job details page."
+msgstr "De SQL Where-clausule die moet worden gebruikt voor de lijst met uitzonderingen.  Bijvoorbeeld <b>\"max_memory>65000000 EN num_cpus>20\".</b> Het Exceoption-filter wordt gecombineerd met alle andere filters op de pagina met taakdetails."
+
+#: exlists.php:252
+msgid "Select Column name to Append to SQL Where"
+msgstr "Selecteer de kolomnaam om toe te voegen aan SQL Waar"
+
+#: exlists.php:286 exlists.php:288 exlists.php:291 exlists.php:297
+#: exlists.php:299
+msgid "Check SQL Syntax"
+msgstr "SQL-syntaxis controleren"
+
+#: exlists.php:369
+msgid "Job Detail Exception Lists"
+msgstr "Lijsten met uitzonderingen voor taakdetails"
+
+#: exlists.php:378
+msgid "Search"
+msgstr "Zoeken"
+
+#: exlists.php:384
+msgid "Rows"
+msgstr "Rijen"
+
+#: exlists.php:388
+msgid "Default"
+msgstr "Standaard"
+
+#: exlists.php:399
+msgid "Go"
+msgstr "Ga"
+
+#: exlists.php:399
+msgid "Set/Refresh Filters"
+msgstr "Stel in/vernieuw filters"
+
+#: exlists.php:402
+msgid "Clear"
+msgstr "Herstel"
+
+#: exlists.php:402
+msgid "Clear Filters"
+msgstr "Stel filters opnieuw in"
+
+#: exlists.php:435
+msgid "List Name"
+msgstr "Naam"
+
+#: exlists.php:439
+msgid "Enabled"
+msgstr "Ingeschakeld"
+
+#: exlists.php:443
+msgid "SQL Where"
+msgstr "SQL Waar"
+
+#: exlists.php:448
+msgid "Filters"
+msgstr "Filters"
+
+#: exlists.php:463
+msgid "No"
+msgstr "Nee"
+
+#: exlists.php:463
+msgid "Yes"
+msgstr "Ja"
+
+#: exlists.php:469
+msgid "No Job Detail Exception Filters Found"
+msgstr "Geen uitzonderingsfilters voor taakdetails gevonden"
+
+#: setup.php:146
+msgid "Data Collection"
+msgstr "Data verzameling"
+
+#: setup.php:147
+msgid "Clusters"
+msgstr "Clusters"
+
+#: setup.php:147
+msgid "Custom Job Filters"
+msgstr "Aangepaste taakfilters"
+
+#: setup.php:158 setup.php:163
+msgid "Undefined"
+msgstr "Niet gedefinieerd"
+
+#: setup.php:180
+msgid "Job Detail Exception Filters"
+msgstr "Filters voor uitzonderingen op taakdetails"
+
+#: setup.php:187
+msgid "(edit)"
+msgstr "(bewerken)"
+
+#: setup.php:194
+#, fuzzy
+msgid "(actions)"
+msgstr "Acties"
