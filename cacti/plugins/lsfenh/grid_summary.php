@@ -723,8 +723,8 @@ function grid_ajax_hostinfo() {
 				<td class='tableSubHeaderColumn' colspan='4'>" . __('Usage Information', 'grid') . "</td>
 			</tr>
 			<tr class='metricRow selectable'>
-				<td class='nowrap'>" . __('Used Slots', 'grid') . "</td>
-				<td class='right'>{$reservation['numRsvJobs']}</td>
+				<td class='nowrap'>" . __('Used/Total Slots', 'grid') . "</td>
+				<td class='right'>{$reservation['numRsvJobs']} / {$reservation['totalSlots']}</td>
 				<td class='nowrap'>" . __('Total Hosts', 'grid') . "</td>
 				<td class='right'>{$reservation['numRsvHosts']}</td>
 			</tr>
@@ -966,6 +966,26 @@ function grid_ajax_show_group() {
 	if (cacti_sizeof($stati)) {
 		foreach ($stati as $status) {
 			print '<option value="' . $status['status'] .'"'; if (get_request_var('bstatus') == $status['status']) { print ' selected'; } print '>' . $status['status'] . '</option>';
+		}
+	}
+
+	print '<br/><option value="-1">' . __('N/A', 'grid') . '</option>';
+	print '<option value="0">' . __('Exists') . '</option>';
+	if (get_request_var('clusterid') == 0) {
+		$res = db_fetch_assoc('SELECT DISTINCT rsvId
+			FROM grid_reservations
+			ORDER BY rsvId');
+	} else {
+		$res = db_fetch_assoc_prepared('SELECT DISTINCT rsvId
+			FROM grid_reservations
+			WHERE clusterid = ?
+			ORDER BY rsvId',
+			array(get_request_var('clusterid')));
+	}
+
+	if (cacti_sizeof($res)) {
+		foreach ($res as $r) {
+			print '<option value="' . $r['rsvId'] .'"'; if (get_request_var('reservation') == $r['rsvId']) { print ' selected'; } print '>' . html_escape($r['rsvId']) . '</option>';
 		}
 	}
 
@@ -1316,22 +1336,22 @@ function grid_view_get_summary_records($is_summary_alarm_log = false) {
 							$res_hosts = $parts[1];
 						}
 						if (strlen($sql_where)) {
-							$sql_where .= " AND qs.host IN ($res_hosts)";
+							$sql_where .= " AND gs.host IN ($res_hosts)";
 						} else {
-							$sql_where = "WHERE qs.host IN ($res_hosts)";
+							$sql_where = "WHERE gs.host IN ($res_hosts)";
 						}
 					} else {
 						if (strlen($sql_where)) {
-							$sql_where .= ' AND qs.host IS NULL';
+							$sql_where .= ' AND gs.host IS NULL';
 						} else {
-							$sql_where = 'WHERE qs.host IN NULL';
+							$sql_where = 'WHERE gs.host IN NULL';
 						}
 					}
 				} else {
 					if (strlen($sql_where)) {
-						$sql_where .= ' AND qs.host IS NULL';
+						$sql_where .= ' AND gs.host IS NULL';
 					} else {
-						$sql_where = 'WHERE qs.host IN NULL';
+						$sql_where = 'WHERE gs.host IN NULL';
 					}
 
 					if ($ret_val == 96) {
@@ -1384,9 +1404,9 @@ function grid_view_get_summary_records($is_summary_alarm_log = false) {
 
 	/* search filter sql where */
 	if (get_request_var('filter') != '') {
-		$sql_where .= (strlen($sql_where) ? ' AND':'WHERE') . " ((qs.host LIKE ?) OR
-			(qs.hostType LIKE ?) OR
-			(qs.hostModel LIKE ?))";
+		$sql_where .= (strlen($sql_where) ? ' AND':'WHERE') . " ((gs.host LIKE ?) OR
+			(gs.hostType LIKE ?) OR
+			(gs.hostModel LIKE ?))";
 		$sql_params[] = '%'. get_request_var('filter') . '%';
 		$sql_params[] = '%'. get_request_var('filter') . '%';
 		$sql_params[] = '%'. get_request_var('filter') . '%';
@@ -1407,7 +1427,7 @@ function grid_view_get_summary_records($is_summary_alarm_log = false) {
 	}
 
 	if (get_request_var('hgroup') != -1) {
-		$sql_query = "SELECT *
+		$sql_query = "SELECT gs.*
 			FROM grid_summary AS gs
 			INNER JOIN grid_hostgroups AS ghg
 			ON ghg.host=gs.host
@@ -1416,14 +1436,14 @@ function grid_view_get_summary_records($is_summary_alarm_log = false) {
 			$sql_where
 			$order_by";
 	} else {
-		$sql_query = "SELECT *
+		$sql_query = "SELECT gs.*
 			FROM grid_summary AS gs
 			$sql_join
 			$sql_where
 			$order_by";
 	}
 
-cacti_log($sql_query);
+	//cacti_log($sql_query);
 
 	return db_fetch_assoc_prepared($sql_query, $sql_params);
 }
@@ -2276,7 +2296,7 @@ function summary_alarm_log() {
 	<script type='text/javascript'>
 
 	function summaryAlertFilterChange() {
-		strURL  = urlPath + 'plugins/grid/grid_summary.php?header=false&tab=alarm';
+		strURL  = urlPath + 'plugins/grid/grid_summary.php?header=false&tab=host';
 		strURL += '&clusterid='    + $('#clusterid').val();
 		strURL += '&hostname='     + $('#hostname').val();
 		strURL += '&cacti='        + $('#cacti').val();
@@ -3236,16 +3256,18 @@ function summary_host() {
 		model_value=$('#model').val();
 		lstatus_value=$('#lstatus').val();
 		bstatus_value=$('#bstatus').val();
+		res_value=$('#reservation').val();
 		strURL = strURL + '&lstatus=' + lstatus_value + '&bstatus=' + bstatus_value ;
 		Pace.track(function() {
 			$.get(strURL,function(data) {
 				var data_array=data.split('<br/>');
-				$('#hgroup').html(data_array[0]);
-				$('#type').html(data_array[1]);
-				$('#model').html(data_array[2]);
-				$('#lstatus').html(data_array[3]);
-				$('#bstatus').html(data_array[4]);
-				$('#resource_str').attr('title',data_array[5]);
+				$('#hgroup').html(data_array[0]).selectmenu('refresh');
+				$('#type').html(data_array[1]).selectmenu('refresh');
+				$('#model').html(data_array[2]).selectmenu('refresh');
+				$('#lstatus').html(data_array[3]).selectmenu('refresh');
+				$('#bstatus').html(data_array[4]).selectmenu('refresh');
+				$('#reservation').html(data_array[5]).selectmenu('refresh');
+				$('#resource_str').attr('title',data_array[6]);
 				$('#hgroup').val(hostgroup_value);
 
 				if ( $('#hgroup').val() == null) {
@@ -3533,8 +3555,9 @@ function process_request_vars() {
 			'default' => get_views_setting('grid_summary', 'refresh', read_grid_config_option('refresh_interval'))
 		),
 		'reservation' => array(
-			'filter' => FILTER_VALIDATE_INT,
+			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
+			'options' => array('options' => 'sanitize_search_string'),
 			'default' => get_views_setting('grid_summary', 'reservation', '-1')
 		),
 		'hgroup' => array(
