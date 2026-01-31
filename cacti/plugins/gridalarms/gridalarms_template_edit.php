@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright IBM Corp. 2006, 2025                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -20,6 +20,7 @@
 
 chdir('../../');
 include_once('./include/auth.php');
+include_once('./lib/reports.php');
 include_once($config['base_path'] . '/lib/utility.php');
 include_once($config['base_path'] . '/plugins/gridalarms/lib/gridalarms_functions.php');
 include_once($config["base_path"] . '/lib/rtm_functions.php');
@@ -50,7 +51,7 @@ if (isset_request_var('id')) {
 		}
 	}
 } else {
-	$gl_clusterid = "''";
+	$gl_clusterid   = "''";
 	$gl_clustername = "''";
 }
 
@@ -121,6 +122,10 @@ switch (get_nfilter_request_var('action')) {
 		top_header();
 		gridalarms_metric_edit();
 		bottom_footer();
+
+		break;
+	case 'ajax_dnd':
+		layout_dnd();
 
 		break;
 	case 'layout_movedown':
@@ -309,14 +314,17 @@ function check_sql_syntax($id, $ajax = true) {
 	}
 }
 
-function check_script($id, $type = 'thold', $ajax = true) {
+function get_script_command($id, $type) : string {
 	global $gl_clusterid, $gl_clustername;
+
+	$command = '';
+
 	if (!empty($id)) {
 		if ($type == 'thold') {
 			$command = trim(db_fetch_cell_prepared('SELECT script_thold
 				FROM gridalarms_template_expression
 				WHERE id = ?',
-				array($id)) . '; ');
+				array($id)), '; ');
 		} else {
 			$command = trim(db_fetch_cell_prepared('SELECT script_data
 				FROM gridalarms_template_expression
@@ -333,39 +341,50 @@ function check_script($id, $type = 'thold', $ajax = true) {
 			WHERE name='path_webroot'");
 
 		$command = str_replace('|path_cacti|', $path_webroot, $command);
+	}
 
-		if (strlen($command)) {
-			$return_code = 0;
-			$output      = array();
-			$result      = exec($command, $output, $return_code);
+	return $command;
+}
 
-			if (strlen($result) && $return_code == 0) {
-				if (!$ajax) return true;
+function check_script($id, $type = 'thold', $ajax = true) {
+	$command = get_script_command($id, $type);
 
-				if ($type == 'thold') {
-					print "<p style='margin:5px 0px;min-height:15px' class='deviceUp'>" . __('OK', 'gridalarms') . '<br>' . __('Output: \'%s\'', trim(implode("\n", $output)), 'gridalarms') . '</p>';
-				} else{
-					print "<p style='margin:5px 0px;min-height:15px' class='deviceUp'>" . __('OK', 'gridalarms') . '<br>' . __('Output: \'%s\'', "<pre style='margin:0px;'>" . html_escape(trim(implode("\n", $output)) . '</pre>'), 'gridalarms') . '</p>';
-				}
+	if ($command != '') {
+		$return_code = 0;
+		$output      = array();
+		$result      = exec($command, $output, $return_code);
+		$output      = array_map('trim', $output);
+
+		if ($result != '' && $return_code == 0) {
+			if (!$ajax) {
+				return true;
+			}
+
+			if ($type == 'thold') {
+				print "<p style='margin:5px 0px;min-height:15px' class='deviceUp'>" . __('OK', 'gridalarms') . '<br>' . __('Output:', 'gridalarms') . html_escape(implode("\n", $output)) . '</p>';
 			} else {
-				if (!$ajax) return false;
-
-				if ($return_code == 127) {
-					print "<p style='margin:5px 0px;min-height:15px' class='deviceDown'>" . __('Error: Script File Not Found!', 'gridalarms') . '</p>';
-				} else {
-					if ($type == 'thold') {
-						print "<p style='margin:5px 0px;min-height:15px' class='deviceDown'>" . __('Error!', 'gridalarms') . '<br>' . __('Return Code: \'%s\'', $return_code, 'gridalarms') . '<br>' . __('Output: \'%s\'', html_escape(trim(implode("\n", $output))), 'gridalarms') . '</p>';
-					} else{
-						print "<p style='margin:5px 0px;min-height:15px' class='deviceDown'>" . __('Error!', 'gridalarms') . '<br>' . __('Return Code: \'%s\'', $return_code, 'gridalarms') . '<br>' . __('Output: %s', "<pre style='margin:0px;'>" . html_escape(trim(implode("\n", $output))) . '</pre>', 'gridalarms') . '</p>';
-					}
-				}
+				print "<p style='margin:5px 0px;min-height:15px' class='deviceUp'>" . __('OK', 'gridalarms') . '<br>' . __('Output:', 'gridalarms') . '</p><pre style="margin:0px">' . html_escape(implode("\n", $output)) . '</pre>';
 			}
 		} else {
-			if (!$ajax) return false;
-			print "<p style='margin:5px 0px;min-height:15px' class='deviceDown'>" . __('No Command Defined, You must Save Alert First!', 'gridalarms') . '</p>';
+			if (!$ajax) {
+				return false;
+			}
+
+			if ($return_code == 127) {
+				print "<p style='margin:5px 0px;min-height:15px' class='deviceDown'>" . __('Error: Script File Not Found!', 'gridalarms') . '</p>';
+			} else {
+				if ($type == 'thold') {
+					print "<p style='margin:5px 0px;min-height:15px' class='deviceDown'>" . __('Error!', 'gridalarms') . '<br>' . __('Return Code: \'%s\'', $return_code, 'gridalarms') . '<br>' . __('Output: \'%s\'', html_escape(implode("\n", $output)), 'gridalarms') . '</p>';
+				} else{
+					print "<p style='margin:5px 0px;min-height:15px' class='deviceDown'>" . __('Error!', 'gridalarms') . '<br>' . __('Return Code: \'%s\'', $return_code, 'gridalarms') . '<br>' . __('Output: %s', "<pre style='margin:0px;'>" . html_escape(implode("\n", $output)) . '</pre>', 'gridalarms') . '</p>';
+				}
+			}
 		}
 	} else {
-		if (!$ajax) return false;
+		if (!$ajax) {
+			return false;
+		}
+
 		print "<p style='margin:5px 0px;min-height:15px' class='deviceDown'>" . __('No Command Defined, You must Save Alert First!', 'gridalarms') . '</p>';
 	}
 
@@ -558,18 +577,29 @@ function draw_gridalarms_sql_preview($expression) {
 }
 
 function draw_gridalarms_script_preview($expression) {
+	$thold_command  = get_script_command($expression['id'], 'thold');
+	$output_command = get_script_command($expression['id'], 'data');
+
 	if (cacti_sizeof($expression)) { ?>
 		<tr class='even'>
-			<td id='syntax_message'><p style='margin:5px 0px;min-height:15px;'><?php print __('Not Run', 'gridalarms');?></p></td>
+			<td style='width: 50px'><b><?php print __('Thold:', 'gridalarms') . '</b>';?></td>
+			<td><?php print html_escape($thold_command);?></td>
+		</tr>
+		<tr class='even'>
+			<td style='width: 50px'><b><?php print __('Data:', 'gridalarms') . '</b>';?></td>
+			<td><?php print html_escape($output_command);?></td>
 		</tr>
 		<tr class='odd'>
-			<td style='padding:5px'>
+			<td colspan='2' style='padding:5px'>
 				<input id='check_script_threshold' type='button' name='check_script_threshold' value='<?php print __('Check Threshold Script', 'gridalarms');?>'/>
 				<input id='check_script_data' type='button' name='check_script_data' value='<?php print __('Check Items Script', 'gridalarms');?>'/>
 				<?php
 				print "<input type='hidden' id='check_syntax_expression_id' name='check_syntax_expression_id' value='" . $expression['id'] . "'/>";
 				?>
 			</td>
+		</tr>
+		<tr>
+			<td colspan='2' id='syntax_message'></td>
 		</tr>
 		<?php
 	}
@@ -660,19 +690,19 @@ function form_save() {
 		$save['script_data_type'] = form_input_validate(get_nfilter_request_var('script_data_type'), 'script_data_type', '', true, 3);
 		$save['description']      = get_nfilter_request_var('description');
 
-		$save['sql_query']        = str_replace('"','\'',$save['sql_query']);
-		$save['sql_query']        = str_replace(';',' ',$save['sql_query']);
-		$save['script_thold']     = str_replace('"','\'',$save['script_thold']);
-		$save['script_data']      = str_replace('"','\'',$save['script_data']);
+		$save['sql_query']        = str_replace('"', '\'', $save['sql_query']);
+		$save['sql_query']        = str_replace(';', ' ',  $save['sql_query']);
+		$save['script_thold']     = str_replace('"', '\'', $save['script_thold']);
+		$save['script_data']      = str_replace('"', '\'', $save['script_data']);
 
 		if (!is_error_message()) {
-			//Clean metrics cache when expression is modified/saved;
+			/* clean metrics cache when expression is modified/saved */
 			if (!isempty_request_var('id')) {
-				$expr_id = get_request_var('id');
+				$expr_id        = get_request_var('id');
 				$expression_old = get_template_expression_by_id($expr_id);
-				if (isset($_SESSION['sess_gat_expr']['expr_tmpl_' . $expr_id])
-					&& ($expression_old['db_table'] != $save['db_table']
-						|| $expression_old['sql_query'] != $save['sql_query'])) {
+
+				if (isset($_SESSION['sess_gat_expr']['expr_tmpl_' . $expr_id]) &&
+					($expression_old['db_table'] != $save['db_table'] || $expression_old['sql_query'] != $save['sql_query'])) {
 					unset($_SESSION['sess_gat_expr']['expr_tmpl_' . $expr_id]);
 				}
 			}
@@ -683,7 +713,7 @@ function form_save() {
 			if ($expression_id) {
 				raise_message(1);
 
-				template_propagation ('gridalarms_template', $alarm_id);
+				template_propagation('gridalarms_template', $alarm_id);
 
 				db_execute_prepared('UPDATE gridalarms_template
 					SET expression_id = ?
@@ -816,7 +846,7 @@ function form_save() {
 
 			if ($id) {
 				raise_message(1);
-				if (!empty($orig_name) && ($orig_name != $save['name'])){
+				if (!empty($orig_name) && ($orig_name != $save['name'])) {
 					db_execute_prepared('UPDATE gridalarms_expression_input
 						SET name = ?
 						WHERE name = ?
@@ -852,6 +882,11 @@ function form_save() {
 		$save['column_name']   = get_nfilter_request_var('column_name');
 		$save['sortposition']  = get_filter_request_var('sortposition');
 		$save['sortdirection'] = get_filter_request_var('sortdirection');
+		$save['type']          = get_nfilter_request_var('type');
+		$save['units']         = get_nfilter_request_var('units');
+		$save['align']         = get_nfilter_request_var('align');
+		$save['digits']        = get_filter_request_var('digits');
+		$save['autoscale']     = get_filter_request_var('autoscale');
 
 		if (!is_error_message()) {
 			$id = sql_save($save, 'gridalarms_template_layout');
@@ -982,7 +1017,13 @@ function form_save() {
 			// Alert Severity/Priority and Facility
 			$save['syslog_priority']    = get_request_var('alarm_syslog_priority');
 			$save['syslog_facility']    = get_request_var('alarm_syslog_facility');
+
+			// Operator Notes and External ID
+			$save['notes']              = get_request_var('notes');
+			$save['external_id']        = get_request_var('external_id');
 		} else {
+			$save['format_file'] = get_nfilter_request_var('format_file');
+
 			if (trim(get_request_var('email_subject')) == '') {
 				$save['email_subject']  = 'ALERT: <NAME> Breached Threshold Limits';
 			} else {
@@ -1016,14 +1057,14 @@ function form_save() {
 
 		if (isempty_request_var('id')) {
 			$save['email_subject'] = 'ALERT: <NAME> Breached Threshold Limits';
-			$save['email_body']  = 'An Alert has been issued that requires your attention. <br><br><strong><NAME></strong>: has breached threshold limits HI:<HI>/LOW:<LOW> with Current Value:<VALUE><br><DETAILS><br><br>';
+			$save['email_body']    = 'An Alert has been issued that requires your attention. <br><br><strong><NAME></strong>: has breached threshold limits HI:<HI>/LOW:<LOW> with Current Value:<VALUE><br><DETAILS><br><br>';
 		}
 
-		$id = sql_save($save , 'gridalarms_template');
+		$id = sql_save($save, 'gridalarms_template');
 
 		if (get_request_var('tab') == 'actions') {
 			if (isset_request_var('notify_accounts') && trim(get_request_var('notify_accounts')) != '') {
-				alarm_save_contacts ($id, get_request_var('notify_accounts'));
+				alarm_save_contacts($id, get_request_var('notify_accounts'));
 			} else {
 				db_execute_prepared('DELETE FROM gridalarms_template_contacts
 					WHERE alarm_id = ?',
@@ -1066,7 +1107,7 @@ function form_save() {
 			raise_message('gridalarms_alarm_save_nods');
 			header('Location: gridalarms_template_edit.php?header=false&tab=' . get_request_var('tab') . '&id=' . $id);
 			exit;
-		}else {
+		} else {
 			raise_message('gridalarms_alarm_save_nods');
 		}
 
@@ -1176,7 +1217,7 @@ function form_actions() {
 						<p>" . __('Click \'Continue\' to Delete the following Expressions.', 'gridalarms') . "</p>
 						<div class='itemlist'><ul>$gridalarms_expression_list</ul></div>
 					</td>
-				</tr>\n";
+				</tr>";
 
 				$save_html = "<input type='button' value='Cancel' onClick='window.history.back()'>&nbsp;<input type='submit' value='Continue' title='Delete expressions'>";
 			} elseif (get_request_var('drp_action') == '2') { /* Duplicate */
@@ -1186,7 +1227,7 @@ function form_actions() {
 						<div class='itemlist'><ul>$gridalarms_expression_list</ul></div>
 						<p><strong>" . __('Title Format', 'gridalarms') . "</strong><br>"; form_text_box('title_format', '<gridalarms_expression_title> (1)', '', '255', '30', 'text'); print "</p>
 					</td>
-				</tr>\n";
+				</tr>";
 
 				$save_html = "<input type='button' value='" . __esc('Cancel', 'gridalarms') . "' onClick='cactiReturnTo()'>&nbsp;<input type='submit' value='" . __esc('Continue', 'gridalarms') . "' title='" . __esc('Duplicate Expressions', 'gridalarms') . "'>";
 			}
@@ -1260,7 +1301,7 @@ function form_actions() {
 					<p>" . __('Click \'Continue\' to Delete the following Metrics.', 'gridalarms') . "</p>
 					<div class='itemlist'><ul>$metric_list</ul></div>
 				</td>
-			</tr>\n";
+			</tr>";
 		}
 
 		if (!isset($metric_array)) {
@@ -1326,7 +1367,7 @@ function confirm_layout_remove() {
 		<td class='textArea'>
 			<p>" . __('Click \'Continue\' to Delete this Layout Column <b>\'%s\'</b>.', html_escape_request_var('column'), 'gridalarms') . "</p>
 		</td>
-	</tr>\n";
+	</tr>";
 
 	$cancel_url = html_escape('gridalarms_template_edit.php?action=edit&tab=layout&id=' . get_request_var('id'));
 
@@ -1340,7 +1381,7 @@ function confirm_layout_remove() {
 			<input type='hidden' name='confirm_layout_remove' value='1'>
 			$save_html
 		</td>
-	</tr>\n";
+	</tr>";
 
 	html_end_box();
 
@@ -1399,7 +1440,7 @@ function confirm_item_remove() {
 		</tr>";
 
 		html_end_box();
-	} else if (get_request_var('type') == 'input'){
+	} else if (get_request_var('type') == 'input') {
 		html_start_box(__('Custom Data Input Item Remove', 'gridalarms'), '60%', '', '3', 'center', '');
 
 		$name = db_fetch_cell_prepared('SELECT name
@@ -1439,7 +1480,7 @@ function confirm_item_remove() {
 			<td class='textArea'>
 				<p>" . __('Click \'Continue\' to Delete this Data Source Metric <b>\'%s\'</b>.', html_escape($name), 'gridalarms') . "</p>
 			</td>
-		</tr>\n";
+		</tr>";
 
 		$save_html = "<input type='button' value='" . __esc('Cancel', 'gridalarms') . "' onClick='cactiReturnTo(\"$cancel_url\")'>&nbsp;<input type='submit' value='" . __esc('Continue', 'gridalarms') . "' title='" . __esc('Delete Expression Metric', 'grialarms') . "'>";
 
@@ -1474,7 +1515,7 @@ function item_remove() {
 			array(get_request_var('id')));
 
 		template_propagation ("gridalarms_template", get_request_var('alarm_id'));
-	}  else if (isset_request_var('confirm_input_remove')){
+	}  else if (isset_request_var('confirm_input_remove')) {
 		/* ================= input validation ================= */
 		get_filter_request_var('id');
 		get_filter_request_var('expression_id');
@@ -1708,10 +1749,6 @@ function item_edit() {
 	form_save_button('gridalarms_template_edit.php?tab=data&header=false&id=' . get_request_var('alarm_id'));
 }
 
-/* ---------------------
-   Expression Functions
-   --------------------- */
-
 function gridalarms_expression_edit() {
 	global $config, $gridalarms_expression_item_types;
 
@@ -1827,7 +1864,7 @@ function gridalarms_expression_edit() {
 				$i++;
 			}
 		} else {
-			echo "<tr><td colspan='4'><em>" . __('Data Source Items Found', 'gridalarms') . "</em></td></tr>";
+			print "<tr><td colspan='4'><em>" . __('Data Source Items Found', 'gridalarms') . "</em></td></tr>";
 		}
 
 		html_end_box();
@@ -1881,7 +1918,7 @@ function gridalarms_expression_edit() {
 				$i++;
 			}
 		} else {
-			echo "<tr><td colspan='6'><em>" . __('No Metrics Found', 'gridalarms') . "</em></td></tr>";
+			print "<tr><td colspan='6'><em>" . __('No Metrics Found', 'gridalarms') . "</em></td></tr>";
 		}
 
 		html_end_box();
@@ -1942,7 +1979,7 @@ function gridalarms_expression_edit() {
 				$i++;
 			}
 		} else {
-			echo "<tr><td colspan='5'><em>" . __('No Data Input Items Found', 'gridalarms') . "</em></td></tr>";
+			print "<tr><td colspan='5'><em>" . __('No Data Input Items Found', 'gridalarms') . "</em></td></tr>";
 		}
 
 		html_end_box();
@@ -1958,10 +1995,8 @@ function gridalarms_expression_edit() {
 			var type_value = $(this).val();
 			if (type_value != '') {
 				$('#type').val(type_value);
-				$.get('gridalarms_template_edit.php',{'action':'gettables', 'type': type_value}, function(data){
-					$('#db_table').html(data).trigger('change').selectmenu('refresh');
-					// Get first visible option text and update the displayed text
-    				$("#db_table-button .ui-selectmenu-text").text($("#db_table option:selected").text());  
+				$.get('gridalarms_template_edit.php',{'action':'gettables', 'type': type_value}, function(data) {
+					$('select#db_table').empty().html(data);
 				});
 			}
 		});
@@ -2290,7 +2325,7 @@ function gridalarms_metric_edit() {
 			$('#row_db_table_display').hide();
 			$('#row_type').hide();
 			$('#row_type_display').hide();
-		}else if (ds_type == 2) {
+		} else if (ds_type == 2) {
 			$('#row_db_table').hide();
 			$('#row_db_table_display').hide();
 			$('#row_type').hide();
@@ -2302,7 +2337,7 @@ function gridalarms_metric_edit() {
 			$('select#db_table').html('<?php print urlencode('<option>' . __('Please wait ...', 'gridalarms') . '</option>');?>');
 			$('select#db_column').html('<?php print urlencode('<option>' . __('Please wait ...', 'gridalarms') . '</option>');?>');
 			if (type_value != '') {
-				$.get('gridalarms_template_edit.php',{'action':'gettables', 'type': type_value}, function(data){
+				$.get('gridalarms_template_edit.php',{'action':'gettables', 'type': type_value}, function(data) {
 					$('select#db_table').html(data);
 				});
 
@@ -2331,7 +2366,7 @@ function gridalarms_metric_edit() {
 					table_name = 'cdef';
 				}
 
-				$.get('gridalarms_template_edit.php',{'action':'getcolumns', 'db_table':table_name}, function(data){
+				$.get('gridalarms_template_edit.php',{'action':'getcolumns', 'db_table':table_name}, function(data) {
 					$('select#db_column').html(data);
 				});
 			}
@@ -2341,7 +2376,7 @@ function gridalarms_metric_edit() {
 			$('select#db_column').html('<?php print urlencode('<option>' . __('Please wait ...', 'gridalarms') . '</option>');?>');
 			var db_table_value = $(this).val();
 			if (db_table_value != '') {
-				$.get('gridalarms_template_edit.php',{'action':'getcolumns', 'db_table': db_table_value}, function(data){
+				$.get('gridalarms_template_edit.php',{'action':'getcolumns', 'db_table': db_table_value}, function(data) {
 					$('select#db_column').html(data);
 				});
 			}
@@ -2472,7 +2507,7 @@ function gridalarms_display_tabs($current_tab) {
 	}
 
 	/* draw the tabs */
-	print "<div class='tabs'><nav><ul>\n";
+	print "<div class='tabs'><nav><ul>";
 
 	if (cacti_sizeof($tabs)) {
 		foreach (array_keys($tabs) as $tab_short_name) {
@@ -2495,115 +2530,138 @@ function get_metrics_from_cache_by_expression_template_id($expression_id) {
 		$expression_metrics = get_template_metrics_from_expression_by_id($expression_id);
 		$_SESSION['sess_gat_expr']['expr_tmpl_' . $expression_id] = $expression_metrics;
 	}
+
 	return $expression_metrics;
 }
 
 function edit_general_actions() {
-	global $config, $gridalarms_types, $alarm_types, $aggregation, $repeatarray, $alertarray, $timearray, $frequencies;
+	global $config, $gridalarms_types, $alarm_types, $aggregation, $repeatarray, $alertarray, $timearray, $frequencies, $gridalarms_severities;
+
+	$legacy_notification = read_config_option('thold_disable_legacy');
+
+	$not_users = array();
+	$users     = array();
+
+	$selected_users_where     = '';
+	$not_selected_users_where = '';
+	$send_notification_array  = array();
+
+	$users_custom_list = '';
+	$users_list        = '';
+
 	$sql_params = array();
 
-	//Initial alarm-expr-metrics in session
+	/* initial alarm-expr-metrics in session */
 	if (!isset($_SESSION['sess_gat_expr'])){
 		$_SESSION['sess_gat_expr'] = array();
 	}
 
 	if (!isempty_request_var('id')) {
-		if(get_request_var('action') != 'save'){
+		if (get_request_var('action') != 'save') {
 			$alarm_item_data = get_template_by_id(get_request_var('id'));
-
-			//Initial alarm-expr-metrics in session
-			if (!empty($alarm_item_data['expression_id'])
-				&& (!isset($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'], 'gridalarms_templates.php') !== false)){
-				$expr_id = $alarm_item_data['expression_id'];
-				if (isset($_SESSION['sess_gat_expr']['expr_tmpl_' . $expr_id])){
-					unset($_SESSION['sess_gat_expr']['expr_tmpl_' . $expr_id]);
-				}
-			}
 		} else {
-			//TODO: security issue
+			/* ToDo: security issue */
 			$alarm_item_data = $_POST;
 		}
 
-		$selected_users_where = ' AND plugin_thold_contacts.id IN (
-			SELECT contact_id
-			FROM gridalarms_template_contacts
-			WHERE alarm_id = ?)';
+		/* initial alarm-expr-metrics in session */
+		if (!empty($alarm_item_data['expression_id']) &&
+			(!isset($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'], 'gridalarms_templates.php') !== false)) {
+			$expr_id = $alarm_item_data['expression_id'];
 
-		$not_selected_users_where = ' AND plugin_thold_contacts.id NOT IN (
-			SELECT contact_id
-			FROM gridalarms_template_contacts
-			WHERE alarm_id = ?)';
-		$sql_params[] = get_request_var('id');
-	} else {
-		$selected_users_where = '';
-		$not_selected_users_where = '';
+			if (isset($_SESSION['sess_gat_expr']['expr_tmpl_' . $expr_id])){
+				unset($_SESSION['sess_gat_expr']['expr_tmpl_' . $expr_id]);
+			}
+		}
+
+		if ($legacy_notification == '') {
+			$selected_users_where = ' AND plugin_thold_contacts.id IN (
+				SELECT contact_id
+				FROM gridalarms_template_contacts
+				WHERE alarm_id = ?)';
+
+			$not_selected_users_where = ' AND plugin_thold_contacts.id NOT IN (
+				SELECT contact_id
+				FROM gridalarms_template_contacts
+				WHERE alarm_id = ?)';
+
+			$sql_params[] = get_filter_request_var('id');
+		}
 	}
 
-	$send_notification_array = array();
-	$users_custom_list = "<table><tr><td><select id='not_selected_users' size='10' MULTIPLE>";
+	if (!db_column_exists('gridalarms_template', 'format_file')) {
+		db_execute('ALTER TABLE gridalarms_template
+			ADD COLUMN format_file varchar(255) NOT NULL default "" AFTER email_subject');
+	}
 
-	$not_users = db_fetch_assoc_prepared("SELECT DISTINCT plugin_thold_contacts.id, plugin_thold_contacts.data,
-		plugin_thold_contacts.type, user_auth.full_name
-		FROM plugin_thold_contacts, user_auth
-		WHERE user_auth.id=plugin_thold_contacts.user_id
-		AND plugin_thold_contacts.data != ''
-		AND user_auth.full_name != '' $not_selected_users_where
-		ORDER BY user_auth.full_name ASC, plugin_thold_contacts.type ASC", $sql_params);
+	if ($legacy_notification == '') {
+		$send_notification_array = array();
+		$users_custom_list = "<table><tr><td><select id='not_selected_users' size='10' MULTIPLE>";
 
-	if ($selected_users_where != '') {
-		$users = db_fetch_assoc_prepared("SELECT DISTINCT plugin_thold_contacts.id, plugin_thold_contacts.data,
+		$not_users = db_fetch_assoc_prepared("SELECT DISTINCT plugin_thold_contacts.id, plugin_thold_contacts.data,
 			plugin_thold_contacts.type, user_auth.full_name
 			FROM plugin_thold_contacts, user_auth
-			WHERE user_auth.id=plugin_thold_contacts.user_id
-			AND plugin_thold_contacts.data!=''
-			AND user_auth.full_name != ''
-			$selected_users_where
+			WHERE user_auth.id = plugin_thold_contacts.user_id
+			AND plugin_thold_contacts.data != ''
+			AND user_auth.full_name != '' $not_selected_users_where
 			ORDER BY user_auth.full_name ASC, plugin_thold_contacts.type ASC", $sql_params);
-	} else {
-		$users = array();
-	}
 
-	if (!empty($not_users)) {
-		foreach ($not_users as $not_user) {
-			$send_notification_array[$not_user['id']] = $not_user['full_name'] . ' - ' . ucfirst($not_user['type']);
-			$users_custom_list .= "<option value='". $not_user['id'] . "'>" . resource_sanitize_search_string($not_user['full_name']) . " - " . ucfirst($not_user['type']) . " </option>";
+		if ($selected_users_where != '') {
+			$users = db_fetch_assoc_prepared("SELECT DISTINCT plugin_thold_contacts.id, plugin_thold_contacts.data,
+				plugin_thold_contacts.type, user_auth.full_name
+				FROM plugin_thold_contacts, user_auth
+				WHERE user_auth.id = plugin_thold_contacts.user_id
+				AND plugin_thold_contacts.data != ''
+				AND user_auth.full_name != ''
+				$selected_users_where
+				ORDER BY user_auth.full_name ASC, plugin_thold_contacts.type ASC", $sql_params);
 		}
-	}
 
-	$users_custom_list .="</select></td>
-		<td>
-			<input type='button' name='Append' id='Append' value='Append >>' onclick='appendSelected(1);' /></br>
-			<input type='button' name='Remove' id='Remove' value='<< Remove' onclick='appendSelected(2)' />
-		</td>
-		<td>
-			<select id='selected_users' name='selected_users' size='10' MULTIPLE>";
-
-	$users_list = '';
-
-	if (!empty($users)) {
-		foreach ($users as $users) {
-			$send_notification_array[$users['id']] = $users['full_name'] . ' - ' . ucfirst($users['type']);
-			$users_custom_list .= "<option value='". $users['id'] . "'>" . resource_sanitize_search_string($users['full_name']) . " - " . ucfirst($users['type']) . " </option>";
-			$users_list .= $users['id'] . ' ';
+		if (cacti_sizeof($not_users)) {
+			foreach ($not_users as $not_user) {
+				$send_notification_array[$not_user['id']] = $not_user['full_name'] . ' - ' . ucfirst($not_user['type']);
+				$users_custom_list .= "<option value='". $not_user['id'] . "'>" . resource_sanitize_search_string($not_user['full_name']) . " - " . ucfirst($not_user['type']) . " </option>";
+			}
 		}
-	}
 
-	$users_custom_list .= '</select></td></tr></table>';
+		$users_custom_list .="</select></td>
+			<td>
+				<input type='button' name='Append' id='Append' value='Append >>' onclick='appendSelected(1);' /></br>
+				<input type='button' name='Remove' id='Remove' value='<< Remove' onclick='appendSelected(2)' />
+			</td>
+			<td>
+				<select id='selected_users' name='selected_users' size='10' MULTIPLE>";
+
+		$users_list = '';
+
+		if (!empty($users)) {
+			foreach ($users as $users) {
+				$send_notification_array[$users['id']] = $users['full_name'] . ' - ' . ucfirst($users['type']);
+				$users_custom_list .= "<option value='". $users['id'] . "'>" . resource_sanitize_search_string($users['full_name']) . " - " . ucfirst($users['type']) . " </option>";
+				$users_list .= $users['id'] . ' ';
+			}
+		}
+
+		$users_custom_list .= '</select></td></tr></table>';
+	}
 
 	/* set to expression id if defined, otherwise, leave unset */
 	$expression_id      = '';
 	$expression_metrics = array();
 	$expression_desc    = '';
 	$expression_ds      = -1;
+
 	if (!empty($alarm_item_data['expression_id'])) {
 		$expression_id   = $alarm_item_data['expression_id'];
 		$expression      = get_template_expression_by_id($alarm_item_data['expression_id']);
 		$expression_desc = $expression['name'];
 		$expression_ds   = $expression['ds_type'];
-		//Query metrics for 'non-Script-DS'(PDB#235497) under 'General' tab
-		if($expression_ds != 2 && get_request_var('tab') == 'general'){
-			$expression_metrics = get_metrics_from_cache_by_expression_template_id($expression_id);
-		}
+
+		$st = microtime(true);
+		$expression_metrics = get_metrics_from_cache_by_expression_template_id($expression_id);
+		$et = microtime(true);
+
+		cacti_log(sprintf('Template Edit Timing %0.2f', $et-$st), false, 'GRIDALARMS', POLLER_VERBOSITY_MEDIUM);
 	}
 
 	if (isset($alarm_item_data['notify_cluster_admin']) && $alarm_item_data['notify_cluster_admin'] == 1) {
@@ -2612,7 +2670,11 @@ function edit_general_actions() {
 		$notify_cluster_admin = '';
 	}
 
-	if (function_exists('define_syslog_variables')) define_syslog_variables();
+	$formats = reports_get_format_files();
+
+	if (function_exists('define_syslog_variables')) {
+		define_syslog_variables();
+	}
 
 	$general_array = array(
 		'general_header' => array(
@@ -2633,7 +2695,7 @@ function edit_general_actions() {
 			'description' => __('Assign a severity to the Alert Template.', 'gridalarms'),
 			'method' => 'drop_array',
 			'default' => read_config_option('gridalarm_severity'),
-			'array' => array(LOG_EMERG => 'Emergency', LOG_ALERT => 'Alert', LOG_CRIT => 'Critical', LOG_ERR => 'Error', LOG_WARNING => 'Warning', LOG_NOTICE => 'Notice', LOG_INFO => 'Info', LOG_DEBUG => 'Debug'),
+			'array' => $gridalarms_severities,
 			'value' => isset($alarm_item_data['syslog_priority']) ? $alarm_item_data['syslog_priority'] : ''
 		),
 		'clusterid' => array(
@@ -2803,11 +2865,29 @@ function edit_general_actions() {
 			'method' => 'hidden',
 			'default' => read_config_option('gridalarm_facility'),
 			'value' => isset($alarm_item_data['syslog_facility']) ? $alarm_item_data['syslog_facility'] : ''
+		),
+		'external_id' => array(
+			'friendly_name' => __('External ID', 'gridalarms'),
+			'method' => 'textbox',
+			'max_length' => 20,
+			'size' => 20,
+			'default' => '',
+			'description' => __('An External ID used to classify this Alert Template.', 'gridalarms'),
+			'value' => isset($alarm_item_data['external_id']) ? $alarm_item_data['external_id'] : ''
+		),
+		'notes' => array(
+			'friendly_name' => __('Operator Notes', 'gridalarms'),
+			'description' => __('Enter instructions here for an operator who may be receiving the Alert message.', 'gridalarms'),
+			'method' => 'textarea',
+			'class' => 'textAreaNotes',
+			'textarea_rows' => '4',
+			'textarea_cols' => '60',
+			'value' => isset($alarm_item_data['notes']) ? $alarm_item_data['notes'] : ''
 		)
 	);
 
 	/*fix problem 235497 undefined index*/
-	if($expression_ds==2){
+	if ($expression_ds == 2) {
 		unset($general_array['metric']);
 	}
 
@@ -2833,6 +2913,14 @@ function edit_general_actions() {
 			'textarea_cols' => '60',
 			'value' => isset($alarm_item_data['email_body']) ? $alarm_item_data['email_body'] : 'An Alert has been issued that requires your attention. <br><br><strong><NAME></strong>: has breached threshold limits HI:<HI>/LOW:<LOW> with Current Value:<VALUE><br><DETAILS><br><br>'
 		),
+		'format_file' => array(
+			'friendly_name' => __('Style/Format File', 'thold'),
+			'method' => 'drop_array',
+			'default' => 'default.format',
+			'description' => __('Choose the custom html wrapper and CSS file to use.  This file contains both html and CSS to wrap around your report.  If it contains more than simply CSS, you need to place a special <REPORT> tag inside of the file.  This format tag will be replaced by the report content.  These files are located in the \'formats\' directory.', 'thold'),
+			'value' => '|arg1:format_file|',
+			'array' => $formats,
+		)
 	);
 
 	$actions_array += array(
@@ -2863,7 +2951,7 @@ function edit_general_actions() {
         )
 	);
 
-	if (read_config_option('gridalarm_disable_legacy') == '') {
+	if ($legacy_notification == '') {
 		$actions_array += array(
 			'users' => array(
 				'friendly_name' => __('Notify Accounts', 'gridalarms'),
@@ -2994,7 +3082,7 @@ function edit_general_actions() {
 			$('select#metric').html('<option>' + pleaseWait + '</option>');
 			var expression_id = $(this).val();
 			if (expression_id != '') {
-				$.get('gridalarms_template_edit.php',{'action':'getmetrics', 'expression_id':expression_id}, function(data){
+				$.get('gridalarms_template_edit.php',{'action':'getmetrics', 'expression_id':expression_id}, function(data) {
 					$('select#metric').html(data);
 				});
 			}
@@ -3033,14 +3121,53 @@ function layout_edit() {
 	html_start_box($atrl_caption_tip, '100%', '', '3', 'center', 'gridalarms_template_edit.php?action=layout_add&id=' . get_request_var('id'));
 
 	$display_text = array(
-		__('Item Number', 'gridalarms'),
-		__('Display Name', 'gridalarms'),
-		__('Column Name', 'gridalarms'),
-		__('Sort Column', 'gridalarms'),
-		__('Sort Order', 'gridalarms')
+		array(
+			'display' => __('Item Number', 'gridalarms'),
+			'align' => 'left'
+		),
+		array(
+			'display' => __('Display Name', 'gridalarms'),
+			'align' => 'left'
+		),
+		array(
+			'display' => __('Column Name', 'gridalarms'),
+			'align' => 'left'
+		),
+		array(
+			'display' => __('Type', 'gridalarms'),
+			'align' => 'left'
+		),
+		array(
+			'display' => __('Align', 'gridalarms'),
+			'align' => 'left'
+		),
+		array(
+			'display' => __('Units', 'gridalarms'),
+			'align' => 'left'
+		),
+		array(
+			'display' => __('Round Value', 'gridalarms'),
+			'align' => 'left'
+		),
+		array(
+			'display' => __('Auto Scale', 'gridalarms'),
+			'align' => 'left'
+		),
+		array(
+			'display' => __('Sort Column', 'gridalarms'),
+			'align' => 'left'
+		),
+		array(
+			'display' => __('Sort Order', 'gridalarms'),
+			'align' => 'left'
+		),
+		array(
+			'display' => __('Actions', 'gridlarms'),
+			'align' => 'right'
+		)
 	);
 
-	html_header($display_text, 2);
+	html_header($display_text, 1);
 
 	$items = db_fetch_assoc_prepared('SELECT *
 		FROM gridalarms_template_layout
@@ -3062,28 +3189,52 @@ function layout_edit() {
 	$total_items = cacti_sizeof($items);
 	if ($total_items) {
 		foreach ($items as $item) {
-			form_alternate_row();
+			form_alternate_row('line' . $item['id']);
+
+			if ($item['align'] == '') {
+				$item['align'] = 'left';
+			}
+
+			if ($item['type'] == '') {
+				$item['type'] = 'general';
+			}
 
 			form_selectable_cell(filter_value(__('Item #%d', $i, 'gridalarms'), '', 'gridalarms_template_edit.php?action=layout_edit&id=' . get_request_var('id') . '&column=' . $item['column_name']), $item['id']);
 			form_selectable_cell('<em>' . html_escape($item['display_name']) . '</em>', $item['id']);
 			form_selectable_cell(html_escape($item['column_name']), $item['id']);
-			form_selectable_cell($item['sortposition'] > 0 ? html_escape($item['sortposition']) : __('N/A', 'gridalarms'), $item['id']);
-			form_selectable_cell($item['sortposition'] > 0 ? ($item['sortdirection'] == 0 ? __('Ascending', 'gridalarms'):__('Descending', 'gridalarms')):__('N/A', 'gridalarms'), $item['id']);
+			form_selectable_cell(ucwords($item['type']), $item['id']);
+			form_selectable_cell(ucwords($item['align']), $item['id']);
+
+			if ($item['type'] == 'integer' || $item['type'] == 'double' || $item['type'] == 'general') {
+				form_selectable_cell(ucwords($item['units']), $item['id']);
+				form_selectable_cell($item['digits'] >= 0 ? $item['digits']:__('Auto', 'gridalarms'), $item['id'], '', 'left');
+				form_selectable_cell($item['autoscale'] == 0 ? __('Yes', 'gridalarms'):__('No', 'gridalarms'), $item['id'], '', 'left');
+			} else {
+				form_selectable_cell(__('-', 'gridalarms'), $item['id']);
+				form_selectable_cell(__('-', 'gridalarms'), $item['id'], '', 'left');
+				form_selectable_cell(__('-', 'gridalarms'), $item['id'], '', 'left');
+			}
+
+			form_selectable_cell($item['sortposition'] > 0 ? html_escape($item['sortposition']) : __('-', 'gridalarms'), $item['id'], '', 'left');
+			form_selectable_cell($item['sortposition'] > 0 ? ($item['sortdirection'] == 0 ? __('Ascending', 'gridalarms'):__('Descending', 'gridalarms')):__('-', 'gridalarms'), $item['id'], '', 'left');
 
 			$move = '';
-			if ($i < $total_items) {
-				$move .= "<a class='pic fa fa-caret-down moveArrow' href='" . html_escape('gridalarms_template_edit.php?action=layout_movedown&id=' . get_request_var('id') . '&column=' . $item['column_name']) . "'></a>";
-			} else {
-				$move .= '<span class="moveArrowNone"></span>';
+
+			if (read_config_option('drag_and_drop') != 'on') {
+				if ($i < $total_items) {
+					$move .= "<a class='pic' href='" . html_escape('gridalarms_template_edit.php?action=layout_movedown&id=' . get_request_var('id') . '&column=' . $item['column_name']) . "'><i class='fa fa-caret-down moveArrow'></i></a>";
+				} else {
+					$move .= '<i class="moveArrowNone"></i>';
+				}
+
+				if ($i > 1 && $i <= $total_items) {
+					$move .= "<a class='pic' href='" . html_escape('gridalarms_template_edit.php?action=layout_moveup&id=' . get_request_var('id') . '&column=' . $item['column_name']) . "'><i class='fa fa-caret-up moveArrow'></i></a>";
+				} else {
+					$move .= '<i class="moveArrowNone"></i>';
+				}
 			}
 
-			if ($i > 1 && $i <= $total_items) {
-				$move .= "<a class='pic fa fa-caret-up moveArrow' href='" . html_escape('gridalarms_template_edit.php?action=layout_moveup&id=' . get_request_var('id') . '&column=' . $item['column_name']) . "'></a>";
-			} else {
-				$move .= '<span class="moveArrowNone"></span>';
-			}
-
-			$move .= "<a class='pic fa fa-times deleteMarker' href='" . html_escape('gridalarms_template_edit.php?action=layout_remove&id=' . get_request_var('id') . '&column=' . $item['column_name']) . "'></a>";
+			$move .= "<a class='pic' href='" . html_escape('gridalarms_template_edit.php?action=layout_remove&id=' . get_request_var('id') . '&column=' . $item['column_name']) . "'><i class='fa fa-times deleteMarker'></i></a>";
 
 			form_selectable_cell($move, $item['id'], '', 'right');
 
@@ -3092,10 +3243,54 @@ function layout_edit() {
 			$i++;
 		}
 	} else {
-		echo "<tr><td colspan='5'><em>" . __('No Columns Found', 'gridalarms') . "</em></td></tr>\n";
+		print "<tr><td colspan='5'><em>" . __('No Columns Found', 'gridalarms') . "</em></td></tr>";
 	}
 
 	html_end_box();
+
+	if (read_config_option('drag_and_drop') == 'on') { ?>
+	<script type='text/javascript'>
+	$(function() {
+		$('#gridalarms_template_edit_edit1_child').attr('id', 'layout').find('tr:first-child').addClass('nodrag');
+		$('#layout').tableDnD({
+			onDrop: function(table, row) {
+				loadPageNoHeader('gridalarms_template_edit.php?action=ajax_dnd&id=<?php isset_request_var('id') ? print get_request_var('id') : print 0;?>&'+$.tableDnD.serialize());
+			}
+		});
+	});
+	</script>
+	<?php }
+}
+
+function layout_dnd() {
+	/* ================= Input validation ================= */
+	get_filter_request_var('id');
+	/* ================= Input validation ================= */
+
+	$continue = true;
+
+	if (isset_request_var('layout') && is_array(get_nfilter_request_var('layout'))) {
+		$layouts = get_nfilter_request_var('layout');
+
+		if (cacti_sizeof($layouts)) {
+			$sequence = 1;
+			foreach($layouts as $layout) {
+				$layout = str_replace('line', '', $layout);
+
+				input_validate_input_number($layout);
+
+				db_execute_prepared('UPDATE gridalarms_template_layout
+					SET sequence = ?
+					WHERE id = ?
+					AND alarm_id = ?',
+					array($sequence, $layout, get_request_var('id')));
+
+				$sequence++;
+			}
+		}
+	}
+
+	header('Location: gridalarms_template_edit.php?action=edit&tab=layout&header=false&id=' . get_request_var('id'));
 }
 
 function layout_movedown() {
@@ -3196,8 +3391,6 @@ function layout_remove() {
 }
 
 function layout_item_edit($new = false) {
-	global $cdef_item_types, $cdef_functions, $cdef_operators, $custom_data_source_types;
-
 	/* ================= input validation ================= */
 	get_filter_request_var('id');
 	/* ==================================================== */
@@ -3210,14 +3403,23 @@ function layout_item_edit($new = false) {
 			array(get_request_var('column'), get_request_var('id')));
 	} else {
 		$columns = array_rekey(
-			db_fetch_assoc_prepared("SELECT column_name
+			db_fetch_assoc_prepared('SELECT column_name
 				FROM gridalarms_template_layout
-				WHERE alarm_id = ?",
+				WHERE alarm_id = ?',
 				array(get_request_var('id'))),
 			'column_name', 'column_name'
 		);
 
-		$available_columns = get_template_metrics_from_expression_by_alarm_id(get_request_var('id'));
+		$expression = get_template_expression_by_alarm_id(get_request_var('id'));
+
+		if ($expression['ds_type'] == 0) {
+			$available_columns = get_table_columns($expression['db_table']);
+		} elseif (isset($_SESSION['gridalarms_layout_cols_' . get_request_var('id')])) {
+			$available_columns = $_SESSION['gridalarms_layout_cols_' . get_request_var('id')];
+		} else {
+			$available_columns = get_columns_from_sql($expression['sql_query'], 'template', get_request_var('id'));
+			$_SESSION['gridalarms_layout_cols_' . get_request_var('id')] = $available_columns;;
+		}
 
 		if (isset($available_columns['clusterid'])) {
 			$available_columns['clustername'] = 'clustername';
@@ -3241,6 +3443,11 @@ function layout_item_edit($new = false) {
 	html_start_box(__('Layout Item', 'gridalarms'), '100%', '', '3', 'center', '');
 
 	$layout_items_array = array(
+		'spacer0' => array(
+			'method' => 'spacer',
+			'friendly_name' => __('General Settings', 'gridalarms'),
+			'collapsible' => false
+		),
 		'display_name' => array(
 			'friendly_name' => __('Display Name', 'gridalarms'),
 			'method' => 'textbox',
@@ -3276,6 +3483,88 @@ function layout_item_edit($new = false) {
 	}
 
 	$layout_items_array += array(
+		'spacer1' => array(
+			'method' => 'spacer',
+			'friendly_name' => __('Display/Alignment Settings', 'gridalarms'),
+			'collapsible' => true
+		),
+		'type' => array(
+			'friendly_name' => __('Column Type', 'gridalarms'),
+			'method' => 'drop_array',
+			'array' => array(
+				'general'  => __('General', 'gridalarms'),
+				'string'   => __('String', 'gridalarms'),
+				'integer'  => __('Integer', 'gridalarms'),
+				'double'   => __('Double', 'gridalarms'),
+				'fpercent' => __('Percent Fractional (1 = 100%%)', 'gridalarms'),
+				'wpercent' => __('Percent Whole (100 = 100%%)', 'gridalarms'),
+				'date'     => __('Date', 'gridalarms'),
+			),
+			'description' => __('Select the Column Type.  When doing so Grid Alerts will provide additional options for formatting.', 'gridalarms'),
+			'value' => isset($layout['type'] ) ? $layout['type']  : ''
+		),
+		'units' => array(
+			'friendly_name' => __('Display Units', 'gridalarms'),
+			'method' => 'drop_array',
+			'array' => array(
+				'none'    => __('None', 'gridalarms'),
+				'bytes'   => __('Bytes', 'gridalarms'),
+				'kbytes'  => __('Kilo Bytes', 'gridalarms'),
+				'mbytes'  => __('Mega Bytes', 'gridalarms'),
+				'gbytes'  => __('Giga Bytes', 'gridalarms'),
+				'tbytes'  => __('Tera Bytes', 'gridalarms'),
+				'pbytes'  => __('Peta Bytes', 'gridalarms'),
+				'xbytes'  => __('Exa Bytes', 'gridalarms'),
+				'jobs'    => __('Jobs', 'gridalarms'),
+				'slots'   => __('Slots', 'gridalarms'),
+				'seconds' => __('Seconds', 'gridalarms'),
+				'minutes' => __('Minutes', 'gridalarms'),
+				'hours'   => __('Hours', 'gridalarms'),
+				'days'    => __('Days', 'gridalarms'),
+			),
+			'description' => __('Select the number of unit type to assist in formatting the output of the Column.', 'gridalarms'),
+			'value' => isset($layout['units']) ? $layout['units']: 'none'
+		),
+		'align' => array(
+			'friendly_name' => __('Column Alignment', 'gridalarms'),
+			'method' => 'drop_array',
+			'array' => array(
+				'left'   => __('Left', 'gridalarms'),
+				'right'  => __('Right', 'gridlarms'),
+				'center' => __('Center', 'gridalarms'),
+			),
+			'description' => __('Select the desired alignment for this Column.', 'gridalarms'),
+			'value' => isset($layout['align']) ? $layout['align']: 'left'
+		),
+		'digits' => array(
+			'friendly_name' => __('Significant Digits', 'gridalarms'),
+			'method' => 'drop_array',
+			'array' => array(
+				'-1' => __('Auto', 'gridalarms'),
+				'0'  => __('%s Digits', 0, 'gridalarms'),
+				'1'  => __('%s Digits', 1, 'gridlarms'),
+				'2'  => __('%s Digits', 2, 'gridalarms'),
+				'3'  => __('%s Digits', 3, 'gridalarms'),
+				'4'  => __('%s Digits', 4, 'gridalarms'),
+			),
+			'description' => __('Select the number of of Significant Digits for numeric display formats.', 'gridalarms'),
+			'value' => isset($layout['digits']) ? $layout['digits']: '0'
+		),
+		'autoscale' => array(
+			'friendly_name' => __('Auto Scale', 'gridalarms'),
+			'method' => 'drop_array',
+			'array' => array(
+				'0'  => __('Yes', 'gridalarms'),
+				'1'  => __('No', 'gridlarms'),
+			),
+			'description' => __('Select the if you wish to Autoscale the numeric data from its base unit.', 'gridalarms'),
+			'value' => isset($layout['autoscale']) ? $layout['autoscale']: '0'
+		),
+		'spacer2' => array(
+			'method' => 'spacer',
+			'friendly_name' => __('Sort Settings', 'gridalarms'),
+			'collapsible' => true
+		),
 		'sortposition' => array(
 			'friendly_name' => __('Sort Order', 'gridalarms'),
 			'method' => 'drop_array',
@@ -3317,4 +3606,41 @@ function layout_item_edit($new = false) {
 	html_end_box();
 
 	form_save_button('gridalarms_template_edit.php?tab=layout&id=' . get_request_var('id'));
+
+	?>
+	<script type='text/javascript'>
+	$(function() {
+		$('#type').change(function() {
+			changeType();
+		});
+
+		changeType();
+	});
+
+	function changeType() {
+		switch ($('#type').val()) {
+			case 'general':
+			case 'date':
+			case '':
+			case 'integer':
+			case 'double':
+				$('#row_units').show();
+				$('#row_digits').show();
+				$('#row_autoscale').show();
+				break;
+			case 'fpercent':
+			case 'wpercent':
+				$('#row_units').hide();
+				$('#row_digits').show();
+				$('#row_autoscale').show();
+				break;
+			case 'string':
+				$('#row_units').hide();
+				$('#row_digits').hide();
+				$('#row_autoscale').hide();
+				break;
+		}
+	}
+	</script>
+	<?php
 }

@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright IBM Corp. 2006, 2025                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -27,10 +27,6 @@ function gridalarms_notify_list_tabs($tabs) {
 	return $tabs;
 }
 
-/* ------------------------
-    The 'actions' function
-   ------------------------ */
-
 function gridalarms_notify_list_save($save) {
 	global $actions, $assoc_actions;
 
@@ -53,7 +49,7 @@ function gridalarms_notify_list_save($save) {
 							WHERE id = ?',
 							array(get_request_var('id'), $selected_items[$i]));
 					}
-				}elseif (get_request_var('drp_action') == '2') { /* disassociate */
+				} elseif (get_request_var('drp_action') == '2') { /* disassociate */
 					for ($i=0;($i<count($selected_items));$i++) {
 						/* ================= input validation ================= */
 						input_validate_input_number($selected_items[$i]);
@@ -72,7 +68,7 @@ function gridalarms_notify_list_save($save) {
 			header('Location: notify_lists.php?action=edit&header=false&tab=alerts&id=' . get_request_var('id'));
 
 			exit;
-		}elseif (isset_request_var('save_atemplates')) {
+		} elseif (isset_request_var('save_atemplates')) {
 			$selected_items = sanitize_unserialize_selected_items(get_request_var('selected_items'));
 			input_validate_input_number(get_request_var('notification_action'));
 
@@ -89,7 +85,7 @@ function gridalarms_notify_list_save($save) {
 							WHERE id = ?',
 							array(get_request_var('id'), $selected_items[$i]));
 					}
-				}elseif (get_request_var('drp_action') == '2') { /* disassociate */
+				} elseif (get_request_var('drp_action') == '2') { /* disassociate */
 					for ($i=0;($i<count($selected_items));$i++) {
 						/* ================= input validation ================= */
 						input_validate_input_number($selected_items[$i]);
@@ -159,7 +155,7 @@ function gridalarms_notify_list_form_confirm($save) {
 				</tr>\n";
 
 				$save_html = "<input type='button' value='" . __esc('Cancel', 'gridalarms') . "' onClick='cactiReturnTo()'>&nbsp;<input type='submit' value='" . __esc('Continue', 'gridalarms') . "' title='" . __esc('Associate Notification Lists', 'gridalarms') . "'>";
-			}elseif (get_request_var('drp_action') == '2') { /* disassociate */
+			} elseif (get_request_var('drp_action') == '2') { /* disassociate */
 				print "<tr>
 					<td class='textArea'>
 						<p>" . __('Click \'Continue\' to Disassociate the Alerts below from the Notification List \'<b>%s</b>\'.', html_escape($list_name), 'gridalarms') . "</p>
@@ -187,7 +183,7 @@ function gridalarms_notify_list_form_confirm($save) {
 		</tr>";
 
 		html_end_box();
-	}elseif (isset_request_var('save_atemplates')) {
+	} elseif (isset_request_var('save_atemplates')) {
 		/* loop through each of the notification lists selected on the previous page and get more info about them */
 		foreach ($_POST as $var => $val) {
 			if (preg_match("/^chk_([0-9]+)$/", $var, $matches)) {
@@ -217,7 +213,7 @@ function gridalarms_notify_list_form_confirm($save) {
 				</tr>\n";
 
 				$save_html = "<input type='button' value='" . __esc('Cancel', 'gridalarms') . "' onClick='cactiReturnTo()'>&nbsp;<input type='submit' value='" . __esc('Continue', 'gridalarms') . "' title='" . __esc('Associate Notification Lists', 'gridalarms') . "'>";
-			}elseif (get_request_var('drp_action') == '2') { /* disassociate */
+			} elseif (get_request_var('drp_action') == '2') { /* disassociate */
 				print "<tr>
 					<td class='textArea'>
 						<p>" . __('Click \'Continue\' to Disassociate the Alert Templates below from the Notification List \'<b>%s</b>\'.', html_escape($list_name), 'gridalarms') . "</p>
@@ -264,7 +260,7 @@ function gridalarms_notify_list_display($save) {
 
 	if ($current_tab == 'alerts') {
 		alerts($header_label);
-	}elseif ($current_tab == 'atemplates') {
+	} elseif ($current_tab == 'atemplates') {
 		atemplates($header_label);
 	}
 	return $save;
@@ -372,7 +368,7 @@ function alerts($header_label) {
 							<option value='-1'><?php print __('Any', 'gridalarms');?></option>
 							<?php
 							foreach ($alarm_templates as $row) {
-								echo "<option value='" . $row['id'] . "'" . (isset_request_var('template') && $row['id'] == get_request_var('template') ? ' selected' : '') . '>' . html_escape($row['name']) . '</option>';
+								print "<option value='" . $row['id'] . "'" . (isset_request_var('template') && $row['id'] == get_request_var('template') ? ' selected' : '') . '>' . html_escape($row['name']) . '</option>';
 							}
 							?>
 						</select>
@@ -480,7 +476,7 @@ function alerts($header_label) {
 			if (!empty($row['notify_alert'])) {
 				if (get_request_var('id') == $row['notify_alert']) {
 					$alert_stat .= (strlen($alert_stat) ? ', ':'') . "<span class='deviceUp'>" . __('Current List', 'gridalarms') . "</span>";
-				}else{
+				} else {
 					$alert_info = db_fetch_cell_prepared('SELECT name
 						FROM plugin_notification_lists
 						WHERE id = ?',
@@ -500,7 +496,7 @@ function alerts($header_label) {
 
 			if ($row['name'] != '') {
 				$name = $row['name'];
-			}else{
+			} else {
 				$name = $row['name'] . ' [' . $row['data_source_name'] . ']';
 			}
 
@@ -679,7 +675,7 @@ function atemplates($header_label) {
 			if (!empty($row['notify_alert'])) {
 				if (get_request_var('id') == $row['notify_alert']) {
 					$alert_stat .= (strlen($alert_stat) ? ', ':'') . "<span class='deviceUp'>" . __('Current List', 'gridalarms') . '</span>';
-				}else{
+				} else {
 					$alert_info = db_fetch_cell_prepared('SELECT name
 						FROM plugin_notification_lists
 						WHERE id = ?',
