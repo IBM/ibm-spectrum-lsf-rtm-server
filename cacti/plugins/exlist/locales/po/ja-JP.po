@@ -1,0 +1,161 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: developers@cacti.net\n"
+"POT-Creation-Date: 2024-10-03 18:53-0400\n"
+"PO-Revision-Date: 2024-10-03 18:10-0400\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ja_JP\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.4\n"
+
+#: exlists.php:29
+msgid "Delete"
+msgstr "削除"
+
+#: exlists.php:154
+msgid "Cancel"
+msgstr "取り消し"
+
+#: exlists.php:154
+msgid "Continue"
+msgstr "続ける"
+
+#: exlists.php:182
+#, php-format
+msgid "Exception Filter [edit: %s]"
+msgstr "例外フィルター[編集:%s]"
+
+#: exlists.php:184
+msgid "Exception Filter [new]"
+msgstr "例外フィルター [新規]"
+
+#: exlists.php:220
+msgid "Filter Name"
+msgstr "絞り込み検索名"
+
+#: exlists.php:221
+msgid "Name this filter.  It will appear as both the dropdown and Legend value"
+msgstr "このフィルターに名前を付けます。 ドロップダウンと凡例の値の両方として表示されます"
+
+#: exlists.php:228
+msgid "Enable Filter"
+msgstr "フィルターを有効化"
+
+#: exlists.php:229
+msgid "When checked this Exception Filter will be enabled."
+msgstr "チェックすると、この例外フィルターが有効になります。"
+
+#: exlists.php:235
+msgid "Database SQL Where"
+msgstr "データベース SQL ここで"
+
+#: exlists.php:236
+msgid "The SQL Where Clause to use for the Exception list.  For example <b>\"max_memory>65000000 AND num_cpus>20\"</b>. The Exceoption Filter is combined with all other Filters on the Job details page."
+msgstr "例外リストに使用する SQL の Where 句。 たとえば <b>、「max_memory>65000000 AND num_cpus>20」</b>です。Exceoptionフィルターは、ジョブの詳細ページで他のすべてのフィルターと組み合わされます。"
+
+#: exlists.php:252
+msgid "Select Column name to Append to SQL Where"
+msgstr "SQL に追加する列名を選択 Where"
+
+#: exlists.php:286 exlists.php:288 exlists.php:291 exlists.php:297
+#: exlists.php:299
+msgid "Check SQL Syntax"
+msgstr "SQL 構文のチェック"
+
+#: exlists.php:369
+msgid "Job Detail Exception Lists"
+msgstr "ジョブ詳細例外リスト"
+
+#: exlists.php:378
+msgid "Search"
+msgstr "検索"
+
+#: exlists.php:384
+msgid "Rows"
+msgstr "行"
+
+#: exlists.php:388
+msgid "Default"
+msgstr "デフォルト"
+
+#: exlists.php:399
+msgid "Go"
+msgstr "Go"
+
+#: exlists.php:399
+msgid "Set/Refresh Filters"
+msgstr "フィルターの設定/更新"
+
+#: exlists.php:402
+msgid "Clear"
+msgstr "クリア"
+
+#: exlists.php:402
+msgid "Clear Filters"
+msgstr "絞り込み条件を解除する"
+
+#: exlists.php:435
+msgid "List Name"
+msgstr "リスト名"
+
+#: exlists.php:439
+msgid "Enabled"
+msgstr "有効"
+
+#: exlists.php:443
+msgid "SQL Where"
+msgstr "SQLここで"
+
+#: exlists.php:448
+msgid "Filters"
+msgstr "フィルター"
+
+#: exlists.php:463
+msgid "No"
+msgstr "いいえ"
+
+#: exlists.php:463
+msgid "Yes"
+msgstr "はい"
+
+#: exlists.php:469
+msgid "No Job Detail Exception Filters Found"
+msgstr "ジョブ詳細例外フィルターが見つかりません"
+
+#: setup.php:146
+msgid "Data Collection"
+msgstr "サーベイ"
+
+#: setup.php:147
+msgid "Clusters"
+msgstr "クラスター"
+
+#: setup.php:147
+msgid "Custom Job Filters"
+msgstr "カスタムジョブフィルター"
+
+#: setup.php:158 setup.php:163
+msgid "Undefined"
+msgstr "未定義"
+
+#: setup.php:180
+msgid "Job Detail Exception Filters"
+msgstr "ジョブ詳細例外フィルター"
+
+#: setup.php:187
+msgid "(edit)"
+msgstr "(編集)"
+
+#: setup.php:194
+#, fuzzy
+msgid "(actions)"
+msgstr "操作"
