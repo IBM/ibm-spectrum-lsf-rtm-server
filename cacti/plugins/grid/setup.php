@@ -126,7 +126,10 @@ function plugin_grid_install() {
 	api_plugin_register_realm('grid', 'grid_bapps.php', 'LSF Application Data', 1);
 	api_plugin_register_realm('grid', 'grid_bjgroups.php', 'LSF Job Group Data', 1);
 	api_plugin_register_realm('grid', 'grid_queue_distrib.php', 'LSF Queue Distribution', 0);
-	api_plugin_register_realm('grid', 'grid_manage_hosts.php,grid_utilities.php,grid_elim_graphs.php,grid_elim_templates.php,grid_clusters.php,grid_settings_system.php,grid_pollers.php', 'LSF Administration', 1);
+	api_plugin_register_realm('grid', 'grid_manage_hosts.php,grid_utilities.php,grid_clusters.php,grid_settings_system.php,grid_pollers.php,grid_resreq.php', 'LSF Administration', 1);
+	api_plugin_register_realm('grid', 'grid_elim_graphs.php,grid_elim_templates.php', 'ELIM Graphs and Templates', 1);
+
+	// Special realms
 	api_plugin_register_realm('grid', 'LSF_Extended_History', 'LSF Extended History', 1);
 	api_plugin_register_realm('grid', 'LSF_Host_Alert_Stop', 'LSF Host Alert Stop/Resume', 0);
 	api_plugin_register_realm('grid', 'LSF_Cluster_Control', 'LSF Cluster Control', 0);
@@ -728,6 +731,9 @@ function grid_poller_bottom () {
 
 	$extra_args_add_elim = '-q '.$config['base_path'] . '/plugins/grid/add_elim_graph.php';
 	exec_background($command_string, $extra_args_add_elim);
+
+	$extra_args_add_resreq = '-q '.$config['base_path'] . '/plugins/grid/poller_grid_resreq.php';
+	exec_background($command_string, $extra_args_add_resreq);
 }
 
 function grid_graph_buttons ($graph_elements = array()) {
@@ -5498,6 +5504,12 @@ function grid_draw_navigation_text($nav) {
 		'url' => 'grid_shared.php',
 		'level' => '1');
 
+	$nav['grid_resreq.php:'] = array(
+		'title' => __('Resource Analytics', 'grid'),
+		'mapping' => $grid_default . ':',
+		'url' => 'grid_resreq.php',
+		'level' => '1');
+
 	$nav['grid_clusters.php:'] = array(
 		'title' => __('Clusters', 'grid'),
 		'mapping' => 'index.php:',
@@ -6097,6 +6109,7 @@ function get_grid_menu($user_menu = array()){
 			'plugins/grid/grid_bmgroup.php' => __('Groups', 'grid')
 		),
 		__('Reports', 'grid') => array(
+			'plugins/grid/grid_resreq.php'         => __('Resource Analytics', 'grid'),
 			'plugins/grid/grid_shared.php'         => __('Shared Resources', 'grid'),
 			'plugins/grid/grid_bresourcespool.php' => __('Resource Pools', 'grid'),
 			'plugins/grid/grid_dailystats.php'     => __('Daily Statistics', 'grid'),
@@ -6190,7 +6203,7 @@ function plugin_grid_update_realms() {
 	plugin_rtm_migrate_realms('grid', 40, __('LSF Application Data', 'grid'), 'grid_bapps.php', $version);
 	plugin_rtm_migrate_realms('grid', 41, __('LSF Job Group Data', 'grid'), 'grid_bjgroups.php', $version);
 	plugin_rtm_migrate_realms('grid', 42, __('LSF Queue Distribution', 'grid'), 'grid_queue_distrib.php', $version);
-	plugin_rtm_migrate_realms('grid', 44, __('LSF Administration', 'grid'), 'grid_manage_hosts.php,grid_utilities.php,grid_elim_graphs.php,grid_elim_templates.php,grid_clusters.php,grid_settings_system.php,grid_pollers.php', $version);
+	plugin_rtm_migrate_realms('grid', 44, __('LSF Administration', 'grid'), 'grid_manage_hosts.php,grid_utilities.php,grid_elim_graphs.php,grid_elim_templates.php,grid_clusters.php,grid_settings_system.php,grid_pollers.php,grid_resreq.php', $version);
 	plugin_rtm_migrate_realms('grid', 1046, __('LSF Extended History', 'grid'), 'LSF_Extended_History', $version);
 	plugin_rtm_migrate_realms('grid', 1048, __('LSF Host Alert Stop/Resume', 'grid'), 'LSF_Host_Alert_Stop', $version);
 	plugin_rtm_migrate_realms('grid', 98, __('LSF Cluster Control', 'grid'), 'LSF_Cluster_Control', $version);
