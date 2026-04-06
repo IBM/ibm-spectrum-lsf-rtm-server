@@ -40,26 +40,82 @@ set_default_action();
 validate_bhosts_request_vars();
 
 switch (get_request_var('action')) {
+	case 'export':
+		grid_export_host();
+
+		break;
 	case 'actions':
 		form_action();
+
 		break;
 	case 'ajax_rtm_users':
 		$sql_where = '';
 		if (get_request_var('clusterid') > 0) {
 			$sql_where = 'clusterid = ' . get_request_var('clusterid');
 		}
+
 		rtm_autocomplete_ajax('grid_bhosts.php', 'job_user', $sql_where);
+
 		break;
 	case 'ajax_rtm_hgroups':
 		$sql_where = '';
 		if (get_request_var('clusterid') > 0) {
 			$sql_where = 'clusterid = ' . get_request_var('clusterid');
 		}
+
 		rtm_autocomplete_ajax('grid_bhosts.php', 'hgroup', $sql_where);
+
 		break;
 	default:
 		grid_view_bhosts();
-	break;
+		break;
+}
+
+function grid_export_host() {
+	$rows       = 0;
+	$sql_params = array();
+	$sql_where  = '';
+
+	$hosts = grid_view_get_bhosts_records($sql_where, false, $rows, $sql_params);
+
+	$stdout = fopen('php://output', 'w');
+
+	header('Content-type: application/excel');
+	header('Content-Disposition: attachment; filename=lsf-hosts-' . time() . '.csv');
+
+	if (cacti_sizeof($hosts)) {
+		$columns = array_keys($hosts[0]);
+		$ucols   = array();
+
+		foreach($columns as $index => $c) {
+			switch($c) {
+				case 'licensed':
+				case 'licFeaturesNeeded':
+				case 'licClass':
+				case 'rexPriority':
+				case 'present':
+					unset($columns[$index]);
+					$ucols[] = $c;
+					default:
+				}
+		}
+
+		fputcsv($stdout, $columns);
+
+		foreach($hosts as $h) {
+			if (isset($ucols) && cacti_sizeof($ucols)) {
+				foreach($ucols as $c) {
+					if (isset($h[$c])) {
+						unset($h[$c]);
+					}
+				}
+			}
+
+			fputcsv($stdout, $h);
+		}
+	}
+
+	fclose($stdout);
 }
 
 function validate_bhosts_request_vars() {
@@ -650,9 +706,11 @@ function grid_view_get_bhosts_records(&$sql_where, $apply_limits = true, $rows =
 	}
 
 	$sql_order = get_order_string();
+	$sql_limit = '';
 	if ($apply_limits) {
 		$sql_limit = ' LIMIT ' . ($rows*(get_request_var('page')-1)) . ',' . $rows;
 	}
+
 
 	$sql_query = "SELECT *
 		FROM (
@@ -799,8 +857,11 @@ function bhostsFilter() {
 						</select>
 					</td>
 					<td>
-						<input type='submit' id='go' value='<?php print __esc('Go', 'grid');?>' title='<?php print __esc('Search', 'grid');?>'>
-						<input type='button' id='clear' value='<?php print __esc('Clear', 'grid');?>' title='<?php print __esc('Clear Filters', 'grid');?>'>
+						<span>
+							<input type='submit' id='go' value='<?php print __esc('Go', 'grid');?>' title='<?php print __esc('Search', 'grid');?>'>
+							<input type='button' id='clear' value='<?php print __esc('Clear', 'grid');?>' title='<?php print __esc('Clear Filters', 'grid');?>'>
+							<input type='button' id='export' value='<?php print __esc('Export', 'grid');?>' title='<?php print __esc('Export Records', 'grid');?>'>
+						</span>
 					</td>
 				</tr>
 			</table>
@@ -983,6 +1044,11 @@ function grid_view_bhosts() {
 		loadPageNoHeader(strURL);
 	}
 
+	function exportRows() {
+		document.location = urlPath + 'plugins/grid/grid_bhosts.php?header=false&action=export';
+		Pace.stop();
+	}
+
 	$(function() {
 		$('#form_grid').submit(function(event) {
 			event.preventDefault();
@@ -996,6 +1062,11 @@ function grid_view_bhosts() {
 		$('#clear').click(function() {
 			clearFilter();
 		});
+
+		$('#export').click(function() {
+			exportRows();
+		});
+
 		applySkinRTM();
 	});
 

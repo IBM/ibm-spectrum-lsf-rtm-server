@@ -41,6 +41,30 @@ function kill_process_tree($pid, $signal = SIGTERM) {
 	return posix_getpgid($pid);
 }
 
+function is_grid_process_running($taskid, $taskname) {
+	$row = db_fetch_row_prepared('SELECT pid, heartbeat
+		FROM grid_processes
+		WHERE taskid = ?
+		AND taskname = ?',
+		array($taskid, $taskname));
+
+	if (cacti_sizeof($row)) {
+		$running = false;
+
+		if ($row['pid'] > 1) {
+			$running = checkPID($row['pid']);
+		}
+
+		if ($running) {
+			return true;
+		} else {
+			return false;
+		}
+	} else {
+		return false;
+	}
+}
+
 /* detect and account for a already running poller */
 function detect_and_correct_running_processes($pollerid, $taskname, $max_runtime, $noprocess = FALSE) {
 	$now = time();

@@ -3029,13 +3029,10 @@ function grid_view_queue_graphs($queue) {
 		gtg.local_graph_id,
 		gtg.width,
 		gtg.height,
-		gtg.title_cache,
-		gl.host_id, h.disabled
+		gtg.title_cache
 		FROM graph_templates_graph AS gtg
 		INNER JOIN graph_local AS gl
 		ON gtg.local_graph_id=gl.id
-		LEFT JOIN host AS h
-		ON gl.host_id = h.id
 		$sql_where
 		ORDER BY gtg.title_cache
 		LIMIT " . (get_request_var('graphs')*(get_request_var('page')-1)) . "," . get_request_var('graphs'), $sql_params);

@@ -3489,6 +3489,14 @@ function grid_config_settings () {
 			'default' => '',
 			'size' => '60',
 			'max_length' => '255'
+		),
+		'grid_backup_tmp_dir' => array(
+			'friendly_name' => __('RTM Backup Temporary Directory', 'grid'),
+			'description' => __('When backing up the RTM database, you can require large amounts of /tmp.  If the /tmp volume is too small, use this path for the backups temporary storage location.', 'grid'),
+			'method' => 'dirpath',
+			'default' => '/tmp',
+			'size' => '60',
+			'max_length' => '255'
 		)
 	);
 

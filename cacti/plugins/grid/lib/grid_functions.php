@@ -734,7 +734,7 @@ function grid_show_efficiency_state($state, $cluster_status, $clusterid) {
 
 function grid_get_group_jobname($job) {
 	/* let's display job arrays better */
-	$max_display_length = 3000;
+	$max_display_length = 119;
 	if ($job['indexid'] > 0) {
 		/* find out where we need to break the jobname for display */
 		$split_pos = strpos($job['jobname'], '[');
@@ -2474,12 +2474,15 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 	global $database_username, $database_password, $debug;
 	global $database_port;
 	global $config;
+
 	include_once($config["base_path"] . "/lib/utility.php");
 	include_once($config["base_path"] . "/plugins/grid/include/grid_constants.php");
+
 	if ((read_config_option("grid_backup_enable") == "on") || ($force)) {
 		$now = time();
 		$day_of_week = date("w", $now);
 		$backup_db = false;
+
 		if (read_config_option("grid_backup_schedule")) {
 			if ((read_config_option("grid_backup_schedule") == "w") &&
 				(read_config_option("grid_backup_weekday") == $day_of_week)) {
@@ -2488,6 +2491,7 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 				$backup_db = true;
 			}
 		}
+
 		/* check to see if now it time to backup */
 		if (($backup_db) || ($force)) {
 			/* disable polling */
@@ -2501,6 +2505,7 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 				$old_file_date        = 99999999999;
 				$backups              = array();
 				$newest_file_date     = 0;
+
 				/* open the directory */
 				if (!empty($backup_path)) {
 					$d = dir($backup_path);
@@ -2508,6 +2513,7 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 					$d = dir(read_config_option("grid_backup_path"));
 					$backup_path = read_config_option("grid_backup_path");
 				}
+
 				/* check if directory exists */
 				if ($d) {
 					/* check to see how many backups we have */
@@ -2517,7 +2523,7 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 							if ($config["cacti_server_os"] == "win32") {
 								$backups[$i]["generation"] = str_replace(".zip", "", str_replace("cacti_db_backup_", "", $entry));
 							} else {
-										$backups[$i]["generation"] = str_replace(".tgz", "", str_replace("cacti_db_backup_", "", $entry));
+								$backups[$i]["generation"] = str_replace(".tgz", "", str_replace("cacti_db_backup_", "", $entry));
 							}
 							$backups[$i]["filename"] = $entry;
 							/* look for the last generation by date */
@@ -2533,43 +2539,68 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 							$i++;
 						}
 					}
+
 					$d->close();
+
 					/* check if we need to delete the oldest file after the backup is complete */
 					$generations = cacti_sizeof($backups);
 					$backup_generations = read_config_option("grid_backup_generations");
+
 					if ($generations >= $backup_generations) {
 						$unlink_oldest = true;
 						//Sort the backups array and delete the oldest $delete_generations backup files.
 						$delete_generations = $generations - $backup_generations + 1;
 						bubblesortBackups($backups);
 					}
+
 					if ($max_generation >= 99) {
 						$max_generation = -1;
 					}
+
 					/* set the next generation */
 					$max_generation++;
 					$next_generation = $max_generation % 100;
+
 					if ($next_generation < 10) {
 						$next_generation = "0" . $next_generation;
 					}
-					if ($config["cacti_server_os"] == "win32") {
-						$tmp_backup_dir = getenv("TEMP") . "\\cacti_backup";
-					} else {
-						$tmp_backup_dir = "/tmp/cacti_backup";
+
+					$tmp_backup_dir = read_config_option('grid_backup_tmp_dir');
+					$tmp_good       = false;
+
+					if ($tmp_backup_dir != '') {
+						if (is_dir($tmp_backup_dir) || is_writable($tmp_backup_dir)) {
+							$tmp_backup_dir .= '/cacti_backup';
+
+							$tmp_good = true;
+						}
 					}
+
+					if (!$tmp_good) {
+						if ($config["cacti_server_os"] == "win32") {
+							$tmp_backup_dir = getenv("TEMP") . "\\cacti_backup";
+						} else {
+							$tmp_backup_dir = "/tmp/cacti_backup";
+						}
+					}
+
 					/* remove the directory structure if it exists */
 					if (is_dir($tmp_backup_dir)) {
-						$result=rmdirr($tmp_backup_dir);
+						$result = rmdirr($tmp_backup_dir);
+
 						$old_tmp_backup_dir = $tmp_backup_dir;
+
 						if (!$result) {
 							$old_tmp_backup_dir = $tmp_backup_dir;
 							$tmp_backup_dir = $tmp_backup_dir ."_". time() ."/cacti_backup";
-							cacti_log("WARNING: Can not remove the existed directory" .$old_tmp_backup_dir. " failed and change the directory to " .$tmp_backup_dir);
+
+							cacti_log("WARNING: Can not remove the existing backup directory" .$old_tmp_backup_dir. " failed and change the directory to " .$tmp_backup_dir);
 						} else {
-							cacti_log("WARNING: Remove the existed directory" .$old_tmp_backup_dir. " successfully");
+							cacti_log("NOTE: Removed the existing backup directory " . $old_tmp_backup_dir . " successfully");
 						}
 					}
-					if (!mkdir($tmp_backup_dir, 0755,true)) {
+
+					if (!mkdir($tmp_backup_dir, 0755, true)) {
 						cacti_log("ERROR: Cacti Database Backup Failed!  Unable to create temporary bcakup dir $tmp_backup_dir.", true, "GRID");
 					} else {
 						if ($config["cacti_server_os"] == "win32") {
@@ -2577,21 +2608,27 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 						} else {
 							$backup_file_tgz      = $backup_path . "/cacti_db_backup_"        . $next_generation . ".tgz";
 						}
+
 						$backup_file_cacti        = $tmp_backup_dir . "/cacti_db_backup.sql";
 						$backup_file_cacti_struct = $tmp_backup_dir . "/cacti_db_struct_backup.sql";
 						$backup_file_mysql        = $tmp_backup_dir . "/mysql_db_backup.sql";
+
 						/* obtain a list of tables to backup */
 						$temp_tables      = db_fetch_assoc("SHOW TABLES");
 						$tables_to_backup = '';
 						$tables_to_backup_struct = '';
+
 						/* flag to backup database success or failure */
 						$backup_database_success = true;
+
 						/* get the backup method */
 						$backup_method = read_config_option('grid_backup_method');
+
 						if (empty($backup_method)) {
 							$backup_method = 'q';
 							set_config_option('grid_backup_method', 'q');
 						}
+
 						if (cacti_sizeof($temp_tables)) {
 							foreach ($temp_tables as $table) {
 								$backup = true;
@@ -2670,52 +2707,64 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 									default:
 										break;
 								}
+
 								/* Ignore temp table that is end with a timestamp string. */
 								if (preg_match("/_\d{10}$/", $table['Tables_in_' . $database_default])) {
 									$backup = false;
 									$backup_strunc = false;
 								}
+
 								/* don't backup grid partition tables */
 								else if (preg_match('/^grid_\S+_v[0-9]/', $table['Tables_in_' . $database_default])) {
 									$backup = false;
 									$backup_strunc = false;
 								}
+
 								/* don't backup license partition tables */
 								else if (preg_match('/^lic_\S+_v[0-9]/', $table['Tables_in_' . $database_default])) {
 									$backup = false;
 									$backup_strunc = false;
 								}
+
 								/* don't backup disku partition tables */
 								else if (preg_match('/^disku_\S+_v[0-9]/', $table['Tables_in_' . $database_default])) {
 									$backup = false;
 									$backup_strunc = false;
 								}
+
 								/* don't backup disku raw tables */
 								else if (preg_match('/^disku_files_raw_/', $table['Tables_in_' . $database_default])) {
 									$backup = false;
 								}
+
 								/* don't backup license daily stats traffic tables */
 								else if ($backup_method == 'q' && preg_match('/^lic_daily_stats_/', $table['Tables_in_' . $database_default])) {
 									$backup = false;
 								}
+
 								/* don't backup license interval stats tables regardless */
 								else if (preg_match('/^lic_interval_stats_/', $table['Tables_in_' . $database_default])) {
 									$backup = false;
 								}
+
 								/* don't backup boost archive tables regardless */
 								else if (preg_match('/^poller_output_boost_/', $table['Tables_in_' . $database_default])) {
 									$backup = false;
+
 								}
 								/* don't backup job pending history tables regardless */
 								else if ($backup_method == 'q' && preg_match('/^grid_jobs_pendhist_hourly_/', $table['Tables_in_' . $database_default])) {
 									$backup = false;
 								}
+
 								else if (preg_match("/^grid_heuristics_user_history_today_/", $table["Tables_in_" . $database_default])) {
 									$backup = false;
 								}
+
 								if ($backup) {
 									$tables_to_backup .= ($tables_to_backup != '' ? ' ':'') . $table['Tables_in_' . $database_default];
 								}
+
 								if ($backup_strunc) {
 									$tables_to_backup_struct .= ($tables_to_backup_struct != '' ? ' ':'') . $table['Tables_in_' . $database_default];
 								}
@@ -2723,6 +2772,7 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 						} else {
 							$backup_database_success = false;
 						}
+
 						/* perform the backup */
 						if (is_writeable($backup_path) && $backup_database_success) {
 							if ($config['cacti_server_os'] == 'win32') {
@@ -2730,13 +2780,16 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 							} else {
 								$mysqldmp = 'mysqldump';
 							}
+
 							$is_cluster_log_bin = db_fetch_row("SHOW VARIABLES LIKE 'log_bin'");
+
 							//$is_cluster_wsrep_on = db_fetch_row("SHOW VARIABLES LIKE 'wsrep_on'");
 							if (cacti_sizeof($is_cluster_log_bin) && $is_cluster_log_bin['Value'] == 'ON'){
 								$is_cluster_log_bin = true;
 							} else {
 								$is_cluster_log_bin = false;
 							}
+
 							$is_cluster_grants = db_fetch_row("SHOW GRANTS FOR CURRENT_USER");
 							$is_cluster_grant_reload = false;
 							$is_cluster_grant_super = false;
@@ -2747,16 +2800,20 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 								if (strpos($grant, 'RELOAD') !== false) {
 									$is_cluster_grant_reload = true;
 								}
+
 								if (strpos($grant, 'SUPER') !== false) {
 									$is_cluster_grant_super = true;
 								}
+
 								if (strpos($grant, 'BINLOG MONITOR') !== false) {
 									$is_cluster_grant_binlog_monitor = true;
 								}
+
 								if (strpos($grant, 'REPLICATION CLIENT') !== false) {
 									$is_cluster_grant_replication_client = true;
 								}
 							}
+
 							if ($is_cluster_log_bin && $is_cluster_grant_reload
 									&& ($is_cluster_grant_super || $is_cluster_grant_binlog_monitor || $is_cluster_grant_replication_client)) {
 								$can_dump_master_data = true;
@@ -2765,6 +2822,7 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 							}
 
 							$start_return = mysql_dump_no_passwd_check(cacti_escapeshellarg($database_username), cacti_escapeshellarg($database_password));
+
 							//Backup table scheme of all tables, except temp/partition table.
 							$backup_command = cacti_escapeshellcmd($mysqldmp) .
 								($start_return ? " --defaults-extra-file='$start_return'" : ' --user='     . cacti_escapeshellarg($database_username) .  ' --password=' . cacti_escapeshellarg($database_password)) .
@@ -2776,13 +2834,16 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 								' '            . cacti_escapeshellarg($database_default)  .
 								' '            . $tables_to_backup_struct .
 								' > '          . $backup_file_cacti_struct;
+
 							$result = grid_shell_exec($backup_command, $stdoutput, $stderror);
+
 							if ($result) {
 								cacti_log("ERROR: Cacti Database Structure Backup Failed!  Message: '" . str_replace("\n", "; ", $stderror) . "'; ExitCode: '$result'", true, "GRID");
 								$backup_database_success = false;
 							} else {
 								cacti_log("NOTE: Cacti Database Structure Backup Successful!", true, "GRID");
 							}
+
 							//Backup selected table data
 							$backup_command = cacti_escapeshellcmd($mysqldmp) .
 								($start_return ? " --defaults-extra-file='$start_return'" : ' --user='     . cacti_escapeshellarg($database_username) .  ' --password=' . cacti_escapeshellarg($database_password)) .
@@ -2795,13 +2856,16 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 								' '            . cacti_escapeshellarg($database_default)  .
 								' '            . $tables_to_backup .
 								' > '          . $backup_file_cacti;
+
 							$result = grid_shell_exec($backup_command, $stdoutput, $stderror);
+
 							if ($result) {
 								cacti_log("ERROR: Cacti Database Backup Failed!  Message: '" . str_replace("\n", "; ", $stderror) . "'; ExitCode: '$result'", true, "GRID");
 								$backup_database_success = false;
 							} else {
 								cacti_log("NOTE: Cacti Database Backup Successful!", true, "GRID");
 							}
+
 							//Backup RTM_ROOT/etc
 							if ($config['cacti_server_os'] == 'win32') {
 								$backup_command = "xcopy \"" . RTM_ROOT . "\\etc\" \"$tmp_backup_dir\\etc\" /SEVIY";
@@ -2815,6 +2879,7 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 									cacti_log('NOTE: ' . RTM_ROOT . '/etc Backup Successful!', true, 'GRID');
 								}
 							}
+
 							// Touch VERSION file
 							$grid_version = db_fetch_cell("SELECT value FROM settings WHERE name='grid_version'");
 							if (!touch($tmp_backup_dir . '/' . $grid_version)) {
@@ -2822,6 +2887,7 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 							} else {
 								cacti_log('NOTE: Stamp grid version in backup dir is Successful!', true, 'GRID');
 							}
+
 							//Tar up backup dir
 							if ($config['cacti_server_os'] == 'win32') {
 								$zip_cmd = read_config_option('path_7z');
@@ -2829,13 +2895,26 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 							} else {
 								$backup_command = 'cd ' . dirname($tmp_backup_dir) . ' && tar -czf ' . $backup_file_tgz . ' ' . basename($tmp_backup_dir);
 							}
+
 							$result = exec($backup_command);
+
+							cacti_log("NOTE: Removing Temporary Directory $tmp_backup_dir recursively", false, 'GRID');
+
 							rmdirr($tmp_backup_dir);
+
 							//Delete parent dir file if tmp dir using as $tmp_backup_dir ."_". time() ."/cacti_backup" format
-							if (preg_match('/cacti_backup_+\d*/', $tmp_backup_dir)){
-							    $parent_backup_dir = dirname($tmp_backup_dir);
-							    rmdirr($parent_backup_dir);
+							if (preg_match('/cacti_backup_+\d*/', $tmp_backup_dir) && strpos($tmp_backup_dir, '_') !== false) {
+								$tmpts = explode('_', $tmp_backup_dir)[1];
+
+								if (is_numeric($tmpts)) {
+								    $parent_backup_dir = dirname($tmp_backup_dir);
+
+									cacti_log("NOTE: Removing Parent Directory $parent_backup_dir recursively", false, 'GRID');
+
+								    rmdirr($parent_backup_dir);
+								}
 							}
+
 							if ($config['cacti_server_os'] == 'win32') {
 								if (!substr_count($result, 'Everything is Ok')) {
 									cacti_log("ERROR: Packing Backup Files Failed!  Message is '$result'", true, 'GRID');
@@ -2849,6 +2928,7 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 									cacti_log('NOTE: Packing Backup Files Successful!', true, 'GRID');
 								}
 							}
+
 							if ($unlink_oldest && $backup_database_success) {
 								for ($i = 0; $i < $delete_generations; $i++) {
 									@unlink($backup_path . "/" . $backups[$i]["filename"]);
@@ -2868,9 +2948,12 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 				} else {
 					cacti_log('FATAL: Unable to Access Backup Directory Location', true, 'GRID');
 				}
+
 				$backup_command = trim(read_config_option('grid_backup_command'));
+
 				if (strlen($backup_command)) {
 					$parts = explode(' ', $backup_command);
+
 					if (is_readable(trim($parts[0])) && is_executable(trim($parts[0]))) {
 						cacti_log("NOTE: Executing Post Backup Command '$backup_command'", false, 'GRID');
 						$result = exec_background($backup_command);
@@ -2878,8 +2961,10 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 						cacti_log("WARNING: Unable to Execute Post Backup Command '" . $parts[0] . "' Is Either Not Readable or Not Executable", false, 'GRID');
 					}
 				}
+
 				/* enable polling */
 				grid_end_maintenance_mode("BACKUP");
+
 				/* partition backup can be done in the background */
 				if (read_config_option("grid_backup_partitions") > 1) {
 					set_config_option('run_partition_backup', '1');
@@ -2896,7 +2981,7 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 function start_polling() {
 	global $config;
 
-include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
+	include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
 
 	/* enable polling */
 	grid_end_maintenance_mode('BACKUP');
@@ -2910,7 +2995,7 @@ function grid_restore_cacti_db($tgz_file) {
 	global $rtm;
 
 	include_once($config['base_path'] . '/lib/utility.php');
-include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
+	include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
 
 	if ($tgz_file['error'] > 0) {
 		raise_message(126);
@@ -2934,26 +3019,25 @@ include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
 		if (move_uploaded_file($tgz_file['tmp_name'], $pathinfo['dirname']. '/' . $pathinfo['basename'])) {
 			//unpack file
 			$retval = 0;
-			$rmdir=$pathinfo['dirname'] . '/' . $backupdir;
+			$rmdir  = $pathinfo['dirname'] . '/' . $backupdir;
+
 			if (is_dir($pathinfo['dirname'] . '/' . $backupdir)) {
 				$result= rmdirr($pathinfo['dirname'] . '/' . $backupdir);
-						if (!$result) {
-							$old_backupdir = $backupdir;
-							$backupdir =  $backupdir . '_' . time() .'/cacti_backup';
+				if (!$result) {
+					$old_backupdir = $backupdir;
+					$backupdir =  $backupdir . '_' . time() .'/cacti_backup';
+
 					if (mkdir($pathinfo['dirname'] .'/'. $backupdir,0755, true)) {
-						 cacti_log('WARNING: Can not remove the existed directory ' . $old_backupdir . ' failed and change the directory to ' .$pathinfo['dirname'] .'/'. $backupdir);
+						cacti_log('WARNING: Can not remove the existed directory ' . $old_backupdir . ' failed and change the directory to ' .$pathinfo['dirname'] .'/'. $backupdir);
 						$rmdir = $pathinfo['dirname'] . '/' . dirname($backupdir);
 					} else {
-								cacti_log('FATAL: Remove the existed directory ' . $old_backupdir . ' failed and can nott change the directory to ' .$pathinfo['dirname'] .'/'. $backupdir);
+						cacti_log('FATAL: Remove the existed directory ' . $old_backupdir . ' failed and can nott change the directory to ' .$pathinfo['dirname'] .'/'. $backupdir);
 						start_polling();
 						return;
-
 					}
-							} else {
-
-					 cacti_log('WARNING: Remove the existed directory ' . $old_backupdir . ' successfully');
+				} else {
+					cacti_log('WARNING: Remove the existed directory ' . $old_backupdir . ' successfully');
 				}
-
 			}
 
 			if ($config['cacti_server_os'] == 'win32') {
@@ -2962,6 +3046,7 @@ include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
 			} else {
 				$cmd = 'cd ' . $pathinfo['dirname'] . ' && tar -xzf ' . escapeshellcmd($pathinfo['basename']) . ' -C ' . dirname($pathinfo['dirname'] . '/' . $backupdir);
 			}
+
 			exec($cmd, $output, $retval);
 
 			if ($retval) {
@@ -3101,6 +3186,7 @@ include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
 					set_config_option('grid_backup_restore_host_file', '');
 				}
 			}
+
 			curl_close($ch);
 
 			rmdirr($pathinfo['dirname'] . '/' . $pathinfo['basename']);
@@ -6107,10 +6193,10 @@ function gridmemvio_notify_users() {
 				"<UNDERAGEJOBS>"  => $record["underage_jobs"],
 				"<OVERAGESLOTS>"  => $record["overage_slots"],
 				"<UNDERAGESLOTS>" => $record["underage_slots"],
-				"<TOTALOVERAGE>"    => display_job_memory(abs($record["total_overage"]), 3),
-				"<TOTALUNDERAGE>"   => display_job_memory(abs($record["total_underage"]),3),
-				"<AVGOVERAGE>"    => display_job_memory(abs($record["avg_overage"]), 3),
-				"<AVGUNDERAGE>"   => display_job_memory(abs($record["avg_underage"]),3),
+				"<TOTALOVERAGE>"    => display_job_memory(abs($record["total_overage"] ?? 0), 3),
+				"<TOTALUNDERAGE>"   => display_job_memory(abs($record["total_underage"] ?? 0),3),
+				"<AVGOVERAGE>"    => display_job_memory(abs($record["avg_overage"] ?? 0), 3),
+				"<AVGUNDERAGE>"   => display_job_memory(abs($record["avg_underage"] ?? 0),3),
 				"<AVGOVERRES>"    => display_job_memory($record["avg_overreserve"], 3),
 				"<AVGUNDERRES>"   => display_job_memory($record["avg_underreserve"], 3)
 			);
@@ -6281,10 +6367,13 @@ function grid_replace_tags($message, $cluster, $job, $data_array) {
 
 	/* custom replacements */
 	if (cacti_sizeof($data_array)) {
-	foreach ($data_array as $tag => $value) {
-		$message = str_replace($tag, $value, $message);
+		foreach ($data_array as $tag => $value) {
+			if ($value !== null) {
+				$message = str_replace($tag, $value, $message);
+			}
+		}
 	}
-	}
+
 	return $message;
 }
 
@@ -19893,6 +19982,7 @@ function rmdirr($dirname) {
 
 	// Loop through the folder
 	$dir = dir($dirname);
+
 	while (false !== $entry = $dir->read()) {
 		// Skip pointers
 		if ($entry == '.' || $entry == '..') {

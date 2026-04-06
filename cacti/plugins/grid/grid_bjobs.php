@@ -151,7 +151,6 @@ function grid_validate_job_request_variables() {
 			$job_array = explode('[', str_replace(']', '', get_request_var('jobid')));
 			$job_id    = $job_array[0];
 			$index_id  = $job_array[1];
-			set_request_var('jobid', $job_id);
 		} elseif (strlen(get_request_var('jobid'))) {
 			$job_id    = get_request_var('jobid');
 			$index_id  = '';
@@ -163,7 +162,8 @@ function grid_validate_job_request_variables() {
 		$job_id   = '';
 		$index_id = '';
 	}
-	
+
+	set_request_var('jobid', $job_id);
 	set_request_var('indexid', $index_id);
 
     /* ================= input validation and session storage ================= */
