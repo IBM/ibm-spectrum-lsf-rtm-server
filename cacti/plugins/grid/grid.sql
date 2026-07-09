@@ -1155,7 +1155,6 @@ CREATE TABLE `grid_pollers` (
   `poller_support_info` varchar(255) NOT NULL default '',
   `lsf_version` int(10) unsigned NOT NULL default '1017',
   `remote` varchar(20),
-  `poller_max_insert_packet_size` varchar(255),
   PRIMARY KEY  (`poller_id`)
 ) ENGINE=InnoDB;
 
@@ -1166,7 +1165,7 @@ CREATE TABLE `grid_pollers` (
 DROP TABLE IF EXISTS `grid_processes`;
 CREATE TABLE `grid_processes` (
   `pid` int(10) unsigned NOT NULL default '0',
-  `taskname` varchar(20) NOT NULL default '0',
+  `taskname` varchar(40) NOT NULL default '0',
   `taskid` int(10) unsigned NOT NULL default '0',
   `heartbeat` timestamp NOT NULL default '0000-00-00 00:00:00',
   PRIMARY KEY  (`taskname`,`taskid`)

@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -133,8 +133,9 @@ if (read_config_option('auth_method') == 2) {
 }
 
 ?>
-<script type='text/javascript'>
+<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 	var cactiVersion='<?php print $config['cacti_version'];?>';
+	var cactiNonce='<?php print CactiSecureHeaders::getNonce();?>';
 	var cactiServerOS='<?php print $config['cacti_server_os'];?>';
 	var cactiAction='<?php print get_filter_request_var('action', FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => '/^([-a-zA-Z0-9_\s]+)$/')));?>';
 	var theme='<?php print get_selected_theme();?>';

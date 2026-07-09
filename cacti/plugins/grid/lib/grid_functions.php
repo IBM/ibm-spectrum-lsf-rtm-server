@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2025                                          |
+ | Copyright IBM Corp. 2006, 2026                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -449,7 +449,7 @@ function grid_get_user_hosts($clusterid, $userid) {
 	$jobs = db_fetch_assoc_prepared("SELECT
 		clusterid, jobid, indexid, submit_time, exec_host, num_cpus
 		FROM grid_jobs
-		WHERE (stat IN('RUNNING', 'USUSP', 'PSUSP', 'SSUSP', 'PROV'))
+		WHERE (stat IN('RUNNING', 'USUSP', 'PSUSP', 'SSUSP'))
 		AND (user=?)
 		$cluster_where", array_merge(array($userid), $sql_params));
 
@@ -1396,7 +1396,7 @@ function rm_duplicated_records($table_name) {
 					FROM $last_table AS last
 					JOIN $pre_table AS pre
 					ON $match_sql");
-				db_execute("DELETE FROM pre USING $pre_table AS pre, tmp_$table_name AS last
+				db_execute("DELETE FROM last USING $last_table AS last, tmp_$table_name AS pre
 					WHERE $match_sql");
 			}
 			db_execute("DROP TABLE IF EXISTS tmp_$table_name");
@@ -2210,7 +2210,7 @@ function perform_grid_db_maint($start_time, $optimize = false) {
 
 		/* remove old data query graphs */
 		grid_debug('Removing Stale Pending Reasons');
-		if (detect_and_correct_running_processes(0, 'REMOVING_STALE_PENDING_REASONS', read_config_option('grid_db_maint_max_time'))) {
+		if (detect_and_correct_running_processes(0, 'REMOVING_STALE_PENDING_REASONS', read_config_option('grid_db_maint_max_time'), true)) {
 			db_execute('DELETE gjp
 				FROM grid_jobs_pendreasons AS gjp
 				LEFT JOIN grid_jobs as gj
@@ -2219,6 +2219,7 @@ function perform_grid_db_maint($start_time, $optimize = false) {
 				AND gjp.indexid=gj.indexid
 				AND gjp.submit_time=gj.submit_time
 				WHERE gj.jobid IS NULL');
+			remove_process_entry(0, 'REMOVING_STALE_PENDING_REASONS');
 		}
 
 		/* remove old data query graphs */
@@ -2474,8 +2475,10 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 	global $database_username, $database_password, $debug;
 	global $database_port;
 	global $config;
+
 	include_once($config["base_path"] . "/lib/utility.php");
 	include_once($config["base_path"] . "/plugins/grid/include/grid_constants.php");
+
 	if ((read_config_option("grid_backup_enable") == "on") || ($force)) {
 		$now = time();
 		$day_of_week = date("w", $now);
@@ -2517,7 +2520,7 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 							if ($config["cacti_server_os"] == "win32") {
 								$backups[$i]["generation"] = str_replace(".zip", "", str_replace("cacti_db_backup_", "", $entry));
 							} else {
-										$backups[$i]["generation"] = str_replace(".tgz", "", str_replace("cacti_db_backup_", "", $entry));
+								$backups[$i]["generation"] = str_replace(".tgz", "", str_replace("cacti_db_backup_", "", $entry));
 							}
 							$backups[$i]["filename"] = $entry;
 							/* look for the last generation by date */
@@ -2552,11 +2555,8 @@ function grid_backup_cacti_db($poller = true, $force = false, $backup_path = '')
 					if ($next_generation < 10) {
 						$next_generation = "0" . $next_generation;
 					}
-					if ($config["cacti_server_os"] == "win32") {
-						$tmp_backup_dir = getenv("TEMP") . "\\cacti_backup";
-					} else {
-						$tmp_backup_dir = "/tmp/cacti_backup";
-					}
+
+					$tmp_backup_dir = $backup_path . "/tmp";
 					/* remove the directory structure if it exists */
 					if (is_dir($tmp_backup_dir)) {
 						$result=rmdirr($tmp_backup_dir);
@@ -2920,11 +2920,7 @@ include_once($config['base_path'] . '/plugins/grid/include/grid_constants.php');
 		exec(LSFPOLLERD_STOP, $output, $retval);
 
 		$backupdir = 'cacti_backup';
-		if ($config['cacti_server_os'] == 'win32') {
-			$pathinfo  = pathinfo(getenv('TEMP') . '\\' . basename($tgz_file['name']));
-		} else {
-			$pathinfo  = pathinfo('/tmp/'.basename($tgz_file['name']));
-		}
+		$pathinfo  = pathinfo('/tmp/'.basename($tgz_file['name']));
 
 		if (!array_key_exists('filename', $pathinfo)) {
 			$f = explode('.', basename($tgz_file['name']));
@@ -3263,7 +3259,7 @@ function calculate_and_store_grid_efficiencies() {
 
 			$cluster_efficiency = db_fetch_cell_prepared("SELECT (SUM(stime+utime)/SUM(run_time*max_allocated_processes))*100
 				FROM grid_jobs
-				WHERE stat IN ('RUNNING','PROV')
+				WHERE stat='RUNNING'
 				$effic_where
 				AND clusterid= ?
 				AND run_time> ?", array($cluster['clusterid'], read_config_option('grid_efficiency_window')));
@@ -3271,7 +3267,7 @@ function calculate_and_store_grid_efficiencies() {
 			$running_efficiency = db_fetch_row_prepared("SELECT SUM(run_time*max_allocated_processes) AS total_time,
 				SUM(stime+utime) AS cpu_time
 				FROM grid_jobs
-				WHERE stat IN ('RUNNING','PROV')
+				WHERE stat='RUNNING'
 				$effic_where
 				AND clusterid= ?
 				AND run_time> ?", array($cluster['clusterid'], read_config_option('grid_efficiency_window')));
@@ -3394,10 +3390,10 @@ function calculate_and_store_grid_efficiencies() {
 		MAX(max_memory) AS max_mem,
 		AVG(max_swap) AS avg_swap,
 		MAX(max_swap) AS max_swap,
-		(SUM(stime+utime)/SUM(run_time*max_allocated_processes))*100 AS efficiency,
+		(SUM(stime+utime)/NULLIF(SUM(run_time*max_allocated_processes), 0))*100 AS efficiency,
 		SUM(cpu_used) AS total_cpu
 		FROM grid_jobs
-		WHERE (stat='RUNNING' OR stat='PROV' OR stat='SSUSP' OR stat='SSUSP')
+		WHERE stat IN ('RUNNING', 'SSUSP', 'USUSP')
 		AND run_time>'"  . read_config_option('grid_efficiency_window') . "'
 		$clsql
 		GROUP BY clusterid, queue";
@@ -4567,7 +4563,7 @@ function pump_interval_recrods($type, $previous_date, $scan_date) {
 		$avg_memory     = "AVG(grid_jobs.mem_used) AS avg_memory";
 		$gpu_max_mem    = "MAX(grid_jobs.gpu_max_memory) AS gpu_max_mem";
 		$gpu_avg_mem    = "AVG(grid_jobs.gpu_max_memory) AS gpu_avg_mem";
-		$sql_where      = "WHERE (stat IN ('RUNNING','PROV'))";
+		$sql_where      = "WHERE stat='RUNNING'";
 		$exec_host      = "grid_jobs.exec_host AS exec_host";
 
 		break;
@@ -5121,7 +5117,7 @@ function grididle_check_for_idle_jobs() {
 			$exclude_queue_where = "";
 		}
 
-		$sql_where .= (strlen($sql_where) ? " AND " : "WHERE ") . "clusterid=?" . " AND run_time>?" . " AND stat IN('RUNNING','PROV') " . $exclude_queue_where;
+		$sql_where .= (strlen($sql_where) ? " AND " : "WHERE ") . "clusterid=?" . " AND run_time>?" . " AND stat='RUNNING' " . $exclude_queue_where;
 		$sql_params[] = $cluster["clusterid"];
 		$sql_params[] = $run_time;
 
@@ -5457,7 +5453,7 @@ function move_records_into_finished_table() {
 		SELECT clusterid, queue, user as user_or_group,
 			SUM(CASE WHEN stat IN ('PEND', 'PSUSP') THEN maxNumProcessors ELSE num_cpus END) AS 'nojobs',
 			SUM(CASE WHEN stat IN ('PEND', 'PSUSP') THEN maxNumProcessors ELSE 0 END) AS 'pendjobs',
-			SUM(CASE WHEN stat IN ('RUNNING','PROV') THEN num_cpus ELSE 0 END) AS 'runjobs',
+			SUM(CASE WHEN stat='RUNNING' THEN num_cpus ELSE 0 END) AS 'runjobs',
 			SUM(CASE WHEN stat IN ('SSUSP', 'USUSP') THEN num_cpus ELSE 0 END) AS 'suspjobs',
 			AVG(CASE WHEN stat='RUNNING' THEN efficiency ELSE NULL END) AS 'efficiency',
 			'1' as present
@@ -5517,7 +5513,7 @@ function grid_check_for_runtime_jobs() {
 			$sql_where = "WHERE clusterid=" . $cluster["clusterid"] . "
 				AND rlimit_max_wallt != 0
 				AND run_time> (1-" .$runtimevio. ")*rlimit_max_wallt
-				AND stat IN ('RUNNING','PROV')" ;
+				AND stat='RUNNING' " ;
 
 			$type=1;
 
@@ -5534,7 +5530,7 @@ function grid_check_for_runtime_jobs() {
 				AND rlimit_max_wallt!=0
 				AND run_time > (1-" .$runtimevio. ")*runtimeEstimation
 				AND run_time < (1-" .$runtimevio. ")*rlimit_max_wallt
-				AND stat IN ('RUNNING','PROV')" ;
+				AND stat='RUNNING' " ;
 
 			$type=2;
 
@@ -5550,7 +5546,7 @@ function grid_check_for_runtime_jobs() {
 				AND runtimeEstimation!=0
 				AND rlimit_max_wallt =0
 				AND (1-" .$runtimevio. ")*runtimeEstimation < run_time
-				AND stat IN ('RUNNING','PROV')" ;
+				AND stat='RUNNING' " ;
 
 			$type=2;
 
@@ -5566,7 +5562,7 @@ function grid_check_for_runtime_jobs() {
 			$sql_where = "WHERE clusterid=" . $cluster["clusterid"] . "
 				AND runtimeEstimation!=0
 				AND run_time> (1-" .$runtimevio. ")*runtimeEstimation
-				AND stat IN ('RUNNING','PROV')" ;
+				AND stat='RUNNING' " ;
 
 			$type=2;
 
@@ -5581,7 +5577,7 @@ function grid_check_for_runtime_jobs() {
 			$sql_where ="WHERE clusterid=" . $cluster["clusterid"] . "
 				AND rlimit_max_wallt !=0
 				AND run_time> (1-" .$runtimevio. ")*rlimit_max_wallt
-				AND stat IN ('RUNNING','PROV')" ;
+				AND stat='RUNNING' " ;
 
 			$type=1;
 
@@ -6107,10 +6103,10 @@ function gridmemvio_notify_users() {
 				"<UNDERAGEJOBS>"  => $record["underage_jobs"],
 				"<OVERAGESLOTS>"  => $record["overage_slots"],
 				"<UNDERAGESLOTS>" => $record["underage_slots"],
-				"<TOTALOVERAGE>"    => display_job_memory(abs($record["total_overage"]), 3),
-				"<TOTALUNDERAGE>"   => display_job_memory(abs($record["total_underage"]),3),
-				"<AVGOVERAGE>"    => display_job_memory(abs($record["avg_overage"]), 3),
-				"<AVGUNDERAGE>"   => display_job_memory(abs($record["avg_underage"]),3),
+				"<TOTALOVERAGE>"    => display_job_memory(abs($record["total_overage"] ?? 0), 3),
+				"<TOTALUNDERAGE>"   => display_job_memory(abs($record["total_underage"] ?? 0),3),
+				"<AVGOVERAGE>"    => display_job_memory(abs($record["avg_overage"] ?? 0), 3),
+				"<AVGUNDERAGE>"   => display_job_memory(abs($record["avg_underage"] ?? 0),3),
 				"<AVGOVERRES>"    => display_job_memory($record["avg_overreserve"], 3),
 				"<AVGUNDERRES>"   => display_job_memory($record["avg_underreserve"], 3)
 			);
@@ -6281,10 +6277,13 @@ function grid_replace_tags($message, $cluster, $job, $data_array) {
 
 	/* custom replacements */
 	if (cacti_sizeof($data_array)) {
-	foreach ($data_array as $tag => $value) {
-		$message = str_replace($tag, $value, $message);
+		foreach ($data_array as $tag => $value) {
+			if ($value !== null) {
+				$message = str_replace($tag, $value, $message);
+			}
+		}
 	}
-	}
+
 	return $message;
 }
 
@@ -6358,7 +6357,7 @@ function gridmemvio_check_for_memvio_jobs($last_maint_start = 0) {
 		$clsql = " AND $clsql";
 	}
 
-	$sql_where = "WHERE stat IN ('RUNNING','PROV','DONE' ,'EXIT') AND res_requirements!='' " . ($mem_limit != -1 ? " AND max_memory>$mem_limit":"") . $clsql;
+	$sql_where = "WHERE stat IN ('RUNNING','DONE' ,'EXIT') AND res_requirements!='' " . ($mem_limit != -1 ? " AND max_memory>$mem_limit":"") . $clsql;
 
 	/* prep for subsequent deletion */
 	//db_execute("UPDATE grid_jobs_memvio SET present=0 WHERE present=1");
@@ -6750,7 +6749,7 @@ function find_pidalarm_jobs() {
 			OR numPGIDS>=?
 			OR numThreads>=?)
 			AND pid_alarm_logged='0'
-			AND (stat IN('RUNNING', 'PROV', 'SSUSP', 'PSUSP', 'USUSP'))", array($pidalarm_thold, $pidalarm_thold, $pidalarm_thold));
+			AND (stat IN('RUNNING', 'SSUSP', 'PSUSP', 'USUSP'))", array($pidalarm_thold, $pidalarm_thold, $pidalarm_thold));
 
 		if (cacti_sizeof($new_pidalarm_jobs)) {
 			foreach ($new_pidalarm_jobs AS $job) {
@@ -6912,19 +6911,19 @@ function update_user_group_stats() {
 
 		$records = db_fetch_assoc("SELECT clusterid,
 			(CASE WHEN userGroup='' THEN 'default' ELSE userGroup END) AS userGroup,
-			SUM(CASE WHEN stat IN ('RUNNING','PROV') THEN num_cpus ELSE 0 END) as numRUN,
+			SUM(CASE WHEN stat='RUNNING' THEN num_cpus ELSE 0 END) as numRUN,
 			SUM(CASE WHEN stat='PEND' THEN num_cpus ELSE 0 END) as numPEND,
 			SUM(num_cpus) as numJOBS,
-			(SUM(CASE WHEN stat IN ('RUNNING','PROV') AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (stime+utime) ELSE 0 END) / SUM(CASE WHEN stat IN ('RUNNING','PROV') AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (run_time*max_allocated_processes) ELSE 0 END)) * 100 as efficiency,
-			AVG(CASE WHEN stat IN ('RUNNING','PROV') THEN max_memory ELSE NULL END) as avg_mem,
-			MAX(CASE WHEN stat IN ('RUNNING','PROV') THEN max_memory ELSE 0 END) as max_mem,
-			AVG(CASE WHEN stat IN ('RUNNING','PROV') THEN max_swap ELSE NULL END) as avg_swap,
-			MAX(CASE WHEN stat IN ('RUNNING','PROV') THEN max_swap ELSE 0 END) as max_swap,
+			(SUM(CASE WHEN stat='RUNNING' AND run_time>'" . read_config_option('grid_efficiency_window') . "' THEN (stime+utime) ELSE 0 END) / NULLIF(SUM(CASE WHEN stat='RUNNING' AND run_time>'" . read_config_option('grid_efficiency_window') . "' THEN (run_time*max_allocated_processes) ELSE 0 END), 0)) * 100 as efficiency,
+			AVG(CASE WHEN stat='RUNNING' THEN max_memory ELSE NULL END) as avg_mem,
+			MAX(CASE WHEN stat='RUNNING' THEN max_memory ELSE 0 END) as max_mem,
+			AVG(CASE WHEN stat='RUNNING' THEN max_swap ELSE NULL END) as avg_swap,
+			MAX(CASE WHEN stat='RUNNING' THEN max_swap ELSE 0 END) as max_swap,
 			SUM(cpu_used) as total_cpu,
 			NOW() AS last_updated,
 			'1' as present
 			FROM grid_jobs
-			WHERE stat IN ('RUNNING','PROV', 'USUSP', 'PSUSP', 'SSUSP', 'PEND')
+			WHERE stat IN ('RUNNING', 'USUSP', 'PSUSP', 'SSUSP', 'PEND')
 			$clsql
 			GROUP BY clusterid, userGroup");
 		grid_pump_records($records, "grid_user_group_stats", $format, false, $duplicate);
@@ -6956,17 +6955,17 @@ function update_user_group_stats() {
 			FROM (SELECT
 				clusterid,
 				user,
-				SUM(CASE WHEN stat IN ('RUNNING','PROV') THEN num_cpus ELSE 0 END) as numRUN,
+				SUM(CASE WHEN stat='RUNNING' THEN num_cpus ELSE 0 END) as numRUN,
 				SUM(CASE WHEN stat='PEND' THEN num_cpus ELSE 0 END) as numPEND,
 				SUM(num_cpus) as numJOBS,
-				(SUM(CASE WHEN stat IN ('RUNNING','PROV') AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (stime+utime) ELSE 0 END) / SUM(CASE WHEN stat IN ('RUNNING','PROV') AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (run_time*max_allocated_processes) ELSE 0 END)) * 100 as avg_efficiency,
+				(SUM(CASE WHEN stat='RUNNING' AND run_time>'" . read_config_option('grid_efficiency_window') . "' THEN (stime+utime) ELSE 0 END) / NULLIF(SUM(CASE WHEN stat='RUNNING' AND run_time>'" . read_config_option('grid_efficiency_window') . "' THEN (run_time*max_allocated_processes) ELSE 0 END), 0)) * 100 as avg_efficiency,
 				AVG(max_memory) as avg_mem,
 				MAX(max_memory) as max_mem,
 				AVG(max_swap) as avg_max_swap,
 				MAX(max_swap) as max_max_swap,
 				SUM(cpu_used) as total_cpu
 				FROM grid_jobs
-				WHERE stat IN('RUNNING', 'PROV', 'USUSP', 'PSUSP', 'SSUSP', 'PEND')
+				WHERE stat IN('RUNNING', 'USUSP', 'PSUSP', 'SSUSP', 'PEND')
 				$clsql
 				GROUP BY clusterid, user) as teddy
 			INNER JOIN grid_user_group_members
@@ -7028,19 +7027,19 @@ function update_license_projects() {
 
 	$records = db_fetch_assoc("SELECT clusterid,
 		licenseProject,
-		SUM(CASE WHEN stat IN ('RUNNING','PROV') THEN num_cpus ELSE 0 END) as numRUN,
+		SUM(CASE WHEN stat='RUNNING' THEN num_cpus ELSE 0 END) as numRUN,
 		SUM(CASE WHEN stat='PEND' THEN num_cpus ELSE 0 END) as numPEND,
 		SUM(num_cpus) as numJOBS,
-		(SUM(CASE WHEN stat IN ('RUNNING','PROV') AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (stime+utime) ELSE 0 END) / SUM(CASE WHEN stat IN ('RUNNING','PROV') AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (run_time*max_allocated_processes) ELSE 0 END)) * 100 as efficiency,
-		AVG(CASE WHEN stat IN ('RUNNING','PROV') THEN max_memory ELSE NULL END) as avg_mem,
-		MAX(CASE WHEN stat IN ('RUNNING', 'PROV') THEN max_memory ELSE 0 END) as max_mem,
-		AVG(CASE WHEN stat IN ('RUNNING', 'PROV') THEN max_swap ELSE NULL END) as avg_swap,
-		MAX(CASE WHEN stat IN ('RUNNING', 'PROV') THEN max_swap ELSE 0 END) as max_swap,
+		(SUM(CASE WHEN stat='RUNNING' AND run_time>'" . read_config_option('grid_efficiency_window') . "' THEN (stime+utime) ELSE 0 END) / NULLIF(SUM(CASE WHEN stat='RUNNING' AND run_time>'" . read_config_option('grid_efficiency_window') . "' THEN (run_time*max_allocated_processes) ELSE 0 END), 0)) * 100 as efficiency,
+		AVG(CASE WHEN stat='RUNNING' THEN max_memory ELSE NULL END) as avg_mem,
+		MAX(CASE WHEN stat='RUNNING' THEN max_memory ELSE 0 END) as max_mem,
+		AVG(CASE WHEN stat='RUNNING' THEN max_swap ELSE NULL END) as avg_swap,
+		MAX(CASE WHEN stat='RUNNING' THEN max_swap ELSE 0 END) as max_swap,
 		SUM(cpu_used) as total_cpu,
 		NOW() AS last_updated,
 		'1' as present
 		FROM grid_jobs
-		WHERE stat IN ('RUNNING', 'PROV', 'USUSP', 'PSUSP', 'SSUSP', 'PEND')
+		WHERE stat IN ('RUNNING', 'USUSP', 'PSUSP', 'SSUSP', 'PEND')
 		AND licenseProject != 'NULL'
 		$clsql
 		GROUP BY clusterid, licenseProject");
@@ -7098,19 +7097,19 @@ function update_projects() {
 
 	$records = db_fetch_assoc("SELECT clusterid,
 		$projMagic AS projectName,
-		SUM(CASE WHEN stat IN ('RUNNING','PROV') THEN num_cpus ELSE NULL END) as numRUN,
+		SUM(CASE WHEN stat='RUNNING' THEN num_cpus ELSE NULL END) as numRUN,
 		SUM(CASE WHEN stat='PEND' THEN num_cpus ELSE NULL END) as numPEND,
 		SUM(num_cpus) as numJOBS,
-		(SUM(CASE WHEN stat IN ('RUNNING','PROV') AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (stime+utime) ELSE NULL END) / SUM(CASE WHEN stat='RUNNING' AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (run_time*max_allocated_processes) ELSE NULL END)) * 100 as efficiency,
-		AVG(CASE WHEN stat IN ('RUNNING','PROV') THEN max_memory ELSE NULL END) as avg_mem,
-		MAX(CASE WHEN stat IN ('RUNNING','PROV') THEN max_memory ELSE NULL END) as max_mem,
-		AVG(CASE WHEN stat IN ('RUNNING','PROV') THEN max_swap ELSE NULL END) as avg_swap,
-		MAX(CASE WHEN stat IN ('RUNNING', 'PROV') THEN max_swap ELSE NULL END) as max_swap,
+		(SUM(CASE WHEN stat='RUNNING' AND run_time>'" . read_config_option('grid_efficiency_window') . "' THEN (stime+utime) ELSE NULL END) / NULLIF(SUM(CASE WHEN stat='RUNNING' AND run_time>'" . read_config_option('grid_efficiency_window') . "' THEN (run_time*max_allocated_processes) ELSE NULL END), 0)) * 100 as efficiency,
+		AVG(CASE WHEN stat='RUNNING' THEN max_memory ELSE NULL END) as avg_mem,
+		MAX(CASE WHEN stat='RUNNING' THEN max_memory ELSE NULL END) as max_mem,
+		AVG(CASE WHEN stat='RUNNING' THEN max_swap ELSE NULL END) as avg_swap,
+		MAX(CASE WHEN stat='RUNNING' THEN max_swap ELSE NULL END) as max_swap,
 		SUM(cpu_used) as total_cpu,
 		NOW() AS last_updated,
 		'1' as present
 		FROM grid_jobs
-		WHERE stat IN ('RUNNING', 'PROV', 'USUSP', 'PSUSP', 'SSUSP', 'PEND')
+		WHERE stat IN ('RUNNING', 'USUSP', 'PSUSP', 'SSUSP', 'PEND')
 		$clsql
 		GROUP BY clusterid, $projMagic");
 	grid_pump_records($records, "grid_projects", $format, false, $duplicate);
@@ -7126,22 +7125,22 @@ function update_projects() {
 
 	$proj_sql = "SELECT clusterid,
 			$projMagic AS projectName,
-			SUM(CASE WHEN stat IN ('RUNNING','PROV') THEN num_cpus ELSE 0 END) as numRUN,
+			SUM(CASE WHEN stat='RUNNING' THEN num_cpus ELSE 0 END) as numRUN,
 			SUM(CASE WHEN stat='PEND' THEN num_cpus ELSE 0 END) as numPEND,
 			SUM(num_cpus) as numJOBS,
-			COUNT(IF(stat IN ('RUNNING','PROV'), stat, NULL)) as runJOBS,
+			COUNT(IF(stat='RUNNING', stat, NULL)) as runJOBS,
 			COUNT(IF(stat='PEND', stat, NULL)) as pendJOBS,
 			COUNT(stat) as totalJOBS,
-			(SUM(CASE WHEN stat IN ('RUNNING','PROV') AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (stime+utime) ELSE 0 END) / SUM(CASE WHEN stat='RUNNING' AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (run_time*max_allocated_processes) ELSE 0 END)) * 100 as efficiency,
-			AVG(CASE WHEN stat IN ('RUNNING','PROV') THEN max_memory ELSE NULL END) as avg_mem,
-			MAX(CASE WHEN stat IN ('RUNNING','PROV') THEN max_memory ELSE 0 END) as max_mem,
-			AVG(CASE WHEN stat IN ('RUNNING','PROV') THEN max_swap ELSE NULL END) as avg_swap,
-			MAX(CASE WHEN stat IN ('RUNNING', 'PROV') THEN max_swap ELSE 0 END) as max_swap,
+			(SUM(CASE WHEN stat='RUNNING' AND run_time>'" . read_config_option('grid_efficiency_window') . "' THEN (stime+utime) ELSE 0 END) / NULLIF(SUM(CASE WHEN stat='RUNNING' AND run_time>'" . read_config_option('grid_efficiency_window') . "' THEN (run_time*max_allocated_processes) ELSE 0 END), 0)) * 100 as efficiency,
+			AVG(CASE WHEN stat='RUNNING' THEN max_memory ELSE NULL END) as avg_mem,
+			MAX(CASE WHEN stat='RUNNING' THEN max_memory ELSE 0 END) as max_mem,
+			AVG(CASE WHEN stat='RUNNING' THEN max_swap ELSE NULL END) as avg_swap,
+			MAX(CASE WHEN stat='RUNNING' THEN max_swap ELSE 0 END) as max_swap,
 			SUM(cpu_used) as total_cpu,
 			NOW() AS last_updated,
 			'1' as present
 			FROM grid_jobs
-			WHERE stat IN ('RUNNING', 'PROV', 'USUSP', 'PSUSP', 'SSUSP', 'PEND')
+			WHERE stat IN ('RUNNING', 'USUSP', 'PSUSP', 'SSUSP', 'PEND')
 			$clsql
 			GROUP BY clusterid, $projMagic";
 	//print $proj_sql;
@@ -7201,22 +7200,22 @@ function update_queues() {
 	/* format the SQL insert syntax */
 	$records = db_fetch_assoc("SELECT clusterid,
 		queue,
-		SUM(CASE WHEN stat IN ('RUNNING','PROV') THEN num_cpus ELSE 0 END) as numRUN,
+		SUM(CASE WHEN stat='RUNNING' THEN num_cpus ELSE 0 END) as numRUN,
 		SUM(CASE WHEN stat='PEND' THEN num_cpus ELSE 0 END) as numPEND,
 		SUM(num_cpus) as numJOBS,
-		(SUM(CASE WHEN stat IN ('RUNNING','PROV') AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (stime+utime) ELSE 0 END) / SUM(CASE WHEN stat='RUNNING' AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (run_time*max_allocated_processes) ELSE 0 END)) * 100 as efficiency,
-		AVG(CASE WHEN stat IN ('RUNNING','PROV') THEN max_memory ELSE NULL END) AS avg_mem,
-		MAX(CASE WHEN stat IN ('RUNNING','PROV') THEN max_memory ELSE 0 END) AS max_mem,
-		AVG(CASE WHEN stat IN ('RUNNING','PROV') THEN max_swap ELSE NULL END) AS avg_swap,
-		MAX(CASE WHEN stat IN ('RUNNING','PROV') THEN max_swap ELSE 0 END) AS max_swap,
+		(SUM(CASE WHEN stat='RUNNING' AND run_time>'" . read_config_option('grid_efficiency_window') . "' THEN (stime+utime) ELSE 0 END) / NULLIF(SUM(CASE WHEN stat='RUNNING' AND run_time>'" . read_config_option('grid_efficiency_window') . "' THEN (run_time*max_allocated_processes) ELSE 0 END), 0)) * 100 as efficiency,
+		AVG(CASE WHEN stat='RUNNING' THEN max_memory ELSE NULL END) AS avg_mem,
+		MAX(CASE WHEN stat='RUNNING' THEN max_memory ELSE 0 END) AS max_mem,
+		AVG(CASE WHEN stat='RUNNING' THEN max_swap ELSE NULL END) AS avg_swap,
+		MAX(CASE WHEN stat='RUNNING' THEN max_swap ELSE 0 END) AS max_swap,
 		SUM(cpu_used) as total_cpu,
-		SUM(CASE WHEN stat IN ('RUNNING','PROV') THEN mem_reserved ELSE 0 END) AS memReserved,
-		SUM(CASE WHEN stat IN ('RUNNING','PROV') THEN mem_used ELSE 0 END) AS memUsed,
-		SUM(CASE WHEN stat IN ('RUNNING','PROV') THEN mem_requested ELSE 0 END) AS memRequested,
+		SUM(CASE WHEN stat='RUNNING' THEN mem_reserved ELSE 0 END) AS memReserved,
+		SUM(CASE WHEN stat='RUNNING' THEN mem_used ELSE 0 END) AS memUsed,
+		SUM(CASE WHEN stat='RUNNING' THEN mem_requested ELSE 0 END) AS memRequested,
 		NOW() AS last_updated,
 		'1' as present
 		FROM grid_jobs
-		WHERE stat IN ('RUNNING', 'PROV', 'USUSP', 'PSUSP', 'SSUSP', 'PEND')
+		WHERE stat IN ('RUNNING', 'USUSP', 'PSUSP', 'SSUSP', 'PEND')
 		$clsql
 		GROUP BY clusterid, queue");
 	grid_pump_records($records, "grid_queues_stats", $format, false, $duplicate);
@@ -7447,19 +7446,19 @@ function update_hostgroups_stats() {
 		FROM (SELECT
 			clusterid,
 			exec_host,
-			(SUM(CASE WHEN stat IN ('RUNNING','PROV') AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (stime+utime) ELSE 0 END) / SUM(CASE WHEN stat IN ('RUNNING','PROV') AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (run_time*max_allocated_processes) ELSE 0 END)) * 100 as avg_efficiency,
+			(SUM(CASE WHEN stat='RUNNING' AND run_time>'" . read_config_option('grid_efficiency_window') . "' THEN (stime+utime) ELSE 0 END) / NULLIF(SUM(CASE WHEN stat='RUNNING' AND run_time>'" . read_config_option('grid_efficiency_window') . "' THEN (run_time*max_allocated_processes) ELSE 0 END), 0)) * 100 as avg_efficiency,
 			AVG(max_memory) as avg_mem,
 			MAX(max_memory) as max_mem,
 			AVG(max_swap) as avg_max_swap,
 			MAX(max_swap) as max_max_swap,
 			SUM(cpu_used) as total_cpu,
-			SUM(CASE WHEN stat IN ('RUNNING','PROV') THEN num_cpus ELSE 0 END) as sum_numRUN,
+			SUM(CASE WHEN stat='RUNNING' THEN num_cpus ELSE 0 END) as sum_numRUN,
 			SUM(num_cpus) as sum_numJOBS,
-			SUM(CASE WHEN stat IN ('RUNNING','PROV') THEN mem_reserved ELSE 0 END) as mem_reserved,
-			SUM(CASE WHEN stat IN ('RUNNING','PROV') THEN mem_used ELSE 0 END) as mem_used,
-			SUM(CASE WHEN stat IN ('RUNNING','PROV') THEN mem_requested ELSE 0 END) as mem_requested
+			SUM(CASE WHEN stat='RUNNING' THEN mem_reserved ELSE 0 END) as mem_reserved,
+			SUM(CASE WHEN stat='RUNNING' THEN mem_used ELSE 0 END) as mem_used,
+			SUM(CASE WHEN stat='RUNNING' THEN mem_requested ELSE 0 END) as mem_requested
 			FROM grid_jobs
-			WHERE stat IN ('RUNNING', 'PROV', 'USUSP', 'PSUSP', 'SSUSP')
+			WHERE stat IN ('RUNNING', 'USUSP', 'PSUSP', 'SSUSP')
 			$clsql_j
 			GROUP BY clusterid, exec_host) as teddy
 		INNER JOIN grid_hostgroups
@@ -7647,21 +7646,21 @@ function update_group() {
 		/* format the SQL insert syntax */
 		$records = db_fetch_assoc("SELECT clusterid,
 			$grpMagic AS groupName,
-			SUM(CASE WHEN stat IN ('RUNNING','PROV') THEN num_cpus ELSE 0 END) as numRUN,
+			SUM(CASE WHEN stat='RUNNING' THEN num_cpus ELSE 0 END) as numRUN,
 			SUM(CASE WHEN stat='PEND' THEN num_cpus ELSE 0 END) as numPEND,
 			SUM(num_cpus) as numJOBS,
 			SUM(CASE WHEN stat='SSUSP' THEN num_cpus ELSE 0 END) as numSSUSP,
 			SUM(CASE WHEN stat='USUSP' THEN num_cpus ELSE 0 END) as numUSUSP,
-			(SUM(CASE WHEN stat IN ('RUNNING','PROV') AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (stime+utime) ELSE 0 END) / SUM(CASE WHEN stat IN ('RUNNING','PROV') AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (run_time*max_allocated_processes) ELSE 0 END)) * 100 as efficiency,
-			AVG(CASE WHEN stat IN ('RUNNING','PROV') THEN max_memory ELSE NULL END) as avg_mem,
-			MAX(CASE WHEN stat IN ('RUNNING','PROV') THEN max_memory ELSE 0 END) as max_mem,
-			AVG(CASE WHEN stat IN ('RUNNING','PROV') THEN max_swap ELSE NULL END) as avg_swap,
-			MAX(CASE WHEN stat IN ('RUNNING','PROV') THEN max_swap ELSE 0 END) as max_swap,
+			(SUM(CASE WHEN stat='RUNNING' AND run_time>'" . read_config_option('grid_efficiency_window') . "' THEN (stime+utime) ELSE 0 END) / NULLIF(SUM(CASE WHEN stat='RUNNING' AND run_time>'" . read_config_option('grid_efficiency_window') . "' THEN (run_time*max_allocated_processes) ELSE 0 END), 0)) * 100 as efficiency,
+			AVG(CASE WHEN stat='RUNNING' THEN max_memory ELSE NULL END) as avg_mem,
+			MAX(CASE WHEN stat='RUNNING' THEN max_memory ELSE 0 END) as max_mem,
+			AVG(CASE WHEN stat='RUNNING' THEN max_swap ELSE NULL END) as avg_swap,
+			MAX(CASE WHEN stat='RUNNING' THEN max_swap ELSE 0 END) as max_swap,
 			SUM(cpu_used) as total_cpu,
 			NOW() AS last_updated,
 			'1' as present
 			FROM grid_jobs
-			WHERE jobGroup!='' AND stat IN ('RUNNING', 'PROV', 'USUSP', 'PSUSP', 'SSUSP', 'PEND')
+			WHERE jobGroup!='' AND stat IN ('RUNNING', 'USUSP', 'PSUSP', 'SSUSP', 'PEND')
 			$clsql
 			GROUP BY clusterid, $grpMagic");
 		grid_pump_records($records, "grid_groups", $format, false, $duplicate);
@@ -7709,19 +7708,19 @@ function update_application() {
 	/* format the SQL insert syntax */
 	$records = db_fetch_assoc("SELECT clusterid,
 		app AS appName,
-		SUM(CASE WHEN stat IN ('RUNNING','PROV')  THEN num_cpus ELSE 0 END) as numRUN,
+		SUM(CASE WHEN stat='RUNNING'  THEN num_cpus ELSE 0 END) as numRUN,
 		SUM(CASE WHEN stat='PEND' THEN num_cpus ELSE 0 END) as numPEND,
 		SUM(num_cpus) as numJOBS,
-		(SUM(CASE WHEN stat IN ('RUNNING','PROV') AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (stime+utime) ELSE 0 END) / SUM(CASE WHEN stat='RUNNING' AND run_time>'"  . read_config_option('grid_efficiency_window') . "' THEN (run_time*max_allocated_processes) ELSE 0 END)) * 100 as efficiency,
-		AVG(CASE WHEN stat IN ('RUNNING','PROV')  THEN max_memory ELSE NULL END) as avg_mem,
-		MAX(CASE WHEN stat IN ('RUNNING','PROV')  THEN max_memory ELSE 0 END) as max_mem,
-		AVG(CASE WHEN stat IN ('RUNNING','PROV')  THEN max_swap ELSE NULL END) as avg_swap,
-		MAX(CASE WHEN stat IN ('RUNNING','PROV')  THEN max_swap ELSE 0 END) as max_swap,
+		(SUM(CASE WHEN stat='RUNNING' AND run_time>'" . read_config_option('grid_efficiency_window') . "' THEN (stime+utime) ELSE 0 END) / NULLIF(SUM(CASE WHEN stat='RUNNING' AND run_time>'" . read_config_option('grid_efficiency_window') . "' THEN (run_time*max_allocated_processes) ELSE 0 END), 0)) * 100 as efficiency,
+		AVG(CASE WHEN stat='RUNNING'  THEN max_memory ELSE NULL END) as avg_mem,
+		MAX(CASE WHEN stat='RUNNING'  THEN max_memory ELSE 0 END) as max_mem,
+		AVG(CASE WHEN stat='RUNNING'  THEN max_swap ELSE NULL END) as avg_swap,
+		MAX(CASE WHEN stat='RUNNING'  THEN max_swap ELSE 0 END) as max_swap,
 		SUM(cpu_used) as total_cpu,
 		NOW() AS last_updated,
 		'1' as present
 		FROM grid_jobs
-		WHERE app!='' AND stat IN ('RUNNING', 'PROV', 'USUSP', 'PSUSP', 'SSUSP', 'PEND')
+		WHERE app!='' AND stat IN ('RUNNING', 'USUSP', 'PSUSP', 'SSUSP', 'PEND')
 		$clsql
 		GROUP BY clusterid, app");
 	grid_pump_records($records, "grid_applications", $format, false, $duplicate);
@@ -10797,9 +10796,9 @@ function get_jobs_query($table_name, $apply_limits = true, &$jobsquery = '', &$r
 			}
 		} elseif ((get_request_var('status') == 'RUNNING')) {
 			 if (strlen($sql_where)) {
-				$sql_where .= " AND (stat IN ('RUNNING', 'PROV'))";
+				$sql_where .= " AND stat='RUNNING'";
 			} else {
-				$sql_where  = "WHERE (stat IN ('RUNNING', 'PROV'))";
+				$sql_where  = "WHERE stat='RUNNING'";
 			}
 
 		} else {
@@ -10887,7 +10886,7 @@ function get_jobs_query($table_name, $apply_limits = true, &$jobsquery = '', &$r
 	/* host group sql where */
 	if (get_request_var('hgroup') == '-1') {
 		/* Show all items */
-	} elseif ((get_request_var('hgroup') != '-1') && (get_request_var('status')=='PEND' ||  get_request_var('status') == 'PSUSP')) {
+	} elseif ((get_request_var('hgroup') != '-1') && (get_request_var('status')=='PEND' || get_request_var('status') == 'PSUSP')) {
 		$pend_hgroup_flag=true;
 		if (strlen($sql_where)) {
 			$sql_where .= " AND (groupName='".get_request_var('hgroup')."')";
@@ -10970,7 +10969,7 @@ function get_jobs_query($table_name, $apply_limits = true, &$jobsquery = '', &$r
 		}
 	}
 
-	if (get_request_var('status') == 'ACTIVE' || get_request_var('status') == 'RUNNING' || get_request_var('status') == 'PROV') {
+	if (get_request_var('status') == 'ACTIVE' || get_request_var('status') == 'RUNNING') {
 		if (read_config_option('grididle_bgcolor') > 0 && get_request_var('exception') == 'hogs') {
 				if (get_request_var('clusterid')>0) {
 					$idle_jobs = db_fetch_assoc_prepared('SELECT * FROM grid_jobs_idled WHERE clusterid=?', array(get_filter_request_var('clusterid')));
@@ -11000,7 +10999,7 @@ function get_jobs_query($table_name, $apply_limits = true, &$jobsquery = '', &$r
 		}
 	}
 
-	if (get_request_var('status') == 'ACTIVE' || get_request_var('status') == 'RUNNING' || get_request_var('status') == 'PROV' ||
+	if (get_request_var('status') == 'ACTIVE' || get_request_var('status') == 'RUNNING' ||
 		get_request_var('status') == 'DONE' || get_request_var('status') == 'EXIT' || get_request_var('status') == 'FINISHED') {
 		if (read_config_option('gridmemvio_bgcolor') > 0 && get_request_var('exception') == 'memvio') {  //overusage
 			$mem_limit     = read_config_option('gridmemvio_min_memory');
@@ -11025,7 +11024,7 @@ function get_jobs_query($table_name, $apply_limits = true, &$jobsquery = '', &$r
 		}
 	}
 
-	if (get_request_var('status') == 'ACTIVE' || get_request_var('status') == 'RUNNING' || get_request_var('status') == 'PROV') {
+	if (get_request_var('status') == 'ACTIVE' || get_request_var('status') == 'RUNNING') {
 		if (read_config_option('gridrunlimitvio_bgcolor') > 0 && get_request_var('exception') == 'runtimevio') {
 			if (get_request_var('clusterid')>0) {
 				$runtime_jobs = db_fetch_assoc_prepared("SELECT * FROM grid_jobs_runtime WHERE present=1 AND (type=2 OR type=1) AND clusterid=?", array(get_filter_request_var('clusterid')));
@@ -12070,7 +12069,7 @@ function update_queues_dispatch_times() {
 				AVG(UNIX_TIMESTAMP(start_time)-UNIX_TIMESTAMP(submit_time)) AS avgdisp,
 				MAX(UNIX_TIMESTAMP(start_time)-UNIX_TIMESTAMP(submit_time)) AS maxdisp
 				FROM grid_jobs
-				WHERE stat in ('RUNNING', 'PROV', 'DONE', 'EXIT')
+				WHERE stat in ('RUNNING', 'DONE', 'EXIT')
 				AND clusterid=?
 				AND start_time >=?
 				GROUP BY clusterid, queue;", $sql_params);
@@ -13516,11 +13515,18 @@ print '</tr></table>';
 				<td width='15%'>
 					<?php print __('Job Name', 'grid');?>
 				</td>
-				<td colspan='3' width='85%'>
+				<td <?php print (empty($job['reservationId']) ? "colspan=3 width=85%" : "width=35%");?>>
 					<?php print html_escape(str_replace(";", "; ", str_replace(":", ": ", api_plugin_hook_function("grid_jobs_jobname", grid_get_group_jobname($job)))));?>
 				</td>
+				<?php if (!empty($job['reservationId'])) {?>
+				<td width='15%'>
+					<?php print __('Reservation ID', 'grid');?>
+				</td>
+				<td width='35%'>
+					<?php print (html_escape($job['reservationId']));?>
+				</td>
 			<?php
-
+			}
 			if (!empty($job['jobDescription'] )) {
 			form_alternate_row();?>
 				<td width='15%' >
@@ -14389,19 +14395,19 @@ print '</tr></table>';
 					<?php print __('Cur Memory Used', 'grid');?>
 				</td>
 				<td width='16%'>
-					<?php print display_job_memory(isset($job_rusage['mem'])?$job_rusage['mem']:0,3);?>
+					<?php print ($job['stat'] == 'RUNNING' ? display_job_memory(isset($job['mem_used'])?$job['mem_used']:0,3) : '-');?>
+				</td>
+				<td width='16%'>
+					<?php print __('Avg Memory Used', 'grid');?>
+				</td>
+				<td  width='16%'>
+					<?php print display_job_memory($job['avg_mem'],3);?>
 				</td>
 				<td width='16%'>
 					<?php print __('Max Memory Used', 'grid');?>
 				</td>
-				<td  width='16%'>
+				<td  width='20%'>
 					<?php print display_job_memory($job['max_memory'],3);?>
-				</td>
-				<td width='16%'>
-					<?php print __('Job Avg Efficiency', 'grid');?>
-				</td>
-				<td width='20%'>
-					<?php print display_job_effic($job["efficiency"], $job["run_time"], 2);?>
 				</td>
 			</tr>
 			<?php
@@ -14499,16 +14505,16 @@ print '</tr></table>';
 					<?php print display_job_memory($job['max_swap'],3);?>
 				</td>
 				<td width='16%'>
-					<?php print __('Mem Peak Efficiency', 'grid');?>
+					<?php print __('Mem Efficiency', 'grid');?>
 				</td>
 				<td width='20%'>
 					<?php print display_job_effic($job["memEfficiency"], $job["run_time"], 2);?>
 				</td>
 			</tr>
-
 			<?php
-			if (($job['stat'] == "DONE") || ($job['stat'] == "EXIT") || ($job['stat'] == "UNKWN")) {
-			form_alternate_row();?>
+			form_alternate_row();
+				$is_finished = ($job['stat'] == "DONE") || ($job['stat'] == "EXIT") || ($job['stat'] == "UNKWN");
+				if ($is_finished) {?>
 				<td width='16%'>
 					<?php print __('Exit Code', 'grid');?>
 				</td>
@@ -14518,12 +14524,19 @@ print '</tr></table>';
 				<td width='16%'>
 					<?php print __('End Time', 'grid');?>
 				</td>
-				<td width='52%' colspan='3'>
+				<td width='16%'>
 					<?php print ((substr_count($job['end_time'], '0000')) ? "-" : $job['end_time']);?>
+				</td>
+				<?php }?>
+				<td width='16%'>
+					<?php print __('Job Avg Efficiency', 'grid');?>
+				</td>
+				<td <?php print ($is_finished ? "width=20%" : "colspan=5 width=84%");?> >
+					<?php print display_job_effic($job["efficiency"], $job["run_time"], 2);?>
 				</td>
 			</tr>
 
-			<?php }
+			<?php
 			if (($job['stat'] != "PEND") || ($job['stat'] != "PSUSP")) {
 				form_alternate_row();?>
 					<td width='16%'>
@@ -15143,6 +15156,11 @@ function build_job_display_array($jobs_page = '') {
 			'dbname'  => 'show_jobname',
 			'sort'    => 'ASC'
 		),
+		'reservationId' => array(
+			'display' => __('Reservation ID', 'grid'),
+			'dbname'  => 'show_reservationid',
+			'sort'    => 'ASC'
+		),
 		'queue' => array(
 			'display' => __('Queue', 'grid'),
 			'dbname'  => 'show_queue',
@@ -15478,6 +15496,10 @@ function grid_job_export_display_array() {
 	if (read_grid_config_option('export_jobname') == 'on') {
 		$display_array[] .= 'jobname';
 	}
+	if (read_grid_config_option('export_reservationId') == 'on') {
+		$display_array[] .= 'reservationId';
+	}
+
 	if (read_grid_config_option('export_jobdescription') == 'on') {
 		$display_array[] .= 'jobDescription';
 	}
@@ -15709,6 +15731,9 @@ function grid_jobs_build_export_row($job, &$queue_nice_levels) {
 		$cmdstring = $jobname;
 		$cmdstring = str_replace('"','""',$cmdstring);
 		$xport_row .= $cmdstring . '","';
+	}
+	if (read_grid_config_option("export_reservationId") == "on") {
+		$xport_row .= $job["reservationId"] . '","';
 	}
 	if (read_grid_config_option("export_jobdescription") == "on") {
 		$xport_row .= $job["jobDescription"] . '","';
@@ -16287,10 +16312,10 @@ function bjobs_form_action($job_page) {
 	print "<tr>
 		<td colspan='2' class='saveRow'>
 			<input type='hidden' name='action' value='actions'>
-			<input type='hidden' name='selected_items' value='" . (isset($cluster_array) ? serialize($cluster_array) : '') . "'>
-			<input type='hidden' name='selected_items_job' value='" . (isset($cluster_array_job) ? serialize($cluster_array_job) : '') . "'>
-			<input type='hidden' name='selected_items_whole' value='" . (isset($cluster_whole_array) ? serialize($cluster_whole_array) : '') . "'>
-			<input type='hidden' name='drp_action' value='" . get_request_var('drp_action') . "'>
+			<input type='hidden' name='selected_items' value='" . (isset($cluster_array) ? html_escape(serialize($cluster_array)) : '') . "'>
+			<input type='hidden' name='selected_items_job' value='" . (isset($cluster_array_job) ? html_escape(serialize($cluster_array_job)) : '') . "'>
+			<input type='hidden' name='selected_items_whole' value='" . (isset($cluster_whole_array) ? html_escape(serialize($cluster_whole_array)) : '') . "'>
+			<input type='hidden' name='drp_action' value='" . html_escape(get_request_var('drp_action')) . "'>
 			<input type='button' value='" . $button_false ."' alt='' onClick='cactiReturnTo()'>
 			$save_html
 		</td>
@@ -16320,7 +16345,7 @@ function grid_view_get_queue_records() {
 
 function grid_view_get_user_queue_slot_records() {
 	$user_queues = db_fetch_assoc("SELECT CONCAT(clusterid, '_', user, '_', queue) AS id, SUM(num_cpus) AS total_cpus
-		FROM grid_jobs WHERE stat IN ('RUNNING','PROV') GROUP BY clusterid, user, queue");
+		FROM grid_jobs WHERE stat='RUNNING' GROUP BY clusterid, user, queue");
 	return $user_queues;
 }
 
@@ -16512,12 +16537,12 @@ function graphViewFilter($job_page = 'grid_bjobs.php') {
 					</td>
 				</tr>
 			</table>
-			<input type='hidden' name='date1' value='<?php print $timespan['current_value_date1'];?>'>
-			<input type='hidden' name='date2' value='<?php print $timespan['current_value_date2'];?>'>
-			<input type='hidden' id='clusterid' value='<?php print get_request_var('clusterid');?>'>
-			<input type='hidden' id='jobid' value='<?php print get_request_var('jobid');?>'>
-			<input type='hidden' id='indexid' value='<?php print get_request_var('indexid');?>'>
-			<input type='hidden' id='submit_time' value='<?php print get_request_var('submit_time');?>'>
+			<input type='hidden' name='date1' value='<?php print html_escape($timespan['current_value_date1']);?>'>
+			<input type='hidden' name='date2' value='<?php print html_escape($timespan['current_value_date2']);?>'>
+			<input type='hidden' id='clusterid' value='<?php print html_escape(get_request_var('clusterid'));?>'>
+			<input type='hidden' id='jobid' value='<?php print html_escape(get_request_var('jobid'));?>'>
+			<input type='hidden' id='indexid' value='<?php print html_escape(get_request_var('indexid'));?>'>
+			<input type='hidden' id='submit_time' value='<?php print html_escape(get_request_var('submit_time'));?>'>
 			</form>
 			<script type='text/javascript'>
 
@@ -16764,12 +16789,12 @@ function jobGraphFilter($job, $job_page) {
 					</td>
 				</tr>
 			</table>
-			<input type='hidden' name='date1' value='<?php print $timespan['current_value_date1'];?>'>
-			<input type='hidden' name='date2' value='<?php print $timespan['current_value_date2'];?>'>
-			<input type='hidden' id='clusterid' value='<?php print get_request_var('clusterid');?>'>
-			<input type='hidden' id='jobid' value='<?php print get_request_var('jobid');?>'>
-			<input type='hidden' id='indexid' value='<?php print get_request_var('indexid');?>'>
-			<input type='hidden' id='submit_time' value='<?php print get_request_var('submit_time');?>'>
+			<input type='hidden' name='date1' value='<?php print html_escape($timespan['current_value_date1']);?>'>
+			<input type='hidden' name='date2' value='<?php print html_escape($timespan['current_value_date2']);?>'>
+			<input type='hidden' id='clusterid' value='<?php print html_escape(get_request_var('clusterid'));?>'>
+			<input type='hidden' id='jobid' value='<?php print html_escape(get_request_var('jobid'));?>'>
+			<input type='hidden' id='indexid' value='<?php print html_escape(get_request_var('indexid'));?>'>
+			<input type='hidden' id='submit_time' value='<?php print html_escape(get_request_var('submit_time'));?>'>
 			</form>
 			<script type='text/javascript'>
 			var pageAction      = 'action=viewjob&tab=jobgraph';
@@ -16913,10 +16938,10 @@ function pendingReasonFilter($grid_pend_ignore_applied, $default_num_of_pendreas
 					</td>
 				</tr>
 			</table>
-			<input type='hidden' id='clusterid' value='<?php print get_request_var('clusterid');?>'>
-			<input type='hidden' id='jobid' value='<?php print get_request_var('jobid');?>'>
-			<input type='hidden' id='indexid' value='<?php print get_request_var('indexid');?>'>
-			<input type='hidden' id='submit_time' value='<?php print get_request_var('submit_time');?>'>
+			<input type='hidden' id='clusterid' value='<?php print html_escape(get_request_var('clusterid'));?>'>
+			<input type='hidden' id='jobid' value='<?php print html_escape(get_request_var('jobid'));?>'>
+			<input type='hidden' id='indexid' value='<?php print html_escape(get_request_var('indexid'));?>'>
+			<input type='hidden' id='submit_time' value='<?php print html_escape(get_request_var('submit_time'));?>'>
 			<input type='hidden' id='action' value='viewjob'>
 			<input type='hidden' id='tab' value='jobpendhist'>
 			</form>
@@ -17479,8 +17504,8 @@ function get_cluster_array (&$clusters, &$cluster_cpu, &$job_details, &$host_slo
 			grid_clusters.hourly_exit_jobs AS exitJobs,
 			(SELECT SUM(num_cpus) FROM grid_jobs AS gj WHERE stat NOT IN ('EXIT', 'DONE') AND gj.clusterid=grid_clusters.clusterid) AS totalSlots,
 			(SELECT COUNT(*) FROM grid_jobs AS gj WHERE stat NOT IN ('EXIT', 'DONE') AND gj.clusterid=grid_clusters.clusterid) AS totalJobs,
-			(SELECT SUM(maxNumProcessors) FROM grid_jobs AS gj WHERE stat IN ('PEND') AND gj.clusterid=grid_clusters.clusterid) AS pendJobs,
-			(SELECT SUM(num_cpus) FROM grid_jobs AS gj WHERE stat IN ('RUNNING','PROV') AND gj.clusterid=grid_clusters.clusterid) AS runJobs,
+			(SELECT SUM(maxNumProcessors) FROM grid_jobs AS gj WHERE stat='PEND' AND gj.clusterid=grid_clusters.clusterid) AS pendJobs,
+			(SELECT SUM(num_cpus) FROM grid_jobs AS gj WHERE stat='RUNNING' AND gj.clusterid=grid_clusters.clusterid) AS runJobs,
 			(SELECT SUM(num_cpus) FROM grid_jobs AS gj WHERE stat LIKE '%SUSP%' AND gj.clusterid=grid_clusters.clusterid) AS suspJobs
 			FROM grid_clusters
 			$sql_where1
@@ -19629,6 +19654,7 @@ function simple_strip_host_domain ($host) {
  *  |        1010 |
  *  |        1017 |
  *  |    10010013 |
+ *  |	 10010015 |
  *  +-------------+
  *  If the first bit of $cluster_lsf_version < 6, the version is higher than 91, So extend it to 4 bits,
  *  others we extend it to 3 bits.  for example,
@@ -20031,7 +20057,7 @@ function display_job_results($jobs_page, $table_name, $job_results, $rows, $tota
 				$row_color = get_color(read_config_option('grid_exit_bgcolor'));
 			}
 
-			if (get_request_var('status') == 'ACTIVE' || get_request_var('status') == 'RUNNING' || get_request_var('status') == 'PROV' ||
+			if (get_request_var('status') == 'ACTIVE' || get_request_var('status') == 'RUNNING' ||
 				get_request_var('status') == 'DONE' || get_request_var('status') == 'EXIT' || get_request_var('status') == 'FINISHED') {
 				$type = check_job_memvio($job['max_memory'], $job['mem_reserved'], $job['run_time']);
 
@@ -20094,6 +20120,7 @@ function display_job_results($jobs_page, $table_name, $job_results, $rows, $tota
 			}
 
 			form_selectable_cell_visible(filter_value(title_trim($jobname, $new_length_jobname), get_request_var('filter')), 'show_jobname', $row_id, '', $jobname);
+			form_selectable_cell_visible((jc($job, 'reservationId') != '' && jc($job, 'reservationId') != 'N/A' ? jc($job, 'reservationId') : '-'), 'show_reservationid', $row_id);
 			form_selectable_cell_metadata('simple', 'queue', $job['clusterid'], jc($job, 'queue'), 'show_queue');
 			form_selectable_cell_visible(jc($job, 'sla'), 'show_sla', $row_id);
 			form_selectable_cell_metadata('detailed', 'user', $job['clusterid'], $job['user'], 'show_user');
@@ -20323,7 +20350,7 @@ function display_job_legend() {
 		}
 	}
 
-	if (get_request_var('status') == 'ACTIVE' || get_request_var('status') == 'RUNNING' || get_request_var('status') == 'PROV' ||
+	if (get_request_var('status') == 'ACTIVE' || get_request_var('status') == 'RUNNING' ||
 		get_request_var('status') == 'DONE' || get_request_var('status') == 'EXIT' || get_request_var('status') == 'FINISHED') {
 		if (read_config_option('gridmemvio_bgcolor') > 0) {
 			print "<div class='nowrap center' style='background-color:#" . get_color(read_config_option('gridmemvio_bgcolor')) . ";'>" . read_config_option('gridmemvio_filter_name') . '</div>';

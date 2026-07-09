@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2024                                          |
+ | Copyright IBM Corp. 2006, 2026                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -289,7 +289,7 @@ function grid_bqueues_set_minimum_page_refresh() {
 
 		/* automatically reload this page */
 		$refresh['seconds'] = get_request_var('refresh');
-		$refresh['page'] = $_SERVER['REQUEST_URI'];
+		$refresh['page'] = sanitize_uri($_SERVER['REQUEST_URI']);
 	}
 }
 
@@ -1346,10 +1346,10 @@ function form_action_queue() {
 		<td colspan='2' align='right' bgcolor='#eaeaea'>
 		<input type='hidden' name='action' value='actions'>
 		<input type='hidden' name='command' value=''>
-		<input type='hidden' name='selected_items' value='" . (isset($queue_array) ? serialize($queue_array) : '') . "'>
-		<input type='hidden' name='selected_items_queuename' value='" . (isset($queue_array_queuename) ? serialize($queue_array_queuename) : '') . "'>
-		<input type='hidden' name='selected_items_whole' value='" . (isset($queue_whole_array) ? serialize($queue_whole_array) : '') . "'>
-		<input type='hidden' name='drp_action' value='" . get_request_var('drp_action') . "'>
+		<input type='hidden' name='selected_items' value='" . (isset($queue_array) ? html_escape(serialize($queue_array)) : '') . "'>
+		<input type='hidden' name='selected_items_queuename' value='" . (isset($queue_array_queuename) ? html_escape(serialize($queue_array_queuename)) : '') . "'>
+		<input type='hidden' name='selected_items_whole' value='" . (isset($queue_whole_array) ? html_escape(serialize($queue_whole_array)) : '') . "'>
+		<input type='hidden' name='drp_action' value='" . html_escape(get_request_var('drp_action')) . "'>
 		<input type='button' value='" . $button_false ."' alt='' onClick='this.form.command.value=\"goback\";this.form.submit();' align='absmiddle' border='0'>
 		$save_html
 		</td>
@@ -3029,13 +3029,10 @@ function grid_view_queue_graphs($queue) {
 		gtg.local_graph_id,
 		gtg.width,
 		gtg.height,
-		gtg.title_cache,
-		gl.host_id, h.disabled
+		gtg.title_cache
 		FROM graph_templates_graph AS gtg
 		INNER JOIN graph_local AS gl
 		ON gtg.local_graph_id=gl.id
-		LEFT JOIN host AS h
-		ON gl.host_id = h.id
 		$sql_where
 		ORDER BY gtg.title_cache
 		LIMIT " . (get_request_var('graphs')*(get_request_var('page')-1)) . "," . get_request_var('graphs'), $sql_params);
@@ -4298,10 +4295,10 @@ function form_action_host() {
 		<td class='saveRow'>
 			<input type='hidden' name='action' value='actions'>
 			<input type='hidden' name='command' value=''>
-			<input type='hidden' name='selected_items' value='" . (isset($host_array) ? serialize($host_array) : '') . "'>
-			<input type='hidden' name='selected_items_hostname' value='".(isset($host_array_hostname) ? serialize($host_array_hostname) : '') . "'>
-			<input type='hidden' name='selected_items_whole' value='".(isset($host_whole_array) ? serialize($host_whole_array) : '') . "'>
-			<input type='hidden' name='drp_action' value='" . get_request_var('drp_action') . "'>
+			<input type='hidden' name='selected_items' value='" . (isset($host_array) ? html_escape(serialize($host_array)) : '') . "'>
+			<input type='hidden' name='selected_items_hostname' value='".(isset($host_array_hostname) ? html_escape(serialize($host_array_hostname)) : '') . "'>
+			<input type='hidden' name='selected_items_whole' value='".(isset($host_whole_array) ? html_escape(serialize($host_whole_array)) : '') . "'>
+			<input type='hidden' name='drp_action' value='" . html_escape(get_request_var('drp_action')) . "'>
 			<input type='button' value='" . $button_false ."' alt='' onClick='cactiReturnTo();'>
 			$save_html
 		</td>

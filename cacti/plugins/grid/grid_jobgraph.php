@@ -153,8 +153,9 @@ if (is_numeric($job_update_interval)) {
 
 if (file_exists($pngfile)) {
 	$filesize = filesize($pngfile);
-	$filetype = exif_imagetype($pngfile);
-	if ($filesize > 0 && $filetype > 0 && $filetype < 19){
+	$imageinfo = getimagesize($pngfile);
+	
+	if ($filesize > 0 && $imageinfo[2] > 0 && $imageinfo[2] < 19){
 		$file = fopen($pngfile, 'rb');
 		$data = fread($file, $filesize);
 		fclose($file);

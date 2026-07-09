@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -475,3 +475,10 @@ if (!defined('LDAP_OPT_X_TLS_NEVER')) {
 	define('LDAP_OPT_X_TLS_TRY', 4);
 }
 
+
+/* HTML/JS/URL/CSS context labels for cacti_html_context_escape() */
+define('CACTI_ESC_ELEMENT',   'element');
+define('CACTI_ESC_ATTR',      'attr');
+define('CACTI_ESC_JS_STRING', 'js_string');
+define('CACTI_ESC_URL',       'url');
+define('CACTI_ESC_CSS',       'css');

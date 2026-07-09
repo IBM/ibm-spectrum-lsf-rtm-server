@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2023                                          |
+ | Copyright IBM Corp. 2006, 2026                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -39,6 +39,30 @@ function kill_process_tree($pid, $signal = SIGTERM) {
 		posix_kill($pid, $signal);
 	}
 	return posix_getpgid($pid);
+}
+
+function is_grid_process_running($taskid, $taskname) {
+	$row = db_fetch_row_prepared('SELECT pid, heartbeat
+			FROM grid_processes
+			WHERE taskid = ?
+			AND taskname = ?',
+			array($taskid, $taskname));
+
+	if (cacti_sizeof($row)) {
+		$running = false;
+
+		if ($row['pid'] > 1) {
+			$running = checkPID($row['pid']);
+		}
+
+		if ($running) {
+			return true;
+		} else {
+			return false;
+		}
+	} else {
+		return false;
+	}
 }
 
 /* detect and account for a already running poller */

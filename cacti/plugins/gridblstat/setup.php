@@ -104,7 +104,7 @@ function gridblstat_check_upgrade () {
 	global $config;
 
 	$files = array('index.php', 'plugins.php');
-	if (isset($_SERVER['PHP_SELF']) && !in_array(basename($_SERVER['PHP_SELF']), $files)) {
+	if (isset($_SERVER['SCRIPT_NAME']) && !in_array(basename($_SERVER['SCRIPT_NAME']), $files)) {
 		return;
 	}
 

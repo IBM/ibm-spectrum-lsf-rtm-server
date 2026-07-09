@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2023                                          |
+ | Copyright IBM Corp. 2006, 2026                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -28,7 +28,68 @@ include_once($config['base_path'] . '/lib/rtm_functions.php');
 
 $title = __('IBM Spectrum LSF RTM - Host Information', 'grid');
 
-grid_view_hosts();
+set_default_action();
+
+switch(get_nfilter_request_var('action')) {
+	case 'export':
+		grid_host_export();
+
+		break;
+	default:
+		grid_view_hosts();
+
+		break;
+}
+
+exit;
+
+function grid_host_export() {
+	$rows       = 0;
+	$sql_params = array();
+	$sql_where  = '';
+
+	grid_lshosts_validate_request_vars();
+
+	$hosts = grid_view_get_hosts_records($sql_where, false, $rows, $sql_params, true);
+
+	$stdout = fopen('php://output', 'w');
+
+	header('Content-type: application/excel');
+	header('Content-Disposition: attachment; filename=lsf-hosts-' . time() . '.csv');
+
+	if (cacti_sizeof($hosts)) {
+		$columns = array_keys($hosts[0]);
+		$ucols   = array();
+
+		foreach($columns as $index => $c) {
+			switch($c) {
+				case 'licensed':
+				case 'licFeaturesNeeded':
+				case 'licClass':
+				case 'rexPriority':
+				case 'present':
+					unset($columns[$index]);
+					$ucols[] = $c;
+					break;
+				default:
+				}
+		}
+
+		fputcsv($stdout, $columns);
+
+		foreach($hosts as $h) {
+			if (cacti_sizeof($ucols)) {
+				foreach($ucols as $c) {
+					unset($h[$c]);
+				}
+			}
+
+			fputcsv($stdout, $h);
+		}
+	}
+
+	fclose($stdout);
+}
 
 function grid_view_get_hosts_records(&$sql_where, $apply_limits = true, $rows = 30, &$sql_params = array()) {
 	/* user id sql where */
@@ -53,18 +114,18 @@ function grid_view_get_hosts_records(&$sql_where, $apply_limits = true, $rows = 
 	}
 
 	/* resource sql where */
-	$resoure_name = get_request_var('resource');
-	if ($resoure_name == '-1') {
+	$resource_name = get_request_var('resource');
+	if ($resource_name == '-1') {
 		/* Show all items */
-	} else if ($resoure_name == '-2') {
+	} else if ($resource_name == '-2') {
 		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . "(resources='-')";
 	} else {
-		if('!' == substr($resoure_name, 0, 1)) {//exclusive resource
+		if ('!' == substr($resource_name, 0, 1)) {//exclusive resource
 			$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . "(excl_resources LIKE ?)";
-			$sql_params[] = '%'. substr($resoure_name, 1) . '%';
+			$sql_params[] = '%'. substr($resource_name, 1) . '%';
 		} else {
 			$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . "(resources LIKE ?)";
-			$sql_params[] = '%'. $resoure_name . '%';
+			$sql_params[] = '%'. $resource_name . '%';
 		}
 	}
 
@@ -118,9 +179,9 @@ function hostsFilter() {
 							<?php
 							$clusters = grid_get_clusterlist();
 							if (cacti_sizeof($clusters)) {
-							foreach ($clusters as $cluster) {
-								print '<option value="' . $cluster['clusterid'] .'"'; if (get_request_var('clusterid') == $cluster['clusterid']) { print ' selected'; } print '>' . $cluster['clustername'] . '</option>';
-							}
+								foreach ($clusters as $cluster) {
+									print '<option value="' . $cluster['clusterid'] .'"'; if (get_request_var('clusterid') == $cluster['clusterid']) { print ' selected'; } print '>' . $cluster['clustername'] . '</option>';
+								}
 							}
 							?>
 						</select>
@@ -147,7 +208,7 @@ function hostsFilter() {
 
 							if (cacti_sizeof($resources)) {
 							foreach ($resources as $resource) {
-								if($resource['rtype'] == 1) { //exclusive resource
+								if ($resource['rtype'] == 1) { //exclusive resource
 									$resource['resource_name'] = '!'. $resource['resource_name'];
 								}
 								print '<option value="' . $resource['resource_name'] .'"'; if (get_request_var('resource') == $resource['resource_name']) { print ' selected'; } print '>' . $resource['resource_name'] . '</option>';
@@ -163,18 +224,19 @@ function hostsFilter() {
 						<select id='rows'>
 							<?php
 							if (cacti_sizeof($grid_rows_selector)) {
-							foreach ($grid_rows_selector as $key => $value) {
-								print '<option value="' . $key . '"'; if (get_request_var('rows') == $key) { print ' selected'; } print '>' . $value . '</option>';
-							}
+								foreach ($grid_rows_selector as $key => $value) {
+									print '<option value="' . $key . '"'; if (get_request_var('rows') == $key) { print ' selected'; } print '>' . $value . '</option>';
+								}
 							}
 							?>
 						</select>
 					</td>
 					<td>
-						<input type='submit' id='go' value='<?php print __esc('Go', 'grid');?>' title='<?php print __esc('Search', 'grid');?>'>
-					</td>
-					<td>
-						<input type='button' id='clear' value='<?php print __esc('Clear', 'grid');?>' title='<?php print __esc('Clear Filters', 'grid');?>'>
+						<span>
+							<input type='submit' id='go' value='<?php print __esc('Go', 'grid');?>' title='<?php print __esc('Search', 'grid');?>'>
+							<input type='button' id='clear' value='<?php print __esc('Clear', 'grid');?>' title='<?php print __esc('Clear Filters', 'grid');?>'>
+							<input type='button' id='export' value='<?php print __esc('Export', 'grid');?>' title='<?php print __esc('Export Records', 'grid');?>'>
+						</span>
 					</td>
 				</tr>
 				<tr>
@@ -252,62 +314,59 @@ function hostsFilter() {
 					</td>
 				</tr>
 			</table>
-			<input type='hidden' id='page' value='<?php print get_request_var('page');?>'>
+			<input type='hidden' id='page' value='<?php print html_escape(get_request_var('page'));?>'>
 			</form>
 		</td>
 	</tr>
 	<?php
 }
 
-function grid_view_hosts() {
-	global $title, $report, $grid_search_types, $grid_rows_selector, $config;
-	$sql_params = array();
-
+function grid_lshosts_validate_request_vars() {
     /* ================= input validation and session storage ================= */
     $filters = array(
 		'rows' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'pageset' => true,
 			'default' => '-1'
-			),
+		),
 		'page' => array(
 			'filter' => FILTER_VALIDATE_INT,
 			'default' => '1'
-			),
+		),
 		'type' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '-1',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'model' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '-1',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'resource' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '-1',
 			'options' => array('options' => 'resource_sanitize_search_string')
-			),
+		),
 		'filter' => array(
 			'filter' => FILTER_CALLBACK,
 			'pageset' => true,
 			'default' => '',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'sort_column' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => 'host',
 			'options' => array('options' => 'sanitize_search_string')
-			),
+		),
 		'sort_direction' => array(
 			'filter' => FILTER_CALLBACK,
 			'default' => 'ASC',
 			'options' => array('options' => 'sanitize_search_string')
-			)
+		)
 	);
 
 	validate_store_request_vars($filters, 'sess_glsh');
@@ -320,6 +379,14 @@ function grid_view_hosts() {
 	);
 	validate_store_request_vars($filters, 'sess_grid');
 	/* ================= input validation ================= */
+
+}
+
+function grid_view_hosts() {
+	global $title, $report, $grid_search_types, $grid_rows_selector, $config;
+	$sql_params = array();
+
+	grid_lshosts_validate_request_vars();
 
 	general_header();
 
@@ -358,6 +425,11 @@ function grid_view_hosts() {
 		loadPageNoHeader(strURL);
 	}
 
+	function exportRows() {
+		document.location = 'grid_lshosts.php?header=false&action=export';
+		Pace.stop();
+	}
+
 	$(function() {
 		$('#form_grid').submit(function(event) {
 			event.preventDefault();
@@ -370,6 +442,10 @@ function grid_view_hosts() {
 
 		$('#clear').click(function() {
 			clearFilter();
+		});
+
+		$('#export').click(function() {
+			exportRows();
 		});
 	});
 
@@ -533,7 +609,7 @@ function grid_view_hosts() {
 			form_selectable_cell($host['nDisks'], $i, '', 'right');
 			form_selectable_cell($host['resources'], $i, '', 'right');
 			$excl_resources = trim($host['excl_resources']);
-			if(strlen($excl_resources) > 0 && $excl_resources != '-') {
+			if (strlen($excl_resources) > 0 && $excl_resources != '-') {
 				$excl_resources = str_replace(' ', ' !', $excl_resources);
 				$excl_resources = '!' . $excl_resources;
 			} else {

@@ -2,7 +2,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -239,9 +239,9 @@ function ss_boost() {
 }
 
 function ss_boost_mem() {
-	$stats = db_fetch_cell('SELECT value
+	$stats = db_fetch_cell('SELECT SUM(value)
 		FROM settings
-		WHERE name="boost_peak_memory"');
+		WHERE name LIKE "boost_peak_memory%"');
 
 	return empty($stats) ? '0' : trim($stats);
 }

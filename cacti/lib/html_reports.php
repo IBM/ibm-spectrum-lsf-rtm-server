@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -226,6 +226,10 @@ function reports_item_dnd() {
 	get_filter_request_var('id');
 	/* ================= Input validation ================= */
 
+	if (!cacti_authorize_resource($_SESSION['sess_user_id'], (int) get_request_var('id'), 'reports')) {
+		return;
+	}
+
 	$continue = true;
 
 	if (isset_request_var('report_item') && is_array(get_nfilter_request_var('report_item'))) {
@@ -265,6 +269,13 @@ function reports_form_save() {
 		if (isempty_request_var('id')) {
 			$save['user_id'] = $_SESSION['sess_user_id'];
 		} else {
+			if (!cacti_authorize_resource($_SESSION['sess_user_id'], (int) get_nfilter_request_var('id'), 'reports')) {
+				raise_message('permission_denied');
+				header('Location: reports.php');
+
+				exit;
+			}
+
 			$save['user_id'] = db_fetch_cell_prepared('SELECT user_id FROM reports WHERE id = ?', array(get_nfilter_request_var('id')));
 		}
 
@@ -274,7 +285,7 @@ function reports_form_save() {
 		$save['enabled']       = (isset_request_var('enabled') ? 'on' : '');
 
 		$save['cformat']       = (isset_request_var('cformat') ? 'on' : '');
-		$save['format_file']   = get_nfilter_request_var('format_file');
+		$save['format_file']   = basename(get_nfilter_request_var('format_file'));
 		$save['font_size']     = form_input_validate(get_nfilter_request_var('font_size'), 'font_size', '^[0-9]+$', false, 3);
 		$save['alignment']     = form_input_validate(get_nfilter_request_var('alignment'), 'alignment', '^[0-9]+$', false, 3);
 		$save['graph_linked']  = (isset_request_var('graph_linked') ? 'on' : '');
@@ -416,6 +427,22 @@ function reports_form_actions() {
 	if (isset_request_var('selected_items')) {
 		$selected_items = sanitize_unserialize_selected_items(get_nfilter_request_var('selected_items'));
 
+		/* Drop any report id the current user is not authorised to mutate so
+		 * every action branch below runs only on rows owned by the caller or
+		 * accessible to a reports admin (realm 21). */
+		if (is_array($selected_items)) {
+			$selected_items = array_values(array_filter(
+				$selected_items,
+				function ($rid) {
+					return cacti_authorize_resource($_SESSION['sess_user_id'], (int) $rid, 'reports');
+				}
+			));
+
+			if (cacti_sizeof($selected_items) === 0) {
+				$selected_items = false;
+			}
+		}
+
 		if ($selected_items != false) {
 			if (get_nfilter_request_var('drp_action') == REPORTS_DELETE) { // delete
 				db_execute('DELETE FROM reports WHERE ' . array_to_sql_or($selected_items, 'id'));
@@ -489,7 +516,7 @@ function reports_form_actions() {
 
 	form_start(get_reports_page(), 'report');
 
-	html_start_box($reports_actions[get_nfilter_request_var('drp_action')], '60%', '', '3', 'center', '');
+	html_start_box(escape_page_action($reports_actions, get_nfilter_request_var('drp_action')), '60%', '', '3', 'center', '');
 
 	if (!isset($reports_array)) {
 		raise_message(40);
@@ -554,7 +581,7 @@ function reports_form_actions() {
 			<input type='hidden' name='action' value='actions'>
 			<input type='hidden' name='selected_items' value='" . (isset($reports_array) ? serialize($reports_array) : '') . "'>
 			<input type='hidden' name='drp_action' value='" . html_escape(get_nfilter_request_var('drp_action')) . "'>
-			<input type='button' class='ui-button ui-corner-all ui-widget' onClick='cactiReturnTo()' value='" . ($save_html == '' ? 'Return':'Cancel') . "' name='cancel'>
+			<input type='button' class='ui-button ui-corner-all ui-widget cactiReturnTo' value='" . ($save_html == '' ? __esc('Return') : __esc('Cancel')) . "' name='cancel'>
 			$save_html
 		</td>
 	</tr>\n";
@@ -611,6 +638,10 @@ function reports_item_movedown() {
 	get_filter_request_var('id');
 	/* ==================================================== */
 
+	if (!cacti_authorize_resource($_SESSION['sess_user_id'], (int) get_request_var('id'), 'reports')) {
+		return;
+	}
+
 	move_item_down('reports_items', get_request_var('item_id'), 'report_id=' . get_request_var('id'));
 }
 
@@ -619,6 +650,11 @@ function reports_item_moveup() {
 	get_filter_request_var('item_id');
 	get_filter_request_var('id');
 	/* ==================================================== */
+
+	if (!cacti_authorize_resource($_SESSION['sess_user_id'], (int) get_request_var('id'), 'reports')) {
+		return;
+	}
+
 	move_item_up('reports_items', get_request_var('item_id'), 'report_id=' . get_request_var('id'));
 }
 
@@ -626,7 +662,14 @@ function reports_item_remove() {
 	/* ================= input validation ================= */
 	get_filter_request_var('item_id');
 	/* ==================================================== */
-	db_execute_prepared('DELETE FROM reports_items WHERE id = ?', array(get_request_var('item_id')));
+
+	$item_id = (int) get_request_var('item_id');
+
+	if (!cacti_authorize_resource($_SESSION['sess_user_id'], $item_id, 'report_item')) {
+		return;
+	}
+
+	db_execute_prepared('DELETE FROM reports_items WHERE id = ?', array($item_id));
 }
 
 function reports_item_resequence($report_id) {
@@ -1148,7 +1191,7 @@ function reports_item_edit() {
 	$_SESSION['custom'] = 'true';
 
 	?>
-	<script type='text/javascript'>
+	<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 
 	useCss=<?php print ($report['cformat'] == 'on' ? 'true':'false');?>;
 
@@ -1458,6 +1501,13 @@ function reports_edit() {
 	$report = array();
 	if (get_filter_request_var('id') > 0) {
 		$report = db_fetch_row_prepared('SELECT * FROM reports WHERE id = ?', array(get_request_var('id')));
+
+		if (!empty($report) && !cacti_authorize_resource($_SESSION['sess_user_id'], (int) get_request_var('id'), 'reports')) {
+			raise_message('permission_denied');
+			header('Location: reports.php');
+
+			exit;
+		}
 	}
 
 	reports_tabs(get_request_var('id'));
@@ -1492,7 +1542,7 @@ function reports_edit() {
 		form_hidden_box('save_component_report', '1', '');
 
 		?>
-		<script type='text/javascript'>
+		<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 		function changeFormat() {
 			if (cformat && cformat.checked) {
 				$('#row_font_size').hide();
@@ -1516,7 +1566,7 @@ function reports_edit() {
 				dateFormat: 'yy-mm-dd'
 			});
 
-			$('#cformat').click(function() {
+			$('#cformat').on('click', function() {
 				changeFormat();
 			});
 
@@ -1540,7 +1590,7 @@ function reports_edit() {
 
 		if (!empty($report['id']) && read_config_option('drag_and_drop') == 'on') {
 			?>
-			<script type='text/javascript'>
+			<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 			var reportsPage = '<?php print get_reports_page();?>';
 			var reportId    = <?php print $report['id'];?>;
 
@@ -1843,7 +1893,7 @@ function reports() {
 						" . __('Status') . "
 					</td>
 					<td>
-						<select id='status' onChange='applyFilter()'>
+						<select id='status'>
 							<option value='-1'" . (get_request_var('status') == '-1' ? ' selected':'') . ">" . __('Any') . "</option>
 							<option value='-2'" . (get_request_var('status') == '-2' ? ' selected':'') . ">" . __('Enabled') . "</option>
 							<option value='-3'" . (get_request_var('status') == '-3' ? ' selected':'') . ">" . __('Disabled') . "</option>
@@ -1853,7 +1903,7 @@ function reports() {
 						" . __('Reports') . "
 					</td>
 					<td>
-						<select id='rows' onChange='applyFilter()'>
+						<select id='rows'>
 							<option value='-1'" . (get_request_var('rows') == '-1' ? ' selected':'') . '>' . __('Default') . '</option>';
 							if (cacti_sizeof($item_rows)) {
 								foreach ($item_rows as $key => $value) {
@@ -1878,9 +1928,12 @@ function reports() {
 
 	form_end();
 
+	$params = array();
+
 	/* form the 'where' clause for our main sql query */
 	if (get_request_var('filter') != '') {
-		$sql_where = 'WHERE (reports.name LIKE ' . db_qstr('%' . get_request_var('filter') . '%') . ')';
+		$sql_where = 'WHERE (reports.name LIKE ?)';
+		$params[] = '%' . get_request_var('filter') . '%';
 	} else {
 		$sql_where = '';
 	}
@@ -1888,36 +1941,46 @@ function reports() {
 	if (get_request_var('status') == '-1') {
 		/* Show all items */
 	} elseif (get_request_var('status') == '-2') {
-		$sql_where .= ($sql_where != '' ? " AND reports.enabled='on'" : " WHERE reports.enabled='on'");
+		$sql_where .= ($sql_where != '' ? " AND reports.enabled = 'on'" : " WHERE reports.enabled = 'on'");
 	} elseif (get_request_var('status') == '-3') {
-		$sql_where .= ($sql_where != '' ? " AND reports.enabled=''" : " WHERE reports.enabled=''");
+		$sql_where .= ($sql_where != '' ? " AND reports.enabled = ''" : " WHERE reports.enabled = ''");
 	}
 
 	/* account for permissions */
 	if (is_reports_admin()) {
 		$sql_join = 'LEFT JOIN user_auth ON user_auth.id=reports.user_id';
 	} else {
-		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . ' user_auth.id=' . $_SESSION['sess_user_id'];
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . ' user_auth.id = ?';
+		$params[] = $_SESSION['sess_user_id'];
 		$sql_join = 'INNER JOIN user_auth ON user_auth.id=reports.user_id';
 	}
 
-	$total_rows = db_fetch_cell("SELECT
-		COUNT(reports.id)
-		FROM reports
-		$sql_join
-		$sql_where");
+	$total_rows = get_total_row_data($_SESSION['sess_user_id'], "SELECT COUNT(reports.id) FROM reports $sql_join $sql_where", $params);
 
-	$reports_list = db_fetch_assoc("SELECT
+	$sort_columns = array(
+		'name'            => 'reports.name',
+		'full_name'       => 'user_auth.full_name',
+		'cint'            => 'cint',
+		'lastsent'        => 'reports.lastsent',
+		'mailtime'        => 'reports.mailtime',
+		'from_name'       => 'reports.from_name',
+		'attachment_type' => 'reports.attachment_type',
+		'enabled'         => 'reports.enabled'
+	);
+
+	$sort_column = cacti_validate_sort_column(get_request_var('sort_column'), array_keys($sort_columns), 'name');
+	$sortby      = $sort_columns[$sort_column];
+
+	$reports_list = db_fetch_assoc_prepared("SELECT
 		user_auth.full_name, user_auth.username,
 		reports.*,
 		CONCAT_WS('', intrvl, ' ', count, ' ', `offset`, '') AS cint
 		FROM reports
 		$sql_join
 		$sql_where
-		ORDER BY " .
-		get_request_var('sort_column') . ' ' .
-		get_request_var('sort_direction') .
-		' LIMIT ' . ($rows*(get_request_var('page')-1)) . ',' . $rows);
+		ORDER BY $sortby " .
+		(strtoupper(get_request_var('sort_direction')) === 'DESC' ? 'DESC' : 'ASC') .
+		' LIMIT ' . ($rows*(get_request_var('page')-1)) . ',' . $rows, $params);
 
 	form_start(get_reports_page(), 'chk');
 
@@ -2005,7 +2068,7 @@ function reports() {
 	form_end();
 
 	?>
-	<script type='text/javascript'>
+	<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 	function applyFilter() {
 		strURL  = '<?php print get_reports_page();?>?header=false&status=' + $('#status').val();
 		strURL += '&rows=' + $('#rows').val();
@@ -2019,15 +2082,19 @@ function reports() {
 	}
 
 	$(function() {
-		$('#refresh').click(function() {
+		$('#refresh').on('click', function() {
 			applyFilter();
 		});
 
-		$('#clear').click(function() {
+		$('#rows, #status').on('change', function() {
+			applyFilter();
+		});
+
+		$('#clear').on('click', function() {
 			clearFilter();
 		});
 
-		$('#form_report').submit(function(event) {
+		$('#form_report').on('submit', function(event) {
 			event.preventDefault();
 			applyFilter();
 		});

@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -429,7 +429,7 @@ function api_device_change_options($device_ids, $post) {
 					}
 
 					// Update the local device and replicate
-					if ($old_poller !=  get_nfilter_request_var($field_name && get_nfilter_request_var($field_name) > 1)) {
+					if ($old_poller !=  get_nfilter_request_var($field_name) && get_nfilter_request_var($field_name) > 1) {
 						api_device_replicate_out($device_id, get_nfilter_request_var($field_name));
 					}
 				}
@@ -877,7 +877,7 @@ function api_device_replicate_out($device_id, $poller_id = 1) {
 		replicate_table_to_poller($rcnn_id, $data, 'data_input_data', $poller_id);
 	}
 
-	api_plugin_hook_function('replicate_out', $poller_id);
+	api_plugin_hook_function('replicate_out', array('remote_poller_id' => $poller_id, 'rcnn_id' => $rcnn_id, 'class' => 'all'));
 
 	$stats = db_fetch_row_prepared('SELECT
 		SUM(CASE WHEN action=0 THEN 1 ELSE 0 END) AS snmp,
@@ -1570,7 +1570,11 @@ function api_device_ping_device($device_id, $from_remote = false) {
 						$snmp_system = str_replace(':', ' ', $snmp_system);
 					}
 
-					if ($snmp_system == '') {
+					/* Some devices (Dell iDRAC, Fortigate, etc.) may have an empty system value. This causes a false down status */
+					$snmp_uptime = cacti_snmp_session_get($session, '.1.3.6.1.6.3.10.2.1.3.0');
+
+					if ($snmp_system == '' && empty($snmp_uptime)) {
+
 						print "<span class='hostDown'>" . __('Host') . ' ' .  __('SNMP error');
 						if ($snmp_error != '') {
 							print " - $snmp_error";
@@ -1579,7 +1583,7 @@ function api_device_ping_device($device_id, $from_remote = false) {
 					} else {
 						$snmp_uptime = cacti_snmp_session_get($session, '.1.3.6.1.6.3.10.2.1.3.0');
 
-						if (!empty($snmp_uptime)) {
+						if (!empty($snmp_uptime) && is_numeric($snmp_uptime)) {
 							$snmp_uptime *= 100;
 						} else {
 							$snmp_uptime = cacti_snmp_session_get($session, '.1.3.6.1.2.1.1.3.0');
@@ -1632,7 +1636,7 @@ function api_device_ping_device($device_id, $from_remote = false) {
 		}
 
 		print __('Ping Results') . "<br>\n";
-		print "<span class='" . $class . "'>" . $ping->ping_response . "</span>\n";
+		print "<span class='" . $class . "'>" . html_escape($ping->ping_response) . "</span>\n";
 	}
 
 	if ($anym == false && $host['disabled'] != 'on') {
@@ -1787,7 +1791,7 @@ function api_clone_get_unique_filename($file_name) {
 
 /**
  * api_clone_device_template_check_for_errors - This function will validate the
- *   intput and return warnings and errors before allowing users to proceed.  This
+ *   input and return warnings and errors before allowing users to proceed.  This
  *   option is skipped when using the quiet option.
  *
  * @param int    - The device template id to be cloned

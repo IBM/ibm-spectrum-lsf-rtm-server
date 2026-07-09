@@ -207,7 +207,7 @@ function gridlimits_setup_table_new() {
 		resources blob,
 		last_seen timestamp DEFAULT '0000-00-00',
 		PRIMARY KEY (clusterid, limit_name, users, queues, hosts, projects, lic_projects, clusters, apps))
-		ENGINE=Aria
+		ENGINE=Aria CHARSET=latin1
 		ROW_FORMAT=Dynamic");
 }
 

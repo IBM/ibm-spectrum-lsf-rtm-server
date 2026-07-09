@@ -30,7 +30,7 @@ include($config['base_path'] . '/plugins/gridblstat/lib/functions.php');
 
 
 if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+    cacti_session_start();
 }
 
 // Saving favourite filters 
@@ -702,7 +702,7 @@ function grid_view_db() {
 					<input type="text" name="fav_filter_name" id='fav_filter_name' value=''>
 				    <span style="color: #ff0000; display: none" id="error-filter-input">Specify a filter name.</span>
 				</div>
-				<input type="hidden" name="fav_filters" id="fav_filters">
+				<input type="hidden" name="fav_filters" id="fav_filters" value='<?php print html_escape('');?>'>
 				<input type="hidden" name="page_name" id="page_name" value="<?= html_escape($pageName) ?>">
 			</form>
 			<?php
@@ -721,10 +721,10 @@ function grid_view_db() {
 		<div id="overwrite_filters_dialog" title="Duplicate record found" style="display: none" >
 			 <form id="overwrite-filter-form" method="POST" action='grid_lsdashboard.php'>
 				<span class="overwrite-filter-form-text">A filter with this name <b><i><?= isset($fav_filter_save_data) ? html_escape($fav_filter_save_data["fav_filter_name"]) : "" ?></i></b> already exists. Do you want to overwrite it?</span>
-				<input type="hidden" name="fav_filter_name"  id='overwrite_fav_filter_name' value=''>
-				<input type="hidden" name="fav_filters" id="overwrite_fav_filters" value=''>
-				<input type="hidden" name="page_name" id="overwrite_fav_page_name" value="<?= $pageName ?>">
-				<input type="hidden" name="overwrite">
+				<input type="hidden" name="fav_filter_name"  id='overwrite_fav_filter_name' value='<?php print html_escape('');?>'>
+				<input type="hidden" name="fav_filters" id="overwrite_fav_filters" value='<?php print html_escape('');?>'>
+				<input type="hidden" name="page_name" id="overwrite_fav_page_name" value="<?= html_escape($pageName) ?>">
+				<input type="hidden" name="overwrite" value='<?php print html_escape('');?>'>
 			</form>
 		</div>
 		<div id="all_filters_dialog" title="Saved Filters" style="display: none">
@@ -786,7 +786,7 @@ function grid_view_db() {
 											<button type="button" class="ui-button ui-corner-all ui-widget" id="close-delete-confirm-filter-<?=  $filter_name ?>">Close</button>
 											<input type="hidden" name="fav_filter_name" value="<?= html_escape($filter["filter_name"]) ?>">
 											<input type="hidden" name="page_name" value="<?= html_escape($pageName) ?>">
-											<input type="hidden" name="delete_filter" value="">
+											<input type="hidden" name="delete_filter" value="<?php print html_escape('');?>">
 										</form>
 									</div>
 								</div>	
@@ -2122,7 +2122,7 @@ function grid_project_filter() {
 						</select>
 					</td>
 					<td>
-						<input type='hidden' id='lsid' name='lsid' value='<?php print (isset_request_var('lsid') ? get_request_var('lsid'):'');;?>'>
+						<input type='hidden' id='lsid' name='lsid' value='<?php print (isset_request_var('lsid') ? html_escape(get_request_var('lsid')):'');;?>'>
 					</td>
 					<?php if (read_config_option('grid_blstat_project_group_aggregation') == 'on') { ?>
 				 	<td>
@@ -2142,7 +2142,7 @@ function grid_project_filter() {
 						</select>
 					</td>
 					<?php } else { ?>
-					<td style='display:none;'><input type='hidden' id='level' value='0'></td>
+					<td style='display:none;'><input type='hidden' id='level' value='<?php print html_escape('0');?>'></td>
 					<?php } ?>
 					<td>
 						<?php print __('Records', 'gridblstat');?>
@@ -2297,7 +2297,7 @@ function grid_distribution_filter() {
 						</span>
 					</td>
 					<td>
-						<input type='hidden' id='lsid' name='lsid' value='<?php print (isset_request_var('lsid') ? get_request_var('lsid'):'');?>'>
+						<input type='hidden' id='lsid' name='lsid' value='<?php print (isset_request_var('lsid') ? html_escape(get_request_var('lsid')):'');?>'>
 					</td>
 					
 
@@ -2958,7 +2958,7 @@ function grid_user_filter() {
 						</select>
 					</td>
 					<td>
-						<input type='hidden' id='lsid' name='lsid' value='<?php print (isset_request_var('lsid') ? get_request_var('lsid'):'');?>'>
+						<input type='hidden' id='lsid' name='lsid' value='<?php print (isset_request_var('lsid') ? html_escape(get_request_var('lsid')):'');?>'>
 						<?php print __('Refresh', 'gridblstat');?>
 					</td>
 					<td>
@@ -5024,9 +5024,9 @@ function grid_view_zen() {
 							</select>
 						</td>
 						<td>
-							<input type='hidden' value='<?php print get_request_var('action');?>'>
-							<input type='hidden' value='<?php print get_request_var('tab');?>'>
-							<input type='hidden' id='lsid' value='<?php print get_request_var('lsid');?>'>
+							<input type='hidden' value='<?php print html_escape(get_request_var('action'));?>'>
+							<input type='hidden' value='<?php print html_escape(get_request_var('tab'));?>'>
+							<input type='hidden' id='lsid' value='<?php print html_escape(get_request_var('lsid'));?>'>
 						</td>
 					</tr>
 				</table>
@@ -5702,8 +5702,8 @@ function grid_checkouts_filter() {
 						</span>
 					</td>
 					<td>
-						<input type="hidden" value="checkouts" name="action">
-						<input type="hidden" value="checkouts" name="tab">
+						<input type="hidden" value="<?php print html_escape('checkouts');?>" name="action">
+						<input type="hidden" value="<?php print html_escape('checkouts');?>" name="tab">
 					</td>
 				</tr>
 			</table>
@@ -6058,9 +6058,9 @@ function grid_blstat_view_graphs() {
 
 	/* do some fancy navigation url construction so we don't have to try and rebuild the url string */
 	if (preg_match("/page=[0-9]+/",basename($_SERVER["QUERY_STRING"]))) {
-		$nav_url = str_replace('page=' . get_request_var('page'), 'page=<PAGE>', basename($_SERVER['PHP_SELF']) . '?' . $_SERVER['QUERY_STRING']);
+		$nav_url = str_replace('page=' . get_request_var('page'), 'page=<PAGE>', basename($_SERVER['SCRIPT_NAME']) . '?' . htmlspecialchars($_SERVER['QUERY_STRING']));
 	} else {
-		$nav_url = str_replace('&clear=true', '', basename($_SERVER["PHP_SELF"]) . '?' . $_SERVER['QUERY_STRING']);//fix next page bug after click clear.
+		$nav_url = str_replace('&clear=true', '', basename($_SERVER['SCRIPT_NAME']) . '?' . htmlspecialchars($_SERVER['QUERY_STRING']));//fix next page bug after click clear.
 		$nav_url = $nav_url . '&page=<PAGE>';
 	}
 
@@ -6324,9 +6324,9 @@ function grid_blstat_graph_view_filter() {
 					</td>
 					<td>
 						<span>
-							<input type='hidden' name='action' value='<?php print get_request_var('action');?>'>
-							<input type='hidden' name='tab' value='<?php print get_request_var('tab');?>'>
-							<input type='hidden' id='lsid' name='lsid' value='<?php print (isset_request_var('lsid') ? get_request_var('lsid'):'');?>'>
+							<input type='hidden' name='action' value='<?php print html_escape(get_request_var('action'));?>'>
+							<input type='hidden' name='tab' value='<?php print html_escape(get_request_var('tab'));?>'>
+							<input type='hidden' id='lsid' name='lsid' value='<?php print (isset_request_var('lsid') ? html_escape(get_request_var('lsid')):'');?>'>
 						</span>
 					</td>
 				</tr>
@@ -6616,7 +6616,7 @@ function grid_blstat_set_minimum_page_refresh() {
 
 		/* automatically reload this page */
 		$refresh['seconds'] = get_request_var('refresh');
-		$refresh['page'] = $_SERVER['REQUEST_URI'];
+		$refresh['page'] = sanitize_uri($_SERVER['REQUEST_URI']);
 	}
 }
 

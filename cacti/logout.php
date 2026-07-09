@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -30,6 +30,12 @@ global $config;
 set_default_action();
 
 api_plugin_hook('logout_pre_session_destroy');
+
+/* Note: logout is reachable via GET without CSRF token. Impact is limited
+ * to forced-logout (annoyance, no privilege escalation). SameSite=Strict
+ * on the session cookie prevents cross-site exploitation on modern browsers.
+ * Tracked in issue #7051 (csrf-magic evaluation). */
+
 
 /* Clear session */
 cacti_cookie_logout();
@@ -76,7 +82,7 @@ if (get_request_var('action') == 'timeout' || get_request_var('action') == 'disa
 		<div class='versionInfo'>" . __('Version %s', $version) . " | " . COPYRIGHT_YEARS_SHORT . "</div>
 	</div>
 	<div class='logoutRight'></div>
-	<script type='text/javascript'>
+	<script type='text/javascript' " . CactiSecureHeaders::getNonceAttribute() . ">
 	$(function() {
 		if (typeof myRefresh != 'undefined') {
 			clearTimeout(myRefresh);

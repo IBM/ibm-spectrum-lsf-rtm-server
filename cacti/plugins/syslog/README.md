@@ -114,27 +114,36 @@ $template cacti_syslog,"INSERT INTO syslog_incoming(facility_id, priority_id, pr
 *.* >localhost,my_database,my_user,my_password;cacti_syslog
 ```
 
-This is a change from versions 2.0 to 2.4 and below, which had the following
-file format:
+For version below 2.0 it should be:
 
 ```console
 $ModLoad imudp
 $UDPServerRun 514
 $ModLoad ommysql
 
-$template cacti_syslog,"INSERT INTO syslog_incoming(facility_id, priority_id, program, date, time, host, message) \
-  values (%syslogfacility%, %syslogpriority%, '%programname%', '%timereported:::date-mysql%', '%timereported:::date-mysql%', '%HOSTNAME%', TRIM('%msg%'))", SQL
+$template cacti_syslog,"INSERT INTO syslog_incoming(facility_id, priority_id, program, logtime, host, message)
+values (%syslogfacility%, %syslogpriority%, '%programname%', '%timegenerated:::date-mysql%', '%HOSTNAME%', TRIM('%msg%'))", SQL
 
-*.* >localhost,my_database,my_user,my_password;cacti_syslog
+. >localhost,my_database,my_user,my_password;cacti_syslog
+```
+
+For version 2.4 and above it should be:
+
+```console
+module(load="ommysql")
+action(type="ommysql" server="localhost" serverport="3306"
+db="syslogDB" uid="userID" pwd="passwdID")
+
+$template cacti_syslog,"INSERT INTO syslog_incoming(facility_id, priority_id, program, logtime, host, message)
+values (%syslogfacility%, %syslogpriority%, '%programname%', '%timegenerated:::date-mysql%', '%HOSTNAME%', TRIM('%msg%'))", SQL
 ```
 
 For CentOS/RHEL systems you will all need to install the rsyslog-mysql package
 
 ```
 yum install rsyslog-mysql
-systemctl resatrt rsyslog
+systemctl restart rsyslog
 ```
-
 
 If you are upgrading to version 2.5 from an earlier version, make sure that you
 update this template format and restart rsyslog.  You may loose some syslog
@@ -167,6 +176,11 @@ configuration.  For example:
 sql_mode=NO_ENGINE_SUBSTITUTION,NO_AUTO_CREATE_USER
 ```
 
+### Special Note for the Grouping feature
+Syslog now supports the ability to group similar messeges from a specific host together
+for easy summarization for larger systems you may need to expand the default mariadb group_concat_max_len
+The default is 1MB you may need to raise it much higher depending on your needs
+
 After this change, you should log into the mysql server and run the following
 command:
 
@@ -196,4 +210,4 @@ new ideas. So, this won't be the last release of syslog, you can rest assured of
 that.
 
 -----------------------------------------------
-Copyright (c) 2004-2024 - The Cacti Group, Inc.
+Copyright (c) 2004-2026 - The Cacti Group, Inc.

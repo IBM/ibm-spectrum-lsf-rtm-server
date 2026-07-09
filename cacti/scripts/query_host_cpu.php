@@ -1,7 +1,7 @@
 <?php
 /*
   +-------------------------------------------------------------------------+
-  | Copyright (C) 2004-2024 The Cacti Group                                 |
+  | Copyright (C) 2004-2026 The Cacti Group                                 |
   |                                                                         |
   | This program is free software; you can redistribute it and/or           |
   | modify it under the terms of the GNU General Public License             |
@@ -107,6 +107,9 @@ if ($cmd == 'index') {
 
 	if (isset($arr_index[$index])) {
 		print $arr[$index];
+	} else {
+		// Index absent — return U so RRDtool records an unknown sample.
+		print 'U';
 	}
 }
 

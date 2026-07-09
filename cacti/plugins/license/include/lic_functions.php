@@ -39,7 +39,7 @@ function make_partition_query($table_name, $start, $end, $sql_where, $join_map =
 			if ($i == 0) {
 				$query  = '(' . $query_prefix . $table . " $join_map " . $sql_where2;
 			} else {
-				$query .= ' UNION ' . $query_prefix . $table . ' ' . $sql_where2;
+				$query .= ' UNION ALL ' . $query_prefix . $table . ' ' . $sql_where2;
 			}
 
 			$i++;
@@ -52,10 +52,12 @@ function make_partition_query($table_name, $start, $end, $sql_where, $join_map =
 		if ($columns == '') {
 			return $table_name;
 		} else {
-			return $table_name . ' ' . $sql_where;
+			// Remove extra WHERE
+			//   return $table_name . ' ' . $sql_where;
+			return $table_name . ' ';
 		}
 	}
-
+	
 	return  $query. ") AS $table_name";
 }
 
@@ -321,10 +323,10 @@ function lic_set_minimum_page_refresh() {
 
 		/* automatically reload this page */
 		$refresh['seconds'] = get_request_var('refresh');
-		$refresh['page']    = $config['url_path'] . 'plugins/license/' . basename($_SERVER['PHP_SELF']);
+		$refresh['page']    = $config['url_path'] . 'plugins/license/' . basename($_SERVER['SCRIPT_NAME']);
 	} else {
 		$refresh['seconds'] = '999999';
-		$refresh['page']    = $config['url_path'] . 'plugins/license/' . basename($_SERVER['PHP_SELF']);
+		$refresh['page']    = $config['url_path'] . 'plugins/license/' . basename($_SERVER['SCRIPT_NAME']);
 	}
 }
 
@@ -1282,6 +1284,13 @@ function lic_calculate_inout_interval($earlier_time, $current_time) {
 	db_execute("DROP TABLE IF EXISTS `lic_daily_stats_temp`");
 
 	if(read_config_option('lic_calculate_inout_disable') == ''){
+		/* The lic_calc_peak_util_interval will create additional
+		   entries in the lic_daily_stats_today table.  Some of these
+		   will have service_id=0, which is an aggregation for all
+		   services.  ETL processes using lic_daily_stats_today need
+		   to be aware of this.
+		   A call to lic_cal_avg_util() will create a 8th type.
+		   */
 		lic_calc_peak_util_interval($earlier_time, $current_time, 1);
 		lic_calc_peak_util_interval($earlier_time, $current_time, 2);
 		lic_calc_peak_util_interval($earlier_time, $current_time, 3);
@@ -2423,7 +2432,7 @@ function lic_level_filter() {
 
 			print '</select></td>';
 		} else {
-			print '<td><input id="lic_level1" type="hidden" value="-1"></td>';
+			print '<td><input id="lic_level1" type="hidden" value="' . html_escape('-1') . '"></td>';
 		}
 
 		$sql_where_l1 = '';
@@ -2463,7 +2472,7 @@ function lic_level_filter() {
 
 			print '</select></td>';
 		} else {
-			print '<td><input id="lic_level2" type="hidden" value="-1"></td>';
+			print '<td><input id="lic_level2" type="hidden" value="' . html_escape('-1') . '"></td>';
 		}
 
 		if ($l3 != '') {
@@ -2490,7 +2499,7 @@ function lic_level_filter() {
 
 			print '</select></td>';
 		} else {
-			print '<td><input id="lic_level3" type="hidden" value="-1"></td>';
+			print '<td><input id="lic_level3" type="hidden" value="' . html_escape('-1') . '"></td>';
 		}
 
 		print '</tr></table>';

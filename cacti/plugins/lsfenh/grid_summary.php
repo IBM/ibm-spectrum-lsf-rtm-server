@@ -2158,7 +2158,7 @@ function summaryFilter() {
 					?>
 				</tr>
 			</table>
-			<input type='hidden' id='page' value='1'>
+			<input type='hidden' id='page' value='<?php print html_escape('1');?>'>
 			</form>
 		</td>
 	</tr>
@@ -2685,11 +2685,11 @@ function summary_alarm_filter() {
 					<?php if (get_request_var('clusterid') > 0 && get_request_var('tab') == 'host') {
 						resource_browser();
 					} else {?>
-						<?php print "<td><input type='hidden' value='' id='resource_str'></td>"; }?>
+						<?php print "<td><input type='hidden' value='" . html_escape('') . "' id='resource_str'></td>"; }?>
 				</tr>
 			</table>
-			<input type='hidden' name='tab' value='alarm'>
-			<input type='hidden' name='page' value='1'>
+			<input type='hidden' name='tab' value='<?php print html_escape('alarm');?>'>
+			<input type='hidden' name='page' value='<?php print html_escape('1');?>'>
 		</form>
 		</td>
 	</tr>
@@ -3757,9 +3757,9 @@ function show_summary() {
 	}
 
 	if (get_request_var('muteme')) {
-		print "<span style='display:none;'><input id='alert_mute' value='true'><input id='reason' value='$message'></span>\n";
+		print "<span style='display:none;'><input id='alert_mute' value='true'><input id='reason' value='" . html_escape($message) . "'></span>\n";
 	} else {
-		print "<span style='display:none;'><input id='alert_mute' value='false'><input id='reason' value='$message'></span>\n";
+		print "<span style='display:none;'><input id='alert_mute' value='false'><input id='reason' value='" . html_escape($message) . "'></span>\n";
 	}
 }
 

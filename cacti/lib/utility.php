@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -27,11 +27,17 @@
    @arg $poller_id - the id of the poller impacted by hash update
    @arg $variable  - the variable name to store in the settings table */
 function update_replication_crc($poller_id, $variable) {
-	$hash = hash('ripemd160', date('Y-m-d H:i:s') . rand() . $poller_id);
+	try {
+		$entropy = bin2hex(random_bytes(16));
+	} catch (Exception $e) {
+		$entropy = md5(uniqid('', true) . mt_rand());
+	}
 
-	db_execute_prepared("REPLACE INTO settings
-		SET value = ?, name='$variable" . ($poller_id > 0 ? "_" . "$poller_id'":"'"),
-		array($hash));
+	$hash         = hash('ripemd160', date('Y-m-d H:i:s') . $entropy . $poller_id);
+	$setting_name = $variable . ($poller_id > 0 ? '_' . $poller_id : '');
+
+	db_execute_prepared('REPLACE INTO settings (name, value) VALUES (?, ?)',
+		array($setting_name, $hash));
 }
 
 function repopulate_poller_cache() {
@@ -39,12 +45,12 @@ function repopulate_poller_cache() {
 
 	include_once($config['library_path'] . '/api_data_source.php');
 
-	$poller_data = db_fetch_assoc('SELECT ' . SQL_NO_CACHE . ' dl.*, h.poller_id
+	$poller_data = db_fetch_assoc('SELECT ' . SQL_NO_CACHE . ' dl.*, COALESCE(h.poller_id, 1) AS poller_id
 		FROM data_local AS dl
-		INNER JOIN host AS h
+		LEFT JOIN host AS h
 		ON dl.host_id=h.id
 		WHERE dl.snmp_query_id = 0 OR (dl.snmp_query_id > 0 AND dl.snmp_index != "")
-		ORDER BY h.poller_id ASC, h.id ASC');
+		ORDER BY COALESCE(h.poller_id, 1) ASC, h.id ASC');
 
 	$poller_items   = array();
 	$local_data_ids = array();
@@ -121,11 +127,14 @@ function update_poller_cache_from_query($host_id, $data_query_id, $local_data_id
 
 	include_once($config['library_path'] . '/api_data_source.php');
 
+	/* SECURITY: Cast all elements to integers to prevent SQL Injection */
+	$safe_ids = array_map('intval', $local_data_ids);
+
 	$poller_data = db_fetch_assoc_prepared('SELECT ' . SQL_NO_CACHE . ' *
 		FROM data_local
 		WHERE host_id = ?
 		AND snmp_query_id = ?
-		AND id IN(' . implode(', ', $local_data_ids) . ')
+		AND id IN(' . implode(', ', $safe_ids) . ')
 		AND snmp_index != ""',
 		array($host_id, $data_query_id));
 
@@ -186,9 +195,9 @@ function update_poller_cache($data_source, $commit = false) {
 		return $poller_items;
 	}
 
-	$poller_id = db_fetch_cell_prepared('SELECT poller_id
-		FROM host AS h
-		INNER JOIN data_local AS dl
+	$poller_id = db_fetch_cell_prepared('SELECT COALESCE(h.poller_id, 1) AS poller_id
+		FROM data_local AS dl
+		LEFT JOIN host AS h
 		ON h.id = dl.host_id
 		WHERE dl.id = ?',
 		array($data_source['id']));
@@ -202,11 +211,15 @@ function update_poller_cache($data_source, $commit = false) {
 		WHERE dtd.local_data_id = ?',
 		array($data_source['id']));
 
-	if (cacti_sizeof($data_input)) {
-		// Check whitelist for input validation
-		if (!data_input_whitelist_check($data_input['id'])) {
-			return $poller_items;
-		}
+	if (cacti_sizeof($data_input) && data_input_whitelist_check($data_input['id'])) {
+		/* Whitelist failure must NOT generate poller_items for this
+		 * data source, but on $commit=true we still fall through to
+		 * the buffer flush so the present=0 / DELETE pass cleans up
+		 * rows that used to pass the whitelist. The pre-fix early
+		 * `return $poller_items;` skipped that pass and stranded stale
+		 * rows whenever an existing data input started failing
+		 * validation. The outer if-else still owns the "Data Input
+		 * Missing" warning so that diagnostic stays specific. */
 
 		/* we have to perform some additional sql queries if this is a 'query' */
 		if (($data_input['type_id'] == DATA_INPUT_TYPE_SNMP_QUERY) ||
@@ -421,6 +434,12 @@ function update_poller_cache($data_source, $commit = false) {
 
 				if (cacti_sizeof($outputs) && cacti_sizeof($snmp_queries)) {
 					foreach ($outputs as $output) {
+						/* Reset between iterations: an output without an
+						 * 'oid' mapping must not inherit the previous
+						 * iteration's value and emit a poller_item with
+						 * the wrong OID. */
+						unset($oid);
+
 						if (isset($snmp_queries['fields'][$output['snmp_field_name']]['oid'])) {
 							$oid = $snmp_queries['fields'][$output['snmp_field_name']]['oid'] . '.' . $data_source['snmp_index'];
 
@@ -503,6 +522,14 @@ function update_poller_cache($data_source, $commit = false) {
 
 				if (cacti_sizeof($outputs) && cacti_sizeof($script_queries)) {
 					foreach ($outputs as $output) {
+						/* Reset between iterations: an output without a
+						 * 'query_name' mapping must not inherit the
+						 * previous iteration's $script_path / $action
+						 * and emit a poller_item built for a different
+						 * output. */
+						unset($script_path);
+						unset($action);
+
 						if (isset($script_queries['fields'][$output['snmp_field_name']]['query_name'])) {
 							$identifier = $script_queries['fields'][$output['snmp_field_name']]['query_name'];
 
@@ -543,6 +570,8 @@ function update_poller_cache($data_source, $commit = false) {
 				}
 			}
 		}
+	} elseif (cacti_sizeof($data_input) && !data_input_whitelist_check($data_input['id'])) {
+		cacti_log('WARNING: Repopulate Poller Cache found DI[' . $data_input['id'] . '] not Passing Input Whitelist Validation for DS[' . $data_source['id'] . '].  Database may be corrupted', false, 'PCACHE');
 	} else {
 		$data_template_data = db_fetch_row_prepared('SELECT ' . SQL_NO_CACHE . ' *
 			FROM data_template_data
@@ -554,15 +583,23 @@ function update_poller_cache($data_source, $commit = false) {
 		}
 	}
 
-	if ($commit && cacti_sizeof($poller_items)) {
+	if ($commit) {
+		/* Always flush on commit, even when $poller_items is empty. The
+		 * buffer pass marks existing rows present=0 then DELETEs whatever
+		 * is still present=0 at the end, which is how a data source that
+		 * just lost its data input / went inactive / failed the
+		 * whitelist gets its stale poller_item rows cleaned out. The
+		 * earlier `cacti_sizeof($poller_items)` guard skipped the flush
+		 * for that case, so callers like data_sources.php form_save
+		 * silently left stale rows behind. */
 		poller_update_poller_cache_from_buffer((array)$data_source['id'], $poller_items, $poller_id);
-	} elseif (!$commit) {
+	} else {
 		return $poller_items;
 	}
 }
 
 function push_out_data_input_method($data_input_id) {
-	$data_sources = db_fetch_assoc_prepared('SELECT ' . SQL_NO_CACHE . ' dl.*, h.poller_id
+	$data_sources = db_fetch_assoc_prepared('SELECT ' . SQL_NO_CACHE . ' dl.*, COALESCE(h.poller_id, 1) AS poller_id
 		FROM data_local AS dl
 		INNER JOIN (
 			SELECT DISTINCT local_data_id
@@ -571,10 +608,10 @@ function push_out_data_input_method($data_input_id) {
 			AND local_data_id > 0
 		) AS dtd
 		ON dtd.local_data_id = dl.id
-		INNER JOIN host AS h
+		LEFT JOIN host AS h
 		ON h.id = dl.host_id
 		WHERE dl.snmp_query_id = 0 OR (dl.snmp_query_id > 0 AND dl.snmp_index != "")
-		ORDER BY h.poller_id ASC',
+		ORDER BY COALESCE(h.poller_id, 1) ASC',
 		array($data_input_id));
 
 	$poller_items = array();
@@ -583,14 +620,20 @@ function push_out_data_input_method($data_input_id) {
 	if (cacti_sizeof($data_sources)) {
 		$prev_poller = -1;
 		foreach ($data_sources as $data_source) {
+			/* Flush the previous poller's buffer when crossing a poller
+			 * boundary, then ALWAYS append the current data source. The
+			 * previous shape put the append in an `else` branch, so the
+			 * first data source for every non-first poller was dropped:
+			 * it never made it into the new buffer and never got
+			 * rebuilt. */
 			if ($prev_poller > 0 && $data_source['poller_id'] != $prev_poller) {
 				poller_update_poller_cache_from_buffer($_my_local_data_ids, $poller_items, $prev_poller);
 				$_my_local_data_ids = array();
 				$poller_items = array();
-			} else {
-				$_my_local_data_ids[] = $data_source['id'];
-				$poller_items = array_merge($poller_items, update_poller_cache($data_source));
 			}
+
+			$_my_local_data_ids[] = $data_source['id'];
+			$poller_items = array_merge($poller_items, update_poller_cache($data_source));
 
 			$prev_poller = $data_source['poller_id'];
 		}
@@ -614,7 +657,9 @@ function poller_update_poller_cache_from_buffer($local_data_ids, &$poller_items,
 
 	/* set all fields present value to 0, to mark the outliers when we are all done */
 	if (cacti_sizeof($local_data_ids)) {
-		$ids = implode(', ', $local_data_ids);
+		/* SECURITY: Cast all elements to integers to prevent SQL Injection */
+		$safe_ids = array_map('intval', $local_data_ids);
+		$ids      = implode(', ', $safe_ids);
 
 		if ($ids != '') {
 			db_execute_prepared("UPDATE poller_item
@@ -913,8 +958,10 @@ function push_out_host($host_id, $local_data_id = 0, $data_template_id = 0) {
 								AND data_template_data_id = ?',
 								array($template_field['id'], $data_source['id']));
 
-							if ($old_data['value'] != $host[$field]) {
-								cacti_log("WARNING: Poller Cache updated Device[{$host['id']}], Field[$field], Old[{$old_data['value']}], New[{$host[$field]}]", false, 'PCACHE', POLLER_VERBOSITY_MEDIUM);
+							if (isset($old_data['value']) && $old_data['value'] != $host[$field]) {
+								$old_log = cacti_redact_value($field, $old_data['value']);
+								$new_log = cacti_redact_value($field, $host[$field]);
+								cacti_log("WARNING: Poller Cache updated Device[{$host['id']}], Field[$field], Old[$old_log], New[$new_log]", false, 'PCACHE', POLLER_VERBOSITY_MEDIUM);
 							}
 
 							db_execute_prepared('REPLACE INTO data_input_data
@@ -953,13 +1000,66 @@ function push_out_host($host_id, $local_data_id = 0, $data_template_id = 0) {
 		}
 	}
 
-	$poller_id = db_fetch_cell_prepared('SELECT poller_id
-		FROM host
-		WHERE id = ?',
-		array($host_id));
+	/* Flush the buffer. push_out_host() is documented as single-host
+	 * scoped, but accepts $host_id = 0 with either a non-zero
+	 * $local_data_id (data_sources.php save_component_data_source path)
+	 * or a $data_template_id (template-wide push). The host-scoped
+	 * branch knows its poller from $host_id; the host_id=0 branch may
+	 * collect data sources spanning multiple pollers, so group by
+	 * poller_id and flush each group separately. The pre-fix code did
+	 * a single SELECT poller_id WHERE id=$host_id which returned NULL
+	 * for $host_id=0 and silently flushed every collected row to
+	 * poller 0. */
+	if ($host_id > 0) {
+		$poller_id = db_fetch_cell_prepared('SELECT poller_id
+			FROM host
+			WHERE id = ?',
+			array($host_id));
 
-	if (cacti_sizeof($local_data_ids)) {
-		poller_update_poller_cache_from_buffer($local_data_ids, $poller_items, $poller_id);
+		if (cacti_sizeof($local_data_ids)) {
+			poller_update_poller_cache_from_buffer($local_data_ids, $poller_items, $poller_id);
+		}
+	} elseif (cacti_sizeof($local_data_ids)) {
+		/* Map each local_data_id to its host's poller. Data sources
+		 * without a device have host_id=0 and belong to the main poller. */
+		$safe_ids = array_map('intval', $local_data_ids);
+		$rows     = db_fetch_assoc('SELECT dl.id AS local_data_id, COALESCE(h.poller_id, 1) AS poller_id
+			FROM data_local AS dl
+			LEFT JOIN host AS h
+			ON h.id = dl.host_id
+			WHERE dl.id IN (' . implode(',', $safe_ids) . ')');
+
+		$ids_by_poller = array();
+		foreach ($rows as $row) {
+			$ids_by_poller[$row['poller_id']][(int) $row['local_data_id']] = true;
+		}
+
+		/* Group $poller_items by their leading local_data_id column.
+		 * api_poller_cache_item_add() emits each entry as a SQL VALUES
+		 * tuple starting with `($local_data_id, ...)`. */
+		$items_by_poller = array();
+		foreach ($poller_items as $item) {
+			if (!preg_match('/^\((\d+),/', $item, $m)) {
+				continue;
+			}
+			$ldid = (int) $m[1];
+			foreach ($ids_by_poller as $pid => $ldid_set) {
+				if (isset($ldid_set[$ldid])) {
+					$items_by_poller[$pid][] = $item;
+					break;
+				}
+			}
+		}
+
+		foreach ($ids_by_poller as $pid => $ldid_set) {
+			$pid_local_data_ids = array_keys($ldid_set);
+			$pid_items          = isset($items_by_poller[$pid]) ? $items_by_poller[$pid] : array();
+			poller_update_poller_cache_from_buffer($pid_local_data_ids, $pid_items, $pid);
+		}
+
+		$poller_id = cacti_sizeof($ids_by_poller) === 1 ? array_key_first($ids_by_poller) : 1;
+	} else {
+		$poller_id = 1;
 	}
 
 	/**
@@ -1015,11 +1115,11 @@ function data_input_whitelist_check($data_input_id) {
 						if ($data_input_whitelist[$hash] == $id['input_string']) {
 							$validated_input_ids[$id['id']] = true;
 						} else {
-							cacti_log('ERROR: Whitelist entry failed validation for Data Input: ' . $id['name'] . '[ ' . $id['id'] . ' ].  Data Collection will not run.  Run CLI command input_whitelist.php --audit and --update to remediate.');
+							cacti_log('ERROR: Whitelist entry failed validation for Data Input: ' . $id['name'] . ' DI[' . $id['id'] . '].  Data Collection will not run.  Run CLI command input_whitelist.php --audit and --update to remediate.');
 							$validated_input_ids[$id['id']] = false;
 						}
 					} else {
-						cacti_log('WARNING: Whitelist entry missing for Data Input: ' . $id['name'] . '[ ' . $id['id'] . ' ].  Run CLI command input_whitelist.php --update to remediate.');
+						cacti_log('WARNING: Whitelist entry missing for Data Input: ' . $id['name'] . ' DI[' . $id['id'] . '].  Run CLI command input_whitelist.php --update to remediate.');
 						$validated_input_ids[$id['id']] = true;
 					}
 				} else {
@@ -1032,9 +1132,11 @@ function data_input_whitelist_check($data_input_id) {
 	if (isset($validated_input_ids[$data_input_id])) {
 		if ($validated_input_ids[$data_input_id] == true) {
 			return true;
-		} else {
+		} elseif (!isset($notified[$data_input_id])) {
 			cacti_log('WARNING: Data Input ' . $data_input_id . ' failing validation check.');
 			$notified[$data_input_id] = true;
+			return false;
+		} else {
 			return false;
 		}
 	} else {
@@ -1242,7 +1344,7 @@ function utilities_get_mysql_recommendations() {
 			'value'   => 'ON',
 			'measure' => 'equalint',
 			'class' => 'error',
-			'comment' => __('This settings should remain ON unless your Cacti instances is running on either ZFS or FusionI/O which both have internal journaling to accomodate abrupt system crashes.  However, if you have very good power, and your systems rarely go down and you have backups, turning this setting to OFF can net you almost a 50% increase in database performance.')
+			'comment' => __('This settings should remain ON unless your Cacti instances is running on either ZFS or FusionI/O which both have internal journaling to accommodate abrupt system crashes.  However, if you have very good power, and your systems rarely go down and you have backups, turning this setting to OFF can net you almost a 50% increase in database performance.')
 			),
 		'innodb_additional_mem_pool_size' => array(
 			'value'   => '80M',
@@ -1641,11 +1743,11 @@ function utilities_get_mysql_recommendations() {
 
 				form_alternate_row();
 
-				print "<td>" . $name . "</td>";
-				print "<td class='right $class'>$value_display</td>";
-				print "<td class='center'>$compare</td>";
-				print "<td>$value_recommend</td>";
-				print "<td class='$class'>" . $r['comment'] . "</td>";
+				print '<td>' . html_escape($name) . '</td>';
+				print "<td class='right $class'>" . html_escape($value_display) . '</td>';
+				print "<td class='center'>" . html_escape($compare) . '</td>';
+				print '<td>' . html_escape($value_recommend) . '</td>';
+				print "<td class='$class'>" . html_escape($r['comment']) . '</td>';
 
 				form_end_row();
 			}
@@ -1798,9 +1900,18 @@ function utility_php_sort_extensions($a, $b) {
 function utility_php_extensions() {
 	global $config;
 
-	$php = cacti_escapeshellcmd(read_config_option('path_php_binary', true));
+	$php_binary = read_config_option('path_php_binary', true);
+
+	/* SECURITY: Validate the binary path prevents RCE if the database is compromised */
+	if (empty($php_binary) || !is_executable($php_binary) || !preg_match('/^php[0-9.]*(?:-cgi|-fpm)?(?:\.exe)?$/i', basename($php_binary))) {
+		cacti_log('ERROR: Invalid or non-executable PHP binary path configured: ' . $php_binary, false, 'SYSTEM');
+
+		return array();
+	}
+
+	$php      = cacti_escapeshellcmd($php_binary);
 	$php_file = cacti_escapeshellarg($config['base_path'] . '/install/cli_check.php') . ' extensions';
-	$json = shell_exec($php . ' -q ' . $php_file);
+	$json     = shell_exec($php . ' -q ' . $php_file);
 	$ext = @json_decode($json, true);
 
 	utility_php_verify_extensions($ext, 'web');
@@ -1857,9 +1968,18 @@ function utility_php_verify_extensions(&$extensions, $source) {
 function utility_php_recommends() {
 	global $config;
 
-	$php = cacti_escapeshellcmd(read_config_option('path_php_binary', true));
+	$php_binary = read_config_option('path_php_binary', true);
+
+	/* SECURITY: Validate the binary path prevents RCE if the database is compromised */
+	if (empty($php_binary) || !is_executable($php_binary) || !preg_match('/^php[0-9.]*(?:-cgi|-fpm)?(?:\.exe)?$/i', basename($php_binary))) {
+		cacti_log('ERROR: Invalid or non-executable PHP binary path configured: ' . $php_binary, false, 'SYSTEM');
+
+		return array();
+	}
+
+	$php      = cacti_escapeshellcmd($php_binary);
 	$php_file = cacti_escapeshellarg($config['base_path'] . '/install/cli_check.php') . ' recommends';
-	$json = shell_exec($php . ' -q ' . $php_file);
+	$json     = shell_exec($php . ' -q ' . $php_file);
 	$ext = array('web' => '', 'cli' => '');
 	$ext['cli'] = @json_decode($json, true);
 
@@ -1980,9 +2100,18 @@ function utility_php_set_recommends_text(&$recs) {
 function utility_php_optionals() {
 	global $config;
 
-	$php = cacti_escapeshellcmd(read_config_option('path_php_binary', true));
+	$php_binary = read_config_option('path_php_binary', true);
+
+	/* SECURITY: Validate the binary path prevents RCE if the database is compromised */
+	if (empty($php_binary) || !is_executable($php_binary) || !preg_match('/^php[0-9.]*(?:-cgi|-fpm)?(?:\.exe)?$/i', basename($php_binary))) {
+		cacti_log('ERROR: Invalid or non-executable PHP binary path configured: ' . $php_binary, false, 'SYSTEM');
+
+		return array();
+	}
+
+	$php      = cacti_escapeshellcmd($php_binary);
 	$php_file = cacti_escapeshellarg($config['base_path'] . '/install/cli_check.php') . ' optionals';
-	$json = shell_exec($php . ' -q ' . $php_file);
+	$json     = shell_exec($php . ' -q ' . $php_file);
 	$opt = @json_decode($json, true);
 
 	utility_php_verify_optionals($opt, 'web');

@@ -3,7 +3,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2023                                          |
+ | Copyright IBM Corp. 2006, 2026                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -138,12 +138,12 @@ $stdin = fopen('php://stdin', 'r');
 if ($confirm) {
 	while (1) {
 		print 'Are you sure you wish to Restore Partitioned tables from the database? [y/n] ';
-		$result = trim(strtolower(fgets($stdin)));
+		$restore_partition = trim(strtolower(fgets($stdin)));
 
-		if ($result == 'y') {
+		if ($restore_partition == 'y') {
 			fclose($stdin);
 			break;
-		} else if ($result == 'n') {
+		} else if ($restore_partition == 'n') {
 			print PHP_EOL . 'Operation Canceled, Exiting!' . PHP_EOL;
 			fclose($stdin);
 			exit(1);
@@ -256,12 +256,7 @@ function grid_restore_cacti_db_partitions($rephosts, $force = false, $tables = '
 		/* check if directory exists */
 		if (file_exists($backup_path) && is_readable($backup_path)) {
 			print "NOTE: Backup path $backup_path is readable.  Continuing." . PHP_EOL;
-
-			if ($config['cacti_server_os'] == 'win32') {
-				$tmp_backup_dir = getenv('TEMP');
-			} else {
-				$tmp_backup_dir = '/tmp';
-			}
+			$tmp_backup_dir = $backup_path . '/tmp';
 
 			if ($tables != 'all' || $partitions != 'all') {
 				if ($tables != 'all' && $partitions == 'all') {
@@ -287,7 +282,7 @@ function grid_restore_cacti_db_partitions($rephosts, $force = false, $tables = '
 
 									if (cacti_sizeof($range)) {
 										foreach($range as $np) {
-											$newparts[$np] = $np;
+											$newparts[$np] = substr('000' . $np, -3);
 										}
 									}
 								} else {
@@ -322,8 +317,11 @@ function grid_restore_cacti_db_partitions($rephosts, $force = false, $tables = '
 			}
 
 			/* check for a filter */
-			if ($tables != 'all' || $partitions != 'all') {
+			if (($tables != 'all' || $partitions != 'all') && !is_array($tables)) {
 				if ($tables != 'all')     $tables = explode(',', $tables);
+			}
+
+			if (($partitions != 'all' || $partitions != 'all') && !is_array($partitions)) {
 				if ($partitions != 'all') $partitions = explode(',', $partitions);
 			}
 

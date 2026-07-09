@@ -2,7 +2,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -298,7 +298,7 @@ if (!cacti_sizeof($host)) {
 	exit(1);
 }
 
-/* merge overriden parameters onto host */
+/* merge overridden parameters onto host */
 $host    = array_merge($host, $overrides);
 
 /* exception for IP */

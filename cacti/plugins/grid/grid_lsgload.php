@@ -276,7 +276,7 @@ function groupLoadFilter() {
 					</td>
 				</tr>
 			</table>
-			<input type='hidden' id='page' value='<?php print get_request_var('page');?>'>
+			<input type='hidden' id='page' value='<?php print html_escape(get_request_var('page'));?>'>
 		</form>
 		</td>
 	</tr>

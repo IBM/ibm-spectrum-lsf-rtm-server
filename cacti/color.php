@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -178,7 +178,7 @@ function form_actions() {
 
 	form_start('color.php');
 
-	html_start_box($color_actions[get_nfilter_request_var('drp_action')], '60%', '', '3', 'center', '');
+	html_start_box(escape_page_action($color_actions, get_nfilter_request_var('drp_action')), '60%', '', '3', 'center', '');
 
 	if (isset($color_array) && cacti_sizeof($color_array)) {
 		if (get_nfilter_request_var('drp_action') == '1') { /* delete */
@@ -189,7 +189,7 @@ function form_actions() {
 				</td>
 			</tr>\n";
 
-			$save_html = "<input type='button' class='ui-button ui-corner-all ui-widget' value='" . __esc('Cancel') . "' onClick='cactiReturnTo()'>&nbsp;<input type='submit' class='ui-button ui-corner-all ui-widget' value='" . __esc('Continue') . "' title='" . __n('Delete Color', 'Delete Colors', cacti_sizeof($color_array)) . "'>";
+			$save_html = "<input type='button' class='ui-button ui-corner-all ui-widget cactiReturnTo' value='" . __esc('Cancel') . "'>&nbsp;<input type='submit' class='ui-button ui-corner-all ui-widget' value='" . __esc('Continue') . "' title='" . __n('Delete Color', 'Delete Colors', cacti_sizeof($color_array)) . "'>";
 		}
 	} else {
 		raise_message(40);
@@ -201,7 +201,7 @@ function form_actions() {
 		<td class='saveRow'>
 			<input type='hidden' name='action' value='actions'>
 			<input type='hidden' name='selected_items' value='" . (isset($color_array) ? serialize($color_array) : '') . "'>
-			<input type='hidden' name='drp_action' value='" . get_request_var('drp_action') . "'>
+			<input type='hidden' name='drp_action' value='" . html_escape(get_request_var('drp_action')) . "'>
 			$save_html
 		</td>
 	</tr>\n";
@@ -232,111 +232,111 @@ function color_import_processor(&$colors) {
 				$update_suffix = '';
 
 				if (cacti_sizeof($line_array)) {
-				foreach($line_array as $line_item) {
-					$line_item = trim(str_replace("'", '', $line_item));
-					$line_item = trim(str_replace('"', '', $line_item));
+					foreach($line_array as $line_item) {
+						$line_item = trim(str_replace("'", '', $line_item));
+						$line_item = trim(str_replace('"', '', $line_item));
 
-					switch ($line_item) {
-						case 'hex':
-							$hexcol = $j;
-						case 'name':
-							if (!$first_column) {
-								$save_order .= ', ';
-							}
+						switch ($line_item) {
+							case 'hex':
+								$hexcol = $j;
+							case 'name':
+								if (!$first_column) {
+									$save_order .= ', ';
+								}
 
-							$save_order .= $line_item;
+								$save_order .= $line_item;
 
-							$insert_columns[] = $j;
-							$first_column = false;
+								$insert_columns[] = $j;
+								$first_column = false;
 
-							if ($update_suffix != '') {
-								$update_suffix .= ", $line_item=VALUES($line_item)";
-							} else {
-								$update_suffix .= " ON DUPLICATE KEY UPDATE $line_item=VALUES($line_item)";
-							}
+								if ($update_suffix != '') {
+									$update_suffix .= ", $line_item=VALUES($line_item)";
+								} else {
+									$update_suffix .= " ON DUPLICATE KEY UPDATE $line_item=VALUES($line_item)";
+								}
 
-							$required++;
+								$required++;
 
-							break;
-						default:
-							/* ignore unknown columns */
-					}
+								break;
+							default:
+								/* ignore unknown columns */
+						}
 
-					$j++;
-				}
-			}
-
-			$save_order .= ')';
-
-			if ($required >= 2) {
-				array_push($return_array, '<b>HEADER LINE PROCESSED OK</b>:  <br>Columns found where: ' . $save_order . '<br>');
-			} else {
-				array_push($return_array, '<b>HEADER LINE PROCESSING ERROR</b>: Missing required field <br>Columns found where:' . $save_order . '<br>');
-				break;
-			}
-		} else {
-			$save_value = '(';
-			$j = 0;
-			$first_column = true;
-			$sql_where = '';
-
-			if (cacti_sizeof($line_array)) {
-			foreach($line_array as $line_item) {
-				if (in_array($j, $insert_columns)) {
-					$line_item = trim(str_replace("'", '', $line_item));
-					$line_item = trim(str_replace('"', '', $line_item));
-
-					if (!$first_column) {
-						$save_value .= ',';
-					} else {
-						$first_column = false;
-					}
-
-					$save_value .= "'" . $line_item . "'";
-
-					if ($j == $hexcol) {
-						$sql_where = "WHERE hex='$line_item'";
+						$j++;
 					}
 				}
 
-				$j++;
-			}
-			}
+				$save_order .= ')';
 
-			$save_value .= ')';
-
-			if ($j > 0) {
-				if (isset_request_var('allow_update')) {
-					$sql_execute = 'INSERT INTO colors ' . $save_order .
-						' VALUES ' . $save_value . $update_suffix;
-
-					if (db_execute($sql_execute)) {
-						array_push($return_array,"INSERT SUCCEEDED: $save_value");
-					} else {
-						array_push($return_array,"INSERT FAILED: $save_value");
-					}
+				if ($required >= 2) {
+					array_push($return_array, '<b>HEADER LINE PROCESSED OK</b>:  <br>Columns found where: ' . $save_order . '<br>');
 				} else {
-					/* perform check to see if the row exists */
-					$existing_row = db_fetch_row("SELECT * FROM colors $sql_where");
+					array_push($return_array, '<b>HEADER LINE PROCESSING ERROR</b>: Missing required field <br>Columns found where:' . $save_order . '<br>');
+					break;
+				}
+			} else {
+				$save_value = '(';
+				$j = 0;
+				$first_column = true;
+				$sql_where = '';
 
-					if (cacti_sizeof($existing_row)) {
-						array_push($return_array,"<strong>INSERT SKIPPED, EXISTING:</strong> $save_value");
-					} else {
+				if (cacti_sizeof($line_array)) {
+					foreach($line_array as $line_item) {
+						if (in_array($j, $insert_columns)) {
+							$line_item = trim(str_replace("'", '', $line_item));
+							$line_item = trim(str_replace('"', '', $line_item));
+
+							if (!$first_column) {
+								$save_value .= ',';
+							} else {
+								$first_column = false;
+							}
+
+							$save_value .= "'" . $line_item . "'";
+
+							if ($j == $hexcol) {
+								$sql_where = "WHERE hex='$line_item'";
+							}
+						}
+
+						$j++;
+					}
+				}
+
+				$save_value .= ')';
+
+				if ($j > 0) {
+					if (isset_request_var('allow_update')) {
 						$sql_execute = 'INSERT INTO colors ' . $save_order .
-							' VALUES ' . $save_value;
+							' VALUES ' . $save_value . $update_suffix;
 
 						if (db_execute($sql_execute)) {
 							array_push($return_array,"INSERT SUCCEEDED: $save_value");
 						} else {
 							array_push($return_array,"INSERT FAILED: $save_value");
 						}
+					} else {
+						/* perform check to see if the row exists */
+						$existing_row = db_fetch_row("SELECT * FROM colors $sql_where");
+
+						if (cacti_sizeof($existing_row)) {
+							array_push($return_array,"<strong>INSERT SKIPPED, EXISTING:</strong> $save_value");
+						} else {
+							$sql_execute = 'INSERT INTO colors ' . $save_order .
+								' VALUES ' . $save_value;
+
+							if (db_execute($sql_execute)) {
+								array_push($return_array,"INSERT SUCCEEDED: $save_value");
+							} else {
+								array_push($return_array,"INSERT FAILED: $save_value");
+							}
+						}
 					}
 				}
 			}
-		}
 
-		$i++;
-	}
+			$i++;
+		}
 	}
 
 	return $return_array;
@@ -398,11 +398,11 @@ function color_import() {
 		</td>
 	</tr><?php
 
-	form_hidden_box('save_component_import','1','');
-
 	html_end_box();
 
-	form_save_button('color.php', 'import');
+	form_hidden_box('save_component_import','1','');
+
+	form_save_button('', 'import', 'import', false);
 }
 
 function color_edit() {
@@ -434,16 +434,16 @@ function color_edit() {
 	form_save_button('color.php');
 
 	?>
-	<script type='text/javascript'>
+	<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 	$(function() {
 		checkReadonly();
 
 		$('#hex').colorpicker().css({'width':'60px'});
-		$('#read_only').click(function() {
+		$('#read_only').on('click', function() {
 			checkReadonly();
 		});
 
-		$('#name').keyup(function() {
+		$('#name').on('keyup', function() {
 			$('#hidden_name').val($(this).val());
 		});
 
@@ -535,7 +535,7 @@ function color() {
 						<?php print __('Colors');?>
 					</td>
 					<td>
-						<select id='rows' onChange='applyFilter()'>
+						<select id='rows'>
 							<option value='-1'<?php print (get_request_var('rows') == '-1' ? ' selected>':'>') . __('Default');?></option>
 							<?php
 							if (cacti_sizeof($item_rows) > 0) {
@@ -573,7 +573,7 @@ function color() {
 				</tr>
 			</table>
 			</form>
-			<script type='text/javascript'>
+			<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 			function applyFilter() {
 				strURL  = 'color.php?header=false';
 				strURL += '&filter='+$('#filter').val();
@@ -589,33 +589,29 @@ function color() {
 			}
 
 			$(function() {
-				$('#refresh').click(function() {
+				$('#refresh, #has_graphs, #named').on('click', function() {
 					applyFilter();
 				});
 
-				$('#has_graphs').click(function() {
+				$('#rows').on('change', function() {
 					applyFilter();
 				});
 
-				$('#named').click(function() {
-					applyFilter();
-				});
-
-				$('#clear').click(function() {
+				$('#clear').on('click', function() {
 					clearFilter();
 				});
 
-				$('#form_color').submit(function(event) {
+				$('#form_color').on('submit', function(event) {
 					event.preventDefault();
 					applyFilter();
 				});
 
-				$('#import').click(function(event) {
+				$('#import').on('click', function(event) {
 					strURL = 'color.php?action=import&header=false';
 					loadPageNoHeader(strURL);
 				});
 
-				$('#export').click(function(event) {
+				$('#export').on('click', function(event) {
 					strURL = 'color.php?action=export&header=false';
 					document.location = strURL;
 					Pace.stop();

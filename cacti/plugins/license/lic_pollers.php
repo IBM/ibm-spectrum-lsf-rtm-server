@@ -143,9 +143,9 @@ function form_actions() {
 
 	print "<tr>
 		<td class='saveRow'>
-			<input type='hidden' name='action' value='actions'>
-			<input type='hidden' name='selected_items' value='" . (isset($lic_poller_array) ? serialize($lic_poller_array) : '') . "'>
-			<input type='hidden' name='drp_action' value='" . get_request_var('drp_action') . "'>
+			<input type='hidden' name='action' value='" . html_escape('actions') . "'>
+			<input type='hidden' name='selected_items' value='" . (isset($lic_poller_array) ? html_escape(serialize($lic_poller_array)) : '') . "'>
+			<input type='hidden' name='drp_action' value='" . html_escape_request_var('drp_action') . "'>
 			$save_html
 		</td>
 	</tr>";

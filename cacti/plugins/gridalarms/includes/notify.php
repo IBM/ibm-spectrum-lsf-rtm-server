@@ -173,11 +173,11 @@ function gridalarms_notify_list_form_confirm($save) {
 
 		print "<tr>
 			<td class='saveRow'>
-				<input type='hidden' name='action' value='actions'>
-				<input type='hidden' name='id' value='" . get_request_var('id') . "'>
-				<input type='hidden' name='save_alerts' value='1'>
-				<input type='hidden' name='selected_items' value='" . (isset($array) ? serialize($array) : '') . "'>
-				<input type='hidden' name='drp_action' value='" . get_request_var('drp_action') . "'>
+				<input type='hidden' name='action' value='" . html_escape('actions') . "'>
+				<input type='hidden' name='id' value='" . html_escape(get_request_var('id')) . "'>
+				<input type='hidden' name='save_alerts' value='" . html_escape('1') . "'>
+				<input type='hidden' name='selected_items' value='" . html_escape(isset($array) ? serialize($array) : '') . "'>
+				<input type='hidden' name='drp_action' value='" . html_escape(get_request_var('drp_action')) . "'>
 				$save_html
 			</td>
 		</tr>";
@@ -231,11 +231,11 @@ function gridalarms_notify_list_form_confirm($save) {
 
 		print "<tr>
 			<td class='saveRow'>
-				<input type='hidden' name='action' value='actions'>
-				<input type='hidden' name='id' value='" . get_request_var('id') . "'>
-				<input type='hidden' name='save_atemplates' value='1'>
-				<input type='hidden' name='selected_items' value='" . (isset($array) ? serialize($array) : '') . "'>
-				<input type='hidden' name='drp_action' value='" . get_request_var('drp_action') . "'>
+				<input type='hidden' name='action' value='" . html_escape('actions') . "'>
+				<input type='hidden' name='id' value='" . html_escape(get_request_var('id')) . "'>
+				<input type='hidden' name='save_atemplates' value='" . html_escape('1') . "'>
+				<input type='hidden' name='selected_items' value='" . html_escape(isset($array) ? serialize($array) : '') . "'>
+				<input type='hidden' name='drp_action' value='" . html_escape(get_request_var('drp_action')) . "'>
 				$save_html
 			</td>
 		</tr>";

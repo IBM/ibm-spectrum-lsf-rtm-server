@@ -312,8 +312,18 @@ function format_stats($variable, $array) {
 		$values = explode(' ', $array[$variable]);
 		$date_part = explode(':', $values[0], 2);
 		$run_part = explode(':', $values[1], 2);
-
-		return __('%s, %s Seconds', str_replace('_', ' ', $date_part[1]), $run_part[1], 'grid');
+		$lastrun_utc = str_replace('_', ' ', $date_part[1]);
+		$utc_timestamp = strtotime($lastrun_utc . ' UTC');
+		if ($utc_timestamp !== false) {
+			$lastrun = date('Y-m-d H:i:s', $utc_timestamp);
+			$time_parts = explode(' ', $lastrun_utc);
+			if (count($time_parts) >= 2) {
+				$lastrun_utc = $time_parts[1] . ' UTC';
+			}
+			return __('%s, (%s) for %s Seconds', $lastrun, $lastrun_utc, $run_part[1], 'grid');
+		} else {
+			return __('%s, for %s Seconds', $lastrun_utc, $run_part[1], 'grid');
+		}
 	}else{
 		return __('UNDEFINED', 'grid');
 	}

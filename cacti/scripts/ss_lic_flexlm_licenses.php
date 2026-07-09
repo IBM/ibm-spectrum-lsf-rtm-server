@@ -68,13 +68,12 @@ function ss_lic_flexlm_getvalue($lic_id, $featurename, $column) {
 	}
 
 	if (!isset($poller_dates[$service_id])) {
-		$time_status = db_fetch_row_prepared('SELECT status, poller_date
+		$time_status = db_fetch_row_prepared('SELECT status, unix_timestamp(poller_date) as poller_date 
 			FROM lic_services
 			WHERE service_id = ?',
 			array($service_id));
 
-		$last_update = strtotime($time_status['poller_date']);
-		$poller_dates[$service_id] = $last_update;
+		$poller_dates[$service_id] = $time_status['poller_date'];
 		$poller_status[$service_id] = $time_status['status'];
 	}
 

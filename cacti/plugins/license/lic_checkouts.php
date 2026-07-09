@@ -830,9 +830,9 @@ function lic_filter() {
 						<?php print __('Feature', 'license');?>
 					</td>
 					<td>
-						<input type='text' id='myfilter' size='35' value='<?php print get_feature_name(get_request_var('filter'));?>'>
-						<input type='hidden' id='myfilter_label' value='<?php print get_feature_name(get_request_var('filter'));?>'>
-						<input type='hidden' id='myfilter_value' value='<?php print get_request_var('filter');?>'>
+						<input type='text' id='myfilter' size='35' value='<?php print html_escape(get_feature_name(get_request_var('filter')));?>'>
+						<input type='hidden' id='myfilter_label' value='<?php print html_escape(get_feature_name(get_request_var('filter')));?>'>
+						<input type='hidden' id='myfilter_value' value='<?php print html_escape(get_request_var('filter'));?>'>
 					</td>
 					<td>
 						<?php print __('User', 'license');?>

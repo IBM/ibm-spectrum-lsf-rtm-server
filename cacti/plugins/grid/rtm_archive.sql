@@ -417,7 +417,6 @@ CREATE TABLE `grid_pollers` (
   `poller_support_info` varchar(255) NOT NULL DEFAULT '',
   `lsf_version` int(10) unsigned NOT NULL DEFAULT '1017',
   `remote` varchar(20) DEFAULT NULL,
-  `poller_max_insert_packet_size` varchar(255),
   PRIMARY KEY (`poller_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

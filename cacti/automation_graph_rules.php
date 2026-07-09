@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -128,7 +128,7 @@ function save() {
 		$save['pattern']   = form_input_validate((isset_request_var('pattern') ? get_nfilter_request_var('pattern') : ''), 'pattern', '', true, 3);
 
 		/* Test for SQL injections */
-		$field_name = str_replace(array('ht.', 'h.', 'gt.'), '', $save['field']);
+		$field_name = str_replace(array('ht.', 'h.', 'gt.', 'gtg.'), '', $save['field']);
 
 		$exists = db_fetch_cell_prepared('SELECT field_name
 			FROM host_snmp_cache
@@ -137,14 +137,21 @@ function save() {
 			array($field_name));
 
 		if (!$exists) {
-			if (!db_column_exists('host', $field_name) && !db_column_exists('host_template', $field_name) && !db_column_exists('graph_templates', $field_name)) {
-				raise_message('sql_injection', __('An attempt was made to perform a SQL injection in Graph automation'), MESSAGE_LEVEL_ERROR);
+			/* check the case where there is no entry in the host_snmp_cache table yet */
+			if ("'$field_name'" != db_qstr($field_name)) {
+			if (!db_column_exists('host', $field_name) &&
+				!db_column_exists('host_template', $field_name) &&
+				!db_column_exists('graph_templates', $field_name) &&
+				!db_column_exists('graph_local', $field_name) &&
+				!db_column_exists('graph_templates_graph', $field_name)) {
+					raise_message('sql_injection', __('An attempt was made to perform a SQL injection in Graph automation'), MESSAGE_LEVEL_ERROR);
 
-				cacti_log(sprintf('ERROR: An attempt was made to perform a SQL Injection in Graph Automation from client address \'%s\'', get_client_addr()), false, 'SECURITY');
+					cacti_log(sprintf('ERROR: An attempt was made to perform a SQL Injection in Graph Automation from client address \'%s\'', get_client_addr()), false, 'SECURITY');
 
-				header('Location: automation_graph_rules.php?header=false&action=edit&id=' . get_request_var('id'));
+					header('Location: automation_graph_rules.php?header=false&action=edit&id=' . get_request_var('id'));
 
-				exit;
+					exit;
+				}
 			}
 		}
 
@@ -180,9 +187,14 @@ function save() {
 		$save['pattern']   = form_input_validate((isset_request_var('pattern') ? get_nfilter_request_var('pattern') : ''), 'pattern', '', true, 3);
 
 		/* Test for SQL injections */
-		$field_name = str_replace(array('ht.', 'h.', 'gt.'), '', $save['field']);
+		$field_name = str_replace(array('ht.', 'h.', 'gt.', 'gl.', 'gtg.'), '', $save['field']);
+		$field_name = preg_replace('/[^a-zA-Z0-9_]/', '', $field_name);
 
-		if (!db_column_exists('host', $field_name) && !db_column_exists('host_template', $field_name) && !db_column_exists('graph_templates', $field_name)) {
+		if (!db_column_exists('host', $field_name) &&
+			!db_column_exists('host_template', $field_name) &&
+			!db_column_exists('graph_templates', $field_name) &&
+			!db_column_exists('graph_local', $field_name) &&
+			!db_column_exists('graph_templates_graph', $field_name)) {
 			raise_message('sql_injection', __('An attempt was made to perform a SQL injection in Graph automation'), MESSAGE_LEVEL_ERROR);
 
 			cacti_log(sprintf('ERROR: An attempt was made to perform a SQL Injection in Graph Automation from client address \'%s\'', get_client_addr()), false, 'SECURITY');
@@ -282,7 +294,7 @@ function automation_graph_rules_form_actions() {
 
 	form_start('automation_graph_rules.php', 'automation_graph_rules');
 
-	html_start_box($automation_graph_rules_actions[get_nfilter_request_var('drp_action')], '60%', '', '3', 'center', '');
+	html_start_box(escape_page_action($automation_graph_rules_actions, get_nfilter_request_var('drp_action')), '60%', '', '3', 'center', '');
 
 	if (get_nfilter_request_var('drp_action') == AUTOMATION_ACTION_GRAPH_DELETE) { /* delete */
 		print "<tr>
@@ -321,7 +333,7 @@ function automation_graph_rules_form_actions() {
 		header('Location: automation_graph_rules.php?header=false');
 		exit;
 	} else {
-		$save_html = "<input type='button' class='ui-button ui-corner-all ui-widget' value='" . __esc('Cancel') . "' onClick='cactiReturnTo()'>&nbsp;<input type='submit' class='ui-button ui-corner-all ui-widget' value='" . __esc('Continue') . "' title='" . __esc('Apply requested action') . "'>";
+		$save_html = "<input type='button' class='ui-button ui-corner-all ui-widget cactiReturnTo' value='" . __esc('Cancel') . "'>&nbsp;<input type='submit' class='ui-button ui-corner-all ui-widget' value='" . __esc('Continue') . "' title='" . __esc('Apply requested action') . "'>";
 	}
 
 	print "	<tr>
@@ -409,7 +421,7 @@ function automation_graph_rules_item_edit() {
 	form_save_button('automation_graph_rules.php?action=edit&id=' . get_request_var('id') . '&rule_type='. get_request_var('rule_type'));
 
 	?>
-	<script type='text/javascript'>
+	<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 
 	$(function() {
 		toggle_operation();
@@ -687,7 +699,7 @@ function automation_graph_rules_edit() {
 	}
 
 	?>
-	<script type='text/javascript'>
+	<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 	function applySNMPQueryIdChange() {
 		strURL  = 'automation_graph_rules.php?action=qedit';
 		strURL += '&id=' + $('#id').val();
@@ -834,7 +846,7 @@ function automation_graph_rules() {
 					</tr>
 				</table>
 		</form>
-		<script type='text/javascript'>
+		<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 		function applyFilter() {
 			strURL = 'automation_graph_rules.php' +
 				'?status='        + $('#status').val()+
@@ -851,15 +863,15 @@ function automation_graph_rules() {
 		}
 
 		$(function() {
-			$('#refresh, #rules, #rows, #status, #snmp_query_id').change(function() {
+			$('#refresh, #rules, #rows, #status, #snmp_query_id').on('change', function() {
 				applyFilter();
 			});
 
-			$('#clear').click(function() {
+			$('#clear').on('click', function() {
 				clearFilter();
 			});
 
-			$('#form_automation').submit(function(event) {
+			$('#form_automation').on('submit', function(event) {
 				event.preventDefault();
 				applyFilter();
 			});
@@ -900,7 +912,9 @@ function automation_graph_rules() {
 		COUNT(agr.id)
 		FROM automation_graph_rules AS agr
 		LEFT JOIN snmp_query AS sq
-		ON (agr.snmp_query_id=sq.id)
+		ON agr.snmp_query_id = sq.id
+		LEFT JOIN snmp_query_graph AS sqg
+		ON agr.graph_type_id = sqg.id
 		$sql_where");
 
 	$sql_order = get_order_string();
@@ -910,9 +924,9 @@ function automation_graph_rules() {
 		agr.enabled, sq.name AS snmp_query_name, sqg.name AS graph_type_name
 		FROM automation_graph_rules AS agr
 		LEFT JOIN snmp_query AS sq
-		ON (agr.snmp_query_id=sq.id)
+		ON agr.snmp_query_id = sq.id
 		LEFT JOIN snmp_query_graph AS sqg
-		ON (agr.graph_type_id=sqg.id)
+		ON agr.graph_type_id = sqg.id
 		$sql_where
 		$sql_order
 		$sql_limit");

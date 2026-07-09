@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -235,7 +235,19 @@ function plugins_load_temp_table() {
 
 			db_execute("CREATE TEMPORARY TABLE IF NOT EXISTS $table LIKE plugin_config");
 			db_execute("TRUNCATE $table");
+
+			/* Cacti strips NO_AUTO_VALUE_ON_ZERO on connect (database.php). Without it,
+			 * a row with id=0 in plugin_config (e.g. from a plugin upgrade script) is
+			 * reassigned by AUTO_INCREMENT to the next sequence value, causing a 1062
+			 * collision when another row already holds that id. */
+			$orig_sql_mode = db_fetch_cell('SELECT @@SESSION.sql_mode');
+			$modes = array_filter(array_map('trim', explode(',', (string)$orig_sql_mode)));
+			if (!in_array('NO_AUTO_VALUE_ON_ZERO', $modes, true)) {
+				$modes[] = 'NO_AUTO_VALUE_ON_ZERO';
+			}
+			db_execute_prepared('SET SESSION sql_mode = ?', [implode(',', $modes)]);
 			db_execute("INSERT INTO $table SELECT * FROM plugin_config");
+			db_execute_prepared('SET SESSION sql_mode = ?', array($orig_sql_mode));
 
 			break;
 		} else {
@@ -377,6 +389,9 @@ function plugins_load_temp_table() {
 function update_show_current () {
 	global $plugins, $pluginslist, $config, $status_names, $actions, $item_rows;
 
+	/* clean from the database any invalid entries */
+	plugin_clean_old_plugin_info();
+
 	/* ================= input validation and session storage ================= */
 	$filters = array(
 		'rows' => array(
@@ -416,7 +431,7 @@ function update_show_current () {
 	$table = plugins_load_temp_table();
 
 	?>
-	<script type="text/javascript">
+	<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 	function applyFilter() {
 		strURL  = 'plugins.php?header=false';
 		strURL += '&filter='+$('#filter').val();
@@ -431,15 +446,19 @@ function update_show_current () {
 	}
 
 	$(function() {
-		$('#refresh').click(function() {
+		$('#refresh').on('click', function() {
 			applyFilter();
 		});
 
-		$('#clear').click(function() {
+		$('#rows, #state').on('change', function() {
+			applyFilter();
+		});
+
+		$('#clear').on('click', function() {
 			clearFilter();
 		});
 
-		$('#form_plugins').submit(function(event) {
+		$('#form_plugins').on('submit', function(event) {
 			event.preventDefault();
 			applyFilter();
 		});
@@ -465,7 +484,7 @@ function update_show_current () {
 						<?php print __('Status');?>
 					</td>
 					<td>
-						<select id='state' name='state' onChange='applyFilter()'>
+						<select id='state' name='state'>
 							<option value='-99'<?php if (get_request_var('state') == '-99') {?> selected<?php }?>><?php print __('All');?></option>
 							<option value='-98'<?php if (get_request_var('state') == '-98') {?> selected<?php }?>><?php print __('Plugin Error');?></option>
 							<option value='1'<?php if (get_request_var('state') == '1') {?> selected<?php }?>><?php print __('Active');?></option>
@@ -479,7 +498,7 @@ function update_show_current () {
 						<?php print __('Plugins');?>
 					</td>
 					<td>
-						<select id='rows' name='rows' onChange='applyFilter()'>
+						<select id='rows' name='rows'>
 							<option value='-1'<?php print (get_request_var('rows') == '-1' ? ' selected>':'>') . __('Default');?></option>
 							<?php
 							if (cacti_sizeof($item_rows) > 0) {
@@ -657,11 +676,11 @@ function update_show_current () {
 	$uninstall_title = __('Are you sure you want to Uninstall?');
 
 	?>
-	<script type='text/javascript'>
+	<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 	var url = '';
 
 	$(function() {
-		$('.piuninstall').click(function(event) {
+		$('.piuninstall').on('click', function(event) {
 			event.preventDefault();
 			url = $(this).attr('href');
 
@@ -702,6 +721,11 @@ function update_show_current () {
 function format_plugin_row($plugin, $last_plugin, $include_ordering, $table) {
 	global $status_names, $config;
 	static $first_plugin = true;
+
+	if (empty($plugin['infoname'])) {
+		$plugin['infoname'] = ucfirst($plugin['directory']);
+		$plugin['status'] = -5;
+	}
 
 	$row = plugin_actions($plugin, $table);
 

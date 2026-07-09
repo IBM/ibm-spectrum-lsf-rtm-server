@@ -356,8 +356,8 @@ function arraysFilter() {
 			<table class='filterTable' style='display:none'>
 				<tr>
 					<td>
-						<input type='hidden' name='predefined_timespan' value='<?php print get_request_var('predefined_timespan');?>'>
-						<input type='hidden' name='predefined_timeshift' value='<?php print get_request_var('predefined_timeshift');?>'>
+						<input type='hidden' name='predefined_timespan' value='<?php print html_escape(get_request_var('predefined_timespan'));?>'>
+						<input type='hidden' name='predefined_timeshift' value='<?php print html_escape(get_request_var('predefined_timeshift'));?>'>
 					</td>
 				</tr>
 			</table>
@@ -372,7 +372,7 @@ function arraysFilter() {
 					</td>
 				</tr>
 			</table>
-			<input type='hidden' name='page' value='<?php print get_request_var('page');?>'>
+			<input type='hidden' name='page' value='<?php print html_escape(get_request_var('page'));?>'>
 			</form>
 
 			<script type='text/javascript'>

@@ -107,6 +107,9 @@ function upgrade_to_10_2_0_15() {
 						MODIFY COLUMN licenseProject VARCHAR(256) NOT NULL DEFAULT '';");
 
 	db_execute("ALTER TABLE grid_license_projects MODIFY COLUMN licenseProject VARCHAR(256) NOT NULL;");
+  
+	//Enable partition table upgrade utility
+	db_execute("REPLACE INTO settings (name, value) VALUES ('grid_partitions_upgrade_status', 'scheduled')");
 }
 
 function partition_tables_to_10_2_0_15(){

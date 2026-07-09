@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2022                                          |
+ | Copyright IBM Corp. 2006, 2026                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -26,6 +26,7 @@ include('./include/auth.php');
 include_once($config['library_path'] . '/rtm_functions.php');
 include_once('./plugins/heuristics/functions.php');
 include_once('./plugins/heuristics/heuristics_webapi.php');
+include_once('./plugins/grid/include/grid_constants.php');
 include_once('./plugins/grid/include/grid_messages.php');
 include_once('./plugins/grid/lib/grid_partitioning.php');
 include_once('./plugins/grid/lib/grid_validate.php');
@@ -60,13 +61,14 @@ $charts = array(
 $views  = api_plugin_hook_function('heuristics_view_list', $views);
 //$charts = api_plugin_hook_function('heuristics_chart_list', $charts);
 
+$charts_fusion = array();
 if (cacti_sizeof($charts)) {
-	foreach($charts as $id => $chart) {
+	foreach ($charts as $id => $chart) {
 		$charts_fusion[] = $chart['fusionfile'];
 	}
 }
 
-switch(get_request_var('action')) {
+switch (get_request_var('action')) {
 	case 'ajax_jobstats':
 		today_pie();
 		break;

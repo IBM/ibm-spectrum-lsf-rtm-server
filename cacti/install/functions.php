@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -72,7 +72,6 @@ function install_create_csrf_secret($file) {
 			$fh = fopen($file, 'w');
 			fwrite($fh, csrf_get_secret());
 			fclose($fh);
-			chmod($file, 0640);
 
 			return true;
 		} else {
@@ -484,6 +483,7 @@ function install_setup_get_templates() {
 		'Cisco_Router.xml.gz',
 		'Citrix_NetScaler_VPX.xml.gz',
 		'Clearpass_policy_manager.xml.gz',
+		'Dell_iDrac.xml.gz',
 		'ESXi_Device.xml.gz',
 		'Fortigate.xml.gz',
 		'Generic_SNMP_Device.xml.gz',
@@ -535,7 +535,7 @@ function install_setup_get_templates() {
 			$info[] = $data['info'];
 		} else {
 			// Loading Template Information from package
-			$myinfo = @json_decode(shell_exec(cacti_escapeshellcmd(read_config_option('path_php_binary')) . ' -q ' . cacti_escapeshellarg($config['base_path'] . '/cli/import_package.php') . ' --filename=' . cacti_escapeshellarg("/$path/$xmlfile") . ' --info-only'), true);
+			$myinfo = @json_decode(shell_exec(cacti_escapeshellcmd(read_config_option('path_php_binary')) . ' -q ' . cacti_escapeshellarg($config['base_path'] . '/cli/import_package.php') . ' --filename=' . cacti_escapeshellarg("/$path/$xmlfile") . ' --info'), true);
 			$myinfo['filename'] = $xmlfile;
 			$myinfo['name']     = $xmlfile;
 			$info[] = $myinfo;

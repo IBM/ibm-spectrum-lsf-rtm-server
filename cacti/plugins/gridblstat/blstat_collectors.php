@@ -383,10 +383,10 @@ function form_actions() {
 
 		print "<tr>
 			<td class='saveRow'>
-				<input type='hidden' name='action' value='actions'>
-				<input type='hidden' name='save_list' value='1'>
-				<input type='hidden' name='selected_items' value='" . (isset($array) ? serialize($array) : '') . "'>
-				<input type='hidden' name='drp_action' value='" . get_request_var('drp_action') . "'>
+				<input type='hidden' name='action' value='" . html_escape('actions') . "'>
+				<input type='hidden' name='save_list' value='" . html_escape('1') . "'>
+				<input type='hidden' name='selected_items' value='" . (isset($array) ? html_escape(serialize($array)) : '') . "'>
+				<input type='hidden' name='drp_action' value='" . html_escape_request_var('drp_action') . "'>
 				$save_html
 			</td>
 		</tr>";

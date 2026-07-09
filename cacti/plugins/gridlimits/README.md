@@ -26,15 +26,11 @@ To install the gridlimits plugin, follow the steps below:
 1. Goto the RTM console and install and enable the plguin.  This
    step will create the base tables required by the data collector.
 
-2. Copy the binary file in the bin plguin directory to the various 
-   RTM data collector directories.  The default location for the RTM 
-   data collectors is /opt/IBM/rtm/lsf*/bin.
-
-3. Users with 'General LSF Data' permission will automatically be
+2. Users with 'General LSF Data' permission will automatically be
    able to view the Limits data under the Cluster top tab under
    Reports > Limits page.
 
-4. Review the Cacti log for errors.  If you find errors report them
+3. Review the Cacti log for errors.  If you find errors report them
    to IBM or submit a pull request to make updates.
 
 ## Possible Bugs and Feature Enhancements

@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -94,7 +94,7 @@ function display_matching_hosts($rule, $rule_type, $url) {
 	}
 
 	?>
-	<script type='text/javascript'>
+	<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 	function applyDeviceFilter() {
 		strURL  = '<?php print $url;?>' + '&host_status=' + $('#host_status').val();
 		strURL += '&host_template_id=' + $('#host_template_id').val();
@@ -110,15 +110,19 @@ function display_matching_hosts($rule, $rule_type, $url) {
 	}
 
 	$(function() {
-		$('#refresh').click(function() {
+		$('#refresh').on('click', function() {
 			applyDeviceFilter();
 		});
 
-		$('#clear').click(function() {
+		$('#host_template_id, #host_status, #rowsd').on('change', function() {
+			applyDeviceFilter();
+		});
+
+		$('#clear').on('click', function() {
 			clearDeviceFilter();
 		});
 
-		$('#form_automation_host').submit(function(event) {
+		$('#form_automation_host').on('submit', function(event) {
 			event.preventDefault();
 			applyDeviceFilter();
 		});
@@ -146,7 +150,7 @@ function display_matching_hosts($rule, $rule_type, $url) {
 							<?php print __('Type');?>
 						</td>
 						<td>
-							<select id='host_template_id' onChange='applyDeviceFilter()'>
+							<select id='host_template_id'>
 								<option value='-1'<?php if (get_request_var('host_template_id') == '-1') {?> selected<?php }?>><?php print __('Any');?></option>
 								<option value='0'<?php if (get_request_var('host_template_id') == '0') {?> selected<?php }?>><?php print __('None');?></option>
 								<?php
@@ -164,7 +168,7 @@ function display_matching_hosts($rule, $rule_type, $url) {
 							<?php print __('Status');?>
 						</td>
 						<td>
-							<select id='host_status' onChange='applyDeviceFilter()'>
+							<select id='host_status'>
 								<option value='-1'<?php if (get_request_var('host_status') == '-1') {?> selected<?php }?>><?php print __('Any');?></option>
 								<option value='-3'<?php if (get_request_var('host_status') == '-3') {?> selected<?php }?>><?php print __('Enabled');?></option>
 								<option value='-2'<?php if (get_request_var('host_status') == '-2') {?> selected<?php }?>><?php print __('Disabled');?></option>
@@ -179,7 +183,7 @@ function display_matching_hosts($rule, $rule_type, $url) {
 							<?php print __('Devices');?>
 						</td>
 						<td>
-							<select id='rowsd' onChange='applyDeviceFilter()'>
+							<select id='rowsd'>
 								<option value='-1'<?php if (get_request_var('rowsd') == '-1') {?> selected<?php }?>><?php print __('Default');?></option>
 								<?php
 								if (cacti_sizeof($item_rows)) {
@@ -258,14 +262,22 @@ function display_matching_hosts($rule, $rule_type, $url) {
 	$rows_query = $sql_query . $sql_where . $sql_filter;
 	$total_rows = cacti_sizeof(db_fetch_assoc($rows_query, false));
 
-	$sortby = get_request_var('sort_column');
-	if ($sortby=='hostname') {
-		$sortby = 'INET_ATON(hostname)';
-	}
+	$sort_columns = array(
+		'description'        => 'h.description',
+		'hostname'           => 'INET_ATON(h.hostname)',
+		'status'             => 'h.status',
+		'host_template_name' => 'ht.name',
+		'id'                 => 'h.id',
+	);
+
+	$sort_column = cacti_validate_sort_column(get_request_var('sort_column'), array_keys($sort_columns), 'description');
+	$sortby      = $sort_columns[$sort_column];
+	$sort_dir    = strtoupper(get_request_var('sort_direction')) === 'DESC' ? 'DESC' : 'ASC';
 
 	$sql_query = $rows_query .
-		' ORDER BY ' . $sortby . ' ' . get_request_var('sort_direction') .
+		' ORDER BY ' . $sortby . ' ' . $sort_dir .
 		' LIMIT ' . ($rows*(get_request_var('paged')-1)) . ',' . $rows;
+
 	$hosts = db_fetch_assoc($sql_query, false);
 
 	$nav = html_nav_bar($url, MAX_DISPLAY_PAGES, get_request_var('paged'), $rows, $total_rows, 7, __('Devices'), 'paged', 'main');
@@ -375,7 +387,7 @@ function display_matching_graphs($rule, $rule_type, $url) {
 	}
 
 	?>
-	<script type='text/javascript'>
+	<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 
 	function applyFilter() {
 		strURL  = '<?php print $url;?>' + '&host_id=' + $('#host_id').val();
@@ -392,19 +404,19 @@ function display_matching_graphs($rule, $rule_type, $url) {
 	}
 
 	$(function() {
-		$('#host_id, #template_id, #rows, #filter').change(function() {
+		$('#host_id, #template_id, #rows, #filter').on('change', function() {
 			applyFilter();
 		});
 
-		$('#refresh').click(function() {
+		$('#refresh').on('click', function() {
 			applyFilter();
 		});
 
-		$('#clear').click(function() {
+		$('#clear').on('click', function() {
 			clearFilter();
 		});
 
-		$('#form_graphs').submit(function(event) {
+		$('#form_graphs').on('submit', function(event) {
 			event.preventDefault();
 			applyFilter();
 		});
@@ -555,8 +567,8 @@ function display_matching_graphs($rule, $rule_type, $url) {
 		LEFT JOIN host_template AS ht
 		ON h.host_template_id=ht.id
 		$sql_where
-		ORDER BY " . get_request_var('sort_column') . ' ' . get_request_var('sort_direction') . '
-		LIMIT ' . ($rows*(get_request_var('page')-1)) . ',' . $rows;
+		" . get_order_string() . "
+		LIMIT " . ($rows*(get_request_var('page')-1)) . ',' . $rows;
 
 	$graph_list = db_fetch_assoc($sql, false);
 
@@ -660,7 +672,7 @@ function display_new_graphs($rule, $url) {
 	}
 
 	?>
-	<script type='text/javascript'>
+	<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 	function applyObjectFilter() {
 		strURL  = '<?php print $url;?>';
 		strURL += '&rows=' + $('#orows').val();
@@ -675,19 +687,19 @@ function display_new_graphs($rule, $url) {
 	}
 
 	$(function() {
-		$('#orefresh').click(function() {
+		$('#orefresh').on('click', function() {
 			applyObjectFilter();
 		});
 
-		$('#oclear').click(function() {
+		$('#oclear').on('click', function() {
 			clearObjectFilter();
 		});
 
-		$('#orows').change(function() {
+		$('#orows').on('change', function() {
 			applyObjectFilter();
 		});
 
-		$('#form_automation_objects').submit(function(event) {
+		$('#form_automation_objects').on('submit', function(event) {
 			event.preventDefault();
 			applyObjectFilter();
 		});
@@ -1019,7 +1031,7 @@ function display_matching_trees ($rule_id, $rule_type, $item, $url) {
 	}
 
 	?>
-	<script type='text/javascript'>
+	<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 
 	function applyFilter() {
 		strURL  = '<?php print $url;?>' + '&host_status=' + $('#host_status').val();
@@ -1036,15 +1048,19 @@ function display_matching_trees ($rule_id, $rule_type, $item, $url) {
 	}
 
 	$(function() {
-		$('#refresh').click(function() {
+		$('#refresh').on('click', function() {
 			applyFilter();
 		});
 
-		$('#clear').click(function() {
+		$('#host_template_id, #host_status, #rows').on('change', function() {
+			applyFilter();
+		});
+
+		$('#clear').on('click', function() {
 			clearFilter();
 		});
 
-		$('#form_automation_tree').submit(function(event) {
+		$('#form_automation_tree').on('submit', function(event) {
 			event.preventDefault();
 			applyFilter();
 		});
@@ -1072,7 +1088,7 @@ function display_matching_trees ($rule_id, $rule_type, $item, $url) {
 						<?php print __('Type');?>
 					</td>
 					<td>
-						<select id='host_template_id' onChange='applyFilter()'>
+						<select id='host_template_id'>
 							<option value='-1'<?php if (get_request_var('host_template_id') == '-1') {?> selected<?php }?>><?php print __('Any');?></option>
 							<option value='0'<?php if (get_request_var('host_template_id') == '0') {?> selected<?php }?>><?php print __('None');?></option>
 							<?php
@@ -1090,7 +1106,7 @@ function display_matching_trees ($rule_id, $rule_type, $item, $url) {
 						<?php print __('Status');?>
 					</td>
 					<td>
-						<select id='host_status' onChange='applyFilter()'>
+						<select id='host_status'>
 							<option value='-1'<?php if (get_request_var('host_status') == '-1') {?> selected<?php }?>><?php print __('Any');?></option>
 							<option value='-3'<?php if (get_request_var('host_status') == '-3') {?> selected<?php }?>><?php print __('Enabled');?></option>
 							<option value='-2'<?php if (get_request_var('host_status') == '-2') {?> selected<?php }?>><?php print __('Disabled');?></option>
@@ -1105,7 +1121,7 @@ function display_matching_trees ($rule_id, $rule_type, $item, $url) {
 						<?php print __('Data Queries');?>
 					</td>
 					<td>
-						<select id='rows' onChange='applyFilter()'>
+						<select id='rows'>
 							<option value='-1'<?php if (get_request_var('rows') == '-1') {?> selected<?php }?>><?php print __('Default');?></option>
 							<?php
 							if (cacti_sizeof($item_rows)) {
@@ -1118,7 +1134,7 @@ function display_matching_trees ($rule_id, $rule_type, $item, $url) {
 					</td>
 					<td>
 						<span>
-							<input type='button' class='ui-button ui-corner-all ui-widget' id='refresh' value='<?php print __esc('Go');?>'>
+							<input type='submit' class='ui-button ui-corner-all ui-widget' id='refresh' value='<?php print __esc('Go');?>'>
 							<input type='button' class='ui-button ui-corner-all ui-widget' id='clear' value='<?php print __esc('Clear');?>'>
 						</span>
 					</td>
@@ -1202,13 +1218,18 @@ function display_matching_trees ($rule_id, $rule_type, $item, $url) {
 
 	$total_rows = cacti_sizeof(db_fetch_assoc($rows_query, false));
 
-	$sortby = get_request_var('sort_column');
-	if ($sortby=='h.hostname') {
-		$sortby = 'INET_ATON(h.hostname)';
-	}
+	$sort_columns = array(
+		'description'        => 'h.description',
+		'hostname'           => 'INET_ATON(h.hostname)',
+		'status'             => 'h.status',
+		'host_template_name' => 'ht.name'
+	);
+
+	$sort_column = cacti_validate_sort_column(get_request_var('sort_column'), array_keys($sort_columns), 'description');
+	$sortby      = $sort_columns[$sort_column];
 
 	$sql_query = "$rows_query ORDER BY $sortby " .
-		get_request_var('sort_direction') . ' LIMIT ' .
+		(strtoupper(get_request_var('sort_direction')) === 'DESC' ? 'DESC' : 'ASC') . ' LIMIT ' .
 		($rows*(get_request_var('page')-1)) . ',' . $rows;
 
 	$templates = db_fetch_assoc($sql_query, false);
@@ -1691,7 +1712,7 @@ function build_rule_item_filter($automation_rule_items, $prefix = '') {
 
 			# field name
 			if ($automation_rule_item['field'] != '') {
-				$sql_filter .= (' ' . $prefix . '`' . implode('`.`', explode('.', $automation_rule_item['field'])) . '`');
+				$sql_filter .= (' ' . $prefix . '`' . implode('`.`', explode('.', sanitize_sql_column($automation_rule_item['field']))) . '`');
 				#
 				$sql_filter .= ' ' . $automation_op_array['op'][$automation_rule_item['operator']] . ' ';
 				if ($automation_op_array['binary'][$automation_rule_item['operator']]) {
@@ -2743,7 +2764,7 @@ function create_all_header_nodes($item_id, $rule) {
 				LEFT JOIN host_template AS ht
 				ON h.host_template_id=ht.id ';
 
-			$sql_where = 'WHERE h.id='. $item_id . ' AND h.deleted = "" ';
+			$sql_where = 'WHERE h.id=? AND h.deleted = "" ';
 		} elseif ($rule['leaf_type'] == TREE_ITEM_TYPE_GRAPH) {
 			/* graphs require a different set of tables to be joined */
 			$sql_tables = 'FROM host AS h
@@ -2756,7 +2777,7 @@ function create_all_header_nodes($item_id, $rule) {
 				LEFT JOIN graph_templates_graph AS gtg
 				ON gl.id=gtg.local_graph_id ';
 
-			$sql_where = 'WHERE gl.id=' . $item_id . ' AND h.deleted = "" ';
+			$sql_where = 'WHERE gl.id=? AND h.deleted = "" ';
 		}
 
 		/* get the WHERE clause for matching hosts */
@@ -2768,7 +2789,12 @@ function create_all_header_nodes($item_id, $rule) {
 				$sql = '';
 				$target = $automation_tree_header_types[AUTOMATION_TREE_ITEM_TYPE_STRING];
 			} else {
-				$sql_field = $tree_item['field'] . ' AS source ';
+				$sanitized_field = sanitize_sql_column($tree_item['field']);
+				if ($sanitized_field == '') {
+					$sql_field = 'NULL AS source ';
+				} else {
+					$sql_field = $sanitized_field . ' AS source ';
+				}
 
 				/* now we build up a new query for counting the rows */
 				$sql = 'SELECT ' .
@@ -2776,10 +2802,11 @@ function create_all_header_nodes($item_id, $rule) {
 				$sql_tables .
 				$sql_where . ' AND (' . $sql_filter . ')';
 
-				$target = db_fetch_cell($sql, '', false);
+				$target = db_fetch_cell_prepared($sql, array($item_id), '', false);
 			}
 
-			cacti_log($function . ' Item ' . $item_id . ' - sql: ' . str_replace("\m",'',$sql) . ' matches: ' . $target, false, 'AUTOM8 TRACE', POLLER_VERBOSITY_DEBUG);
+			cacti_log($function . ' Item ' . $item_id . ' - sql: ' . str_replace("\m", '', $sql) . ' matches: ' . $target, false, 'AUTOM8 TRACE', POLLER_VERBOSITY_DEBUG);
+
 
 			$parent_tree_item_id = create_multi_header_node($target, $rule, $tree_item, $parent_tree_item_id);
 		}
@@ -3085,29 +3112,28 @@ function automation_add_tree($host_id, $tree) {
 
 function automation_find_os($sysDescr, $sysObject, $sysName) {
 	$sql_where  = '';
+	$params     = array();
 
 	if ($sysDescr != '') {
-		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . "(? REGEXP CONCAT('/', sysDescr, '/') OR ? LIKE CONCAT('%%', sysDescr, '%%'))";
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . "(? REGEXP CONCAT('/', sysDescr, '/') OR ? LIKE CONCAT('%', sysDescr, '%'))";
 
 		$params[] = $sysDescr;
 		$params[] = $sysDescr;
 	}
 
 	if ($sysObject != '') {
-		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . "(? REGEXP CONCAT('/', sysOid, '/') OR ? LIKE CONCAT('%%', sysOid, '%%'))";
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . "(? REGEXP CONCAT('/', sysOid, '/') OR ? LIKE CONCAT('%', sysOid, '%'))";
 
 		$params[] = $sysObject;
 		$params[] = $sysObject;
 	}
 
 	if ($sysName != '') {
-		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . "(? REGEXP CONCAT('/', sysName, '/') OR ? LIKE CONCAT('%%', sysName, '%%'))";
+		$sql_where .= ($sql_where != '' ? ' AND ':'WHERE ') . "(? REGEXP CONCAT('/', sysName, '/') OR ? LIKE CONCAT('%', sysName, '%'))";
 
 		$params[] = $sysName;
 		$params[] = $sysName;
 	}
-
-	$params = array($sysDescr, $sysDescr, $sysObject, $sysObject, $sysName, $sysName);
 
 	$result = db_fetch_row_prepared("SELECT at.*, ht.name
 		FROM automation_templates AS at

@@ -1,8 +1,7 @@
 <?php
-// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -14,6 +13,11 @@
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
  +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDTool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
+ +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
 */
@@ -24,8 +28,6 @@ include_once('./lib/xml.php');
 include_once('./plugins/syslog/functions.php');
 include_once('./plugins/syslog/database.php');
 
-syslog_determine_config();
-include(SYSLOG_CONFIG);
 syslog_connect();
 
 set_default_action();
@@ -49,6 +51,7 @@ switch (get_request_var('action')) {
 		break;
 	case 'import':
 		top_header();
+		syslog_include_js();
 		import();
 		bottom_footer();
 
@@ -60,6 +63,7 @@ switch (get_request_var('action')) {
 	case 'edit':
 	case 'newedit':
 		top_header();
+		syslog_include_js();
 
 		syslog_action_edit();
 
@@ -67,6 +71,7 @@ switch (get_request_var('action')) {
 		break;
 	default:
 		top_header();
+		syslog_include_js();
 
 		syslog_alerts();
 
@@ -103,8 +108,7 @@ function form_save() {
 
 function form_actions() {
 	global $config, $syslog_actions, $fields_syslog_action_edit;
-
-	include(SYSLOG_CONFIG);
+	global $syslogdb_default;
 
 	get_filter_request_var('drp_action', FILTER_VALIDATE_REGEXP,
 		 array('options' => array('regexp' => '/^([a-zA-Z0-9_]+)$/')));
@@ -225,7 +229,7 @@ function form_actions() {
 }
 
 function alert_export() {
-	include(SYSLOG_CONFIG);
+	global $syslogdb_default;
 
 	/* if we are to save this form, instead of display it */
 	if (isset_request_var('selected_items')) {
@@ -257,8 +261,7 @@ function alert_export() {
 
 function api_syslog_alert_save($id, $name, $method, $level, $num, $type, $message, $email, $notes,
 	$enabled, $severity, $command, $repeat_alert, $open_ticket, $notify = 0, $body = '') {
-
-	include(SYSLOG_CONFIG);
+	global $syslogdb_default;
 
 	/* get the username */
 	$username = db_fetch_cell('SELECT username FROM user_auth WHERE id=' . $_SESSION['sess_user_id']);
@@ -322,17 +325,17 @@ function api_syslog_alert_save($id, $name, $method, $level, $num, $type, $messag
 }
 
 function api_syslog_alert_remove($id) {
-	include(SYSLOG_CONFIG);
+	global $syslogdb_default;
 	syslog_db_execute("DELETE FROM `" . $syslogdb_default . "`.`syslog_alert` WHERE id='" . $id . "'");
 }
 
 function api_syslog_alert_disable($id) {
-	include(SYSLOG_CONFIG);
+	global $syslogdb_default;
 	syslog_db_execute("UPDATE `" . $syslogdb_default . "`.`syslog_alert` SET enabled='' WHERE id='" . $id . "'");
 }
 
 function api_syslog_alert_enable($id) {
-	include(SYSLOG_CONFIG);
+	global $syslogdb_default;
 	syslog_db_execute("UPDATE `" . $syslogdb_default . "`.`syslog_alert` SET enabled='on' WHERE id='" . $id . "'");
 }
 
@@ -341,7 +344,7 @@ function api_syslog_alert_enable($id) {
    --------------------- */
 
 function syslog_get_alert_records(&$sql_where, $rows) {
-	include(SYSLOG_CONFIG);
+	global $syslogdb_default;
 
 	if (get_request_var('filter') != '') {
 		$sql_where .= (strlen($sql_where) ? ' AND ':'WHERE ') .
@@ -427,8 +430,7 @@ function get_repeat_array() {
 
 function syslog_action_edit() {
 	global $message_types, $severities;
-
-	include(SYSLOG_CONFIG);
+	global $syslogdb_default;
 
 	/* ================= input validation ================= */
 	get_filter_request_var('id');
@@ -750,41 +752,7 @@ function syslog_filter() {
 			<input type='hidden' id='page' value='<?php print get_filter_request_var('page');?>'>
 		</form>
 		<script type='text/javascript'>
-
-		function applyFilter() {
-			strURL = 'syslog_alerts.php?filter='+$('#filter').val()+'&enabled='+$('#enabled').val()+'&rows='+$('#rows').val()+'&page='+$('#page').val()+'&header=false';
-			loadPageNoHeader(strURL);
-		}
-
-		function clearFilter() {
-			strURL = 'syslog_alerts.php?clear=1&header=false';
-			loadPageNoHeader(strURL);
-		}
-
-		function importAlert() {
-			strURL = 'syslog_alerts.php?action=import&header=false';
-			loadPageNoHeader(strURL);
-		}
-
-		$(function() {
-			$('#refresh').click(function() {
-				applyFilter();
-			});
-
-			$('#clear').click(function() {
-				clearFilter();
-			});
-
-			$('#import').click(function() {
-				importAlert();
-			});
-
-			$('#alert').submit(function(event) {
-				event.preventDefault();
-				applyFilter();
-			});
-		});
-
+		initSyslogAlerts();
 		</script>
 		</td>
 	</tr>
@@ -793,8 +761,7 @@ function syslog_filter() {
 
 function syslog_alerts() {
 	global $syslog_actions, $config, $message_types, $severities;
-
-	include(SYSLOG_CONFIG);
+	global $syslogdb_default;
 
     /* ================= input validation and session storage ================= */
     $filters = array(

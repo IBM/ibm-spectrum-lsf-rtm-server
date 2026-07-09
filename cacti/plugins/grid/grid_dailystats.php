@@ -549,16 +549,6 @@ function dailyStatsFilter() {
 	//		get_request_var('exec_host') = "0";
 	//	}
 	//}
-	if (read_config_option('grid_partitioning_enable') == '') {
-		$min_start    = db_fetch_cell('SELECT MIN(interval_start) FROM grid_job_daily_stats');
-	} else {
-		$min_start     = db_fetch_cell("SELECT MIN(min_time) FROM grid_table_partitions WHERE table_name='grid_job_daily_stats'");
-
-		/* no partitions are created yet */
-		if (strlen($min_start) == 0) {
-			$min_start    = db_fetch_cell('SELECT MIN(interval_start) FROM grid_job_daily_stats');
-		}
-	}
 	?>
 	<tr class='odd'>
 		<td>

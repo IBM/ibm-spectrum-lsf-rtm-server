@@ -4944,7 +4944,7 @@ function list_templates(bool $admin = true) {
 
 			print "<tr>
 				<td colspan='2' class='saveRow'>
-					<input type='hidden' name='import_submit' value='import_submit'>
+					<input type='hidden' name='import_submit' value='" . html_escape('import_submit') . "'>
 					<input type='button' name='cancel' value='" . (strlen($save_html) ? 'No':'Return') . "' onClick='cactiReturnTo(\"" . $config['url_path'] . "plugins/gridalarms/gridalarms_templates.php\")'>$save_html
 				</td>
 			</tr>";
@@ -4978,7 +4978,7 @@ function list_templates(bool $admin = true) {
 
 		print "<tr>
 			<td colspan='2' class='saveRow'>
-				<input type='hidden' name='import_check' value='import_check'>
+				<input type='hidden' name='import_check' value='" . html_escape('import_check') . "'>
 				<input type='button' name='cancel' value='" . (strlen($save_html) ? 'No':'Return') . "' onClick='cactiReturnTo(\"" . $config['url_path'] . "plugins/gridalarms/gridalarms_templates.php\")'>" . $save_html . "
 			</td>
 		</tr>";
@@ -5098,8 +5098,8 @@ function list_templates(bool $admin = true) {
 						</span>
 					</td>
 					<td>
-						<input type='hidden' id='tab' value='alarms'>
-						<input type='hidden' id='search' value='search'>
+						<input type='hidden' id='tab' value='<?php print html_escape('alarms');?>'>
+						<input type='hidden' id='search' value='<?php print html_escape('search');?>'>
 					</td>
 				</tr>
 			</table>
@@ -6063,9 +6063,9 @@ function do_alarms(string $from = 'console') : void {
 
 			print "<tr>
 				<td colspan='2' class='saveRow'>
-					<input type='hidden' name='ack_action' value='ack_action'>
-					<input type='hidden' name='selected_items' value='" . (isset($alarms) ? serialize($alarms) : '') . "'>
-					<input type='hidden' name='drp_action' value='" . ALERT_DELETE . "'>
+					<input type='hidden' name='ack_action' value='" . html_escape('ack_action') . "'>
+					<input type='hidden' name='selected_items' value='" . html_escape(isset($alarms) ? serialize($alarms) : '') . "'>
+					<input type='hidden' name='drp_action' value='" . html_escape(ALERT_DELETE) . "'>
 					<input type='button' name='cancel' value='" . (strlen($save_html) ? __esc('Cancel', 'gridalarms'):__esc('Return', 'gridalarms')) . "' onClick='cactiReturnTo(\"" . $config['url_path'] . "plugins/gridalarms/gridalarms_alarm.php\")'>
 					$save_html
 				</td>
@@ -6136,9 +6136,9 @@ function do_alarms(string $from = 'console') : void {
 
 			print " <tr>
 				<td colspan='2' class='saveRow'>
-					<input type='hidden' name='ack_action' value='ack_action'>
-					<input type='hidden' name='selected_items' value='" . (isset($alarms) ? serialize($alarms) : '') . "'>
-					<input type='hidden' name='drp_action' value='" . ALERT_DISABLE . "'>
+					<input type='hidden' name='ack_action' value='" . html_escape('ack_action') . "'>
+					<input type='hidden' name='selected_items' value='" . html_escape(isset($alarms) ? serialize($alarms) : '') . "'>
+					<input type='hidden' name='drp_action' value='" . html_escape(ALERT_DISABLE) . "'>
 					<input type='button' name='cancel' value='" . (strlen($save_html) ? __esc('Cancel', 'gridalarms'):__esc('Return', 'gridalarms')) . "' onClick='cactiReturnTo(\"" . $config['url_path'] . "plugins/gridalarms/gridalarms_alarm.php\")'>$save_html
 				</td>
 			</tr>";
@@ -6207,9 +6207,9 @@ function do_alarms(string $from = 'console') : void {
 
 			print " <tr>
 				<td colspan='2' class='saveRow'>
-					<input type='hidden' name='ack_action' value='ack_action'>
-					<input type='hidden' name='selected_items' value='" . (isset($alarms) ? serialize($alarms) : '') . "'>
-					<input type='hidden' name='drp_action' value='" . ALERT_ENABLE . "'>
+					<input type='hidden' name='ack_action' value='" . html_escape('ack_action') . "'>
+					<input type='hidden' name='selected_items' value='" . html_escape(isset($alarms) ? serialize($alarms) : '') . "'>
+					<input type='hidden' name='drp_action' value='" . html_escape(ALERT_ENABLE) . "'>
 					<input type='button' name='cancel' value='" . (strlen($save_html) ? __('Cancel', 'gridalarms'):__esc('Return', 'gridalarms')) . "' onClick='cactiReturnTo(\"" . $config['url_path'] . "plugins/gridalarms/gridalarms_alarm.php\")'>
 					$save_html
 				</td>
@@ -6290,9 +6290,9 @@ function do_alarms(string $from = 'console') : void {
 
 			print "<tr>
 				<td colspan='2' class='saveRow'>
-					<input type='hidden' name='ack_action' value='ack_action'>
-					<input type='hidden' name='selected_items' value='" . (isset($alarms) ? serialize($alarms) : '') . "'>
-					<input type='hidden' name='drp_action' value='" . ALERT_ACK . "'>
+					<input type='hidden' name='ack_action' value='" . html_escape('ack_action') . "'>
+					<input type='hidden' name='selected_items' value='" . html_escape(isset($alarms) ? serialize($alarms) : '') . "'>
+					<input type='hidden' name='drp_action' value='" . html_escape(ALERT_ACK) . "'>
 					<input type='button' name='cancel' value='" . (strlen($save_html) ? 'Cancel':'Return') . "' onClick='cactiReturnTo(\"" . $config['url_path'] . "plugins/gridalarms/gridalarms_alarm.php\")'>
 					$save_html
 				</td>
@@ -6372,9 +6372,9 @@ function do_alarms(string $from = 'console') : void {
 
 			print "<tr>
 				<td colspan='2' class='saveRow'>
-					<input type='hidden' name='ack_action' value='ack_action'>
-					<input type='hidden' name='selected_items' value='" . (isset($alarms) ? serialize($alarms) : '') . "'>
-					<input type='hidden' name='drp_action' value='" . ALERT_RESET . "'>
+					<input type='hidden' name='ack_action' value='" . html_escape('ack_action') . "'>
+					<input type='hidden' name='selected_items' value='" . html_escape(isset($alarms) ? serialize($alarms) : '') . "'>
+					<input type='hidden' name='drp_action' value='" . html_escape(ALERT_RESET) . "'>
 					<input type='button' name='cancel' value='" . (strlen($save_html) ? __esc('Cancel', 'gridalarms'):__esc('Return', 'gridalarms')) . "' onClick='cactiReturnTo(\"" . $config['url_path'] . "plugins/gridalarms/gridalarms_alarm.php\")'>
 					$save_html
 				</td>
@@ -6508,9 +6508,9 @@ function do_templates() : void {
 
 			print " <tr>
 				<td colspan='2' class='saveRow'>
-					<input type='hidden' name='ack_action' value='ack_action'>
-					<input type='hidden' name='selected_items' value='" . (isset($alarms) ? serialize($alarms) : '') . "'>
-					<input type='hidden' name='drp_action' value='" . TEMPLATE_DELETE . "'>
+					<input type='hidden' name='ack_action' value='" . html_escape('ack_action') . "'>
+					<input type='hidden' name='selected_items' value='" . html_escape(isset($alarms) ? serialize($alarms) : '') . "'>
+					<input type='hidden' name='drp_action' value='" . html_escape(TEMPLATE_DELETE) . "'>
 					<input type='button' name='cancel' value='" . (strlen($save_html) ? __esc('Cancel', 'gridalarms'):__esc('Return', 'gridalarms')) . "' onClick='cactiReturnTo(\"" . $config['url_path'] . "plugins/gridalarms/gridalarms_templates.php\")'>
 					$save_html
 				</td>
@@ -6583,9 +6583,9 @@ function do_templates() : void {
 
 			print "<tr>
 				<td colspan='2' class='saveRow'>
-					<input type='hidden' name='ack_action' value='ack_action'>
-					<input type='hidden' name='selected_items' value='" . (isset($alarms) ? serialize($alarms) : '') . "'>
-					<input type='hidden' name='drp_action' value='" . TEMPLATE_DUP . "'>
+					<input type='hidden' name='ack_action' value='" . html_escape('ack_action') . "'>
+					<input type='hidden' name='selected_items' value='" . html_escape(isset($alarms) ? serialize($alarms) : '') . "'>
+					<input type='hidden' name='drp_action' value='" . html_escape(TEMPLATE_DUP) . "'>
 					<input type='button' name='cancel' value='" . (strlen($save_html) ? 'No':'Return') . "' onClick='cactiReturnTo(\"" . $config['url_path'] . "plugins/gridalarms/gridalarms_templates.php\")'>
 					$save_html
 				</td>
@@ -8142,8 +8142,11 @@ function do_title_replacement(array &$alarm) : bool|int {
  *
  * @return string the hash of the template
  */
-function get_hash_alert_template(int $id, string $sub_type = 'alert_template') : string {
-	if (!empty($id)) {
+function get_hash_alert_template($id, string $sub_type = 'alert_template') : string {
+	// Validate and convert to int, ensuring positive integer or 0
+	$id = filter_var($id, FILTER_VALIDATE_INT, ["options" => ["min_range" => 1]]) ?: 0;
+
+	if ($id != 0) {
 		if ($sub_type == 'alert_template') {
 			$hash = db_fetch_cell_prepared('SELECT hash
 				FROM gridalarms_template
@@ -8199,7 +8202,7 @@ function gridalarms_save_button(string $form_name, bool $encode_fields) : void {
 	<table class='cactiTable'>
 		<tr>
 			<td class='right'>
-				<input type='hidden' name='action' value='save'>
+				<input type='hidden' name='action' value='" . html_escape('save') . "'>
 				<input type='button' value='Save' onClick='submitFunction()'>
 				<script type='text/javascript'>
 				keyStr = 'ABCDEFGHIJKLMNOP' +

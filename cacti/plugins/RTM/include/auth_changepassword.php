@@ -106,7 +106,7 @@ function rtm_custom_password(){
 		}
 
 		if (!$valid) {
-			cacti_log('WARNING: User attempted to access RTM from unkonwn URL', false, 'AUTH');
+			cacti_log('WARNING: User attempted to access RTM from unknown URL', false, 'AUTH');
 
 			raise_message('problems_with_page', __('There are problems with the Change Password page.  Contact your RTM administrator right away.'), MESSAGE_LEVEL_ERROR);
 			header('Location:index.php');
@@ -127,8 +127,8 @@ function rtm_custom_password(){
 			<div class='cactiLogoutLogo'></div>
 			<legend><?php print RTM_BRAND_NAME_BOLD;?><span class="logo-area"> <?php print RTM_PRODUCT_NAME . " " . RTM_VERSION;?></span></legend>
 			<form name='login' method='post' action='<?php print get_current_page();?>'>
-				<input type='hidden' name='action' value='changepassword'>
-				<input type='hidden' name='ref' value='<?php print html_escape_request_var('ref'); ?>'>
+				<input type='hidden' name='action' value='<?php print html_escape('changepassword'); ?>'>
+				<input type='hidden' name='ref' value='<?php print html_escape(html_escape_request_var('ref')); ?>'>
 				<input type='hidden' name='name' value='<?php print isset($user['username']) ? html_escape($user['username']) : '';?>'>
 				<div class='loginTitle'>
 <?php
@@ -145,7 +145,7 @@ function rtm_custom_password(){
 						<tr>
 <?php if ($skip_current) { ?>
 							<td><?php print __('Username');?></td>
-							<td class='nowrap'><input type='hidden' id='current' name='current_password' autocomplete='current-password' value=''><?php print $user['username'];?></td>
+							<td class='nowrap'><input type='hidden' id='current' name='current_password' autocomplete='current-password' value=''><?php print html_escape($user['username']);?></td>
 <?php } else { ?>
 							<td><?php print __('Current password');?></td>
 							<td class='nowrap'><input type='password' class='ui-state-default ui-corner-all' id='current' name='current_password' autocomplete='current-password' size='20' placeholder='********'></td>
@@ -153,11 +153,11 @@ function rtm_custom_password(){
 						</tr>
 						<tr>
 							<td><?php print __('New password');?></td>
-							<td class='nowrap'><input type='password' class='ui-state-default ui-corner-all' id='password' name='password' autocomplete='new-password' size='20' placeholder='********'><?php print display_tooltip($secpass_tooltip);?></td>
+							<td class='nowrap'><input type='password' class='ui-state-default ui-corner-all' id='password' name='password' autocomplete='off' size='20' placeholder='********'><?php print display_tooltip($secpass_tooltip);?></td>
 						</tr>
 						<tr>
 							<td><?php print __('Confirm new password');?></td>
-							<td class='nowrap'><input type='password' class='ui-state-default ui-corner-all' id='password_confirm' name='password_confirm' autocomplete='new-password' size='20' placeholder='********'></td>
+							<td class='nowrap'><input type='password' class='ui-state-default ui-corner-all' id='password_confirm' name='password_confirm' autocomplete='off' size='20' placeholder='********'></td>
 						</tr>
 						<tr>
 							<td class='nowrap' colspan='2'>

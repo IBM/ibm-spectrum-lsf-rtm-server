@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -1420,8 +1420,8 @@ function data_source_to_data_template($local_data_id, $data_source_title) {
 
 	$title = str_replace('<ds_title>', $title_template, $data_source_title);
 
-	db_execute('INSERT INTO data_template
-		(id,name,hash)
+	db_execute_prepared('INSERT INTO data_template
+		(id, name, hash)
 		VALUES (0, ?, ?)',
 		array($title, get_hash_data_template(0)));
 

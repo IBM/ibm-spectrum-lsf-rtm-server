@@ -48,12 +48,10 @@ function themeReady() {
 		$('input[type="text"]').addClass('ui-state-default ui-corner-all');
 	}
 
-	if (!!!brandName) {
-		var brandName='IBM Spectrum';
-		var brandNameBold='IBM <b>Spectrum</b>';
-		var productName='LSF RTM 10.2.0.15';
-		var copyRight='© Copyright International Business Machines Corp. 1992, 2026. US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp. Portions Copyright © 2004, 2025 The Cacti Group, Inc.';
-	}
+	var brandName='IBM Spectrum';
+	var brandNameBold='IBM <b>Spectrum</b>';
+	var productName='LSF RTM 10.2.0.16';
+	var copyRight='© Copyright International Business Machines Corp. 1992, 2026. US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp. Portions Copyright © 2004, 2025 The Cacti Group, Inc.';
 
 	logoSVG = '<svg class="company-logo" style="fille: rgb(255,255,255);" aria-hidden="false"><use xlink:href="#LSF"><symbol viewBox="0 0 36 36" id="LSF" xmlns:xlink="http://www.w3.org/1999/xlink"> <polygon points="8.5,15 6.5,15 7.5,13 9.5,13 "></polygon> <polygon points="12.5,15 10.5,15 11.5,13 13.5,13 "></polygon> <polygon points="16.5,15 14.5,15 15.5,13 17.5,13 "></polygon> <polygon points="10,12 8,12 9,10 11,10 "></polygon> <polygon points="14,12 12,12 13,10 15,10 "></polygon> <polygon points="18,12 16,12 17,10 19,10 "></polygon> <polygon points="11.5,9 9.5,9 10.5,7 12.5,7 "></polygon> <polygon points="15.5,9 13.5,9 14.5,7 16.5,7 "></polygon> <polygon points="19.5,9 17.5,9 18.5,7 20.5,7 "></polygon> <polygon points="2,12 0,12 1,10 3,10 "></polygon> <polygon points="6,12 4,12 5,10 7,10 "></polygon> <polygon points="18.3,17 5.5,17 4.5,18 5.5,19 19.5,19 25.1,9.3 23.8,7.6 "></polygon> <g> <polygon points="30.7,27 35.8,18 27.9,4 25.3,4 31,14 25.3,24 18.4,24 20,27  "></polygon> <polygon points="14.3,22 6.3,22 12.1,32 27.9,32 29.3,29 18.6,29  "></polygon> </g> </symbol></use></svg>';
 	logodark = '<svg class="company-logo" style="fille: rgb(255,255,255);" aria-hidden="false" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32 32"><defs><linearGradient id="ae8e5876-815e-4dd7-9b8b-48628e568be2" x1="16.858" y1="3.531" x2="26.824" y2="20.792" gradientUnits="userSpaceOnUse"><stop offset="0.051" stop-color="#fff" stop-opacity="0"/><stop offset="0.399" stop-color="#fff"/></linearGradient><linearGradient id="bf25f80d-e501-4f40-a567-77eff671c830" x1="-738.094" y1="-589.368" x2="-746.906" y2="-604.632" gradientTransform="translate(748 620)" gradientUnits="userSpaceOnUse"><stop offset="0.139" stop-opacity="0"/><stop offset="0.569"/></linearGradient><linearGradient id="f7efb8e6-41c7-4924-99a8-f5ed8688d730" x1="16" y1="10" x2="25" y2="10" gradientUnits="userSpaceOnUse"><stop offset="0.39" stop-color="#fff"/><stop offset="0.949" stop-color="#fff" stop-opacity="0"/></linearGradient><linearGradient id="a224d0e0-1015-4234-8ffb-5616e014b46d" x1="10" y1="23" x2="10" y2="6" gradientUnits="userSpaceOnUse"><stop offset="0.58" stop-color="#fff"/><stop offset="0.9" stop-color="#fff" stop-opacity="0"/></linearGradient><mask id="ade8b32c-a3e7-4118-8be9-f9cc710af085" x="0" y="0" width="32" height="32" maskUnits="userSpaceOnUse"><path d="M23,23H21V17a2,2,0,0,1,2-2h5.259L20.386,1.5,22.114.5l8.75,15A1,1,0,0,1,30,17H23Z" fill="url(#ae8e5876-815e-4dd7-9b8b-48628e568be2)"/><path d="M8.136,28.5l-7-12a1,1,0,0,1,0-1.008l7-12A1,1,0,0,1,9,3h6a2,2,0,0,1,2,2V23H15V5H9.574L3.158,16,9.864,27.5Z" fill="#fff"/><rect y="16" width="11" height="14" transform="translate(11 46) rotate(180)" fill="url(#bf25f80d-e501-4f40-a567-77eff671c830)"/><rect x="16" y="9" width="9" height="2" fill="url(#f7efb8e6-41c7-4924-99a8-f5ed8688d730)"/><rect x="9" y="6" width="2" height="17" fill="url(#a224d0e0-1015-4234-8ffb-5616e014b46d)"/></mask><linearGradient id="bbc7ed7f-c57c-44e5-8fc3-c01e73cc0516" y1="32" x2="32" gradientUnits="userSpaceOnUse"><stop offset="0.1" stop-color="#3ddbd9"/><stop offset="0.9" stop-color="#24a148"/></linearGradient></defs><g id="acfb902f-694a-4283-a4d5-95ffda27d60d" data-name="Layer 2"><g id="a6726dba-b328-4c3c-a3b4-075db23147ff" data-name="Dark theme icons"><g><g mask="url(#ade8b32c-a3e7-4118-8be9-f9cc710af085)"><rect width="32" height="32" fill="url(#bbc7ed7f-c57c-44e5-8fc3-c01e73cc0516)"/></g><circle cx="10" cy="27" r="2" fill="#f4f4f4"/><circle cx="22" cy="27" r="2" fill="#f4f4f4"/><circle cx="16" cy="27" r="2" fill="#f4f4f4"/></g></g></g></svg>';
@@ -264,7 +262,7 @@ function themeReady() {
 	}
 
 	if($('.versionInfo').css('position') != 'absolute' && $("LINK[href*='RTM/include/main.css']")){
-		$('head').append('<link rel="stylesheet" type="text/css" href="' + urlPath + 'plugins/RTM/include/main.css">');
+		$('head').append('<link rel="stylesheet" type="text/css" integrity="sha384-H33maP1dck4Et7OLBdOILLThCWTl3iL7vMdNlwWuIaOArjnLQdO2zXE/y+Jy5vAH" href="' + urlPath + 'plugins/RTM/include/main.css">');
 	}
 }
 

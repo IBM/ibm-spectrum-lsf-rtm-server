@@ -130,7 +130,7 @@ function clientsFilter() {
 					</td>
 				</tr>
 			</table>
-			<input type='hidden' name='page' value='<?php print get_request_var('page');?>'>
+			<input type='hidden' name='page' value='<?php print html_escape(get_request_var('page'));?>'>
 			</form>
 		</td>
 	</tr>

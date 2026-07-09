@@ -122,7 +122,7 @@ function filter() {
 					</td>
 				</tr>
 			</table>
-			<input type='hidden' name='page' value='<?php print get_request_var('page');?>'>
+			<input type='hidden' name='page' value='<?php print html_escape(get_request_var('page'));?>'>
 			</form>
 		</td>
 		<?php
@@ -148,8 +148,8 @@ function filter() {
 						<input type='submit' value='<?php print __esc('Import', 'meta');?>'>
 					</td>
 					<td>
-						<input name='type' type='hidden' value='<?php print htmlspecialchars($cur_type);?>'>
-						<input name='action' type='hidden' value='load'>
+						<input name='type' type='hidden' value='<?php print html_escape($cur_type);?>'>
+						<input name='action' type='hidden' value='<?php print html_escape('load'); ?>'>
 					</td>
 				</tr>
 			</table>
@@ -297,9 +297,9 @@ function metadata_delete() {
 		print "<tr>
 			<td class='saveRow'>
 				<form action='metadata.php?action=delete&amp;confirm=y' method='post'>
-				<input type='hidden' name='action' value='actions'>
-				<input type='hidden' name='selected_items' value='" . $object_list . "'>
-				<input type='hidden' name='drp_action' value='" . get_request_var('drp_action') . "'>
+				<input type='hidden' name='action' value='" . html_escape('actions') . "'>
+				<input type='hidden' name='selected_items' value='" . html_escape($object_list) . "'>
+				<input type='hidden' name='drp_action' value='" . html_escape(get_request_var('drp_action')) . "'>
 				$save_html
 				</form>
 			</td>

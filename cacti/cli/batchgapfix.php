@@ -2,7 +2,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -317,7 +317,7 @@ if ($child == 0) {
 
 		if ($rate > 0) {
 			$estimate = round($rrdfiles / $rate, 0);
-			$complate = ($end - $start) - $estimate;
+			$complete = ($end - $start) - $estimate;
 		} else {
 			$estimate = 'unknown';
 		}

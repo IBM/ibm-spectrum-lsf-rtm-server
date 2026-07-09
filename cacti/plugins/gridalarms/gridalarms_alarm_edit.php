@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2025                                          |
+ | Copyright IBM Corp. 2006, 2026                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -569,9 +569,9 @@ function draw_gridalarms_expression_preview($expression_id) {
 			<input id='check_syntax_sql' type='button' name='check_syntax_sql' value='<?php print __('Return SQL', 'gridalarms');?>'/>
 			<?php
 			if (get_request_var('id')) {
-				print "<input type='hidden' id='check_syntax_expression_id' name='check_syntax_expression_id' value='" . $expression_id . "'/>";
+				print "<input type='hidden' id='check_syntax_expression_id' name='check_syntax_expression_id' value='" . html_escape($expression_id) . "'/>";
 			} else {
-				print "<input type='hidden' id='check_syntax_expression_id' name='check_syntax_expression_id' value=''/>";
+				print "<input type='hidden' id='check_syntax_expression_id' name='check_syntax_expression_id' value='" . html_escape('') . "'/>";
 			}
 			?>
 		</td>
@@ -593,7 +593,7 @@ function draw_gridalarms_sql_preview($expression) {
 		<td>
 			<input id='check_sql_syntax' type='button' name='check_sql_syntax' value='<?php print __('Check SQL', 'gridalarms');?>'/>
 			<?php
-			print "<input type='hidden' id='check_syntax_expression_id' name='check_syntax_expression_id' value='" . $expression['id'] . "'/>";
+			print "<input type='hidden' id='check_syntax_expression_id' name='check_syntax_expression_id' value='" . html_escape($expression['id']) . "'/>";
 			?>
 		</td>
 	</tr>
@@ -619,7 +619,7 @@ function draw_gridalarms_script_preview($expression) {
 				<input id='check_script_threshold' type='button' name='check_script_threshold' value='<?php print __('Check Threshold Script', 'gridalarms');?>'/>
 				<input id='check_script_data' type='button' name='check_script_data' value='<?php print __('Check Items Script', 'gridalarms');?>'/>
 				<?php
-				print "<input type='hidden' id='check_syntax_expression_id' name='check_syntax_expression_id' value='" . $expression['id'] . "'/>";
+				print "<input type='hidden' id='check_syntax_expression_id' name='check_syntax_expression_id' value='" . html_escape($expression['id']) . "'/>";
 				?>
 			</td>
 		</tr>
@@ -881,7 +881,7 @@ function form_save() {
 		$save['id']            = get_request_var('id');
 		$save['alarm_id']      = get_request_var('alarm_id');
 		$save['display_name']  = form_input_validate(get_request_var('display_name'), 'display_name', '', false, 3);
-		$save['column_name']   = get_request_var('column_name');
+		$save['column_name']   = get_nfilter_request_var('column_name');
 		$save['sortposition']  = get_request_var('sortposition');
 		$save['sortdirection'] = get_request_var('sortdirection');
 		$save['type']          = get_nfilter_request_var('type');
@@ -1339,9 +1339,9 @@ function form_actions() {
 
 		print "<tr>
 			<td class='saveRow'>
-				<input type='hidden' name='action' value='actions'>
-				<input type='hidden' name='selected_items' value='" . (isset($gridalarms_expression_array) ? serialize($gridalarms_expression_array) : '') . "'>
-				<input type='hidden' name='drp_action' value='" . get_request_var('drp_action') . "'>
+				<input type='hidden' name='action' value='" . html_escape('actions') . "'>
+				<input type='hidden' name='selected_items' value='" . html_escape(isset($gridalarms_expression_array) ? serialize($gridalarms_expression_array) : '') . "'>
+				<input type='hidden' name='drp_action' value='" . html_escape(get_request_var('drp_action')) . "'>
 				$save_html
 			</td>
 		</tr>";
@@ -1416,9 +1416,9 @@ function form_actions() {
 
 		print "	<tr>
 			<td class='saveRow'>
-				<input type='hidden' name='action' value='actions'>
-				<input type='hidden' name='selected_items' value='" . (isset($metric_array) ? serialize($metric_array) : '') . "'>
-				<input type='hidden' name='drp_action' value='" . get_request_var('drp_action') . "'>
+				<input type='hidden' name='action' value='" . html_escape('actions') . "'>
+				<input type='hidden' name='selected_items' value='" . html_escape(isset($metric_array) ? serialize($metric_array) : '') . "'>
+				<input type='hidden' name='drp_action' value='" . html_escape(get_request_var('drp_action')) . "'>
 				$save_html
 			</td>
 		</tr>";
@@ -1466,10 +1466,10 @@ function confirm_layout_remove() {
 
 	print "<tr>
 		<td class='saveRow'>
-			<input type='hidden' name='action' value='layout_remove'>
-			<input type='hidden' name='id' value='" . get_filter_request_var('id') . "'>
+			<input type='hidden' name='action' value='" . html_escape('layout_remove') . "'>
+			<input type='hidden' name='id' value='" . html_escape(get_filter_request_var('id')) . "'>
 			<input type='hidden' name='column' value='" . html_escape_request_var('column') . "'>
-			<input type='hidden' name='confirm_layout_remove' value='1'>
+			<input type='hidden' name='confirm_layout_remove' value='" . html_escape('1') . "'>
 			$save_html
 		</td>
 	</tr>";
@@ -1521,11 +1521,11 @@ function confirm_item_remove() {
 
 		print "<tr>
 			<td class='saveRow'>
-				<input type='hidden' name='action' value='item_remove'>
-				<input type='hidden' name='id' value='" . get_request_var('id') . "'>
-				<input type='hidden' name='alarm_id' value='" . get_request_var('alarm_id') . "'>
-				<input type='hidden' name='expression_id' value='" . get_request_var('expression_id') . "'>
-				<input type='hidden' name='confirm_item_remove' value='1'>
+				<input type='hidden' name='action' value='" . html_escape('item_remove') . "'>
+				<input type='hidden' name='id' value='" . html_escape(get_request_var('id')) . "'>
+				<input type='hidden' name='alarm_id' value='" . html_escape(get_request_var('alarm_id')) . "'>
+				<input type='hidden' name='expression_id' value='" . html_escape(get_request_var('expression_id')) . "'>
+				<input type='hidden' name='confirm_item_remove' value='" . html_escape('1') . "'>
 				$save_html
 			</td>
 		</tr>";
@@ -1549,11 +1549,11 @@ function confirm_item_remove() {
 
 		print "<tr>
 			<td class='saveRow'>
-				<input type='hidden' name='action' value='item_remove'>
-				<input type='hidden' name='id' value='" . get_request_var('id') . "'>
-				<input type='hidden' name='alarm_id' value='" . get_request_var('alarm_id') . "'>
-				<input type='hidden' name='expression_id' value='" . get_request_var('expression_id') . "'>
-				<input type='hidden' name='confirm_input_remove' value='1'>
+				<input type='hidden' name='action' value='" . html_escape('item_remove') . "'>
+				<input type='hidden' name='id' value='" . html_escape(get_request_var('id')) . "'>
+				<input type='hidden' name='alarm_id' value='" . html_escape(get_request_var('alarm_id')) . "'>
+				<input type='hidden' name='expression_id' value='" . html_escape(get_request_var('expression_id')) . "'>
+				<input type='hidden' name='confirm_input_remove' value='" . html_escape('1') . "'>
 				$save_html
 			</td>
 		</tr>";
@@ -1577,11 +1577,11 @@ function confirm_item_remove() {
 
 		print "<tr>
 			<td class='saveRow'>
-				<input type='hidden' name='action' value='item_remove'>
-				<input type='hidden' name='id' value='" . get_request_var('id') . "'>
-				<input type='hidden' name='alarm_id' value='" . get_request_var('alarm_id') . "'>
-				<input type='hidden' name='expression_id' value='" . get_request_var('expression_id') . "'>
-				<input type='hidden' name='confirm_metric_remove' value='1'>
+				<input type='hidden' name='action' value='" . html_escape('item_remove') . "'>
+				<input type='hidden' name='id' value='" . html_escape(get_request_var('id')) . "'>
+				<input type='hidden' name='alarm_id' value='" . html_escape(get_request_var('alarm_id')) . "'>
+				<input type='hidden' name='expression_id' value='" . html_escape(get_request_var('expression_id')) . "'>
+				<input type='hidden' name='confirm_metric_remove' value='" . html_escape('1') . "'>
 				$save_html
 			</td>
 		</tr>";
@@ -2993,7 +2993,7 @@ function draw_simple_edit() {
 			<table style='width:100%;text-align:center;'>
 				<tr>
 					<td class='saveRow'>
-						<input type='hidden' name='action' value='save'>
+						<input type='hidden' name='action' value='<?php print __esc('save', 'gridalarms');?>'>
 						<input type='submit' value='<?php print __esc('Create', 'gridalarms');?>'>
 					</td>
 				</tr>
@@ -3511,7 +3511,7 @@ function edit_general_actions() {
 			'size' => 20,
 			'default' => '',
 			'description' => __('An External ID used to classify this Alert Template.', 'gridalarms'),
-			'value' => isset($alarm_item_data['external_id']) ? $alarm_item_data['external_id'] : ''
+			'value' => isset($alarm['external_id']) ? $alarm['external_id'] : ''
 		),
 		'notes' => array(
 			'friendly_name' => __('Operator Notes', 'gridalarms'),
@@ -3520,7 +3520,7 @@ function edit_general_actions() {
 			'class' => 'textAreaNotes',
 			'textarea_rows' => '4',
 			'textarea_cols' => '60',
-			'value' => isset($alarm_item_data['notes']) ? $alarm_item_data['notes'] : ''
+			'value' => isset($alarm['notes']) ? $alarm['notes'] : ''
 		)
 	);
 

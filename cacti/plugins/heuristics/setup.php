@@ -99,7 +99,7 @@ function heuristics_check_upgrade() {
 
 	// Let's only run this check if we are on a page that actually needs the data
 	$files = array('plugins.php', 'heuristics.php');
-	if (isset($_SERVER['PHP_SELF']) && !in_array(basename($_SERVER['PHP_SELF']), $files)) {
+	if (isset($_SERVER['SCRIPT_NAME']) && !in_array(basename($_SERVER['SCRIPT_NAME']), $files)) {
 		return;
 	}
 

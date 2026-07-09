@@ -484,8 +484,6 @@ function gridpend_filter_table() {
 	global $config, $gridpend_rows_selector;
 	global $gridpend_time_range;
 
-	$min_start = db_fetch_cell('SELECT MIN(year_day) FROM grid_jobs_pendhist_daily');
-
 	?>
 	<tr class='odd'>
 		<td>

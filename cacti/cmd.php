@@ -2,7 +2,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -301,13 +301,13 @@ if (cacti_sizeof($poller_items) && read_config_option('poller_enabled') == 'on')
 			2 => array('pipe', 'w')  // stderr is a pipe to write to
 		);
 
-		$php_path = read_config_option('path_php_binary');
+		$php_path = cacti_escapeshellcmd(read_config_option('path_php_binary'));
+		$script   = cacti_escapeshellarg($config['base_path'] . '/script_server.php');
 
-		$command = $php_path     . ' -q ' .
-			$config['base_path'] . '/script_server.php ' .
-			' --environ=cmd '    .
-			' --poller='         . $poller_id .
-			' --mode='           . $config['connection'];
+		$command = $php_path . ' -q ' . $script .
+			' --environ=' . cacti_escapeshellarg('cmd') .
+			' --poller='  . cacti_escapeshellarg((string) $poller_id) .
+			' --mode='    . cacti_escapeshellarg($config['connection']);
 
 		$cactiphp = proc_open($command, $cactides, $pipes);
 		$output = fgets($pipes[1], 1024);
@@ -729,6 +729,8 @@ function collect_device_data(&$item, &$error_ds) {
 					if (read_config_option('spine_log_level') == 2) {
 						cacti_log("WARNING: Invalid Response, Device[$host_id] DS[$ds] SCRIPT: " . $item['arg1'] . ", output: $output", $print_data_to_stdout, 'POLLER');
 					}
+
+					$output = 'U';
 				}
 			}
 
@@ -753,6 +755,8 @@ function collect_device_data(&$item, &$error_ds) {
 					if (read_config_option('spine_log_level') == 2) {
 						cacti_log("WARNING: Invalid Response, Device[$host_id] DS[$ds] SERVER: " . $item['arg1'] . ", output: $output", $print_data_to_stdout, 'POLLER');
 					}
+
+					$output = 'U';
 				}
 			}
 
@@ -815,6 +819,13 @@ function ping_and_reindex_check(&$item, $mibs) {
 
 			foreach ($reindex as $index_item) {
 				$assert_fail = false;
+				/* Reset between iterations: a reindex action that
+				 * is not handled by the switch below (the default
+				 * branch only logs) must not inherit the previous
+				 * iteration's $output and feed the wrong value into
+				 * the assert comparison further down. The empty-string
+				 * sentinel keeps trim($output) safe under PHP 8. */
+				$output = '';
 
 				switch ($index_item['action']) {
 					case POLLER_ACTION_SNMP:
@@ -1036,4 +1047,3 @@ function display_help () {
 	print '    --mibs   - Refresh all system mibs from hosts supporting snmp.' . PHP_EOL;
 	print '    --debug  - Display verbose output during execution.' . PHP_EOL . PHP_EOL;
 }
-

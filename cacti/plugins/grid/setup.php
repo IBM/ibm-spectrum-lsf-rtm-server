@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2025                                          |
+ | Copyright IBM Corp. 2006, 2026                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -126,7 +126,9 @@ function plugin_grid_install() {
 	api_plugin_register_realm('grid', 'grid_bapps.php', 'LSF Application Data', 1);
 	api_plugin_register_realm('grid', 'grid_bjgroups.php', 'LSF Job Group Data', 1);
 	api_plugin_register_realm('grid', 'grid_queue_distrib.php', 'LSF Queue Distribution', 0);
-	api_plugin_register_realm('grid', 'grid_manage_hosts.php,grid_utilities.php,grid_elim_graphs.php,grid_elim_templates.php,grid_clusters.php,grid_settings_system.php,grid_pollers.php', 'LSF Administration', 1);
+	api_plugin_register_realm('grid', 'grid_manage_hosts.php,grid_utilities.php,grid_clusters.php,grid_settings_system.php,grid_pollers.php,grid_resreq.php', 'LSF Administration', 1);
+	api_plugin_register_realm('grid', 'grid_elim_graphs.php,grid_elim_templates.php', 'ELIM Graphs and Templates', 1);
+	// Special realms
 	api_plugin_register_realm('grid', 'LSF_Extended_History', 'LSF Extended History', 1);
 	api_plugin_register_realm('grid', 'LSF_Host_Alert_Stop', 'LSF Host Alert Stop/Resume', 0);
 	api_plugin_register_realm('grid', 'LSF_Cluster_Control', 'LSF Cluster Control', 0);
@@ -142,6 +144,99 @@ function plugin_grid_install_tables() {
 	include_once($config['base_path'] . '/plugins/grid/include/database.php');
 
 	grid_create_tables();
+
+	$gpollers = db_fetch_cell('SELECT COUNT(*) FROM grid_pollers');
+	if ($gpollers == 0) {
+		db_execute("INSERT INTO `grid_pollers` 
+			(`poller_id`, `poller_name`, `poller_lbindir`, `lsf_version`) VALUES
+			(10,'Poller for LSF 10.1.0.7','/opt/IBM/rtm/lsf1017/bin/',1017),
+			(11,'Poller for LSF 10.1.0.13','/opt/IBM/rtm/lsf10.1.0.13/bin/',10010013),
+			(12,'Poller for LSF 10.1.0.15','/opt/IBM/rtm/lsf10.1.0.15/bin/',10010015);");
+	}
+
+	$gcnt = db_fetch_cell('SELECT COUNT(*) FROM grid_clusters_perfmon_metrics_type');
+	if ($gcnt == 0) {
+		db_execute("INSERT INTO `grid_clusters_perfmon_metrics_type` VALUES
+			('Host information queries',1),
+			('Job information queries',1),
+			('Job submission requests',1),
+			('Jobs accepted from remote cluster',1),
+			('Jobs completed',1),
+			('Jobs dispatched',1),
+			('Jobs reordered',1),
+			('Jobs sent to remote cluster',1),
+			('Jobs submitted',1),
+			('Processed requests: mbatchd',1),
+			('Queue information queries',1),
+			('Job buckets',2),
+			('Matching host criteria',2),
+			('Scheduling interval in second(s)',2),
+			('MBD file descriptor usage',3),
+			('Slot utilization',4),
+			('Memory utilization',4);");
+	}
+
+	$gcnt = db_fetch_cell('SELECT COUNT(*) FROM grid_clusters_perfmon_metrics_type');
+	if ($gcnt == 0) {
+		db_execute("INSERT INTO `grid_elim_templates_item` VALUES 
+			(1,'ba00ecd28b9774348322ff70a96f2826',0,0,1,0,37,'FF',7,0.00,NULL,NULL,0,0,NULL,1,NULL,'in','','',2,1,'gbytesin',2),
+			(2,'412bfa7b3ccb5c8f239b14cc692ddb6c',0,0,1,0,0,'FF',9,0.00,NULL,NULL,0,0,NULL,4,NULL,'Current:','','',2,2,'gbytesin',2),
+			(3,'eada3e90a8aaaa2cf9477fd1f2d3a59c',0,0,1,0,0,'FF',9,0.00,NULL,NULL,0,0,NULL,1,NULL,'Average:','','',2,3,'gbytesin',2),
+			(4,'0d81a9774309651dc515fc6755914ffb',0,0,1,0,0,'FF',9,0.00,NULL,NULL,0,0,NULL,3,NULL,'Maximum:','','on',2,4,'gbytesin',2),
+			(5,'304244ca63d5b09e62a94c8ec6fbda8d',0,0,1,0,21,'FF',5,0.00,NULL,NULL,0,0,NULL,1,NULL,'out','','',2,5,'gbytesout',2),
+			(6,'b7d690f0bc06cc05ffb5e25daf0eee6b',0,0,1,0,0,'FF',9,0.00,NULL,NULL,0,0,NULL,4,NULL,'Current:','','',2,6,'gbytesout',2),
+			(7,'6f1befe8a42d30a42aff2c918d147790',0,0,1,0,0,'FF',9,0.00,NULL,NULL,0,0,NULL,1,NULL,'Average:','','',2,7,'gbytesout',2),
+			(8,'378a0570264241ca017e4e5b9b3f97e0',0,0,1,0,0,'FF',9,0.00,NULL,NULL,0,0,NULL,3,NULL,'Maximum:','','on',2,8,'gbytesout',2),
+			(9,'cee862b95864b27c479c08673e5c7950',0,0,2,0,37,'FF',4,0.00,NULL,NULL,0,0,NULL,1,NULL,'greads','','',2,1,'greads',2),
+			(10,'20d5bfe350083e2bc9d25fadc80785da',0,0,2,0,0,'FF',9,0.00,NULL,NULL,0,0,NULL,4,NULL,'current:','','',3,2,'greads',2),
+			(11,'147774a8c60ec3f5ceb4a9c02b323d3c',0,0,2,0,11,'FF',4,0.00,NULL,NULL,0,0,NULL,1,NULL,'gwrites','','',2,3,'gwrites',2),
+			(12,'6eed807bf49cf7450d237747c20af959',0,0,2,0,0,'FF',9,0.00,NULL,NULL,0,0,NULL,4,NULL,'current:','','on',3,4,'gwrites',2),
+			(13,'280c83b269ba2b56534ddd53443faa85',0,0,2,0,21,'FF',4,0.00,NULL,NULL,0,0,NULL,1,NULL,'grdir','','',2,5,'grdir',2),
+			(14,'e48b2f69c07fd5b1dc803fc0bbeb01ab',0,0,2,0,0,'FF',9,0.00,NULL,NULL,0,0,NULL,4,NULL,'current:','','',3,6,'grdir',2),
+			(15,'75f3d80204d115aa0e900d270825e7b2',0,0,2,0,7,'FF',4,0.00,NULL,NULL,0,0,NULL,1,NULL,'giupdate','','',2,7,'giupdate',2),
+			(16,'a17e5de495f7c9a2b67ce9346f155423',0,0,2,0,0,'FF',9,0.00,NULL,NULL,0,0,NULL,4,NULL,'current:','','on',3,8,'giupdate',2),
+			(17,'cfe55875bf4830c30676cab91d4fd72c',0,0,2,0,58,'FF',4,0.00,NULL,NULL,0,0,NULL,1,NULL,'gcloses','','',2,9,'gcloses',2),
+			(18,'3152d73113dabdceee713fdd967f97a6',0,0,2,0,0,'FF',9,0.00,NULL,NULL,0,0,NULL,4,NULL,'current:','','',3,10,'gcloses',2),
+			(19,'0ff0e35c3a878eb914a8d38685bf5117',0,0,2,0,12,'FF',4,0.00,NULL,NULL,0,0,NULL,1,NULL,'gopens','','',2,11,'gopens',2),
+			(20,'61f2fc6ab51b51942db6de8e3bee61fb',0,0,2,0,0,'FF',9,0.00,NULL,NULL,0,0,NULL,4,NULL,'current:','','on',3,12,'gopens',2),
+			(21,'7fbd95c85f92c6d400d4251c23502610',0,0,3,0,25,'FF',5,0.00,'',0,0,0,'',1,'','gpu 0','','',4,1,'gpu_mused0',2),
+			(22,'e4cbf8f1f4a3dfb1911a2fdea0b672c1',0,0,3,0,0,'FF',9,0.00,'',0,0,0,'',4,'','Current:','','',2,2,'gpu_mused0',2),
+			(23,'ef204a34ced3e62a43780997275c456c',0,0,3,0,0,'FF',9,0.00,'',0,0,0,'',1,'','Average:','','',2,3,'gpu_mused0',2),
+			(24,'d13fc51f0e6c6a40e4b69d4c080c2c25',0,0,3,0,0,'FF',9,0.00,'',0,0,0,'',3,'','Maximum:','','on',2,4,'gpu_mused0',2),
+			(25,'fb27ae5932f4372b472cc7b6c7928368',0,0,3,0,67,'FF',5,0.00,'',0,0,0,'',1,'','gpu 1','','',4,5,'gpu_mused1',2),
+			(26,'8418774380cc7caa8c8369f2a706a844',0,0,3,0,0,'FF',9,0.00,'',0,0,0,'',4,'','Current:','','',2,6,'gpu_mused1',2),
+			(27,'c1281f7a352c013d3627a556150b0689',0,0,3,0,0,'FF',9,0.00,'',0,0,0,'',1,'','Average:','','',2,7,'gpu_mused1',2),
+			(28,'5cf3cf3f5b2055d307c145fc6b9a351f',0,0,3,0,0,'FF',9,0.00,'',0,0,0,'',3,'','Maximum:','','on',2,8,'gpu_mused1',2),
+			(29,'c9c659f991c0a8d2d25f26eb61d0c0a9',0,0,3,0,33,'FF',6,0.00,'',0,0,0,'',1,'','Total Mem','','',2,9,'gpu_mtotal0',2),
+			(30,'df7e266090fb77de7c5946def78053b1',0,0,3,0,0,'FF',9,0.00,'',0,0,0,'',4,'','Current:','','',2,10,'gpu_mtotal0',2),
+			(31,'3a8c97066171cf54bd888221bf6052b9',0,0,3,0,0,'FF',9,0.00,'',0,0,0,'',1,'','Average:','','',2,11,'gpu_mtotal0',2),
+			(32,'0ef5d1f017c13fd46cfa6119894b9480',0,0,3,0,0,'FF',9,0.00,'',0,0,0,'',3,'','Maximum:','','on',2,12,'gpu_mtotal0',2),
+			(33,'2e7604db32112b9773d95fc20ccb8c3a',0,0,4,0,9,'FF',5,0.00,'',0,0,0,'',1,'','gpu 3','','',2,13,'gpu_ut3',2),
+			(34,'9bc0c8b8e730fe02c20ae26b1112fe54',0,0,4,0,0,'FF',9,0.00,'',0,0,0,'',4,'','Current:','','',5,14,'gpu_ut3',2),
+			(35,'376ff505cb6699a0168aaa1d08dcf914',0,0,4,0,0,'FF',9,0.00,'',0,0,0,'',1,'','Average:','','',5,15,'gpu_ut3',2),
+			(36,'85da18f9f14dabafa7e381196f7219c0',0,0,4,0,0,'FF',9,0.00,'',0,0,0,'',3,'','Maximum:','','on',5,16,'gpu_ut3',2),
+			(37,'cc7ee46cb8e4637d93709764d19ba0ba',0,0,4,0,39,'FF',5,0.00,'',0,0,0,'',1,'','gpu 2','','',2,9,'gpu_ut2',2),
+			(38,'815b46b4c4553365267c2e93a6cde9d5',0,0,4,0,0,'FF',9,0.00,'',0,0,0,'',4,'','Current:','','',5,10,'gpu_ut2',2),
+			(39,'36336e12552319f64c35a27771b79087',0,0,4,0,0,'FF',9,0.00,'',0,0,0,'',1,'','Average:','','',5,11,'gpu_ut2',2),
+			(40,'fa25e8610f37e17cc529def671a5f89c',0,0,4,0,0,'FF',9,0.00,'',0,0,0,'',3,'','Maximum:','','on',5,12,'gpu_ut2',2),
+			(41,'14bfeeacd055f67907351153fdfefe78',0,0,4,0,67,'FF',5,0.00,'',0,0,0,'',1,'','gpu 1','','',2,5,'gpu_ut1',2),
+			(42,'9dade17940bfa5e363199e221488a33c',0,0,4,0,0,'FF',9,0.00,'',0,0,0,'',4,'','Current:','','',5,6,'gpu_ut1',2),
+			(43,'c8ff5b6736fa2df087abb7e922e20aa8',0,0,4,0,0,'FF',9,0.00,'',0,0,0,'',1,'','Average:','','',5,7,'gpu_ut1',2),
+			(44,'20604fc426ee00a91c4dbddb687fc6d4',0,0,4,0,0,'FF',9,0.00,'',0,0,0,'',3,'','Maximum:','','on',5,8,'gpu_ut1',2),
+			(45,'1fd3c4990d8ade03aac63c45b788c1f2',0,0,4,0,25,'FF',5,0.00,'',0,0,0,'',1,'','gpu 0','','',5,1,'gpu_ut0',2),
+			(46,'d38131e870341ea65f8b6920e256463b',0,0,4,0,0,'FF',9,0.00,'',0,0,0,'',4,'','Current:','','',5,2,'gpu_ut0',2),
+			(47,'c7bccd2c97feb5d951f9424f2b7e149b',0,0,4,0,0,'FF',9,0.00,'',0,0,0,'',1,'','Average:','','',5,3,'gpu_ut0',2),
+			(48,'7e35b229df9db03834511c03f0a3236a',0,0,4,0,0,'FF',9,0.00,'',0,0,0,'',3,'','Maximum:','','on',5,4,'gpu_ut0',2),
+			(49,'9289014ef0b815025eda627b4b5ed5aa',0,0,5,0,22,'FF',5,0.00,NULL,NULL,0,0,NULL,1,NULL,'All GPUs shared','','',4,1,'gpu_shared_avg_mut',2),
+			(50,'767209a43d0e6520d73eb4dced5fcd20',0,0,5,0,0,'FF',9,0.00,NULL,NULL,0,0,NULL,4,NULL,'Current:','','',5,2,'gpu_shared_avg_mut',2),
+			(51,'b718d195b35fefdeac591ab54f79e785',0,0,5,0,0,'FF',9,0.00,NULL,NULL,0,0,NULL,1,NULL,'Average:','','',5,3,'gpu_shared_avg_mut',2),
+			(52,'b189fa570c66719a54774a3f371aba7b',0,0,5,0,0,'FF',9,0.00,NULL,NULL,0,0,NULL,3,NULL,'Maximum:','','',5,4,'gpu_shared_avg_mut',2),
+			(53,'8c272b5495e6bfaa6e82b788f7ccd75e',0,0,6,0,22,'FF',5,0.00,NULL,NULL,0,0,NULL,1,NULL,'All GPUs shared:','','',4,1,'gpu_shared_avg_ut',2),
+			(54,'6d9c3bb055f9aeb9a66030dcb4b16463',0,0,6,0,0,'FF',9,0.00,NULL,NULL,0,0,NULL,4,NULL,'Current:','','',5,2,'gpu_shared_avg_ut',2),
+			(55,'a88e482814b2cd5b905637530bdb1376',0,0,6,0,0,'FF',9,0.00,NULL,NULL,0,0,NULL,1,NULL,'Average:','','',5,3,'gpu_shared_avg_ut',2),
+			(56,'49943d57421626f8efbe6f2dfb5e287f',0,0,6,0,0,'FF',9,0.00,NULL,NULL,0,0,NULL,3,NULL,'Maximum:','','',5,4,'gpu_shared_avg_ut',2);");
+	}
+
 }
 
 function plugin_grid_uninstall() {
@@ -728,6 +823,9 @@ function grid_poller_bottom () {
 
 	$extra_args_add_elim = '-q '.$config['base_path'] . '/plugins/grid/add_elim_graph.php';
 	exec_background($command_string, $extra_args_add_elim);
+
+	$extra_args_add_resreq = '-q '.$config['base_path'] . '/plugins/grid/poller_grid_resreq.php';
+	exec_background($command_string, $extra_args_add_resreq);
 }
 
 function grid_graph_buttons ($graph_elements = array()) {
@@ -1409,17 +1507,6 @@ function grid_config_form () {
 			'description' => __('Please enter relevant contact information for the Poller.', 'grid'),
 			'value' => '|arg1:poller_support_info|',
 			'max_length' => '255'
-		),
-		'spacer3' => array(
-			'method' => 'spacer',
-			'friendly_name' => __('Job Collection Settings', 'grid')
-		),
-		'poller_max_insert_packet_size' => array(
-			'friendly_name' => __('Max Insert SQL string length', 'grid'),
-			'description' => __('The maximum length of one INSERT SQL string for job or any generated/intermediate string. Increase this option is benefit for job Poller performance if there is network latency between Poller host and database server. The default is the global setting of \'Max Insert SQL string length\', upper limit to 16MB. ', 'grid'),
-			'method' => 'textbox',
-			'value' => '|arg1:poller_max_insert_packet_size|',
-			'max_length' => '20'
 		),
 		'poller_id' => array(
 			'method' => 'hidden_zero',
@@ -2448,7 +2535,7 @@ function grid_config_settings () {
 		),
 		'rtm_max_insert_packet_size' => array(
 			'friendly_name' => __('Max Insert SQL string length', 'grid'),
-			'description' => __('The maximum length of one INSERT SQL string for job or any generated/intermediate string. Increase this option is benefit for job Poller performance if there is network latency between Poller host and database server. The default is 128KB, upper limit to 16MB. ', 'grid'),
+			'description' => __('The maximum length of one SQL INSERTION string used by LSF grid poller. Increase this value to enhance LSF Poller performance if there is network latency between Poller host and database server. Default to min value 128KB, upper limit to 16MB. Use actual number, e.g. 131064 instead of 128K. The potential memory consumed for INSERTTION will be - this value * 10 * the number of LSF clusters. Set it properly to leave enough free memory for other applications.', 'grid'),
 			'method' => 'textbox',
 			'size' => '10',
 			'default' => '131064',
@@ -2492,9 +2579,15 @@ function grid_config_settings () {
 		),
 		'grid_jobhosts_collection' => array(
 		    'friendly_name' => __('Enable Multiple Execution Hosts Collection', 'grid'),
-		    'description' => __('When enabled, the lsf Poller collects and stores multiple execution hosts for parallel jobs even when the job does not span to more than one execution host.  Disabling this option may improve RTM job query performance with the host or host group filter and improve job data collection performance.', 'grid'),
+		    'description' => __('When enabled, the LSF Poller collects and stores multiple execution hosts for parallel jobs even when the job does not span to more than one execution host.  Disabling this option may improve RTM job query performance with the host or host group filter and improve job data collection performance.', 'grid'),
 		    'default' => 'on',
 		    'method' => 'checkbox'
+		),
+		'grid_resreq_enabled' => array(
+			'friendly_name' => __('Enable Resource Analytics', 'grid'),
+			'description' => __('When enabled, the LSF Poller collects and processes job data to identify groups of jobs that are stalling.', 'grid'),
+			'default' => '',
+			'method' => 'checkbox',
 		),
 		'grid_advocate_header' => array(
 			'friendly_name' => __('Advocate Settings', 'grid'),
@@ -2656,12 +2749,6 @@ function grid_config_settings () {
 			'method' => 'drop_array',
 			'default' => '1week',
 			'array' => $grid_partition_time_range,
-		),
-		'lic_process_keyfeatures_enable' => array(
-			'friendly_name' => __('Only Process Key License Features', 'grid'),
-			'description' => __('For Large Systems, turn this option on to only process license features that have been identified as key features.  <u><b>NOTE:</b> Please refer to RTM Documentation prior to disabling this setting.</u>', 'grid'),
-			'method' => 'checkbox',
-			'default' => 'on'
 		),
 		'grid_maint_backup_header' => array(
 			'friendly_name' => __('Database Backups', 'grid'),
@@ -4241,6 +4328,11 @@ function grid_config_settings () {
 				'method' => 'checkbox',
 				'default' => 'on'
 				),
+			'show_reservationid' => array(
+				'friendly_name' => __('Reservation ID', 'grid'),
+				'method' => 'checkbox',
+				'default' => ''
+				),
 			'show_queue' => array(
 				'friendly_name' => __('Queue Name', 'grid'),
 				'method' => 'checkbox',
@@ -4510,6 +4602,11 @@ function grid_config_settings () {
 				'friendly_name' => __('Job Name', 'grid'),
 				'method' => 'checkbox',
 				'default' => 'on'
+				),
+			'export_reservationid' => array(
+				'friendly_name' => __('Reservation ID', 'grid'),
+				'method' => 'checkbox',
+				'default' => ''
 				),
 			'export_jobdescription' => array(
 				'friendly_name' => __('Job Description', 'grid'),
@@ -5498,6 +5595,12 @@ function grid_draw_navigation_text($nav) {
 		'url' => 'grid_shared.php',
 		'level' => '1');
 
+	$nav['grid_resreq.php:'] = array(
+		'title' => __('Resource Analytics', 'grid'),
+		'mapping' => $grid_default . ':',
+		'url' => 'grid_resreq.php',
+		'level' => '1');
+
 	$nav['grid_clusters.php:'] = array(
 		'title' => __('Clusters', 'grid'),
 		'mapping' => 'index.php:',
@@ -6097,6 +6200,7 @@ function get_grid_menu($user_menu = array()){
 			'plugins/grid/grid_bmgroup.php' => __('Groups', 'grid')
 		),
 		__('Reports', 'grid') => array(
+			'plugins/grid/grid_resreq.php'         => __('Resource Analytics', 'grid'),
 			'plugins/grid/grid_shared.php'         => __('Shared Resources', 'grid'),
 			'plugins/grid/grid_bresourcespool.php' => __('Resource Pools', 'grid'),
 			'plugins/grid/grid_dailystats.php'     => __('Daily Statistics', 'grid'),
@@ -6190,7 +6294,7 @@ function plugin_grid_update_realms() {
 	plugin_rtm_migrate_realms('grid', 40, __('LSF Application Data', 'grid'), 'grid_bapps.php', $version);
 	plugin_rtm_migrate_realms('grid', 41, __('LSF Job Group Data', 'grid'), 'grid_bjgroups.php', $version);
 	plugin_rtm_migrate_realms('grid', 42, __('LSF Queue Distribution', 'grid'), 'grid_queue_distrib.php', $version);
-	plugin_rtm_migrate_realms('grid', 44, __('LSF Administration', 'grid'), 'grid_manage_hosts.php,grid_utilities.php,grid_elim_graphs.php,grid_elim_templates.php,grid_clusters.php,grid_settings_system.php,grid_pollers.php', $version);
+	plugin_rtm_migrate_realms('grid', 44, __('LSF Administration', 'grid'), 'grid_manage_hosts.php,grid_utilities.php,grid_elim_graphs.php,grid_elim_templates.php,grid_clusters.php,grid_settings_system.php,grid_pollers.php,grid_resreq.php', $version);
 	plugin_rtm_migrate_realms('grid', 1046, __('LSF Extended History', 'grid'), 'LSF_Extended_History', $version);
 	plugin_rtm_migrate_realms('grid', 1048, __('LSF Host Alert Stop/Resume', 'grid'), 'LSF_Host_Alert_Stop', $version);
 	plugin_rtm_migrate_realms('grid', 98, __('LSF Cluster Control', 'grid'), 'LSF_Cluster_Control', $version);
@@ -7749,7 +7853,7 @@ function grid_auth_profile_run_action ($current_tab) {
 	}
 
 	if (isset($_SERVER['HTTP_REFERER'])) {
-		$referer = $_SERVER['HTTP_REFERER'];
+		$referer = htmlspecialchars($_SERVER['HTTP_REFERER']);
 
 		if (strpos($referer, 'auth_profile.php') === false) {
 			$timespan_sel_pos = strpos($referer, '&predefined_timespan');

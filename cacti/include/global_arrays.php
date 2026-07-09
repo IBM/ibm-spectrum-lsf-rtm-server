@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -143,6 +143,7 @@ $cacti_version_codes = array(
 	'1.2.28'  => '0103',
 	'1.2.29'  => '0103',
 	'1.2.30'  => '0103',
+	'1.2.31'  => '0103',
 );
 
 $messages = array(
@@ -309,7 +310,7 @@ $messages = array(
 		'message' => __('Unable to determine size of password field, please check permissions of db user'),
 		'level' => MESSAGE_LEVEL_ERROR),
 	'nopasswordinc' => array(
-		'message' => __('Unable to increase size of password field, pleas check permission of db user'),
+		'message' => __('Unable to increase size of password field, please check permission of db user'),
 		'level' => MESSAGE_LEVEL_ERROR),
 	'nodomainpassword' => array(
 		'message' => __('LDAP/AD based password change not supported.'),
@@ -638,8 +639,8 @@ $image_types = array(
 
 $snmp_security_levels = array(
 	'noAuthNoPriv' => 'noAuthNoPriv',
-	'authNoPriv' => 'authNoPriv',
-	'authPriv' => 'authPriv'
+	'authNoPriv'   => 'authNoPriv',
+	'authPriv'     => 'authPriv'
 );
 
 $snmp_versions = array(0 =>
@@ -655,19 +656,19 @@ $snmp_auth_protocols = array(
 	'SHA'    => __('SHA'),
 	'SHA224' => __('SHA-224'),
 	'SHA256' => __('SHA-256'),
-	'SHA392' => __('SHA-392'),
+	'SHA384' => __('SHA-384'),
 	'SHA512' => __('SHA-512'),
 );
 
 $snmp_priv_protocols = array(
-	'[None]' => __('[None]'),
-	'DES'    => __('DES'),
-	'AES'    => __('AES'),
-	'AES128' => __('AES-128'),
-	'AES192' => __('AES-192'),
-        'AES192C' => __('AES-192-C'),
-        'AES256' => __('AES-256'),
-        'AES256C' => __('AES-256-C')
+	'[None]'  => __('[None]'),
+	'DES'     => __('DES'),
+	'AES'     => __('AES'),
+	'AES128'  => __('AES-128'),
+	'AES192'  => __('AES-192'),
+	'AES192C' => __('AES-192-C'),
+	'AES256'  => __('AES-256'),
+	'AES256C' => __('AES-256-C')
 );
 
 $banned_snmp_strings = array(
@@ -2910,7 +2911,7 @@ if ($config['cacti_server_os'] == 'unix') {
 		'/usr/share/fonts/truetype/', //SLES
 		'/usr/share/fonts/truetype/dejavu/', //Ubuntu
 		'/usr/local/share/fonts/dejavu/', //FreeBSD
-		__DIR__ . '/fonts'  //Build-in
+		__DIR__ . '/fonts'  //Built-in
 	);
 } else {
 	$dejavu_paths = array(

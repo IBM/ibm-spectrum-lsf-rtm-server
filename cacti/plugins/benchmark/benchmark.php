@@ -117,6 +117,7 @@ function form_actions() {
 
 	/* loop through each of the benchmarks selected on the previous page and get more info about them */
 	foreach ($_POST as $var => $val) {
+		$val = htmlspecialchars($val);
 		if (preg_match('/^chk_([0-9]+)$/', $var, $matches)) {
 			/* ================= input validation ================= */
 			input_validate_input_number($matches[1]);
@@ -186,9 +187,9 @@ function form_actions() {
 
 	print "<tr>
 		<td class='saveRow'>
-			<input type='hidden' name='action' value='actions'>
-			<input type='hidden' name='selected_items' value='" . (isset($benchmark_array) ? serialize($benchmark_array) : '') . "'>
-			<input type='hidden' name='drp_action' value='" . get_request_var('drp_action') . "'>
+			<input type='hidden' name='action' value='" . html_escape('actions') . "'>
+			<input type='hidden' name='selected_items' value='" . html_escape(isset($benchmark_array) ? serialize($benchmark_array) : '') . "'>
+			<input type='hidden' name='drp_action' value='" . html_escape(get_request_var('drp_action')) . "'>
 			$save_html
 		</td>
 	</tr>";
@@ -695,7 +696,7 @@ function job_config_filter() {
 					</td>
 				</tr>
 			</table>
-			<input type='hidden' name='page' value='<?php print get_request_var('page');?>'>
+			<input type='hidden' name='page' value='<?php print html_escape(get_request_var('page'));?>'>
 			</form>
 		</td>
 	</tr>

@@ -716,7 +716,7 @@ function dailyStatsFilter() {
 					</td>
 				</tr>
 			</table>
-			<input type='hidden' id='page' value='1'>
+			<input type='hidden' id='page' value='<?php print html_escape('1');?>'>
 			</form>
 		</td>
 	</tr>

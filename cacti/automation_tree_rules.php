@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -178,6 +178,20 @@ function automation_tree_rules_form_save() {
 		$save['search_pattern']    = isset_request_var('search_pattern') ? form_input_validate(get_nfilter_request_var('search_pattern'), 'search_pattern', '', false, 3) : '';
 		$save['replace_pattern']   = isset_request_var('replace_pattern') ? form_input_validate(get_nfilter_request_var('replace_pattern'), 'replace_pattern', '', true, 3) : '';
 
+		if ($save['field'] != AUTOMATION_TREE_ITEM_TYPE_STRING && $save['field'] != '') {
+			$field_name = str_replace(array('ht.', 'h.', 'gt.', 'gl.', 'gtg.'), '', $save['field']);
+			$field_name = preg_replace('/[^a-zA-Z0-9_]/', '', $field_name);
+			if (!db_column_exists('host', $field_name) &&
+				!db_column_exists('host_template', $field_name) &&
+				!db_column_exists('graph_templates', $field_name) &&
+				!db_column_exists('graph_local', $field_name) &&
+				!db_column_exists('graph_templates_graph', $field_name)) {
+				raise_message('field_invalid', __('Invalid Field Name specified for Tree Rule Item.'), MESSAGE_LEVEL_ERROR);
+				header('Location: automation_tree_rules.php?header=false&action=item_edit&id=' . get_request_var('id') . '&item_id=' . get_request_var('item_id') . '&rule_type=' . AUTOMATION_RULE_TYPE_TREE_ACTION);
+				exit;
+			}
+		}
+
 		if (!is_error_message()) {
 			$automation_graph_rule_item_id = sql_save($save, 'automation_tree_rule_items');
 
@@ -263,7 +277,7 @@ function automation_tree_rules_form_actions() {
 
 	form_start('automation_tree_rules.php', 'automation_tree_rules_action');
 
-	html_start_box($automation_tree_rules_actions[get_nfilter_request_var('drp_action')], '60%', '', '3', 'center', '');
+	html_start_box(escape_page_action($automation_tree_rules_actions, get_nfilter_request_var('drp_action')), '60%', '', '3', 'center', '');
 
 	if (get_nfilter_request_var('drp_action') == AUTOMATION_ACTION_TREE_DELETE) { /* DELETE */
 		print "<tr>
@@ -302,7 +316,7 @@ function automation_tree_rules_form_actions() {
 		header('Location: automation_tree_rules.php?header=false');
 		exit;
 	}else {
-		$save_html = "<input type='button' class='ui-button ui-corner-all ui-widget' value='" . __esc('Cancel') . "' onClick='cactiReturnTo()'>&nbsp;<input type='submit' class='ui-button ui-corner-all ui-widget' value='" . __esc('Continue') . "' title='" . __esc('Apply requested action') . "'>";
+		$save_html = "<input type='button' class='ui-button ui-corner-all ui-widget cactiReturnTo' value='" . __esc('Cancel') . "'>&nbsp;<input type='submit' class='ui-button ui-corner-all ui-widget' value='" . __esc('Continue') . "' title='" . __esc('Apply requested action') . "'>";
 	}
 
 	print "<tr>
@@ -440,7 +454,7 @@ function automation_tree_rules_item_edit() {
 
 	//Now we need some javascript to make it dynamic
 ?>
-<script type='text/javascript'>
+<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 
 applyHeaderChange();
 toggle_operation();
@@ -651,7 +665,7 @@ function automation_tree_rules_edit() {
 	}
 
 	?>
-	<script type='text/javascript'>
+	<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 	var automationLeafTypeOriginal = $('#leaf_type').val();
 
 	<?php
@@ -859,7 +873,7 @@ function automation_tree_rules() {
 					</tr>
 				</table>
 			</form>
-			<script type='text/javascript'>
+			<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 			function applyFilter() {
 				strURL = 'automation_tree_rules.php' +
 					'?status='+$('#status').val() +
@@ -876,19 +890,19 @@ function automation_tree_rules() {
 			}
 
 			$(function() {
-				$('#rows, #status').change(function() {
+				$('#rows, #status').on('change', function() {
 					applyFilter();
 				});
 
-				$('#refresh').click(function() {
+				$('#refresh').on('click', function() {
 					applyFilter();
 				});
 
-				$('#clear').click(function() {
+				$('#clear').on('click', function() {
 					clearFilter();
 				});
 
-				$('#form_automation').submit(function(event) {
+				$('#form_automation').on('submit', function(event) {
 					event.preventDefault();
 					applyFilter();
 				});

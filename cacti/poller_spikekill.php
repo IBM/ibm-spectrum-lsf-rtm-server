@@ -2,7 +2,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -173,7 +173,7 @@ function timeToRun() {
 		}
 	} elseif ($forcerun) {
 		debug('Force to Run');
-		db_execute_prepared('REPLACE INTO settings (name,value) VALUES ("spikekill_lastrun", ?', array(time()));
+		db_execute_prepared('REPLACE INTO settings (name,value) VALUES ("spikekill_lastrun", ?)', array(time()));
 		return true;
 	} else {
 		debug('Not time to Run');
@@ -192,7 +192,7 @@ function debug($message) {
 
 function purge_spike_backups() {
 	$directory = read_config_option('spikekill_backupdir');
-	$retention = read_config_option('spikekil_backup');
+	$retention = read_config_option('spikekill_purge');
 
 	$purges = 0;
 

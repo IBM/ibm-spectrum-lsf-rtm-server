@@ -1038,10 +1038,10 @@ function form_action() {
 		<td class='saveRow' colspan='2'>
 			<input type='hidden' name='action' value='actions'>
 			<input type='hidden' name='command' value=''>
-			<input type='hidden' name='selected_items' value='" . (isset($host_array) ? serialize($host_array) : '') . "'>
-			<input type='hidden' name='selected_items_hostname' value='" . (isset($host_array_hostname) ? serialize($host_array_hostname) : '') . "'>
-			<input type='hidden' name='selected_items_whole' value='" . (isset($host_whole_array) ? serialize($host_whole_array) : '') . "'>
-			<input type='hidden' name='drp_action' value='" . get_request_var('drp_action') . "'>
+			<input type='hidden' name='selected_items' value='" . (isset($host_array) ? html_escape(serialize($host_array)) : '') . "'>
+			<input type='hidden' name='selected_items_hostname' value='" . (isset($host_array_hostname) ? html_escape(serialize($host_array_hostname)) : '') . "'>
+			<input type='hidden' name='selected_items_whole' value='" . (isset($host_whole_array) ? html_escape(serialize($host_whole_array)) : '') . "'>
+			<input type='hidden' name='drp_action' value='" . html_escape(get_request_var('drp_action')) . "'>
 			<input type='button' value='" . $button_false . "' alt='' onClick='cactiReturnTo();'>
 			$save_html
 		</td>
@@ -1379,7 +1379,7 @@ function bhostsFilter() {
 					<?php resource_browser();?>
 				</tr>
 			</table>
-			<input type='hidden' name='page' value='<?php print get_request_var('page');?>'>
+			<input type='hidden' name='page' value='<?php print html_escape(get_request_var('page'));?>'>
 		</form>
 		</td>
 	</tr>

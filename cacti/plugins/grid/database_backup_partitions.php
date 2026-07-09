@@ -119,11 +119,7 @@ function grid_backup_cacti_db_partition($poller = true, $force = false, $backup_
 
 		/* check if directory exists */
 		if (is_dir($backup_path) && is_writable($backup_path)) {
-			if ($config['cacti_server_os'] == 'win32') {
-				$tmp_backup_dir = getenv('TEMP');
-			} else {
-				$tmp_backup_dir = '/tmp';
-			}
+			$tmp_backup_dir = $backup_path . '/tmp';
 
 			/* obtain a list of tables to backup */
 			$partitioned_tables = db_fetch_assoc("SHOW TABLES LIKE '%\_v___'");

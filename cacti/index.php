@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -39,16 +39,16 @@ function render_external_links($style = 'FRONT') {
 		foreach($consoles as $page) {
 			if (is_realm_allowed($page['id']+10000)) {
 				if (preg_match('/^((((ht|f)tp(s?))\:\/\/){1}\S+)/i', $page['contentfile'])) {
-					print '<iframe class="content" src="' . $page['contentfile'] . '" frameborder="0"></iframe>';
+					print '<iframe class="content" src="' . html_escape($page['contentfile']) . '" frameborder="0"></iframe>';
 				} else {
 					print '<div id="content">';
 
-					$file = $config['base_path'] . "/include/content/" . $page['contentfile'];
+					$file = $config['base_path'] . '/include/content/' . $page['contentfile'];
 
-					if (file_exists($file)) {
-						include_once($file);
+					if (cacti_path_is_within($file, $config['base_path'] . '/include/content')) {
+						include_once(realpath($file));
 					} else {
-						print '<h1>The file \'' . $page['contentfile'] . '\' does not exist!!</h1>';
+						print '<h1>The file \'' . html_escape($page['contentfile']) . '\' does not exist!!</h1>';
 					}
 
 					print '</div>';
@@ -105,10 +105,10 @@ render_external_links('FRONT');
 api_plugin_hook('console_after');
 
 ?>
-<script type='text/javascript'>
+<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 $(function() {
 	resizeWindow();
-	$(window).resize(function() {
+	$(window).on('resize', function() {
 		resizeWindow();
 	});
 });

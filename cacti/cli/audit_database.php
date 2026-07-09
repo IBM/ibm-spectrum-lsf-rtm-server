@@ -2,7 +2,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -501,7 +501,7 @@ function report_audit_results($output = true) {
 
 								/* work around MariaDB compatibility issue */
 								$c[$col]     = ! $c[$col] ?: str_replace('current_timestamp()', 'CURRENT_TIMESTAMP', $c[$col]);
-								$dbc[$dbcol] = ! $dbc[$dbcol] ?: str_replace('current_timestamp()', 'CURRENT_TIMESTAMP',$dbc[$dbcol]);
+								$dbc[$dbcol] = ! $dbc[$dbcol] ?: str_replace('current_timestamp()', 'CURRENT_TIMESTAMP', $dbc[$dbcol]);
 
 								/* work around MySQL 8.x simplified int columns */
 								if (strpos($dbc[$dbcol], 'int(') !== false) {
@@ -526,7 +526,12 @@ function report_audit_results($output = true) {
 								if (($c[$col] != $dbc[$dbcol] && $c[$col] != $adbccol) && $c[$col] != 'mediumtext') {
 									if ($output) {
 										if ($col != 'Key') {
-											print PHP_EOL . 'ERROR Col: \'' . $c['Field'] . '\', Attribute \'' . $col . '\' invalid. Should be: \'' . $dbc[$dbcol] . '\', Is: \'' . $c[$col] . '\'';
+											if ($col == 'Extra' && $dbc[$dbcol] == '1' && $c[$col] == '') {
+												// Handle Timestamp on DEFAULT/ON UPDATE irregularities
+												continue;
+											} else {
+												print PHP_EOL . 'ERROR Col: \'' . $c['Field'] . '\', Attribute \'' . $col . '\' invalid. Should be: \'' . $dbc[$dbcol] . '\', Is: \'' . $c[$col] . '\'';
+											}
 										}
 									}
 
@@ -733,8 +738,10 @@ function make_column_props(&$dbc) {
 			// Ignore
 		} elseif ($dbc['table_default'] === '') {
 			// Ignore
-		} else {
+		} elseif ($dbc['table_default'] != 'CURRENT_TIMESTAMP') {
 			$alter_cmd .= ' DEFAULT "' . $dbc['table_default'] . '"';
+		} else {
+			$alter_cmd .= ' DEFAULT CURRENT_TIMESTAMP';
 		}
 	} elseif ($dbc['table_default'] !== 'NULL' && $dbc['table_default'] !== NULL) {
 		if ($dbc['table_default'] == 'CURRENT_TIMESTAMP') {
@@ -743,7 +750,7 @@ function make_column_props(&$dbc) {
 			if (strpos($dbc['table_type'], 'int(') !== false && $dbc['table_default'] == '') {
 				$alter_cmd .= ' DEFAULT "0"';
 			} else {
-				$alter_cmd .= ' DEFAULT \'' . $dbc['table_default'] . '\'';
+				$alter_cmd .= " DEFAULT '" . $dbc['table_default'] . "'";
 			}
 		}
 	}
@@ -834,6 +841,8 @@ function make_index_alter($table, $key) {
 		}
 	}
 
+	$using = '';
+
 	if (cacti_sizeof($parts)) {
 		$i = 0;
 
@@ -851,12 +860,18 @@ function make_index_alter($table, $key) {
 				}
 			}
 
+			if ($using == '' && isset($p['idx_index_type']) && $p['idx_index_type'] != '') {
+				$using = $p['idx_index_type'];
+			}
+
 			$alter_cmd .= ($i > 0 ? ',':'') . '`' . $p['idx_column_name'] . '`';
 
 			$i++;
 		}
 
-		$alter_cmd .= ') USING ' . $p['idx_index_type'];
+		if ($using != '') {
+			$alter_cmd .= ') USING ' . $using;
+		}
 
 		$alter_cmds[] = $alter_cmd;
 	}
@@ -952,8 +967,26 @@ function create_tables($load = true) {
 		$output = array();
 		$error  = 0;
 
+		//Handle case to address Mariadb dropping the mysql command
+		if (file_exists('/usr/bin/mariadb')) {
+			$db_shell = '/usr/bin/mariadb';
+		} elseif (file_exists('/usr/bin/mysql')) {
+			$db_shell = '/usr/bin/mysql';
+		} elseif (file_exists('/usr/local/bin/mariadb')) {
+			$db_shell = '/usr/local/bin/mariadb';
+		} elseif (file_exists('/usr/local/bin/mysql')) {
+			$db_shell = '/usr/local/bin/mysql';
+		} else {
+			$db_shell = shell_exec('which mysql');
+
+			if ($db_shell == '') {
+				print 'FATAL: mysql or mariadb command not found' . PHP_EOL;
+				exit;
+			}
+		}
+
 		if (file_exists($config['base_path'] . '/docs/audit_schema.sql')) {
-			exec('mysql' .
+			exec($db_shell .
 				' -u' . cacti_escapeshellarg($database_username) .
 				' -p' . cacti_escapeshellarg($database_password) .
 				' -h' . cacti_escapeshellarg($database_hostname) .

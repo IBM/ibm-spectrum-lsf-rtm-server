@@ -250,10 +250,10 @@ function disku_set_minimum_page_refresh() {
 
 		/* automatically reload this page */
 		$refresh['seconds'] = get_request_var('refresh');
-		$refresh['page'] = $config['url_path'] . 'plugins/license/' . basename($_SERVER['PHP_SELF']);
+		$refresh['page'] = $config['url_path'] . 'plugins/license/' . basename($_SERVER['SCRIPT_NAME']);
 	}else{
 		$refresh['seconds'] = "999999";
-		$refresh['page'] = $config['url_path'] . 'plugins/license/' . basename($_SERVER['PHP_SELF']);
+		$refresh['page'] = $config['url_path'] . 'plugins/license/' . basename($_SERVER['SCRIPT_NAME']);
 	}
 }
 

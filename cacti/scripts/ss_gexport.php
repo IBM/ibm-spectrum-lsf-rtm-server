@@ -2,7 +2,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -71,7 +71,7 @@ function ss_gexport($cmd = 'index', $arg1 = '', $arg2 = '') {
 	} elseif ($cmd == 'get') {
 		$arg   = $arg1;
 		$index = $arg2;
-		$value = '0';
+		$value = 'U';
 
 		if (db_table_exists('graph_exports')) {
 			switch($arg) {
@@ -92,6 +92,8 @@ function ss_gexport($cmd = 'index', $arg1 = '', $arg2 = '') {
 			}
 		}
 
-		return ($value == '' ? '0' : $value);
+		return ($value === '' || $value === false || $value === null ? 'U' : $value);
 	}
+
+	return 'U';
 }

@@ -2,7 +2,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -88,7 +88,7 @@ if (isset($options['foreground'])) {
 }
 
 // Set the frequency of data collection dynamically
-// before loosing our database connection after fork.
+// before losing our database connection after fork.
 // We would not have to do this is PDO supported
 // connection cloning as does Perl.
 $frequency = read_config_option('cron_interval', true);

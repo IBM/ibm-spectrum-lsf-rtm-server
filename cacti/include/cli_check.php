@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -21,6 +21,12 @@
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
 */
+
+/* reject non-CLI invocations early */
+if (php_sapi_name() !== 'cli') {
+	http_response_code(404);
+	exit;
+}
 
 /* do NOT run this script through a web browser */
 define('CACTI_CLI_ONLY', true);

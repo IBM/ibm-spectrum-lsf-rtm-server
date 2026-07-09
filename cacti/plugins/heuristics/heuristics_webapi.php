@@ -2968,7 +2968,7 @@ function table_cache_prune($prefix = 'htc_') {
 	$close_session = false;
 
 	if (session_status() == PHP_SESSION_NONE) {
-		session_start();
+		cacti_session_start();
 		$close_session = true;
 	}
 
@@ -3014,7 +3014,7 @@ function table_cache_control($action, $key, $data = array(), $timeout = '', $col
 	if ($action == 'add') {
 		if (session_status() == PHP_SESSION_NONE) {
 			$close_session = true;
-			session_start();
+			cacti_session_start();
 		}
 
 		$_SESSION['htc_' . $key]['time']      = time();
@@ -3052,7 +3052,7 @@ function table_cache_control($action, $key, $data = array(), $timeout = '', $col
 	} elseif ($action == 'purge') {
 		if (session_status() == PHP_SESSION_NONE) {
 			$close_session = true;
-			session_start();
+			cacti_session_start();
 		}
 
 		if (isset($_SESSION['htc_' . $key])) {

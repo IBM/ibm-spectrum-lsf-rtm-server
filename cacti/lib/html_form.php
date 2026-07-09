@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -26,10 +26,15 @@
  * Standard HTML form elements
  */
 
-/* draw_edit_form - draws an html edit form
-   @arg $array - an array that contains all of the information needed to draw
-     the html form. see the arrays contained in include/global_settings.php
-     for the extract syntax of this array */
+/**
+ * draw_edit_form - draws an html edit form
+ *
+ * @param array $array - an array that contains all of the information needed to draw
+ *   the html form. see the arrays contained in include/global_settings.php
+ *   for the extract syntax of this array
+ *
+ * @return void
+ */
 function draw_edit_form($array) {
 	if (cacti_sizeof($array)) {
 		foreach ($array as $top_branch => $top_children) {
@@ -43,7 +48,7 @@ function draw_edit_form($array) {
 
 	if (cacti_sizeof($fields_array)) {
 		if (!isset($config_array['no_form_tag'])) {
-			print "<form class='cactiForm' method='post' autocomplete='off' action='" . ((isset($config_array['post_to'])) ? $config_array['post_to'] : get_current_page()) . "'" . ((isset($config_array['form_name'])) ? " name='" . $config_array['form_name'] . "'" : '') . ((isset($config_array['enctype'])) ? " enctype='" . $config_array['enctype'] . "'" : '') . ">\n";
+			print "<form class='cactiForm' method='post' autocomplete='off' action='" . ((isset($config_array['post_to'])) ? $config_array['post_to'] : get_current_page()) . "'" . ((isset($config_array['form_name'])) ? " name='" . $config_array['form_name'] . "'" : '') . ((isset($config_array['enctype'])) ? " enctype='" . $config_array['enctype'] . "'" : '') . ">";
 		}
 
 		$i = 0;
@@ -86,7 +91,7 @@ function draw_edit_form($array) {
 				$collapsible = (isset($field_array['collapsible']) && $field_array['collapsible'] == 'true');
 
 				print "<div class='spacer formHeader" . ($collapsible ? ' collapsible':'') . "' id='row_$field_name'><div class='formHeaderText'>" . html_escape($field_array['friendly_name']);
-				print '<div class="formTooltip">' . (isset($field_array['description']) ? display_tooltip($field_array['description']):'') . '</div>';
+				print '<div class="formTooltip">' . (isset($field_array['description']) ? display_tooltip(html_purify($field_array['description'])):'') . '</div>';
 				print ($collapsible ? "<div class='formHeaderAnchor'><i class='fa fa-angle-double-up'></i></div>":'') . '</div></div>';
 			} else {
 				// Make a row using a div
@@ -132,10 +137,10 @@ function draw_edit_form($array) {
 				print html_escape($field_array['friendly_name']);
 
 				if (read_config_option('hide_form_description') == 'on') {
-					print '<br><span class="formFieldDescription">' . ((isset($field_array['description'])) ? $field_array['description'] : '') . "</span>\n";
+					print '<br><span class="formFieldDescription">' . ((isset($field_array['description'])) ? html_purify($field_array['description']) : '') . '</span>';
 				} else {
 					print '<div class="formTooltip">';
-					print display_tooltip((isset($field_array['description'])) ? $field_array['description'] : '');
+					print display_tooltip((isset($field_array['description'])) ? html_purify($field_array['description']) : '');
 					print '</div>';
 				}
 
@@ -159,16 +164,44 @@ function draw_edit_form($array) {
 			$i++;
 		}
 
+		if ((isset($_SESSION['form_change_action']) && cacti_sizeof($_SESSION['form_change_actions'])) ||
+			(isset($_SESSION['form_click_actions']) && cacti_sizeof($_SESSION['form_click_actions']))) {
+			print PHP_EOL . '<script type="text/javascript" ' . CactiSecureHeaders::getNonceAttribute() . '>' . PHP_EOL;
+
+			if (isset($_SESSION['form_change_actions']) && cacti_sizeof($_SESSION['form_change_actions'])) {
+				foreach($_SESSION['form_change_actions'] as $form_name => $action) {
+					print "$('#" . html_escape($form_name) . "').on('change', function() { " . $action . "; });" . PHP_EOL;
+				}
+			}
+
+			if (isset($_SESSION['form_click_actions']) && cacti_sizeof($_SESSION['form_click_actions'])) {
+				foreach($_SESSION['form_click_actions'] as $form_name => $action) {
+					print "$('#" . html_escape($form_name) . "').on('click', function() { " . $action . "; });" . PHP_EOL;
+				}
+			}
+
+			print '</script>' . PHP_EOL;
+
+			kill_session_var('form_change_actions');
+			kill_session_var('form_click_actions');
+		}
+
 		if (isset($_SESSION['sess_error_fields'])) {
 			kill_session_var('sess_error_fields');
 		}
 	}
+
 }
 
-/* draw_edit_control - draws a single control to be used on an html edit form
-   @arg $field_name - the name of the control
-   @arg $field_array - an array containing data for this control. see include/global_form.php
-     for more specific syntax */
+/**
+ * draw_edit_control - draws a single control to be used on an html edit form
+ *
+ * @param string $field_name - the name of the control
+ * @param array  $field_array - an array containing data for this control. see include/global_form.php
+ *   for more specific syntax
+ *
+ * @return void
+ */
 function draw_edit_control($field_name, &$field_array) {
 	switch ($field_array['method']) {
 	case 'textbox':
@@ -511,42 +544,62 @@ function draw_edit_control($field_name, &$field_array) {
 	}
 }
 
-/* form_button - draws a standard button form element
-   @arg $form_name - the name of this form element
-   @arg $value - the display value for the button
-   @arg $title - the hover title for the button
-   @arg $action - the onClick action for the button */
+/**
+ * form_button - draws a standard button form element
+ *
+ * @param string $form_name - the name of this form element
+ * @param string $value - the display value for the button
+ * @param string $title - the hover title for the button
+ * @param string $action - the onClick action for the button
+ *
+ * @return void
+ */
 function form_button($form_name, $value, $title = '', $action = '') {
+	if ($action != '') {
+		$_SESSION['form_click_actions'][$form_name] = $action;
+	}
+
 	print "<input type='button' class='ui-button ui-corner-all ui-widget' " .
 		"id='$form_name' " .
 		"name='$form_name' " .
 		"value='" . html_escape($value) . "' " .
-		($action!='' ? "onClick='$action'":"") .
 		($title!='' ? "title='" . html_escape($title) . "'":"") . ">";
 }
 
-/* form_button - draws a standard button form element
-   @arg $form_name - the name of this form element
-   @arg $value - the display value for the button
-   @arg $title - the hover title for the button
-   @arg $action - the onClick action for the button */
+/**
+ * form_submit - draws a standard button form element
+ *
+ * @param string $form_name - the name of this form element
+ * @param string $value - the display value for the button
+ * @param string $title - the hover title for the button
+ * @param string $action - the onClick action for the button
+ *
+ * @return void
+ */
 function form_submit($form_name, $value, $title = '', $action = '') {
+	if ($action != '') {
+		$_SESSION['form_click_actions'][$form_name] = $action;
+	}
+
 	print "<input type='submit' class='ui-button ui-corner-all ui-widget' " .
 		"id='$form_name' " .
 		"name='$form_name' " .
 		"value='" . html_escape($value) . "' " .
-		($action!='' ? "onClick='$action'":"") .
 		($title!='' ? "title='" . html_escape($title) . "'":"") . ">";
 }
 
-/* form_file - draws a standard html file input element
-   @arg $form_name - the name of this form element
-   @arg $form_size - the size (width) of the textbox
-   @arg $form_accept - the file types permitted
+/**
+ * form_file - draws a standard html file input element
+ *
+ * @param string $form_name - the name of this form element
+ * @param mixed  $form_size - the size (width) of the textbox
+ * @param string $form_accept - the file types permitted
+ *
+ * @return void
  */
 function form_file($form_name, $form_size = 30, $form_accept = '') {
-	print "<div>\n";
-	print "<label class='import_label' for='$form_name'>" . __('Select a File'). "</label>\n";
+	print "<div>";
+	print "<label class='import_label' for='$form_name'>" . __('Select a File'). "</label>";
 	print "<input type='file'";
 
 	if (isset($_SESSION['sess_error_fields']) && !empty($_SESSION['sess_error_fields'][$form_name])) {
@@ -556,26 +609,31 @@ function form_file($form_name, $form_size = 30, $form_accept = '') {
 		print " class='import_button ui-state-default ui-corner-all'";
 	}
 
-	print " id='$form_name' name='$form_name' size='$form_size'" . ($form_accept != '' ? " accept='$form_accept'":'') . ">\n";
-	print "<span class='import_text'></span>\n";
-	print "</div>\n";
+	print " id='$form_name' name='$form_name' size='$form_size'" . ($form_accept != '' ? " accept='$form_accept'":'') . ">";
+	print "<span class='import_text'></span>";
+	print "</div>";
 }
 
-/* form_filepath_box - draws a standard html textbox and provides status of a files existence
-   @arg $form_name - the name of this form element
-   @arg $form_previous_value - the current value of this form element
-   @arg $form_default_value - the value of this form element to use if there is
-     no current value available
-   @arg $form_max_length - the maximum number of characters that can be entered
-     into this textbox
-   @arg $form_size - the size (width) of the textbox
-   @arg $type - the type of textbox, either 'text' or 'password'
-   @arg $current_id - used to determine if a current value for this form element
-     exists or not. a $current_id of '0' indicates that no current value exists,
-     a non-zero value indicates that a current value does exist
-   @arg data - array containing 'text' element for display and if 'error' element present, shows failure */
+/**
+ * form_filepath_box - draws a standard html textbox and provides status of a files existence
+ *
+ * @param string $form_name - the name of this form element
+ * @param mixed  $form_previous_value - the current value of this form element
+ * @param string $form_default_value - the value of this form element to use if there is
+ *   no current value available
+ * @param mixed  $form_max_length - the maximum number of characters that can be entered
+ *   into this textbox
+ * @param mixed  $form_size - the size (width) of the textbox
+ * @param string $type - the type of textbox, either 'text' or 'password'
+ * @param mixed  $current_id - used to determine if a current value for this form element
+ *   exists or not. An empty $current_id indicates that no current value exists,
+ *   a non-zero value indicates that a current value does exist
+ * @param mixed  $data - array containing 'text' element for display and if 'error' element present, shows failure
+ *
+ * @return void
+ */
 function form_filepath_box($form_name, $form_previous_value, $form_default_value, $form_max_length, $form_size = 30, $type = 'text', $current_id = 0, $data = false) {
-	if (($form_previous_value == '') && (empty($current_id))) {
+	if (empty($current_id) && empty($form_previous_value)) {
 		$form_previous_value = $form_default_value;
 	}
 
@@ -631,20 +689,25 @@ function form_filepath_box($form_name, $form_previous_value, $form_default_value
 	print " id='$form_name' placeholder='" . __esc('Enter a valid file path') . "' name='$form_name' size='$form_size'" . (!empty($form_max_length) ? " maxlength='$form_max_length'" : '') . " value='" . html_escape($form_previous_value) . "'>" . $extra_data;
 }
 
-/* form_dirpath_box - draws a standard html textbox and provides status of a directories existence
-   @arg $form_name - the name of this form element
-   @arg $form_previous_value - the current value of this form element
-   @arg $form_default_value - the value of this form element to use if there is
-     no current value available
-   @arg $form_max_length - the maximum number of characters that can be entered
-     into this textbox
-   @arg $form_size - the size (width) of the textbox
-   @arg $type - the type of textbox, either 'text' or 'password'
-   @arg $current_id - used to determine if a current value for this form element
-     exists or not. a $current_id of '0' indicates that no current value exists,
-     a non-zero value indicates that a current value does exist */
+/**
+ * form_dirpath_box - draws a standard html textbox and provides status of a directories existence
+ *
+ * @param string $form_name - the name of this form element
+ * @param mixed  $form_previous_value - the current value of this form element
+ * @param string $form_default_value - the value of this form element to use if there is
+ *   no current value available
+ * @param int    $form_max_length - the maximum number of characters that can be entered
+ *   into this textbox
+ * @param int    $form_size - the size (width) of the textbox
+ * @param string $type - the type of textbox, either 'text' or 'password'
+ * @param mixed  $current_id - used to determine if a current value for this form element
+ *   exists or not. An empty $current_id indicates that no current value exists,
+ *   a non-zero value indicates that a current value does exist
+ *
+ * @return void
+ */
 function form_dirpath_box($form_name, $form_previous_value, $form_default_value, $form_max_length, $form_size = 30, $type = 'text', $current_id = 0) {
-	if (($form_previous_value == '') && (empty($current_id))) {
+	if (empty($current_id) && empty($form_previous_value)) {
 		$form_previous_value = $form_default_value;
 	}
 
@@ -678,23 +741,27 @@ function form_dirpath_box($form_name, $form_previous_value, $form_default_value,
 	print " id='$form_name' name='$form_name' placeholder='" . __esc('Enter a valid directory path'). "' size='$form_size'" . (!empty($form_max_length) ? " maxlength='$form_max_length'" : '') . " value='" . html_escape($form_previous_value) . "'>" . $extra_data;
 }
 
-/* form_text_box - draws a standard html textbox
-   @arg $form_name - the name of this form element
-   @arg $form_previous_value - the current value of this form element
-   @arg $form_default_value - the value of this form element to use if there is
-     no current value available
-   @arg $form_max_length - the maximum number of characters that can be entered
-     into this textbox
-   @arg $form_size - the size (width) of the textbox
-   @arg $type - the type of textbox, either 'text' or 'password'
-   @arg $current_id - used to determine if a current value for this form element
-     exists or not. a $current_id of '0' indicates that no current value exists,
-     a non-zero value indicates that a current value does exist
-   @arg $placeholder - place a placeholder over an empty field
-   @arg $title - use a title attribute when hovering over the textbox
+/**
+ * form_text_box - draws a standard html textbox
+ *
+ * @param string $form_name - the name of this form element
+ * @param mixed  $form_previous_value - the current value of this form element
+ * @param string $form_default_value - the value of this form element to use if there is
+ *   no current value available
+ * @param int    $form_max_length - the maximum number of characters that can be entered
+ *   into this textbox
+ * @param int    $form_size - the size (width) of the textbox
+ * @param string $type - the type of textbox, either 'text' or 'password'
+ * @param mixed  $current_id - used to determine if a current value for this form element
+ *   exists or not. An empty $current_id indicates that no current value exists,
+ *   a non-zero value indicates that a current value does exist
+ * @param string $placeholder - place a placeholder over an empty field
+ * @param string $title - use a title attribute when hovering over the textbox
+ *
+ * @return void
  */
 function form_text_box($form_name, $form_previous_value, $form_default_value, $form_max_length, $form_size = 30, $type = 'text', $current_id = 0, $placeholder = '', $title = '') {
-	if (($form_previous_value == '') && (empty($current_id))) {
+	if (empty($current_id) && empty($form_previous_value)) {
 		$form_previous_value = $form_default_value;
 	}
 
@@ -721,14 +788,19 @@ function form_text_box($form_name, $form_previous_value, $form_default_value, $f
 		}
 	}
 
-	print " id='$form_name' " . ($placeholder != '' ? "placeholder='" . html_escape($placeholder) . "'":'') . " name='$form_name' size='$form_size'" . (!empty($form_max_length) ? " maxlength='$form_max_length'" : '') . " value='" . html_escape($form_previous_value) . "'>\n";
+	print " id='$form_name' " . ($placeholder != '' ? "placeholder='" . html_escape($placeholder) . "'":'') . " name='$form_name' size='$form_size'" . (!empty($form_max_length) ? " maxlength='$form_max_length'" : '') . " value='" . html_escape($form_previous_value) . "'>";
 }
 
-/* form_hidden_box - draws a standard html hidden element
-   @arg $form_name - the name of this form element
-   @arg $form_previous_value - the current value of this form element
-   @arg $form_default_value - the value of this form element to use if there is
-     no current value available */
+/**
+ * form_hidden_box - draws a standard html hidden element
+ *
+ * @param string $form_name - the name of this form element
+ * @param mixed  $form_previous_value - the current value of this form element
+ * @param string $form_default_value - the value of this form element to use if there is
+ *   no current value available
+ *
+ * @return void
+ */
 function form_hidden_box($form_name, $form_previous_value, $form_default_value, $in_form = false) {
 	if ($form_previous_value == '') {
 		$form_previous_value = $form_default_value;
@@ -778,18 +850,18 @@ function form_dropdown($form_name, $form_data, $column_display, $column_id, $for
 	}
 
 	if ($on_change != '') {
-		$on_change = " onChange='$on_change' ";
+		$_SESSION['form_change_actions'][$form_name] = $on_change;
 	}
 
-	print "<select id='" . html_escape($form_name) . "' name='" . html_escape($form_name) . "'" . $class . $on_change . '>';
+	print "<select id='" . html_escape($form_name) . "' name='" . html_escape($form_name) . "'" . $class . '>';
 
 	if (!empty($form_none_entry)) {
-		print "<option value='0'" . (empty($form_previous_value) ? ' selected' : '') . ">$form_none_entry</option>\n";
+		print "<option value='0'" . (empty($form_previous_value) ? ' selected' : '') . ">$form_none_entry</option>";
 	}
 
 	html_create_list($form_data, $column_display, $column_id, $form_previous_value);
 
-	print "</select>\n";
+	print "</select>";
 }
 
 function form_droplanguage($form_name, $column_display, $column_id, $form_previous_value, $form_none_entry, $form_default_value, $class = '', $on_change = '') {
@@ -815,12 +887,12 @@ function form_droplanguage($form_name, $column_display, $column_id, $form_previo
 	}
 
 	if ($on_change != '') {
-		$on_change = " onChange='$on_change' ";
+		$_SESSION['form_change_actions'][$form_name] = $on_change;
 	}
 
 	$languages = get_installed_locales();
 
-	print "<select id='" . html_escape($form_name) . "' name='" . html_escape($form_name) . "'" . $class . $on_change . '>';
+	print "<select id='" . html_escape($form_name) . "' name='" . html_escape($form_name) . "'" . $class . '>';
 
 	foreach ($languages as $key => $value) {
 		$selected = '';
@@ -863,14 +935,14 @@ function form_callback($form_name, $classic_sql, $column_display, $column_id, $c
 		print "<select id='" . html_escape($form_name) . "' name='" . html_escape($form_name) . "'" . $class . '>';
 
 		if (!empty($none_entry)) {
-			print "<option value='0'" . (empty($previous_value) ? ' selected' : '') . ">$none_entry</option>\n";
+			print "<option value='0'" . (empty($previous_value) ? ' selected' : '') . ">$none_entry</option>";
 		}
 
 		$form_data = db_fetch_assoc($classic_sql);
 
 		html_create_list($form_data, $column_display, $column_id, $previous_id);
 
-		print "</select>\n";
+		print "</select>";
 	} else {
 		if (empty($previous_id) && $previous_value == '') {
 			$previous_value = $none_entry;
@@ -889,7 +961,7 @@ function form_callback($form_name, $classic_sql, $column_display, $column_id, $c
 		print "</span>";
 		print "<input type='hidden' id='" . $form_name . "' name='" . $form_name . "' value='" . html_escape($previous_id) . "'>";
 		?>
-		<script type='text/javascript'>
+		<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 		var <?php print $form_name;?>Timer;
 		var <?php print $form_name;?>ClickTimer;
 		var <?php print $form_name;?>Open = false;
@@ -972,7 +1044,7 @@ function form_callback($form_name, $classic_sql, $column_display, $column_id, $c
    @param string $form_default_value - the value of this form element to use if there is
      no current value available
    @param int $current_id - used to determine if a current value for this form element
-     exists or not. a $current_id of '0' indicates that no current value exists,
+     exists or not. An empty $current_id indicates that no current value exists,
      a non-zero value indicates that a current value does exist
    @param string $class - specify a css class
    @param string $on_change - specify a javascript onchange action
@@ -980,7 +1052,7 @@ function form_callback($form_name, $classic_sql, $column_display, $column_id, $c
    @param boolean $show_label - show the form caption in the checkbox
 */
 function form_checkbox($form_name, $form_previous_value, $form_caption, $form_default_value, $current_id = 0, $class = '', $on_change = '', $title = '', $show_label = false) {
-	if (($form_previous_value === null) && (empty($current_id))) {
+	if (empty($current_id) && empty($form_previous_value)) {
 		$form_previous_value = $form_default_value;
 	}
 
@@ -995,7 +1067,7 @@ function form_checkbox($form_name, $form_previous_value, $form_caption, $form_de
 	}
 
 	if ($on_change != '') {
-		$on_change = " onChange='$on_change'";
+		$_SESSION['form_change_actions'][$form_name] = $on_change;
 	}
 
 	if ($form_previous_value == 'on') {
@@ -1010,7 +1082,7 @@ function form_checkbox($form_name, $form_previous_value, $form_caption, $form_de
 	}
 
 	print "<span class='nowrap'>";
-	print "<label class='checkboxSwitch' " . ($title != '' ? " title='" . html_escape($title) . "'":'') . '><input ' . ($title != '' ? " title='" . html_escape($title) . "'":'') . " class='formCheckbox$class' type='checkbox' id='$form_name' name='$form_name'" . $on_change . $checked . "><span class='checkboxSlider checkboxRound'></span></label>";
+	print "<label class='checkboxSwitch' " . ($title != '' ? " title='" . html_escape($title) . "'":'') . '><input ' . ($title != '' ? " title='" . html_escape($title) . "'":'') . " class='formCheckbox$class' type='checkbox' id='$form_name' name='$form_name'" . $checked . "><span class='checkboxSlider checkboxRound'></span></label>";
 	print "<label class='checkboxLabel$labelClass' for='$form_name'>" . html_escape($form_caption) . '</label>';
 	print '</span>';
 }
@@ -1037,10 +1109,6 @@ function form_radio_button($form_name, $form_previous_value, $form_current_value
 		$class = " $class";
 	}
 
-	if ($on_change != '') {
-		$on_change = " onChange='$on_change' ";
-	}
-
 	if ($form_previous_value == $form_current_value) {
 		$checked = " checked aria-checked='true'";
 	} else {
@@ -1049,11 +1117,14 @@ function form_radio_button($form_name, $form_previous_value, $form_current_value
 
 	$css_id = $form_name . '_' . $form_current_value;
 
+	if ($on_change != '') {
+		$_SESSION['form_change_actions'][$css_id] = $on_change;
+	}
 
 	print "<span class='nowrap'>";
 	print "<label class='radioSwitch'><input value='" . html_escape($form_current_value) .
 		"' class='formCheckbox$class' type='radio' id='$css_id' name='$form_name'" .
-		$on_change . $checked . "><span class='radioSlider radioRound'></span></label>";
+		$checked . "><span class='radioSlider radioRound'></span></label>";
 	print "<label class='radioLabelWanted' for='$css_id'>" . html_escape($form_caption) . "</label>";
 	print "</span>";
 }
@@ -1084,14 +1155,14 @@ function form_text_area($form_name, $form_previous_value, $form_rows, $form_colu
 	}
 
 	if ($on_change != '') {
-		$on_change = " onChange='$on_change' ";
+		$_SESSION['form_change_actions'][$form_name] = $on_change;
 	}
 
 	if ($placeholder != '') {
 		$placeholder = " placeholder='" . html_escape($placeholder) . "'";
 	}
 
-	print "<textarea class='$class ui-state-default ui-corner-all' aria-multiline='true' cols='$form_columns' rows='$form_rows' id='$form_name' name='$form_name'" . $on_change . $placeholder . '>' . html_escape($form_previous_value) . "</textarea>\n";
+	print "<textarea class='$class ui-state-default ui-corner-all' aria-multiline='true' cols='$form_columns' rows='$form_rows' id='$form_name' name='$form_name'" . $placeholder . '>' . html_escape($form_previous_value) . "</textarea>";
 }
 
 /* form_multi_dropdown - draws a standard html multiple select dropdown
@@ -1133,10 +1204,10 @@ function form_multi_dropdown($form_name, $array_display, $sql_previous_values, $
 	}
 
 	if ($on_change != '') {
-		$on_change = " onChange='$on_change' ";
+		$_SESSION['form_change_actions'][$form_name] = $on_change;
 	}
 
-	print "<select style='height:20px;' size='1' class='$class' id='$form_name' name='$form_name" . "[]' multiple>\n";
+	print "<select style='height:20px;' size='1' class='$class' id='$form_name' name='$form_name" . "[]' multiple>";
 
 	foreach (array_keys($array_display) as $id) {
 		print "<option value='" . $id . "'";
@@ -1150,10 +1221,10 @@ function form_multi_dropdown($form_name, $array_display, $sql_previous_values, $
 		}
 
 		print '>' . html_escape($array_display[$id]);
-		print "</option>\n";
+		print "</option>";
 	}
 
-	print "</select>\n";
+	print "</select>";
 }
 
 /*
@@ -1184,11 +1255,11 @@ function form_color_dropdown($form_name, $form_previous_value, $form_none_entry,
 		WHERE id = ?',
 		array($form_previous_value));
 
-	if ($on_change != '') {
-		$on_change = ' ' . $on_change . ';';
-	}
+	$on_change = "this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor;$on_change";
 
-	$on_change = " onChange='this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor;$on_change'";
+	if ($on_change != '') {
+		$_SESSION['form_change_actions'][$form_name] = $on_change;
+	}
 
 	$colors_sql = 'SELECT *
 		FROM colors
@@ -1199,7 +1270,7 @@ function form_color_dropdown($form_name, $form_previous_value, $form_none_entry,
 
 	$colors_list = db_fetch_assoc($colors_sql);
 
-	print "<select style='background-color: #$current_color;' id='$form_name' name='$form_name'" . $class . $on_change . ">";
+	print "<select style='background-color: #$current_color;' id='$form_name' name='$form_name'" . $class . ">";
 
 	if ($form_none_entry != '') {
 		print "<option value='0'>$form_none_entry</option>";
@@ -1226,22 +1297,27 @@ function form_color_dropdown($form_name, $form_previous_value, $form_none_entry,
 	print '</select>';
 }
 
-/* form_font_box - draws a standard html textbox and provides status of a fonts existence
-   @arg $form_name - the name of this form element
-   @arg $form_previous_value - the current value of this form element
-   @arg $form_default_value - the value of this form element to use if there is
-     no current value available
-   @arg $form_max_length - the maximum number of characters that can be entered
-     into this textbox
-   @arg $form_size - the size (width) of the textbox
-   @arg $type - the type of textbox, either 'text' or 'password'
-   @arg $current_id - used to determine if a current value for this form element
-     exists or not. a $current_id of '0' indicates that no current value exists,
-     a non-zero value indicates that a current value does exist */
+/**
+ * form_font_box - draws a standard html textbox and provides status of a fonts existence
+ *
+ *  @param string $form_name - the name of this form element
+ *  @param mixed  $form_previous_value - the current value of this form element
+ *  @param string $form_default_value - the value of this form element to use if there is
+ *    no current value available
+ *  @param int    $form_max_length - the maximum number of characters that can be entered
+ *    into this textbox
+ *  @param int    $form_size - the size (width) of the textbox
+ *  @param string $type - the type of textbox, either 'text' or 'password'
+ *  @param mixed  $current_id - used to determine if a current value for this form element
+ *    exists or not. An empty $current_id indicates that no current value exists,
+ *    a non-zero value indicates that a current value does exist
+ *
+ *  @return void
+ */
 function form_font_box($form_name, $form_previous_value, $form_default_value, $form_max_length, $form_size = 30, $type = 'text', $current_id = 0, $placeholder = '') {
 	global $config;
 
-	if (($form_previous_value == '') && (empty($current_id))) {
+	if (empty($current_id) && empty($form_previous_value)) {
 		$form_previous_value = $form_default_value;
 	}
 
@@ -1274,11 +1350,17 @@ function form_font_box($form_name, $form_previous_value, $form_default_value, $f
 	print " id='$form_name' " . ($placeholder != '' ? "placeholder='" . html_escape($placeholder) . "'":'') . " name='$form_name' size='$form_size'" . (!empty($form_max_length) ? " maxlength='$form_max_length'" : '') . " value='" . html_escape($form_previous_value) . "'>" . $extra_data;
 }
 
-/* form_confirm - draws a table presenting the user with some choice and allowing
-     them to either proceed (delete) or cancel
-   @arg $body_text - the text to prompt the user with on this form
-   @arg $cancel_url - the url to go to when the user clicks 'cancel'
-   @arg $action_url - the url to go to when the user clicks 'delete' */
+/**
+ * form_confirm - draws a table presenting the user with some choice and allowing
+ * them to either proceed (delete) or cancel
+ *
+ * @param string $title_text - the title text for this form
+ * @param string $body_text - the text to prompt the user with on this form
+ * @param string $cancel_url - the url to go to when the user clicks 'cancel'
+ * @param string $action_url - the url to go to when the user clicks 'delete'
+ *
+ * @return void
+ */
 function form_confirm($title_text, $body_text, $cancel_url, $action_url) { ?>
 	<br>
 	<table style="width:60%;">
@@ -1298,26 +1380,35 @@ function form_confirm($title_text, $body_text, $cancel_url, $action_url) { ?>
 	</table>
 <?php }
 
-/* form_confirm_buttons - draws a cancel and delete button suitable for display
-     on a confirmation form
-   @arg $cancel_url - the url to go to when the user clicks 'cancel'
-   @arg $action_url - the url to go to when the user clicks 'delete' */
+/**
+ * form_confirm_buttons - draws a cancel and delete button suitable for display
+ * on a confirmation form
+ *
+ * @param string $action_url - the url to go to when the user clicks 'delete'
+ * @param string $cancel_url - the url to go to when the user clicks 'cancel'
+ *
+ * @return void
+ */
 function form_confirm_buttons($action_url, $cancel_url) {
 	global $config;
 	?>
 	<tr>
 		<td class='right'>
-			<input type='button' class='ui-button ui-corner-all ui-widget' onClick='cactiReturnTo("<?php print html_escape($config['url_path'] . $cancel_url);?>")' value='<?php print __esc('Cancel');?>'>
-			<input type='button' class='ui-button ui-corner-all ui-widget' onClick='cactiReturnTo("<?php print html_escape($config['url_path'] . $action_url . '&confirm=true');?>")' value='<?php print __esc('Delete');?>'>
+			<input type='button' class='ui-button ui-corner-all ui-widget cactiReturnTo' data-url='<?php print html_escape($config['url_path'] . $cancel_url);?>' value='<?php print __esc('Cancel');?>'>
+			<input type='button' class='ui-button ui-corner-all ui-widget cactiReturnTo' data-url='<?php print html_escape($config['url_path'] . $action_url . '&confirm=true');?>' value='<?php print __esc('Delete');?>'>
 		</td>
 	</tr>
 <?php }
 
-/* form_save_button - draws a (save|create) and cancel button at the bottom of
-     an html edit form
-   @arg $cancel_url - the url to go to when the user clicks 'cancel'
-   @arg $force_type - if specified, will force the 'action' button to be either
-     'save' or 'create'. otherwise this field should be properly auto-detected */
+/**
+ * form_save_button - draws a (save|create) and cancel button at the bottom of
+ * an html edit form
+ * @param string $cancel_url - the url to go to when the user clicks 'cancel'
+ * @param string $force_type - if specified, will force the 'action' button to be either
+ *   'save' or 'create'. otherwise this field should be properly auto-detected
+ *
+ * @return void
+ */
 function form_save_button($cancel_url, $force_type = '', $key_field = 'id', $ajax = true) {
 	$calt = __('Cancel');
 
@@ -1346,7 +1437,7 @@ function form_save_button($cancel_url, $force_type = '', $key_field = 'id', $aja
 	}
 
 	if ($force_type != 'import' && $force_type != 'export' && $force_type != 'save' && $force_type != 'close' && $cancel_url != '') {
-		$cancel_action = "<input type='button' class='ui-button ui-corner-all ui-widget' onClick='cactiReturnTo(\"" . html_escape(sanitize_uri($cancel_url)) . "\")' value='" . $calt . "'>";
+		$cancel_action = "<input type='button' class='ui-button ui-corner-all ui-widget cactiReturnTo' data-url='" . html_escape(sanitize_uri($cancel_url)) . "' value='" . $calt . "'>";
 	} else {
 		$cancel_action = '';
 	}
@@ -1366,9 +1457,14 @@ function form_save_button($cancel_url, $force_type = '', $key_field = 'id', $aja
 	form_end($ajax);
 }
 
-/* form_save_buttons - draws a set of buttons at the end of a form
-     an html edit form
-   @arg $buttons - an array of 'id', 'name' buttons */
+/**
+ * form_save_buttons - draws a set of buttons at the end of a form
+ * an html edit form.
+ *
+ * @param array $buttons - an array of 'id', 'name' buttons
+ *
+ * @return void
+ */
 function form_save_buttons($buttons) {
 	?>
 	<table style='width:100%;text-align:center;'>
@@ -1376,7 +1472,7 @@ function form_save_buttons($buttons) {
 			<td class='saveRow'>
 				<input type='hidden' name='action' value='save'>
 				<?php foreach($buttons as $b) {
-					print "<input type='button' class='ui-button ui-corner-all ui-widget' id='" . $b['id'] . "' value='" . html_escape($b['value']) . "'>\n";
+					print "<input type='button' class='ui-button ui-corner-all ui-widget' id='" . $b['id'] . "' value='" . html_escape($b['value']) . "'>";
 				} ?>
 			</td>
 		</tr>
@@ -1384,9 +1480,15 @@ function form_save_buttons($buttons) {
 	<?php
 }
 
-/* form_start - draws post form start. To be combined with form_end()
-   @arg $action - a mandatory php file URI
-   @arg $id     - an optional id, if empty, one will be generated */
+/**
+ * form_start - draws post form start. To be combined with form_end()
+ *
+ * @param string $action - a mandatory php file URI
+ * @param mixed  $id     - an optional id, if empty, one will be generated
+ * @param bool $multipart - Is this a multipart form object
+ *
+ * @return void
+ */
 function form_start($action, $id = '', $multipart = false) {
 	global $form_id, $form_action;
 	static $counter = 1;
@@ -1400,17 +1502,23 @@ function form_start($action, $id = '', $multipart = false) {
 
 	$form_action = $action;
 
-	print "<form class='cactiFormStart' id='$form_id' name='$form_id' action='$form_action' autocomplete='off' method='post'" . ($multipart ? " enctype='multipart/form-data'":'') . ">\n";
+	print "<form class='cactiFormStart' id='$form_id' name='$form_id' action='$form_action' autocomplete='off' method='post'" . ($multipart ? " enctype='multipart/form-data'":'') . ">";
 }
 
-/* form_end - draws post form end. To be combined with form_start() */
+/**
+ * form_end - draws post form end. To be combined with form_start()
+ *
+ * @param  bool $ajax Is this an ajax form end?
+ *
+ * @return void
+ */
 function form_end($ajax = true) {
 	global $form_id, $form_action;
 
 	print '</form>' . PHP_EOL;
 
 	if ($ajax) { ?>
-		<script type='text/javascript'>
+		<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 		var formArray = [];
 		var changed = false;
 
@@ -1473,7 +1581,7 @@ function form_end($ajax = true) {
 			formArray['<?php print $form_id;?>'] = $('#<?php print $form_id;?>').serializeForm();
 			changed = false;
 
-			$('#<?php print $form_id;?>').submit(function(event) {
+			$('#<?php print $form_id;?>').on('submit', function(event) {
 				event.preventDefault();
 
 				// Enable the form if it's disabled
@@ -1516,4 +1624,3 @@ function form_end($ajax = true) {
 		<?php
 	}
 }
-

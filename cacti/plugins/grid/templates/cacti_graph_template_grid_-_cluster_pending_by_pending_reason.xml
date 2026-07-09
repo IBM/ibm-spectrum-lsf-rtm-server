@@ -197,7 +197,7 @@
 	<hash_0301025036ba4f10baf24c1bd8ab0ed18bae82>
 		<name>GRID - Cluster Pending by Pending Reason</name>
 		<type_id>5</type_id>
-		<input_string>PHBhdGhfY2FjdGk+L3NjcmlwdHMvc3NfZ3JpZF9wcmVhc29uLnBocCBzc19ncmlkX3ByZWFzb24gPGNsdXN0ZXJpZD4iPHJlYXNvbj4i</input_string>
+		<input_string>&lt;path_cacti&gt;/scripts/ss_grid_preason.php ss_grid_preason &lt;clusterid&gt; &lt;reason&gt;</input_string>
 		<fields>
 			<hash_070102d9633077c232574856b0fa057f70f318>
 				<name>The substring match on Pending Reason. No special characters.</name>

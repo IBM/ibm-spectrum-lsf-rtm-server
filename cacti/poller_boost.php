@@ -2,7 +2,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -186,6 +186,9 @@ if ($child == false) {
 		$continue = boost_prepare_process_table();
 		$time_end = time();
 		cacti_log('INFO: Boost prepare tables took ' . ($time_end - $time_start) . ' seconds.', true, 'BOOST');
+
+		/* prune old memory stats */
+		boost_prune_memstats();
 
 		/* Launch the boost children */
 		if ($continue) {
@@ -475,6 +478,15 @@ function boost_prepare_process_table() {
 	return true;
 }
 
+function boost_prune_memstats() {
+	$processes = read_config_option('boost_parallel');
+
+	db_execute_prepared('DELETE FROM settings
+		WHERE name LIKE "boost_peak_memory%"
+		AND REPLACE(name, "boost_peak_memory_", "") > ?',
+		array($processes));
+}
+
 function boost_launch_children() {
 	global $config, $debug;
 
@@ -494,7 +506,7 @@ function boost_launch_children() {
 
 			cacti_log("WARNING: Boost log '$boost_log' is not writable!", true, 'BOOST');
 		} else {
-			$redirect_args = '>> ' . $boost_log;
+			$redirect_args = '>> ' . cacti_escapeshellarg($boost_log);
 		}
 	}
 
@@ -1360,7 +1372,9 @@ function boost_log_child_statistics($rrd_updates, $child) {
 }
 
 function boost_purge_cached_png_files($forcerun) {
-	/* remove stale png's from the cache.  I consider png's stale afer 1 hour */
+	global $config;
+
+	/* remove stale png's from the cache.  I consider png's stale after 1 hour */
 	if ((read_config_option('boost_png_cache_enable') == 'on') || $forcerun) {
 		$cache_directory = read_config_option('boost_png_cache_directory');
 		$remove_time = time() - 3600;
@@ -1368,8 +1382,34 @@ function boost_purge_cached_png_files($forcerun) {
 		$directory_contents = array();
 
 		if (is_dir($cache_directory)) {
-			if ($handle = opendir($cache_directory)) {
-				/* This is the correct way to loop over the directory. */
+			$real_cache_directory = realpath($cache_directory);
+			$real_base_path       = realpath($config['base_path']);
+			$normalized_cache     = ($real_cache_directory === false ? false : str_replace('\\', '/', $real_cache_directory));
+			$normalized_base      = ($real_base_path === false ? false : rtrim(str_replace('\\', '/', $real_base_path), '/'));
+
+			if ($normalized_cache !== false) {
+				$normalized_cache = rtrim($normalized_cache, '/');
+			}
+
+			if (strtoupper(substr(PHP_OS, 0, 3)) == 'WIN') {
+				if ($normalized_cache !== false) {
+					$normalized_cache = strtolower($normalized_cache);
+				}
+
+				if ($normalized_base !== false) {
+					$normalized_base = strtolower($normalized_base);
+				}
+			}
+
+			// Reject if cache dir IS the base path or is outside it (must be a strict subdirectory)
+			if ($normalized_cache === false || $normalized_base === false
+				|| $normalized_cache === $normalized_base
+				|| strpos($normalized_cache, $normalized_base . '/') !== 0) {
+				cacti_log("ERROR: Boost PNG Cache Directory '$cache_directory' is outside of Cacti base path. Purge aborted.", true, 'BOOST');
+				return;
+			}
+
+			if ($handle = opendir($cache_directory)) {				/* This is the correct way to loop over the directory. */
 				while (false !== ($file = readdir($handle))) {
 					$directory_contents[] = $file;
 				}
@@ -1419,4 +1459,3 @@ function display_help () {
 	print "    --force   - Force the execution of a update process\n";
 	print "    --debug   - Display verbose output during execution\n\n";
 }
-

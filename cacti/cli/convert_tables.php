@@ -2,7 +2,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -159,7 +159,7 @@ if ($innodb) {
 	$engines = db_fetch_assoc('SHOW ENGINES');
 
 	foreach($engines as $engine) {
-		if (strtolower($engine['Engine']) == 'innodb' && strtolower($engine['Support'] == 'off')) {
+		if (strtolower($engine['Engine']) == 'innodb' && strtolower($engine['Support']) == 'off') {
 			print_or_log($installer,  "InnoDB Engine is not enabled\n");
 			exit;
 		}

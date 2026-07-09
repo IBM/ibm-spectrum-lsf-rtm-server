@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -43,19 +43,19 @@ if (!read_config_option('i18n_language_support') && read_config_option('i18n_lan
 
 /* Repair legacy language support */
 if (!empty($config['i18n_force_language'])) {
-	$_REQUEST['language'] = $config['i18n_force_language'];
+	set_request_var('language', $config['i18n_force_language']);
 }
 
-if (!empty($_REQUEST['language'])) {
-	$_REQUEST['language'] = repair_locale($_REQUEST['language']);
+if (!isempty_request_var('language')) {
+	set_request_var('language', repair_locale(get_request_var('language')));
 }
 
 /* determine whether or not we can support the language */
 $user_locale = '';
 
-if (!empty($_REQUEST['language']) && !empty($lang2locale[$_REQUEST['language']])) {
+if (!isempty_request_var('language') && !empty($lang2locale[get_request_var('language')])) {
 	/* user requests another language */
-	$user_locale = apply_locale($_REQUEST['language']);
+	$user_locale = apply_locale(get_request_var('language'));
 	unset($_SESSION['sess_current_date1']);
 	unset($_SESSION['sess_current_date2']);
 
@@ -282,7 +282,7 @@ function get_src_language_files($i18n_handler) {
 			],
 			/*
 			 * This was 'files' => ['Translator.php', 'StringReader.php' ],
-			 * but has been replaced with autoload.php to suppor Debian
+			 * but has been replaced with autoload.php to support Debian
 			 * bullseye which has an updated version of MoTranslator
 			 */
 			'files' => ['autoload.php', ],
@@ -738,6 +738,7 @@ function get_list_of_locales() {
 		'et-EE' => array('language' => 'Estonian',            'direction' => 'ltr', 'country' => 'ee', 'filename' => 'estonian_estonia'),
 		'fi-FI' => array('language' => 'Finnish',             'direction' => 'ltr', 'country' => 'fi', 'filename' => 'finnish_finland'),
 		'fr-FR' => array('language' => 'French',              'direction' => 'ltr', 'country' => 'fr', 'filename' => 'french_france'),
+		'ka-GE' => array('language' => 'Georgian',            'direction' => 'ltr', 'country' => 'ge', 'filename' => 'georgian_georgia'),
 		'de-DE' => array('language' => 'German',              'direction' => 'ltr', 'country' => 'de', 'filename' => 'german_germany'),
 		'el-GR' => array('language' => 'Greek',               'direction' => 'ltr', 'country' => 'gr', 'filename' => 'greek_greece'),
 		'he-IL' => array('language' => 'Hebrew',              'direction' => 'rtl', 'country' => 'il', 'filename' => 'hebrew_israel'),
@@ -864,6 +865,10 @@ function read_user_i18n_setting($config_name) {
 function number_format_i18n($number, $decimals = null, $baseu = 1024) {
 	global $cacti_locale, $cacti_country;
 
+	if (is_null($number)) {
+		return '0';
+	}
+
 	$country = strtoupper($cacti_country);
 
 	if (function_exists('numfmt_create')) {
@@ -879,8 +884,6 @@ function number_format_i18n($number, $decimals = null, $baseu = 1024) {
 
 			if ($number !== null) {
 				return numfmt_format($fmt, $number);
-			} else {
-				return $number;
 			}
 		}
 		cacti_log('DEBUG: Number format \'' . $fmt_key .'\' was unavailable, using older methods',false,'i18n',POLLER_VERBOSITY_HIGH);

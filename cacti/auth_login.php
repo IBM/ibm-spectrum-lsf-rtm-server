@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -206,14 +206,35 @@ if (get_nfilter_request_var('action') == 'login' || $auth_method == 2) {
 			}
 		}
 
-		if (!$error) {
-			/* set the php session */
-			$_SESSION['sess_user_id'] = $user['id'];
+			if (!$error) {
+				/* avoid session fixation */
+				cacti_session_start(true);
 
-			/* handle 'force change password' */
-			if ($user['must_change_password'] == 'on' && $auth_method == 1 && $user['password_change'] == 'on') {
-				$_SESSION['sess_change_password'] = true;
-			}
+				/* set the php session */
+				$_SESSION['sess_user_id'] = $user['id'];
+
+				/* enforce post-auth session/cookie transition hardening */
+				if (!cacti_auth_transition((int)$user['id'], 'login')) {
+					$error     = true;
+					$error_msg = __('Access Denied! User account locked.');
+					cacti_session_destroy();
+					cacti_session_start(true);
+				}
+
+				if ($error) {
+					if ($auth_method == 2) {
+						auth_display_custom_error_message($error_msg);
+						exit;
+					}
+
+					header('Location: auth_login.php');
+					exit;
+				}
+
+				/* handle 'force change password' */
+				if ($user['must_change_password'] == 'on' && $auth_method == 1 && $user['password_change'] == 'on') {
+					$_SESSION['sess_change_password'] = true;
+				}
 
 			if (db_table_exists('user_auth_group')) {
 				$group_options = db_fetch_cell_prepared('SELECT MAX(login_opts)
@@ -315,7 +336,7 @@ $selectedTheme = get_selected_theme();
 								<label for='login_password'><?php print __('Password');?></label>
 							</td>
 							<td>
-								<input type='password' autocomplete='new-password' class='ui-state-default ui-corner-all' id='login_password' name='login_password' placeholder='********'>
+								<input type='password' autocomplete='current-password' class='ui-state-default ui-corner-all' id='login_password' name='login_password' placeholder='********'>
 							</td>
 						</tr>
 						<?php
@@ -379,7 +400,7 @@ $selectedTheme = get_selected_theme();
 			<div class='loginErrors'>
 				<?php
 				if ($error) {
-					print $error_msg;
+					print html_escape($error_msg);
 				}
 				?>
 			</div>
@@ -387,7 +408,7 @@ $selectedTheme = get_selected_theme();
 		<div class='versionInfo'><?php print __('Version %s | %s', $version, COPYRIGHT_YEARS_SHORT);?></div>
 	</div>
 	<div class='loginRight'></div>
-	<script type='text/javascript'>
+	<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 	var storage = Storages.localStorage;
 
 	$(function() {
@@ -412,7 +433,7 @@ $selectedTheme = get_selected_theme();
 		}
 
 		// Control submit in order to store preferred realm
-		$('#login').submit(function(event) {
+		$('#login').on('submit', function(event) {
 			event.preventDefault();
 			if ($('#realm').length) {
 				storage.set('user_realm', $('#realm').val());

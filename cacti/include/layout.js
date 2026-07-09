@@ -1,6 +1,6 @@
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -736,9 +736,56 @@ function cactiReturnTo(href) {
 	}
 }
 
+function handleTableNav() {
+	$('.navBarNavigationNext, .navBarNavigationCenter, .navBarNavigationPrevious').find('a').each(function() {
+		$(this).on('click', function(event) {
+			var data_url = $(this).data('url');
+			var returnTo = $(this).data('return');
+
+			event.preventDefault();
+
+			if (typeof url_graph === 'function') {
+				var url_add = url_graph('');
+			} else {
+				var url_add = '';
+			}
+
+			if (data_url) {
+				if (returnTo) {
+					$.get(data_url+url_add+'&header=false', function(data) {
+						$('#' + returnTo).html(data);
+						applySkin();
+					});
+				} else {
+					document.location = data_url + url_add;
+				}
+			}
+		});
+	});
+
+	$('.tableSubHeaderCheckbox > input[type="checkbox"]').on('click', function() {
+		var prefix = $(this).data('prefix');
+		selectAll(prefix, $(this).is(':checked'));
+	});
+
+	$('.selectAllRealms').on('click', function() {
+		selectAllRealms($(this).is(':checked'));
+	});
+
+	$('.cactiReturnTo').on('click', function() {
+		var url = $(this).data('url');
+		cactiReturnTo(url);
+	});
+}
+
 /** applySkin - This function re-asserts all javascript behavior to a page
  *  that can't be set using a live attribute 'on()' */
 function applySkin() {
+	// Support callback nonces
+	$.ajaxSetup({
+		nonce: cactiNonce
+	});
+
 	pageName = basename($(location).attr('pathname'));
 
 	$('#messageContainer').remove();
@@ -747,7 +794,7 @@ function applySkin() {
 		theme = 'classic';
 
 		// debounce submits
-		$('form').submit(function() {
+		$('form').on('submit', function() {
 			$('input[type="submit"], button[type="submit"]').not('.import, .export').prop('disabled', true);
 		});
 	} else {
@@ -757,7 +804,7 @@ function applySkin() {
 		$('fieldset.reindex_methods').buttonset();
 
 		// debounce submits
-		$('form').submit(function() {
+		$('form').on('submit', function() {
 			$('input[type="submit"], button[type="submit"]').not('.import, .export').button('disable');
 		});
 	}
@@ -781,6 +828,8 @@ function applySkin() {
 	ajaxAnchors();
 
 	applySelectorVisibilityAndActions();
+
+	handleTableNav();
 
 	$('.helpPage').off('click').on('click', function(event) {
 		event.stopPropagation();
@@ -1234,7 +1283,7 @@ function makeFiltersResponsive() {
 	}
 
 	if ($('#form_graph_view').length) {
-		$('#form_graph_view').filter('input, select').not('#date1, #date2').click(function() {
+		$('#form_graph_view').find('input, select').not('#date1, #date2').on('click', function() {
 			closeDateFilters();
 		});
 	}
@@ -1670,7 +1719,7 @@ function tuneTable(object, width) {
 
 		return false;
 	} else {
-		$('#main, .cactiConsoleContentArea').css({ 'overflow-x': 'hidden' });
+		$('#main, .cactiConsoleContentArea').css({ 'overflow-x': 'auto' });
 	}
 
 	// We have to both show and hide columns that fit.
@@ -2530,7 +2579,7 @@ function getPresentHTTPErrorOrRedirect(data, url) {
 	if (typeof url != 'undefined') {
 		if (data.status >= 500) {
 			// Let the HTTP Error stick log an error
-			$.get(urlPath + 'help.php?page=' + escape(url) + '&error=' + data.status);
+			$.get(urlPath + 'help.php?page=' + encodeURIComponent(url) + '&error=' + data.status);
 		} else if (data.status >= 400) {
 			// Let the HTTP Error stick
 		} else if (data.statusText != 'abort') {
@@ -2772,7 +2821,7 @@ function setupSortable() {
 }
 
 function setupBreadcrumbs() {
-	$('#breadcrumbs > li > a').click(function(event) {
+	$('#breadcrumbs > li > a').on('click', function(event) {
 		event.preventDefault();
 		event.stopPropagation();
 
@@ -3029,7 +3078,7 @@ $(function() {
 		handlePopState();
 	}
 
-	$('#filter, #rfilter').keydown(function(event) {
+	$('#filter, #rfilter').on('keydown', function(event) {
 		if (event.keyCode == 8 && $(this).val() == '') {
 			handlePopState();
 		}
@@ -3139,7 +3188,7 @@ function setupEllipsis() {
 }
 
 function keepWindowSize() {
-	$(window).resize(function (event) {
+	$(window).on('resize', function (event) {
 		waitForFinalEvent(function() {
 			$('.cactiGraphContentArea').show();
 
@@ -3643,189 +3692,30 @@ function clearGraphTimespanFilter() {
 	});
 }
 
-function removeSpikesStdDev(local_graph_id) {
-	var href = urlPath + 'spikekill.php' +
-		'?method=stddev'   +
-		'&local_graph_id=' + local_graph_id;
+function removeSpikes(method, dryrun, local_graph_id) {
+	var graph_start = $('#graph_' + local_graph_id).attr('graph_start');
+	var graph_end   = $('#graph_' + local_graph_id).attr('graph_end');
+
+	if (!(graph_start > 0 && graph_end > 0)) {
+		console.log('FATAL: Can not find Graph ID: ' + local_graph_id);
+		return false;
+	}
 
 	closeDateFilters();
 
-	$.getJSON(href)
-		.done(function(data) {
-			checkForRedirects(data, href);
-
-			redrawGraph(local_graph_id);
-			$('#spikeresults').remove();
-			$('body').append('<div id="spikeresults" style="overflow-y:scroll;" title="' + spikeKillResults + '"></div>');
-			$('#spikeresults').html(data.results);
-			$('#spikeresults').dialog({ width:1100, maxHeight: 600 });
-		})
-		.fail(function(data) {
-			getPresentHTTPError(data);
-		}
-	);
-}
-
-function removeSpikesVariance(local_graph_id) {
 	var href = urlPath + 'spikekill.php' +
-		'?method=variance' +
-		'&local_graph_id=' + local_graph_id;
-
-	closeDateFilters();
-
-	$.getJSON(href)
-		.done(function(data) {
-			checkForRedirects(data, href);
-
-			redrawGraph(local_graph_id);
-			$('#spikeresults').remove();
-			$('body').append('<div id="spikeresults" style="overflow-y:scroll;" title="' + spikeKillResults + '"></div>');
-			$('#spikeresults').html(data.results);
-			$('#spikeresults').dialog({ width:1100, maxHeight: 600 });
-		})
-		.fail(function(data) {
-			getPresentHTTPError(data);
-		}
-	);
-}
-
-function removeSpikesInRange(local_graph_id) {
-	var href = urlPath + 'spikekill.php' +
-		'?method=fill' +
-		'&local_graph_id=' + local_graph_id +
-		'&outlier-start='  + graph_start    +
-		'&outlier-end='    + graph_end;
-
-	closeDateFilters();
-
-	$.getJSON(href)
-		.done(function(data) {
-			checkForRedirects(data, href);
-
-			redrawGraph(local_graph_id);
-			$('#spikeresults').remove();
-			$('body').append('<div id="spikeresults" style="overflow-y:scroll;" title="' + spikeKillResults + '"></div>');
-			$('#spikeresults').html(data.results);
-			$('#spikeresults').dialog({ width:1100, maxHeight: 600 });
-		})
-		.fail(function(data) {
-			getPresentHTTPError(data);
-		}
-	);
-}
-
-function removeRangeFill(local_graph_id) {
-	var href = urlPath + 'spikekill.php' +
-		'?method=float'    +
+		'?method='         + method +
+		(dryrun ? '&dryrun=true':'') +
 		'&local_graph_id=' + local_graph_id +
 		'&outlier-start='  + graph_start +
 		'&outlier-end='    + graph_end;
 
-	closeDateFilters();
-
 	$.getJSON(href)
 		.done(function(data) {
 			checkForRedirects(data, href);
 
 			redrawGraph(local_graph_id);
-			$('#spikeresults').remove();
-			$('body').append('<div id="spikeresults" style="overflow-y:scroll;" title="' + spikeKillResults + '"></div>');
-			$('#spikeresults').html(data.results);
-			$('#spikeresults').dialog({ width:1100, maxHeight: 600 });
-		})
-		.fail(function(data) {
-			getPresentHTTPError(data);
-		}
-	);
-}
 
-function dryRunStdDev(local_graph_id) {
-	var href = urlPath + 'spikekill.php' +
-		'?method=stddev'   +
-		'&dryrun=true'     +
-		'&local_graph_id=' + local_graph_id;
-
-	closeDateFilters();
-
-	$.getJSON(href)
-		.done(function(data) {
-			checkForRedirects(data, href);
-
-			$('#spikeresults').remove();
-			$('body').append('<div id="spikeresults" style="overflow-y:scroll;" title="' + spikeKillResults + '"></div>');
-			$('#spikeresults').html(data.results);
-			$('#spikeresults').dialog({ width:1100, maxHeight: 600 });
-		})
-		.fail(function(data) {
-			getPresentHTTPError(data);
-		}
-	);
-}
-
-function dryRunVariance(local_graph_id) {
-	var href = urlPath + 'spikekill.php' +
-		'?method=variance' +
-		'&dryrun=true'     +
-		'&local_graph_id=' + local_graph_id;
-
-	closeDateFilters();
-
-	$.getJSON(href)
-		.done(function(data) {
-			checkForRedirects(data, href);
-
-			$('#spikeresults').remove();
-			$('body').append('<div id="spikeresults" style="overflow-y:scroll;" title="' + spikeKillResults + '"></div>');
-			$('#spikeresults').html(data.results);
-			$('#spikeresults').dialog({ width:1100, maxHeight: 600 });
-		})
-		.fail(function(data) {
-			getPresentHTTPError(data);
-		}
-	);
-}
-
-function dryRunSpikesInRange(local_graph_id) {
-	var href = urlPath + 'spikekill.php' +
-		'?method=fill' +
-		'&dryrun=true' +
-		'&local_graph_id=' + local_graph_id +
-		'&outlier-start='  + graph_start +
-		'&outlier-end='    + graph_end;
-
-	closeDateFilters();
-
-	$.getJSON(href)
-		.done(function(data) {
-			checkForRedirects(data, href);
-
-			redrawGraph(local_graph_id);
-			$('#spikeresults').remove();
-			$('body').append('<div id="spikeresults" style="overflow-y:scroll;" title="' + spikeKillResults + '"></div>');
-			$('#spikeresults').html(data.results);
-			$('#spikeresults').dialog({ width:1100, maxHeight: 600 });
-		})
-		.fail(function(data) {
-			getPresentHTTPError(data);
-		}
-	);
-}
-
-function dryRunRangeFill(local_graph_id) {
-	var href = urlPath + 'spikekill.php' +
-		'?method=float' +
-		'&dryrun=true'  +
-		'&local_graph_id=' + local_graph_id +
-		'&outlier-start='  + graph_start +
-		'&outlier-end='    + graph_end;
-
-	closeDateFilters();
-
-	$.getJSON(href)
-		.done(function(data) {
-			checkForRedirects(data, href);
-
-			redrawGraph(local_graph_id);
 			$('#spikeresults').remove();
 			$('body').append('<div id="spikeresults" style="overflow-y:scroll;" title="' + spikeKillResults + '"></div>');
 			$('#spikeresults').html(data.results);
@@ -4000,7 +3890,7 @@ function initializeGraphs(disable_cache) {
 	$('#form_graph_view').off('submit').on('submit', function(event) {
 		event.preventDefault();
 		event.stopPropagation();
-		applyFilter();
+		applyGraphFilter();
 	});
 
 	var mainWidth = getMainWidth() - 30;
@@ -4195,6 +4085,122 @@ function initializeGraphs(disable_cache) {
 		});
 	});
 }
+
+$.widget('ui.tooltip', $.ui.tooltip, {
+	_create: function() {
+		this._on( {
+			mouseover: 'open',
+			focusin: 'open'
+		} );
+
+		// IDs of generated tooltips, needed for destroy
+		this.tooltips = {};
+
+		// IDs of parent tooltips where we removed the title attribute
+		this.parents = {};
+
+		// Append the aria-live region so tooltips announce correctly,
+		// but only once !
+		let liveRegion = $('[role=log].ui-helper-hidden-accessible');
+		if ( liveRegion.length === 0 ) {
+			this.liveRegion = $( '<div>' )
+				.attr( {
+					role: 'log',
+					'aria-live': 'assertive',
+					'aria-relevant': 'additions'
+				} )
+				.appendTo( this.document[ 0 ].body );
+			this._addClass( this.liveRegion, null, 'ui-helper-hidden-accessible' );
+		}else{
+			this.liveRegion = liveRegion;
+		}
+		this.disabledTitles = $( [] );
+	},
+	_open: function( event, target, content ) {
+		var tooltipData, tooltip, delayedShow, a11yContent,
+			positionOption = $.extend( {}, this.options.position );
+
+		if ( !content ) {
+			return;
+		}
+
+		// Content can be updated multiple times. If the tooltip already
+		// exists, then just update the content and bail.
+		tooltipData = this._find( target );
+		if ( tooltipData ) {
+			tooltipData.tooltip.find( '.ui-tooltip-content' ).html( content );
+			return;
+		}
+
+		// If we have a title, clear it to prevent the native tooltip
+		// we have to check first to avoid defining a title if none exists
+		// (we don't want to cause an element to start matching [title])
+		//
+		// We use removeAttr only for key events, to allow IE to export the correct
+		// accessible attributes. For mouse events, set to empty string to avoid
+		// native tooltip showing up (happens only when removing inside mouseover).
+		if ( target.is( '[title]' ) ) {
+			if ( event && event.type === 'mouseover' ) {
+				target.attr( 'title', '' );
+			} else {
+				target.removeAttr( 'title' );
+			}
+		}
+
+		tooltipData = this._tooltip( target );
+		tooltip = tooltipData.tooltip;
+		this._addDescribedBy( target, tooltip.attr( 'id' ) );
+		tooltip.find( '.ui-tooltip-content' ).html( content );
+
+		// Support: Voiceover on OS X, JAWS on IE <= 9
+		// JAWS announces deletions even when aria-relevant="additions"
+		// Voiceover will sometimes re-read the entire log region's contents from the beginning
+		this.liveRegion.empty();
+		a11yContent = $( '<div>' ).html( tooltip.find( '.ui-tooltip-content' ).html() );
+		a11yContent.removeAttr( 'name' ).find( '[name]' ).removeAttr( 'name' );
+		a11yContent.removeAttr( 'id' ).find( '[id]' ).removeAttr( 'id' );
+		a11yContent.appendTo( this.liveRegion );
+
+		function position( event ) {
+			positionOption.of = event;
+			if ( tooltip.is( ':hidden' ) ) {
+				return;
+			}
+			tooltip.position( positionOption );
+		}
+		if ( this.options.track && event && /^mouse/.test( event.type ) ) {
+			this._on( this.document, {
+				mousemove: position
+			} );
+
+			// trigger once to override element-relative positioning
+			position( event );
+		} else {
+			tooltip.position( $.extend( {
+				of: target
+			}, this.options.position ) );
+		}
+
+		tooltip.hide();
+
+		this._show( tooltip, this.options.show );
+
+		// Handle tracking tooltips that are shown with a delay (#8644). As soon
+		// as the tooltip is visible, position the tooltip using the most recent
+		// event.
+		// Adds the check to add the timers only when both delay and track options are set (#14682)
+		if ( this.options.track && this.options.show && this.options.show.delay ) {
+			delayedShow = this.delayedShow = setInterval( function() {
+				if ( tooltip.is( ':visible' ) ) {
+					position( positionOption.of );
+					clearInterval( delayedShow );
+				}
+			}, 13 );
+		}
+
+		this._trigger( 'open', event, { tooltip: tooltip } );
+	},
+})
 
 $.widget('custom.languageselect', $.ui.selectmenu, {
 	_renderItem: function(ul, item) {
@@ -4531,19 +4537,19 @@ function setSNMPSecurity() {
 				$('#snmp_security_level').selectmenu('refresh');
 			}
 
-			$('#snmp_password').keyup(function() {
+			$('#snmp_password').on('keyup', function() {
 				checkSNMPPassphrase('auth');
 			});
 
-			$('#snmp_password_confirm').keyup(function() {
+			$('#snmp_password_confirm').on('keyup', function() {
 				checkSNMPPassphraseConfirm('auth');
 			});
 
-			$('#snmp_priv_passphrase').keyup(function() {
+			$('#snmp_priv_passphrase').on('keyup', function() {
 				checkSNMPPassphrase('priv');
 			});
 
-			$('#snmp_priv_passphrase_confirm').keyup(function() {
+			$('#snmp_priv_passphrase_confirm').on('keyup', function() {
 				checkSNMPPassphraseConfirm('priv');
 			});
 		}

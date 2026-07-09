@@ -755,7 +755,7 @@ if (cacti_sizeof($parms)) {
 			$method = 2;
 		}
 
-		if (!preg_match("/^(91|1010|1017|10010013|9.1|10.1|10.1.0.7|10.1.0.13)$/", $cluster_lsfver)) {
+		if (!preg_match("/^(1017|10010013|10010015|10.1.0.7|10.1.0.13|10.1.0.15)$/", $cluster_lsfver)) {
 			echo "FATAL: The LSF Version is invalid '$cluster_lsfver'\n";
 			exit -1;
 		} else if(isset($rtmvermap[$cluster_lsfver])){
@@ -1526,6 +1526,7 @@ function grid_lsf_generate_conf($clusterid, $pollerid, $lsfmaster, $lsf_lim_port
 		case '1010':
 		case '1017':
 		case '10010013':
+		case '10010015':
 			curl_setopt($ch, CURLOPT_POSTFIELDS, "ACTION=save&LSF_GET_CONF=lim&LSF_CONFDIR=".$lsf_envdir."&LSF_LIM_PORT=".$lsf_lim_port."&LSF_SERVER_HOSTS=".$lsfmaster."&LSF_VERSION=".$rtm["lsf".$lsf_version]["VERSION"]."&LSF_EGO_ENVDIR=".$lsf_envdir."&LSF_ENABLE_EGO=".$lsf_ego."&LSF_LOGDIR=".$lsf_envdir."&LSF_STRICT_CHECKING=".$lsf_strict_checking."&LSF_LOG_MASK=LOG_WARNING".($lsf_krb_auth != 'on' ? '' : '&LSB_KRB_LIB_PATH=/usr/lib64%20/usr/lib/x86_64-linux-gnu')."&LSF_GETCONF_MAX=1");
 			break;
 	}

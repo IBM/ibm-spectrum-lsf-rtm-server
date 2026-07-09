@@ -295,6 +295,7 @@ function form_save() {
 		case '1010':
 		case '1017':
 		case '10010013':
+		case '10010015':
 			if (isset_request_var('save_component_cluster') && isempty_request_var('add_dq_y')) {
 				if (!isset_request_var('perfmon_run')) {
 					set_request_var('perfmon_run', '');
@@ -462,7 +463,7 @@ function form_actions() {
 		<td class='saveRow'>
 			<input type='hidden' name='action' value='actions'>
 			<input type='hidden' name='selected_items' value='" . (isset($cluster_array) ? serialize($cluster_array) : '') . "'>
-			<input type='hidden' name='drp_action' value='" . get_nfilter_request_var('drp_action') . "'>
+			<input type='hidden' name='drp_action' value='" . html_escape(get_nfilter_request_var('drp_action')) . "'>
 			$save_html
 		</td>
 	</tr>";
@@ -744,6 +745,7 @@ function api_grid_cluster_save($clusterid, $poller_id, $clustername, $lsf_envdir
 						case '1010':
 						case '1017':
 						case '10010013':
+						case '10010015':
 							$lsf_envdir = $rtm['lsf'.$lsf_version]['LSF_ENVDIR'].$clusterid;
 							$LSF_EGO_ENVDIR = $lsf_envdir;
 							curl_setopt($ch, CURLOPT_URL, 'https://127.0.0.1:'.$advocate_port.'/hostSettings/lsfHosts');
@@ -1127,7 +1129,7 @@ function grid_cluster_edit() {
 
 		//For new freshed RTM and upgraded RTM, when adding a new cluster, just allow to show LSF 10 or above pollers
 		$fields_grid_cluster_edit1 = $fields_grid_cluster_edit;
-		$fields_grid_cluster_edit1['cluster_config']['poller_id']['sql'] = "SELECT poller_id AS id, poller_name AS name FROM grid_pollers WHERE lsf_version IN (91, 1010, 1017, 10010013) ORDER BY lsf_version ASC";
+		$fields_grid_cluster_edit1['cluster_config']['poller_id']['sql'] = "SELECT poller_id AS id, poller_name AS name FROM grid_pollers WHERE lsf_version IN (1017, 10010013, 10010015) ORDER BY lsf_version ASC";
 
 	}
 

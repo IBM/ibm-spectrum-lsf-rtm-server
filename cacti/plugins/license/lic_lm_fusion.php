@@ -895,6 +895,7 @@ function lic_lm_build_statistic(){
 	}
 
 	$display_text = lic_build_display_array();
+
 	$stats = lic_lm_get_license_records($sql_where, TRUE, $row_limit, $total_rows);
 
 	$nav = html_nav_bar('lic_lm_fusion.php?action=view', MAX_DISPLAY_PAGES, get_request_var('page'), $row_limit, $total_rows, '', __('License Service Statistics'), 'page', 'main');
@@ -905,7 +906,16 @@ function lic_lm_build_statistic(){
 
 	html_header_sort($display_text, get_request_var('sort_column'), get_request_var('sort_direction'), false);
 
-	if (cacti_sizeof($stats)){
+	if ($stats === false) {
+		global $database_last_error;
+		if (strpos($database_last_error, 'max_statement_time exceeded') !== false) {
+			cacti_log('WARNING: The database query from lic_lm_fusion.php is taking too long. Add a user of feature filter.', false);
+			print "<tr><td colspan='7'><em>The query is taking too long.  Consider filtering by user or feature.</em></td></tr>";
+		} else {
+			print "<tr><td colspan='7'><em>The database query failed.  Consult the logs for more details.</em></td></tr>";
+		}
+		html_end_box(false);
+    } elseif (cacti_sizeof($stats)){
 		foreach ($stats as $stat){
 			form_alternate_row();
 			print '<td>'.$stat['feature'].'</td>';
@@ -958,6 +968,14 @@ function lic_lm_get_first_feature() {
 function lic_lm_get_license_records(&$sql_where, $apply_limits=TRUE, $row_limit='30', &$total_rows = 0){
 	if (get_request_var('service_id') != -1){
 		$sql_where = 'WHERE lic_daily_stats.service_id='.get_request_var('service_id');
+	} else {
+		if (get_request_var('poller_type') > 0) {
+			$sql_for_lp = "SELECT service_id FROM lic_services WHERE poller_type='" . get_request_var('poller_type') . "'" ;
+			$service_ids = db_fetch_assoc($sql_for_lp);
+			if (cacti_sizeof($service_ids)) {
+				$sql_where = 'WHERE lic_daily_stats.service_id IN (' . implode(',', array_column($service_ids, 'service_id')) . ')';
+			}
+		}
 	}
 
 	if (get_request_var('feature') != -1){
@@ -970,7 +988,7 @@ function lic_lm_get_license_records(&$sql_where, $apply_limits=TRUE, $row_limit=
 
 	lic_set_time_span_values($current, $earlier);
 
-	$sql_where .= ($sql_where != '' ? ' AND':'WHERE') . " date_recorded BETWEEN '$earlier' AND '$current' AND user!='' AND host!='' AND user !='N/A' AND host !='N/A'";
+	$sql_where .= ($sql_where != '' ? ' AND':'WHERE') . " date_recorded BETWEEN '$earlier' AND '$current' AND user NOT IN ('', 'N/A') AND host NOT IN ('', 'N/A')";
 
 	if (get_request_var('type') == 'utilization'){
 		$group_by = 'GROUP BY lic_daily_stats.service_id, lic_daily_stats.feature, lic_daily_stats.user, lic_daily_stats.host, lic_daily_stats.vendor';
@@ -987,18 +1005,17 @@ function lic_lm_get_license_records(&$sql_where, $apply_limits=TRUE, $row_limit=
 		$partition_query = make_partition_query('lic_daily_stats', $earlier, $current, $sql_where);
 	}
 
-	$sql_join_lp = "";
-	if (get_request_var('poller_type') > 0) {
-		$sql_where .= (strlen($sql_where)  ? ' AND ' : ' WHERE ') . '(poller_type=' . get_request_var('poller_type') . ')';
-
-		$sql_join_lp = "INNER JOIN lic_pollers lp ON lp.id=lic_services.poller_id";
+	/* Apply timouts for this large query */
+	global $cnn_id;
+	$mver = db_get_global_variable('version', $cnn_id);
+	if (strpos($mver, 'MariaDB') !== false) {
+		$presql = "SET STATEMENT max_statement_time=30 FOR ";
+	} else {
+		$presql = "SET STATEMENT max_execution_time=30000 FOR ";
 	}
 
-	$sql_query = "SELECT lic_daily_stats.*
+	$sql_query = "$presql SELECT lic_daily_stats.*
 		FROM $partition_query
-		INNER JOIN lic_services
-		ON (lic_daily_stats.service_id=lic_services.service_id)
-		$sql_join_lp
 		$sql_where
 		$group_by
 		$sort_order";
@@ -1007,14 +1024,19 @@ function lic_lm_get_license_records(&$sql_where, $apply_limits=TRUE, $row_limit=
 		$sql_query .= ' LIMIT ' . ($row_limit*(get_request_var('page')-1)) . ',' . $row_limit;
 	}
 
-	$total_rows_query = "SELECT lic_daily_stats.*
+	$total_rows_query = "$presql SELECT lic_daily_stats.*
 		FROM $partition_query
-		INNER JOIN lic_services
-		ON (lic_daily_stats.service_id=lic_services.service_id)
-		$sql_join_lp $sql_where $group_by";
+		$sql_where $group_by";
 
-	$total_rows = lic_count_query_size(db_fetch_assoc($total_rows_query));
+	$total_rows_result = db_fetch_assoc($total_rows_query);
 
+	/* Stop function on DB call failure */
+	if ($total_rows_result === false) {
+		$total_rows = 0;
+		return false;
+	} else {
+		$total_rows = lic_count_query_size($total_rows_result);
+	}
 	//echo $sql_query."<br>";
 
 	return db_fetch_assoc($sql_query);

@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -76,19 +76,21 @@ function api_plugin_hook($name) {
 			$plugin_name = $hdata['name'];
 			$plugin_file = $hdata['file'];
 
-			// Security check
-			if (strpos($plugin_file, '..') !== false) {
-				cacti_log("ERROR: Attempted inclusion of not plugin file $plugin_file from $plugin_name with the hook name $name", false, 'SECURITY');
-				continue;
-			}
-
 			if (!in_array($plugin_name, $plugins_integrated, true)) {
 				$plugin_func = $hdata['function'];
-				$full_path   = $config['base_path'] . '/plugins/' . $plugin_name . '/' . $plugin_file;
 				$debounce    = 'mpf_' . $plugin_name . '_' . $plugin_func;
 
-				if (file_exists($full_path)) {
-					include_once($full_path);
+				if ($plugin_name !== 'internal') {
+					$full_path = cacti_plugin_path($plugin_name, $plugin_file);
+
+					if ($full_path === false) {
+						cacti_log("ERROR: Attempted inclusion of invalid plugin file $plugin_file from $plugin_name with the hook name $name", false, 'SECURITY');
+						continue;
+					}
+
+					if (file_exists($full_path)) {
+						include_once($full_path);
+					}
 				}
 
 				if (function_exists($plugin_func)) {
@@ -145,8 +147,12 @@ function api_plugin_hook_function($name, $parm = NULL) {
 			if (!in_array($hdata['name'], $plugins_integrated)) {
 				$p[] = $hdata['name'];
 
-				if (file_exists($config['base_path'] . '/plugins/' . $hdata['name'] . '/' . $hdata['file'])) {
-					include_once($config['base_path'] . '/plugins/' . $hdata['name'] . '/' . $hdata['file']);
+				if ($hdata['name'] !== 'internal') {
+					$plugin_include = cacti_plugin_path($hdata['name'], $hdata['file']);
+
+					if ($plugin_include !== false && file_exists($plugin_include)) {
+						include_once($plugin_include);
+					}
 				}
 
 				$function = $hdata['function'];
@@ -571,9 +577,8 @@ function api_plugin_db_changes_remove($plugin) {
 	if (cacti_count($tables)) {
 		foreach ($tables as $table) {
 			db_execute('DROP TABLE IF EXISTS `' . $table['table'] . '`;');
+			api_plugin_drop_remote_table($table['table']);
 		}
-
-		api_plugin_drop_remote_table($table['table']);
 
 		db_execute_prepared("DELETE FROM plugin_db_changes
 			WHERE plugin = ?
@@ -703,7 +708,13 @@ function api_plugin_install($plugin) {
 		exit;
 	}
 
-	include_once($config['base_path'] . "/plugins/$plugin/setup.php");
+	if ($plugin !== 'internal') {
+		$plugin_setup = cacti_plugin_path($plugin, 'setup.php');
+
+		if ($plugin_setup !== false && file_exists($plugin_setup)) {
+			include_once($plugin_setup);
+		}
+	}
 
 	$exists = db_fetch_assoc_prepared('SELECT id
 		FROM plugin_config
@@ -792,16 +803,20 @@ function api_plugin_uninstall($plugin, $tables = true) {
 
 	$plugin_found = false;
 
-	if (file_exists($config['base_path'] . "/plugins/$plugin/setup.php")) {
-		include_once($config['base_path'] . "/plugins/$plugin/setup.php");
+	if ($plugin !== 'internal') {
+		$plugin_setup = cacti_plugin_path($plugin, 'setup.php');
 
-		// Run the Plugin's Uninstall Function first
-		$function = 'plugin_' . $plugin . '_uninstall';
+		if ($plugin_setup !== false && file_exists($plugin_setup)) {
+			include_once($plugin_setup);
 
-		if (function_exists($function)) {
-			$function();
+			// Run the Plugin's Uninstall Function first
+			$function = 'plugin_' . $plugin . '_uninstall';
 
-			$plugin_found = true;
+			if (function_exists($function)) {
+				$function();
+
+				$plugin_found = true;
+			}
 		}
 	}
 
@@ -835,16 +850,20 @@ function api_plugin_check_config($plugin) {
 
 	clearstatcache();
 
-	if (file_exists($config['base_path'] . "/plugins/$plugin/setup.php")) {
-		include_once($config['base_path'] . "/plugins/$plugin/setup.php");
+	if ($plugin !== 'internal') {
+		$plugin_setup = cacti_plugin_path($plugin, 'setup.php');
 
-		$function = 'plugin_' . $plugin . '_check_config';
+		if ($plugin_setup !== false && file_exists($plugin_setup)) {
+			include_once($plugin_setup);
 
-		if (function_exists($function)) {
-			return $function();
+			$function = 'plugin_' . $plugin . '_check_config';
+
+			if (function_exists($function)) {
+				return $function();
+			}
+
+			return true;
 		}
-
-		return true;
 	}
 
 	return false;
@@ -873,7 +892,7 @@ function api_plugin_is_enabled($plugin) {
 	$status = db_fetch_cell_prepared('SELECT status
 		FROM plugin_config
 		WHERE directory = ?',
-		array($plugin), false);
+		array($plugin), '', false);
 
 	if ($status == '1') {
 		$pstatus[$plugin] = true;
@@ -968,32 +987,42 @@ function api_plugin_moveup($plugin) {
 		WHERE directory = ?',
 		array($plugin));
 
-	if (!empty($id)) {
-		$temp_id = db_fetch_cell('SELECT MAX(id) FROM plugin_config')+1;
-
+	if ($id !== false) {
 		$prior_id = db_fetch_cell_prepared('SELECT MAX(id)
 			FROM plugin_config
 			WHERE id < ?',
 			array($id));
 
-		/* update the above plugin to the prior temp id */
-		db_execute_prepared('UPDATE plugin_config SET id = ? WHERE id = ?', array($temp_id, $prior_id));
-		db_execute_prepared('UPDATE plugin_config SET id = ? WHERE id = ?', array($prior_id, $id));
-		db_execute_prepared('UPDATE plugin_config SET id = ? WHERE id = ?', array($id, $temp_id));
+		/* MAX() on an empty set returns NULL; without a guard, the UPDATE
+		 * below would set id = NULL on the current plugin, which non-strict
+		 * MariaDB/MySQL silently stores as 0, corrupting the primary key. */
+		if ($prior_id !== null) {
+			$temp_id = db_fetch_cell('SELECT MAX(id) FROM plugin_config') + 1;
+
+			db_execute_prepared('UPDATE plugin_config SET id = ? WHERE id = ?', array($temp_id, $prior_id));
+			db_execute_prepared('UPDATE plugin_config SET id = ? WHERE id = ?', array($prior_id, $id));
+			db_execute_prepared('UPDATE plugin_config SET id = ? WHERE id = ?', array($id, $temp_id));
+		}
 	}
 
 	api_plugin_replicate_config();
 }
 
 function api_plugin_movedown($plugin) {
-	$id      = db_fetch_cell_prepared('SELECT id FROM plugin_config WHERE directory = ?', array($plugin));
-	$temp_id = db_fetch_cell('SELECT MAX(id) FROM plugin_config')+1;
-	$next_id = db_fetch_cell_prepared('SELECT MIN(id) FROM plugin_config WHERE id > ?', array($id));
+	$id = db_fetch_cell_prepared('SELECT id FROM plugin_config WHERE directory = ?', array($plugin));
 
-	/* update the above plugin to the prior temp id */
-	db_execute_prepared('UPDATE plugin_config SET id = ? WHERE id = ?', array($temp_id, $next_id));
-	db_execute_prepared('UPDATE plugin_config SET id = ? WHERE id = ?', array($next_id, $id));
-	db_execute_prepared('UPDATE plugin_config SET id = ? WHERE id = ?', array($id, $temp_id));
+	if ($id !== false) {
+		$next_id = db_fetch_cell_prepared('SELECT MIN(id) FROM plugin_config WHERE id > ?', array($id));
+
+		/* MIN() on an empty set returns NULL; same NULL->0 corruption risk as moveup. */
+		if ($next_id !== null) {
+			$temp_id = db_fetch_cell('SELECT MAX(id) FROM plugin_config') + 1;
+
+			db_execute_prepared('UPDATE plugin_config SET id = ? WHERE id = ?', array($temp_id, $next_id));
+			db_execute_prepared('UPDATE plugin_config SET id = ? WHERE id = ?', array($next_id, $id));
+			db_execute_prepared('UPDATE plugin_config SET id = ? WHERE id = ?', array($id, $temp_id));
+		}
+	}
 
 	api_plugin_replicate_config();
 }
@@ -1009,7 +1038,7 @@ function api_plugin_register_hook($plugin, $hook, $function, $file, $enable = fa
 		FROM plugin_hooks
 		WHERE name = ?
 		AND hook = ?',
-		array($plugin, $hook), false);
+		array($plugin, $hook), '', false);
 
 	if (!$exists) {
 		// enable the hooks if they are system level hooks to enable configuration
@@ -1183,7 +1212,7 @@ function api_plugin_register_realm($plugin, $file, $display, $admin = true) {
 				FROM plugin_realms
 				WHERE plugin = ?
 				AND file = ?',
-				array($plugin, $file), false);
+				array($plugin, $file), '', false);
 
 			$realm_id = $realm_id + 100;
 
@@ -1343,6 +1372,43 @@ function plugin_load_info_defaults($file, $info, $defaults = array()) {
 	return $result;
 }
 
+function plugin_clean_old_plugin_info() {
+	db_execute_prepared('DELETE ph
+		FROM plugin_hooks AS ph
+		LEFT JOIN plugin_config AS pc
+		ON ph.name = pc.directory
+		WHERE pc.directory IS NULL
+		AND ph.name != ?',
+		array('internal'));
+
+	db_execute_prepared('DELETE pd
+		FROM plugin_db_changes AS pd
+		LEFT JOIN plugin_config AS pc
+		ON pd.plugin = pc.directory
+		WHERE pc.directory IS NULL
+		AND pd.plugin != ?',
+		array('internal'));
+
+	$realms = db_fetch_assoc_prepared('SELECT pr.id
+		FROM plugin_realms AS pr
+		LEFT JOIN plugin_config AS pc
+		ON pr.plugin = pc.directory
+		WHERE pc.directory IS NULL
+		AND pr.plugin != ?',
+		array('internal'));
+
+	if (cacti_sizeof($realms)) {
+		foreach($realms as $r) {
+			$id = $r['id'] + 100;
+
+			db_execute_prepared('DELETE FROM user_auth_realm WHERE realm_id = ?', array($id));
+			db_execute_prepared('DELETE FROM user_auth_group_realm WHERE realm_id = ?', array($id));
+
+			db_execute_prepared('DELETE FROM plugin_realms WHERE id = ?', array($r['id']));
+		}
+	}
+}
+
 function plugin_load_info_file($file) {
 	$info = false;
 	if (file_exists($file)) {
@@ -1362,4 +1428,3 @@ function plugin_load_info_file($file) {
 
 	return $info;
 }
-

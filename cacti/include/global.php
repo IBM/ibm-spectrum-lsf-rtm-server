@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -276,6 +276,7 @@ if (isset($i18n_text_log)) {
 /* include base modules */
 include_once($config['library_path'] . '/database.php');
 include_once($config['library_path'] . '/functions.php');
+include_once($config['library_path'] . '/headers_secure.php');
 include_once($config['include_path'] . '/global_constants.php');
 include_once($config['library_path'] . '/html.php');
 include_once($config['library_path'] . '/html_utility.php');
@@ -371,7 +372,7 @@ if ($config['poller_id'] > 1 || isset($rdatabase_hostname)) {
 		print $li . 'the database is running.' . $il;
 		print $li . 'the credentials in config.php are valid.' . $il;
 		print $lu . $sp;
-		if (isset($_REQUEST['display_db_errors']) && !empty($config['DATABASE_ERROR'])) {
+		if (isset_request_var('display_db_errors') && !empty($config['DATABASE_ERROR'])) {
 			print $ps . 'The following database errors occurred: ' . $ul;
 			foreach ($config['DATABASE_ERROR'] as $e) {
 				print $li . $e['Code'] . ': ' . $e['Error'] . $il;
@@ -415,8 +416,10 @@ db_cacti_initialized($config['is_web']);
 
 if ($config['is_web']) {
 	if (read_config_option('force_https') == 'on') {
-		if (!isset($_SERVER['HTTPS']) && isset($_SERVER['HTTP_HOST']) && isset($_SERVER['REQUEST_URI'])) {
-			header('Location: https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . PHP_EOL . PHP_EOL);
+		$is_https = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== '' && strtolower($_SERVER['HTTPS']) !== 'off');
+
+		if (!$is_https && isset($_SERVER['HTTP_HOST']) && isset($_SERVER['REQUEST_URI'])) {
+			header('Location: https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
 			exit;
 		}
 	}
@@ -428,6 +431,7 @@ if ($config['is_web']) {
 	ini_set('session.cookie_httponly', true);
 	ini_set('session.cookie_path', $config['url_path']);
 	ini_set('session.use_strict_mode', true);
+	ini_set('session.use_only_cookies', true);
 
 	$options = array(
 		'cookie_httponly' => true,
@@ -462,23 +466,12 @@ if ($config['is_web']) {
 
 	/* we don't want these pages cached */
 	header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-	header('X-Frame-Options: SAMEORIGIN');
 
-	/* increased web hardening */
-	$script_policy = read_config_option('content_security_policy_script');
-	if ($script_policy == 'unsafe-eval') {
-		$script_policy = "'$script_policy'";
-	} else {
-		$script_policy = '';
-	}
-	$alternates = html_escape(read_config_option('content_security_alternate_sources'));
-
-	header("Content-Security-Policy: default-src *; img-src 'self' $alternates data: blob:; style-src 'self' 'unsafe-inline' $alternates; script-src 'self' $script_policy 'unsafe-inline' $alternates; frame-ancestors 'self'; worker-src 'self' $alternates;");
-
-	/* prevent IE from silently rejects cookies sent from third party sites. */
-	header('P3P: CP="CAO PSA OUR"');
-	header('Cache-Control: no-store, no-cache, must-revalidate');
-	header('Cache-Control: max-age=31536000');
+	/* All CSP / HSTS / X-Frame-Options / Referrer / Permissions headers
+	 * flow through one helper so the policy has a single authoritative
+	 * source. The prior layout also duplicated CSP as a <meta> tag,
+	 * which weakened the header policy. */
+	CactiSecureHeaders::emitHeaders();
 
 	cacti_session_start();
 
@@ -559,6 +552,7 @@ include_once($config['library_path'] . '/snmpagent.php');
 include_once($config['library_path'] . '/aggregate.php');
 include_once($config['library_path'] . '/api_automation.php');
 include_once($config['include_path'] . '/csrf.php');
+include_once($config['include_path'] . '/vendor/autoload.php');
 
 if ($config['is_web']) {
 	/* raise a message and perform a page refresh if we've changed modes */

@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -291,7 +291,7 @@ function form_actions() {
 
 	form_start('data_source_profiles.php');
 
-	html_start_box($profile_actions[get_request_var('drp_action')], '60%', '', '3', 'center', '');
+	html_start_box(escape_page_action($profile_actions, get_nfilter_request_var('drp_action')), '60%', '', '3', 'center', '');
 
 	if (isset($profile_array) && cacti_sizeof($profile_array)) {
 		if (get_request_var('drp_action') == '1') { // delete
@@ -302,7 +302,7 @@ function form_actions() {
 				</td>
 			</tr>\n";
 
-			$save_html = "<input type='button' class='ui-button ui-corner-all ui-widget' value='" . __esc('Cancel') . "' onClick='cactiReturnTo()'>&nbsp;<input type='submit' class='ui-button ui-corner-all ui-widget' value='" . __esc('Continue') . "' title='" . __n('Delete Data Source Profile', 'Delete Data Source Profiles', cacti_sizeof($profile_array)) . "'>";
+			$save_html = "<input type='button' class='ui-button ui-corner-all ui-widget cactiReturnTo' value='" . __esc('Cancel') . "'>&nbsp;<input type='submit' class='ui-button ui-corner-all ui-widget' value='" . __esc('Continue') . "' title='" . __n('Delete Data Source Profile', 'Delete Data Source Profiles', cacti_sizeof($profile_array)) . "'>";
 		} elseif (get_request_var('drp_action') == '2') { // duplicate
 			print "<tr>
 				<td class='textArea' class='odd'>
@@ -312,7 +312,7 @@ function form_actions() {
 				</td>
 			</tr>\n";
 
-			$save_html = "<input type='button' class='ui-button ui-corner-all ui-widget' value='" . __esc('Cancel') . "' onClick='cactiReturnTo()'>&nbsp;<input type='submit' class='ui-button ui-corner-all ui-widget' value='" . __esc('Continue') . "' title='" . __n('Duplicate Data Source Profile', 'Duplicate Date Source Profiles', cacti_sizeof($profile_array)) . "'>";
+			$save_html = "<input type='button' class='ui-button ui-corner-all ui-widget cactiReturnTo' value='" . __esc('Cancel') . "'>&nbsp;<input type='submit' class='ui-button ui-corner-all ui-widget' value='" . __esc('Continue') . "' title='" . __n('Duplicate Data Source Profile', 'Duplicate Date Source Profiles', cacti_sizeof($profile_array)) . "'>";
 		}
 	} else {
 		raise_message(40);
@@ -324,7 +324,7 @@ function form_actions() {
 		<td class='saveRow'>
 			<input type='hidden' name='action' value='actions'>
 			<input type='hidden' name='selected_items' value='" . (isset($profile_array) ? serialize($profile_array) : '') . "'>
-			<input type='hidden' name='drp_action' value='" . get_request_var('drp_action') . "'>
+			<input type='hidden' name='drp_action' value='" . html_escape(get_request_var('drp_action')) . "'>
 			$save_html
 		</td>
 	</tr>\n";
@@ -526,7 +526,7 @@ function item_edit() {
 	form_save_button('data_source_profiles.php?action=edit&id=' . get_request_var('profile_id'));
 
 	?>
-	<script type='text/javascript'>
+	<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 
 	var profile_id=<?php print get_request_var('profile_id') != '' ? get_request_var('profile_id'):0;?>;
 	var rows_to = false;
@@ -536,12 +536,12 @@ function item_edit() {
 		get_span();
 		get_size();
 
-		$('#steps').change(function() {
+		$('#steps').on('change', function() {
 			get_span();
 			get_size();
 		});
 
-        $('#rows').keyup(function() {
+        $('#rows').on('keyup', function() {
             if (rows_to) { clearTimeout(rows_to); }
             rows_to = setTimeout(function () { get_span(); get_size() }, 250);
         });
@@ -680,7 +680,7 @@ function profile_edit() {
 	form_save_button('data_source_profiles.php', 'return');
 
 	?>
-	<script type='text/javascript'>
+	<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 
 	var profile_id=<?php print get_request_var('id') != '' ? get_request_var('id'):0;?>;
 
@@ -702,12 +702,13 @@ function profile_edit() {
         });
 
 		get_size();
-		$('consolidation_function_id').change(function() {
+
+		$('#consolidation_function_id').on('change', function() {
 			get_size();
 		});
 
 		<?php if (!$readonly) {?>
-		$('.delete').click(function (event) {
+		$('.delete').on('click', function (event) {
 			event.preventDefault();
 
 			id = $(this).attr('id').split('_');
@@ -918,7 +919,7 @@ function profile() {
 						<?php print __('Profiles');?>
 					</td>
 					<td>
-						<select id='rows' name='rows' onChange='applyFilter()'>
+						<select id='rows' name='rows'>
 							<option value='-1'<?php print (get_request_var('rows') == '-1' ? ' selected>':'>') . __('Default');?></option>
 							<?php
 							if (cacti_sizeof($item_rows) > 0) {
@@ -944,7 +945,7 @@ function profile() {
 				</tr>
 			</table>
 			</form>
-			<script type='text/javascript'>
+			<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 
 			function applyFilter() {
 				strURL  = 'data_source_profiles.php?header=false';
@@ -960,15 +961,19 @@ function profile() {
 			}
 
 			$(function() {
-				$('#has_data').click(function() {
+				$('#has_data').on('click', function() {
 					applyFilter();
 				});
 
-				$('#clear').click(function() {
+				$('#rows').on('change', function() {
+					applyFilter();
+				});
+
+				$('#clear').on('click', function() {
 					clearFilter();
 				});
 
-				$('#form_dsp').submit(function(event) {
+				$('#form_dsp').on('submit', function(event) {
 					event.preventDefault();
 					applyFilter();
 				});

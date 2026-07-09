@@ -2,7 +2,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -206,9 +206,9 @@ function ss_net_snmp_disk_io($host_id_or_hostname = '') {
 					$writes = 'U';
 				} elseif ($previous["dw$index"] > $measure['value']) {
 					if ($writes != 'U') {
-						$writes += $measure['value'] + 4294967295 - $previous["dw$index"] - $previous["dw$index"];
+						$writes += intval($measure['value']) + 4294967295 - intval($previous["dw$index"]) - intval($previous["dw$index"]);
 					} else {
-						$writes = $measure['value'] + 4294967295 - $previous["dw$index"] - $previous["dw$index"];
+						$writes = intval($measure['value']) + 4294967295 - intval($previous["dw$index"]) - intval($previous["dw$index"]);
 					}
 				} else {
 					if ($writes != 'U') {

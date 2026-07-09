@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -39,7 +39,7 @@ if (cacti_count($_SERVER['argv']) < 4) {
 	exit(-1);
 }
 
-$poller_id = $_SERVER['argv'][1];
+$poller_id = preg_match('/^[a-zA-Z0-9_-]{1,64}$/', $_SERVER['argv'][1]) ? $_SERVER['argv'][1] : '';
 $graph_id  = (int)$_SERVER['argv'][2];
 $interval  = (int)$_SERVER['argv'][3];
 
@@ -112,7 +112,7 @@ if (cacti_sizeof($idbyhost)) {
 		);
 
 		if (function_exists('proc_open')) {
-			$cactiphp = proc_open(read_config_option('path_php_binary') . ' -q ' . $config['base_path'] . '/script_server.php realtime ' . $poller_id, $cactides, $pipes);
+			$cactiphp = proc_open(cacti_escapeshellcmd(read_config_option('path_php_binary')) . ' -q ' . cacti_escapeshellarg($config['base_path'] . '/script_server.php') . ' realtime ' . cacti_escapeshellarg($poller_id), $cactides, $pipes);
 			$output = fgets($pipes[1], 1024);
 			$using_proc_function = true;
 		} else {
@@ -172,6 +172,12 @@ if (cacti_sizeof($idbyhost)) {
 
 			if (cacti_sizeof($poller_items)) {
 				foreach($poller_items as $item) {
+					/* Reset between iterations: a poller_item action that
+					 * is not handled by the switch below must not inherit
+					 * the previous iteration's $output and write it into
+					 * poller_output_realtime under the wrong local_data_id. */
+					unset($output);
+
 					switch ($item['action']) {
 					case POLLER_ACTION_SNMP: /* snmp */
 						if (($item['snmp_version'] == 0) || (($item['snmp_community'] == '') && ($item['snmp_version'] != 3))) {

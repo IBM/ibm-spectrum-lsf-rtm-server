@@ -50,32 +50,15 @@ $lsf_versions = array(
 	'705'    => __('LSF 7.0 Update 5', 'grid'),
 	'706'    => __('LSF 7.0 Update 6', 'grid'),
 	'8'      => __('LSF 8', 'grid'),*/
-	'91'     => __('LSF 9.1', 'grid'),
-	'1010'   => __('LSF 10.1', 'grid'),
 	'1017'   => __('LSF 10.1.0.7', 'grid'),
-	'10010013' => __('LSF 10.1.0.13', 'grid')
+	'10010013' => __('LSF 10.1.0.13', 'grid'),
+    '10010015' => __('LSF 10.1.0.15', 'grid')
 );
 
-$oob_lsf_versions = array('91', '1010', '1017', '10010013');
+$oob_lsf_versions = array('1017', '10010013', '10010015');
 
 //Rename original LSF_SERVERDIR to RTM_POLLERBINDIR, and add new RTM_POLLERBINDIR as acutal eauth location
 $rtm = array(
-	'lsf91' => array(
-		'PATH' => RTM_ROOT . DELIM . 'lsf91' . DELIM,
-		'VERSION' => '9.1',
-		'LSF_ENVDIR' => RTM_ROOT . DELIM . 'etc' . DELIM,
-		'RTM_POLLERBINDIR' => RTM_ROOT . DELIM . 'lsf91' . DELIM . 'bin' . DELIM,
-		'LSF_SERVERDIR' => RTM_ROOT . DELIM . 'lsf91' . DELIM . 'etc' . DELIM,
-		'DESC' => 'Poller for LSF 9.1'
-	),
-	'lsf1010' => array(
-		'PATH' => RTM_ROOT . DELIM . 'lsf101' . DELIM,
-		'VERSION' => '10.1',
-		'LSF_ENVDIR' => RTM_ROOT . DELIM . 'etc' . DELIM,
-		'RTM_POLLERBINDIR' => RTM_ROOT . DELIM . 'lsf101' . DELIM . 'bin' . DELIM,
-		'LSF_SERVERDIR' => RTM_ROOT . DELIM . 'lsf101' . DELIM . 'etc' . DELIM,
-		'DESC' => 'Poller for LSF 10.1'
-	),
 	'lsf1017' => array(
 		'PATH' => RTM_ROOT . DELIM . 'lsf1017' . DELIM,
 		'VERSION' => '10.1',
@@ -91,14 +74,21 @@ $rtm = array(
 		'RTM_POLLERBINDIR' => RTM_ROOT . DELIM . 'lsf10.1.0.13' . DELIM . 'bin' . DELIM,
 		'LSF_SERVERDIR' => RTM_ROOT . DELIM . 'lsf10.1.0.13' . DELIM . 'etc' . DELIM,
 		'DESC' => 'Poller for LSF 10.1.0.13'
+	),
+    'lsf10010015' => array(
+		'PATH' => RTM_ROOT . DELIM . 'lsf10.1.0.15' . DELIM,
+		'VERSION' => '10.1',
+		'LSF_ENVDIR' => RTM_ROOT . DELIM . 'etc' . DELIM,
+		'RTM_POLLERBINDIR' => RTM_ROOT . DELIM . 'lsf10.1.0.15' . DELIM . 'bin' . DELIM,
+		'LSF_SERVERDIR' => RTM_ROOT . DELIM . 'lsf10.1.0.15' . DELIM . 'etc' . DELIM,
+		'DESC' => 'Poller for LSF 10.1.0.15'
 	)
 ); // end $rtm
 
 $rtmvermap = array(
-    '9.1' => '91',
-    '10.1' => '1010',
     '10.1.0.7' => '1017',
-    '10.1.0.13' => '10010013'
+    '10.1.0.13' => '10010013',
+    '10.1.0.15' => '10010015'
 ); // map of version to rtm name
 
 if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN'){

@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -164,6 +164,11 @@ function upgrade_to_1_2_20() {
 								FROM graph_local
 								WHERE id = ?',
 								array($id['local_graph_id']));
+
+							if (!cacti_sizeof($local_graph)) {
+								cacti_log('NOTE: Skipping local_graph_id ' . $id['local_graph_id'] . ' during upgrade - not found', false, 'UPGRADE');
+								continue;
+							}
 
 							switch($field_data['type_code']) {
 								case 'index_type':

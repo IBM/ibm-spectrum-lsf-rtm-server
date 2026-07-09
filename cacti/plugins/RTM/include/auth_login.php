@@ -21,6 +21,7 @@
  +-------------------------------------------------------------------------+
 */
 
+
 function rtm_custom_login(){
 	global $config;
 
@@ -48,7 +49,7 @@ function rtm_custom_login(){
 		<div class='cactiLoginLogo'></div>
 		<legend><?php print RTM_BRAND_NAME_BOLD;?><span class="logo-area"> <?php print RTM_PRODUCT_NAME . " " . RTM_VERSION;?></span></legend>
 		<form id='login' name='login' method='post' class='login-form' action='<?php print get_current_page();?>'>
-			<input type='hidden' name='action' value='login'>
+			<input type='hidden' name='action' value='<?php print html_escape('login'); ?>'>
 			<?php api_plugin_hook_function('login_before',
 				array(
 					'error'        => $error,
@@ -68,7 +69,7 @@ function rtm_custom_login(){
 					</tr>
 					<tr>
 						<td>
-							<input type='password' class='login-field' autocomplete='new-password' id='login_password' name='login_password' placeholder='********'>
+							<input type='password' class='login-field' autocomplete='current-password' id='login_password' name='login_password' placeholder='********'>
 						</td>
 					</tr>
 					<?php

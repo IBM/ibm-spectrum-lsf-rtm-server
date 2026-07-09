@@ -91,6 +91,8 @@ function upgrade_to_10_2_0_12() {
 
 	//update version for other plugins that file touched, and no much DB change
 	db_execute("UPDATE plugin_config SET version='10.2.0.12' WHERE directory IN ('gridpend', 'benchmark', 'RTM', 'lichist', 'meta')");
+	//Enable partition table upgrade utility
+	db_execute("REPLACE INTO settings (name, value) VALUES ('grid_partitions_upgrade_status', 'scheduled')");
 }
 
 function partition_tables_to_10_2_0_12(){

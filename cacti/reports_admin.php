@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -22,7 +22,6 @@
  +-------------------------------------------------------------------------+
 */
 
-$guest_account = true;
 include('./include/auth.php');
 include_once($config['library_path'] . '/reports.php');
 include_once($config['library_path'] . '/html_reports.php');

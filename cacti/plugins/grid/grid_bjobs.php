@@ -151,7 +151,6 @@ function grid_validate_job_request_variables() {
 			$job_array = explode('[', str_replace(']', '', get_request_var('jobid')));
 			$job_id    = $job_array[0];
 			$index_id  = $job_array[1];
-			set_request_var('jobid', $job_id);
 		} elseif (strlen(get_request_var('jobid'))) {
 			$job_id    = get_request_var('jobid');
 			$index_id  = '';
@@ -163,7 +162,7 @@ function grid_validate_job_request_variables() {
 		$job_id   = '';
 		$index_id = '';
 	}
-	
+	set_request_var('jobid', $job_id);
 	set_request_var('indexid', $index_id);
 
     /* ================= input validation and session storage ================= */
@@ -894,8 +893,8 @@ function jobsFilter() {
 				</tr>
 			</table>
 			<?php if (get_request_var('clusterid') == 0) { ?>
-			<input type='hidden' id='cluster_tz'<?php print (get_request_var('cluster_tz') == 'true' || get_request_var('cluster_tz') == 'on') ? ' checked>':'';?>>
-			<?php } ;?>
+			<input type='hidden' id='cluster_tz'<?php print (get_request_var('cluster_tz') == 'true' || get_request_var('cluster_tz') == 'on') ? ' checked':'';?>>
+			<?php } ?>
 			<input type='hidden' id='sub_host' value='-1'>
 			<input type='hidden' id='page' value='1'>
 			</form>
@@ -1485,7 +1484,7 @@ function grid_view_jobs() {
 				applyFilter(0);
 			});
 			$('#clusterid').change(function() {
-				if ($('#clusterid').val != 0) {
+				if ($('#clusterid').val() != 0) {
 					getLsfversion();
 				}
 			});

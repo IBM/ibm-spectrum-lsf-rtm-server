@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2025                                          |
+ | Copyright IBM Corp. 2006, 2026                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -57,10 +57,61 @@ switch (get_request_var('action')) {
 		}
 		rtm_autocomplete_ajax('grid_bhosts.php', 'hgroup', $sql_where);
 		break;
+	case 'export':
+		grid_export_host();
+		break;
 	default:
 		grid_view_bhosts();
 	break;
 }
+
+
+function grid_export_host() {
+	$rows       = 0;
+	$sql_params = array();
+	$sql_where  = '';
+
+	$hosts = grid_view_get_bhosts_records($sql_where, false, $rows, $sql_params);
+
+	$stdout = fopen('php://output', 'w');
+
+	header('Content-type: application/excel');
+	header('Content-Disposition: attachment; filename=lsf-bhosts-' . time() . '.csv');
+
+	if (cacti_sizeof($hosts)) {
+		$columns = array_keys($hosts[0]);
+		$ucols   = array();
+
+		foreach($columns as $index => $c) {
+			switch($c) {
+				case 'licensed':
+				case 'licFeaturesNeeded':
+				case 'licClass':
+				case 'rexPriority':
+				case 'present':
+					unset($columns[$index]);
+					$ucols[] = $c;
+					break;
+				default:
+				}
+		}
+
+		fputcsv($stdout, $columns);
+
+		foreach($hosts as $h) {
+			if (cacti_sizeof($ucols)) {
+				foreach($ucols as $c) {
+					unset($h[$c]);
+				}
+			}
+
+			fputcsv($stdout, $h);
+		}
+	}
+
+	fclose($stdout);
+}
+
 
 function validate_bhosts_request_vars() {
 	/* ================= input validation and session storage ================= */
@@ -185,7 +236,7 @@ function form_action() {
 	}
 
 	/* if we are to save this form, instead of display it */
-	if (isset_request_var('selected_items') && !isset($_SESSION['sess_error_fields']['message'])&& !isset($_SESSION['sess_error_fields']['action_lockid'])) {
+	if (isset_request_var('selected_items') && !isset($_SESSION['sess_error_fields']['message']) && !isset($_SESSION['sess_error_fields']['action_lockid'])) {
 		if (isset_request_var('message') && trim(get_nfilter_request_var('message')) != '') {
 			$message = __("'%s' - by RTM User '%s'", trim(get_nfilter_request_var('message')), get_username($_SESSION['sess_user_id']), 'grid');
 		} else {
@@ -257,8 +308,8 @@ function form_action() {
 			$key_sort[$k] = $rsp_content[$k]['clusterid'];
 		}
 
-                $output_message='';
-		if(isset($key_sort)){
+		$output_message = '';
+		if(isset($key_sort)) {
 			asort($key_sort);
 			foreach( $key_sort as $key => $val) {
 				foreach ($rsp_content as $key_rsp_content => $value) {
@@ -274,8 +325,8 @@ function form_action() {
 										$return_status = __('Ok');
 										$count_ok ++;
 									}
-									$message='Status:' . $return_status . ' - Cluster Name:' . grid_get_clustername($value['clusterid']) . ' - '.$message.'<br/>';
-									$output_message=$output_message.$message;
+									$message = 'Status:' . $return_status . ' - Cluster Name:' . grid_get_clustername($value['clusterid']) . ' - '.$message.'<br/>';
+									$output_message = $output_message.$message;
 								}
 							}
 						} else {
@@ -286,16 +337,16 @@ function form_action() {
 								$count_fail ++;
 								$return_status = __('Failed. Status Code: %d', $value['status_code'], 'grid');
 							}
-				                        $message='Status:' . $return_status . ' - Cluster Name:' . grid_get_clustername($value['clusterid']) . ' - '.$value['status_message'].'<br/>';
-				                        $output_message=$output_message.$message;
+							$message = 'Status:' . $return_status . ' - Cluster Name:' . grid_get_clustername($value['clusterid']) . ' - '.$value['status_message'].'<br/>';
+							$output_message = $output_message.$message;
 						}
 					}
 				}
 			}
 			if($count_fail>0)
-              			raise_message('mymessage', $output_message, MESSAGE_LEVEL_ERROR);
-            		else
-              			raise_message('mymessage', $output_message, MESSAGE_LEVEL_INFO);
+				raise_message('mymessage', $output_message, MESSAGE_LEVEL_ERROR);
+			else
+				raise_message('mymessage', $output_message, MESSAGE_LEVEL_INFO);
 		}
 		header('Location: grid_bhosts.php');
 		exit;
@@ -324,7 +375,7 @@ function form_action() {
 		}
 	} else {
 		foreach ($_POST as $key => $value) {
-			if (strncmp($key, 'chk_', '4') == 0) {
+			if (strncmp($key, 'chk_', 4) == 0) {
 				$key = str_replace('@', '.', $key);
 				$host_whole_array[$i] = substr($key, 4);
 				$host_details = explode(':',substr($key, 4));
@@ -444,10 +495,10 @@ function form_action() {
 		<td class='saveRow' colspan='2'>
 			<input type='hidden' name='action' value='actions'>
 			<input type='hidden' name='command' value=''>
-			<input type='hidden' name='selected_items' value='" . (isset($host_array) ? serialize($host_array) : '') . "'>
-			<input type='hidden' name='selected_items_hostname' value='".(isset($host_array_hostname) ? serialize($host_array_hostname) : '') . "'>
-			<input type='hidden' name='selected_items_whole' value='".(isset($host_whole_array) ? serialize($host_whole_array) : '') . "'>
-			<input type='hidden' name='drp_action' value='" . get_request_var('drp_action') . "'>
+			<input type='hidden' name='selected_items' value='" . (isset($host_array) ? html_escape(serialize($host_array)) : '') . "'>
+			<input type='hidden' name='selected_items_hostname' value='".(isset($host_array_hostname) ? html_escape(serialize($host_array_hostname)) : '') . "'>
+			<input type='hidden' name='selected_items_whole' value='".(isset($host_whole_array) ? html_escape(serialize($host_whole_array)) : '') . "'>
+			<input type='hidden' name='drp_action' value='" . html_escape(get_request_var('drp_action')) . "'>
 			<input type='button' value='" . $button_false ."' alt='' onClick='cactiReturnTo()'>
 			$save_html
 		</td>
@@ -650,6 +701,7 @@ function grid_view_get_bhosts_records(&$sql_where, $apply_limits = true, $rows =
 	}
 
 	$sql_order = get_order_string();
+	$sql_limit = '';
 	if ($apply_limits) {
 		$sql_limit = ' LIMIT ' . ($rows*(get_request_var('page')-1)) . ',' . $rows;
 	}
@@ -799,8 +851,11 @@ function bhostsFilter() {
 						</select>
 					</td>
 					<td>
-						<input type='submit' id='go' value='<?php print __esc('Go', 'grid');?>' title='<?php print __esc('Search', 'grid');?>'>
-						<input type='button' id='clear' value='<?php print __esc('Clear', 'grid');?>' title='<?php print __esc('Clear Filters', 'grid');?>'>
+						<span>
+							<input type='submit' id='go' value='<?php print __esc('Go', 'grid');?>' title='<?php print __esc('Search', 'grid');?>'>
+							<input type='button' id='clear' value='<?php print __esc('Clear', 'grid');?>' title='<?php print __esc('Clear Filters', 'grid');?>'>
+							<input type='button' id='export' value='<?php print __esc('Export', 'grid');?>' title='<?php print __esc('Export Records', 'grid');?>'>
+						</span>
 					</td>
 				</tr>
 			</table>
@@ -983,6 +1038,11 @@ function grid_view_bhosts() {
 		loadPageNoHeader(strURL);
 	}
 
+	function exportRows() {
+		document.location = urlPath + 'plugins/grid/grid_bhosts.php?header=false&action=export';
+		Pace.stop();
+	}
+
 	$(function() {
 		$('#form_grid').submit(function(event) {
 			event.preventDefault();
@@ -996,6 +1056,11 @@ function grid_view_bhosts() {
 		$('#clear').click(function() {
 			clearFilter();
 		});
+
+		$('#export').click(function() {
+			exportRows();
+		});
+
 		applySkinRTM();
 	});
 

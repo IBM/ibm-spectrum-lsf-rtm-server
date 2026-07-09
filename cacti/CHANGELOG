@@ -1,11 +1,104 @@
 Cacti CHANGELOG
 
+1.2.31
+-security#GHSA-23g4-vf2j-94w4: CVE-2026-39894 RRDtool metric shift via LC_NUMERIC locale comma decimal formatting
+-security#GHSA-273r-qr93-wgcp: CVE-2026-40082 Session Fixation via missing session_regenerate_id() after login
+-security#GHSA-274c-97hj-pv2v: CVE-2026-40941 Package Import Signature Validation Bypass allows self-signed packages
+-security#GHSA-2j98-xfjq-gw39: CVE-2026-39897 Reflected XSS in html_auth_footer error message output
+-security#GHSA-34rf-frc3-v48r: CVE-2026-39900 Reflected XSS via tab parameter in auth_profile.php JavaScript context
+-security#GHSA-37jj-rx8x-4wf2: CVE-2026-46531 SQL Injection in automation_tree_rules.php
+-security#GHSA-3vj5-jqr9-q8hg: CVE-2026-44481 Pre-auth Open Redirect via link.php Referer header
+-security#GHSA-6233-v5hc-6gvf: CVE-2026-39952 Stored XSS in Report Tree expansion titles
+-security#GHSA-69gg-mjfm-jjpc: CVE-2026-39893 Pre-authentication SQL injection via rfilter RLIKE clause in graph_view.php
+-security#GHSA-6RVG-2vm8-5wrf: CVE-2026-22802 Authentication Bypass leads to information disclosure
+-security#GHSA-6gr7-53g8-vchq: CVE-2026-40080 Open Redirect via HTTP_REFERER substring check in auth_login_redirect
+-security#GHSA-84q3-92xc-c3pf: CVE-2026-40078 Backend ORDER BY SQL Injection
+-security#GHSA-8522-5p3m-754c: CVE-2026-39949 Authenticated Remote Code Execution via Host Variable Injection
+-security#GHSA-8p2f-6jvx-j75j: CVE-2026-40081 Reports IDOR allows any authenticated user to modify other users' reports (CWE-639)
+-security#GHSA-9jqv-4cpm-vm2c: CVE-2026-39948 SQL Injection via rfilter parameter in RLIKE clauses
+-security#GHSA-c4qp-j9r9-fq24: CVE-2026-39902 Authenticated RCE on Data Input
+-security#GHSA-fwh3-8c8r-378r: CVE-2026-39898 Reflected XSS via rfilter parameter in aggregate_graphs.php input value
+-security#GHSA-g37j-39f4-6r4j: CVE-2026-41884 Arbitrary File Read via Reports format_file path traversal
+-security#GHSA-gp82-qhrg-crv7: CVE-2026-39955 Pre-Authentication SQL Injection via unanchored FILTER_VALIDATE_REGEXP in graph_view.php
+-security#GHSA-hr82-h9vr-587w: CVE-2026-39896 TOCTOU race in auth_process_lockout allows brute-force lockout bypass
+-security#GHSA-j696-m433-87qq: CVE-2026-39950 Arbitrary PHP file write via Plugin Archive extraction leading to RCE
+-security#GHSA-j9jv-6xjq-9hhj: CVE-2026-40083 SQL Injection in managers.php via uncast array values in IN clauses
+-security#GHSA-m7v2-f3xw-3qh7: User Enumeration via Error Messages
+-security#GHSA-mjvw-mhj5-9jcj: CVE-2026-40084 Arbitrary File Read via path traversal in Report format_file parameter
+-security#GHSA-pf37-v86f-5xwp: CVE-2026-39951 Stored SQL Injection via graph_name_regexp in Reports feature
+-security#GHSA-pr9x-34w8-4mf7: CVE-2026-39899 Path traversal via filename parameter in package_import.php
+-security#GHSA-rm7p-qcqm-x5m6: CVE-2026-39938 Unauthenticated LFI via graph_theme and rrdtool IPC serialization hardening
+-security#GHSA-vp35-4h28-r883: CVE-2026-39939 Path traversal in Package Import file write allows arbitrary file creation in webroot
+-security#GHSA-w47c-53f9-w47g: CVE-2026-39947 RRDtool IPC pipe poisoning via is_numeric newline bypass in rrdtool_function_update
+-security#GHSA-wpjq-m269-mghj: CVE-2026-39895 Second-order RCE via unescaped log path in exec_background shell redirection
+-security#GHSA-xq98-376r-hv9j: CVE-2026-40079 Command Injection via escape_command() no-op in RRDtool execution
+-security: CVE-2026-40194, CVE-2026-32935 in phpseclib - This is breaking change for RRDProxy
+-security: CVE-2026-1513 billboard.js before 3.18.0 Improper Input Sanitization Allows Remote JavaScript Execution
+-issue#6168: When purging RRD files, paths are not correctly handled
+-issue#6202: When using automation, devices may not be added as expected
+-issue#6204: Attempting to match a field in automation may cause unexpected errors
+-issue#6210: Ensure column names are escaped to prevent reserved word issues
+-issue#6240: Improve sort order for incorrect RRA's
+-issue#6249: Unable to send Email to users without a domain name
+-issue#6251: When viewing a graph, do not produce unnecessary errors if graph has been removed
+-issue#6253: When i18n formatting numbers, assume null means 0 by xmacan
+-issue#6257: When data sources are removed, ensure only RRD files are removed by xmacan
+-issue#6262: When the database connection drops during query, retry to ensure success
+-issue#6270: Incorrect escaping may prevent drop downs working as intended
+-issue#6271: When validation errors occur, provide more information to help diagnosis
+-issue#6283: When calculating total pages, ensure math errors do not occur
+-issue#6292: When validating null request variables, fatal errors may occur
+-issue#6294: Automation may produce unexpected warnings when detecting the OS
+-issue#6296: Process timeouts may not end processes as expected
+-issue#6297: Improve support for Secure SMTP
+-issue#6299: Improve email address handling to support UTF8
+-issue#6313: When editing multiple devices, unexpected errors may be recorded
+-issue#6314: When editing an Aggregation Graph, total count may not reflect number of items correctly
+-issue#6315: When duplicating a Data Input Method, unexpected errors may occur
+-issue#6326: Improve SNMP v3 support for Cisco devices
+-issue#6327: Implement Autocomplete standards for Login and Change Password
+-issue#6329: When using LDAP, checking a user's groups may cause unexpected errors
+-issue#6331: When upgrading from pre-1.0.5, unexpected errors may occur by YATV
+-issue#6334: When creating Aggregate graphs, unable to hide HRULE and COMMENT based items
+-issue#6335: Email addresses with leading or trailing spaces can cause issues
+-issue#6441: Spikekill uses the wrong option for retention periods by 3432
+-issue#6444: When a Data Input's Title is applied, unexpected errors and values may be seen
+-issue#6490: When using Clear All on Selective Debug, first item is reselected
+-issue#6507: Importing packages may not work as expected by xmacan
+-issue#6508: When exporting graphs, data issues may lead to unexpected errors by xmacan
+-issue#6516: When modifying Graph Automation Rules, unexpected errors may be logged
+-issue#6518: Improve security of CSRF Secret by SMark-Black
+-issue#6519: When using Real Time graphing, unexpected errors may appear if graph is removed
+-issue#6546: Restore some missing SNMP Script Server configurations
+-issue#6551: Improve support for FreeBSD when Auditing Databases by xmacan
+-issue#6573: Create new device_change_javascript hook for THOLD plugin by xmacan
+-issue#6598: Improve PHP 8 support by TheWitness
+-issue#6600: When replicating plugins, unexpected errors may appear due to missing tables
+-issue#6605: Prevent Row Data Loss When Rebuilding RRD Files
+-issue#6606: When using SpikeKill, actions would not always lead to expected results
+-issue#6706: Some hosts may show as down incorrectly by xmacan
+-issue#6945: Improve PHP 8.5 support
+-issue#7121: When using data input methods, unexpected log entries may appear
+-issue#7133: When attempting to push out items, offline data sources can have unexpected results
+-issue#7135: Fix issue with locally scoped OID/Script path not being correctly cleared
+-issue#7199: CSV Color Import fails
+-issue#7202: Removed plugins may leave orphan entries in plugin tables
+-feature#6523: When disabling users, ensure that their authentication cookies and sessions cleared
+-feature#6524: When changing your password, log off from all sessions
+-feature#6534: Improve Cacti Session ID security
+-feature#6607: Implement session security on Password change
+-feature#6681: Add Dell iDRAC template by xmacan
+-feature: Update DOMPurify to 3.4.7
+-feature: Update PHPMailer to 6.10 to support SMTPUTF8
+-feature: Update phpseclib for the Service Check plugin
+-feature: Update jstree to 3.3.17 for CSP Level 3 compliance
+
 1.2.30
 -issue#6089: Unable to add new users
 -issue#6090: When using Automation Rules, specifying graph criteria may cause issues
 -issue#6099: When transferring a system from a backup if the poller has not run recently rrdtool issues are found
--issue#6172: When translating, quotes may cause incorrect text to appear
--issue#6173: When using Boost for the first time, warnings may appear
+-issue#6172: Quoting issues leading to translation issue in form messaging in Chinese language
+-issue#6173: Deprecation warning when using boost for the first time
 -issue#6183: When refreshing forms, items may be checked incorrectly by xmacan
 
 1.2.29
@@ -4055,4 +4148,4 @@ Cacti CHANGELOG
 -initial release
 
 -----------------------------------------------
-Copyright (c) 2004-2024 - The Cacti Group, Inc.
+Copyright (c) 2004-2026 - The Cacti Group, Inc.

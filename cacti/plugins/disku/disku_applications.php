@@ -216,9 +216,9 @@ function form_actions() {
 
 	print " <tr>
 		<td align='right' bgcolor='#eaeaea'>
-			<input type='hidden' name='action' value='actions'>
-			<input type='hidden' name='selected_items' value='" . (isset($app_array) ? serialize($app_array) : '') . "'>
-			<input type='hidden' name='drp_action' value='" . get_request_var('drp_action') . "'>
+			<input type='hidden' name='action' value='" . html_escape('actions') . "'>
+			<input type='hidden' name='selected_items' value='" . (isset($app_array) ? html_escape(serialize($app_array)) : '') . "'>
+			<input type='hidden' name='drp_action' value='" . html_escape_request_var('drp_action') . "'>
 			$save_html
 		</td>
 	</tr>";

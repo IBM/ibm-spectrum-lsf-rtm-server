@@ -183,7 +183,7 @@ function projectsFilter($aggregatelevel) {
 					</td>
 				</tr>
 			</table>
-			<input type='hidden' name='page' value='<?php print get_request_var('page');?>'>
+			<input type='hidden' name='page' value='<?php print html_escape(get_request_var('page'));?>'>
 		</form>
 		</td>
 	</tr>
@@ -474,7 +474,7 @@ function build_project_display_project() {
 			'display' => __('Total %s', format_job_slots(), 'grid'),
 			'dbname'  => 'pgroup_num_jobs',
 			'align'   => 'right',
-			'tip'     => __('Total %s of RUNNING, PROV, USUSP, PSUSP, SSUSP, PEND jobs', format_job_slots(), 'grid'),
+			'tip'     => __('Total %s of RUNNING, USUSP, PSUSP, SSUSP, PEND jobs', format_job_slots(), 'grid'),
 			'sort'    => 'DESC'
 		),
 		'numPEND' => array(

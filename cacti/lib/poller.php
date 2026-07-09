@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -49,7 +49,7 @@ function exec_poll($command) {
 
 		pclose($fp);
 	} else {
-		$output = `$command`;
+		$output = shell_exec($command);
 	}
 
 	return $output;
@@ -112,7 +112,7 @@ function exec_poll_php($command, $using_proc_function, $pipes, $proc_fd) {
 
 			pclose($fp);
 		} else {
-			$output = `$command`;
+			$output = shell_exec($command);
 		}
 	}
 
@@ -131,6 +131,18 @@ function exec_poll_php($command, $using_proc_function, $pipes, $proc_fd) {
  */
 function exec_background($filename, $args = '', $redirect_args = '') {
 	global $config, $debug;
+
+	if (is_array($args)) {
+		$args = implode(' ', array_map('cacti_escapeshellarg', $args));
+	} else {
+		/* SECURITY: If args are passed as a string, strip shell operators to
+		 * prevent background command chaining if a caller forgot to escape */
+		$args = preg_replace('/[&;|]+/', '', $args);
+	}
+
+	if (is_array($redirect_args)) {
+		$redirect_args = '';
+	}
 
 	cacti_log("DEBUG: About to Spawn a Remote Process [CMD: $filename, ARGS: $args]", true, 'POLLER', ($debug ? POLLER_VERBOSITY_NONE:POLLER_VERBOSITY_DEBUG));
 
@@ -179,7 +191,10 @@ function exec_with_timeout($cmd, &$output, &$return_code, $timeout = 5) {
 	);
 
 	// Start the process.
-	$process = proc_open('exec ' . $cmd, $descriptors, $pipes);
+	/* Removed 'exec setsid' to allow native PHP process management
+	   (proc_terminate/posix_kill) to target the actual child process
+	   on timeout, preventing zombie process table exhaustion */
+	$process = proc_open($cmd, $descriptors, $pipes);
 
 	if (!is_resource($process)) {
 		return false;
@@ -222,7 +237,7 @@ function exec_with_timeout($cmd, &$output, &$return_code, $timeout = 5) {
 		}
 
 		// Subtract the number of microseconds that we waited.
-		$timeout -= (int) (microtime(true) - $start) * 1000000;
+		$timeout -= (int) ((microtime(true) - $start) * 1000000);
 	}
 
 	// Check if there were any errors.
@@ -235,11 +250,17 @@ function exec_with_timeout($cmd, &$output, &$return_code, $timeout = 5) {
 	}
 
 	if (!empty($errors)) {
-		return false;
+		cacti_log('WARNING: exec_with_timeout stderr: ' . trim($errors), false, 'POLLER', POLLER_VERBOSITY_MEDIUM);
 	}
 
 	// Kill the process in case the timeout expired and it's still running.
 	// If the process already exited this won't do anything.
+	// Do not use a negative PID here because the child PID is not guaranteed
+	// to be the process-group ID on every platform/runtime combination.
+	if (isset($status['pid']) && $status['running'] && function_exists('posix_kill')) {
+		posix_kill($status['pid'], 9);
+	}
+
 	proc_terminate($process, 9);
 
 	// Close all streams.
@@ -274,15 +295,7 @@ function file_escaped($file) {
  * @return (int) 1 if the file exists otherwise 0
  */
 function file_exists_2gb($filename) {
-	global $config;
-
-	$rval = 0;
-	if ($config['cacti_server_os'] != 'win32') {
-		system("test -f $filename", $rval);
-		return ($rval == 0);
-	} else {
-		return 0;
-	}
+	return @file_exists($filename);
 }
 
 /**
@@ -584,7 +597,7 @@ function process_poller_output(&$rrdtool_pipe, $remainder = 0) {
 			} elseif (is_hexadecimal($value)) {
 				/**
 				 * special case of one value output: hexadecimal to decimal conversion
-				 * attempt to accomodate 32bit and 64bit systems
+				 * attempt to accommodate 32bit and 64bit systems
 				 */
 				$value = str_replace(' ', '', $value);
 
@@ -641,8 +654,6 @@ function process_poller_output(&$rrdtool_pipe, $remainder = 0) {
 							} else {
 								$rrd_update_array[$rrd_path]['times'][$unix_time][$field] = 'U';
 							}
-
-							$rrd_update_array[$rrd_path]['times'][$unix_time][$field] = $matches[1];
 
 							$rrd_tmpl .= ($rrd_tmpl != '' ? ':':'') . $field;
 
@@ -1812,6 +1823,21 @@ function replicate_out($remote_poller_id = 1, $class = 'all') {
  * @return (void)
  */
 function replicate_out_table($conn, &$data, $table, $remote_poller_id, $truncate = true, $exclude = false, $level = POLLER_VERBOSITY_NONE) {
+	// Get the create table syntax just in case
+	$create_table = db_fetch_row("SHOW CREATE TABLE `$table`");
+
+	if (cacti_sizeof($create_table)) {
+		$create = $create_table['Create Table'];
+	} else {
+		cacti_log("WARNING: Replicate Out Unable to get Table Schema for $table.  Table does not exist!", false, 'POLLER');
+		$create = '';
+		return;
+	}
+
+	if (!db_table_exists($table, false, $conn) && $create != '') {
+		db_execute($create, false, $conn);
+	}
+
 	if (cacti_sizeof($data)) {
 		/* check if the table structure changed, and if so, recreate */
 		$local_columns  = db_fetch_assoc('SHOW COLUMNS FROM ' . $table);
@@ -1856,11 +1882,11 @@ function replicate_out_table($conn, &$data, $table, $remote_poller_id, $truncate
 			foreach($cols as $col) {
 				if ($exclude !== false) {
 					if (array_search($col, $exclude) === false) {
-						$suffix .= ($i > 0 ? ', ':'') . " $col=VALUES($col)";
+						$suffix .= ($i > 0 ? ', ':'') . " `$col`=VALUES($col)";
 						$i++;
 					}
 				} else {
-					$suffix .= ($i > 0 ? ', ':'') . " $col=VALUES($col)";
+					$suffix .= ($i > 0 ? ', ':'') . " `$col`=VALUES($col)";
 					$i++;
 				}
 			}
@@ -1877,7 +1903,7 @@ function replicate_out_table($conn, &$data, $table, $remote_poller_id, $truncate
 			if (!db_column_exists($table, $c, false, $conn)) {
 				$skipcols[$index] = $c;
 			} else {
-				$prefix .= ($colcnt > 0 ? ', ':'') . $c;
+				$prefix .= ($colcnt > 0 ? ', ':'') . "`$c`";
 				$colcnt++;
 			}
 		}
@@ -2099,8 +2125,8 @@ function replicate_table_to_poller($conn, &$data, $table, $exclude = false) {
 		foreach($columns as $index => $c) {
 			if (!db_column_exists($table, $c, false, $conn)) {
 				$skipcols[$index] = $c;
-			} elseif ($exclude !== false && array_search($c, $exclude) === true) {
-				// Do not update this column
+			} elseif ($exclude !== false && array_search($c, $exclude, true) !== false) {
+				$skipcols[$index] = $c;
 			} else {
 				$prefix .= ($colcnt > 0 ? ', ':'') . $c;
 				$suffix .= ($colcnt > 0 ? ', ':'') . "$c=VALUES($c)";

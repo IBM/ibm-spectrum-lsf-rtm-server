@@ -2,7 +2,7 @@
 // $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright IBM Corp. 2006, 2025                                          |
+ | Copyright IBM Corp. 2006, 2026                                          |
  |                                                                         |
  | Licensed under the Apache License, Version 2.0 (the "License");         |
  | you may not use this file except in compliance with the License.        |
@@ -182,6 +182,7 @@ function gridalarms_setup_new_tables() {
 	$data['columns'][] = array('name' => 'type', 'type' => 'int(1)', 'NULL' => false);
 	$data['columns'][] = array('name' => 'db_table', 'type' => 'varchar(50)', 'NULL' => false);
 	$data['columns'][] = array('name' => 'sql_query', 'type' => 'varchar(1024)', 'NULL' => true);
+	$data['columns'][] = array('name' => 'column_data', 'type' => 'varchar(512)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'script_thold', 'type' => 'varchar(255)', 'NULL' => true);
 	$data['columns'][] = array('name' => 'script_data', 'type' => 'varchar(255)', 'NULL' => true);
 	$data['columns'][] = array('name' => 'script_data_type', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => true, 'default' => '0');
@@ -310,6 +311,7 @@ function gridalarms_setup_new_tables() {
 	$data['columns'][] = array('name' => 'type', 'type' => 'int(1)', 'NULL' => false);
 	$data['columns'][] = array('name' => 'db_table', 'type' => 'varchar(50)', 'NULL' => false);
 	$data['columns'][] = array('name' => 'sql_query', 'type' => 'varchar(1024)', 'NULL' => true);
+	$data['columns'][] = array('name' => 'column_data', 'type' => 'varchar(512)', 'NULL' => false, 'default' => '');
 	$data['columns'][] = array('name' => 'script_thold', 'type' => 'varchar(255)', 'NULL' => true);
 	$data['columns'][] = array('name' => 'script_data', 'type' => 'varchar(255)', 'NULL' => true);
 	$data['columns'][] = array('name' => 'script_data_type', 'unsigned' => true, 'type' => 'int(10)', 'NULL' => true, 'default' => '0');

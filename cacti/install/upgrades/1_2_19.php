@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -25,7 +25,7 @@
 function upgrade_to_1_2_19() {
 	// Correct name values in data input fields
 	db_install_execute("UPDATE data_input_fields
-		SET name='SNMP Authenticaion Protocol (v3)'
+		SET name='SNMP Authentication Protocol (v3)'
 		WHERE hash IN ('20832ce12f099c8e54140793a091af90', '2cf7129ad3ff819a7a7ac189bee48ce8')");
 
 	if (!db_column_exists('graph_templates', 'test_source')) {

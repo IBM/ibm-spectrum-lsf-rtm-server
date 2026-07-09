@@ -1,8 +1,7 @@
 <?php
-// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2023 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -14,17 +13,21 @@
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
  +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDTool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
+ +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
 */
 
-include(__DIR__ . '/../../include/cli_check.php');
-include_once($config['library_path'] . '/poller.php');
-include_once(__DIR__ . '/functions.php');
-include_once(__DIR__ . '/database.php');
+chdir('../../');
+include('./include/cli_check.php');
+include_once('./lib/poller.php');
+include_once('./plugins/syslog/functions.php');
+include_once('./plugins/syslog/database.php');
 
-syslog_determine_config();
-include(SYSLOG_CONFIG);
 syslog_connect();
 
 /* Let it run for an hour if it has to, to clear up any big

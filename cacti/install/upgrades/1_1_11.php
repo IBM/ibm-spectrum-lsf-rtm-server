@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -27,7 +27,7 @@ function upgrade_to_1_1_11() {
 		MODIFY COLUMN data_name VARCHAR(40) NOT NULL DEFAULT "",
 		MODIFY COLUMN data_source_names VARCHAR(125) NOT NULL DEFAULT ""');
 
-	// required for tne new plugin structure
+	// required for the new plugin structure
 	db_install_execute('DELETE FROM settings WHERE name LIKE "md5%_plugins"');
 	db_install_execute('DELETE FROM poller_resource_cache WHERE `path` LIKE "plugins/%"');
 }

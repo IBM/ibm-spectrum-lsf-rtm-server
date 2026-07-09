@@ -398,17 +398,17 @@ function grid_licusage_filter() {
 			</table>
 			<script type="text/javascript">
 			function applyFilterChange() {
-				strURL = '<?php print basename($_SERVER['PHP_SELF']) . "?" . build_query_string(); ?>'
+				strURL = '<?php print basename($_SERVER['SCRIPT_NAME']) . "?" . build_query_string(); ?>'
 				strURL = strURL + '&filter=' + $('#filter').val();
 				strURL = strURL + '&rows=' + $('#rows').val();
-				loadPageNoHeader(strURL);
+				loadPageNoHeader(html_escape(strURL));
 			}
 
 			function clearFilter() {
-				strURL = '<?php print basename($_SERVER['PHP_SELF']) . "?" . build_query_string(); ?>'
+				strURL = '<?php print basename($_SERVER['SCRIPT_NAME']) . "?" . build_query_string(); ?>'
 				strURL = strURL + '&filter=';
 				strURL = strURL + '&rows=-1';
-				loadPageNoHeader(strURL);
+				loadPageNoHeader(html_escape(strURL));
 			}
 			</script>
 		</td>
@@ -462,7 +462,7 @@ function grid_view_curr_licusage() {
 
 	$total_rows = $row_count;
 
-	$fw_from = basename($_SERVER['PHP_SELF']);
+	$fw_from = basename($_SERVER['SCRIPT_NAME']);
 	if($fw_from == "grid_bjobs.php"){
 		$drilldown_url = "plugins/grid/grid_bjobs.php";
 	}else if($fw_from == "heuristics_jobs.php"){
@@ -472,13 +472,15 @@ function grid_view_curr_licusage() {
 	$display_text = build_lichist_curr_display_array();
 
 	/* generate page list */
-	$nav = html_nav_bar(basename($_SERVER['PHP_SELF']) . '?' . build_query_string() . '&filter=' . get_request_var('filter') , MAX_DISPLAY_PAGES, get_request_var('page_curr'), $row_limit, $total_rows, '', '', 'page_curr', 'main');
+	$php_file = basename($_SERVER['SCRIPT_NAME']);
+	$nav = html_nav_bar(html_escape($php_file . '?' . build_query_string() . '&filter=' . get_request_var('filter')),
+		MAX_DISPLAY_PAGES, get_request_var('page_curr'), $row_limit, $total_rows, '', '', 'page_curr', 'main');
 
 	print $nav;
 
 	html_start_box('', '100%', '', '3', 'center', '');
 
-	html_header_sort($display_text, get_request_var('sort_column'), get_request_var('sort_direction'), false, basename($_SERVER['PHP_SELF']) . '?' . build_query_string());
+	html_header_sort($display_text, get_request_var('sort_column'), get_request_var('sort_direction'), false, basename($_SERVER['SCRIPT_NAME']) . '?' . build_query_string());
 
 	$i = 0;
 	if (cacti_sizeof($lics) > 0) {
@@ -551,7 +553,7 @@ function grid_view_hist_licusage() {
 		$row_limit = get_request_var('rows');
 	}
 
-	$fw_from = basename($_SERVER['PHP_SELF']);
+	$fw_from = basename($_SERVER['SCRIPT_NAME']);
 	if($fw_from == "grid_bjobs.php"){
 		$drilldown_url = "plugins/grid/grid_bjobs.php";
 	}else if($fw_from == "heuristics_jobs.php"){
@@ -567,13 +569,15 @@ function grid_view_hist_licusage() {
 	$display_text = build_lichist_hist_display_array();
 
 	/* generate page list */
-	$nav = html_nav_bar(basename($_SERVER['PHP_SELF']) . '?' . build_query_string() . '&filter=' . get_request_var('filter'), MAX_DISPLAY_PAGES, get_request_var('page_hist'), $row_limit, $total_rows, '', '', 'page_hist', 'main');
+	$php_file = basename($_SERVER['SCRIPT_NAME']);
+	$nav = html_nav_bar(html_escape($php_file . '?' . build_query_string() . '&filter=' . get_request_var('filter')), 
+		MAX_DISPLAY_PAGES, get_request_var('page_hist'), $row_limit, $total_rows, '', '', 'page_hist', 'main');
 
 	print $nav;
 
 	html_start_box('', '100%', '', '3', 'center', '');
 
-	html_header_sort($display_text, get_request_var('sort_column'), get_request_var('sort_direction'), false, basename($_SERVER['PHP_SELF']) . '?' . build_query_string());
+	html_header_sort($display_text, get_request_var('sort_column'), get_request_var('sort_direction'), false, basename($_SERVER['SCRIPT_NAME']) . '?' . build_query_string());
 
 	$i = 0;
 	if (cacti_sizeof($lics)) {

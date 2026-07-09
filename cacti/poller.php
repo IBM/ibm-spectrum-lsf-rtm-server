@@ -2,7 +2,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -108,7 +108,9 @@ if (cacti_sizeof($parms)) {
 		switch ($arg) {
 			case '-p':
 			case '--poller':
-				$poller_id = $value;
+				/* SECURITY: Force integer casting to prevent CLI-based SQLi
+				 * and command injection via crafted --poller argument */
+				$poller_id = (int)$value;
 
 				break;
 			case '-d':
@@ -673,7 +675,7 @@ while ($poller_runs_completed < $poller_runs) {
 		}
 
 		if (read_config_option('path_stderrlog') != '' && $config['cacti_server_os'] != 'win32') {
-			$extra_parms = '>> ' . read_config_option('path_stderrlog') . ' 2>&1';
+			$extra_parms = '>> ' . cacti_escapeshellarg(read_config_option('path_stderrlog')) . ' 2>&1';
 		} else {
 			$extra_parms = '';
 		}

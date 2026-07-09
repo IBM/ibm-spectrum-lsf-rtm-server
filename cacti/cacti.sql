@@ -1,9 +1,6 @@
---
--- $Id$
---
 /*
   +-------------------------------------------------------------------------+
-  | Copyright (C) 2004-2024 The Cacti Group                                 |
+  | Copyright (C) 2004-2026 The Cacti Group                                 |
   |                                                                         |
   | This program is free software; you can redistribute it and/or           |
   | modify it under the terms of the GNU General Public License             |
@@ -15,6 +12,11 @@
   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
   | GNU General Public License for more details.                            |
   +-------------------------------------------------------------------------+
+  | Cacti: The Complete RRDTool-based Graphing Solution                     |
+  +-------------------------------------------------------------------------+
+  | This code is designed, written, and maintained by the Cacti Group. See  |
+  | about.php and/or the AUTHORS file for specific developer information.   |
+  +-------------------------------------------------------------------------+
   | http://www.cacti.net/                                                   |
   +-------------------------------------------------------------------------+
 */
@@ -22,6 +24,8 @@
 --
 -- Allow MySQL to handle Cacti's legacy syntax
 --
+
+DELIMITER //
 
 SET @sqlmode= "";
 SET SESSION sql_mode = @sqlmode;
@@ -154,7 +158,7 @@ CREATE TABLE `aggregate_graphs` (
   `total_type` int(10) unsigned NOT NULL,
   `total_prefix` varchar(64) NOT NULL,
   `order_type` int(10) unsigned NOT NULL,
-  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `user_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `aggregate_template_id` (`aggregate_template_id`),
@@ -1117,6 +1121,7 @@ CREATE TABLE data_input_data (
   value text,
   PRIMARY KEY (data_input_field_id,data_template_data_id),
   KEY data_template_data_id (data_template_data_id),
+  KEY data_input_field_id (data_input_field_id),
   KEY t_value (t_value)
 ) ENGINE=InnoDB ROW_FORMAT=Dynamic;
 
@@ -2405,7 +2410,7 @@ CREATE TABLE `reports_items` (
 --
 
 CREATE TABLE settings (
-  name varchar(75) NOT NULL default '',
+  name varchar(255) NOT NULL default '',
   value varchar(4096) NOT NULL default '',
   PRIMARY KEY (name)
 ) ENGINE=InnoDB ROW_FORMAT=Dynamic;
@@ -2423,7 +2428,7 @@ INSERT INTO settings VALUES ('selected_theme', 'modern');
 
 CREATE TABLE settings_user (
   user_id smallint(8) unsigned NOT NULL default '0',
-  name varchar(75) NOT NULL default '',
+  name varchar(255) NOT NULL default '',
   value varchar(4096) NOT NULL default '',
   PRIMARY KEY (user_id, name)
 ) ENGINE=InnoDB ROW_FORMAT=Dynamic;
@@ -2491,7 +2496,9 @@ CREATE TABLE snmp_query_graph (
   graph_template_id mediumint(8) unsigned NOT NULL default '0',
   PRIMARY KEY (id),
   KEY `graph_template_id_name` (`graph_template_id`, `name`),
-  KEY `snmp_query_id_name` (`snmp_query_id`, `name`)
+  KEY `snmp_query_id_name` (`snmp_query_id`, `name`),
+  KEY `graph_template_id` (`graph_template_id`),
+  KEY `snmp_query_id` (`snmp_query_id`)
 ) ENGINE=InnoDB ROW_FORMAT=Dynamic;
 
 --

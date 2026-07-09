@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -181,16 +181,16 @@ function export() {
 	html_end_box();
 
 	?>
-	<script type='text/javascript'>
+	<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 	var stopTimer;
 
 	$(function() {
-		$('#export_type').change(function() {
+		$('#export_type').on('change', function() {
 			strURL = 'templates_export.php?header=false&export_type='+$('#export_type').val();
 			loadPageNoHeader(strURL);
 		});
 
-		$('form#export').submit(function(event) {
+		$('form#export').on('submit', function(event) {
 			stopTimer = setTimeout(function() { Pace.stop() }, 1000);
 		});
 	});

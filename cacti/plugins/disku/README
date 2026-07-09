@@ -62,13 +62,6 @@
     The plugin Installation is similar to other plugins.  Simply goto Plugin
     management, and install and enable the plugin.
 
-    Once that is complete, you need to import the Extension Registry.  To
-    do that, open an ssh session with the RTM Web Server and issue the
-    following commands:
-
-    cd /opt/cacti/plugins/disku
-    mysql cacti < disku_extension_registry.sql
-
     Next, grant your RTM user account access to veiw the plugins content.
     The Cacti Realms are as follows:
 

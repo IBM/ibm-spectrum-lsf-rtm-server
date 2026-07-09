@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -62,7 +62,7 @@ function check_tmp_dir() {
 		return true;
 	} else {
 		?>
-		<script type='text/javascript'>
+		<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 		var mixedReasonTitle = '<?php print __('Key Generation Required to Use Plugin');?>';
 		var mixedOnPage      = '<?php print __esc('Package Key Information Not Found');?>';
 		sessionMessage   = {
@@ -80,12 +80,37 @@ function check_tmp_dir() {
 	}
 }
 
+function package_import_write_session_file() {
+	if (!isset($_SESSION['sess_import_package'])) {
+		return false;
+	}
+
+	$xmlfile = tempnam(sys_get_temp_dir(), 'cacti_pkg_');
+
+	if ($xmlfile === false) {
+		cacti_log('FATAL: Unable to create temporary package import file', true, 'IMPORT');
+
+		return false;
+	}
+
+	if (file_put_contents($xmlfile, $_SESSION['sess_import_package']) === false) {
+		cacti_log('FATAL: Unable to write temporary package import file', true, 'IMPORT');
+		unlink($xmlfile);
+
+		return false;
+	}
+
+	return $xmlfile;
+}
+
 function form_save() {
 	global $config, $preview_only;
 
 	validate_request_vars();
 
 	if (isset_request_var('save_component_import')) {
+		$session_tmpfile = false;
+
 		if (isset($_FILES['import_file']['tmp_name']) &&
 			($_FILES['import_file']['tmp_name'] != 'none') &&
 			($_FILES['import_file']['tmp_name'] != '')) {
@@ -94,9 +119,17 @@ function form_save() {
 
 			$_SESSION['sess_import_package'] = file_get_contents($xmlfile);
 		} elseif (isset($_SESSION['sess_import_package'])) {
-			$xmlfile = sys_get_temp_dir() . '/package_import_' . rand();
+			$xmlfile = package_import_write_session_file();
 
-			file_put_contents($xmlfile, $_SESSION['sess_import_package']);
+			if ($xmlfile === false) {
+				/* Session is always active here: auth.php called cacti_session_start()
+				 * before any action dispatch, so raise_message() can safely write. */
+				raise_message('import_fail', __('Unable to create temporary package file.'), MESSAGE_LEVEL_ERROR);
+				header('Location: package_import.php');
+				exit;
+			}
+
+			$session_tmpfile = true;
 		} else {
 			header('Location: package_import.php');
 			exit;
@@ -105,6 +138,10 @@ function form_save() {
 		if (isset_request_var('trust_signer') && get_request_var('trust_signer') == 'on') {
 			import_validate_public_key($xmlfile, true);
 		} elseif (!package_validate_signature($xmlfile)) {
+			if ($session_tmpfile) {
+				@unlink($xmlfile);
+			}
+
 			raise_message('verify_warning', __('You have not Trusted this Package Author.  If you wish to import, check the Automatically Trust Author checkbox'), MESSAGE_LEVEL_ERROR);
 			header('Location: package_import?package_location=0');
 			exit;
@@ -202,9 +239,9 @@ function form_save() {
 			unlink($xmlfile);
 		} else {
 			if ($data !== false) {
-				raise_message('import_success', __('The Package %s Imported Successfully', $package_name), MESSAGE_LEVEL_INFO);
+				raise_message('import_success', __('The Package %s Imported Successfully', html_escape($package_name)), MESSAGE_LEVEL_INFO);
 			} else {
-				raise_message('import_fail', __('The Package %s Import Failed', $package_name), MESSAGE_LEVEL_ERROR);
+				raise_message('import_fail', __('The Package %s Import Failed', html_escape($package_name)), MESSAGE_LEVEL_ERROR);
 			}
 
 			unlink($xmlfile);
@@ -219,9 +256,11 @@ function form_save() {
 
 function package_file_get_contents($filename) {
 	if (isset($_SESSION['sess_import_package'])) {
-		$xmlfile = sys_get_temp_dir() . '/package_import_' . rand();
+		$xmlfile = package_import_write_session_file();
 
-		file_put_contents($xmlfile, $_SESSION['sess_import_package']);
+		if ($xmlfile === false) {
+			return false;
+		}
 
 		$data = import_read_package_data($xmlfile, $binary_signature);
 
@@ -273,6 +312,14 @@ function package_diff_file() {
 		'ignoreCase' => false
 	);
 
+	$validated_path = validate_relative_path_within($filename, $config['base_path']);
+
+	if ($validated_path === false) {
+		print '<h3>' . __('Error: Invalid file path.') . '</h3>';
+
+		return;
+	}
+
 	$newfile = package_file_get_contents($filename);
 
 	if ($newfile !== false) {
@@ -280,7 +327,7 @@ function package_diff_file() {
 		$newfile = explode("\n", $newfile);
 	}
 
-	$oldfile = file_get_contents($config['base_path'] . '/' . $filename);
+	$oldfile = file_get_contents($validated_path);
 
 	if ($oldfile !== false) {
 		$oldfile = str_replace("\n\r", "\n", $oldfile);
@@ -351,7 +398,7 @@ function package_get_details() {
 
 				unlink($xmlfile);
 			} else {
-				raise_message_javascript(__('Error in Package'), __('The package "%s" download or validation failed', $package_name), __('See the cacti.log for more information.  It could be that you had either an API Key error or the package was tamered with, or the location is not available.'));
+				raise_message_javascript(__('Error in Package'), __('The package "%s" download or validation failed', html_escape($package_name)), __('See the cacti.log for more information.  It could be that you had either an API Key error or the package was tamered with, or the location is not available.'));
 			}
 		}
 
@@ -478,16 +525,16 @@ function import_display_package_data($templates, $files, $package_name, $xmlfile
 	$id = 99;
 
 	form_alternate_row('line_' . $id);
-	form_selectable_cell($details['author'], $id);
-	form_selectable_cell($details['homepage'], $id);
-	form_selectable_cell($details['email'], $id);
+	form_selectable_ecell($details['author'], $id);
+	form_selectable_ecell($details['homepage'], $id);
+	form_selectable_ecell($details['email'], $id);
 	if (isset($details['class']) && array_key_exists($details['class'], $device_classes)) {
-		form_selectable_cell($device_classes[$details['class']], $id);
+		form_selectable_ecell($device_classes[$details['class']], $id);
 	} else {
 		form_selectable_cell(__('Unknown'), $id);
 	}
-	form_selectable_cell($details['version'], $id);
-	form_selectable_cell($details['copyright'], $id);
+	form_selectable_ecell($details['version'], $id);
+	form_selectable_ecell($details['copyright'], $id);
 	form_end_row();
 
 	html_end_box();
@@ -534,8 +581,8 @@ function import_display_package_data($templates, $files, $package_name, $xmlfile
 					);
 
 					form_alternate_row('line_' . $id);
-					form_selectable_cell($file_package_name, $id);
-					form_selectable_cell($pfile, $id);
+					form_selectable_ecell($file_package_name, $id);
+					form_selectable_ecell($pfile, $id);
 
 					$status  = explode(',', $status);
 					$nstatus = '';
@@ -626,8 +673,8 @@ function import_display_package_data($templates, $files, $package_name, $xmlfile
 
 			form_alternate_row('line_import_' . $detail['status'] . '_' . $id);
 
-			form_selectable_cell($detail['type_name'], $id);
-			form_selectable_cell($detail['name'], $id);
+			form_selectable_ecell($detail['type_name'], $id);
+			form_selectable_ecell($detail['name'], $id);
 			form_selectable_cell($status, $id);
 
 			if (isset($detail['vals'])) {
@@ -650,11 +697,13 @@ function import_display_package_data($templates, $files, $package_name, $xmlfile
 				}
 
 				if (cacti_sizeof($diff_array)) {
+					// $diff_array entries are pre-escaped at source in lib/import.php via html_escape();
+					// do NOT wrap with array_map('html_escape') here — that would double-encode color spans.
 					$diff_details .= __('Differences') . '<br>' . implode('<br>', $diff_array);
 				}
 
 				if (cacti_sizeof($orphan_array)) {
-					$diff_details .= ($diff_details != '' ? '<br>':'') . __('Orphans') . '<br>' . implode('<br>', $orphan_array);
+					$diff_details .= ($diff_details != '' ? '<br>':'') . __('Orphans') . '<br>' . implode('<br>', array_map('html_escape', $orphan_array));
 				}
 
 				form_selectable_cell($diff_details, $id, '', 'white-space:pre-wrap');
@@ -671,7 +720,7 @@ function import_display_package_data($templates, $files, $package_name, $xmlfile
 	}
 
 	?>
-	<script type='text/javascript'>
+	<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 
 	function getURLVariable(url, varname) {
 		var urlparts = url.slice(url.indexOf('?') + 1).split('&');
@@ -696,7 +745,7 @@ function import_display_package_data($templates, $files, $package_name, $xmlfile
 			});
 		}
 
-		$('.diffme').click(function(event) {
+		$('.diffme').on('click', function(event) {
 			event.preventDefault();
 
 			var url = $(this).attr('href');
@@ -949,10 +998,10 @@ function package_import() {
 	form_save_button('', 'import', 'import', false);
 
 	?>
-	<script type='text/javascript'>
+	<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 
 	$(function() {
-		$('#import_file').change(function() {
+		$('#import_file').on('change', function() {
 			$('#preview_only').val('on');
 
 			var form = $('#import')[0];
@@ -1102,4 +1151,3 @@ function package_prepare_import_array(&$templates, &$files, $package_name, $pack
 		}
 	}
 }
-

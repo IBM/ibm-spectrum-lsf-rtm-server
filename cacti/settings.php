@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -400,6 +400,12 @@ default:
 
 			if ((isset($field_array['items'])) && (is_array($field_array['items']))) {
 				foreach ($field_array['items'] as $sub_field_name => $sub_field_array) {
+					/**
+					 * This is a hack for the default value of checkboxes
+					 * if the config value exists that means that the user
+					 * has set this value, and that the form should not use
+					 * the default.  Otherwise, use the default.
+					 */
 					if (config_value_exists($sub_field_name)) {
 						$form_array[$field_name]['items'][$sub_field_name]['form_id'] = 1;
 					}
@@ -417,6 +423,12 @@ default:
 					}
 				}
 			} else {
+				/**
+				 * This is a hack for the default value of checkboxes
+				 * if the config value exists that means that the user
+				 * has saved this value and that the form should not use
+				 * the default.  Otherwise, use the default.
+				 */
 				if (config_value_exists($field_name)) {
 					$form_array[$field_name]['form_id'] = 1;
 				}
@@ -474,7 +486,7 @@ default:
 	form_save_button('', 'save');
 
 	?>
-	<script type='text/javascript'>
+	<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 
 	var themeChanged   = false;
 	var langRefresh    = false;
@@ -482,21 +494,21 @@ default:
 	var currentLang    = '';
 	var rrdArchivePath = '';
 	var smtpPath       = '';
-	var currentTab     = '<?php print $current_tab;?>';
-	var dataCollectors = '<?php print $data_collectors;?>';
+	var currentTab     = <?php print json_encode($current_tab);?>;
+	var dataCollectors = <?php print json_encode($data_collectors);?>;
 	var permsTitle     = '<?php print __esc('Changing Permission Model Warning');?>';
 	var permsHeader    = '<?php print __esc('Changing Permission Model will alter a users effective Graph permissions.');?>';
 	var permsMessage   = '<?php print __esc('After you change the Graph Permission Model you should audit your Users and User Groups Effective Graph permission to ensure that you still have adequate control of your Graphs.  NOTE: If you want to restrict all Graphs at the Device or Graph Template Graph Permission Model, the default Graph Policy should be set to \'Deny\'.');?>';
 
 	$(function() {
-		$('.subTab').find('a').click(function(event) {
+		$('.subTab').find('a').on('click', function(event) {
 			event.preventDefault();
 			strURL = $(this).attr('href');
 			strURL += (strURL.indexOf('?') > 0 ? '&':'?') + 'header=false';
 			loadPageNoHeader(strURL, true, false);
 		});
 
-		$('input[value="<?php print __esc('Save');?>"]').unbind().click(function(event) {
+		$('input[value="<?php print __esc('Save');?>"]').on('click', function(event) {
 			event.preventDefault();
 
 			if (parseInt($('#cron_interval').val()) < parseInt($('#poller_interval').val())) {
@@ -557,22 +569,17 @@ default:
 				},
 				checkAllText: '<?php print __('All');?>',
 				uncheckAllText: '<?php print __('None');?>',
-				uncheckAll: function() {
-					$(this).multiselect('widget').find(':checkbox:first').each(function() {
-						$(this).prop('checked', true);
-					});
-				}
 			}).multiselectfilter( {
 				label: '<?php print __('Search');?>',
 				placeholder: '<?php print __('Enter keyword');?>',
 				width: '150'
 			});
 
-			$('#graph_auth_method').change(function() {
+			$('#graph_auth_method').on('change', function() {
 				permsChanger();
 			});
 
-			$('#i18n_default_language, #i18n_auto_detection, #i18n_language_support').change(function() {
+			$('#i18n_default_language, #i18n_auto_detection, #i18n_language_support').on('change', function() {
 				langDetectionChanger();
 			});
 		} else if (currentTab == 'spikes') {
@@ -627,7 +634,7 @@ default:
 				width: '150'
 			});
 		} else if (currentTab == 'data') {
-			$('#storage_location').change(function() {
+			$('#storage_location').on('change', function() {
 				if ($(this).val() == '0') {
 					$('#row_rrdp_header').hide();
 					$('#row_rrdp_server').hide();
@@ -651,7 +658,7 @@ default:
 				}
 			}).trigger('change');
 
-			$('#extended_paths').change(function() {
+			$('#extended_paths').on('change', function() {
 				if ($(this).is(':checked')) {
 					$('#row_extended_paths_type').show();
 				} else {
@@ -663,11 +670,11 @@ default:
 
 			initMail();
 
-			$('#settings_how').change(function() {
+			$('#settings_how').on('change', function() {
 				initMail();
 			});
 
-			$('#emailtest').click(function() {
+			$('#emailtest').on('click', function() {
 				$.get('settings.php?action=send_test')
 					.done(function(data) {
 						$('body').append('<div id="testmail" title="<?php print __esc('Test Email Results');?>"></div>');
@@ -701,15 +708,15 @@ default:
 			initFonts();
 			initRealtime();
 
-			$('#font_method').change(function() {
+			$('#font_method').on('change', function() {
 				initFonts();
 			});
 
-			$('#selected_theme').change(function() {
+			$('#selected_theme').on('change', function() {
 				themeChanger();
 			});
 
-			$('#realtime_enabled').change(function() {
+			$('#realtime_enabled').on('change', function() {
 				initRealtime();
 			});
 		} else if (currentTab == 'snmp') {
@@ -718,12 +725,12 @@ default:
 
 			setSNMP();
 
-			$('#snmp_version, #snmp_auth_protocol, #snmp_priv_protocol, #snmp_security_level').change(function() {
+			$('#snmp_version, #snmp_auth_protocol, #snmp_priv_protocol, #snmp_security_level').on('change', function() {
 				setSNMP();
 			});
 
 			initAvail();
-			$('#availability_method').change(function() {
+			$('#availability_method').on('change', function() {
 				initAvail();
 			});
 		} else if (currentTab == 'authentication') {
@@ -731,21 +738,21 @@ default:
 			initSearch();
 			initGroupMember();
 
-			$('#auth_method').change(function() {
+			$('#auth_method').on('change', function() {
 				initAuth();
 			});
 
-			$('#ldap_mode').change(function() {
+			$('#ldap_mode').on('change', function() {
 				initSearch();
 			});
 
-			$('#ldap_group_require').change(function() {
+			$('#ldap_group_require').on('change', function() {
 				initGroupMember();
 			});
 		} else if (currentTab == 'path') {
 			initRRDClean();
 
-			$('#rrd_autoclean').change(function() {
+			$('#rrd_autoclean').on('change', function() {
 				initRRDClean();
 			});
 
@@ -753,7 +760,7 @@ default:
 				$('#row_path_stderrlog').hide();
 			}
 
-			$('#rrd_autoclean_method').change(function() {
+			$('#rrd_autoclean_method').on('change', function() {
 				initRRDClean();
 			});
 		} else if (currentTab == 'boost') {
@@ -767,11 +774,11 @@ default:
 			initBoostOD();
 			initBoostCache();
 
-			$('#boost_rrd_update_enable').change(function() {
+			$('#boost_rrd_update_enable').on('change', function() {
 				initBoostOD();
 			});
 
-			$('#boost_png_cache_enable').change(function() {
+			$('#boost_png_cache_enable').on('change', function() {
 				initBoostCache();
 			});
 		}

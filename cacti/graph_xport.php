@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -92,7 +92,7 @@ $graph_data_array['export_csv'] = true;
 $xport_array = rrdtool_function_xport(get_request_var('local_graph_id'), get_request_var('rra_id'), $graph_data_array, $xport_meta, $_SESSION['sess_user_id']);
 
 /* Make graph title the suggested file name */
-if (is_array($xport_array['meta'])) {
+if (is_array($xport_array) && isset($xport_array['meta']) && is_array($xport_array['meta'])) {
 	$filename = $xport_array['meta']['title_cache'] . '.csv';
 } else {
 	$filename = 'graph_export.csv';
@@ -115,7 +115,7 @@ if (isset_request_var('format') && get_nfilter_request_var('format') == 'table')
 	$html = false;
 }
 
-if (is_array($xport_array['meta']) && isset($xport_array['meta']['start'])) {
+if (is_array($xport_array) && isset($xport_array['meta']['start'])) {
 	if (!$html) {
 		$output  = '"' . __('Title') . '","'          . $xport_array['meta']['title_cache']    . '"' . "\n";
 		$output .= '"' . __('Vertical Label') . '","' . $xport_array['meta']['vertical_label'] . '"' . "\n";
@@ -143,7 +143,11 @@ if (is_array($xport_array['meta']) && isset($xport_array['meta']['start'])) {
 
 		$header = '"' . __('Date') . '"';
 		for ($i = 1; $i <= $xport_array['meta']['columns']; $i++) {
-			$header .= ',"' . $xport_array['meta']['legend']['col' . $i] . '"';
+			$legend = isset($xport_array['meta']['legend']['col' . $i]) ? (string) $xport_array['meta']['legend']['col' . $i] : '';
+			/* RFC 4180 CSV quoting so a column name carrying a double-quote
+			 * or newline (often from SNMP-sourced ifAlias/ifDescr) cannot
+			 * break the CSV shape downstream. */
+			$header .= ',"' . str_replace(array("\r", "\n", '"'), array(' ', ' ', '""'), $legend) . '"';
 		}
 		$output .= $header . "\n";
 	} else {
@@ -234,7 +238,7 @@ if (is_array($xport_array['meta']) && isset($xport_array['meta']['start'])) {
 			<th class='tableSubHeaderColumn left ui-resizable'>" . __('Date') . "</th>\n";
 
 		for ($i = 1; $i <= $xport_array['meta']['columns']; $i++) {
-			print "<th class='{sorter: \"numberFormat\"} tableSubHeaderColumn right ui-resizable'>" . $xport_array['meta']['legend']['col' . $i] . "</th>\n";
+			print "<th class='{sorter: \"numberFormat\"} tableSubHeaderColumn right ui-resizable'>" . html_escape($xport_array['meta']['legend']['col' . $i]) . "</th>\n";
 		}
 
 		print "</tr></thead>\n";
@@ -292,7 +296,7 @@ if (isset($xport_array['data']) && is_array($xport_array['data'])) {
 		print "<tr><td>\n";
 
 		?>
-		<script type='text/javascript'>
+		<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 		$(function() {
 			$('#csvExport').tablesorter({
 				widgets: ['zebra'],
@@ -311,7 +315,7 @@ if (isset($xport_array['data']) && is_array($xport_array['data'])) {
 				$('.wrapperTop').scrollLeft($('.wrapperMain').scrollLeft());
 			});
 
-			$(window).resize(function() {
+			$(window).on('resize', function() {
 				resizeWrapper();
 			});
 		});

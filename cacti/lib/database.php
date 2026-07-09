@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -99,9 +99,9 @@ function db_connect_real($device, $user, $pass, $db_name, $db_type = 'mysql', $p
 		}
 	}
 
-	/* set connection timout for down servers */
+	/* set connection timeout for down servers */
 	$flags[PDO::ATTR_TIMEOUT] = 2;
-	$flage[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
+	$flags[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
 
 	while ($i <= $retries) {
 		try {
@@ -240,7 +240,7 @@ function db_connect_real($device, $user, $pass, $db_name, $db_type = 'mysql', $p
  *  attempt to reconnect, otherwise return the connection
  *
  * @param bool|object  The connection to check
- * @param bool         Wether or not to log the connection check
+ * @param bool         Whether or not to log the connection check
  *
  * @return bool        The database true is the database is connected else false
  */
@@ -569,7 +569,7 @@ function db_execute_prepared($sql, $params = array(), $log = true, $db_conn = fa
 			unset($query);
 
 			if ($log) {
-				if ($en == 1213 || $en == 1205) {
+				if ($en == 1213 || $en == 1205 || $en == 1020) {
 					$errors++;
 					if ($errors > 30) {
 						cacti_log("ERROR: Too many Lock/Deadlock errors occurred! SQL:'" . clean_up_lines($sql) . "'", true, 'DBCALL', POLLER_VERBOSITY_DEBUG);
@@ -589,6 +589,19 @@ function db_execute_prepared($sql, $params = array(), $log = true, $db_conn = fa
 					cacti_debug_backtrace('SQL', false, true, 0, 1);
 
 					$database_last_error = 'DB ' . $execute_name . ' Too Large!, Error ' . $en . ': ' . $errorinfo[2];
+				} elseif ($en == 2002 || $en == 2006) {
+					$errors++;
+
+					cacti_log('WARNING: The DB has gone away during a query.  Retry to connect and query in 5 seconds.', false, 'DBCALL', POLLER_VERBOSITY_LOW);
+
+					sleep(5);
+
+					if (db_check_reconnect($db_conn)) {
+						if ($errors < 5) {
+							/* retry the query now */
+							continue;
+						}
+					}
 				} else {
 					cacti_log('ERROR: A DB ' . $execute_name . ' Failed!, Error: ' . $en . ', SQL: \'' . clean_up_lines($sql) . '\'', false, 'DBCALL', POLLER_VERBOSITY_DEBUG);
 					cacti_log('ERROR: A DB ' . $execute_name . ' Failed!, Error: ' . $errorinfo[2], false);
@@ -680,7 +693,13 @@ function db_fetch_cell_return($query, $col_name = '') {
 	$r = $query->fetchAll(PDO::FETCH_BOTH);
 	if (isset($r[0]) && is_array($r[0])) {
 		if ($col_name != '') {
-			return $r[0][$col_name];
+			if (array_key_exists($col_name, $r[0])) {
+				return $r[0][$col_name];
+			}
+
+			cacti_log('WARNING: Requested column not found in SQL result: "' . $col_name . '"', false, 'DBCALL', POLLER_VERBOSITY_DEBUG);
+
+			return false;
 		} else {
 			return reset($r[0]);
 		}
@@ -1107,7 +1126,7 @@ function db_index_matches($table, $index, $columns, $log = true, $db_conn = fals
 function db_table_exists($table, $log = true, $db_conn = false) {
 	static $results;
 
-	if ($db_conn == false) {
+	if ($db_conn === false) {
 		$index = '-1';
 	} else {
 		$index = md5(json_encode($db_conn));
@@ -1184,7 +1203,7 @@ function db_cacti_initialized($is_web = true) {
 function db_column_exists($table, $column, $log = true, $db_conn = false) {
 	static $results = array();
 
-	if ($db_conn == false) {
+	if ($db_conn === false) {
 		$index = '-1';
 	} else {
 		$index = md5(json_encode($db_conn));
@@ -1737,7 +1756,7 @@ function array_to_sql_or($array, $sql_column) {
 	}
 
 	if (cacti_sizeof($array)) {
-		$sql_or = "($sql_column IN('" . implode("','", $array) . "'))";
+		$sql_or = '(' . $sql_column . ' IN(' . implode(',', array_map('db_qstr', $array)) . '))';
 
 		return $sql_or;
 	}
@@ -1761,7 +1780,19 @@ function db_replace($table_name, $array_items, $keyCols, $db_conn = false) {
 		$db_conn = $database_sessions["$database_hostname:$database_port:$database_default"];
 	}
 
-	cacti_log("DEVEL: SQL Replace on table '$table_name': '" . serialize($array_items) . "'", false, 'DBCALL', POLLER_VERBOSITY_DEVDBG);
+	$log_items = $array_items;
+	$redact_fields = array(
+		'snmp_community', 'snmp_password', 'snmp_priv_passphrase',
+		'snmp_auth_passphrase', 'password', 'proxy_password',
+		'rsa_private_key', 'secret', 'auth_key', 'priv_key'
+	);
+	foreach ($redact_fields as $field) {
+		if (isset($log_items[$field])) {
+			$log_items[$field] = '********';
+		}
+	}
+
+	cacti_log("DEVEL: SQL Replace on table '$table_name': '" . serialize($log_items) . "'", false, 'DBCALL', POLLER_VERBOSITY_DEVDBG);
 
 	_db_replace($db_conn, $table_name, $array_items, $keyCols);
 
@@ -1778,6 +1809,17 @@ function db_replace($table_name, $array_items, $keyCols, $db_conn = false) {
  *
  * @return (bool|int) Either the insert id of the replace of false on error
  */
+/**
+ * Sanitize a column name for safe SQL interpolation.
+ * Strips backticks and any character that is not alphanumeric or underscore.
+ *
+ * @param string $col  Raw column name
+ * @return string      Safe column name
+ */
+function cacti_safe_column_name($col) {
+	return preg_replace('/[^a-zA-Z0-9_]/', '', $col);
+}
+
 function _db_replace($db_conn, $table, $fieldArray, $keyCols) {
 	global $database_sessions, $database_default, $database_hostname, $database_port;
 
@@ -1805,6 +1847,9 @@ function _db_replace($db_conn, $table, $fieldArray, $keyCols) {
 			$sql  .= ', ';
 			$sql2 .= ', ';
 		}
+
+		$k = cacti_safe_column_name($k);
+
 		$sql   .= "`$k`";
 		$sql2  .= $v;
 		$first  = false;
@@ -1891,7 +1936,7 @@ function sql_save($array_items, $table_name, $key_cols = 'id', $autoinc = true, 
 			} elseif (is_numeric($value)) {
 				$array_items[$key] = $value;
 			} else {
-				cacti_log('ERROR: Column: ' . $key . ' contains and invald value: ' . $value, false, 'DBCALL');
+				cacti_log('ERROR: Column: ' . $key . ' contains an invalid value: ' . $value, false, 'DBCALL');
 				$array_items[$key] = 0;
 			}
 		} else {
@@ -1940,9 +1985,36 @@ function db_qstr($s, $db_conn = false) {
 		return $db_conn->quote($s);
 	}
 
-	$s = str_replace(array('\\', "\0", "'"), array('\\\\', "\\\0", "\\'"), $s);
+	cacti_log('WARNING: db_qstr() called without a valid database connection. Escaping may be unsafe.', false, 'DBCALL');
+
+	$s = str_replace(array('\\', "\0", "\n", "\r", "'", '"', "\x1a"), array('\\\\', '\\0', '\\n', '\\r', "\\'", '\\"', '\\Z'), $s);
 
 	return  "'" . $s . "'";
+}
+
+/**
+ * db_qstr_rlike - Safely quote a value for use in a RLIKE/REGEXP clause.
+ *
+ * Caps the length and strips alternation and bounded-repeat metacharacters
+ * to limit catastrophic backtracking on attacker-supplied filter input.
+ * Normal regex features (anchors, character classes, simple quantifiers)
+ * remain available.
+ *
+ * @param string $s       The regex pattern value to quote
+ * @param mixed  $db_conn An optional database connection object
+ *
+ * @return string The safe 'RLIKE <quoted>' SQL fragment
+ */
+function db_qstr_rlike($s, $db_conn = false) {
+	$s = (string) $s;
+
+	if (strlen($s) > 255) {
+		$s = substr($s, 0, 255);
+	}
+
+	$s = str_replace(array("\0", '|', '{', '}'), '', $s);
+
+	return 'RLIKE ' . db_qstr($s, $db_conn);
 }
 
 /**
@@ -2160,64 +2232,123 @@ function db_switch_main_to_local() {
  * @param  (string)     $database - default $database_default
  * @param  (string)     $tables - default all tables
  * @param  (array)      $credentials - array($name => value, ...) for user, password, host, port, ssl ...
- * @param  (sting|bool) $output_file - dump file name, default /tmp/cacti.dump.sql
+ * @param  (string|bool) $output_file - dump file name, default /tmp/cacti.dump.sql
  * @param  (string)     $options - option strings for mysqldump, if --defaults-extra-file set, dump the data directly
  *
  * @return (int) return status of the executed command
  */
 function db_dump_data($database = '', $tables = '', $credentials = array(), $output_file = false, $options = '--extended-insert=FALSE') {
 	global $database_default, $database_username, $database_password;
-	$credentials_string = '';
 
-	if ($database == '') {
-		$database = $database_default;
+	$database    = ($database == '') ? $database_default : $database;
+	$output_file = ($output_file === false) ? '/tmp/cacti.dump.sql' : $output_file;
+
+	/* Extract username and password from credentials array or globals */
+	$username = isset($credentials['user']) ? $credentials['user'] : $database_username;
+	$password = isset($credentials['password']) ? $credentials['password'] : $database_password;
+
+	/* Use mariadb-dump if available to avoid deprecation warnings on MariaDB */
+	$dump_binary = 'mysqldump';
+	if (file_exists('/usr/bin/mariadb-dump') || file_exists('/usr/local/bin/mariadb-dump')) {
+		$dump_binary = 'mariadb-dump';
 	}
-	if (cacti_sizeof($credentials)) {
-		foreach ($credentials as $key => $value) {
-			$name = trim($key);
-			if (strstr($name, '--') !== false) {      //name like --host
-				if($name == '--password') {
-					$password = $value;
-				} elseif ($name == '--user') {
-					$username = $value;
-				} else {
-					$credentials_string .= $name . '=' . $value . ' ';
-				}
-			} elseif(strstr($name, '-') !== false) { //name like -h
-				if($name == '-p') {
-					$password = $value;
-				} elseif ($name == '-u') {
-					$username = $value;
-				} else {
-					$credentials_string .= $name . $value . ' ';
-				}
-			} else {                                  //name like host
-				if($name == 'password') {
-					$password = $value;
-				} elseif ($name == 'user') {
-					$username = $value;
-				} else {
-					$credentials_string .= '--' . $name . '=' . $value . ' ';
-				}
+
+	$command = array(
+		$dump_binary,
+		$options,
+		'-u',
+		$username,
+		$database
+	);
+
+	/* Safely parse and append table names */
+	if (trim($tables) != '') {
+		$table_arr = is_array($tables) ? $tables : explode(' ', trim($tables));
+
+		foreach ($table_arr as $table) {
+			if (trim($table) != '') {
+				$command[] = trim($table);
 			}
 		}
 	}
-	if (!isset($password)) {
-		$password = $database_password;
+
+	$env = array(
+		'MYSQL_PWD' => $password
+	);
+
+	$descriptors = array(
+		1 => array('file', $output_file, 'w'),
+		2 => array('pipe', 'w')
+	);
+
+	/* Construct safe shell arguments using cacti_escapeshellarg */
+	$cmd_string = '';
+
+	foreach ($command as $arg) {
+		$cmd_string .= cacti_escapeshellarg($arg) . ' ';
 	}
-	if (!isset($username)) {
-		$username = $database_username;
+
+	$process = proc_open(trim($cmd_string), $descriptors, $pipes, null, $env);
+
+	if (!is_resource($process)) {
+		cacti_log("ERROR: Failed to initialize mysqldump process for database '$database'", false, 'DBCALL');
+
+		return 1;
 	}
-	if (strstr($options, '--defaults-extra-file') !== false) {
-		exec("mysqldump $options $credentials_string $database $tables > " . $output_file, $output, $retval);
-	} else {
-		exec("mysqldump $options $credentials_string " . $database . ' version >/dev/null 2>&1', $output, $retval);
-		if ($retval) {
-			exec("mysqldump $options $credentials_string -u" . $username . ' -p' . $password . ' ' . $database . " $tables > " . $output_file, $output, $retval);
-		} else {
-			exec("mysqldump $options $credentials_string $database $tables > " . $output_file, $output, $retval);
-		}
+
+	fclose($pipes[2]);
+	$retval = proc_close($process);
+
+	if ($retval !== 0) {
+		cacti_log("ERROR: mysqldump failed with exit code $retval for database '$database'", false, 'DBCALL');
 	}
+
 	return $retval;
+}
+
+/**
+ * cacti_fetch_by_id - Fetch a single row by its integer primary key.
+ *
+ * Sanitizes the table name, column list, and ID column to prevent
+ * injection. Returns false when the ID is non-positive or no row
+ * is found.
+ *
+ * @param  string       $table      Table name (alphanumeric + underscore only)
+ * @param  int          $id         The row ID to look up
+ * @param  string|array $columns    Column(s) to select ('*' for all)
+ * @param  string       $id_column  Name of the primary key column
+ * @param  mixed        $db_conn    Optional database connection
+ *
+ * @return array|false  The row as an associative array, or false
+ */
+function cacti_fetch_by_id($table, $id, $columns = '*', $id_column = 'id', $db_conn = false) {
+	$id = intval($id);
+
+	if ($id <= 0) {
+		return false;
+	}
+
+	$safe_table  = preg_replace('/[^a-zA-Z0-9_]/', '', $table);
+	$safe_id_col = preg_replace('/[^a-zA-Z0-9_]/', '', $id_column);
+
+	if (is_array($columns)) {
+		$safe_cols = implode(', ', array_map(function($c) {
+			return '`' . preg_replace('/[^a-zA-Z0-9_]/', '', $c) . '`';
+		}, $columns));
+	} else {
+		$safe_cols = $columns === '*' ? '*' : '`' . preg_replace('/[^a-zA-Z0-9_]/', '', $columns) . '`';
+	}
+
+	$row = db_fetch_row_prepared(
+		"SELECT $safe_cols FROM `$safe_table` WHERE `$safe_id_col` = ?",
+		array($id),
+		$db_conn
+	);
+
+	if (!cacti_sizeof($row)) {
+		return false;
+	}
+
+	return $row;
 }
 

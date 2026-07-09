@@ -1,8 +1,7 @@
 <?php
-// $Id$
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -14,9 +13,21 @@
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           |
  | GNU General Public License for more details.                            |
  +-------------------------------------------------------------------------+
+ | Cacti: The Complete RRDTool-based Graphing Solution                     |
+ +-------------------------------------------------------------------------+
+ | This code is designed, written, and maintained by the Cacti Group. See  |
+ | about.php and/or the AUTHORS file for specific developer information.   |
+ +-------------------------------------------------------------------------+
  | http://www.cacti.net/                                                   |
  +-------------------------------------------------------------------------+
 */
+
+function syslog_include_js() {
+	global $config;
+	?>
+	<script type='text/javascript' src='<?php print $config['url_path'];?>plugins/syslog/js/functions.js'></script>
+	<?php
+}
 
 function syslog_allow_edits() {
 	global $config;
@@ -31,9 +42,7 @@ function syslog_allow_edits() {
 }
 
 function syslog_sync_save($data, $table, $primary = '') {
-	global $config;
-
-	include(SYSLOG_CONFIG);
+	global $config, $syslogdb_default;
 
 	if (read_config_option('syslog_remote_enabled') == 'on' && read_config_option('syslog_remote_sync_rules') == 'on') {
 		if ($config['poller_id'] == 1) {
@@ -93,9 +102,9 @@ function syslog_sendemail($to, $from, $subject, $message, $smsmessage = '') {
 		if (cacti_sizeof($emails)) {
 			foreach($emails as $email) {
 				if (substr_count($email, 'sms@')) {
-					$sms .= (strlen($sms) ? ', ':'') . str_replace('sms@', '', trim($email));
+					$sms .= ($sms != '' ? ', ':'') . str_replace('sms@', '', trim($email));
 				} else {
-					$nonsms .= (strlen($nonsms) ? ', ':'') . trim($email);
+					$nonsms .= ($nonsms != '' ? ', ':'') . trim($email);
 				}
 			}
 		}
@@ -248,6 +257,10 @@ function syslog_partition_remove($table) {
 function syslog_partition_check($table) {
 	global $syslogdb_default;
 
+	if (defined('SYSLOG_CONFIG')) {
+		include(SYSLOG_CONFIG);
+	}
+
 	/* find date of last partition */
 	$last_part = syslog_db_fetch_cell("SELECT PARTITION_NAME
 		FROM `information_schema`.`partitions`
@@ -275,8 +288,7 @@ function syslog_check_changed($request, $session) {
 
 function syslog_remove_items($table, $uniqueID) {
 	global $config, $syslog_cnn, $syslog_incoming_config;
-
-	include(SYSLOG_CONFIG);
+	global $syslogdb_default;
 
 	syslog_debug('-------------------------------------------------------------------------------------');
 	syslog_debug('Processing Removal Rules...');
@@ -412,7 +424,7 @@ function syslog_remove_items($table, $uniqueID) {
 								ON spg.program = si.program
 								INNER JOIN `' . $syslogdb_default . '`.`syslog_hosts` AS sh
 								ON sh.host = si.host
-								WHERE host = ' . db_qstr($remove['message']) . '
+								WHERE si.host = ' . db_qstr($remove['message']) . '
 								AND `status` = ' . $uniqueID . '
 							) AS merge';
 					}
@@ -679,17 +691,17 @@ function syslog_row_color($priority, $message) {
 		break;
 	}
 
-	print "<tr title='" . html_escape($message) . "' class='tableRow selectable $class syslogRow'>";
+	print "<tr title='" . html_escape($message) . "' class='tableRow selectable $class syslogRow syslog-detail-row'>";
+	return $class;
 }
 
 function sql_hosts_where($tab) {
 	global $hostfilter, $hostfilter_log, $syslog_incoming_config;
+	global $syslogdb_default;
 
 	$hostfilter     = '';
 	$hostfilter_log = '';
 	$hosts_array    = array();
-
-	include(SYSLOG_CONFIG);
 
 	if (!isempty_request_var('host') && get_nfilter_request_var('host') != 'null') {
 		$hostarray = explode(',', trim(get_nfilter_request_var('host')));
@@ -713,15 +725,18 @@ function sql_hosts_where($tab) {
 				$hostfilter_log = ' host IN(' . implode(',', $hosts_array) . ')';
 			}
 
-			$hostfilter .= (strlen($hostfilter) ? ' AND ':'') . ' host_id IN(' . implode(',', $hostarray) . ')';
+			$hostfilter .= ($hostfilter != '' ? ' AND ':'') . ' host_id IN(' . implode(',', $hostarray) . ')';
 		}
 	}
 }
 
 function syslog_export($tab) {
 	global $syslog_incoming_config, $severities;
+	global $syslogdb_default;
 
-	include(SYSLOG_CONFIG);
+	if (defined('SYSLOG_CONFIG')) {
+		include(SYSLOG_CONFIG);
+	}
 
 	if ($tab == 'syslog') {
 		header('Content-type: application/excel');
@@ -834,8 +849,7 @@ function syslog_debug($message) {
 
 function syslog_log_alert($alert_id, $alert_name, $severity, $msg, $count = 1, $html = '', $hosts = array()) {
 	global $config, $severities;
-
-	include(SYSLOG_CONFIG);
+	global $syslogdb_default;
 
 	if ($count <= 1) {
 		$save['seq']         = '';
@@ -892,8 +906,7 @@ function syslog_log_alert($alert_id, $alert_name, $severity, $msg, $count = 1, $
 
 function syslog_manage_items($from_table, $to_table) {
 	global $config, $syslog_cnn, $syslog_incoming_config;
-
-	include(SYSLOG_CONFIG);
+	global $syslogdb_default;
 
 	/* Select filters to work on */
 	$rows = syslog_db_fetch_assoc('SELECT * FROM `' . $syslogdb_default . "`.`syslog_remove` WHERE enabled='on'");
@@ -1090,8 +1103,7 @@ function syslog_array2xml($array, $tag = 'template') {
  */
 function syslog_process_alerts($uniqueID) {
 	global $syslogdb_default;
-
-	include(SYSLOG_CONFIG);
+	global $syslogdb_default;
 
 	$syslog_alarms = 0;
 	$syslog_alerts = 0;
@@ -1483,9 +1495,15 @@ function syslog_process_alert($alert, $sql, $params, $count, $hostname = '') {
 					/**
 					 * Open a ticket if this options have been selected.
 					 */
-					if ($alert['open_ticket'] == 'on' && strlen(read_config_option('syslog_ticket_command'))) {
-						if (is_executable(read_config_option('syslog_ticket_command'))) {
-							$command = read_config_option('syslog_ticket_command') .
+					 $command = read_config_option('syslog_ticket_command');
+
+					if ($command != '') {
+						$command = trim($command);
+					}
+
+					if ($alert['open_ticket'] == 'on' && $command != '') {
+						if (is_executable($command)) {
+							$command = $command .
 								' --alert-name=' . cacti_escapeshellarg(clean_up_name($alert['name'])) .
 								' --severity='   . cacti_escapeshellarg($alert['severity']) .
 								' --hostlist='   . cacti_escapeshellarg(implode(',',$hostlist)) .
@@ -1537,9 +1555,15 @@ function syslog_process_alert($alert, $sql, $params, $count, $hostname = '') {
 
 					alert_setup_environment($alert, $results, $hostlist, $hostname);
 
-					if ($alert['open_ticket'] == 'on' && strlen(read_config_option('syslog_ticket_command'))) {
-						if (is_executable(read_config_option('syslog_ticket_command'))) {
-							$command = read_config_option('syslog_ticket_command') .
+					$command = read_config_option('syslog_ticket_command');
+
+					if ($command != '') {
+						$command = trim($command);
+					}
+
+					if ($alert['open_ticket'] == 'on' && $command != '') {
+						if (is_executable($command)) {
+							$command = $command .
 								' --alert-name=' . cacti_escapeshellarg(clean_up_name($alert['name'])) .
 								' --severity='   . cacti_escapeshellarg($alert['severity']) .
 								' --hostlist='   . cacti_escapeshellarg(implode(',',$hostlist)) .
@@ -1596,6 +1620,14 @@ function syslog_process_alert($alert, $sql, $params, $count, $hostname = '') {
 function syslog_get_alert_sql(&$alert, $uniqueID) {
 	global $syslogdb_default, $syslog_incoming_config;
 
+	if (defined('SYSLOG_CONFIG')) {
+		include(SYSLOG_CONFIG);
+	}
+
+	if (!isset($syslog_incoming_config['programField'])) {
+		$syslog_incoming_config['programField'] = 'program';
+	}
+
 	$params = array();
 	$sql    = '';
 
@@ -1635,6 +1667,14 @@ function syslog_get_alert_sql(&$alert, $uniqueID) {
 		$sql = 'SELECT *
 			FROM `' . $syslogdb_default . '`.`syslog_incoming`
 			WHERE `' . $syslog_incoming_config['hostField'] . '` = ?
+			AND `status` = ?' . $uniqueID;
+
+		$params[] = $alert['message'];
+		$params[] = $uniqueID;
+	} elseif ($alert['type'] == 'program') {
+		$sql = 'SELECT *
+			FROM `' . $syslogdb_default . '`.`syslog_incoming`
+			WHERE `' . $syslog_incoming_config['programField'] . '` = ?
 			AND `status` = ?' . $uniqueID;
 
 		$params[] = $alert['message'];
@@ -1725,6 +1765,46 @@ function syslog_strip_incoming_domains($uniqueID) {
 	}
 }
 
+
+
+
+/**
+ * Check if the hostname is in the cacti hosts table
+ * Some devices only send IP addresses in syslog messages, and may not be in the DNS
+ * however they may be in the cacti hosts table as monitored devices.
+ * 
+ * @param  (string) The hostname to check
+ * @param  (int) The unique id for syslog_incoming messages to process
+ * 
+ * @return (bool) True if the host exists in the Cacti database, false otherwise
+ */
+
+function syslog_check_cacti_hosts($host, $uniqueID) {
+	global $syslogdb_default;
+
+	if (empty($host)) {
+		return false;
+	}
+
+	// Check if the host exists in cacti by hostname and get the description
+	$cacti_host = db_fetch_row_prepared('SELECT DISTINCT description
+		FROM host
+		WHERE hostname = ?
+		LIMIT 1',
+		array($host));
+
+	if (cacti_sizeof($cacti_host) && !empty($cacti_host['description'])) {
+		syslog_db_execute_prepared('UPDATE `' . $syslogdb_default . '`.`syslog_incoming`
+			SET host = ?
+			WHERE host = ?
+			AND `status` = ?',
+			array($cacti_host['description'], $host, $uniqueID));
+		
+		return true;
+	}
+	
+	return false;
+}
 /**
  * syslog_update_reference_tables - There are many values in the syslog plugin
  *   that for the purposes of reducing the size of the syslog table are normalized
@@ -1744,20 +1824,45 @@ function syslog_update_reference_tables($uniqueID) {
 	syslog_debug('-------------------------------------------------------------------------------------');
 	syslog_debug('Updating Reference Tables from New Syslog Records');
 
-	/* correct for invalid hosts */
-	if (read_config_option('syslog_validate_hostname') == 'on') {
-		$hosts = syslog_db_fetch_assoc('SELECT DISTINCT host
-			FROM `' . $syslogdb_default . '`.`syslog_incoming`');
+	/* Validate and resolve hostnames - check DNS first, then Cacti, then mark invalid */
+    if (read_config_option('syslog_resolve_hostname') == 'on') {
+        $hosts = syslog_db_fetch_assoc_prepared('SELECT DISTINCT host
+            FROM `' . $syslogdb_default . '`.`syslog_incoming`
+            WHERE `status` = ?',
+            array($uniqueID));
 
-		foreach($hosts as $host) {
-			if ($host['host'] == gethostbyname($host['host'])) {
-				syslog_db_execute_prepared('UPDATE `' . $syslogdb_default . "`.`syslog_incoming`
-					SET host = 'invalid_host'
-					WHERE host = ?",
-					array($host['host']));
-			}
-		}
-	}
+        foreach($hosts as $host) {
+            if (!isset($host['host']) || empty($host['host'])) {
+                continue;
+            }
+            
+            $resolved = false;
+            
+            // Check if hostname resolves via DNS (only if DNS is enabled)
+            if (read_config_option('syslog_no_dns') != 'on') {
+                if ($host['host'] != gethostbyname($host['host'])) {
+                    // DNS resolved successfully
+                    $resolved = true;
+                }
+            }
+            
+            // Check if hostname exists in Cacti hosts table (only if not already resolved via DNS)
+            if (!$resolved) {
+                $resolved = syslog_check_cacti_hosts($host['host'], $uniqueID);
+            }
+            
+            // If not resolved via DNS or found in Cacti, prefix the hostname
+            if (!$resolved) {
+                $unresolved_host = 'unresolved-' . $host['host'];
+                cacti_log("SYSLOG WARNING: Hostname '" . $host['host'] . "' could not be resolved via DNS or found in Cacti hosts table, marking as '" . $unresolved_host . "'", false, 'SYSLOG');
+                syslog_db_execute_prepared('UPDATE `' . $syslogdb_default . "`.`syslog_incoming`
+                    SET host = ?
+                    WHERE host = ?
+                    AND `status` = ?",
+                    array($unresolved_host, $host['host'], $uniqueID));
+            }
+        }
+    }
 
 	syslog_db_execute_prepared('INSERT INTO `' . $syslogdb_default . '`.`syslog_programs`
 		(program, last_updated)

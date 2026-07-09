@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -610,6 +610,7 @@ $struct_data_source = array(
 		'friendly_name' => __('Data Source Active'),
 		'method' => 'checkbox',
 		'default' => 'on',
+		'form_id' => '|arg1:id|',
 		'description' => __('Whether Cacti should gather data for this data source or not.'),
 		'flags' => ''
 		)
@@ -751,6 +752,7 @@ $struct_graph = array(
 		'friendly_name' => __('Slope Mode (--slope-mode)'),
 		'method' => 'checkbox',
 		'default' => 'on',
+		'form_id' => '|arg1:id|',
 		'description' => __('Using Slope Mode evens out the shape of the graphs at the expense of some on screen resolution.')
 		),
 	'scaling_header' => array(
@@ -762,6 +764,7 @@ $struct_graph = array(
 		'friendly_name' => __('Auto Scale'),
 		'method' => 'checkbox',
 		'default' => 'on',
+		'form_id' => '|arg1:id|',
 		'description' => __('Auto scale the y-axis instead of defining an upper and lower limit. Note: if this is check both the Upper and Lower limit will be ignored.'),
 		'size' => '7'
 		),
@@ -919,6 +922,7 @@ $struct_graph = array(
 		'friendly_name' => __('Auto Padding'),
 		'method' => 'checkbox',
 		'default' => 'on',
+		'form_id' => '|arg1:id|',
 		'description' => __('Pad text so that legend and graph data always line up. Note: this could cause graphs to take longer to render because of the larger overhead. Also Auto Padding may not be accurate on all types of graphs, consistent labeling usually helps.')
 		),
 	'dynamic_labels' => array(
@@ -1251,6 +1255,7 @@ $fields_host_edit = array(
 	'host_snmp_head' => array(
 		'method' => 'spacer',
 		'friendly_name' => __('SNMP Options'),
+		'collapsible' => 'true',
 		),
 	) + $fields_snmp_item_with_oids + array(
 	'host_avail_head' => array(
@@ -1487,7 +1492,8 @@ $fields_tree_edit = array(
 		'friendly_name' => __('Publish'),
 		'description' => __('Should this Tree be published for users to access?'),
 		'value' => '|arg1:enabled|',
-		'default' => 'on'
+		'default' => 'on',
+		'form_id' => '|arg1:id|',
 	),
 	'id' => array(
 		'method' => 'hidden_zero',

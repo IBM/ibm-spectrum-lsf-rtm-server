@@ -1,7 +1,7 @@
 <?php
 /*
  +-------------------------------------------------------------------------+
- | Copyright (C) 2004-2024 The Cacti Group                                 |
+ | Copyright (C) 2004-2026 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU General Public License             |
@@ -207,14 +207,13 @@ function set_user_setting($config_name, $value, $user = -1) {
 
 		cacti_log('NOTE: Attempt to set user setting \'' . $config_name . '\', with no user id: ' . cacti_debug_backtrace('', false, false, 0, 1), false, $mode, POLLER_VERBOSITY_MEDIUM);
 	} elseif (db_table_exists('settings_user')) {
-		if (strlen($config_name) > 75) {
+		if (strlen($config_name) > 255) {
 			cacti_log("ERROR: User setting name '$config_name' is too long, will be truncated", false, 'SYSTEM');
 		}
 
-		db_execute_prepared('REPLACE INTO settings_user
-			SET user_id = ?,
-			name = ?,
-			value = ?',
+		db_execute_prepared('INSERT INTO settings_user
+			(user_id, name, value) VALUES (?, ?, ?)
+			ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)',
 			array($user, $config_name, $value));
 
 		unset($_SESSION['sess_user_config_array']);
@@ -421,20 +420,20 @@ function set_config_option($config_name, $value, $remote = false) {
 
 	include_once($config['base_path'] . '/lib/poller.php');
 
-	if (strlen($config_name) > 75) {
+	if (strlen($config_name) > 255) {
 		cacti_log("ERROR: Config option name '$config_name' is too long, will be truncated", false, 'SYSTEM');
 	}
 
-	db_execute_prepared('REPLACE INTO settings
-		SET name = ?, value = ?',
+	db_execute_prepared('INSERT INTO settings
+		(name, value) VALUES (?, ?)
+		ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)',
 		array($config_name, $value));
 
 	if ($remote && !is_remote_path_setting($config_name)) {
 		$gone_time = read_config_option('poller_interval') * 2;
 
 		$pollers = array_rekey(
-			db_fetch_assoc('SELECT
-				id,
+			db_fetch_assoc('SELECT id,
 				UNIX_TIMESTAMP() - UNIX_TIMESTAMP(last_status) AS last_polled
 				FROM poller
 				WHERE id > 1
@@ -442,7 +441,9 @@ function set_config_option($config_name, $value, $remote = false) {
 			'id', 'last_polled'
 		);
 
-		$sql = 'INSERT INTO settings (name, value) VALUES (?, ?) ON DUPLICATE KEY UPDATE value=VALUES(value)';
+		$sql = 'INSERT INTO settings (name, value)
+			VALUES (?, ?)
+			ON DUPLICATE KEY UPDATE `value`= VALUES(`value`)';
 
 		foreach($pollers as $p => $t) {
 			if ($t > $gone_time) {
@@ -1051,7 +1052,7 @@ function raise_message($message_id, $message = '', $message_level = MESSAGE_LEVE
  */
 function raise_message_javascript($title, $header, $message) {
 	?>
-	<script type='text/javascript'>
+	<script type='text/javascript' <?php print CactiSecureHeaders::getNonceAttribute();?>>
 	var mixedReasonTitle = DOMPurify.sanitize(<?php print json_encode($title, JSON_THROW_ON_ERROR);?>);
 	var mixedOnPage      = DOMPurify.sanitize(<?php print json_encode($header, JSON_THROW_ON_ERROR);?>);
 	sessionMessage   = {
@@ -2163,7 +2164,7 @@ function test_data_source($data_template_id, $host_id, $snmp_query_id = 0, $snmp
 			$params   = array();
 			$params[] = $data_input['data_template_id'];
 
-			if ($field['output_type'] != '') {
+			if (isset($field['output_type']) && $field['output_type'] != '') {
 				$output_type_sql = ' AND sqgr.snmp_query_graph_id = ?';
 				$params[] = $field['output_type'];
 			} else {
@@ -2233,7 +2234,7 @@ function test_data_source($data_template_id, $host_id, $snmp_query_id = 0, $snmp
 				$output = shell_exec($script_path);
 			} else {
 				// Script server is a bit more complicated
-				$php   = read_config_option('path_php_binary');
+				$php   = cacti_escapeshellcmd(read_config_option('path_php_binary'));
 				$parts = explode(' ', $script_path);
 
 				dsv_log('parts', $parts);
@@ -2245,7 +2246,7 @@ function test_data_source($data_template_id, $host_id, $snmp_query_id = 0, $snmp
 
 					dsv_log('script', $script);
 
-					$output = shell_exec("$php -q $script");
+					$output = shell_exec($php . ' -q ' . $script);
 
 					if ($output == '' || $output == false) {
 						$output = 'U';
@@ -2399,6 +2400,12 @@ function test_data_source($data_template_id, $host_id, $snmp_query_id = 0, $snmp
 
 			if (cacti_sizeof($outputs) && cacti_sizeof($snmp_queries)) {
 				foreach ($outputs as $output) {
+					/* Reset between iterations: an output without an
+					 * 'oid' mapping must not inherit the previous
+					 * iteration's value and validate against a stale
+					 * OID. */
+					unset($oid);
+
 					if (isset($snmp_queries['fields'][$output['snmp_field_name']]['oid'])) {
 						$oid = $snmp_queries['fields'][$output['snmp_field_name']]['oid'] . '.' . $snmp_index;
 
@@ -2493,6 +2500,17 @@ function test_data_source($data_template_id, $host_id, $snmp_query_id = 0, $snmp
 
 			if (cacti_sizeof($outputs) && cacti_sizeof($script_queries)) {
 				foreach ($outputs as $output) {
+					/* Reset between iterations: an output without a
+					 * 'query_name' mapping must not validate against a
+					 * stale $script_path from the previous iteration.
+					 * $action is write-only in this loop (the post-guard
+					 * read at isset($script_path) does not consult it),
+					 * so it does not need a reset here.
+					 * update_poller_cache() in lib/utility.php builds a
+					 * poller_item that reads $action and therefore does
+					 * reset it. */
+					unset($script_path);
+
 					if (isset($script_queries['fields'][$output['snmp_field_name']]['query_name'])) {
 						$identifier = $script_queries['fields'][$output['snmp_field_name']]['query_name'];
 
@@ -2504,7 +2522,7 @@ function test_data_source($data_template_id, $host_id, $snmp_query_id = 0, $snmp
 								$prepend = $script_queries['arg_prepend'];
 							}
 
-							$script_path = read_config_option('path_php_binary') . ' -q ' . get_script_query_path(trim($prepend . ' ' . $script_queries['arg_get'] . ' ' . $identifier . ' "' . $snmp_index . '"'), $script_queries['script_path'], $host_id);
+							$script_path = cacti_escapeshellcmd(read_config_option('path_php_binary')) . ' -q ' . get_script_query_path(trim($prepend . ' ' . $script_queries['arg_get'] . ' ' . $identifier . ' "' . $snmp_index . '"'), $script_queries['script_path'], $host_id);
 						} else {
 							$action = POLLER_ACTION_SCRIPT;
 							$script_path = get_script_query_path(trim((isset($script_queries['arg_prepend']) ? $script_queries['arg_prepend'] : '') . ' ' . $script_queries['arg_get'] . ' ' . $identifier . ' "' . $snmp_index . '"'), $script_queries['script_path'], $host_id);
@@ -2574,7 +2592,7 @@ function get_full_test_script_path($data_template_id, $host_id) {
 			} elseif ($item['data_name'] == 'host_id' || $item['data_name'] == 'hostid') {
 				$value = cacti_escapeshellarg($host['id']);
 			} else {
-				$value = "'" . $item['value'] . "'";
+				$value = cacti_escapeshellarg((string) $item['value']);
 			}
 
 			$full_path = str_replace('<' . $item['data_name'] . '>', $value, $full_path);
@@ -3483,6 +3501,34 @@ function get_graph_parent($graph_template_item_id, $direction) {
 }
 
 /**
+ * build_where_from_array - builds a parameterized WHERE clause from an associative array
+ *
+ * @param $filters - associative array of field => value pairs
+ * @param $params  - (byref) array to append parameter values to
+ *
+ * @return - (string) the WHERE clause fragment, or '1=1' if filters is empty
+ */
+function build_where_from_array($filters, &$params) {
+	if (empty($filters)) {
+		return '1=1';
+	}
+
+	$where = array();
+
+	foreach ($filters as $field => $value) {
+		if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $field)) {
+			cacti_log('ERROR: Invalid field name in build_where_from_array: ' . $field, false, 'SECURITY');
+			continue;
+		}
+
+		$where[]  = "`$field` = ?";
+		$params[] = $value;
+	}
+
+	return implode(' AND ', $where);
+}
+
+/**
  * get_item - returns the ID of the next or previous item id
  *
  * @param $tblname - the table name that contains the target id
@@ -3494,6 +3540,8 @@ function get_graph_parent($graph_template_item_id, $direction) {
  * @return - (int) the ID of the next or previous item id
  */
 function get_item($tblname, $field, $startid, $lmt_query, $direction) {
+	$params = array();
+
 	if ($direction == 'next') {
 		$sql_operator = '>';
 		$sql_order = 'ASC';
@@ -3507,11 +3555,21 @@ function get_item($tblname, $field, $startid, $lmt_query, $direction) {
 		WHERE id = ?",
 		array($startid));
 
-	$new_item_id = db_fetch_cell("SELECT id
-		FROM $tblname
-		WHERE $field $sql_operator $current_sequence " . ($lmt_query != '' ? " AND $lmt_query":"") . "
-		ORDER BY $field $sql_order
-		LIMIT 1");
+	$where_clause = '';
+
+	if (is_array($lmt_query)) {
+		$where_clause = build_where_from_array($lmt_query, $params);
+	} else {
+		$where_clause = $lmt_query;
+	}
+
+	$sql_query = "SELECT id FROM $tblname WHERE $field $sql_operator ? " .
+		($where_clause != '' ? " AND $where_clause" : '') .
+		" ORDER BY $field $sql_order LIMIT 1";
+
+	array_unshift($params, $current_sequence);
+
+	$new_item_id = db_fetch_cell_prepared($sql_query, $params);
 
 	if (empty($new_item_id)) {
 		return $startid;
@@ -3532,9 +3590,17 @@ function get_item($tblname, $field, $startid, $lmt_query, $direction) {
  */
 function get_sequence($id, $field, $table_name, $group_query) {
 	if (empty($id)) {
-		$data = db_fetch_row("SELECT max($field)+1 AS seq
+		$params = array();
+
+		if (is_array($group_query)) {
+			$where_clause = build_where_from_array($group_query, $params);
+		} else {
+			$where_clause = $group_query;
+		}
+
+		$data = db_fetch_row_prepared("SELECT max($field)+1 AS seq
 			FROM $table_name
-			WHERE $group_query");
+			WHERE $where_clause", $params);
 
 		if ($data['seq'] == '') {
 			return 1;
@@ -4283,7 +4349,11 @@ function get_hash_version($type) {
  * @return - a 128-bit, hexadecimal hash
  */
 function generate_hash() {
-	return md5(session_id() . microtime() . rand(0,1000));
+	try {
+		return bin2hex(random_bytes(16));
+	} catch (Exception $e) {
+		return md5(session_id() . microtime() . rand(0, 1000));
+	}
 }
 
 /**
@@ -4433,8 +4503,33 @@ function sanitize_search_string($string) {
  * @return string    - the sanitized uri
  */
 function sanitize_uri($uri) {
-	static $drop_char_match =   array('^', '$', '<', '>', '`', "'", '"', '|', '+', '[', ']', '{', '}', ';', '!', '(', ')');
-	static $drop_char_replace = array( '', '',  '',  '',  '',  '',   '',  '',  '',  '',  '',  '',  '',  '',  '');
+	static $drop_char_match = array(
+		'^', '$',
+		'<', '>',
+		'`', "'",
+		'"', '[',
+		']', '{',
+		'}', ';',
+		'!', "\\",
+		"\0", "\r",
+		"\n"
+	);
+
+	static $drop_char_replace = array(
+		'', '',
+		'', '',
+		'', '',
+		'', '',
+		'', '',
+		'', '',
+		'', '',
+		'', '',
+		''
+	);
+
+	if (is_urlencoded($uri)) {
+		$uri = urldecode($uri);
+	}
 
 	if (strpos($uri, 'graph_view.php')) {
 		if (!strpos($uri, 'action=')) {
@@ -4442,7 +4537,22 @@ function sanitize_uri($uri) {
 		}
 	}
 
-	return str_replace($drop_char_match, $drop_char_replace, strip_tags(urldecode($uri)));
+	return str_replace($drop_char_match, $drop_char_replace, strip_tags($uri));
+}
+
+/**
+ * Checks to see if a string is urlencoded
+ *
+ * @param  string $string the string to be validated
+ *
+ * @return boolean - true is the string is urlencoded otherwise false
+ */
+function is_urlencoded($string) {
+	if ($string != urldecode($string)) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 /**
@@ -4488,8 +4598,96 @@ function sanitize_cdef($cdef) {
 }
 
 /**
- * verifies all selected items are numeric to guard against injection
+ * validates that a user-supplied filename resolves to a path within a given
+ * base directory to guard against directory traversal and injection
  *
+ * @param string $filename The user-supplied filename
+ * @param string $base_dir The base directory the file must reside in
+ *
+ * @return mixed The validated real path, or false if invalid
+ */
+function validate_path_within($filename, $base_dir) {
+	$filename = basename($filename);
+
+	if ($filename === '' || $filename === '.' || $filename === '..') {
+		return false;
+	}
+
+	$base_real = realpath($base_dir);
+
+	if ($base_real === false) {
+		return false;
+	}
+
+	return $base_real . '/' . $filename;
+}
+
+/**
+ * Validate that a relative path resolves within a base directory.
+ * Allows subdirectory paths but rejects '..' traversal components.
+ *
+ * @param string $path     The user-supplied relative path
+ * @param string $base_dir The base directory the path must stay within
+ *
+ * @return mixed The validated real path, or false if invalid
+ */
+function validate_relative_path_within($path, $base_dir) {
+	if (!is_string($path) || $path === '' || strpos($path, "\0") !== false) {
+		return false;
+	}
+
+	$normalized = str_replace('\\', '/', $path);
+
+	if ($normalized === '' || $normalized[0] === '/' || preg_match('/^[a-zA-Z]:\//', $normalized)) {
+		return false;
+	}
+
+	$parts = array();
+
+	foreach (explode('/', $normalized) as $part) {
+		if ($part === '' || $part === '.' || $part === '..') {
+			return false;
+		}
+
+		$parts[] = $part;
+	}
+
+	$base_real = realpath($base_dir);
+
+	if ($base_real === false) {
+		return false;
+	}
+
+	$candidate = $base_real . '/' . implode('/', $parts);
+
+	/* Block symlink pivots under writable base paths. */
+	$walk = $base_real;
+	foreach ($parts as $part) {
+		$walk .= '/' . $part;
+
+		if (file_exists($walk) && is_link($walk)) {
+			return false;
+		}
+	}
+
+	if (file_exists($candidate)) {
+		$resolved = realpath($candidate);
+
+		if ($resolved === false || !cacti_path_is_within($resolved, $base_real)) {
+			return false;
+		}
+	} else {
+		$parent = realpath(dirname($candidate));
+
+		if ($parent === false || !cacti_path_is_within($parent, $base_real)) {
+			return false;
+		}
+	}
+
+	return $candidate;
+}
+
+/**
  * @param string $items   An array of serialized items from a post
  *
  * @return array          The sanitized selected items array
@@ -4500,11 +4698,7 @@ function sanitize_unserialize_selected_items($items) {
 
 		// validate that sanitized string is correctly formatted
 		if (preg_match('/^a:[0-9]+:{/', $unstripped) && !preg_match('/(^|;|{|})O:\+?[0-9]+:"/', $unstripped)) {
-			if(version_compare(PHP_VERSION, '7.0.0', '>=')) {
-				$items = unserialize($unstripped, array('allowed_classes' => false));
-			} else {
-				$items = unserialize($unstripped);
-			}
+			$items = unserialize($unstripped, array('allowed_classes' => false));
 
 			if (is_array($items)) {
 				foreach ($items as $item) {
@@ -4679,7 +4873,7 @@ function general_header() {
 }
 
 function appendHeaderSuppression($url) {
-	if (strpos($url, 'header=false') < 0) {
+	if (strpos($url, 'header=false') === false) {
 		return $url . (strpos($url, '?') ? '&':'?') . 'header=false';
 	}
 
@@ -4699,7 +4893,7 @@ function admin_email($subject, $message) {
 				$name  = read_config_option('settings_from_name');
 
 				if ($name != '') {
-					$from = '"' . $name . '" <' . $email . '>';
+					$from = "$name <$email>";
 				} else {
 					$from = $email;
 				}
@@ -4727,30 +4921,43 @@ function admin_email($subject, $message) {
 }
 
 function send_mail($to, $from, $subject, $body, $attachments = '', $headers = '', $html = false) {
-	$fromname = '';
-	if (is_array($from)) {
-		$fromname = $from[1];
-		$from     = $from[0];
-	}
+	if (!is_array($from)) {
+		$name = '';
 
-	if ($from == '') {
-		$from     = read_config_option('settings_from_email');
-		$fromname = read_config_option('settings_from_name');
-	} elseif ($fromname == '') {
-		$full_name = db_fetch_cell_prepared('SELECT full_name
-			FROM user_auth
-			WHERE email_address = ?',
-			array($from));
+		if (empty($from)) {
+			$email = read_config_option('settings_from_email');
+			$name  = read_config_option('settings_from_name');
 
-		if (empty($full_name)) {
-			$fromname = $from;
-		} else {
-			$fromname = $full_name;
+			if ($name != '') {
+				$from = "$name <$email>";
+			} else {
+				$from = $email;
+			}
 		}
-	}
 
-	$from = array(0 => $from, 1 => $fromname);
-	return mailer($from, $to, '', '', '', $subject, $body, '', $attachments, $headers, $html);
+		if ($from != '' && strpos($from, '<') === false) {
+			if ($name == '') {
+				$full_name = db_fetch_cell_prepared('SELECT full_name
+					FROM user_auth
+					WHERE email_address = ?',
+					array($from));
+
+				if ($full_name != '') {
+					$name = $full_name;
+
+					$from = "$name <$from>";
+				}
+			}
+		}
+
+		if ($from != '') {
+			return mailer($from, $to, '', '', '', $subject, $body, '', $attachments, $headers, $html);
+		} else {
+			return 'ERROR: From Email Address Not Set';
+		}
+	} else {
+		return mailer($from, $to, '', '', '', $subject, $body, '', $attachments, $headers, $html);
+	}
 }
 
 /**
@@ -4771,14 +4978,43 @@ function send_mail($to, $from, $subject, $body, $attachments = '', $headers = ''
  * @param $html        - if set to true, html is the default, otherwise text format will be used
  *
  * For contact parameters, they can accept arrays containing zero or more values in the forms of:
- *     'email@email.com,email2@email.com,email3@email.com'
- *     array('email1@email.com' => 'My email', 'email2@email.com' => 'Your email', 'email3@email.com' => 'Whose email')
- *     array(array('email' => 'email1@email.com', 'name' => 'My email'), array('email' => 'email2@email.com',
- *         'name' => 'Your email'), array('email' => 'email3@email.com', 'name' => 'Whose email'))
  *
- * The $from field will only use the first contact specified.  If no contact is provided for $replyto
- * then $from is used for that too. If $from is empty, it will default to cacti@<server> or if no server name can
- * be found, it will use cacti@cacti.net
+ *     1. A comma delimited string:
+ *
+ *        'email@email.com,email2@email.com,email3@email.com'
+ *
+ *        Emails can also be as follows: "Your Name" <myemail@mydomain.com>, ...
+ *
+ *     2. An array of Emails and Names:
+ *
+ *     array(
+ *       'email1@email.com' => 'My email',
+ *       'email2@email.com' => 'Your email',
+ *       'email3@email.com' => 'Whose email'
+ *     );
+ *
+ *     3. An array of arrays with keys of 'email' and 'name':
+ *
+ *     array(
+ *       array(
+ *         'email' => 'email1@email.com',
+ *         'name'  => 'My email'
+ *       ),
+ *       array(
+ *         'email' => 'email2@email.com',
+ *         'name'  => 'Your email'
+ *       ),
+ *       array(
+ *         'email' => 'email3@email.com',
+ *         'name'  => 'Whose email'
+ *       )
+ *     );
+ *
+ * The $from field will only use the first contact specified.
+ *
+ * If no contact is provided for $replyto then $from is used for that too.
+ * If $from is empty, it will default to cacti@<server> or if no server name can
+ * be found, it will use cacti@cacti.net.
  *
  * The $attachments parameter may either be a single string, or a list of attachments
  * either as strings or an array.  The array can have the following keys:
@@ -4811,11 +5047,16 @@ function mailer($from, $to, $cc, $bcc, $replyto, $subject, $body, $body_text = '
 		$mail->Timeout = $timeout;
 	}
 
+	// Support SMTPUTF8
+	$mail::$validator = 'eai';
+
+	// Setup i18n
 	$langparts = explode('-', $cacti_locale);
 	if (file_exists($config['include_path'] . '/vendor/phpmailer/language/phpmailer.lang-' . $langparts[0] . '.php')) {
 		$mail->setLanguage($langparts[0], $config['include_path'] . '/vendor/phpmailer/language/');
 	}
 
+	// Determine the Email send method
 	$how = read_config_option('settings_how');
 	if ($how < 0 || $how > 2) {
 		$how = 0;
@@ -4828,8 +5069,8 @@ function mailer($from, $to, $cc, $bcc, $replyto, $subject, $body, $body_text = '
 		$mail->isSendmail();
 	} elseif ($how == 2) {
 		$mail->isSMTP();
-		$mail->Host     = read_config_option('settings_smtp_host');
-		$mail->Port     = read_config_option('settings_smtp_port');
+		$mail->Host = read_config_option('settings_smtp_host');
+		$mail->Port = read_config_option('settings_smtp_port');
 
 		if (read_config_option('settings_smtp_username') != '') {
 			$mail->SMTPAuth = true;
@@ -4842,9 +5083,14 @@ function mailer($from, $to, $cc, $bcc, $replyto, $subject, $body, $body_text = '
 			$mail->SMTPAuth = false;
 		}
 
-		$secure  = read_config_option('settings_smtp_secure');
+		$secure = read_config_option('settings_smtp_secure');
 		if (!empty($secure) && $secure != 'none') {
-			$mail->SMTPSecure = true;
+			if ($secure == 'tls') {
+				$mail->SMTPSecure = $mail::ENCRYPTION_STARTTLS;
+			} else {
+				$mail->SMTPSecure = $mail::ENCRYPTION_SMTPS;
+			}
+
 			if (substr_count($mail->Host, ':') == 0) {
 				$mail->Host = $secure . '://' . $mail->Host;
 			}
@@ -4890,16 +5136,15 @@ function mailer($from, $to, $cc, $bcc, $replyto, $subject, $body, $body_text = '
 		} else {
 			$from['email'] = 'Cacti@cacti.net';
 		}
-
-		if (empty($from['name'])) {
-			$from['name'] = 'Cacti';
-		}
 	}
 
-	// Sanity test the from email
-	if (!filter_var($from['email'], FILTER_VALIDATE_EMAIL)) {
-		return 'Bad email address format. Invalid from email address ' . $from['email'];
+	// Ensure name is never null — PHPMailer passes it to preg_replace()
+	// which is deprecated for null in PHP 8.x.
+	if (empty($from['name'])) {
+		$from['name'] = 'Cacti';
 	}
+
+	$result = null;
 
 	$fromText  = add_email_details(array($from), $result, array($mail, 'setFrom'));
 
@@ -5129,7 +5374,7 @@ function add_email_details($emails, &$result, callable $addFunc) {
 		if (!empty($e['email'])) {
 			//if (is_callable($addFunc)) {
 			if (!empty($addFunc)) {
-				$result = $addFunc($e['email'], $e['name']);
+				$result = $addFunc($e['email'], (string) $e['name']);
 				if (!$result) {
 					return '';
 				}
@@ -5143,7 +5388,7 @@ function add_email_details($emails, &$result, callable $addFunc) {
 	}
 
 	$text = implode(',', $arrText);
-	//print "add_email_sw_details(): $text\n";
+
 	return $text;
 }
 
@@ -5153,6 +5398,7 @@ function parse_email_details($emails, $max_records = 0, $details = array()) {
 	}
 
 	$update = array();
+
 	foreach ($emails as $check_email) {
 		if (!empty($check_email)) {
 			if (!is_array($check_email)) {
@@ -5160,9 +5406,11 @@ function parse_email_details($emails, $max_records = 0, $details = array()) {
 
 				foreach($emails as $email) {
 					$email_array = split_emaildetail($email);
+
 					$details[$email_array['email']] = $email_array;
 				}
 			} else {
+				// Case indexed array of Emails
 				$has_name  = array_key_exists('name', $check_email);
 				$has_email = array_key_exists('email', $check_email);
 
@@ -5174,7 +5422,7 @@ function parse_email_details($emails, $max_records = 0, $details = array()) {
 					$email = array_key_exists(0, $check_email) ? $check_email[0] : '';
 				}
 
-				$details[trim(strtolower($email))] = array('name' => trim($name), 'email' => trim(strtolower($email)));
+				$details[mb_strtolower($email)] = array('name' => $name, 'email' => mb_strtolower($email));
 			}
 		}
 	}
@@ -5184,6 +5432,7 @@ function parse_email_details($emails, $max_records = 0, $details = array()) {
 		$results = is_array($detail) ? $detail : array();
 	} elseif ($max_records != 0 && $max_records < count($details)) {
 		$results = array();
+
 		foreach ($details as $d) {
 			$results[] = $d;
 			$max_records--;
@@ -5199,28 +5448,58 @@ function parse_email_details($emails, $max_records = 0, $details = array()) {
 }
 
 function split_emaildetail($email) {
-	$rname  = '';
+	$rname = '';
 	$rmail = '';
 
 	if (!is_array($email)) {
 		$email = trim($email);
+	}
 
-		$sPattern = '/(?:"?([^"]*)"?\s)?(?:<?(.+@[^>]+)>?)/i';
-		preg_match($sPattern, $email, $aMatch);
+	/**
+	 * Handle the special case where sendmail is being used
+	 * without an email domain
+	 */
+	if (!is_array($email) && strpos($email, '@') === false) {
+		return array('name' => '', 'email' => $email);
+	}
 
-		if (isset($aMatch[1])) {
-			$rname = trim($aMatch[1]);
+	/**
+	 * Handle the case where the Email is a string, but may
+	 * include the name at the beginning of the Email.
+	 */
+	if (!is_array($email) && strpos($email, '@') !== false) {
+		if (strpos($email, '<') !== false) {
+			$parts = explode('<', $email);
+			$name  = str_replace(array('"', "'"), array('', ''), $parts[0]);
+			$email = str_replace('>', '', $parts[1]);
+
+			return array('name' => $name, 'email' => $email);
 		}
+	}
 
-		if (isset($aMatch[2])) {
-			$rmail = trim($aMatch[2]);
+	if (!is_array($email)) {
+		/**
+		 * Borrowing eai validation from PHPMailer
+		 *
+		 * @see https://html.spec.whatwg.org/#e-mail-state-(type=email)
+		 * @see https://en.wikipedia.org/wiki/International_email
+		 */
+		$sPattern = '/^[-\p{L}\p{N}\p{M}.!#$%&\'*+\/=?^_`{|}~]+@[\p{L}\p{N}\p{M}](?:[\p{L}\p{N}\p{M}-]{0,61}' .
+			'[\p{L}\p{N}\p{M}])?(?:\.[\p{L}\p{N}\p{M}]' .
+			'(?:[-\p{L}\p{N}\p{M}]{0,61}[\p{L}\p{N}\p{M}])?)*$/usD';
+
+		$valid = preg_match($sPattern, $email);
+
+		if ($valid) {
+			$rmail = $email;
+			$rname = '';
 		}
 	} else {
 		$rmail = $email[0];
 		$rname = $email[1];
 	}
 
-	return array('name' => $rname, 'email' => strtolower($rmail));
+	return array('name' => $rname, 'email' => mb_strtolower($rmail));
 }
 
 function create_emailtext($e) {
@@ -5291,7 +5570,7 @@ function ping_mail_server($host, $port, $user, $password, $timeout = 10, $secure
 function email_test() {
 	global $config;
 
-	$message =  __('This is a test message generated from Cacti.  This message was sent to test the configuration of your Mail Settings.') . '<br><br>';
+	$message  =  __('This is a test message generated from Cacti.  This message was sent to test the configuration of your Mail Settings.') . '<br><br>';
 	$message .= __('Your email settings are currently set as follows') . '<br><br>';
 	$message .= '<b>' . __('Method') . '</b>: ';
 
@@ -5304,14 +5583,16 @@ function email_test() {
 	if ($how == 0) {
 		$mail = __('PHP\'s Mailer Class');
 	} elseif ($how == 1) {
-		$mail = __('Sendmail') . '<br><b>' . __('Sendmail Path'). '</b>: ';
+		$mail     = __('Sendmail') . '<br><b>' . __('Sendmail Path'). '</b>: ';
 		$sendmail = read_config_option('settings_sendmail_path');
-		$mail .= $sendmail;
+		$mail    .= $sendmail;
 	} elseif ($how == 2) {
 		print __('Method: SMTP') . '<br>';
+
 		$mail = __('SMTP') . '<br>';
-		$smtp_host = read_config_option('settings_smtp_host');
-		$smtp_port = read_config_option('settings_smtp_port');
+
+		$smtp_host     = read_config_option('settings_smtp_host');
+		$smtp_port     = read_config_option('settings_smtp_port');
 		$smtp_username = read_config_option('settings_smtp_username');
 		$smtp_password = read_config_option('settings_smtp_password');
 		$smtp_secure   = read_config_option('settings_smtp_secure');
@@ -5344,6 +5625,7 @@ function email_test() {
 			$mail .= '<b>' . __('Ping Results') . '</b>: ' . __('Bypassed') . '<br>';
 		}
 	}
+
 	$message .= $mail;
 	$message .= '<br>';
 
@@ -6115,6 +6397,12 @@ function call_remote_data_collector($poller_id, $url, $logtype = 'WEBUI') {
 		}
 	}
 
+	// Validate URL is a relative path to prevent SSRF
+	if (strpos($url, '://') !== false || strpos($url, '@') !== false || strpos($url, '../') !== false || (strlen($url) > 0 && $url[0] !== '/')) {
+		cacti_log('ERROR: Invalid URL passed to call_remote_data_collector: ' . $url, false, 'SECURITY');
+		return '';
+	}
+
 	$fgc_contextoption = get_default_contextoption();
 	$fgc_context       = stream_context_create($fgc_contextoption);
 
@@ -6161,9 +6449,10 @@ function get_default_contextoption($timeout = false) {
 	if (in_array($protocol, array('ssl', 'https', 'ftps'))) {
 		$fgc_contextoption = array(
 			'ssl' => array(
-				'verify_peer' => false,
-				'verify_peer_name' => false,
-				'allow_self_signed' => true,
+				'verify_peer'       => read_config_option('allow_unsafe_https') != 'on' ? true : false,
+				'verify_peer_name'  => read_config_option('allow_unsafe_https') != 'on' ? true : false,
+				'allow_self_signed' => read_config_option('allow_unsafe_https') == 'on' ? true : false,
+				'follow_location'   => 0,
 			)
 		);
 	}
@@ -6370,23 +6659,23 @@ function repair_system_data_input_methods($step = 'import') {
 }
 
 if (isset($config['cacti_server_os']) && $config['cacti_server_os'] == 'win32' && !function_exists('posix_kill')) {
+	if (!defined('SIGTERM')) {
+		define('SIGTERM', 15);
+	}
+
+	if (!defined('SIGKILL')) {
+		define('SIGKILL', 9);
+	}
+
+	if (!defined('SIGHUP')) {
+		define('SIGHUP', 1);
+	}
+
+	if (!defined('SIGINT')) {
+		define('SIGINT', 2);
+	}
+
 	function posix_kill($pid, $signal = SIGTERM) {
-		if (!defined('SIGTERM')) {
-			define('SIGTERM', 15);
-		}
-
-		if (!defined('SIGKILL')) {
-			define('SIGKILL', 9);
-		}
-
-		if (!defined('SIGHUP')) {
-			define('SIGHUP', 1);
-		}
-
-		if (!defined('SIGINT')) {
-			define('SIGINT', 2);
-		}
-
 		$wmi   = new COM("winmgmts:{impersonationLevel=impersonate}!\\\\.\\root\\cimv2");
 		$procs = $wmi->ExecQuery("SELECT ProcessId FROM Win32_Process WHERE ProcessId='" . $pid . "'");
 
@@ -6412,14 +6701,22 @@ if (isset($config['cacti_server_os']) && $config['cacti_server_os'] == 'win32' &
 }
 
 function is_ipaddress($ip_address = '') {
+	/* Strip IPv6 Scope ID (Zone Index) for validation, as
+	   filter_var rejects valid link-local addresses like fe80::1%eth0 */
+	$clean_ip = $ip_address;
+	if (strpos($clean_ip, '%') !== false) {
+		$parts = explode('%', $clean_ip, 2);
+		$clean_ip = $parts[0];
+	}
+
 	/* check for ipv4/v6 */
 	if (function_exists('filter_var')) {
-		if (filter_var($ip_address, FILTER_VALIDATE_IP) !== false) {
+		if (filter_var($clean_ip, FILTER_VALIDATE_IP) !== false) {
 			return true;
 		} else {
 			return false;
 		}
-	} elseif (inet_pton($ip_address) !== false) {
+	} elseif (@inet_pton($clean_ip) !== false) {
 		return true;
 	} else {
 		return false;
@@ -6715,9 +7012,9 @@ function get_md5_include_js($path, $async = false) {
 	}
 
 	if ($async) {
-		return '<script type=\'text/javascript\' src=\'' . $config['url_path'] . $relpath . '?' . get_md5_hash($path) . '\' async></script>' . PHP_EOL;
+		return '<script type=\'text/javascript\' ' . CactiSecureHeaders::getNonceAttribute() . ' src=\'' . $config['url_path'] . $relpath . '?' . get_md5_hash($path) . '\' async></script>' . PHP_EOL;
 	} else {
-		return '<script type=\'text/javascript\' src=\'' . $config['url_path'] . $relpath . '?' . get_md5_hash($path) . '\'></script>' . PHP_EOL;
+		return '<script type=\'text/javascript\' ' . CactiSecureHeaders::getNonceAttribute() . ' src=\'' . $config['url_path'] . $relpath . '?' . get_md5_hash($path) . '\'></script>' . PHP_EOL;
 	}
 }
 
@@ -7054,6 +7351,229 @@ function cacti_ptoa($title, $addr) {
 	}
 }
 
+/**
+ * cacti_csv_safe - sanitzes a string for inclusion in a CSV file to prevent formula injection
+ *
+ * @param $value - (string) The string to be sanitized
+ *
+ * @returns - (string) The sanitized string
+ */
+function cacti_csv_safe($value) {
+	if (!is_string($value) && !is_numeric($value)) {
+		return $value;
+	}
+
+	$value = (string)$value;
+
+	// Strip leading whitespace and control characters that spreadsheets
+	// treat as formula-start triggers (OWASP CSV injection)
+	$trimmed = ltrim($value, " \t\n\r\0\x0B");
+
+	$dangerous = array('=', '+', '-', '@', "\t", "\r");
+
+	foreach ($dangerous as $char) {
+		if (isset($trimmed[0]) && $trimmed[0] === $char) {
+			return "'" . $value;
+		}
+	}
+
+	return $value;
+}
+
+/**
+ * cacti_input_string_is_safe - guard against shell metacharacters smuggled
+ *   into a data_input.input_string template. The placeholder syntax is
+ *   <field_name>, never <;rm -rf /;>, so any character outside a placeholder
+ *   that could be interpreted by a shell is taken as a command-injection
+ *   attempt. The same regex gates both the GUI save path (data_input.php)
+ *   and XML/package import (lib/import.php) so the two cannot drift.
+ *
+ *   However, for backward compatibility, we check the setting of
+ *   allow unsafe metacharacters for administrators that may have historically
+ *   used simple commands for data input methods including things like
+ *   ps -ef | grep string | wc -l which have been historically allowed,
+ *   but are unsafe for web applications.
+ *
+ *   Otherwise, the following are blocked: ; & | ` $ \ \n \r ' " < > ( ) { }
+ *
+ *   These cover the original set plus single-quote, double-quote, redirect
+ *   operators (<>), and subshell delimiters ((){}), which were absent before
+ *   and allowed bypass payloads such as /bin/sh -c 'id' or cmd > /tmp/x.
+ *
+ *   Placeholder names match [a-zA-Z0-9_]+, the same grammar that
+ *   generate_data_input_field_sequences() and get_full_script_path()
+ *   use, so digit-suffixed tokens such as <arg1> and <host_id2> are
+ *   recognised. Paired surrounding quotes ("<x>" or '<x>') are stripped
+ *   together with the placeholder so that legitimate shell-arg quoting
+ *   in templates such as
+ *     <path_cacti>/scripts/x.php "<reason>"
+ *   is preserved.
+ *
+ * @param string $input_string The candidate input_string template
+ *
+ * @return bool True if the value is safe to persist
+ */
+function cacti_input_string_is_safe($input_string) {
+	if ($input_string === '' || $input_string === null) {
+		return true;
+	}
+
+	$bare = preg_replace(
+		'/"<[a-zA-Z0-9_]+>"|\'<[a-zA-Z0-9_]+>\'|<[a-zA-Z0-9_]+>/',
+		'',
+		$input_string
+	);
+
+	// Never allow redirects regardless of metachars setting
+	if (str_contains($bare, '>') || str_contains($bare, '<')) {
+		return false;
+	}
+
+	// If the Cacti admin permit's unsafe metachars short circuit here
+	if (read_config_option('allow_unsafe_metachars') == 'on') {
+		return true;
+	}
+
+	return !preg_match('/[;&|`$\\\\\n\r\'"<>()\{\}]/', $bare);
+}
+
+/**
+ * cacti_exec - run an external command via proc_open with a discrete argv array.
+ *
+ * No shell is involved: the argv array is passed directly to execve(), so shell
+ * metacharacters in argument values are inert. Callers must still validate
+ * argument semantics (e.g. rrdtool DEF lines) themselves.
+ *
+ * This is the argv-array counterpart to exec_with_timeout() in lib/poller.php,
+ * which accepts a pre-built shell string. Use cacti_exec() when the binary and
+ * arguments are known separately; use exec_with_timeout() when migrating legacy
+ * shell_exec() callers that already assemble the command string.
+ *
+ * Requires PHP 7.4+ (array form of proc_open). The 1.2.x branch targets PHP 7.4
+ * as its minimum, so no version gate is needed.
+ *
+ * @param string $binary   Path to the executable. Must not start with '-'.
+ * @param array  $args     Ordered argument strings (not shell-escaped).
+ * @param array  &$output  Receives stdout lines on success; empty array on empty output.
+ * @param mixed  $timeout  False for 4 hour timeout or seconds before the process is killed (default 30).
+ *
+ * @return int Exit code, or 255 on spawn failure, error with binary or timeout.
+ */
+function cacti_exec($binary, array $args = array(), array &$output = array(), $timeout = 30) {
+	// Ensure buffers flush automatically
+	if (PHP_SAPI === 'cli') {
+		ini_set('implicit_flush', true);
+	}
+
+	// Blocking assumes a timeout of 4 hours
+	if ($timeout === false) {
+		$timeout  = 3600 * 4;
+	}
+
+	if (!is_string($binary) || trim($binary) === '') {
+		return 255;
+	}
+
+	if (strpos(trim($binary), '-') === 0) {
+		cacti_log('ERROR: cacti_exec() rejected binary starting with dash: ' . $binary, false, 'SYSTEM');
+		return 255;
+	}
+
+	$argv = array_merge(array($binary), array_values($args));
+
+	$descriptors = array(
+		0 => array('pipe', 'r'),
+		1 => array('pipe', 'w'),
+		2 => array('pipe', 'w'),
+	);
+
+	$process = proc_open($argv, $descriptors, $pipes);
+
+	if (!is_resource($process)) {
+		cacti_log('ERROR: cacti_exec() failed to spawn: ' . $binary, false, 'SYSTEM');
+		return 255;
+	}
+
+	fclose($pipes[0]);
+	stream_set_blocking($pipes[1], false);
+	stream_set_blocking($pipes[2], false);
+
+	$stdout    = '';
+	$stderr    = '';
+	$remaining = (int) $timeout * 1000000;
+	$exit      = false;
+
+	while ($remaining > 0) {
+		$start  = microtime(true);
+		$read   = array($pipes[1], $pipes[2]);
+		$write  = array();
+		$except = array();
+		stream_select($read, $write, $except, 0, $remaining);
+
+		usleep(50000);
+
+		$status  = proc_get_status($process);
+		$stdout .= stream_get_contents($pipes[1]);
+		$stderr .= stream_get_contents($pipes[2]);
+
+		if (!$status['running']) {
+			$exit = $status['exit_code'];
+
+			break;
+		}
+
+		$remaining -= (int) ((microtime(true) - $start) * 1000000);
+	}
+
+	fclose($pipes[1]);
+	fclose($pipes[2]);
+
+	$status = proc_get_status($process);
+
+	if ($status['running']) {
+		if (isset($status['pid']) && function_exists('posix_kill')) {
+			posix_kill($status['pid'], 9);
+		}
+
+		proc_terminate($process, 9);
+		proc_close($process);
+
+		cacti_log('ERROR: cacti_exec() timed out after ' . $timeout . 's: ' . $binary, false, 'SYSTEM');
+
+		return 1;
+	}
+
+	proc_close($process);
+
+	if (!empty($stderr)) {
+		cacti_log('WARNING: cacti_exec() stderr: ' . trim($stderr), false, 'SYSTEM');
+	}
+
+	$stdout  = rtrim($stdout, "\n");
+	$output  = ($stdout === '') ? array() : explode("\n", $stdout);
+
+	return $exit;
+}
+
+/**
+ * cacti_exec_string - run a command and return stdout as a single string.
+ *
+ * Convenience wrapper around cacti_exec() for callers that previously used
+ * shell_exec() and expect a string return value.
+ *
+ * @param string $binary
+ * @param array  $args
+ * @param int    $timeout
+ *
+ * @return string|false stdout on exit code 0, false on failure.
+ */
+function cacti_exec_string($binary, array $args = array(), $timeout = 30) {
+	$output = array();
+	$exit   = cacti_exec($binary, $args, $output, $timeout);
+
+	return ($exit === 0) ? implode("\n", $output) : false;
+}
+
 function cacti_sizeof($array) {
 	return ($array === false || !is_array($array)) ? 0 : sizeof($array);
 }
@@ -7087,10 +7607,11 @@ function raise_ajax_permission_denied() {
 /**
  * cacti_session_start - Create a Cacti session from the settings set by the administrator
  *
+ * @param bool $regenerate - If you are logging in for the first time, regenerate the token
+ *
  * @return - null
  */
-function cacti_session_start() {
-	/** @var array */
+function cacti_session_start($regenerate = false) {
 	global $config;
 
 	/* initialize php session */
@@ -7098,19 +7619,53 @@ function cacti_session_start() {
 		die('PHP Session Management is missing, please install PHP Session module');
 	}
 
-	session_name($config['cacti_session_name']);
-
 	if (session_status() === PHP_SESSION_NONE) {
 		$session_restart = '';
+
+		session_name($config['cacti_session_name']);
 	} else {
 		$session_restart = 're';
 	}
 
-	$session_result = session_start($config['cookie_options']);
+	if ($regenerate) {
+		$session_data = cacti_session_regenerate();
+	}
+
+	if (session_status() === PHP_SESSION_NONE) {
+		$session_result = session_start($config['cookie_options']);
+	} else {
+		$session_result = true;
+	}
+
+	/* restore the session data after regeneration */
+	if ($regenerate) {
+		$_SESSION = $session_data;
+	}
 
 	if (!$session_result) {
 		cacti_log('Session "' . session_id() . '" ' . $session_restart . 'start failed! ' . cacti_debug_backtrace('', false, false, 0, 1), false, 'WARNING:');
 	}
+}
+
+/**
+ * cacti_session_regenerate - This function will regenerate a session token in cases
+ * where the user logs in for the first time, or their session token has existed
+ * too long. We forcibly destroy old session data as it will remove the entry from
+ * the Cacti sessions table immediately thus reducing the number of inactive
+ * sessions in the sessions table.
+ *
+ * @return array - The prior sessions data
+ */
+function cacti_session_regenerate() {
+	if (session_status() === PHP_SESSION_ACTIVE) {
+		$session_data = $_SESSION;
+	} else {
+		$session_data = array();
+	}
+
+	session_regenerate_id(true);
+
+	return $session_data;
 }
 
 /**
@@ -7134,7 +7689,7 @@ function cacti_session_destroy() {
 }
 
 /**
- * cacti_cookie_set - Allows for settings an arbitry cookie name and value
+ * cacti_cookie_set - Allows for settings an arbitrary cookie name and value
  * used for CSRF protection.
  *
  * @return - null
@@ -7329,11 +7884,10 @@ function cacti_browser_zone_enabled() {
 		return true;
 	}
 }
-
 /**
- * cacti_time_zone_set - Givin an offset in minutes, attempt
+ * cacti_time_zone_set - Given an offset in minutes, attempt
  * to set a PHP date.timezone.  There are some oddballs that
- * we have to accomodate.
+ * we have to accommodate.
  *
  * @return - null
  */
@@ -7455,11 +8009,11 @@ function debounce_run_notification($id, $frequency = 7200) {
 }
 
 function cacti_unserialize($strobj) {
-	if (version_compare(PHP_VERSION, '7.0.0', '>=')) {
-		return unserialize($strobj, array('allowed_classes' => false));
-	} else {
-		return unserialize($strobj);
+	if ($strobj === null || $strobj === '') {
+		return false;
 	}
+
+	return @unserialize($strobj, array('allowed_classes' => false));
 }
 
 function cacti_format_ipv6_colon($address) {
@@ -7478,3 +8032,527 @@ function cacti_format_ipv6_colon($address) {
 	return($address);
 }
 
+/**
+ * cacti_path_is_within - Check whether a candidate path resolves to a
+ * location inside a given base directory.  Both paths are resolved via
+ * realpath() so symlinks and relative components are handled.
+ *
+ * Windows notes:
+ *   - comparison is case-insensitive (NTFS is case-preserving but not
+ *     case-sensitive).
+ *   - both backslashes and forward slashes are normalised to '/' before
+ *     the comparison.
+ *   - the long-path prefixes "\\?\" and "\\?\UNC\" that realpath may
+ *     return for deep trees or UNC shares are stripped so a candidate
+ *     returned in extended form still matches a base in classic form
+ *     (and vice versa).
+ *   - UNC shares ("\\server\share\path") are supported.  The leading
+ *     "\\" is preserved as "//" after slash normalisation so the prefix
+ *     check still discriminates "//server/share" from "//server/shareX".
+ *
+ * @param  string $candidate  The path to test
+ * @param  string $base       The base directory that must contain it
+ *
+ * @return bool  True when $candidate is strictly inside $base
+ */
+function cacti_path_is_within($candidate, $base) {
+	$resolved = realpath($candidate);
+
+	if ($resolved === false) {
+		return false;
+	}
+
+	$base_resolved = realpath($base);
+
+	if ($base_resolved === false) {
+		return false;
+	}
+
+	if (DIRECTORY_SEPARATOR === '\\') {
+		$resolved      = cacti_normalize_windows_path($resolved);
+		$base_resolved = cacti_normalize_windows_path($base_resolved);
+	}
+
+	return strpos($resolved, $base_resolved . '/') === 0 || $resolved === $base_resolved;
+}
+
+/**
+ * cacti_normalize_windows_path - Internal helper for cacti_path_is_within.
+ *
+ * Lowercases the path for case-insensitive comparison, converts all
+ * backslashes to forward slashes, strips Windows long-path prefixes
+ * (\\?\UNC\ becomes \\, \\?\ is removed), and trims trailing slashes.
+ *
+ * @param  string $path  A path already passed through realpath()
+ * @return string        Normalised path suitable for strpos comparison
+ */
+function cacti_normalize_windows_path($path) {
+	$lower = strtolower((string) $path);
+
+	/* Long-path prefixes. Strip \\?\UNC\ first so the remaining \\ is
+	 * preserved for UNC share comparison; then strip bare \\?\ (which
+	 * only wraps drive-letter paths for filesystem APIs). */
+	if (strpos($lower, '\\\\?\\unc\\') === 0) {
+		$lower = '\\\\' . substr($lower, 8);
+	} elseif (strpos($lower, '\\\\?\\') === 0) {
+		$lower = substr($lower, 4);
+	}
+
+	$lower = str_replace('\\', '/', $lower);
+
+	/* Drop trailing slashes except for a lone '/' (drive-root case). */
+	if (strlen($lower) > 1) {
+		$lower = rtrim($lower, '/');
+	}
+
+	return $lower;
+}
+
+/**
+ * cacti_header - Redirect to the default if the HTTP_REFERER is empty
+ *
+ * @param string $default The default to redirect to unless
+ *
+ * @return void
+ */
+function cacti_header($default = 'index.php') {
+	$save_url = validate_redirect_url($_SERVER['HTTP_REFERER'] ?? $default, $default);
+
+	header('Location: ' . $save_url);
+	exit;
+}
+
+/**
+ * cacti_redirect - Redirect to a validated URL.
+ *
+ * Uses validate_redirect_url() to ensure the target is safe before
+ * sending the Location header. Falls back to $default when the URL
+ * is empty or fails validation.
+ *
+ * @param  string $url      Target URL (empty to use HTTP_REFERER)
+ * @param  string $default  Fallback URL when input is empty or invalid
+ * @param  int    $status   HTTP status code for the redirect
+ *
+ * @return void  (exits after sending the header)
+ */
+function cacti_redirect($url = '', $default = 'index.php', $status = 302) {
+	$safe_url = validate_redirect_url(
+		!empty($url) ? $url : (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : $default),
+		$default
+	);
+
+	header('Location: ' . $safe_url, true, $status);
+	exit;
+}
+
+/**
+ * cacti_redact_sensitive - Replace sensitive values in an associative array.
+ *
+ * Walks the array recursively and replaces any value whose key matches
+ * a known sensitive name (password, token, community, etc.) with
+ * '[REDACTED]'. Safe for logging request data or debug dumps.
+ *
+ * @param  mixed $data  Array to redact (non-arrays returned unchanged)
+ *
+ * @return mixed  The redacted copy
+ */
+function cacti_redact_sensitive($data) {
+	if (!is_array($data)) {
+		return $data;
+	}
+
+	$redacted = array();
+
+	foreach ($data as $key => $value) {
+		$redacted[$key] = cacti_is_sensitive_key($key)
+			? '[REDACTED]'
+			: (is_array($value) ? cacti_redact_sensitive($value) : $value);
+	}
+
+	return $redacted;
+}
+
+/**
+ * cacti_is_sensitive_key - Returns true if the given key name suggests
+ * the value holds a secret (password, token, SNMP community, etc.).
+ *
+ * Exposed so callers that log a single "$key => $value" pair (for
+ * example the poller cache diff log) can redact without building an
+ * intermediate array.
+ */
+function cacti_is_sensitive_key($key) {
+	static $sensitive_keys = array(
+		'password', 'pass', 'snmp_password', 'snmp_priv_passphrase',
+		'snmp_auth_passphrase', 'rsa_private_key', 'secret',
+		'auth_key', 'priv_key', 'token', 'cookie', 'community',
+		'snmp_community', 'specific_password', 'ldap_password',
+	);
+
+	$lower = strtolower((string) $key);
+
+	foreach ($sensitive_keys as $sk) {
+		if ($lower === $sk || strpos($lower, $sk) !== false) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+ * cacti_redact_value - Returns '[REDACTED]' if the key is sensitive,
+ * otherwise returns the original value. Companion to cacti_redact_sensitive
+ * for scalar log statements.
+ */
+function cacti_redact_value($key, $value) {
+	return cacti_is_sensitive_key($key) ? '[REDACTED]' : $value;
+}
+
+/**
+ * cacti_temp_file - Execute a callback with a temporary file, then clean up.
+ *
+ * Creates a temp file via tempnam(), passes its path to $callback,
+ * and deletes the file in a finally block regardless of exceptions.
+ *
+ * @param  string   $prefix    Prefix for the temp filename
+ * @param  callable $callback  Receives the temp file path as its argument
+ *
+ * @return mixed  The return value of $callback, or false on tempnam failure
+ */
+function cacti_temp_file($prefix, $callback) {
+	$path = tempnam(sys_get_temp_dir(), $prefix);
+
+	if ($path === false) {
+		cacti_log('ERROR: cacti_temp_file: tempnam failed', false, 'SYSTEM');
+		return false;
+	}
+
+	try {
+		$result = call_user_func($callback, $path);
+	} finally {
+		@unlink($path);
+	}
+
+	return $result;
+}
+
+
+/**
+ * cacti_validate_theme - returns the requested theme name iff it names a
+ * real directory under include/themes/ that contains an rrdtheme.php file.
+ * Otherwise returns the configured default theme.
+ *
+ * Root-cause mitigation for LFI via the graph_theme request parameter.
+ * basename() on the request value is not sufficient because an attacker
+ * who can place files at predictable paths (plugin uploads, session files,
+ * log rotation) can satisfy a basename + is_dir check with an
+ * attacker-controlled directory. This helper builds the allowlist from the
+ * filesystem once per request (cached statically) and rejects anything
+ * that is not a genuine shipped theme.
+ *
+ * Applies to:
+ *   GHSA-rm7p-qcqm-x5m6 (unauth LFI via graph_theme + rrdtool IPC)
+ *   GHSA-cx5r-8q6h-r772 (pre-auth LFI via graph_theme)
+ *
+ * @param string $requested  The raw value from the request
+ *
+ * @return string  A validated theme name safe for path concatenation
+ */
+function cacti_validate_theme($requested) {
+	global $config;
+	static $valid_themes = null;
+
+	$default = read_config_option('selected_theme');
+
+	if (empty($default)) {
+		$default = 'modern';
+	}
+
+	if ($valid_themes === null) {
+		$valid_themes = array();
+		$themes_dir   = $config['base_path'] . '/include/themes';
+
+		if (is_dir($themes_dir)) {
+			$entries = scandir($themes_dir);
+
+			if ($entries !== false) {
+				foreach ($entries as $entry) {
+					if ($entry === '.' || $entry === '..') {
+						continue;
+					}
+
+					$full = $themes_dir . '/' . $entry;
+
+					if (is_dir($full) && is_file($full . '/rrdtheme.php')) {
+						$valid_themes[$entry] = true;
+					}
+				}
+			}
+		}
+	}
+
+	$requested = basename((string) $requested);
+
+	return isset($valid_themes[$requested]) ? $requested : $default;
+}
+
+/**
+ * cacti_html_context_escape - escape a value for safe insertion into a
+ * specific HTML / JS / URL / CSS context.
+ *
+ * Different contexts require different escape rules. Using the wrong escape
+ * (e.g., htmlspecialchars for a JavaScript string) leaves exploitable holes.
+ * This helper picks the right primitive per context and fails closed when
+ * an unknown context is passed.
+ *
+ * Root-cause mitigation for context-confusion XSS:
+ *   GHSA-7gx8-f5q4-86mv (tooltip HTML attr via SNMP description)
+ *   GHSA-m544-32jr-54xw (JS string via session referer in auth_profile)
+ *   GHSA-6233-v5hc-6gvf (HTML element via Report Tree titles)
+ *   GHSA-977w-79m7-xjc4 (HTML element via SNMP data in graph export)
+ *   GHSA-cfhh-pwvx-gp5g (reflected XSS via rfilter PCRE differential)
+ *
+ * Usage:
+ *   print cacti_html_context_escape($value, CACTI_ESC_ELEMENT);
+ *   print "<a title='" . cacti_html_context_escape($v, CACTI_ESC_ATTR) . "'>";
+ *   print "var x = '" . cacti_html_context_escape($v, CACTI_ESC_JS_STRING) . "';";
+ *   print "<a href='?q=" . cacti_html_context_escape($v, CACTI_ESC_URL) . "'>";
+ *
+ * @param mixed  $value    The value to escape
+ * @param string $context  One of CACTI_ESC_* constants
+ *
+ * @return string  The escaped value safe for the given context
+ */
+function cacti_html_context_escape($value, $context) {
+	$value = (string) $value;
+
+	switch ($context) {
+		case CACTI_ESC_ELEMENT:
+		case CACTI_ESC_ATTR:
+			// htmlspecialchars with ENT_QUOTES is safe for both element
+			// content and both ' / " quoted attribute values.
+			return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+
+		case CACTI_ESC_JS_STRING:
+			// Emit a JSON-encoded string literal body (without the
+			// surrounding quotes). Caller supplies the delimiting quotes.
+			// JSON_HEX_TAG/APOS/QUOT/AMP keep the result safe inside <script>
+			// tags and inside HTML attributes that contain JS.
+			$flags = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE;
+			$json  = json_encode($value, $flags);
+
+			if ($json === false) {
+				// Fail closed on encode failure.
+				return '';
+			}
+
+			// Strip the surrounding double quotes; caller owns the delimiters.
+			return substr($json, 1, -1);
+
+		case CACTI_ESC_URL:
+			// rawurlencode per RFC 3986 (spaces as %20, not +).
+			return rawurlencode($value);
+
+		case CACTI_ESC_CSS:
+			// Only allow safe chars; escape everything else as \XX hex.
+			// Keeps attacker out of style="expression(...)", url(...), etc.
+			return preg_replace_callback('/[^a-zA-Z0-9\-\_]/', function ($m) {
+				return '\\' . bin2hex($m[0]) . ' ';
+			}, $value);
+
+		default:
+			// Unknown context — fail closed by escaping aggressively as
+			// HTML element content. Preserves safety, alerts on misuse via
+			// visibly escaped output.
+			return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+	}
+}
+
+/**
+ * cacti_validate_sort_column - returns $column if it exactly matches an
+ * entry in $allowed (strict comparison), otherwise returns $default or the
+ * first allowlist entry.
+ *
+ * Root-cause mitigation for ORDER BY SQL injection via unsanitized
+ * sort_column request parameters.
+ *
+ * The allowlist may contain:
+ *   - bare column names:  'name', 'hostname', 'time'
+ *   - fully-qualified names:  'h.description', 'dl.host_id'
+ *   - function expressions:  'INET_ATON(hostname)', 'LENGTH(description)'
+ *
+ * Callers pass the exact SQL fragment they want to allow. Matching is
+ * strict (===), case-sensitive, and whitespace-sensitive. Request values
+ * that don't match any allowlist entry fall through to $default.
+ *
+ * Example (with function expression):
+ *   $col = cacti_validate_sort_column(
+ *       get_request_var('sort_column'),
+ *       array('description', 'hostname', 'INET_ATON(hostname)'),
+ *       'description'
+ *   );
+ *
+ * Applies to GHSA-3p6w, GHSA-84q3, GHSA-gp82 and future ORDER BY reports.
+ *
+ * @param string $column   Requested sort column
+ * @param array  $allowed  Allowlist of acceptable SQL fragments
+ * @param string $default  Fallback when $column is not in $allowed
+ *
+ * @return string  Safe SQL fragment
+ */
+function cacti_validate_sort_column(string $column, array $allowed, string $default = '') : string {
+	if (in_array($column, $allowed, true)) {
+		return $column;
+	}
+
+	return $default !== '' ? $default : (count($allowed) > 0 ? $allowed[0] : 'id');
+}
+
+/**
+ * escape_page_action - Look up a drp_action key in an actions array and return
+ * the matching label, html_escape()'d and ready for direct output.
+ *
+ * The key is used only for the array lookup, so a non-scalar or unknown key
+ * yields $default. Plugin hooks (api_plugin_hook_function) may substitute
+ * labels containing HTML, so the result is escaped here; callers output it
+ * directly without a second html_escape().
+ *
+ * @param array  $actions     Associative array mapping drp_action values to labels.
+ * @param mixed  $drp_action  The drp_action key to look up; non-scalar keys yield $default.
+ * @param string $default     Label to return when the key is absent from the array.
+ *
+ * @return string  The html_escape()'d matched label, or $default.
+ */
+function escape_page_action(array $actions, $drp_action, string $default = ''): string {
+	if (!is_string($drp_action) && !is_int($drp_action)) {
+		return $default;
+	}
+
+	return html_escape(isset($actions[$drp_action]) ? $actions[$drp_action] : $default);
+}
+
+/**
+ * cacti_http - SSRF-hardened HTTP GET.
+ *
+ * Wraps file_get_contents() with a stream context that enables TLS peer
+ * verification, disables redirect-following, and rejects non-http(s)
+ * schemes. Callers may pass an optional host allowlist; if set, only
+ * matching hostnames pass.
+ *
+ * @param string $url        Absolute http(s) URL to fetch.
+ * @param int    $timeout    Seconds before the request is aborted.
+ * @param array  $allowlist  Optional case-insensitive list of allowed hostnames (exact match).
+ * @param int    $status     By-ref HTTP status code, or 0 on transport failure.
+ *
+ * @return mixed  Response body string on 2xx, false on any failure.
+ */
+function cacti_http($url, $timeout = 10, array $allowlist = array(), &$status = 0) {
+	$status = 0;
+
+	$parts = parse_url((string) $url);
+
+	if ($parts === false || !isset($parts['scheme']) || !isset($parts['host'])) {
+		return false;
+	}
+
+	$scheme = strtolower($parts['scheme']);
+
+	if ($scheme !== 'http' && $scheme !== 'https') {
+		return false;
+	}
+
+	if (!empty($allowlist)) {
+		$host_lower = strtolower($parts['host']);
+		$allowed = array_map('strtolower', $allowlist);
+
+		if (!in_array($host_lower, $allowed, true)) {
+			return false;
+		}
+	}
+
+	$ssl = ($scheme === 'https') ? array(
+		'verify_peer'       => read_config_option('allow_unsafe_https') != 'on' ? true : false,
+		'verify_peer_name'  => read_config_option('allow_unsafe_https') != 'on' ? true : false,
+		'allow_self_signed' => read_config_option('allow_unsafe_https') == 'on' ? true : false,
+	) : array();
+
+	$ctx = stream_context_create(array(
+		'http' => array(
+			'method'          => 'GET',
+			'timeout'         => (int) $timeout,
+			'follow_location' => 0,
+			'max_redirects'   => 0,
+			'ignore_errors'   => true,
+			'header'          => "Accept: */*\r\nConnection: close\r\n",
+		),
+		'ssl' => $ssl,
+	));
+
+	$body = @file_get_contents($url, false, $ctx);
+
+	if (isset($http_response_header) && is_array($http_response_header) && count($http_response_header) > 0) {
+		if (preg_match('#HTTP/\S+\s+(\d+)#', $http_response_header[0], $m)) {
+			$status = (int) $m[1];
+		}
+	}
+
+	if ($body === false || $status < 200 || $status >= 300) {
+		return false;
+	}
+
+	return $body;
+}
+
+/**
+ * cacti_plugin_path - Resolve a file inside a named plugin's directory.
+ *
+ * Builds and realpath-validates base_path/plugins/<plugin>/<relative>
+ * to prevent ../ traversal leaving the plugin subtree. Returns the
+ * validated absolute path on success, or false if the plugin name is
+ * unsafe or the resulting path escapes plugins/<plugin>/.
+ *
+ * @param string $plugin    Plugin directory name (e.g. 'thold').
+ * @param string $relative  Relative file path under the plugin directory (e.g. 'setup.php').
+ *
+ * @return string|false     Validated absolute path, or false on rejection.
+ */
+function cacti_plugin_path($plugin, $relative = '') {
+	global $config;
+
+	$plugin = (string) $plugin;
+
+	if ($plugin === '' || !preg_match('/^[A-Za-z0-9_-]+$/', $plugin)) {
+		return false;
+	}
+
+	$plugin_base = realpath($config['base_path'] . '/plugins/' . $plugin);
+
+	if ($plugin_base === false) {
+		return false;
+	}
+
+	if ($relative === '') {
+		return $plugin_base;
+	}
+
+	$resolved = validate_relative_path_within((string) $relative, $plugin_base);
+
+	return $resolved !== false ? $resolved : false;
+}
+
+/**
+ * sanitize_sql_column - sanitizes a column name to prevent SQL injection
+ *
+ * @param string $column - the column name to sanitize
+ *
+ * @return string - the sanitized column name
+ */
+function sanitize_sql_column($column) {
+	if (is_array($column)) {
+		return '';
+	}
+	if (!is_scalar($column)) {
+		return '';
+	}
+	return preg_replace('/[^a-zA-Z0-9_.]/', '', (string)$column);
+}
