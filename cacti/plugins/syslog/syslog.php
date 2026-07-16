@@ -204,7 +204,7 @@ function syslog_view_alarm() {
 	print "<tr class='tableHeader'><td class='textHeaderDark'>" . __('Syslog Alert View', 'syslog') . "</td></tr>";
 	print "<tr><td class='odd'>\n";
 
-	$html = syslog_db_fetch_cell('SELECT html FROM `' . $syslogdb_default . '`.`syslog_logs` WHERE seq=' . get_request_var('id'));
+	$html = syslog_db_fetch_cell_prepared('SELECT html FROM `' . $syslogdb_default . '`.`syslog_logs` WHERE seq=?', array(get_request_var('id')));
 	print trim($html, "' ");
 
 	print '</td></tr></table>';
