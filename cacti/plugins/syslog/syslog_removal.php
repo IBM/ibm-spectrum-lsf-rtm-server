@@ -388,9 +388,9 @@ function syslog_action_edit() {
 	/* ==================================================== */
 
 	if (isset_request_var('id') && get_nfilter_request_var('action') == 'edit') {
-		$removal = syslog_db_fetch_row('SELECT *
+		$removal = syslog_db_fetch_row_prepared('SELECT *
 			FROM `' . $syslogdb_default . '`.`syslog_remove`
-			WHERE id=' . get_request_var('id'));
+			WHERE id=?', array(get_request_var('id')));
 
 		if (cacti_sizeof($removal)) {
 			$header_label = __esc('Removal Rule Edit [edit: %s]', $removal['name'], 'syslog');

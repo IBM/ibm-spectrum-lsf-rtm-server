@@ -8834,7 +8834,8 @@ function create_job_graph($file_base, $clusterid, $jobid, $indexid, $submit_time
 				WHERE jobid=? AND indexid=?) AND clusterid=?", array($jobid, $indexid, $clusterid)) * 1024;
 
 		}else{
-			$query  = "";
+			$query       = "";
+			$sql_params  = array();
 			$tables = partition_get_partitions_for_query("grid_jobs_finished", date("Y-m-d H:i:s", $submit_time), date("Y-m-d H:i:s"));
 
 			if (cacti_sizeof($tables)) {
@@ -8845,13 +8846,18 @@ function create_job_graph($file_base, $clusterid, $jobid, $indexid, $submit_time
 
 					$query .= "SELECT stat, submit_time, start_time, end_time, mem_requested, mem_reserved, max_swap
 						FROM $table
-						WHERE clusterid='$clusterid'
-						AND submit_time='" . date("Y-m-d H:i:s", $submit_time) . "'
-						AND jobid='$jobid'
-						AND indexid='$indexid'";
+						WHERE clusterid=?
+						AND submit_time=?
+						AND jobid=?
+						AND indexid=?";
+
+					$sql_params[] = (int) $clusterid;
+					$sql_params[] = date("Y-m-d H:i:s", $submit_time);
+					$sql_params[] = (int) $jobid;
+					$sql_params[] = (int) $indexid;
 				}
 
-				$job = db_fetch_row($query);
+				$job = db_fetch_row_prepared($query, $sql_params);
 
 				foreach($tables as $table){
 					$exec_host = '';
